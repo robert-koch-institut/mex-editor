@@ -1,0 +1,14 @@
+.component-container {
+  display: flex;
+  flex-direction: column;
+
+  .control-container {
+    display: flex;
+    align-items: center;
+
+    .value-container {
+      margin-left: 16px;
+      flex: 1;
+    }
+  }
+}

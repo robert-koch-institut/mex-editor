@@ -1,0 +1,28 @@
+<input
+  matInput
+  [ngxMatDatetimePicker]="picker"
+  [placeholder]="props.placeholder || 'Datum wählen'"
+  [formControl]="formControl"
+  [errorStateMatcher]="errorStateMatcher"
+  [min]="props.dateTimeOptions.minDate"
+  [max]="props.dateTimeOptions.maxDate"
+  [formlyAttributes]="field"
+  [required]="required"
+  readonly
+/>
+<ng-template #datepickerToggle>
+  <mat-datepicker-toggle matSuffix [for]="$any(picker)" (click)="detectChanges()"></mat-datepicker-toggle>
+</ng-template>
+<ngx-mat-datetime-picker
+  #picker
+  [showSpinners]="props.dateTimeOptions.showSpinners"
+  [showSeconds]="props.dateTimeOptions.showSeconds"
+  [stepHour]="props.dateTimeOptions.stepHour"
+  [stepMinute]="props.dateTimeOptions.stepMinute"
+  [stepSecond]="props.dateTimeOptions.stepSecond"
+  [enableMeridian]="props.dateTimeOptions.enableMeridian"
+  [disableMinute]="props.dateTimeOptions.disableMinute"
+  (openedStream)="props.dateTimeOptions.opened = true"
+  (closedStream)="props.dateTimeOptions.opened = false"
+>
+</ngx-mat-datetime-picker>

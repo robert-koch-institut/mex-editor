@@ -1,0 +1,38 @@
+# compiled output
+/dist
+/tmp
+/out-tsc
+
+# dependencies
+/.angular
+/node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/
+
+# misc
+/connect.lock
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+
+# tests
+/coverage
+/e2e/*.js
+/e2e/*.map
+TESTS.xml
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Environment
+/src/secrets.ts

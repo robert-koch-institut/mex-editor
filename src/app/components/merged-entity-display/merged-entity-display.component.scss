@@ -1,0 +1,150 @@
+@use "@angular/material" as mat;
+@use "sass:map";
+@use "sass:color";
+@import "/src/mixins";
+
+@mixin merged-entity-display-component($theme) {
+  $typo: map.get($theme, "typography");
+  // $font: map.get($typo, "headline-6");
+  $foreground: map.get($theme, "foreground");
+
+  $color-config: mat.get-color-config($theme);
+  $primary-palette: map.get($color-config, "primary");
+  $accent-palette: map.get($color-config, "accent");
+
+  .entity-display-component {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+
+    .additional-properties {
+      font-size: 0.875em;
+      line-height: 1.25em;
+    }
+
+    .overflow-ellipsis {
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .sub-entity {
+      & > * {
+        @extend .overflow-ellipsis;
+      }
+    }
+
+    .label-container {
+      display: flex;
+      flex-wrap: wrap;
+      min-width: 0;
+      width: 100%;
+      // flex: 1;
+
+      .title {
+        // @include extend-map($font);
+        min-width: 0;
+        width: 100%;
+      }
+
+      .additional-properties {
+        display: flex;
+        gap: 8px;
+        min-width: 0;
+        width: 100%;
+
+        .additional-property {
+          flex: 1;
+          min-width: 0;
+
+          .label {
+            color: map.get($foreground, "secondary-text");
+          }
+
+          // .value {
+          //   // overflow: hidden;
+          //   // text-overflow: ellipsis;
+          // }
+        }
+      }
+    }
+
+    .object-prop-container {
+      display: flex;
+      gap: 8px;
+
+      .object-prop {
+        display: flex;
+        flex-direction: column-reverse;
+        min-width: 3em;
+
+        .object-prop-label {
+          font-size: 0.75em;
+          line-height: 1em;
+          color: lightgray;
+        }
+      }
+    }
+
+    .text-object {
+      .language {
+        margin-right: 4px;
+      }
+    }
+
+    .array-value {
+      display: flex;
+      gap: 8px;
+      min-width: 0;
+      align-items: flex-start;
+
+      .item-value {
+        min-width: 0;
+      }
+
+      .more-item-value {
+        background-color: mat.get-color-from-palette($primary-palette);
+        color: mat.get-color-from-palette($primary-palette, default-contrast);
+        cursor: pointer;
+      }
+    }
+  }
+
+  .entity-display-component.selected {
+    color: mat.get-color-from-palette($primary-palette, default-contrast);
+
+    .array-value {
+      .more-item-value {
+        background-color: mat.get-color-from-palette($accent-palette);
+        color: mat.get-color-from-palette($accent-palette, default-contrast);
+      }
+    }
+  }
+
+  .tooltip-wrapper {
+    padding: 8px;
+    background: rgba(50, 50, 50, 0.9);
+    color: white;
+    border-radius: 2px;
+    // margin: 8px;
+    font-size: 12px;
+    min-width: 400px;
+    max-width: 40vw;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    max-height: 100%;
+
+    .tooltip-item-value {
+      .sub-entity {
+        .array-value {
+          flex-direction: column;
+          flex-wrap: wrap;
+          gap: 0;
+        }
+      }
+    }
+  }
+}

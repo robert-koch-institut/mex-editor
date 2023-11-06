@@ -1,0 +1,12 @@
+<div class="multi-schema-formly-field-container">
+  <h3 *ngIf="props.label">{{ props.label }}</h3>
+  <p *ngIf="props.description">{{ props.description }}</p>
+
+  <div *ngFor="let field of field.fieldGroup; let i = index">
+    <formly-field [field]="field"></formly-field>
+  </div>
+
+  <div class="fg-warn" role="alert" *ngIf="showError && formControl.errors">
+    <formly-validation-message [field]="field"></formly-validation-message>
+  </div>
+</div>

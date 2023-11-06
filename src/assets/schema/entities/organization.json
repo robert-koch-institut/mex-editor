@@ -1,0 +1,91 @@
+{
+  "$id": "https://mex.rki.de/schema/entities/organization",
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "alternativeName": {
+      "items": {
+        "$ref": "/schema/fields/text"
+      },
+      "sameAs": ["http://purl.org/dc/terms/alternative"],
+      "type": "array"
+    },
+    "geprisId": {
+      "examples": ["https://gepris.dfg.de/gepris/institution/10179"],
+      "format": "uri",
+      "pattern": "^https://gepris\\.dfg\\.de/gepris/institution/[0-9]{1,64}$",
+      "sameAs": ["http://www.wikidata.org/entity/P4871"],
+      "type": "string"
+    },
+    "gndId": {
+      "examples": ["https://d-nb.info/gnd/17690-4"],
+      "format": "uri",
+      "pattern": "^https://d\\-nb\\.info/gnd/[-X0-9]{3,10}$",
+      "sameAs": ["http://www.wikidata.org/entity/P227"],
+      "type": "string"
+    },
+    "hadPrimarySource": {
+      "$ref": "/schema/entities/primary-source#/identifier",
+      "sameAs": ["http://www.w3.org/ns/prov#hadPrimarySource"]
+    },
+    "identifier": {
+      "$ref": "/schema/fields/identifier",
+      "sameAs": ["http://purl.org/dc/elements/1.1/identifier"]
+    },
+    "identifierInPrimarySource": {
+      "examples": ["123456", "item-501", "D7/x4/zz.final3"],
+      "minLength": 1,
+      "type": "string"
+    },
+    "isniId": {
+      "examples": ["https://isni.org/isni/0000000109403744"],
+      "format": "uri",
+      "pattern": "^https://isni\\.org/isni/[X0-9]{16}$",
+      "sameAs": ["http://www.wikidata.org/entity/P213"],
+      "type": "string"
+    },
+    "officialName": {
+      "items": {
+        "$ref": "/schema/fields/text"
+      },
+      "minItems": 1,
+      "sameAs": ["http://www.wikidata.org/entity/P1448"],
+      "type": "array"
+    },
+    "rorId": {
+      "examples": ["https://ror.org/01k5qnb77"],
+      "format": "uri",
+      "pattern": "^https://ror\\.org/[a-z0-9]{9}$",
+      "sameAs": ["http://www.wikidata.org/entity/P6782"],
+      "type": "string"
+    },
+    "shortName": {
+      "items": {
+        "$ref": "/schema/fields/text"
+      },
+      "sameAs": ["http://www.wikidata.org/entity/P1813"],
+      "type": "array"
+    },
+    "stableTargetId": {
+      "examples": ["00000000-0000-4000-8000-00000000002a"],
+      "format": "uuid",
+      "type": "string"
+    },
+    "viafId": {
+      "examples": ["https://viaf.org/viaf/123556639"],
+      "format": "uri",
+      "pattern": "^https://viaf\\.org/viaf/[1-9]{2,22}$",
+      "sameAs": ["http://www.wikidata.org/entity/P214"],
+      "type": "string"
+    },
+    "wikidataId": {
+      "examples": ["http://www.wikidata.org/entity/Q679041"],
+      "format": "uri",
+      "pattern": "^https://www\\.wikidata\\.org/entity/[PQ0-9]{2,64}$",
+      "type": "string"
+    }
+  },
+  "required": ["hadPrimarySource", "identifier", "identifierInPrimarySource", "officialName", "stableTargetId"],
+  "sameAs": ["http://www.w3.org/ns/org#Organization"],
+  "title": "Organization",
+  "type": "object"
+}

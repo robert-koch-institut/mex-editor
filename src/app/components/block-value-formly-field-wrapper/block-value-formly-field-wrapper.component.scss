@@ -1,0 +1,12 @@
+.block-value-container {
+  display: flex;
+  gap: 8px;
+
+  .wrapped-component {
+    flex: 1;
+  }
+
+  .slide-toggle {
+    padding-top: 0.25em;
+  }
+}

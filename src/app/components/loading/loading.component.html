@@ -1,0 +1,8 @@
+<div class="loading-component" [class.inline]="inline">
+  <div class="spinner-text-container">
+    <div class="spinner">
+      <mat-progress-spinner [diameter]="inline ? 24 : 100" mode="indeterminate" [title]="text"></mat-progress-spinner>
+    </div>
+    <div *ngIf="!hideText && text" class="text">{{ text }}</div>
+  </div>
+</div>

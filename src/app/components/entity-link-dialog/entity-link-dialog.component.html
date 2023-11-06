@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Zusammenführung von Entitäten</h2>
+<mat-dialog-content class="mdc-typography" class="dialog-content">
+  <mat-tab-group
+    (selectedTabChange)="rightEntity = $event.tab === tabSearch ? textSearch.selectedEntity : idSearch.entity"
+  >
+    <mat-tab label="Suche" #tabSearch>
+      <app-merged-entity-search
+        #textSearch
+        (selectedEntityChanged)="rightEntity = $event"
+        [enableNavigation]="false"
+      ></app-merged-entity-search>
+    </mat-tab>
+    <mat-tab label="StableTargetId" #tabId>
+      <app-entity-load-by-id #idSearch (entityChanged)="rightEntity = $event"></app-entity-load-by-id>
+    </mat-tab>
+  </mat-tab-group>
+  <div *ngIf="linkingEntities" class="linking-entites">
+    <app-loading text="Entitäten werden zusammengeführt..."></app-loading>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button [disabled]="linkingEntities || !leftEntity || !rightEntity" (click)="linkEntities()">
+    Zusammenführen
+  </button>
+  <button mat-button [disabled]="linkingEntities" mat-dialog-close>Abbrechen</button>
+</mat-dialog-actions>

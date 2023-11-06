@@ -1,0 +1,14 @@
+<div class="entity-new-page sub-page">
+  <div class="sub-page-content">
+    <ng-container *ngIf="entityCreation$ | async as creation; else loading">
+      <h2>Neue Entität vom Typ '{{ creation.entity.$type | entityTypeLabel }}' anlegen</h2>
+      <app-entity-edit-form #editForm [entity]="creation.entity" [schema]="creation.schema"></app-entity-edit-form>
+      <button mat-raised-button (click)="save(editForm.model)">Speichern</button>
+      <div *ngIf="isSaving" style="height: 300px; width: 300px; background-color: aqua">SPEICHERE...</div>
+    </ng-container>
+
+    <ng-template #loading>
+      <app-loading text="Lade Daten..."></app-loading>
+    </ng-template>
+  </div>
+</div>

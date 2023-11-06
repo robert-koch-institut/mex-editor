@@ -1,0 +1,16 @@
+<mat-list class="merged-entity-list-component">
+  <mat-list-item
+    *ngFor="let entity of entities; trackBy: trackEntity"
+    (click)="selectEntity(entity)"
+    [class.selected]="!!selectedEntity && selectedEntity.identifier === entity.identifier"
+    class="entity-list-item"
+  >
+    <div class="list-item-content">
+      <app-merged-entity-display
+        [entity]="entity"
+        [selected]="!!selectedEntity && selectedEntity.identifier === entity.identifier"
+      ></app-merged-entity-display>
+      <a mat-raised-button *ngIf="enableNavigation" [routerLink]="['/item', entity.stableTargetId]"> Gehe zu </a>
+    </div>
+  </mat-list-item>
+</mat-list>

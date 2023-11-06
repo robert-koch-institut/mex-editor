@@ -1,0 +1,12 @@
+td {
+  padding: 8px;
+  vertical-align: top;
+}
+
+td.auto-width {
+  width: 1px;
+  white-space: nowrap;
+}
+td.fill-width {
+  width: 100%;
+}

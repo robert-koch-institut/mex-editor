@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>
+  Suche nach
+  <ng-container *ngFor="let entityType of data.entityTypes; let last = last">
+    {{ entityType | entityTypeLabel }}{{ last ? "" : " oder " }}
+  </ng-container>
+</h2>
+<mat-dialog-content class="mdc-typography">
+  <app-merged-entity-search
+    #mergedEntitySearch
+    [entitySearch]="entitySearch"
+    [availableEntityTypes]="data.entityTypes"
+    [enableFilter]="data.entityTypes.length > 1"
+    [enableNavigation]="false"
+    [enableSelection]="true"
+    (selectedEntityChanged)="selectedEntity = $event"
+  ></app-merged-entity-search>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button [disabled]="selectedEntity === undefined" [mat-dialog-close]="selectedEntity">Ok</button>
+  <button mat-button mat-dialog-close>Abbrechen</button>
+</mat-dialog-actions>

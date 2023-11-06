@@ -1,0 +1,18 @@
+.source-name-container {
+  display: flex;
+
+  .source-name {
+    max-width: 15em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    ::ng-deep .label-container {
+      .title {
+        .array-value {
+          flex-wrap: wrap;
+        }
+      }
+    }
+  }
+}

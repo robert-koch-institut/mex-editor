@@ -1,0 +1,15 @@
+<div class="entity-load-by-id-component">
+  <mat-form-field>
+    <mat-label>StableTargetId</mat-label>
+    <input matInput placeholder="StableTargetId der zu suchenden Entität" [formControl]="formControl" />
+    <mat-error *ngIf="formControl.hasError('invalidId')">
+      Keine Entität für angegeben StableTargetId gefunden.
+    </mat-error>
+    <mat-error *ngIf="formControl.hasError('required')"> Das ist ein Pflichtfeld. </mat-error>
+  </mat-form-field>
+  <app-merged-entity-display *ngIf="entity; else fillId" [entity]="entity"></app-merged-entity-display>
+</div>
+
+<ng-template #fillId>
+  <i> Bitte tragen Sie eine gültige StableTargetId in das obenstehende Textfeld ein. </i>
+</ng-template>

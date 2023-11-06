@@ -1,0 +1,222 @@
+<div class="entity-display-component" [class.selected]="selected">
+  <mat-icon *ngIf="!hideIcon" [title]="entity.$type | entityTypeLabel" class="icon">
+    {{ entity.$type | entityTypeIcon }}
+  </mat-icon>
+
+  <div class="label-container">
+    <div class="title overflow-ellipsis">
+      <ng-container
+        *ngIf="titleProperty$ | async as titleProperty; else titleFake"
+        [ngTemplateOutlet]="templatePicker"
+        [ngTemplateOutletContext]="{
+          $implicit: {
+            $implicit: entity[titleProperty.key],
+            props: titleProperty.propertyType
+          },
+          type: titleProperty.propertyType.type
+        }"
+      >
+      </ng-container>
+    </div>
+    <div *ngIf="!hideAdditionalProperties" class="additional-properties">
+      <ng-container *ngIf="additionalProperties$ | async as additionalProperties; else propertiesFake">
+        <div
+          *ngFor="let addField of additionalProperties"
+          class="additional-property"
+          [ngStyle]="{ 'max-width': 'calc(100% / ' + additionalProperties.length + ')' }"
+        >
+          <div class="label">
+            {{ addField.title ?? addField.key }}
+            <span
+              *ngIf="addField.propertyType.type === 'array' && (entity | hasKey : addField.key) && entity[addField.key]"
+            >
+              ({{ $any(entity[addField.key]).length }} Wert/e)
+            </span>
+          </div>
+          <div class="value" *ngIf="(entity | hasKey : addField.key) && entity[addField.key]; else noValue">
+            <ng-container
+              [ngTemplateOutlet]="templatePicker"
+              [ngTemplateOutletContext]="{
+                $implicit: {
+                  $implicit: entity[addField.key],
+                  props: addField.propertyType
+                },
+                type: addField.propertyType.type
+              }"
+            >
+            </ng-container>
+          </div>
+          <ng-template #noValue> Kein Wert für '{{ addField.title ?? addField.key }}' vorhanden. </ng-template>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<ng-template #templatePicker let-context let-type="type">
+  <ng-container [ngSwitch]="type">
+    <ng-container *ngSwitchCase="'array'" [ngTemplateOutlet]="array" [ngTemplateOutletContext]="context"></ng-container>
+    <ng-container
+      *ngSwitchCase="'string'"
+      [ngTemplateOutlet]="string"
+      [ngTemplateOutletContext]="context"
+    ></ng-container>
+    <ng-container
+      *ngSwitchCase="'identity-ref'"
+      [ngTemplateOutlet]="identityRef"
+      [ngTemplateOutletContext]="context"
+    ></ng-container>
+    <ng-container
+      *ngSwitchCase="'object'"
+      [ngTemplateOutlet]="object"
+      [ngTemplateOutletContext]="context"
+    ></ng-container>
+    <ng-container *ngSwitchDefault>
+      WHAT {{ context | json }}
+      <ng-container [ngTemplateOutlet]="unknown" [ngTemplateOutletContext]="context"> </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #array let-value let-props="props">
+  <div class="array-value">
+    <div class="item-value" *ngFor="let item of value | slice : 0 : maxArrayItems">
+      <ng-container
+        [ngTemplateOutlet]="templatePicker"
+        [ngTemplateOutletContext]="{
+          $implicit: { $implicit: item, props: props.itemType },
+          type: props.itemType.type
+        }"
+      >
+      </ng-container>
+    </div>
+    // TODO: fix sat-popover integration
+    <!-- <ng-container *ngIf="value.length > maxArrayItems">
+      <div class="more-item-value" (click)="instantPopover.toggle(); $event.stopPropagation()" #popoverAnchor>
+        + {{ value.length - maxArrayItems }}
+      </div>
+
+      <sat-popover
+        #instantPopover
+        panelClass="more-items-popover"
+        [anchor]="popoverAnchor"
+        hasBackdrop
+        (afterOpen)="afterPopupOpen()"
+      >
+        <div class="tooltip-wrapper">
+          <h3>{{ value.length - maxArrayItems }} weitere Einträge</h3>
+          <div class="tooltip-item-value" *ngFor="let item of value | slice : maxArrayItems">
+            <ng-container
+              [ngTemplateOutlet]="templatePicker"
+              [ngTemplateOutletContext]="{
+                $implicit: { $implicit: item, props: props.itemType },
+                type: props.itemType.type
+              }"
+            >
+            </ng-container>
+          </div>
+        </div>
+      </sat-popover>
+    </ng-container> -->
+  </div>
+</ng-template>
+
+<ng-template #object let-value let-props="props">
+  <ng-container [ngSwitch]="props.objectType">
+    <ng-container
+      *ngSwitchCase="'text'"
+      [ngTemplateOutlet]="textObject"
+      [ngTemplateOutletContext]="{ $implicit: value }"
+    ></ng-container>
+    <ng-container
+      *ngSwitchCase="'link'"
+      [ngTemplateOutlet]="linkObject"
+      [ngTemplateOutletContext]="{ $implicit: value }"
+    ></ng-container>
+    <div *ngSwitchDefault class="object-prop-container">
+      <div class="object-prop" *ngFor="let propertyDesc of props.propertyDescriptors">
+        <div class="object-prop-label overflow-ellipsis" [title]="propertyDesc.title ?? propertyDesc.key">
+          {{ propertyDesc.title ?? propertyDesc.key }}
+        </div>
+        <div class="object-prop-value">
+          <ng-container
+            [ngTemplateOutlet]="templatePicker"
+            [ngTemplateOutletContext]="{
+              $implicit: {
+                $implicit: value[propertyDesc.key],
+                props: propertyDesc.propertyType
+              },
+              type: propertyDesc.propertyType.type
+            }"
+          >
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #string let-value let-props="props">
+  <div
+    [title]="value | stringFormat : props.format"
+    class="overflow-ellipsis"
+    [ngClass]="maxLines !== undefined ? 'max-lines-' + maxLines : undefined"
+  >
+    {{ value | stringFormat : props.format }}
+  </div>
+</ng-template>
+
+<ng-template #unknown let-value>
+  <div [title]="value" class="overflow-ellipsis" style="color: red">
+    {{ value }}
+  </div>
+</ng-template>
+
+<ng-template #identityRef let-value let-props="props">
+  <ng-container *ngLet="value | loadEntity as loadResult">
+    <div class="sub-entity">
+      <div *ngIf="loadResult.state === 'pending'" title="Lade...">Lade...</div>
+      <div *ngIf="loadResult.state === 'error'" [title]="'Fehler beim Laden von \'' + value + '\'.'" class="fg-warn">
+        Fehler beim Laden von '{{ value }}'. Fehler: {{ loadResult.error | json }}
+      </div>
+      <app-merged-entity-display
+        *ngIf="loadResult.state === 'success'"
+        [entity]="loadResult.data"
+        [hideAdditionalProperties]="true"
+        [hideIcon]="true"
+      ></app-merged-entity-display>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #textObject let-value>
+  <div
+    [title]="value.value"
+    class="text-object overflow-ellipsis"
+    [ngClass]="maxLines !== undefined ? 'max-lines-' + maxLines : undefined"
+  >
+    <span *ngIf="value.language" class="language">({{ value.language }})</span>
+    <span class="value">{{ value.value }}</span>
+  </div>
+</ng-template>
+
+<ng-template #linkObject let-value>
+  <ng-container *ngIf="value.title" [ngClass]="maxLines !== undefined ? 'max-lines-' + maxLines : undefined">
+    <a [href]="value.url" [title]="value.title + ' (' + value.url + ')'" target="_blank" class="overflow-ellipsis">
+      {{ value.title }} ({{ value.url }})</a
+    >
+  </ng-container>
+  <ng-container *ngIf="!value.title" [ngClass]="maxLines !== undefined ? 'max-lines-' + maxLines : undefined">
+    <a [href]="value.url" [title]="value.url" target="_blank" class="overflow-ellipsis">{{ value.url }}</a>
+  </ng-container>
+</ng-template>
+
+<ng-template #titleFake>
+  <app-loading-merged-entity [showIcon]="false" [showProperties]="false"></app-loading-merged-entity>
+</ng-template>
+
+<ng-template #propertiesFake>
+  <div class="additional-property">
+    <app-loading-merged-entity [showIcon]="false" [showTitle]="false"></app-loading-merged-entity>
+  </div>
+</ng-template>

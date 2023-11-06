@@ -1,0 +1,11 @@
+<div class="entity-search-page sub-page">
+  <div class="sub-page-content">
+    <ng-container *ngIf="entitySearch$ | async as search">
+      <app-merged-entity-search
+        [entitySearch]="search"
+        (entitySearchChanged)="onEntitySearchChanged($event)"
+        [enableSelection]="false"
+      ></app-merged-entity-search>
+    </ng-container>
+  </div>
+</div>

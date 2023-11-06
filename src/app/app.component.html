@@ -1,0 +1,45 @@
+<div class="app-component">
+  <header>
+    <mat-toolbar color="primary">
+      <nav>
+        <ol class="nav-list">
+          <li class="nav-item">
+            <a mat-button class="nav-link" routerLink="" ariaCurrentWhenActive="page">
+              <h1>MEx Editor</h1>
+            </a>
+            <mat-chip class="nav-chip">v0.1</mat-chip>
+          </li>
+          <li class="nav-item">
+            <a mat-button class="nav-link" routerLink="/search" routerLinkActive="active" ariaCurrentWhenActive="page">
+              <mat-icon>search</mat-icon> Search
+            </a>
+          </li>
+          <li class="nav-item">
+            <a mat-button class="nav-link" [matMenuTriggerFor]="debugMenu"> Debug </a>
+          </li>
+        </ol>
+      </nav>
+    </mat-toolbar>
+  </header>
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+  <footer>
+    <ol class="footer-list">
+      <li class="footer-item">
+        <a class="footer-link" href="/imprint">Imprint</a>
+      </li>
+      <li class="footer-item">
+        <a class="footer-link" href="/privacy">Privacy policy</a>
+      </li>
+      <li class="footer-item">
+        <a class="footer-link" href="/accessibility">Accessibility statement</a>
+      </li>
+    </ol>
+  </footer>
+</div>
+
+<mat-menu #debugMenu="matMenu">
+  <a mat-menu-item routerLink="/debug/edit">Edit</a>
+  <a mat-menu-item routerLink="/debug/search">Search</a>
+</mat-menu>

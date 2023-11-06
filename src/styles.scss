@@ -1,0 +1,92 @@
+@use "@angular/material" as mat;
+@use "@material/typography/mdc-typography";
+@import "material-symbols";
+@import "mixins";
+@import "app/pages/home-page/home-page.component";
+@import "app/app.component";
+@import "app/components/date-time-formly-field-type/ngx-mat-datetime-fix";
+@import "app/components/merged-entity-display/merged-entity-display.component";
+@import "app/components/loading-merged-entity/loading-merged-entity.component";
+@import "app/components/merged-entity-list/merged-entity-list.component";
+@import "app/components/loading/loading.component";
+
+$mex-editor-typography: mat.define-typography-config();
+$mex-editor-primary: mat.define-palette(mat.$indigo-palette, 800, 700, 900);
+$mex-editor-accent: mat.define-palette(mat.$blue-palette, 700, 500, 800);
+$mex-editor-warn: mat.define-palette(mat.$red-palette, 400, 200, 600);
+$mex-editor-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $mex-editor-primary,
+      accent: $mex-editor-accent,
+      warn: $mex-editor-warn,
+    ),
+    typography: $mex-editor-typography,
+  )
+);
+
+// material mixins
+@include mat.core();
+@include mat.all-component-themes($mex-editor-theme);
+// page mixins
+@include app-component($mex-editor-theme);
+@include home-page($mex-editor-theme);
+// component mixins
+@include merged-entity-display-component($mex-editor-theme);
+@include loading-merged-entity-component($mex-editor-theme);
+@include merged-entity-list-component($mex-editor-theme);
+@include loading-component($mex-editor-theme);
+// util mixins
+@include bg-util($mex-editor-theme);
+@include fg-util($mex-editor-theme);
+@include max-lines-util();
+// global fix mixins
+@include mat-hint-fix();
+@include ngx-mat-datetime-fix();
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+}
+
+.sub-page {
+  display: flex;
+  justify-content: center;
+
+  height: 100%;
+  // background-color: mat.get-color-from-palette(mat.$grey-palette, 100);
+
+  .sub-page-content {
+    min-width: 800px;
+    width: 61.8%;
+    max-width: 1440px;
+
+    overflow: auto;
+
+    > * {
+      width: 100%;
+    }
+  }
+}
+
+.mat-mdc-form-field-error-wrapper {
+  mat-error {
+    display: inline-flex;
+    max-width: 100%;
+
+    formly-validation-message {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+// centers select arrow in the middle of the row
+.mat-form-field-appearance-fill .mat-mdc-form-field-icon-prefix .mat-mdc-select-arrow-wrapper {
+  transform: translateY(0);
+}

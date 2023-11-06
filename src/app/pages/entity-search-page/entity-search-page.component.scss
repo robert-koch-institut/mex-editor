@@ -1,0 +1,11 @@
+.entity-search-page {
+  .sub-page-content {
+    display: flex;
+
+    app-entity-search {
+      width: 100%;
+      min-height: 0;
+      flex: 1;
+    }
+  }
+}

@@ -1,0 +1,8 @@
+<div i18n class="entity-edit-form-component">
+  <form [formGroup]="form">
+    <formly-form [model]="model" [fields]="fields" [options]="options" [form]="form"></formly-form>
+    <div *ngIf="getFormErrors(form) as formErrors" class="fg-warn">
+      {{ formErrors | json }}
+    </div>
+  </form>
+</div>

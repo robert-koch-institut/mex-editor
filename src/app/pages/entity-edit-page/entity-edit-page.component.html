@@ -1,0 +1,25 @@
+<div class="sub-page entity-edit-page">
+  <div class="sub-page-content">
+    <ng-container *ngIf="ruleSetEdit; else loading">
+      <div class="button-container">
+        <button mat-raised-button (click)="reset()">Reset</button>
+        <button mat-raised-button (click)="showPreview()">Speichern / Vorschau</button>
+        <button mat-raised-button (click)="linkEntity()">Zusammenführen</button>
+      </div>
+
+      <app-entities-rule-set-edit
+        #editComponent
+        [entities]="ruleSetEdit.entities"
+        [schema]="ruleSetEdit.schema"
+        [ruleSet]="ruleSetEdit.ruleSet"
+        (ruleSetChanged)="ruleSetEdit.ruleSet = $event"
+      >
+      </app-entities-rule-set-edit>
+    </ng-container>
+    <div *ngIf="isSaving" style="background-color: white">Speichere DATEN!</div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <app-loading text="Lade Daten..."></app-loading>
+</ng-template>

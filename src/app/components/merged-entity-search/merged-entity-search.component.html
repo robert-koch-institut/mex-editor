@@ -1,0 +1,82 @@
+<div class="entity-search-component">
+  <div class="query-container">
+    <mat-form-field appearance="fill" color="primary" class="search-field">
+      <mat-label>Suche</mat-label>
+      <input
+        matInput
+        placeholder="Suche"
+        [ngModel]="entitySearch.query"
+        (ngModelChange)="onSearchQueryChanged($event)"
+        (keydown.enter)="search()"
+      />
+
+      <!-- Impossible to show 'keine' inside the select-trigger. This is the workaround. -->
+      <div
+        *ngIf="enableFilter && (entitySearch.filter.entityTypes?.length ?? 0) === 0"
+        matPrefix
+        class="no-entity-filter-hack"
+      >
+        Keine
+      </div>
+      <mat-select
+        *ngIf="enableFilter"
+        matPrefix
+        multiple
+        [ngModel]="entitySearch.filter.entityTypes"
+        (ngModelChange)="onEntityTypeFilterChanged($event)"
+      >
+        <mat-select-trigger>
+          <ng-container *ngIf="entitySearch.filter.entityTypes" [ngSwitch]="entitySearch.filter.entityTypes.length">
+            <span *ngSwitchCase="availableEntityTypes.length">Alle</span>
+            <span *ngSwitchDefault>
+              <ng-container *ngIf="entitySearch.filter.entityTypes">
+                {{ entitySearch.filter.entityTypes[0] | entityTypeLabel }}
+                <span *ngIf="(entitySearch.filter.entityTypes.length || 0) > 1" class="additional-selection">
+                  (+{{ (entitySearch.filter.entityTypes.length || 0) - 1 }} mehr)
+                </span>
+              </ng-container>
+            </span>
+          </ng-container>
+        </mat-select-trigger>
+
+        <mat-option *ngFor="let item of availableEntityTypes" [value]="item">{{ item | entityTypeLabel }}</mat-option>
+      </mat-select>
+
+      <button mat-icon-button matSuffix (click)="onSearchQueryChanged('')" *ngIf="entitySearch.query">
+        <mat-icon>close</mat-icon>
+      </button>
+      <button mat-icon-button matSuffix (click)="search()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <div class="result-container">
+    <ng-container *ngIf="searchResult$ | async as searchResult; else searching">
+      <ng-container *ngIf="searchResult.entities.length > 0">
+        <app-merged-entity-list
+          [entities]="searchResult.entities"
+          [selectedEntity]="selectedEntity"
+          (selectedEntityChanged)="selectEntity($event)"
+          [enableNavigation]="enableNavigation"
+          [enableSelection]="enableSelection"
+        ></app-merged-entity-list>
+        <mat-paginator
+          (page)="onPageChanged($event)"
+          [pageIndex]="entitySearch.page.index"
+          [length]="searchResult.totalEntities"
+          [pageSize]="entitySearch.page.size"
+          [pageSizeOptions]="pageSizeOptions"
+        ></mat-paginator>
+      </ng-container>
+
+      <div *ngIf="searchResult.entities.length === 0">Keine Entitäten gefunden.</div>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #searching>
+  <div class="loading-item-container">
+    <app-loading-merged-entity *ngFor="let item of array(entitySearch.page.size)"></app-loading-merged-entity>
+  </div>
+</ng-template>

@@ -1,0 +1,18 @@
+<div>
+  <h3 *ngIf="!props['hideLabel'] && props.label">{{ props.label }}</h3>
+  <p *ngIf="!props['hideDescription'] && props.description">
+    {{ props.description }}
+  </p>
+  <div class="fg-warn" role="alert" *ngIf="showError && formControl.errors">
+    <formly-validation-message [field]="field"></formly-validation-message>
+  </div>
+  <div class="field-container" [class.row-layout]="useRowLayout">
+    <div
+      *ngFor="let f of field.fieldGroup"
+      class="field-item"
+      [ngStyle]="{ 'max-width': 'calc(' + 100 / (field.fieldGroup?.length || 1) + '%)' }"
+    >
+      <formly-field [field]="f"></formly-field>
+    </div>
+  </div>
+</div>

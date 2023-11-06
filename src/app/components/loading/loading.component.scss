@@ -1,0 +1,43 @@
+@use "@angular/material" as mat;
+@use "sass:map";
+
+@mixin loading-component($theme) {
+  $background: map.get($theme, background);
+  $foreground: map.get($theme, foreground);
+
+  .loading-component {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 100%;
+    width: 100%;
+
+    background-color: map.get($foreground, disabled);
+
+    .spinner-text-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+
+      background-color: map.get($background, dialog);
+      padding: 16px;
+    }
+  }
+
+  .loading-component.inline {
+    background-color: unset;
+
+    .spinner-text-container {
+      flex-direction: row;
+      background-color: unset;
+      padding: 0.5em;
+      gap: 0.5em;
+
+      .text {
+        line-height: 1em;
+      }
+    }
+  }
+}

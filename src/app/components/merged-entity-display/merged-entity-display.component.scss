@@ -5,7 +5,6 @@
 
 @mixin merged-entity-display-component($theme) {
   $typo: map.get($theme, "typography");
-  // $font: map.get($typo, "headline-6");
   $foreground: map.get($theme, "foreground");
 
   $color-config: mat.get-color-config($theme);
@@ -38,10 +37,8 @@
       flex-wrap: wrap;
       min-width: 0;
       width: 100%;
-      // flex: 1;
 
       .title {
-        // @include extend-map($font);
         min-width: 0;
         width: 100%;
       }
@@ -59,11 +56,6 @@
           .label {
             color: map.get($foreground, "secondary-text");
           }
-
-          // .value {
-          //   // overflow: hidden;
-          //   // text-overflow: ellipsis;
-          // }
         }
       }
     }
@@ -125,7 +117,6 @@
     background: rgba(50, 50, 50, 0.9);
     color: white;
     border-radius: 2px;
-    // margin: 8px;
     font-size: 12px;
     min-width: 400px;
     max-width: 40vw;

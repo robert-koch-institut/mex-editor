@@ -37,16 +37,6 @@
 }
 
 @mixin mat-hint-fix() {
-  // mat-hint {
-  //   text-overflow: ellipsis;
-  // }
-  // .mat-mdc-form-field-hint {
-  //   color: rgba(0, 0, 0, 0.6);
-  // }
-  // .mat-mdc-form-field-hint-wrapper {
-  //   font-size: 75%;
-  // }
-
   mat-hint.mat-mdc-form-field-hint.mat-mdc-form-field-bottom-align {
     color: rgba(0, 0, 0, 0.6);
     font-size: 75%;

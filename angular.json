@@ -108,10 +108,10 @@
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["src/assets"],
+            "assets": ["src/favicon.ico", "src/assets"],
             "codeCoverage": true,
             "karmaConfig": "karma.conf.js",
-            "styles": ["src/theme.scss", "src/styles.scss"],
+            "styles": ["src/styles.scss"],
             "scripts": []
           }
         },

@@ -12,11 +12,6 @@ interface MergedItemResponse {
   items: MergedEntity[];
 }
 
-interface ExtractedItemResponse {
-  total: number;
-  items: Entity[];
-}
-
 @Injectable({
   providedIn: 'root',
 })

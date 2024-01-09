@@ -32,7 +32,6 @@ export class FormlyFieldConfigBuilderService {
   private readonly _formlyJsonschema = new FormlyJsonschema();
   private readonly _refHelper = new SchemaRefHelper();
 
-  // @log('out')
   build(schema: JSONSchema7, getDefaultProps?: (field: FormlyFieldConfig) => FormlyProps | undefined) {
     return this.createFieldConfig(schema, getDefaultProps);
   }

@@ -1,5 +1,10 @@
 # MEx editor
 
+Metadata editor web application.
+
+[![linting](https://github.com/robert-koch-institut/mex-common/actions/workflows/linting.yml/badge.svg)](https://github.com/robert-koch-institut/mex-common/actions/workflows/linting.yml)
+[![cve-scan](https://github.com/robert-koch-institut/mex-common/actions/workflows/cve-scan.yml/badge.svg)](https://github.com/robert-koch-institut/mex-common/actions/workflows/cve-scan.yml)
+
 ## project
 
 The Metadata Exchange (MEx) project is committed to improve the retrieval of RKI

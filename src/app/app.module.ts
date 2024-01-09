@@ -64,10 +64,7 @@ import { EntityRuleSetFieldEditComponent } from './components/entity-rule-set-fi
 import { AddValueRuleSetFieldEditComponent } from './components/add-value-rule-set-field-edit/add-value-rule-set-field-edit.component';
 import { A11yModule } from '@angular/cdk/a11y';
 import { createFormlyWrapperMap, FORMLY_WRAPPER_MAP } from './util/create-formly-wrapper-map';
-import {
-  MergedEntityDisplayComponent,
-  // PropertyDescriptorTemplateRefDirective,
-} from './components/merged-entity-display/merged-entity-display.component';
+import { MergedEntityDisplayComponent } from './components/merged-entity-display/merged-entity-display.component';
 import { LoadEntityPipe } from './pipes/load-entity.pipe';
 import { NgLetModule } from 'ng-let';
 import { FirstPipe } from './pipes/first.pipe';
@@ -144,7 +141,6 @@ const dateTimeFormats = {
     MergedEntityDisplayComponent,
     LoadEntityPipe,
     FirstPipe,
-    // PropertyDescriptorTemplateRefDirective,
     DebugSearchPageComponent,
     StringFormatPipe,
     HasKeyPipe,

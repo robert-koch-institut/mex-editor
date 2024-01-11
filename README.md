@@ -2,8 +2,8 @@
 
 Metadata editor web application.
 
-[![linting](https://github.com/robert-koch-institut/mex-common/actions/workflows/linting.yml/badge.svg)](https://github.com/robert-koch-institut/mex-common/actions/workflows/linting.yml)
-[![cve-scan](https://github.com/robert-koch-institut/mex-common/actions/workflows/cve-scan.yml/badge.svg)](https://github.com/robert-koch-institut/mex-common/actions/workflows/cve-scan.yml)
+[![linting](https://github.com/robert-koch-institut/mex-editor/actions/workflows/linting.yml/badge.svg)](https://github.com/robert-koch-institut/mex-editor/actions/workflows/linting.yml)
+[![cve-scan](https://github.com/robert-koch-institut/mex-editor/actions/workflows/cve-scan.yml/badge.svg)](https://github.com/robert-koch-institut/mex-editor/actions/workflows/cve-scan.yml)
 
 ## project
 
@@ -16,6 +16,10 @@ that it can be shared with others.
 Via MEx, metadata will be made findable, accessible and shareable, as well as available
 for further research. The goal is to get an overview of what research data is available,
 understand its context, and know what needs to be considered for subsequent use.
+
+RKI cooperated with D4L data4life gGmbH for a pilot phase where the vision of a
+FAIR metadata catalog was explored and concepts and prototypes were developed.
+The partnership has ended with the successful conclusion of the pilot phase.
 
 After an internal launch, the metadata will also be made publicly available and thus be
 available to external researchers as well as the interested (professional) public to
@@ -30,14 +34,14 @@ data Findable, Accessible, Interoperable and Reusable.
 
 ## package
 
-The `mex-editor` is an angular application that allows creating and editing
-rules to non-destructivley manipulate metadata. This can be used to enrich data
-with manual input or insert new data from scratch.
+The `mex-editor` is an angular application that allows creating and editing rules to
+non-destructivley manipulate metadata. This can be used to enrich data with manual input
+or insert new data from scratch.
 
 ## license
 
-This package is licensed under the [MIT license](/LICENSE). Other components of the
-MEx project will be released under the same license in the future.
+This package is licensed under the [MIT license](/LICENSE). All other software
+components of the MEx project are open-sourced under the same license as well.
 
 ## development
 

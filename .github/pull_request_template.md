@@ -12,8 +12,14 @@
 ## Added
 <!--- For new features. -->
 
+- pull request template
+- CHANGELOG file
+- cruft template link
+
 ## Changes
 <!--- For changes in existing functionality. -->
+
+- harmonized boilerplate
 
 ## Deprecated
 <!--- For soon-to-be removed features. -->

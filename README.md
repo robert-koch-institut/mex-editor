@@ -35,7 +35,7 @@ data Findable, Accessible, Interoperable and Reusable.
 ## package
 
 The `mex-editor` is an angular application that allows creating and editing rules to
-non-destructivley manipulate metadata. This can be used to enrich data with manual input
+non-destructively manipulate metadata. This can be used to enrich data with manual input
 or insert new data from scratch.
 
 ## license

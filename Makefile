@@ -24,14 +24,14 @@ karma:
 prod:
 	# build the prod angular package
 	@ echo building prod package; \
-	npm run build --prod; \
+	npm run ng build -- --configuration prod; \
 
 stage:
 	# build the stage angular package
 	@ echo building stage package; \
-	npm run build --stage; \
+	npm run ng build -- --configuration stage; \
 
 dev:
 	# build the dev angular package
 	@ echo building dev package; \
-	npm run build --dev; \
+	npm run ng build -- --configuration dev; \

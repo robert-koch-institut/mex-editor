@@ -1,4 +1,4 @@
-.PHONY: all test install karma linter build
+.PHONY: all test install karma linter prod stage dev
 all: install test
 test: linter karma
 
@@ -21,7 +21,17 @@ karma:
 	@ echo running all tests; \
 	npm run test; \
 
-build:
-	# build the angular package
-	@ echo building package; \
-	npm run build --prod; \
+prod:
+	# build the prod angular package
+	@ echo building prod package; \
+	npm run ng build -- --configuration prod; \
+
+stage:
+	# build the stage angular package
+	@ echo building stage package; \
+	npm run ng build -- --configuration stage; \
+
+dev:
+	# build the dev angular package
+	@ echo building dev package; \
+	npm run ng build -- --configuration dev; \

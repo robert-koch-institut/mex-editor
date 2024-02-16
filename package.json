@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "start": "ng serve",
     "test": "ng test",
-    "watch": "ng build --watch --configuration development",
+    "watch": "ng build --watch --configuration dev",
     "prepare": "husky install",
     "setup-dummy-data": "npx ts-node setup-dummy-data.ts",
     "prettify-src": "npx prettier --print-width 120 --write src"

@@ -28,7 +28,7 @@
             "scripts": []
           },
           "configurations": {
-            "production": {
+            "prod": {
               "budgets": [
                 {
                   "type": "initial",
@@ -52,7 +52,7 @@
                 "styles": {"inlineCritical": false}
               }
             },
-            "staging": {
+            "stage": {
                 "budgets": [
                   {
                     "type": "initial",
@@ -76,7 +76,7 @@
                   "styles": {"inlineCritical": false}
                 }
               },
-            "development": {
+            "dev": {
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
@@ -85,22 +85,22 @@
               "namedChunks": true
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "dev"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "production": {
-              "browserTarget": "mex-editor:build:production"
+            "prod": {
+              "browserTarget": "mex-editor:build:prod"
             },
-            "staging": {
-                "browserTarget": "mex-editor:build:staging"
+            "stage": {
+                "browserTarget": "mex-editor:build:stage"
             },
-            "development": {
-              "browserTarget": "mex-editor:build:development"
+            "dev": {
+              "browserTarget": "mex-editor:build:dev"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "dev"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",

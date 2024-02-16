@@ -1,6 +1,6 @@
 import { secrets } from 'src/secrets';
 
 export const environment = {
-  production: true,
+  prodMode: true,
   apiBaseUrl: secrets.urls.api.prod,
 };

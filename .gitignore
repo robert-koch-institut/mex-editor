@@ -34,5 +34,9 @@ TESTS.xml
 .DS_Store
 Thumbs.db
 
+# cruft
+.cruft-pr-body
+*.rej
+
 # Environment
 /src/secrets.ts

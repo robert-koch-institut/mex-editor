@@ -12,8 +12,6 @@ updates:
   - package-ecosystem: "npm"
     allow:
       - dependency-type: "all"
-    assignees:
-      - ${{secrets.MEX_BOT_USER}}
     directory: "/"
     labels:
       - "dependabot"

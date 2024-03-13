@@ -13,8 +13,8 @@ exit /b 1
 echo follow https://learn.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows
 exit /b 1
 
-@REM run the npm installation
-echo installing packages
+@REM install packages from lock file
+echo installing package
 npm install
 exit /b %errorlevel%
 

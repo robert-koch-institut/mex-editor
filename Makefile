@@ -7,7 +7,7 @@ $(error "npm not installed, follow https://github.com/nvm-sh/nvm")
 endif
 
 install:
-	# run the npm installation
+	# install packages from lock file
 	@ echo installing package; \
 	npm install; \
 

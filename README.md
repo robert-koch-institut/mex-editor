@@ -47,33 +47,26 @@ components of the MEx project are open-sourced under the same license as well.
 
 ### installation
 
-#### unix
+- on unix, get https://github.com/nvm-sh/nvm
+  - run `nvm install --lts`
+  - run `npm install`
+  - run `npm run prepare`
+- on windows, get https://learn.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows
+  - run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
+  - run `nvm install --lts`
+  - run `npm install`
+  - run `npm run prepare`
 
-- get https://github.com/nvm-sh/nvm
-- run `nvm install --lts`
-- run `npm install`
-- run `npm run prepare`
+### creating release
 
-#### windows
+- update version in `package.json` and `CHANGELOG.md`
+- commit update `git commit --message "..."`
+- create a tag `git tag ...`
+- push `git push --follow-tags`
 
-- get https://learn.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows
-- run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
-- run `nvm install --lts`
-- run `npm install`
-- run `npm run prepare`
+## commands
 
-### start
-
-- run `npm start`
-
-### lint
-
-- run `npm run lint`
-
-### test
-
-- run `npm test`
-
-### build
-
-- run `npm run build`
+- run `npm start` to start a local server
+- run `npm run lint` to lint the project
+- run `npm test` to start the tests
+- run `npm run build` to build a package

@@ -19,10 +19,10 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Cache node modules
+      - name: Cache environment
         uses: actions/cache@v4
         env:
-          cache-name: cache-node-modules
+          cache-name: cache-environment
         with:
           path: node_modules
           key: ${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}

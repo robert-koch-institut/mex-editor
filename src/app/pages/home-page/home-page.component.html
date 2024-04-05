@@ -3,31 +3,38 @@
     <section class="hero-box">
       <h2 i18n class="hero-title">Metadata Exchange Editor</h2>
       <p i18n class="hero-text">
-        Search for metadata items using free text keywords. Lorem ipsum dolor sit amet
-        est consectetur adipisicing elit explicabo deleniti. Voluptatibus nostrum in
-        possimus eaque optio exercitationem, provident ipsum officia.
+        Search for metadata items using free text keywords. Lorem ipsum dolor sit amet est consectetur adipisicing elit
+        explicabo deleniti. Voluptatibus nostrum in possimus eaque optio exercitationem, provident ipsum officia.
       </p>
       <div class="hero-form">
         <mat-form-field class="hero-field" appearance="fill">
           <mat-label i18n>Suchbegriffe</mat-label>
-          <input class="hero-input" type="text" i18n-aria-label aria-label="Suchbegriffe" matInput
-            [(ngModel)]="searchQuery" />
+          <input
+            class="hero-input"
+            type="text"
+            i18n-aria-label
+            aria-label="Suchbegriffe"
+            matInput
+            [(ngModel)]="searchQuery"
+          />
         </mat-form-field>
-        <button mat-raised-button [routerLink]="['search', searchQuery]">
-          Suchen
-        </button>
+        <button mat-raised-button [routerLink]="['search', searchQuery]">Suchen</button>
       </div>
       <div class="hero-form">
         <mat-form-field class="hero-field" appearance="fill">
           <mat-label>Entitätentyp</mat-label>
           <mat-select [(ngModel)]="selectedEntityType">
             <mat-option *ngFor="let item of entityTypes" [value]="item">
-              {{ item | entityTypeLabel}}
+              {{ item | entityTypeLabel }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <button mat-raised-button color="primary" [routerLink]="['item/new', selectedEntityType]"
-          [disabled]="!selectedEntityType">
+        <button
+          mat-raised-button
+          color="primary"
+          [routerLink]="['item/new', selectedEntityType]"
+          [disabled]="!selectedEntityType"
+        >
           Erstellen
         </button>
       </div>

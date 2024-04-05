@@ -2,6 +2,9 @@
 all: install test
 test: linter karma
 
+LATEST = $(shell git describe --tags $(shell git rev-list --tags --max-count=1))
+PWD = $(shell pwd)
+
 ifeq (, $(shell which npm))
 $(error "npm not installed, follow https://github.com/nvm-sh/nvm")
 endif

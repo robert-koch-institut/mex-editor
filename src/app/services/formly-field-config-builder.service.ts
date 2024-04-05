@@ -20,8 +20,8 @@ export interface ValueJsonSchema {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FormlyProps = FormlyFieldProps & {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [additionalProperties: string]: any;
 };
 

@@ -88,7 +88,7 @@ export class EntityLookupFormlyFieldTypeComponent
         data: { entityTypes: this.props.lookupOptions.entityTypes.map((x) => `Merged${x}` as MergedEntityType) },
       }
     );
-    dialogRef.afterOpened().subscribe((x) => dialogRef.componentInstance.search());
+    dialogRef.afterOpened().subscribe(() => dialogRef.componentInstance.search());
     dialogRef.afterClosed().subscribe((x) => {
       if (x) {
         this.formControl.patchValue(x.identifier);

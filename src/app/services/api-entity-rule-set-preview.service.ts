@@ -18,6 +18,7 @@ export class ApiEntityRuleSetPreviewService extends EntityRuleSetPreviewService 
   @log('in')
   override preview(ruleSet: EntityRuleSet | NewEntityRuleSetForEntities): Observable<MergedEntity> {
     const body = isEntityRuleSet(ruleSet) ? ruleSet : { ...ruleSet.ruleSet, stableTargetId: ruleSet.stableTargetId };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { hadPrimarySource, ...bodyNoHasPrimarySource } = body;
     return this._http.post<MergedEntity>(`${environment.apiBaseUrl}/v0/preview`, bodyNoHasPrimarySource);
   }

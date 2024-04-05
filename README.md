@@ -2,8 +2,10 @@
 
 Metadata editor web application.
 
-[![linting](https://github.com/robert-koch-institut/mex-editor/actions/workflows/linting.yml/badge.svg)](https://github.com/robert-koch-institut/mex-editor/actions/workflows/linting.yml)
+[![cookiecutter](https://github.com/robert-koch-institut/mex-editor/actions/workflows/cookiecutter.yml/badge.svg)](https://github.com/robert-koch-institut/mex-template)
 [![cve-scan](https://github.com/robert-koch-institut/mex-editor/actions/workflows/cve-scan.yml/badge.svg)](https://github.com/robert-koch-institut/mex-editor/actions/workflows/cve-scan.yml)
+[![linting](https://github.com/robert-koch-institut/mex-editor/actions/workflows/linting.yml/badge.svg)](https://github.com/robert-koch-institut/mex-editor/actions/workflows/linting.yml)
+[![open-code](https://github.com/robert-koch-institut/mex-editor/actions/workflows/open-code.yml/badge.svg)](https://gitlab.opencode.de/robert-koch-institut/mex/mex-editor)
 
 ## project
 
@@ -70,3 +72,4 @@ components of the MEx project are open-sourced under the same license as well.
 - run `npm run lint` to lint the project
 - run `npm test` to start the tests
 - run `npm run build` to build a package
+- run `npm run setup-dummy-data` for dummy data

@@ -3,7 +3,6 @@ import { EntitySearchService, MergedEntitySearchResult } from './entity-search.s
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Entity } from '../models/entity';
 import { MergedEntity } from '../models/merged-entity';
 import { MergedEntitySearch } from '../components/merged-entity-search/merged-entity-search.component';
 

@@ -27,7 +27,7 @@ jobs:
           path: node_modules
           key: ${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-              ${{ env.cache-name }}-
+            ${{ env.cache-name }}-
 
       - name: Setup node
         uses: actions/setup-node@v4

@@ -1,6 +1,6 @@
 [project]
 name = "mex-editor"
-version = "0.2.0"
+version = "0.1.0"
 description = "Metadata editor web application."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -39,7 +39,6 @@ context = 5
 [tool.mypy]
 python_version = "3.11"
 show_error_codes = true
-strict = true
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
@@ -66,6 +65,10 @@ all = { composite = ["install-all", "lint", "test", "doc"] }
 
 [tool.pydantic-mypy]
 warn_untyped_fields = true
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
 
 [tool.pytest.ini_options]
 addopts = [

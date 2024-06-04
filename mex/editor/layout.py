@@ -33,7 +33,7 @@ def navbar(heading: Header) -> rx.Component:
         id="navbar",
         padding="1em",
         position="fixed",
-        style={"background": "var(--accent-4)"},
+        style=rx.style(background="var(--accent-4)"),
         top="0px",
         width="100%",
         z_index="1000",

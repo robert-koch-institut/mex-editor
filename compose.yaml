@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  mex-editor:
+    build:
+      context: .
+    ports:
+      - 3000:3000
+      - 8000:8000
+    environment:
+      - APP_NAME=mex
+      - FRONTEND_PORT=3000
+      - DEPLOY_URL=http://0.0.0.0:3000
+      - BACKEND_PORT=8000
+      - API_URL=http://0.0.0.0:8000
+      - TELEMETRY_ENABLED=False
+      - REFLEX_DIR=/app/data
+    expose:
+      - 3000
+      - 8000
+    healthcheck:
+      test: [ "CMD", "curl", "http://0.0.0.0:8000/_system/check" ]
+      interval: 60s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - data:/app/data
+volumes:
+  data:

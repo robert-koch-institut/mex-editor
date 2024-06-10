@@ -66,10 +66,6 @@ all = { composite = ["install-all", "lint", "test", "doc"] }
 [tool.pydantic-mypy]
 warn_untyped_fields = true
 
-[tool.pyright]
-venvPath = "."
-venv = ".venv"
-
 [tool.pytest.ini_options]
 addopts = [
     "--verbose",

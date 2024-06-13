@@ -9,15 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- pull request template
-- CHANGELOG file
-- cruft template link
-- open-code workflow
-
 ### Changes
-
-- harmonized boilerplate
-- update github actions according to cookiecutter template
 
 ### Deprecated
 

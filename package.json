@@ -34,7 +34,7 @@
     "@wjaspers/sat-popover": "^10.2.4",
     "json-schema": "^0.4.0",
     "lodash-es": "^4.17.21",
-    "material-symbols": "^0.18.0",
+    "material-symbols": "^0.20.0",
     "ng-let": "^15.0.2",
     "randexp": "^0.5.3",
     "rxjs": "^7.5.0",

@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:516c7d5368cbcdf5c0a86ef1967eb42bcc48ec8551f16d124564f3875c51e959"
+content_hash = "sha256:39cbcf9a4bed3b564d866226b5553c3814f5e0b22888a908edfc2e657d3ecebb"
 
 [[package]]
 name = "alabaster"

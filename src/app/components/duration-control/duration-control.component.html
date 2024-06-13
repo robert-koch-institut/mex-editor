@@ -1,6 +1,0 @@
-<form [formGroup]="form">
-  <mat-form-field class="w-100" *ngFor="let unit of units; trackBy: trackBy">
-    <mat-label>{{ unitConfig[unit].label }}</mat-label>
-    <input matInput type="number" [formControlName]="unit" [min]="0" />
-  </mat-form-field>
-</form>

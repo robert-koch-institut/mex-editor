@@ -1,9 +1,0 @@
-{
-  "$id": "https://mex.rki.de/schema/fields/identifier",
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "examples": ["https://mex.rki.de/entity/Xc124df"],
-  "format": "uri",
-  "pattern": "^https://mex\\.rki\\.de/item/[\\w\\d]+$",
-  "title": "Identifier",
-  "type": "string"
-}

@@ -11,12 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- switch tech stack to python, pydantic, fastapi and reflex
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+### Security
+
+## [0.1.0] - 2024-06-14
+
+### Changes
+
+- switch tech stack to python, pydantic, fastapi and reflex
 
 ### Security

@@ -9,12 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add health check route to api
-
 ### Changes
-
-- use production mode in dockerfile
-- change default ports to 8030/8040
 
 ### Deprecated
 
@@ -23,6 +18,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.2.0] - 2024-07-12
+
+### Added
+
+- add health check route to api
+
+### Changes
+
+- use production mode in dockerfile
+- change default ports to 8030/8040
 
 ## [0.1.0] - 2024-06-14
 

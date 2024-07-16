@@ -9,17 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add login component and form
+- add user menu in navbar with logout button
+- setup authentication against locally configured users
+
 ### Changes
+
+- re-organize state classes into individual modules
 
 ### Deprecated
 
 ### Removed
+
+- remove unused `mex.editor.transform.to_primitive`
 
 ### Fixed
 
 ### Security
 
 ## [0.2.1] - 2024-07-12
+
+### Changes
+
+- update dependency versions
 
 ## [0.2.0] - 2024-07-12
 
@@ -37,5 +49,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - switch tech stack to python, pydantic, fastapi and reflex
-
-### Security

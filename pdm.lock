@@ -4,8 +4,8 @@
 [metadata]
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
-lock_version = "4.4.1"
-content_hash = "sha256:be728ffdfe83d13e83e302dd8245c39e3bd28396c13106365d476a5a68b0c0ba"
+lock_version = "4.4.2"
+content_hash = "sha256:a5f0717b1908cba7fee674198fadebbbc712b0a7ce5ff99c00e6d37f5f4d13ad"
 
 [[package]]
 name = "alabaster"
@@ -1831,7 +1831,7 @@ files = [
 
 [[package]]
 name = "starlette-admin"
-version = "0.14.0"
+version = "0.14.1"
 requires_python = ">=3.8"
 summary = "Fast, beautiful and extensible administrative interface framework for Starlette/FastApi applications"
 groups = ["default"]
@@ -1841,8 +1841,8 @@ dependencies = [
     "starlette",
 ]
 files = [
-    {file = "starlette_admin-0.14.0-py3-none-any.whl", hash = "sha256:b59a0d1f571898086651c2a02e0a34db8fc68c4c564de66ac66de7a0daa764fd"},
-    {file = "starlette_admin-0.14.0.tar.gz", hash = "sha256:60b517ca9f73ac7eb645f354138a0126dbb84d7bdde53db23deaf38477100dff"},
+    {file = "starlette_admin-0.14.1-py3-none-any.whl", hash = "sha256:5b6260d7ed3db455585852d669feb7ed9a8c5f9a1e3d48d21a52912ec37e18f9"},
+    {file = "starlette_admin-0.14.1.tar.gz", hash = "sha256:45e2baa3b9a8deec7a6e8ca9295123f648bb0d2070abe68f27193c6d5e32cc38"},
 ]
 
 [[package]]

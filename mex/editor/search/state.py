@@ -9,9 +9,9 @@ class SearchState(rx.State):
     results: list[str] = []
     total: int = 0
 
-    def refresh(self):
+    def refresh(self) -> None:
         """Refresh the search results."""
         connector = BackendApiConnector.get()
-        response = connector.request("GET", "merged-item")
+        response = connector.request("GET", "merged-item")  # stop-gap: MX-1581
         self.results = [str(i) for i in response["items"]]
         self.total = response["total"]

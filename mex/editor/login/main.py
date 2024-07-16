@@ -1,6 +1,6 @@
 import reflex as rx
 
-from mex.editor.auth.state import AuthState
+from mex.editor.login.state import LoginState
 
 
 def login_form() -> list[rx.Component]:
@@ -10,7 +10,7 @@ def login_form() -> list[rx.Component]:
             rx.text("Username"),
             rx.input(
                 autofocus=True,
-                on_change=AuthState.set_username,
+                on_change=LoginState.set_username,
                 placeholder="Username",
                 size="3",
                 tab_index=1,
@@ -19,7 +19,7 @@ def login_form() -> list[rx.Component]:
         rx.vstack(
             rx.text("Password"),
             rx.input(
-                on_change=AuthState.set_password,
+                on_change=LoginState.set_password,
                 placeholder="Password",
                 size="3",
                 tab_index=2,
@@ -28,7 +28,7 @@ def login_form() -> list[rx.Component]:
         ),
         rx.button(
             "Log in",
-            on_click=AuthState.login,
+            on_click=LoginState.login,
             size="3",
             tab_index=3,
             width="5em",

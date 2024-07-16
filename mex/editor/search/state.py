@@ -1,4 +1,4 @@
-import rx
+import reflex as rx
 
 from mex.common.backend_api.connector import BackendApiConnector
 

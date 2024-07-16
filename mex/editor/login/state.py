@@ -7,7 +7,7 @@ from mex.editor.security import has_read_access, has_write_access
 from mex.editor.state import State, User
 
 
-class AuthState(State):
+class LoginState(State):
     """State management for the login page."""
 
     username: str

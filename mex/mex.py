@@ -2,8 +2,8 @@ import reflex as rx
 from reflex.components.radix import themes
 
 from mex.editor.api.main import check_system_status
-from mex.editor.auth.main import index as login_index
 from mex.editor.edit.main import index as edit_index
+from mex.editor.login.main import index as login_index
 from mex.editor.merge.main import index as merge_index
 from mex.editor.search.main import index as search_index
 from mex.editor.state import State

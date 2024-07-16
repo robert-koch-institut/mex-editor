@@ -11,7 +11,9 @@ class SearchState(rx.State):
 
     def refresh(self) -> None:
         """Refresh the search results."""
+        # TODO: use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
-        response = connector.request("GET", "merged-item")  # stop-gap: MX-1581
+        # TODO: use a specialized merged-item search method (stop-gap MX-1581)
+        response = connector.request("GET", "merged-item")
         self.results = [str(i) for i in response["items"]]
         self.total = response["total"]

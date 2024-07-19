@@ -1,5 +1,6 @@
 import reflex as rx
 from reflex.components.radix import themes
+from reflex.utils.console import info as log_info
 
 from mex.editor.api.main import check_system_status
 from mex.editor.edit.main import index as edit_index
@@ -39,4 +40,8 @@ app.api.add_api_route(
     "/_system/check",
     check_system_status,
     tags=["system"],
+)
+app.register_lifespan_task(
+    log_info,
+    msg="MEx Editor is running, shut it down using CTRL+C",
 )

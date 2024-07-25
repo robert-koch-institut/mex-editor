@@ -4,7 +4,9 @@ from mex.editor.state import State
 
 def test_login_state_login_success() -> None:
     state = LoginState(
-        username="writer", password="writer_pass", parent_state=State()  # noqa: S106
+        username="writer",
+        password="writer_pass",  # noqa: S106
+        parent_state=State(),
     )
 
     assert "/" in str(state.login())
@@ -18,7 +20,9 @@ def test_login_state_login_success() -> None:
 
 def test_login_state_login_error() -> None:
     state = LoginState(
-        username="not_a_user", password="not_a_pass", parent_state=State()  # noqa: S106
+        username="not_a_user",
+        password="not_a_pass",  # noqa: S106
+        parent_state=State(),
     )
 
     assert "Invalid credentials" in str(state.login())

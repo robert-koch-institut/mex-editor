@@ -1,0 +1,46 @@
+AccessPlatform:
+  title: title
+  preview:
+    - alternativeTitle
+    - unitInCharge
+Activity:
+  title: title
+  preview:
+    - shortName
+    - responsibleUnit
+    - start
+    - end
+ContactPoint:
+  title: email
+Distribution:
+  title: title
+Organization:
+  title: officialName
+  preview:
+    - shortName
+    - alternativeName
+OrganizationalUnit:
+  title: shortName
+Person:
+  title: fullName
+  preview:
+    - memberOf
+PrimarySource:
+  title: title
+  preview:
+    - unitInCharge
+    - contact
+Resource:
+  title: title
+  preview:
+    - unitInCharge
+    - wasGeneratedBy
+Variable:
+  title: label
+  preview:
+    - belongsTo
+    - usedIn
+VariableGroup:
+  title: label
+  preview:
+    - containedBy

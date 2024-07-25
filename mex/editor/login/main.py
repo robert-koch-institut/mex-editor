@@ -1,11 +1,12 @@
 import reflex as rx
 
+from mex.editor.layout import mex_editor_logo
 from mex.editor.login.state import LoginState
 
 
-def login_form() -> list[rx.Component]:
-    """Return the login form components."""
-    return [
+def login_form() -> rx.Component:
+    """Return a vertical stack of login form components."""
+    return rx.vstack(
         rx.vstack(
             rx.text("Username"),
             rx.input(
@@ -14,7 +15,9 @@ def login_form() -> list[rx.Component]:
                 placeholder="Username",
                 size="3",
                 tab_index=1,
+                style={"width": "80%"},
             ),
+            style={"width": "100%"},
         ),
         rx.vstack(
             rx.text("Password"),
@@ -24,7 +27,9 @@ def login_form() -> list[rx.Component]:
                 size="3",
                 tab_index=2,
                 type="password",
+                style={"width": "80%"},
             ),
+            style={"width": "100%"},
         ),
         rx.button(
             "Log in",
@@ -33,7 +38,7 @@ def login_form() -> list[rx.Component]:
             tab_index=3,
             width="5em",
         ),
-    ]
+    )
 
 
 def index() -> rx.Component:
@@ -41,21 +46,13 @@ def index() -> rx.Component:
     return rx.center(
         rx.card(
             rx.vstack(
-                rx.hstack(
-                    rx.icon(
-                        "file-pen-line",
-                        size=28,
-                    ),
-                    rx.heading(
-                        "MEx Editor",
-                        weight="medium",
-                    ),
-                ),
+                mex_editor_logo(),
                 rx.divider(size="4"),
-                *login_form(),
+                login_form(),
                 spacing="4",
             ),
-            top="4em",
+            top="20vh",
             width="400px",
-        )
+            variant="classic",
+        ),
     )

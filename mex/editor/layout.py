@@ -1,11 +1,6 @@
-from collections import defaultdict
-from typing import Literal
-
 import reflex as rx
 
-from mex.editor.state import State
-
-Header = Literal["search"] | Literal["edit"] | Literal["merge"]
+from mex.editor.state import NavItem, State
 
 
 def user_menu() -> rx.Component:
@@ -26,6 +21,7 @@ def user_menu() -> rx.Component:
             rx.menu.item(
                 State.user.name,  # type: ignore[union-attr]
                 disabled=True,
+                style={"color": "var(--gray-12)"},
             ),
             rx.menu.separator(),
             rx.menu.item(
@@ -36,38 +32,35 @@ def user_menu() -> rx.Component:
     )
 
 
-def nav_links(heading: Header) -> list[rx.Component]:
-    """Return a list of navigation links with the current heading highlighted."""
-    should_underline = defaultdict(lambda: "none", {heading: "always"})
-    return [
-        rx.link(
-            "Search",
-            href="/",
-            underline=should_underline["search"],
-            padding="0.2em",
-        ),
-        rx.link(
-            "Edit",
-            href="/item/123",
-            underline=should_underline["edit"],
-            padding="0.2em",
-        ),
-        rx.link(
-            "Merge",
-            href="/merge",
-            underline=should_underline["merge"],
-            padding="0.2em",
-        ),
-    ]
+def nav_link(item: NavItem) -> rx.Component:
+    return rx.link(
+        item.title,
+        href=item.href,
+        underline=item.underline,
+        padding="0.2em",
+    )
 
 
-def nav_bar(heading: Header) -> rx.Component:
+def mex_editor_logo() -> rx.Component:
+    return rx.hstack(
+        rx.icon(
+            "file-pen-line",
+            size=28,
+        ),
+        rx.heading(
+            "MEx Editor",
+            weight="medium",
+            style={"user-select": "none"},
+        ),
+    )
+
+
+def nav_bar() -> rx.Component:
     """Return a navigation bar component."""
     return rx.hstack(
-        rx.icon("file-pen-line", size=28),
-        rx.heading("MEx Editor", weight="medium"),
+        mex_editor_logo(),
         rx.divider(orientation="vertical", size="2"),
-        *nav_links(heading),
+        rx.foreach(State.nav_items, nav_link),
         rx.divider(orientation="vertical", size="2"),
         user_menu(),
         rx.spacer(),
@@ -75,22 +68,30 @@ def nav_bar(heading: Header) -> rx.Component:
         id="navbar",
         padding="1em",
         position="fixed",
-        style=rx.style.Style(background="var(--accent-4)"),
+        style={"background": "var(--accent-4)"},
         top="0px",
         width="100%",
         z_index="1000",
     )
 
 
-def page(heading: Header, *children: str | rx.Component) -> rx.Component:
+def page(*children: str | rx.Component) -> rx.Component:
     """Return a page fragment with navigation bar and given children."""
-    return rx.fragment(
-        nav_bar(heading),
-        rx.vstack(
-            *children,
-            justify="center",
-            min_height="85vh",
-            margin="4em 1em 1em",
-            spacing="5",
+    return rx.cond(
+        State.user,
+        rx.fragment(
+            nav_bar(),
+            rx.vstack(
+                *children,
+                min_height="85vh",
+                margin="5em 1em 1em",
+                spacing="5",
+            ),
+            on_mount=State.load_page,
+            on_unmount=State.unload_page,
+        ),
+        rx.center(
+            rx.spinner(size="3"),
+            style={"marginTop": "40vh"},
         ),
     )

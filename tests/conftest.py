@@ -20,9 +20,16 @@ def client() -> TestClient:
 
 
 @pytest.fixture(autouse=True)
-def patch_editor_user_database(monkeypatch: MonkeyPatch) -> None:
+def settings() -> EditorSettings:
+    return EditorSettings.get()
+
+
+@pytest.fixture(autouse=True)
+def patch_editor_user_database(
+    monkeypatch: MonkeyPatch, settings: EditorSettings
+) -> None:
     monkeypatch.setattr(
-        EditorSettings.get(),
+        settings,
         "editor_user_database",
         EditorUserDatabase(
             read={"reader": EditorUserPassword("reader_pass")},

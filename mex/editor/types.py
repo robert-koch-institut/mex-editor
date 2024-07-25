@@ -1,13 +1,8 @@
-from importlib.resources import files
 from typing import cast
 
-import yaml
-from pydantic import BaseModel, SecretStr, TypeAdapter
+from pydantic import SecretStr
 
 from mex.common.models import BaseModel
-
-DEFAULT_MODEL_CONFIG_PATH = files("mex.editor").joinpath("models.yaml")
-ModelConfigByStemType = dict[str, "ModelConfig"]
 
 
 class EditorUserPassword(SecretStr):
@@ -32,10 +27,3 @@ class ModelConfig(BaseModel):
 
     title: str
     preview: list[str] = []
-
-    @classmethod
-    def load_all(cls) -> ModelConfigByStemType:
-        """Load the full model config and group items by stem type."""
-        return TypeAdapter(ModelConfigByStemType).validate_python(
-            yaml.safe_load(open(DEFAULT_MODEL_CONFIG_PATH.open().read()))
-        )

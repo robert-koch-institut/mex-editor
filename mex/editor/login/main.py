@@ -38,6 +38,7 @@ def login_form() -> rx.Component:
             tab_index=3,
             width="5em",
         ),
+        style={"width": "100%"},
     )
 
 

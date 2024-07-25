@@ -8,7 +8,8 @@ def search_result(result: SearchResult) -> rx.Component:
     """Render a single merged item search result."""
     return rx.card(
         rx.link(
-            result.preview,
+            rx.text(result.title, weight="bold"),
+            rx.text(result.preview, weight="light"),
             href=f"/item/{result.identifier}",
         ),
         style={"width": "80%"},
@@ -26,5 +27,6 @@ def index() -> rx.Component:
                 ),
             ),
             on_mount=SearchState.refresh,
-        ),
+            style={"width": "100%"},
+        )
     )

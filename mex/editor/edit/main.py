@@ -2,7 +2,6 @@ import reflex as rx
 
 from mex.editor.edit.state import EditableField, EditablePrimarySource, EditState
 from mex.editor.layout import page
-from mex.editor.state import State
 
 
 def editable_value(value: str) -> rx.Component:
@@ -46,7 +45,7 @@ def editable_field(model: EditableField) -> rx.Component:
 def index() -> rx.Component:
     """Return the index for the edit component."""
     return page(
-        rx.heading(f"Edit {State.item_id}"),
+        rx.heading(EditState.item_title),
         rx.container(
             rx.vstack(
                 rx.foreach(

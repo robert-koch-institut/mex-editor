@@ -4,7 +4,10 @@ from pydantic import BaseModel
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import AnyExtractedModel
 from mex.editor.state import State
-from mex.editor.transform import render
+from mex.editor.transform import (
+    render_any_value,
+    render_model_title,
+)
 
 
 class EditablePrimarySource(rx.Base):
@@ -29,7 +32,8 @@ class _BackendSearchResponse(BaseModel):
 class EditState(State):
     """State for the edit component."""
 
-    fields: list[EditableField]
+    fields: list[EditableField] = []
+    item_title: str = ""
 
     def refresh(self) -> None:
         """Refresh the search results."""
@@ -40,9 +44,9 @@ class EditState(State):
         response = connector.request(
             "GET", f"extracted-item?stableTargetId={self.item_id}"
         )
-        self.fields = self.extracted_to_fields(
-            _BackendSearchResponse.model_validate(response).items
-        )
+        items = _BackendSearchResponse.model_validate(response).items
+        self.fields = self.extracted_to_fields(items)
+        self.item_title = render_model_title(items[0])
 
     @staticmethod
     def extracted_to_fields(models: list[AnyExtractedModel]) -> list[EditableField]:
@@ -62,7 +66,7 @@ class EditState(State):
                 editable_field.values.append(
                     EditablePrimarySource(
                         name=model.hadPrimarySource,
-                        values=[render(v) for v in value],
+                        values=[render_any_value(v) for v in value],
                     )
                 )
         return list(fields_by_name.values())

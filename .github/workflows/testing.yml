@@ -22,6 +22,19 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
+    services:
+      neo4j:
+        image: neo4j:5.22-community
+        env:
+          NEO4J_AUTH: neo4j/password
+        ports:
+          - 7687:7687
+      backend:
+        image: ghcr.io/robert-koch-institut/mex-backend:0.15.0
+        ports:
+          - 8080:8080
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -57,4 +70,17 @@ jobs:
         run: make install
 
       - name: Run test suite
-        run: make pytest
+        run: |
+          pdm run editor run &
+          sleep 10 &&
+          curl --connect-timeout 1 --max-time 20 --retry 10 --retry-delay 1 http://localhost:8000/_system/check &&
+          curl --connect-timeout 1 --max-time 20 --retry 10 --retry-delay 1 http://localhost:8080/_system/check &&
+          make pytest
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: test_*.jpeg
+          if-no-files-found: error
+          retention-days: 14

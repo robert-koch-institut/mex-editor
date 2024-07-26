@@ -28,5 +28,6 @@ def index() -> rx.Component:
             ),
             on_mount=SearchState.refresh,
             style={"width": "100%"},
-        )
+            custom_attrs={"data-testid": "search-container"},
+        ),
     )

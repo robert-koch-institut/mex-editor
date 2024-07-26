@@ -26,16 +26,17 @@ def settings() -> EditorSettings:
 
 @pytest.fixture(autouse=True)
 def patch_editor_user_database(
-    monkeypatch: MonkeyPatch, settings: EditorSettings
+    is_integration_test: bool, monkeypatch: MonkeyPatch, settings: EditorSettings
 ) -> None:
-    monkeypatch.setattr(
-        settings,
-        "editor_user_database",
-        EditorUserDatabase(
-            read={"reader": EditorUserPassword("reader_pass")},
-            write={"writer": EditorUserPassword("writer_pass")},
-        ),
-    )
+    if not is_integration_test:
+        monkeypatch.setattr(
+            settings,
+            "editor_user_database",
+            EditorUserDatabase(
+                read={"reader": EditorUserPassword("reader_pass")},
+                write={"writer": EditorUserPassword("writer_pass")},
+            ),
+        )
 
 
 @pytest.fixture()

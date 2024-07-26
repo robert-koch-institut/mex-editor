@@ -17,6 +17,7 @@ optional-dependencies.dev = [
     "ipdb==0.13.13",
     "mypy==1.11.0",
     "pytest-cov==5.0.0",
+    "pytest-playwright>=0.5.1",
     "pytest-random-order==1.1.1",
     "pytest-xdist==3.6.1",
     "pytest==8.3.1",
@@ -50,7 +51,9 @@ distribution = true
 [tool.pdm.scripts]
 update-all = { cmd = "pdm update --group :all --update-all --save-compatible" }
 lock-all = { cmd = "pdm lock --group :all --refresh" }
-install-all = { cmd = "pdm install --group :all --frozen-lockfile" }
+install-lockfile = { cmd = "pdm install --group :all --frozen-lockfile" }
+install-playwright = { cmd = "playwright install firefox" }
+install-all = { composite = ["install-lockfile", "install-playwright"] }
 export-all = { cmd = "pdm export --group :all --no-hashes -f requirements" }
 apidoc = { cmd = "pdm run sphinx-apidoc -f -o docs/source mex" }
 sphinx = { cmd = "pdm run sphinx-build -aE -b dirhtml docs docs/dist" }
@@ -73,6 +76,7 @@ addopts = [
     "--cov-report=term-missing:skip-covered",
     "--cov-fail-under=90",
     "--cov-branch",
+    "--browser=firefox",
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--random-order-bucket=global",
 ]

@@ -1,21 +1,7 @@
 import reflex as rx
 
-from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.layout import page
-
-
-class SearchState(rx.State):
-    """State management for the search page."""
-
-    results: list[str] = []
-    total: int = 0
-
-    def refresh(self):
-        """Refresh the search results."""
-        connector = BackendApiConnector.get()
-        response = connector.request("GET", "merged-item")
-        self.results = [str(i) for i in response["items"]]
-        self.total = response["total"]
+from mex.editor.search.state import SearchState
 
 
 def search_result(item: str) -> rx.Component:
@@ -28,11 +14,15 @@ def index() -> rx.Component:
     return page(
         "search",
         rx.vstack(
-            rx.button(
-                "Search",
-                on_click=SearchState.refresh,
+            rx.hstack(
+                rx.button(
+                    "Search",
+                    on_click=SearchState.refresh,
+                ),
             ),
-            rx.card(rx.text("Total: "), rx.text(SearchState.total)),
-            rx.foreach(SearchState.results, search_result),
+            rx.foreach(
+                SearchState.results,
+                search_result,
+            ),
         ),
     )

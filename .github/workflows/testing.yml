@@ -35,6 +35,7 @@ jobs:
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
           MEX_BACKEND_API_KEY_DATABASE: ${{ secrets.MEX_BACKEND_API_KEY_DATABASE }}
+          MEX_IDENTITY_PROVIDER: graph
         ports:
           - 8080:8080
 
@@ -75,17 +76,14 @@ jobs:
       - name: Run test suite
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
-          MEX_BACKEND_API_KEY_DATABASE: ${{ secrets.MEX_BACKEND_API_KEY_DATABASE }}
+          MEX_BACKEND_API_KEY: ${{ secrets.MEX_BACKEND_API_KEY }}
+          MEX_IDENTITY_PROVIDER: backend
         run: |
           pdm run editor run &
           sleep 30 &&
           curl --connect-timeout 1 --max-time 20 --retry 10 --retry-delay 1 http://localhost:8000/_system/check &&
           curl --connect-timeout 1 --max-time 20 --retry 10 --retry-delay 1 http://localhost:8080/v0/_system/check &&
           make pytest
-
-      - name: List dir
-        if: always()
-        run: ls -lah
 
       - name: Upload screenshots
         if: always()
@@ -94,4 +92,4 @@ jobs:
           name: playwright-screenshots
           path: test_*.jpeg
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 10

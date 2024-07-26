@@ -74,8 +74,11 @@ jobs:
           pdm run editor run &
           sleep 60 &&
           curl --connect-timeout 1 --max-time 20 --retry 10 --retry-delay 1 http://localhost:8000/_system/check &&
-          curl --connect-timeout 1 --max-time 20 --retry 10 --retry-delay 1 http://localhost:8080/_system/check &&
+          curl --connect-timeout 1 --max-time 20 --retry 10 --retry-delay 1 http://localhost:8080/v0/_system/check &&
           make pytest
+
+      - name: List dir
+        run: ls -lah
 
       - name: Upload screenshots
         if: always()

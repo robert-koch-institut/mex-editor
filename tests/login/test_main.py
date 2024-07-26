@@ -3,18 +3,18 @@ from pathlib import Path
 
 import pytest
 from playwright.sync_api import Page, expect
-
-from mex.editor.settings import EditorSettings
+from pydantic import SecretStr
 
 
 @pytest.mark.integration
-def test_login(page: Page) -> None:
-    settings = EditorSettings.get()
-    username, password = next(iter(settings.editor_user_database["write"].items()))
-
+def test_login(page: Page, writer_user_credentials: tuple[str, SecretStr]) -> None:
     page.goto("http://localhost:3000")
-    page.get_by_placeholder("Username").fill(username)
-    page.get_by_placeholder("Password").fill(password.get_secret_value())
+    page.get_by_placeholder("Username").fill(
+        writer_user_credentials[0],
+    )
+    page.get_by_placeholder("Password").fill(
+        writer_user_credentials[1].get_secret_value(),
+    )
     page.screenshot(path="test_login-login-screen.jpeg")
     assert Path("test_login-login-screen.jpeg").exists()
     logging.info(Path("test_login-login-screen.jpeg").as_posix())

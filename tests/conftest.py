@@ -1,10 +1,8 @@
-from typing import Any
-
 import pytest
 from fastapi.testclient import TestClient
+from pydantic import SecretStr
 from pytest import MonkeyPatch
 
-from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.settings import EditorSettings
 from mex.editor.types import EditorUserDatabase, EditorUserPassword
 from mex.mex import app
@@ -40,21 +38,16 @@ def patch_editor_user_database(
 
 
 @pytest.fixture()
-def mocked_backend(monkeypatch: MonkeyPatch) -> None:
-    def mocked_request(
-        self: BackendApiConnector,
-        method: str,
-        endpoint: str | None = None,
-        payload: Any = None,
-        params: dict[str, str] | None = None,
-        **kwargs: Any,
-    ) -> dict[str, Any]:
-        return {
-            "total": 2,
-            "items": [
-                {"version": 1, "name": "item-423"},
-                {"version": 8, "name": "item-978"},
-            ],
-        }
+def reader_user_credentials() -> tuple[str, SecretStr]:
+    settings = EditorSettings.get()
+    for username, password in settings.editor_user_database["read"].items():
+        return username, password
+    raise RuntimeError("No reader configured")  # pragma: no cover
 
-    monkeypatch.setattr(BackendApiConnector, "request", mocked_request)
+
+@pytest.fixture()
+def writer_user_credentials() -> tuple[str, SecretStr]:
+    settings = EditorSettings.get()
+    for username, password in settings.editor_user_database["write"].items():
+        return username, password
+    raise RuntimeError("No writer configured")  # pragma: no cover

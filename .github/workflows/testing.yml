@@ -78,6 +78,7 @@ jobs:
           make pytest
 
       - name: List dir
+        if: always()
         run: ls -lah
 
       - name: Upload screenshots

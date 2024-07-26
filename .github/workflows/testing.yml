@@ -77,7 +77,6 @@ jobs:
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
           MEX_BACKEND_API_KEY: ${{ secrets.MEX_BACKEND_API_KEY }}
-          MEX_IDENTITY_PROVIDER: backend
         run: |
           pdm run editor run &
           sleep 30 &&

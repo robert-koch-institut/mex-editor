@@ -32,6 +32,8 @@ jobs:
           - 7687:7687
       backend:
         image: ghcr.io/robert-koch-institut/mex-backend:0.15.0
+        env:
+          MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
         ports:
           - 8080:8080
 
@@ -70,6 +72,8 @@ jobs:
         run: make install
 
       - name: Run test suite
+        env:
+          MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
         run: |
           pdm run editor run &
           sleep 60 &&

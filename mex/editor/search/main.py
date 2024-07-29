@@ -19,7 +19,12 @@ def search_result(result: SearchResult) -> rx.Component:
 def index() -> rx.Component:
     """Return the index for the search component."""
     return page(
-        rx.container(
+        rx.section(
+            rx.heading(
+                "Search",
+                custom_attrs={"data-testid": "search-heading"},
+                style={"margin": "1em 0"},
+            ),
             rx.vstack(
                 rx.foreach(
                     SearchState.results,
@@ -28,6 +33,6 @@ def index() -> rx.Component:
             ),
             on_mount=SearchState.refresh,
             style={"width": "100%"},
-            custom_attrs={"data-testid": "search-container"},
+            custom_attrs={"data-testid": "search-section"},
         ),
     )

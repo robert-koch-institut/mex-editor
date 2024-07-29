@@ -32,6 +32,7 @@ def user_menu() -> rx.Component:
                 on_select=State.logout,
             ),
         ),
+        custom_attrs={"data-testid": "user-menu"},
     )
 
 
@@ -77,6 +78,7 @@ def nav_bar() -> rx.Component:
         top="0px",
         width="100%",
         z_index="1000",
+        custom_attrs={"data-testid": "nav-bar"},
     )
 
 
@@ -89,7 +91,7 @@ def page(*children: str | rx.Component) -> rx.Component:
             rx.vstack(
                 *children,
                 min_height="85vh",
-                margin="5em 1em 1em",
+                margin="2em 1em 1em",
                 spacing="5",
             ),
             on_mount=State.load_page,

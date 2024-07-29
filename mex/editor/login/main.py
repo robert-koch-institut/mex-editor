@@ -36,7 +36,7 @@ def login_form() -> rx.Component:
             on_click=LoginState.login,
             size="3",
             tab_index=3,
-            width="5em",
+            width="6em",
         ),
         style={"width": "100%"},
     )
@@ -55,5 +55,6 @@ def index() -> rx.Component:
             top="20vh",
             width="400px",
             variant="classic",
+            custom_attrs={"data-testid": "login-card"},
         ),
     )

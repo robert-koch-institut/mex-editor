@@ -52,7 +52,7 @@ coverage.xml
 .pytest_cache/
 cover/
 pytestdebug.log
-test_*.jpeg
+tests_*.jpeg
 
 # Translations
 *.mo

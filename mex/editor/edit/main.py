@@ -45,8 +45,12 @@ def editable_field(model: EditableField) -> rx.Component:
 def index() -> rx.Component:
     """Return the index for the edit component."""
     return page(
-        rx.heading(EditState.item_title),
-        rx.container(
+        rx.section(
+            rx.heading(
+                EditState.item_title,
+                custom_attrs={"data-testid": "edit-heading"},
+                style={"margin": "1em 0"},
+            ),
             rx.vstack(
                 rx.foreach(
                     EditState.fields,
@@ -54,6 +58,7 @@ def index() -> rx.Component:
                 ),
             ),
             on_mount=EditState.refresh,
-            padding="0",
+            style={"width": "100%"},
+            custom_attrs={"data-testid": "edit-section"},
         ),
     )

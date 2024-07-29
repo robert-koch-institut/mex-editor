@@ -1,5 +1,5 @@
 from mex.common.models import AnyExtractedModel, AnyMergedModel
-from mex.common.types import Text
+from mex.common.types import Link, Text
 from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE
 
 
@@ -11,7 +11,9 @@ def render_any_value(value: object) -> str:
         return ", ".join(render_any_value(v) for v in value)
     if isinstance(value, Text):
         return value.value
-    if value := str(value).strip():
+    if isinstance(value, Link):
+        return value.url
+    if value and (value := str(value).strip()):
         return value
     return ""
 
@@ -25,7 +27,8 @@ def render_model_title(model: AnyExtractedModel | AnyMergedModel) -> str:
 
 
 def render_model_preview(
-    model: AnyExtractedModel | AnyMergedModel, sep: str = " \u2010 "
+    model: AnyExtractedModel | AnyMergedModel,
+    sep: str = " \u2010 ",
 ) -> str:
     """Return a rendered model preview separated by given string."""
     config = MODEL_CONFIG_BY_STEM_TYPE[model.stemType]

@@ -47,12 +47,12 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *.cover
+*.jpeg
 *.py,cover
 .hypothesis/
 .pytest_cache/
 cover/
 pytestdebug.log
-tests_*.jpeg
 
 # Translations
 *.mo

@@ -11,7 +11,7 @@ dependencies = [
     "babel==2.15.0",
     "mex-common@git+https://github.com/robert-koch-institut/mex-common.git@0.32.0",
     "reflex==0.5.7",
-    "uvicorn==0.20.0",
+    "uvicorn==0.30.3",
 ]
 optional-dependencies.dev = [
     "ipdb==0.13.13",

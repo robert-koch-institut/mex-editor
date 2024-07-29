@@ -92,7 +92,7 @@ def writer_user_page(
     return page
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def dummy_data() -> list[AnyExtractedModel]:
     """Create a set of interlinked dummy data."""
     primary_source_1 = ExtractedPrimarySource(
@@ -150,7 +150,7 @@ def dummy_data() -> list[AnyExtractedModel]:
     ]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def load_dummy_data(dummy_data: list[AnyExtractedModel]) -> list[AnyExtractedModel]:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()

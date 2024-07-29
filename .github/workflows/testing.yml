@@ -35,7 +35,6 @@ jobs:
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
           MEX_BACKEND_API_KEY_DATABASE: ${{ secrets.MEX_BACKEND_API_KEY_DATABASE }}
-          MEX_IDENTITY_PROVIDER: graph
           MEX_GRAPH_URL: neo4j://neo4j:7687
         ports:
           - 8080:8080

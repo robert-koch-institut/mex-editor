@@ -1,7 +1,8 @@
 import reflex as rx
 
 from mex.editor.layout import page
-from mex.editor.search.state import SearchResult, SearchState
+from mex.editor.search.models import SearchResult
+from mex.editor.search.state import SearchState
 
 
 def search_result(result: SearchResult) -> rx.Component:

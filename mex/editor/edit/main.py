@@ -36,7 +36,7 @@ def editable_field(model: EditableField) -> rx.Component:
             style={"width": "15vw"},
         ),
         rx.foreach(
-            model.values,
+            model.primary_sources,
             editable_primary_source,
         ),
     )

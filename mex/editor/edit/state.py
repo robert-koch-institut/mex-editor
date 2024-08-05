@@ -1,27 +1,10 @@
-import reflex as rx
 from pydantic import BaseModel
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import AnyExtractedModel
+from mex.editor.edit.models import EditableField, EditablePrimarySource
 from mex.editor.state import State
-from mex.editor.transform import (
-    render_any_value,
-    render_model_title,
-)
-
-
-class EditablePrimarySource(rx.Base):
-    """Model for describing the editor state for one primary source."""
-
-    name: str
-    values: list[str]
-
-
-class EditableField(rx.Base):
-    """Model for describing the editor state for a single field."""
-
-    name: str
-    values: list[EditablePrimarySource]
+from mex.editor.transform import render_any_value, render_model_title
 
 
 class _BackendSearchResponse(BaseModel):
@@ -46,6 +29,8 @@ class EditState(State):
         )
         items = _BackendSearchResponse.model_validate(response).items
         self.fields = self.extracted_to_fields(items)
+
+        # TODO: use title of merged item instead of title of first item
         self.item_title = render_model_title(items[0])
 
     @staticmethod
@@ -56,14 +41,14 @@ class EditState(State):
             model_dump = model.model_dump()
             for field_name in model.model_fields:
                 editable_field = fields_by_name.setdefault(
-                    field_name, EditableField(name=field_name, values=[])
+                    field_name, EditableField(name=field_name, primary_sources=[])
                 )
                 value = model_dump[field_name]
                 if not value:
                     continue
                 if not isinstance(value, list):
                     value = [value]
-                editable_field.values.append(
+                editable_field.primary_sources.append(
                     EditablePrimarySource(
                         name=model.hadPrimarySource,
                         values=[render_any_value(v) for v in value],

@@ -3,18 +3,8 @@ from pydantic import BaseModel
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import AnyMergedModel
-from mex.editor.transform import (
-    render_model_preview,
-    render_model_title,
-)
-
-
-class SearchResult(rx.Base):
-    """Search result preview."""
-
-    identifier: str
-    title: str
-    preview: str
+from mex.editor.search.models import SearchResult
+from mex.editor.transform import render_model_preview, render_model_title
 
 
 class _BackendSearchResponse(BaseModel):

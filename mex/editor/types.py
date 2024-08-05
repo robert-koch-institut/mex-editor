@@ -20,10 +20,3 @@ class EditorUserDatabase(BaseModel):
     ) -> dict[str, EditorUserPassword]:  # stop-gap: MX-1596
         """Return an attribute in indexing syntax."""
         return cast(dict[str, EditorUserPassword], getattr(self, key))
-
-
-class ModelConfig(BaseModel):
-    """Configuration for how to display an entity type in the frontend."""
-
-    title: str
-    preview: list[str] = []

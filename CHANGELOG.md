@@ -9,7 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- implement a basic item view which will be expanded into the editing mode
+- add model config YAML to store which fields to use for titles and previews
+- add basic rendering functions for arbitrary models and types
+- configure CI integration tests running against real backend and database
+- implement integration tests for all four major pages in the editor
+
 ### Changes
+
+- rework navigation bar to work with states instead of passing through literals
+- update layout and styling on login form, merge page stub and search view
 
 ### Deprecated
 

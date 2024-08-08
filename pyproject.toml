@@ -11,7 +11,7 @@ dependencies = [
     "babel==2.15.0",
     "mex-common@git+https://github.com/robert-koch-institut/mex-common.git@0.33.0",
     "pyyaml==6.0.1",
-    "reflex==0.5.8",
+    "reflex==0.5.9",
     "uvicorn==0.20.0",
 ]
 optional-dependencies.dev = [

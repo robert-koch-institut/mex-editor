@@ -1,4 +1,5 @@
 import reflex as rx
+import reflex_chakra as rc
 
 from mex.editor import styles
 from mex.editor.layout import page
@@ -37,11 +38,11 @@ def sidebar() -> rx.Component:
             rx.foreach(
                 SearchState.entity_types,
                 lambda choice: rx.debounce_input(
-                    rx.chakra.checkbox(
+                    rc.checkbox(
                         choice[0],
                         checked=choice[1],
                         on_change=lambda val: SearchState.set_entity_type(
-                            value=val, index=choice[0]
+                            val, choice[0]
                         ),  # type: ignore
                     ),
                     debounce_timeout=100,

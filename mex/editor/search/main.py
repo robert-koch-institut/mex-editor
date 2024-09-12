@@ -48,6 +48,7 @@ def sidebar() -> rx.Component:
                     debounce_timeout=100,
                 ),
             ),
+            custom_attrs={"data-testid": "entity-types"},
             style={"margin": "2em 0"},
         ),
         width="20%",
@@ -55,6 +56,7 @@ def sidebar() -> rx.Component:
         padding="20px",
         style={"margin": "2em 0 0"},
         bg=rx.color("gray", 2),
+        custom_attrs={"data-testid": "search-sidebar"},
     )
 
 
@@ -85,6 +87,7 @@ def pagination() -> rx.Component:
             ),
         ),
         width="100%",
+        custom_attrs={"data-testid": "pagination"},
     )
 
 
@@ -94,7 +97,7 @@ def main_content() -> rx.Component:
         rx.heading(
             f"showing {SearchState.current_results_length} "
             f"of total {SearchState.total} items found",
-            custom_attrs={"data-testid": "search-heading"},
+            custom_attrs={"data-testid": "search-results-heading"},
             style={"margin": "1em 0"},
             size="3",
         ),
@@ -109,11 +112,13 @@ def main_content() -> rx.Component:
         on_mount=SearchState.refresh,
         style={"width": "100%", "margin": "2em 0 0"},
         width="100%",
-        custom_attrs={"data-testid": "search-section"},
+        custom_attrs={"data-testid": "search-results-section"},
     )
 
 
 def index() -> rx.Component:
     """Return the index for the search component."""
-    # consider breadcrumb https://reflex.dev/docs/library/chakra/navigation/breadcrumb/
-    return page(sidebar(), main_content())
+    return page(
+        sidebar(),
+        main_content(),
+    )

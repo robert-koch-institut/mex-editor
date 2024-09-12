@@ -16,14 +16,34 @@ def test_index(
 
     # load page and establish section is visible
     page.goto("http://localhost:3000")
-    section = page.get_by_test_id("search-section")
+    section = page.get_by_test_id("search-results-section")
     expect(section).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_index-on-load.jpeg")
 
     # check heading is showing
-    heading = page.get_by_test_id("search-heading")
+    heading = page.get_by_test_id("search-results-heading")
     expect(heading).to_be_visible()
-    assert heading.inner_text() == "Search"
+    assert heading.inner_text() == "showing 7 of total 7 items found"
+
+    # check sidebar is showing
+    sidebar = page.get_by_test_id("search-sidebar")
+    expect(sidebar).to_be_visible()
+
+    # check search input is showing
+    search_input = page.get_by_placeholder("Search here...")
+    expect(search_input).to_be_visible()
+
+    # check entity types are showing
+    entiy_types = page.get_by_test_id("entity-types")
+    expect(entiy_types).to_be_visible()
+    assert (
+        "MergedPrimarySource" and "MergedPerson" in entiy_types.all_text_contents()[0]
+    )
+
+    # check pagination is showing
+    pagination = page.get_by_test_id("pagination")
+    expect(pagination).to_be_visible()
+    assert "Previous" and "Next" in pagination.all_text_contents()[0]
 
     # check mex primary source is showing
     primary_source = page.get_by_text(

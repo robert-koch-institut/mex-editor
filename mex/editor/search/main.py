@@ -43,7 +43,7 @@ def sidebar() -> rx.Component:
                         checked=choice[1],
                         on_change=lambda val: SearchState.set_entity_type(
                             val, choice[0]
-                        ),  # type: ignore
+                        ),  # type: ignore[call-arg]
                     ),
                     debounce_timeout=100,
                 ),

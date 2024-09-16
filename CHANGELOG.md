@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- implement simple search with pagination and entity type filteration
+- implement simple search with pagination and entity type filtration
 
 ### Changes
 

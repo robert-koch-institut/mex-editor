@@ -106,4 +106,3 @@ class SearchState(rx.State):
             for item in items
         ]
         self.total = response["total"]
-        logger.info("results refreshed.")

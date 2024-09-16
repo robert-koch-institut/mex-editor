@@ -34,10 +34,10 @@ def test_index(
     expect(search_input).to_be_visible()
 
     # check entity types are showing
-    entiy_types = page.get_by_test_id("entity-types")
-    expect(entiy_types).to_be_visible()
+    entity_types = page.get_by_test_id("entity-types")
+    expect(entity_types).to_be_visible()
     assert (
-        "MergedPrimarySource" and "MergedPerson" in entiy_types.all_text_contents()[0]
+        "MergedPrimarySource" and "MergedPerson" in entity_types.all_text_contents()[0]
     )
 
     # check pagination is showing

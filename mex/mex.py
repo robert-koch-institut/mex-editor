@@ -2,6 +2,7 @@ import reflex as rx
 from reflex.components.radix import themes
 from reflex.utils.console import info as log_info
 
+from mex.common.logging import logger
 from mex.editor.api.main import check_system_status
 from mex.editor.edit.main import index as edit_index
 from mex.editor.login.main import index as login_index
@@ -46,6 +47,4 @@ app.register_lifespan_task(
     log_info,
     msg="MEx Editor is running, shut it down using CTRL+C",
 )
-app.register_lifespan_task(
-    EditorSettings.get,
-)
+app.register_lifespan_task(lambda: logger.info(EditorSettings.get().text()))

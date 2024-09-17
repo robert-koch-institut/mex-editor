@@ -20,6 +20,14 @@ def test_index(
     expect(section).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_index-on-load.jpeg")
 
+    # check pagination is showing and disabled
+    pagination_previous = page.get_by_test_id("pagination-previous-button")
+    pagination_next = page.get_by_test_id("pagination-next-button")
+    pagination_page_select = page.get_by_test_id("pagination-page-select")
+    expect(pagination_previous).to_be_disabled()
+    expect(pagination_next).to_be_disabled()
+    assert pagination_page_select.inner_text() == "1"
+
     # check heading is showing
     results_heading = page.get_by_test_id("search-results-heading")
     expect(results_heading).to_be_visible()
@@ -33,14 +41,15 @@ def test_index(
     search_input = page.get_by_placeholder("Search here...")
     expect(search_input).to_be_visible()
     search_input.fill("mex")
-    assert (
-        page.get_by_test_id("search-results-heading").inner_text()
-        == "showing 1 of total 1 items found"
+    expect(page.get_by_text("showing 1 of total 1 items found")).to_be_visible()
+    page.screenshot(
+        path="tests_search_test_main-test_index-on-search-input-1-found.jpeg"
     )
+
     search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
-    assert (
-        page.get_by_test_id("search-results-heading").inner_text()
-        == "showing 0 of total 0 items found"
+    expect(page.get_by_text("showing 0 of total 0 items found")).to_be_visible()
+    page.screenshot(
+        path="tests_search_test_main-test_index-on-search-input-0-found.jpeg"
     )
 
     # check entity types are showing
@@ -50,18 +59,10 @@ def test_index(
         "MergedPrimarySource" and "MergedPerson" in entity_types.all_text_contents()[0]
     )
     entity_types.get_by_label("MergedActivity").check()
-    assert (
-        page.get_by_test_id("search-results-heading").inner_text()
-        == "showing 1 of total 1 items found"
+    expect(page.get_by_text("showing 1 of total 1 items found")).to_be_visible()
+    page.screenshot(
+        path="tests_search_test_main-test_index-on-select-entity-1-found.jpeg"
     )
-
-    # check pagination is showing and disabled
-    pagination_previous = page.get_by_test_id("pagination-previous-button")
-    pagination_next = page.get_by_test_id("pagination-next-button")
-    pagination_page_select = page.get_by_test_id("pagination-page-select")
-    expect(pagination_previous).to_be_disabled()
-    expect(pagination_next).to_be_disabled()
-    assert pagination_page_select.inner_text() == "1"
 
     # check mex primary source is showing
     primary_source = page.get_by_text(

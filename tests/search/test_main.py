@@ -20,6 +20,9 @@ def test_index(
     expect(section).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_index-on-load.jpeg")
 
+    # check heading is showing
+    expect(page.get_by_text("showing 7 of total 7 items found")).to_be_visible()
+
     # check pagination is showing and disabled
     pagination_previous = page.get_by_test_id("pagination-previous-button")
     pagination_next = page.get_by_test_id("pagination-next-button")
@@ -27,11 +30,6 @@ def test_index(
     expect(pagination_previous).to_be_disabled()
     expect(pagination_next).to_be_disabled()
     assert pagination_page_select.inner_text() == "1"
-
-    # check heading is showing
-    results_heading = page.get_by_test_id("search-results-heading")
-    expect(results_heading).to_be_visible()
-    assert results_heading.inner_text() == "showing 7 of total 7 items found"
 
     # check sidebar is showing
     sidebar = page.get_by_test_id("search-sidebar")
@@ -51,6 +49,7 @@ def test_index(
     page.screenshot(
         path="tests_search_test_main-test_index-on-search-input-0-found.jpeg"
     )
+    search_input.fill("")
 
     # check entity types are showing
     entity_types = page.get_by_test_id("entity-types")
@@ -58,11 +57,12 @@ def test_index(
     assert (
         "MergedPrimarySource" and "MergedPerson" in entity_types.all_text_contents()[0]
     )
-    entity_types.get_by_label("MergedActivity").check()
+    entity_types.get_by_text("MergedActivity").click()
     expect(page.get_by_text("showing 1 of total 1 items found")).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_index-on-select-entity-1-found.jpeg"
     )
+    entity_types.get_by_text("MergedActivity").click()
 
     # check mex primary source is showing
     primary_source = page.get_by_text(

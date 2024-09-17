@@ -71,11 +71,13 @@ def pagination() -> rx.Component:
                 spacing="2",
                 width="120px",
                 margin_right="10px",
+                custom_attrs={"data-testid": "pagination-previous-button"},
             ),
             rx.select(
                 SearchState.total_pages,
                 value=f"{SearchState.current_page}",
                 on_change=SearchState.set_page,
+                custom_attrs={"data-testid": "pagination-page-select"},
             ),
             rx.button(
                 rx.text("Next", weight="bold"),
@@ -84,10 +86,10 @@ def pagination() -> rx.Component:
                 spacing="2",
                 width="120px",
                 margin_left="10px",
+                custom_attrs={"data-testid": "pagination-next-button"},
             ),
         ),
         width="100%",
-        custom_attrs={"data-testid": "pagination"},
     )
 
 

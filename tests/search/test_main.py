@@ -21,17 +21,27 @@ def test_index(
     page.screenshot(path="tests_search_test_main-test_index-on-load.jpeg")
 
     # check heading is showing
-    heading = page.get_by_test_id("search-results-heading")
-    expect(heading).to_be_visible()
-    assert heading.inner_text() == "showing 7 of total 7 items found"
+    results_heading = page.get_by_test_id("search-results-heading")
+    expect(results_heading).to_be_visible()
+    assert results_heading.inner_text() == "showing 7 of total 7 items found"
 
     # check sidebar is showing
     sidebar = page.get_by_test_id("search-sidebar")
     expect(sidebar).to_be_visible()
 
-    # check search input is showing
+    # check search input is showing and search is working
     search_input = page.get_by_placeholder("Search here...")
     expect(search_input).to_be_visible()
+    search_input.fill("mex")
+    assert (
+        page.get_by_test_id("search-results-heading").inner_text()
+        == "showing 1 of total 1 items found"
+    )
+    search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
+    assert (
+        page.get_by_test_id("search-results-heading").inner_text()
+        == "showing 0 of total 0 items found"
+    )
 
     # check entity types are showing
     entity_types = page.get_by_test_id("entity-types")
@@ -40,10 +50,13 @@ def test_index(
         "MergedPrimarySource" and "MergedPerson" in entity_types.all_text_contents()[0]
     )
 
-    # check pagination is showing
-    pagination = page.get_by_test_id("pagination")
-    expect(pagination).to_be_visible()
-    assert "Previous" and "Next" in pagination.all_text_contents()[0]
+    # check pagination is showing and disabled
+    pagination_previous = page.get_by_test_id("pagination-previous-button")
+    pagination_next = page.get_by_test_id("pagination-next-button")
+    pagination_page_select = page.get_by_test_id("pagination-page-select")
+    expect(pagination_previous).to_be_disabled()
+    expect(pagination_next).to_be_disabled()
+    assert pagination_page_select.inner_text() == "1"
 
     # check mex primary source is showing
     primary_source = page.get_by_text(

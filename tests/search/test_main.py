@@ -49,6 +49,11 @@ def test_index(
     assert (
         "MergedPrimarySource" and "MergedPerson" in entity_types.all_text_contents()[0]
     )
+    entity_types.get_by_label("MergedActivity").check()
+    assert (
+        page.get_by_test_id("search-results-heading").inner_text()
+        == "showing 1 of total 1 items found"
+    )
 
     # check pagination is showing and disabled
     pagination_previous = page.get_by_test_id("pagination-previous-button")

@@ -88,7 +88,7 @@ def page(*children: str | rx.Component) -> rx.Component:
         State.user,
         rx.fragment(
             nav_bar(),
-            rx.vstack(
+            rx.hstack(
                 *children,
                 min_height="85vh",
                 margin="2em 1em 1em",

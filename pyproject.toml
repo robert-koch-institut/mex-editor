@@ -13,6 +13,7 @@ dependencies = [
     "mex-common@git+https://github.com/robert-koch-institut/mex-common.git@feature/mx-1702-field-and-type-utils",
     "pydantic>=2.9.1,<3",
     "pyyaml>=6.0.2,<7",
+    "reflex-chakra>=0.5.10,<1",
     "reflex>=0.5.10,<1",
     "starlette>=0.37.2,<1",
     "uvicorn>=0.30.6,<1",
@@ -20,12 +21,13 @@ dependencies = [
 optional-dependencies.dev = [
     "ipdb>=0.13.13,<1",
     "mypy>=1.11.0,<2",
-    "pytest-playwright>=0.5.1,<1",
+    "pytest-playwright>=0.5.2,<1",
     "pytest-random-order>=1.1.1,<2",
-    "pytest>=8.3.1,<9",
+    "pytest>=8.3.3,<9",
     "ruff>=0.5.4,<1",
     "sphinx>=7.4.5,<8",
     "types-PyYAML>=6.0.12,<7",
+    "types-requests>=2.32.0,<3",
 ]
 
 [project.scripts]
@@ -45,6 +47,10 @@ plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
 module = "reflex.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "reflex_chakra.*"
 ignore_missing_imports = true
 
 [tool.pdm]

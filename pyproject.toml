@@ -17,6 +17,7 @@ dependencies = [
     "reflex>=0.5.10,<1",
     "starlette>=0.37.2,<1",
     "uvicorn>=0.30.6,<1",
+    "reflex-chakra>=0.5.10",
 ]
 optional-dependencies.dev = [
     "ipdb>=0.13.13,<1",

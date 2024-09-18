@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:fe697417836500525596628554096e77aedcc924b0dc594512bd1fc2afc8fa40"
+content_hash = "sha256:64ff7cbfcd10c28f7db0019b557beff475bdf567e0e7bc47a15ce7f94a784ffd"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -75,7 +75,6 @@ name = "asttokens"
 version = "2.4.1"
 summary = "Annotate AST trees with source code positions"
 groups = ["dev"]
-marker = "python_version >= \"3.11\""
 dependencies = [
     "six>=1.12.0",
     "typing; python_version < \"3.5\"",
@@ -131,7 +130,6 @@ version = "1.2.0"
 requires_python = ">=3.8"
 summary = "Backport of CPython tarfile module"
 groups = ["default"]
-marker = "python_version < \"3.12\""
 files = [
     {file = "backports.tarfile-1.2.0-py3-none-any.whl", hash = "sha256:77e284d754527b01fb1e6fa8a1afe577858ebe4e9dad8919e34c862cb399bc34"},
     {file = "backports_tarfile-1.2.0.tar.gz", hash = "sha256:d75e02c268746e1b8144c278978b6e98e85de6ad16f8e4b0844a154557eca991"},
@@ -294,7 +292,6 @@ version = "5.1.1"
 requires_python = ">=3.5"
 summary = "Decorators for Humans"
 groups = ["dev"]
-marker = "python_version >= \"3.11\""
 files = [
     {file = "decorator-5.1.1-py3-none-any.whl", hash = "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"},
     {file = "decorator-5.1.1.tar.gz", hash = "sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330"},
@@ -340,7 +337,6 @@ version = "2.1.0"
 requires_python = ">=3.8"
 summary = "Get the currently executing AST node of a frame, and other information"
 groups = ["dev"]
-marker = "python_version >= \"3.11\""
 files = [
     {file = "executing-2.1.0-py2.py3-none-any.whl", hash = "sha256:8d63781349375b5ebccc3142f4b30350c0cd9c79f921cde38be2be4637e98eaf"},
     {file = "executing-2.1.0.tar.gz", hash = "sha256:8ea27ddd260da8150fa5a708269c4a10e76161e2496ec3e587da9e3c0fe4b9ab"},
@@ -528,7 +524,6 @@ version = "8.27.0"
 requires_python = ">=3.10"
 summary = "IPython: Productive Interactive Computing"
 groups = ["dev"]
-marker = "python_version >= \"3.11\""
 dependencies = [
     "colorama; sys_platform == \"win32\"",
     "decorator",
@@ -595,7 +590,6 @@ version = "0.19.1"
 requires_python = ">=3.6"
 summary = "An autocompletion tool for Python that can be used for text editors."
 groups = ["dev"]
-marker = "python_version >= \"3.11\""
 dependencies = [
     "parso<0.9.0,>=0.8.3",
 ]
@@ -745,7 +739,6 @@ version = "0.1.7"
 requires_python = ">=3.8"
 summary = "Inline Matplotlib backend for Jupyter"
 groups = ["dev"]
-marker = "python_version >= \"3.11\""
 dependencies = [
     "traitlets",
 ]
@@ -927,7 +920,6 @@ version = "0.8.4"
 requires_python = ">=3.6"
 summary = "A Python Parser"
 groups = ["dev"]
-marker = "python_version >= \"3.11\""
 files = [
     {file = "parso-0.8.4-py2.py3-none-any.whl", hash = "sha256:a418670a20291dacd2dddc80c377c5c3791378ee1e8d12bffc35420643d43f18"},
     {file = "parso-0.8.4.tar.gz", hash = "sha256:eb3a7b58240fb99099a345571deecc0f9540ea5f4dd2fe14c2a99d6b281ab92d"},
@@ -938,7 +930,7 @@ name = "pexpect"
 version = "4.9.0"
 summary = "Pexpect allows easy control of interactive console applications."
 groups = ["dev"]
-marker = "(sys_platform != \"win32\" and sys_platform != \"emscripten\") and python_version >= \"3.11\""
+marker = "sys_platform != \"win32\" and sys_platform != \"emscripten\""
 dependencies = [
     "ptyprocess>=0.5",
 ]
@@ -1031,7 +1023,6 @@ version = "3.0.47"
 requires_python = ">=3.7.0"
 summary = "Library for building powerful interactive command lines in Python"
 groups = ["dev"]
-marker = "python_version >= \"3.11\""
 dependencies = [
     "wcwidth",
 ]
@@ -1062,7 +1053,7 @@ name = "ptyprocess"
 version = "0.7.0"
 summary = "Run a subprocess in a pseudo terminal"
 groups = ["dev"]
-marker = "(sys_platform != \"win32\" and sys_platform != \"emscripten\") and python_version >= \"3.11\""
+marker = "sys_platform != \"win32\" and sys_platform != \"emscripten\""
 files = [
     {file = "ptyprocess-0.7.0-py2.py3-none-any.whl", hash = "sha256:4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35"},
     {file = "ptyprocess-0.7.0.tar.gz", hash = "sha256:5c5d0a3b48ceee0b48485e0c26037c0acd7d29765ca3fbb5cb3831d347423220"},
@@ -1073,7 +1064,6 @@ name = "pure-eval"
 version = "0.2.3"
 summary = "Safely evaluate AST nodes without side effects"
 groups = ["dev"]
-marker = "python_version >= \"3.11\""
 files = [
     {file = "pure_eval-0.2.3-py3-none-any.whl", hash = "sha256:1db8e35b67b3d218d818ae653e27f06c3aa420901fa7b081ca98cbedc874e0d0"},
     {file = "pure_eval-0.2.3.tar.gz", hash = "sha256:5f4e983f40564c576c7c8635ae88db5956bb2229d7e9237d03b3c0b0190eaf42"},
@@ -1825,7 +1815,6 @@ name = "stack-data"
 version = "0.6.3"
 summary = "Extract data from python stack frames and tracebacks for informative displays"
 groups = ["dev"]
-marker = "python_version >= \"3.11\""
 dependencies = [
     "asttokens>=2.1.0",
     "executing>=1.2.0",
@@ -1905,7 +1894,6 @@ version = "5.14.3"
 requires_python = ">=3.8"
 summary = "Traitlets Python configuration system"
 groups = ["dev"]
-marker = "python_version >= \"3.11\""
 files = [
     {file = "traitlets-5.14.3-py3-none-any.whl", hash = "sha256:b74e89e397b1ed28cc831db7aea759ba6640cb3de13090ca145426688ff1ac4f"},
     {file = "traitlets-5.14.3.tar.gz", hash = "sha256:9ed0579d3502c94b4b3732ac120375cda96f923114522847de4b3bb98b96b6b7"},
@@ -1960,6 +1948,20 @@ groups = ["dev"]
 files = [
     {file = "types-PyYAML-6.0.12.20240808.tar.gz", hash = "sha256:b8f76ddbd7f65440a8bda5526a9607e4c7a322dc2f8e1a8c405644f9a6f4b9af"},
     {file = "types_PyYAML-6.0.12.20240808-py3-none-any.whl", hash = "sha256:deda34c5c655265fc517b546c902aa6eed2ef8d3e921e4765fe606fe2afe8d35"},
+]
+
+[[package]]
+name = "types-requests"
+version = "2.32.0.20240712"
+requires_python = ">=3.8"
+summary = "Typing stubs for requests"
+groups = ["dev"]
+dependencies = [
+    "urllib3>=2",
+]
+files = [
+    {file = "types-requests-2.32.0.20240712.tar.gz", hash = "sha256:90c079ff05e549f6bf50e02e910210b98b8ff1ebdd18e19c873cd237737c1358"},
+    {file = "types_requests-2.32.0.20240712-py3-none-any.whl", hash = "sha256:f754283e152c752e46e70942fa2a146b5bc70393522257bb85bd1ef7e019dcc3"},
 ]
 
 [[package]]
@@ -2065,7 +2067,6 @@ name = "wcwidth"
 version = "0.2.13"
 summary = "Measures the displayed width of unicode strings in a terminal"
 groups = ["dev"]
-marker = "python_version >= \"3.11\""
 dependencies = [
     "backports-functools-lru-cache>=1.2.1; python_version < \"3.2\"",
 ]
@@ -2113,7 +2114,6 @@ version = "1.16.0"
 requires_python = ">=3.6"
 summary = "Module for decorators, wrappers and monkey patching."
 groups = ["default"]
-marker = "python_version >= \"3.11\""
 files = [
     {file = "wrapt-1.16.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:1a5db485fe2de4403f13fafdc231b0dbae5eca4359232d2efc79025527375b09"},
     {file = "wrapt-1.16.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:75ea7d0ee2a15733684badb16de6794894ed9c55aa5e9903260922f0482e687d"},

@@ -56,7 +56,7 @@ def mex_editor_logo() -> rx.Component:
         rx.heading(
             "MEx Editor",
             weight="medium",
-            style={"user-select": "none"},
+            style={"userSelect": "none"},
         ),
     )
 

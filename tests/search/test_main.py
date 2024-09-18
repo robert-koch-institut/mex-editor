@@ -50,6 +50,7 @@ def test_pagination(
     page = writer_user_page
     page.goto("http://localhost:3000")
 
+    # check sidebar is showing and disabled and selector is on page 1
     pagination_previous = page.get_by_test_id("pagination-previous-button")
     pagination_next = page.get_by_test_id("pagination-next-button")
     pagination_page_select = page.get_by_test_id("pagination-page-select")

@@ -42,21 +42,11 @@ class State(rx.State):
             return rx.redirect("/login")
         return None
 
-    def load_page(self) -> None:
+    def load_nav(self) -> None:
         """Event hook for updating the navigation on page loads."""
         self.item_id = self.router.page.params.get("item_id")
         item_id = self.item_id or MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
         for nav_item in self.nav_items:
             nav_item.href = nav_item.href_template.format(item_id=item_id)
-            if self.router.page.raw_path == nav_item.href:
-                nav_item.underline = "always"
-            else:
-                nav_item.underline = "none"
-
-    def unload_page(self) -> None:
-        """Event hook for resetting the navigation on page unloads."""
-        self.item_id = ""
-        item_id = MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
-        for nav_item in self.nav_items:
-            nav_item.underline = "none"
-            nav_item.href = nav_item.href_template.format(item_id=item_id)
+            current_nav = self.router.page.raw_path == nav_item.href
+            nav_item.underline = "always" if current_nav else "none"

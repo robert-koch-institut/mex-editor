@@ -18,19 +18,19 @@ app.add_page(
     edit_index,
     route="/item/[item_id]",
     title="MEx Editor | Edit",
-    on_load=State.check_login,
+    on_load=[State.check_login, State.load_nav],
 )
 app.add_page(
     merge_index,
     route="/merge",
     title="MEx Editor | Merge",
-    on_load=State.check_login,
+    on_load=[State.check_login, State.load_nav],
 )
 app.add_page(
     search_index,
     route="/",
     title="MEx Editor | Search",
-    on_load=State.check_login,
+    on_load=[State.check_login, State.load_nav],
 )
 app.add_page(
     login_index,

@@ -56,7 +56,7 @@ def mex_editor_logo() -> rx.Component:
         rx.heading(
             "MEx Editor",
             weight="medium",
-            style={"user-select": "none"},
+            style={"userSelect": "none"},
         ),
     )
 
@@ -94,8 +94,6 @@ def page(*children: str | rx.Component) -> rx.Component:
                 margin="2em 1em 1em",
                 spacing="5",
             ),
-            on_mount=State.load_page,
-            on_unmount=State.unload_page,
         ),
         rx.center(
             rx.spinner(size="3"),

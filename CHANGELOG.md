@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- implement simple search with pagination and entity type filtration
-
 ### Changes
-
-- set fastapi, starlette and pydantic versions explicitly and update mex-common
 
 ### Deprecated
 
@@ -22,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.5.0] - 2024-09-19
+
+### Added
+
+- implement simple search with pagination and entity type filtration
+
+### Changes
+
+- set fastapi, starlette and pydantic versions explicitly and update mex-common
 
 ## [0.4.0] - 2024-08-07
 

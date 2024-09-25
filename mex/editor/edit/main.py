@@ -38,14 +38,10 @@ def fixed_link(value: FixedValue) -> rx.Component:
 
 def fixed_text(value: FixedValue) -> rx.Component:
     """Render a fixed value as a text span with language attribute."""
-    return rx.cond(
+    return rx.text(
         value.text,
-        rx.text(
-            value.text,
-            lang=value.language,
-            as_="span",
-        ),
-        rx.icon("slash"),
+        lang=value.language,
+        as_="span",
     )
 
 
@@ -112,7 +108,13 @@ def index() -> rx.Component:
             rx.heading(
                 EditState.item_title,
                 custom_attrs={"data-testid": "edit-heading"},
-                style={"margin": "1em 0"},
+                style={
+                    "margin": "1em 0",
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis",
+                    "maxWidth": "80%",
+                },
             ),
             rx.vstack(
                 rx.foreach(

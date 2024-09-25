@@ -1,7 +1,5 @@
-import functools
 from collections.abc import Iterable
 
-from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
@@ -9,18 +7,12 @@ from mex.common.models import (
 )
 from mex.common.types import Identifier, Link, Text
 from mex.editor.edit.models import EditableField, EditablePrimarySource, FixedValue
-from mex.editor.transform import render_model_title
-
-
-@functools.lru_cache(maxsize=500)
-def get_title(merged_identifier: str) -> str:
-    """Get a cached preview title for a given merged identifier."""
-    connector = BackendApiConnector.get()
-    item = connector.get_merged_item(merged_identifier)
-    return render_model_title(item)
+from mex.editor.transform import get_title_for_merged_id
 
 
 def _transform_values(values: object) -> list[FixedValue]:
+    if values is None:
+        return []
     if not isinstance(values, list):
         values = [values]
     return [_transform_value(v) for v in values]
@@ -50,7 +42,7 @@ def _transform_value(value: object) -> FixedValue:
         )
     if isinstance(value, Identifier):
         return FixedValue(
-            text=get_title(value),
+            text=get_title_for_merged_id(value),
             href=f"/item/{value}",
             language=None,
             external=False,
@@ -70,15 +62,16 @@ def transform_models_to_fields(
     fields_by_name: dict[str, EditableField] = {}
     for model in models:
         if isinstance(model, AnyExtractedModel):
-            primary_source_name = _transform_value(model.hadPrimarySource)
-        else:
+            primary_source_name = _transform_value(Identifier(model.hadPrimarySource))
+        elif isinstance(model, AnyRuleModel):
             primary_source_name = _transform_value(MEX_PRIMARY_SOURCE_STABLE_TARGET_ID)
-
+        else:
+            raise RuntimeError(f"{model} is weird")
         for field_name in model.model_fields:
             editable_field = EditableField(name=field_name, primary_sources=[])
             fields_by_name.setdefault(field_name, editable_field)
-            values = _transform_values(getattr(model, field_name))
-            editable_field.primary_sources.append(
-                EditablePrimarySource(name=primary_source_name, values=values)
-            )
+            if values := _transform_values(getattr(model, field_name)):
+                editable_field.primary_sources.append(
+                    EditablePrimarySource(name=primary_source_name, values=values)
+                )
     return list(fields_by_name.values())

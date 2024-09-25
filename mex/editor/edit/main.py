@@ -1,87 +1,32 @@
 import reflex as rx
 
+from mex.editor.components import fixed_value
 from mex.editor.edit.models import EditableField, EditablePrimarySource, FixedValue
 from mex.editor.edit.state import EditState
 from mex.editor.layout import page
 
 
-def fixed_internal_link(value: FixedValue) -> rx.Component:
-    """Render a fixed value as a clickable internal link that reloads the edit page."""
-    return rx.link(
-        value.text,
-        href=value.href,
-        href_lang=value.language,
-        high_contrast=True,
-        on_click=EditState.refresh,
-    )
-
-
-def fixed_external_link(value: FixedValue) -> rx.Component:
-    """Render a fixed value as a clickable external link that opens in a new window."""
-    return rx.link(
-        value.text,
-        href=value.href,
-        href_lang=value.language,
-        high_contrast=True,
-        is_external=True,
-    )
-
-
-def fixed_link(value: FixedValue) -> rx.Component:
-    """Render a fixed value as a clickable link that reloads the edit page."""
-    return rx.cond(
-        value.external,
-        fixed_external_link(value),
-        fixed_internal_link(value),
-    )
-
-
-def fixed_text(value: FixedValue) -> rx.Component:
-    """Render a fixed value as a text span with language attribute."""
-    return rx.text(
-        value.text,
-        lang=value.language,
-        as_="span",
-    )
-
-
-def language_badge(value: FixedValue) -> rx.Component:
-    """Render a language badge for a fixed value."""
-    return rx.badge(
-        value.language,
-        radius="full",
-        variant="surface",
-        style={
-            "marginLeft": "0.5em",
-            "textTransform": "uppercase",
-        },
-    )
-
-
-def fixed_value(value: FixedValue) -> rx.Component:
-    """Return a single card for one fixed value."""
+def fixed_value_card(value: FixedValue) -> rx.Component:
+    """Return a card containing a single fixed value."""
     return rx.card(
-        rx.cond(
-            value.href,
-            fixed_link(value),
-            fixed_text(value),
-        ),
-        rx.cond(
-            value.language,
-            language_badge(value),
-        ),
+        fixed_value(value),
         style={"width": "30vw"},
+        custom_attrs={"data-testid": "fixed-value"},
     )
 
 
 def editable_primary_source(model: EditablePrimarySource) -> rx.Component:
     """Return a horizontal grid of cards for editing one primary source."""
     return rx.hstack(
-        fixed_value(model.name),
+        rx.card(
+            fixed_value(model.name),
+            style={"width": "20vw"},
+            custom_attrs={"data-testid": "primary-source-name"},
+        ),
         rx.vstack(
             rx.foreach(
-                model.values,
-                fixed_value,
+                model.editor_values,
+                fixed_value_card,
             )
         ),
     )
@@ -93,6 +38,7 @@ def editable_field(model: EditableField) -> rx.Component:
         rx.card(
             rx.text(model.name),
             style={"width": "15vw"},
+            custom_attrs={"data-testid": "field-name"},
         ),
         rx.foreach(
             model.primary_sources,
@@ -104,9 +50,14 @@ def editable_field(model: EditableField) -> rx.Component:
 def index() -> rx.Component:
     """Return the index for the edit component."""
     return page(
-        rx.section(
+        rx.box(
             rx.heading(
-                EditState.item_title,
+                rx.hstack(
+                    rx.foreach(
+                        EditState.item_title,
+                        fixed_value,
+                    )
+                ),
                 custom_attrs={"data-testid": "edit-heading"},
                 style={
                     "margin": "1em 0",
@@ -122,8 +73,7 @@ def index() -> rx.Component:
                     editable_field,
                 ),
             ),
-            on_mount=EditState.refresh,
-            style={"width": "100%"},
+            style={"width": "100%", "margin": "0 2em 1em"},
             custom_attrs={"data-testid": "edit-section"},
         ),
     )

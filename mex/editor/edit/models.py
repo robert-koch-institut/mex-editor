@@ -1,21 +1,13 @@
 import reflex as rx
 
-
-class FixedValue(rx.Base):
-    """Model for describing fixed values that are not editable."""
-
-    text: str | None
-    language: str | None
-    href: str | None
-    tooltip: str | None
-    external: bool
+from mex.editor.models import FixedValue
 
 
 class EditablePrimarySource(rx.Base):
     """Model for describing the editor state for one primary source."""
 
     name: FixedValue
-    values: list[FixedValue]
+    editor_values: list[FixedValue]
 
 
 class EditableField(rx.Base):

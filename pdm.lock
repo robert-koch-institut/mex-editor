@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:666d87484f72de9aca0895dcc48769bc87533de9fd9c72188a219f15abefca1a"
+content_hash = "sha256:4a077aa696e0b24c4a1cd75692e854cc81f3a78183aff5194611f8c2838a9a1c"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -348,18 +348,18 @@ files = [
 
 [[package]]
 name = "fastapi"
-version = "0.110.3"
+version = "0.115.0"
 requires_python = ">=3.8"
 summary = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 groups = ["default"]
 dependencies = [
     "pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4",
-    "starlette<0.38.0,>=0.37.2",
+    "starlette<0.39.0,>=0.37.2",
     "typing-extensions>=4.8.0",
 ]
 files = [
-    {file = "fastapi-0.110.3-py3-none-any.whl", hash = "sha256:fd7600612f755e4050beb74001310b5a7e1796d149c2ee363124abdfa0289d32"},
-    {file = "fastapi-0.110.3.tar.gz", hash = "sha256:555700b0159379e94fdbfc6bb66a0f1c43f4cf7060f25239af3d84b63a656626"},
+    {file = "fastapi-0.115.0-py3-none-any.whl", hash = "sha256:17ea427674467486e997206a5ab25760f6b09e069f099b96f5b55a32fb6f1631"},
+    {file = "fastapi-0.115.0.tar.gz", hash = "sha256:f93b4ca3529a8ebc6fc3fcf710e5efa8de3df9b41570958abf1d97d843138004"},
 ]
 
 [[package]]
@@ -383,7 +383,7 @@ files = [
 
 [[package]]
 name = "gunicorn"
-version = "22.0.0"
+version = "23.0.0"
 requires_python = ">=3.7"
 summary = "WSGI HTTP Server for UNIX"
 groups = ["default"]
@@ -392,8 +392,8 @@ dependencies = [
     "packaging",
 ]
 files = [
-    {file = "gunicorn-22.0.0-py3-none-any.whl", hash = "sha256:350679f91b24062c86e386e198a15438d53a7a8207235a78ba1b53df4c4378d9"},
-    {file = "gunicorn-22.0.0.tar.gz", hash = "sha256:4a0b436239ff76fb33f11c07a16482c521a7e09c1ce3cc293c2330afe01bec63"},
+    {file = "gunicorn-23.0.0-py3-none-any.whl", hash = "sha256:ec400d38950de4dfd418cff8328b2c8faed0edb0d517d3394e457c317908ca4d"},
+    {file = "gunicorn-23.0.0.tar.gz", hash = "sha256:f014447a0101dc57e294f6c18ca6b40227a4c90e9bdb586042628030cba004ec"},
 ]
 
 [[package]]
@@ -1435,8 +1435,8 @@ files = [
 
 [[package]]
 name = "reflex"
-version = "0.5.10"
-requires_python = "<4.0,>=3.8"
+version = "0.6.0"
+requires_python = "<4.0,>=3.9"
 summary = "Web apps in pure Python."
 groups = ["default"]
 dependencies = [
@@ -1445,8 +1445,8 @@ dependencies = [
     "charset-normalizer<4.0,>=3.3.2",
     "dill<0.4,>=0.3.8",
     "distro<2.0,>=1.8.0; sys_platform == \"linux\"",
-    "fastapi<0.111.0,>=0.96.0",
-    "gunicorn<23.0,>=20.1.0",
+    "fastapi!=0.111.0,!=0.111.1,>=0.96.0",
+    "gunicorn<24.0,>=20.1.0",
     "httpx<1.0,>=0.25.1",
     "jinja2<4.0,>=3.1.2",
     "lazy-loader>=0.4",
@@ -1458,7 +1458,7 @@ dependencies = [
     "python-multipart<0.1,>=0.0.5",
     "python-socketio<6.0,>=5.7.0",
     "redis<6.0,>=4.3.5",
-    "reflex-chakra<0.6,>=0.1.1a1",
+    "reflex-chakra>=0.6.0a6",
     "reflex-hosting-cli<2.0,>=0.1.2",
     "rich<14.0,>=13.0.0",
     "setuptools<70.2,>=69.1.1",
@@ -1468,29 +1468,27 @@ dependencies = [
     "twine<6.0,>=4.0.0",
     "typer<1.0,>=0.4.2",
     "uvicorn>=0.20.0",
-    "watchdog<5.0,>=2.3.1",
-    "watchfiles<1.0,>=0.19.0",
     "wheel<1.0,>=0.42.0",
     "wrapt<2.0,>=1.11.0; python_version < \"3.11\"",
     "wrapt<2.0,>=1.14.0; python_version >= \"3.11\"",
 ]
 files = [
-    {file = "reflex-0.5.10-py3-none-any.whl", hash = "sha256:c1ef6967c45b0c1223b02227563c4e9adc1b1a97f9980c2f28882e67d8735ba7"},
-    {file = "reflex-0.5.10.tar.gz", hash = "sha256:dc636979febd0056ca097a218d2bc0bbce70312812d6ceeeaba32d12942495fc"},
+    {file = "reflex-0.6.0-py3-none-any.whl", hash = "sha256:ad5ed00deaa2f8ad754526c757fcac1259d2514743fa933bdf6fad18be197b51"},
+    {file = "reflex-0.6.0.tar.gz", hash = "sha256:50e7d1948bbd196956932bfdae2ed4872866a68cbc61791afd6dbf9b258b3171"},
 ]
 
 [[package]]
 name = "reflex-chakra"
-version = "0.5.10"
+version = "0.6.0"
 requires_python = "<4.0,>=3.8"
 summary = "reflex using chakra components"
 groups = ["default"]
 dependencies = [
-    "reflex>=0.5.9",
+    "reflex>=0.6.0a",
 ]
 files = [
-    {file = "reflex_chakra-0.5.10-py3-none-any.whl", hash = "sha256:ca8370b5fda32a7cd0a90a10c69e264ea9173430d3948aaabc1920e8a40dc559"},
-    {file = "reflex_chakra-0.5.10.tar.gz", hash = "sha256:35875ee7e69f1154904d6e25ce01768443ad040baa169173466e2e7782ff0c2c"},
+    {file = "reflex_chakra-0.6.0-py3-none-any.whl", hash = "sha256:eca1593fca67289e05591dd21fbcc8632c119d64a08bdc41fd995055a114cc91"},
+    {file = "reflex_chakra-0.6.0.tar.gz", hash = "sha256:db1c7b48f1ba547bf91e5af103fce6fc7191d7225b414ebfbada7d983e33dd87"},
 ]
 
 [[package]]
@@ -1839,7 +1837,7 @@ files = [
 
 [[package]]
 name = "starlette"
-version = "0.37.2"
+version = "0.38.6"
 requires_python = ">=3.8"
 summary = "The little ASGI library that shines."
 groups = ["default"]
@@ -1848,8 +1846,8 @@ dependencies = [
     "typing-extensions>=3.10.0; python_version < \"3.10\"",
 ]
 files = [
-    {file = "starlette-0.37.2-py3-none-any.whl", hash = "sha256:6fe59f29268538e5d0d182f2791a479a0c64638e6935d1c6989e63fb2699c6ee"},
-    {file = "starlette-0.37.2.tar.gz", hash = "sha256:9af890290133b79fc3db55474ade20f6220a364a0402e0b556e7cd5e1e093823"},
+    {file = "starlette-0.38.6-py3-none-any.whl", hash = "sha256:4517a1409e2e73ee4951214ba012052b9e16f60e90d73cfb06192c19203bbb05"},
+    {file = "starlette-0.38.6.tar.gz", hash = "sha256:863a1588f5574e70a821dadefb41e4881ea451a47a3cd1b4df359d4ffefe5ead"},
 ]
 
 [[package]]
@@ -2024,55 +2022,6 @@ dependencies = [
 files = [
     {file = "uvicorn-0.30.6-py3-none-any.whl", hash = "sha256:65fd46fe3fda5bdc1b03b94eb634923ff18cd35b2f084813ea79d1f103f711b5"},
     {file = "uvicorn-0.30.6.tar.gz", hash = "sha256:4b15decdda1e72be08209e860a1e10e92439ad5b97cf44cc945fcbee66fc5788"},
-]
-
-[[package]]
-name = "watchdog"
-version = "4.0.2"
-requires_python = ">=3.8"
-summary = "Filesystem events monitoring"
-groups = ["default"]
-files = [
-    {file = "watchdog-4.0.2-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:7c7d4bf585ad501c5f6c980e7be9c4f15604c7cc150e942d82083b31a7548930"},
-    {file = "watchdog-4.0.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:914285126ad0b6eb2258bbbcb7b288d9dfd655ae88fa28945be05a7b475a800b"},
-    {file = "watchdog-4.0.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:984306dc4720da5498b16fc037b36ac443816125a3705dfde4fd90652d8028ef"},
-    {file = "watchdog-4.0.2-py3-none-manylinux2014_aarch64.whl", hash = "sha256:936acba76d636f70db8f3c66e76aa6cb5136a936fc2a5088b9ce1c7a3508fc83"},
-    {file = "watchdog-4.0.2-py3-none-manylinux2014_armv7l.whl", hash = "sha256:e252f8ca942a870f38cf785aef420285431311652d871409a64e2a0a52a2174c"},
-    {file = "watchdog-4.0.2-py3-none-manylinux2014_i686.whl", hash = "sha256:0e83619a2d5d436a7e58a1aea957a3c1ccbf9782c43c0b4fed80580e5e4acd1a"},
-    {file = "watchdog-4.0.2-py3-none-manylinux2014_ppc64.whl", hash = "sha256:88456d65f207b39f1981bf772e473799fcdc10801062c36fd5ad9f9d1d463a73"},
-    {file = "watchdog-4.0.2-py3-none-manylinux2014_ppc64le.whl", hash = "sha256:32be97f3b75693a93c683787a87a0dc8db98bb84701539954eef991fb35f5fbc"},
-    {file = "watchdog-4.0.2-py3-none-manylinux2014_s390x.whl", hash = "sha256:c82253cfc9be68e3e49282831afad2c1f6593af80c0daf1287f6a92657986757"},
-    {file = "watchdog-4.0.2-py3-none-manylinux2014_x86_64.whl", hash = "sha256:c0b14488bd336c5b1845cee83d3e631a1f8b4e9c5091ec539406e4a324f882d8"},
-    {file = "watchdog-4.0.2-py3-none-win32.whl", hash = "sha256:0d8a7e523ef03757a5aa29f591437d64d0d894635f8a50f370fe37f913ce4e19"},
-    {file = "watchdog-4.0.2-py3-none-win_amd64.whl", hash = "sha256:c344453ef3bf875a535b0488e3ad28e341adbd5a9ffb0f7d62cefacc8824ef2b"},
-    {file = "watchdog-4.0.2-py3-none-win_ia64.whl", hash = "sha256:baececaa8edff42cd16558a639a9b0ddf425f93d892e8392a56bf904f5eff22c"},
-    {file = "watchdog-4.0.2.tar.gz", hash = "sha256:b4dfbb6c49221be4535623ea4474a4d6ee0a9cef4a80b20c28db4d858b64e270"},
-]
-
-[[package]]
-name = "watchfiles"
-version = "0.24.0"
-requires_python = ">=3.8"
-summary = "Simple, modern and high performance file watching and code reload in python."
-groups = ["default"]
-dependencies = [
-    "anyio>=3.0.0",
-]
-files = [
-    {file = "watchfiles-0.24.0-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:bdcd5538e27f188dd3c804b4a8d5f52a7fc7f87e7fd6b374b8e36a4ca03db428"},
-    {file = "watchfiles-0.24.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:2dadf8a8014fde6addfd3c379e6ed1a981c8f0a48292d662e27cabfe4239c83c"},
-    {file = "watchfiles-0.24.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6509ed3f467b79d95fc62a98229f79b1a60d1b93f101e1c61d10c95a46a84f43"},
-    {file = "watchfiles-0.24.0-cp311-cp311-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:8360f7314a070c30e4c976b183d1d8d1585a4a50c5cb603f431cebcbb4f66327"},
-    {file = "watchfiles-0.24.0-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:316449aefacf40147a9efaf3bd7c9bdd35aaba9ac5d708bd1eb5763c9a02bef5"},
-    {file = "watchfiles-0.24.0-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:73bde715f940bea845a95247ea3e5eb17769ba1010efdc938ffcb967c634fa61"},
-    {file = "watchfiles-0.24.0-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:3770e260b18e7f4e576edca4c0a639f704088602e0bc921c5c2e721e3acb8d15"},
-    {file = "watchfiles-0.24.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:aa0fd7248cf533c259e59dc593a60973a73e881162b1a2f73360547132742823"},
-    {file = "watchfiles-0.24.0-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:d7a2e3b7f5703ffbd500dabdefcbc9eafeff4b9444bbdd5d83d79eedf8428fab"},
-    {file = "watchfiles-0.24.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:d831ee0a50946d24a53821819b2327d5751b0c938b12c0653ea5be7dea9c82ec"},
-    {file = "watchfiles-0.24.0-cp311-none-win32.whl", hash = "sha256:49d617df841a63b4445790a254013aea2120357ccacbed00253f9c2b5dc24e2d"},
-    {file = "watchfiles-0.24.0-cp311-none-win_amd64.whl", hash = "sha256:d3dcb774e3568477275cc76554b5a565024b8ba3a0322f77c246bc7111c5bb9c"},
-    {file = "watchfiles-0.24.0-cp311-none-win_arm64.whl", hash = "sha256:9301c689051a4857d5b10777da23fafb8e8e921bcf3abe6448a058d27fb67633"},
-    {file = "watchfiles-0.24.0.tar.gz", hash = "sha256:afb72325b74fa7a428c009c1b8be4b4d7c2afedafb2982827ef2156646df2fe1"},
 ]
 
 [[package]]

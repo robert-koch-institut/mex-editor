@@ -13,8 +13,8 @@ dependencies = [
     "mex-common@git+https://github.com/robert-koch-institut/mex-common.git@feature/mx-1702-type-prep",
     "pydantic>=2.9.1,<3",
     "pyyaml>=6.0.2,<7",
-    "reflex-chakra>=0.5.10,<1",
-    "reflex>=0.5.10,<1",
+    "reflex-chakra>=0.6.0,<1",
+    "reflex>=0.6.0,<1",
     "starlette>=0.37.2,<1",
     "uvicorn>=0.30.6,<1",
 ]

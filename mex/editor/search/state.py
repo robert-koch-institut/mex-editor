@@ -1,4 +1,5 @@
 import math
+from collections.abc import Generator
 
 import reflex as rx
 from reflex.event import EventSpec
@@ -9,9 +10,10 @@ from mex.common.logging import logger
 from mex.common.models import MERGED_MODEL_CLASSES_BY_NAME
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
+from mex.editor.state import State
 
 
-class SearchState(rx.State):
+class SearchState(State):
     """State management for the search page."""
 
     results: list[SearchResult] = []
@@ -19,7 +21,7 @@ class SearchState(rx.State):
     query_string: str = ""
     entity_types: dict[str, bool] = {k: False for k in MERGED_MODEL_CLASSES_BY_NAME}
     current_page: int = 1
-    limit: int = 10
+    limit: int = 25
 
     @rx.var
     def disable_previous_page(self) -> bool:
@@ -42,30 +44,32 @@ class SearchState(rx.State):
         """Return a list of total pages based on the number of results."""
         return [f"{i+1}" for i in range(math.ceil(self.total / self.limit))]
 
-    def set_query_string(self, value: str) -> EventSpec | None:
+    def set_query_string(self, value: str) -> Generator[EventSpec | None, None, None]:
         """Set the query string and refresh the results."""
         self.query_string = value
-        return self.refresh()
+        return self.search()
 
-    def set_entity_type(self, value, index) -> EventSpec | None:
+    def set_entity_type(self, value, index) -> Generator[EventSpec | None, None, None]:
         """Set the entity type for filtering and refresh the results."""
         self.entity_types[index] = value
-        return self.refresh()
+        return self.search()
 
-    def set_page(self, page_number: str | int) -> EventSpec | None:
+    def set_page(
+        self, page_number: str | int
+    ) -> Generator[EventSpec | None, None, None]:
         """Set the current page and refresh the results."""
         self.current_page = int(page_number)
-        return self.refresh()
+        return self.search()
 
-    def go_to_previous_page(self) -> EventSpec | None:
+    def go_to_previous_page(self) -> Generator[EventSpec | None, None, None]:
         """Navigate to the previous page."""
         return self.set_page(self.current_page - 1)
 
-    def go_to_next_page(self) -> EventSpec | None:
+    def go_to_next_page(self) -> Generator[EventSpec | None, None, None]:
         """Navigate to the next page."""
         return self.set_page(self.current_page + 1)
 
-    def refresh(self) -> EventSpec | None:
+    def search(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results."""
         # TODO: use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
@@ -79,12 +83,18 @@ class SearchState(rx.State):
         except HTTPError as exc:
             self.reset()
             logger.error("backend error: %s", exc.response.text, exc_info=False)
-            return rx.toast.error(
+            yield rx.toast.error(
                 exc.response.text,
                 duration=5000,
                 close_button=True,
                 dismissible=True,
             )
-        self.results = transform_models_to_results(response.items)
-        self.total = response.total
-        return None
+        else:
+            yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
+            self.results = transform_models_to_results(response.items)
+            self.total = response.total
+
+    def refresh(self) -> Generator[EventSpec | None, None, None]:
+        """Refresh the search page."""
+        self.reset()
+        return self.search()

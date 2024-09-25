@@ -1,60 +1,95 @@
-import functools
+from collections.abc import Sequence
 
-from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.logging import logger
 from mex.common.models import AnyExtractedModel, AnyMergedModel
-from mex.common.types import Identifier, Link, Text
-from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE
+from mex.common.types import Identifier, Link, Text, VocabularyEnum
+from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, FixedValue
 
 
-def render_any_value(value: object, sep: str = ", ") -> str:
-    """Simple rendering function to stringify objects."""
-    if isinstance(value, list):
-        return sep.join(render_any_value(v) for v in value)
+def transform_values(values: object) -> list[FixedValue]:
+    """Convert a single object or a list of objects into a list of fixed values."""
+    if values is None:
+        return []
+    if not isinstance(values, list):
+        values = [values]
+    return [transform_value(v) for v in values]
+
+
+def transform_value(value: object) -> FixedValue:
+    """Transform a single object into a fixed value ready for rendering."""
+    if value is None:
+        return FixedValue(
+            text=None,
+            href=None,
+            badge=None,
+            external=False,
+        )
     if isinstance(value, Text):
-        return value.value
+        return FixedValue(
+            text=value.value,
+            badge=value.language,
+            href=None,
+            external=False,
+        )
     if isinstance(value, Link):
-        return value.title or value.url
+        return FixedValue(
+            text=value.title or value.url,
+            href=value.url,
+            badge=value.language,
+            external=True,
+        )
     if isinstance(value, Identifier):
-        return get_title_for_merged_id(value)
-    if value and (value := str(value).strip()):
-        return value
-    return ""
+        return FixedValue(
+            text=value,
+            href=f"/item/{value}",
+            badge=None,
+            external=False,
+        )
+    if isinstance(value, VocabularyEnum):
+        return FixedValue(
+            text=value.name,
+            href=None,
+            badge=type(value).__name__,
+            external=False,
+        )
+    return FixedValue(
+        text=str(value),
+        href=None,
+        badge=None,
+        external=False,
+    )
 
 
-def render_model_title(model: AnyExtractedModel | AnyMergedModel) -> str:
-    """Return a rendered model title."""
-    config = MODEL_CONFIG_BY_STEM_TYPE[model.stemType]
-    if rendered := render_any_value(getattr(model, config.title)):
-        return rendered
-    return str(model.identifier)
+def transform_models_to_title(
+    models: Sequence[AnyExtractedModel | AnyMergedModel],
+) -> list[FixedValue]:
+    """Converts a list of models into fixed values based on the title config."""
+    if not models:
+        return []
+    titles: list[FixedValue] = []
+    for model in models:
+        config = MODEL_CONFIG_BY_STEM_TYPE[model.stemType]
+        titles.extend(
+            transform_values(getattr(model, config.title)),
+        )
+    if titles:
+        return titles
+    return transform_values(models[0].identifier)
 
 
-def render_model_preview(
-    model: AnyExtractedModel | AnyMergedModel,
-    sep: str = " \u2010 ",
-) -> str:
-    """Return a rendered model preview separated by given string."""
-    config = MODEL_CONFIG_BY_STEM_TYPE[model.stemType]
-    if rendered := sep.join(
-        value
-        for field in config.preview
-        if (value := render_any_value(getattr(model, field)))
-    ):
-        return rendered
-    return str(model.entityType)
-
-
-@functools.lru_cache(maxsize=500)
-def get_title_for_merged_id(merged_id: Identifier) -> str:
-    """Get a cached preview title for a given merged identifier."""
-    try:
-        connector = BackendApiConnector.get()
-        # item = connector.get_merged_item(merged_id)
-        # title = render_model_title(item)
-        title = repr((connector, merged_id))
-        logger.info(f"resolved {merged_id} to {title[:30]}")
-    except Exception as err:
-        logger.error("failed resolving %s: %s", merged_id, err)
-        title = render_any_value(merged_id)
-    return title
+def transform_models_to_preview(
+    models: Sequence[AnyExtractedModel | AnyMergedModel],
+) -> list[FixedValue]:
+    """Converts a list of models into fixed values based on the preview config."""
+    if not models:
+        return []
+    previews: list[FixedValue] = []
+    for model in models:
+        config = MODEL_CONFIG_BY_STEM_TYPE[model.stemType]
+        previews.extend(
+            value
+            for field in config.preview
+            for value in transform_values(getattr(model, field))
+        )
+    if previews:
+        return previews
+    return transform_values(models[0].entityType)

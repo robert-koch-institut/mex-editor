@@ -6,18 +6,20 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import logger
 from mex.editor.edit.models import EditableField
 from mex.editor.edit.transform import transform_models_to_fields
+from mex.editor.models import FixedValue
 from mex.editor.state import State
-from mex.editor.transform import render_model_title
+from mex.editor.transform import transform_models_to_title
 
 
 class EditState(State):
     """State for the edit component."""
 
     fields: list[EditableField] = []
-    item_title: str = ""
+    item_title: list[FixedValue] = []
 
     def refresh(self) -> EventSpec | None:
         """Refresh the edit page."""
+        self.reset()
         # TODO: use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
         try:
@@ -37,6 +39,6 @@ class EditState(State):
                 close_button=True,
                 dismissible=True,
             )
-        self.item_title = render_model_title(response.items[0])
+        self.item_title = transform_models_to_title(response.items)
         self.fields = transform_models_to_fields(response.items)
         return None

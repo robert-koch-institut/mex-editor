@@ -2,23 +2,7 @@ import reflex as rx
 from reflex.event import EventSpec
 
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
-
-
-class User(rx.Base):
-    """Info on the currently logged-in user."""
-
-    name: str
-    authorization: str
-    write_access: bool
-
-
-class NavItem(rx.Base):
-    """Model for one navigation bar item."""
-
-    title: str
-    href: str = "/"
-    href_template: str
-    underline: str = "none"
+from mex.editor.models import NavItem, User
 
 
 class State(rx.State):

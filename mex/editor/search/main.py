@@ -1,6 +1,7 @@
 import reflex as rx
 import reflex_chakra as rc
 
+from mex.editor.components import fixed_value
 from mex.editor.layout import page
 from mex.editor.search.models import SearchResult
 from mex.editor.search.state import SearchState
@@ -11,7 +12,12 @@ def search_result(result: SearchResult) -> rx.Component:
     return rx.card(
         rx.link(
             rx.text(
-                result.title,
+                rx.hstack(
+                    rx.foreach(
+                        result.title,
+                        fixed_value,
+                    )
+                ),
                 weight="bold",
                 style={
                     "whiteSpace": "nowrap",
@@ -21,8 +27,19 @@ def search_result(result: SearchResult) -> rx.Component:
                 },
             ),
             rx.text(
-                result.preview,
+                rx.hstack(
+                    rx.foreach(
+                        result.preview,
+                        fixed_value,
+                    )
+                ),
                 weight="light",
+                style={
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis",
+                    "maxWidth": "100%",
+                },
             ),
             href=f"/item/{result.identifier}",
         ),
@@ -78,11 +95,9 @@ def sidebar() -> rx.Component:
     return rx.box(
         search_input(),
         entity_type_filter(),
-        width="20%",
-        height="100vh",
-        padding="20px",
-        style={"margin": "2em 0 0 -1em"},
-        bg=rx.color("gray", 2),
+        width="20vw",
+        padding="2em 2em 10em",
+        bg="linear-gradient(to bottom, var(--gray-2) 0%, var(--color-background) 100%)",
         custom_attrs={"data-testid": "search-sidebar"},
     )
 
@@ -102,7 +117,7 @@ def pagination() -> rx.Component:
         ),
         rx.select(
             SearchState.total_pages,
-            value=f"{SearchState.current_page}",
+            value=SearchState.current_page.to_string(),  # type: ignore[attr-defined]
             on_change=SearchState.set_page,
             custom_attrs={"data-testid": "pagination-page-select"},
         ),
@@ -116,31 +131,31 @@ def pagination() -> rx.Component:
             variant="surface",
             custom_attrs={"data-testid": "pagination-next-button"},
         ),
+        style={"margin": "1em 0"},
+        width="100%",
     )
 
 
-def main_content() -> rx.Component:
+def search_results() -> rx.Component:
     """Render the search results with a heading, result list, and pagination."""
-    return rx.section(
+    return rx.vstack(
         rx.center(
             rx.heading(
                 f"showing {SearchState.current_results_length} "
                 f"of total {SearchState.total} items found",
                 custom_attrs={"data-testid": "search-results-heading"},
-                style={"margin": "1em 0"},
                 size="3",
             ),
+            style={"margin": "1em 0"},
+            width="100%",
         ),
-        rx.vstack(
-            rx.foreach(
-                SearchState.results,
-                search_result,
-            ),
+        rx.foreach(
+            SearchState.results,
+            search_result,
         ),
         pagination(),
-        on_mount=SearchState.refresh,
-        style={"width": "70%", "margin": "2em 0 0 1em"},
         custom_attrs={"data-testid": "search-results-section"},
+        width="70vw",
     )
 
 
@@ -148,5 +163,5 @@ def index() -> rx.Component:
     """Return the index for the search component."""
     return page(
         sidebar(),
-        main_content(),
+        search_results(),
     )

@@ -13,8 +13,8 @@ def test_login(page: Page, writer_user_credentials: tuple[str, SecretStr]) -> No
     page.get_by_placeholder("Password").fill(
         writer_user_credentials[1].get_secret_value(),
     )
-    page.screenshot(path="tests_login_test_main-test_login-on-load.jpeg")
+    page.screenshot(path="tests_login_test_main-test_login-on-load.png")
 
     page.get_by_text("Log in").click()
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
-    page.screenshot(path="tests_login_test_main-test_login-after-login.jpeg")
+    page.screenshot(path="tests_login_test_main-test_login-after-login.png")

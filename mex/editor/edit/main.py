@@ -6,27 +6,38 @@ from mex.editor.edit.state import EditState
 from mex.editor.layout import page
 
 
-def fixed_value_card(value: FixedValue) -> rx.Component:
+def fixed_value_card(
+    field_name: str, primary_source: str | None, index: int, value: FixedValue
+) -> rx.Component:
     """Return a card containing a single fixed value."""
     return rx.card(
         fixed_value(value),
         style={"width": "30vw"},
-        custom_attrs={"data-testid": "fixed-value"},
+        custom_attrs={"data-testid": f"value-{field_name}_{primary_source}_{index}"},
     )
 
 
-def editable_primary_source(model: EditablePrimarySource) -> rx.Component:
+def editable_primary_source(
+    field_name: str, model: EditablePrimarySource
+) -> rx.Component:
     """Return a horizontal grid of cards for editing one primary source."""
     return rx.hstack(
         rx.card(
             fixed_value(model.name),
             style={"width": "20vw"},
-            custom_attrs={"data-testid": "primary-source-name"},
+            custom_attrs={
+                "data-testid": f"primary-source-{field_name}_{model.name.text}"
+            },
         ),
         rx.vstack(
             rx.foreach(
                 model.editor_values,
-                fixed_value_card,
+                lambda value, index: fixed_value_card(
+                    field_name,
+                    model.name.text,
+                    index,
+                    value,
+                ),
             )
         ),
     )
@@ -38,12 +49,13 @@ def editable_field(model: EditableField) -> rx.Component:
         rx.card(
             rx.text(model.name),
             style={"width": "15vw"},
-            custom_attrs={"data-testid": "field-name"},
+            custom_attrs={"data-testid": f"field-{model.name}"},
         ),
         rx.foreach(
             model.primary_sources,
-            editable_primary_source,
+            lambda primary_source: editable_primary_source(model.name, primary_source),
         ),
+        role="row",
     )
 
 

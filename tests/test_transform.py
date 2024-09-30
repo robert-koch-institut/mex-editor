@@ -1,37 +1,9 @@
-from typing import Any
-
-import pytest
-
-from mex.common.models import (
-    AnyExtractedModel,
-)
-from mex.common.types import Identifier, Link, Text
-from mex.editor.transform import (
-    render_any_value,
-    render_model_preview,
-    render_model_title,
-)
-
-
-@pytest.mark.parametrize(
-    ("value", "expected"),
-    [
-        (None, ""),
-        ({"foo": 42}, "foo: 42"),
-        (["foo", 42, Identifier.generate(seed=42)], "foo, 42, bFQoRhcVH5DHU6"),
-        (Text.model_validate("This is proper."), "This is proper."),
-        (Link(title="Title", url="https://foo"), "https://foo"),
-        ("text-text-text", "text-text-text"),
-        ({"foo": {"bar": Identifier.generate(seed=42)}}, "foo: bar: bFQoRhcVH5DHU6"),
-    ],
-    ids=["None", "dict", "list", "Text", "Link", "string-like", "nested"],
-)
-def test_render_any_value(value: Any, expected: str) -> None:
-    assert render_any_value(value) == expected
+from mex.common.models import AnyExtractedModel
+from mex.editor.transform import transform_models_to_preview, transform_models_to_title
 
 
 def test_render_model_title(dummy_data: list[AnyExtractedModel]) -> None:
-    dummy_titles = [render_model_title(d) for d in dummy_data]
+    dummy_titles = [transform_models_to_title([d]) for d in dummy_data]
     assert dummy_titles == [
         "ExtractedPrimarySource",
         "ExtractedPrimarySource",
@@ -43,7 +15,7 @@ def test_render_model_title(dummy_data: list[AnyExtractedModel]) -> None:
 
 
 def test_render_model_preview(dummy_data: list[AnyExtractedModel]) -> None:
-    dummy_previews = [render_model_preview(d) for d in dummy_data]
+    dummy_previews = [transform_models_to_preview([d]) for d in dummy_data]
     assert dummy_previews == [
         "sMgFvmdtJyegb9vkebq04",
         "d0MGZryflsy7PbsBF3ZGXO",

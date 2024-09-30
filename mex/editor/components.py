@@ -9,6 +9,7 @@ def fixed_internal_link(value: FixedValue) -> rx.Component:
         value.text,
         href=value.href,
         high_contrast=True,
+        role="link",
     )
 
 
@@ -19,6 +20,7 @@ def fixed_external_link(value: FixedValue) -> rx.Component:
         href=value.href,
         high_contrast=True,
         is_external=True,
+        role="link",
     )
 
 

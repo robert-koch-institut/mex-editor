@@ -1,8 +1,30 @@
 from collections.abc import Sequence
 
+import pytz
+from babel.dates import format_datetime
+
 from mex.common.models import AnyExtractedModel, AnyMergedModel
-from mex.common.types import Identifier, Link, Text, VocabularyEnum
+from mex.common.types import (
+    Identifier,
+    Link,
+    TemporalEntity,
+    TemporalEntityPrecision,
+    Text,
+    VocabularyEnum,
+)
 from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, FixedValue
+
+_DEFAULT_LOCALE = "de_DE"
+_DEFAULT_TIMEZONE = pytz.timezone("Europe/Berlin")
+_BABEL_FORMATS_BY_PRECISION = {
+    TemporalEntityPrecision.YEAR: "yyyy",
+    TemporalEntityPrecision.MONTH: "MMMM yyyy",
+    TemporalEntityPrecision.DAY: "d. MMMM yyyy",
+    TemporalEntityPrecision.HOUR: "d. MMMM yyyy k a",
+    TemporalEntityPrecision.MINUTE: "d. MMMM yyyy H:MM",
+    TemporalEntityPrecision.SECOND: "d. MMMM yyyy H:MM:ss",
+    TemporalEntityPrecision.MICROSECOND: "d. MMMM yyyy H:MM:ss:SS",
+}
 
 
 def transform_values(values: object) -> list[FixedValue]:
@@ -49,6 +71,17 @@ def transform_value(value: object) -> FixedValue:
             text=value.name,
             href=None,
             badge=type(value).__name__,
+            external=False,
+        )
+    if isinstance(value, TemporalEntity):
+        return FixedValue(
+            text=format_datetime(
+                _DEFAULT_TIMEZONE.localize(value.date_time),
+                format=_BABEL_FORMATS_BY_PRECISION[value.precision],
+                locale=_DEFAULT_LOCALE,
+            ),
+            href=None,
+            badge=None,
             external=False,
         )
     return FixedValue(

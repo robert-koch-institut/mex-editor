@@ -771,7 +771,7 @@ version = "0.36.1"
 requires_python = "<3.13,>=3.11"
 git = "https://github.com/robert-koch-institut/mex-common.git"
 ref = "feature/mx-1702-type-prep"
-revision = "b8b7937305a9a9ac9bbfadfb28d8c93771384eaa"
+revision = "612c7cc4471eefd9b7ed1d89b7ff49f52d3a46d0"
 summary = "Common library for MEx python projects."
 groups = ["default"]
 dependencies = [

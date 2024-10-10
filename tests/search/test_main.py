@@ -18,7 +18,7 @@ def test_index(
     page.goto("http://localhost:3000")
     section = page.get_by_test_id("search-results-section")
     expect(section).to_be_visible()
-    page.screenshot(path="tests_search_test_main-test_index-on-load.jpeg")
+    page.screenshot(path="tests_search_test_main-test_index-on-load.png")
 
     # check heading is showing
     expect(page.get_by_text("showing 7 of total 7 items found")).to_be_visible()
@@ -39,7 +39,7 @@ def test_index(
     )
     activity.scroll_into_view_if_needed()
     expect(activity).to_be_visible()
-    page.screenshot(path="tests_search_test_main-test_index-focus-activity.jpeg")
+    page.screenshot(path="tests_search_test_main-test_index-focus-activity.png")
 
 
 @pytest.mark.integration()
@@ -77,13 +77,13 @@ def test_search_input(
     search_input.fill("mex")
     expect(page.get_by_text("showing 1 of total 1 items found")).to_be_visible()
     page.screenshot(
-        path="tests_search_test_main-test_index-on-search-input-1-found.jpeg"
+        path="tests_search_test_main-test_index-on-search-input-1-found.png"
     )
 
     search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
     expect(page.get_by_text("showing 0 of total 0 items found")).to_be_visible()
     page.screenshot(
-        path="tests_search_test_main-test_index-on-search-input-0-found.jpeg"
+        path="tests_search_test_main-test_index-on-search-input-0-found.png"
     )
     search_input.fill("")
 
@@ -109,6 +109,6 @@ def test_entity_types(
     entity_types.get_by_text("MergedActivity").click()
     expect(page.get_by_text("showing 1 of total 1 items found")).to_be_visible()
     page.screenshot(
-        path="tests_search_test_main-test_index-on-select-entity-1-found.jpeg"
+        path="tests_search_test_main-test_index-on-select-entity-1-found.png"
     )
     entity_types.get_by_text("MergedActivity").click()

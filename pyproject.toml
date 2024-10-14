@@ -20,12 +20,12 @@ dependencies = [
 ]
 optional-dependencies.dev = [
     "ipdb>=0.13.13,<1",
-    "mypy>=1.11.0,<2",
+    "mypy>=1.11.2,<2",
     "pytest-playwright>=0.5.2,<1",
     "pytest-random-order>=1.1.1,<2",
     "pytest>=8.3.3,<9",
-    "ruff>=0.5.4,<1",
-    "sphinx>=7.4.5,<8",
+    "ruff>=0.6.5,<1",
+    "sphinx>=8.0.2,<9",
     "types-PyYAML>=6.0.12,<7",
     "types-requests>=2.32.0,<3",
 ]

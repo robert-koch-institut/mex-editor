@@ -1,7 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
+from neo4j import GraphDatabase
 from playwright.sync_api import Page, expect
-from pydantic import SecretStr
+from pydantic import Field, SecretStr
 from pytest import MonkeyPatch
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -13,6 +14,7 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
+from mex.common.settings import BaseSettings
 from mex.common.types import Email, Link, Text, TextLanguage, Theme, YearMonthDay
 from mex.editor.settings import EditorSettings
 from mex.editor.types import EditorUserDatabase, EditorUserPassword
@@ -92,6 +94,49 @@ def writer_user_page(
     return page
 
 
+class GraphSettings(BaseSettings):
+    graph_url: str = Field(
+        "neo4j://localhost:7687",
+        description="URL for connecting to the graph database.",
+        validation_alias="MEX_GRAPH_URL",
+    )
+    graph_db: str = Field(
+        "neo4j",
+        description="Name of the default graph database.",
+        validation_alias="MEX_GRAPH_NAME",
+    )
+    graph_user: SecretStr = Field(
+        SecretStr("neo4j"),
+        description="Username for authenticating with the graph database.",
+        validation_alias="MEX_GRAPH_USER",
+    )
+    graph_password: SecretStr = Field(
+        SecretStr("password"),
+        description="Password for authenticating with the graph database.",
+        validation_alias="MEX_GRAPH_PASSWORD",
+    )
+
+
+@pytest.fixture(autouse=True)
+def isolate_graph_database(is_integration_test: bool) -> None:
+    """Automatically flush the graph database for integration testing."""
+    if is_integration_test:
+        settings = GraphSettings()
+        with GraphDatabase.driver(
+            settings.graph_url,
+            auth=(
+                settings.graph_user.get_secret_value(),
+                settings.graph_password.get_secret_value(),
+            ),
+            database=settings.graph_db,
+        ) as driver:
+            driver.execute_query("MATCH (n) DETACH DELETE n;")
+            for row in driver.execute_query("SHOW ALL CONSTRAINTS;").records:
+                driver.execute_query(f"DROP CONSTRAINT {row['name']};")
+            for row in driver.execute_query("SHOW ALL INDEXES;").records:
+                driver.execute_query(f"DROP INDEX {row['name']};")
+
+
 @pytest.fixture()
 def dummy_data() -> list[AnyExtractedModel]:
     """Create a set of interlinked dummy data."""
@@ -154,5 +199,5 @@ def dummy_data() -> list[AnyExtractedModel]:
 def load_dummy_data(dummy_data: list[AnyExtractedModel]) -> list[AnyExtractedModel]:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
-    connector.post_models(dummy_data)
+    connector.post_extracted_items(dummy_data)
     return dummy_data

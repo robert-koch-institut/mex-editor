@@ -51,7 +51,7 @@ class EditState(State):
                 editable_field.primary_sources.append(
                     EditablePrimarySource(
                         name=model.hadPrimarySource,
-                        values=[render_any_value(v) for v in value],
+                        editable_values=[render_any_value(v) for v in value],
                     )
                 )
         return list(fields_by_name.values())

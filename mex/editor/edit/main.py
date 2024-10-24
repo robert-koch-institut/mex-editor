@@ -21,7 +21,7 @@ def editable_primary_source(model: EditablePrimarySource) -> rx.Component:
         ),
         rx.vstack(
             rx.foreach(
-                model.values,
+                model.editable_values,
                 editable_value,
             )
         ),

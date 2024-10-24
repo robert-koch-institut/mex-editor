@@ -75,7 +75,7 @@ def pagination() -> rx.Component:
             ),
             rx.select(
                 SearchState.total_pages,
-                value=f"{SearchState.current_page}",
+                value=SearchState.current_page.to_string(),  # type: ignore[attr-defined]
                 on_change=SearchState.set_page,
                 custom_attrs={"data-testid": "pagination-page-select"},
             ),
@@ -108,7 +108,10 @@ def main_content() -> rx.Component:
                 SearchState.results,
                 search_result,
             ),
-            pagination(),
+            rx.cond(
+                SearchState.total_pages,
+                pagination(),
+            ),
             padding="10px",
         ),
         on_mount=SearchState.refresh,

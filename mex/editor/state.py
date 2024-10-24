@@ -31,7 +31,7 @@ class State(rx.State):
         NavItem(title="Merge", href_template=r"/merge/"),
     ]
 
-    def logout(self, _) -> EventSpec:
+    def logout(self) -> EventSpec:
         """Log out a user."""
         self.reset()
         return rx.redirect("/")

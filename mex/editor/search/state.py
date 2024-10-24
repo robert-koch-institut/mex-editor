@@ -51,28 +51,28 @@ class SearchState(rx.State):
         """Return a list of total pages based on the number of results."""
         return [f"{i+1}" for i in range(math.ceil(self.total / self.limit))]
 
-    def set_query_string(self, value: str):
+    def set_query_string(self, value: str) -> None:
         """Set the query string and refresh the results."""
         self.query_string = value
         self.refresh()
 
-    def set_entity_type(self, value, index):
+    def set_entity_type(self, value: bool, index: str) -> None:
         """Set the entity type for filtering and refresh the results."""
         self.entity_types[index] = value
         self.refresh()
 
-    def set_page(self, page_number: str | int):
+    def set_page(self, page_number: str) -> None:
         """Set the current page and refresh the results."""
         self.current_page = int(page_number)
         self.refresh()
 
-    def go_to_previous_page(self):
+    def go_to_previous_page(self) -> None:
         """Navigate to the previous page."""
-        self.set_page(self.current_page - 1)
+        self.set_page(str(self.current_page - 1))
 
-    def go_to_next_page(self):
+    def go_to_next_page(self) -> None:
         """Navigate to the next page."""
-        self.set_page(self.current_page + 1)
+        self.set_page(str(self.current_page + 1))
 
     def refresh(self) -> None:
         """Refresh the search results."""

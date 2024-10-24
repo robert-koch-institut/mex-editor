@@ -1,43 +1,67 @@
 AccessPlatform:
   title: title
   preview:
-    - alternativeTitle
+    - contact
     - unitInCharge
+    - endpointType
+    - technicalAccessibility
 Activity:
   title: title
   preview:
     - shortName
+    - contact
     - responsibleUnit
     - start
     - end
+BibliographicResource:
+  title: title
+  preview:
+    - bibliographicResourceType
+    - publicationYear
+    - creator
+    - accessRestriction
 ContactPoint:
   title: email
 Distribution:
   title: title
+  preview:
+    - mediaType
+    - issued
+    - accessRestriction
 Organization:
   title: officialName
   preview:
     - shortName
     - alternativeName
+    - wikidataId
 OrganizationalUnit:
   title: shortName
+  preview:
+    - name
 Person:
   title: fullName
   preview:
+    - givenName
+    - familyName
     - memberOf
+    - email
+    - orcidId
 PrimarySource:
   title: title
   preview:
-    - unitInCharge
     - contact
+    - unitInCharge
 Resource:
   title: title
   preview:
     - unitInCharge
-    - wasGeneratedBy
+    - theme
+    - resourceCreationMethod
+    - accessRestriction
 Variable:
   title: label
   preview:
+    - dataType
     - belongsTo
     - usedIn
 VariableGroup:

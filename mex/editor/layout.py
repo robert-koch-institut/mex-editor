@@ -71,7 +71,6 @@ def nav_bar() -> rx.Component:
         user_menu(),
         rx.spacer(),
         rx.color_mode.button(),
-        id="navbar",
         padding="1em",
         position="fixed",
         style={"background": "var(--accent-4)"},
@@ -91,11 +90,9 @@ def page(*children: str | rx.Component) -> rx.Component:
             rx.hstack(
                 *children,
                 min_height="85vh",
-                margin="2em 1em 1em",
+                margin="4em 0 0",
                 spacing="5",
             ),
-            on_mount=State.load_page,
-            on_unmount=State.unload_page,
         ),
         rx.center(
             rx.spinner(size="3"),

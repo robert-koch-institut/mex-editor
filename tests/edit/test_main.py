@@ -1,51 +1,120 @@
 import re
+from typing import cast
 
 import pytest
 from playwright.sync_api import Page, expect
 
-from mex.common.models import AnyExtractedModel
+from mex.common.models import AnyExtractedModel, ExtractedActivity
 
 
-@pytest.mark.integration()
-def test_index(
-    writer_user_page: Page,
-    load_dummy_data: list[AnyExtractedModel],
-) -> None:
-    extracted_activity = load_dummy_data[-1]
+@pytest.fixture()
+def extracted_activity(load_dummy_data: list[AnyExtractedModel]) -> ExtractedActivity:
+    return cast(ExtractedActivity, load_dummy_data[-1])
+
+
+@pytest.fixture()
+def edit_page(writer_user_page: Page, extracted_activity: ExtractedActivity) -> Page:
     page = writer_user_page
-
-    # load page and establish section is visible
     page.goto(f"http://localhost:3000/item/{extracted_activity.stableTargetId}")
     section = page.get_by_test_id("edit-section")
     expect(section).to_be_visible()
-    page.screenshot(path="tests_edit_test_main-test_index-on-load.jpeg")
+    return page
 
-    # check heading is showing
-    heading = page.get_by_test_id("edit-heading")
-    expect(heading).to_be_visible()
-    assert heading.inner_text() == "Aktivität 1"
 
-    # check nav item is selected
+@pytest.mark.integration()
+def test_edit_nav_bar(edit_page: Page) -> None:
+    page = edit_page
     nav_bar = page.get_by_test_id("nav-bar")
+    page.screenshot(path="tests_edit_test_main-test_edit_nav_bar.png")
     expect(nav_bar).to_be_visible()
     nav_item = nav_bar.get_by_text("Edit", exact=True)
     expect(nav_item).to_have_class(re.compile("rt-underline-always"))
 
-    # check title is showing
-    title = section.get_by_test_id("edit-heading")
-    expect(title).to_contain_text("Aktivität 1")
 
-    # check shortName field card is showing
-    field = section.get_by_text("shortName", exact=True)
-    field.scroll_into_view_if_needed()
-    page.screenshot(path="tests_edit_test_main-test_index-focus-field.jpeg")
-    expect(field).to_be_visible()
+@pytest.mark.integration()
+def test_edit_heading(edit_page: Page) -> None:
+    page = edit_page
+    heading = page.get_by_test_id("edit-heading")
+    page.screenshot(path="tests_edit_test_main-test_edit_heading.png")
+    expect(heading).to_be_visible()
+    assert re.match(r"Aktivität 1\s*de", heading.inner_text())
 
-    # check shortName value card is showing
-    value = section.get_by_text("value: A1", exact=True)
-    expect(value).to_be_visible()
 
-    # check primary source cards are showing
-    primary_sources = section.get_by_text(extracted_activity.hadPrimarySource).all()
+@pytest.mark.integration()
+def test_edit_fields(edit_page: Page, extracted_activity: ExtractedActivity) -> None:
+    page = edit_page
+    identifier_in_primary_source = page.get_by_test_id(
+        "field-identifierInPrimarySource"
+    )
+    page.screenshot(path="tests_edit_test_main-test_edit_fields.png")
+    expect(identifier_in_primary_source).to_be_visible()
+    all_fields = page.get_by_role("row").all()
+    assert len(all_fields) == len(extracted_activity.model_fields)
+
+
+@pytest.mark.integration()
+def test_edit_primary_sources(
+    edit_page: Page, extracted_activity: ExtractedActivity
+) -> None:
+    page = edit_page
+    had_primary_source = page.get_by_test_id(
+        "primary-source-hadPrimarySource_gGdOIbDIHRt35He616Fv5q"
+    )
+    page.screenshot(path="tests_edit_test_main-test_edit_primary_sources.png")
+    expect(had_primary_source).to_be_visible()
+    all_primary_sources = page.get_by_text(extracted_activity.hadPrimarySource).all()
     set_values = extracted_activity.model_dump(exclude_none=True, exclude_defaults=True)
-    assert len(primary_sources) == len(set_values)
+    assert len(all_primary_sources) == len(set_values)
+
+
+@pytest.mark.integration()
+def test_edit_text(edit_page: Page) -> None:
+    page = edit_page
+    text = page.get_by_test_id("value-title_gGdOIbDIHRt35He616Fv5q_0")
+    page.screenshot(path="tests_edit_test_main-test_edit_text.png")
+    expect(text).to_be_visible()
+    expect(text).to_contain_text("Aktivität 1")  # text value
+    expect(text).to_contain_text("de")  # language badge
+
+
+@pytest.mark.integration()
+def test_edit_vocab(edit_page: Page) -> None:
+    page = edit_page
+    theme = page.get_by_test_id("value-theme_gGdOIbDIHRt35He616Fv5q_0")
+    page.screenshot(path="tests_edit_test_main-test_edit_vocab.png")
+    expect(theme).to_be_visible()
+    expect(theme).to_contain_text("DIGITAL_PUBLIC_HEALTH")  # theme value
+    expect(theme).to_contain_text("Theme")  # vocabulary name
+
+
+@pytest.mark.integration()
+def test_edit_link(edit_page: Page) -> None:
+    page = edit_page
+    website = page.get_by_test_id("value-website_gGdOIbDIHRt35He616Fv5q_0")
+    page.screenshot(path="tests_edit_test_main-test_edit_link.png")
+    expect(website).to_be_visible()
+    link = website.get_by_role("link")
+    expect(link).to_contain_text("Activity Homepage")  # link title
+    expect(link).to_have_attribute("href", "https://activity-1")  # link href
+    expect(link).to_have_attribute("target", "_blank")  # external link
+
+
+@pytest.mark.integration()
+def test_edit_temporal(edit_page: Page) -> None:
+    page = edit_page
+    start = page.get_by_test_id("value-start_gGdOIbDIHRt35He616Fv5q_0")
+    page.screenshot(path="tests_edit_test_main-test_edit_temporal.png")
+    expect(start).to_be_visible()
+    expect(start).to_contain_text("24. Dezember 1999")  # temporal localization
+
+
+@pytest.mark.integration()
+def test_edit_identifier(edit_page: Page) -> None:
+    page = edit_page
+    contact = page.get_by_test_id("value-contact_gGdOIbDIHRt35He616Fv5q_2")
+    page.screenshot(path="tests_edit_test_main-test_edit_identifier.png")
+    expect(contact).to_be_visible()
+    link = contact.get_by_role("link")
+    expect(link).to_contain_text("cWWm02l1c6cucKjIhkFqY4")  # not resolved yet
+    expect(link).to_have_attribute("href", "/item/cWWm02l1c6cucKjIhkFqY4/")  # link href
+    expect(link).not_to_have_attribute("target", "_blank")  # internal link

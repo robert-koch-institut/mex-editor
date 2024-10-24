@@ -8,9 +8,9 @@ def test_index(writer_user_page: Page) -> None:
 
     # load page and establish section is visible
     page.goto("http://localhost:3000/merge")
-    section = page.get_by_test_id("merge-section")
-    expect(section).to_be_visible()
-    page.screenshot(path="tests_merge_test_main-test_index-on-load.jpeg")
+    heading = page.get_by_test_id("merge-heading")
+    expect(heading).to_be_visible()
+    page.screenshot(path="tests_merge_test_main-test_index-on-load.png")
 
     # check heading is showing
     heading = page.get_by_test_id("merge-heading")

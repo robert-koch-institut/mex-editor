@@ -38,6 +38,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Testing / coverage reports
+tests/
 htmlcov/
 .tox/
 .nox/

@@ -21,7 +21,7 @@ class SearchState(State):
     query_string: str = ""
     entity_types: dict[str, bool] = {k: False for k in MERGED_MODEL_CLASSES_BY_NAME}
     current_page: int = 1
-    limit: int = 25
+    limit: int = 50
 
     @rx.var
     def disable_previous_page(self) -> bool:

@@ -80,7 +80,10 @@ def entity_type_filter() -> rx.Component:
                 rc.checkbox(
                     choice[0],
                     checked=choice[1],
-                    on_change=lambda val: SearchState.set_entity_type(val, choice[0]),  # type: ignore[call-arg]
+                    on_change=lambda val: SearchState.set_entity_type(  # type: ignore[call-arg]
+                        val,
+                        choice[0],
+                    ),
                 ),
                 debounce_timeout=100,
             ),

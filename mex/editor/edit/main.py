@@ -53,7 +53,10 @@ def editable_field(model: EditableField) -> rx.Component:
         ),
         rx.foreach(
             model.primary_sources,
-            lambda primary_source: editable_primary_source(model.name, primary_source),
+            lambda primary_source: editable_primary_source(
+                model.name,
+                primary_source,
+            ),
         ),
         role="row",
     )

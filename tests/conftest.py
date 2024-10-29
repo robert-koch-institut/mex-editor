@@ -23,7 +23,7 @@ from mex.mex import app
 pytest_plugins = ("mex.common.testing.plugin",)
 
 
-@pytest.fixture()
+@pytest.fixture
 def client() -> TestClient:
     """Return a fastAPI test client initialized with our app."""
     with TestClient(app.api, raise_server_exceptions=False) as test_client:
@@ -50,7 +50,7 @@ def patch_editor_user_database(
         )
 
 
-@pytest.fixture()
+@pytest.fixture
 def reader_user_credentials() -> tuple[str, SecretStr]:
     settings = EditorSettings.get()
     for username, password in settings.editor_user_database["read"].items():
@@ -58,7 +58,7 @@ def reader_user_credentials() -> tuple[str, SecretStr]:
     raise RuntimeError("No reader configured")  # pragma: no cover
 
 
-@pytest.fixture()
+@pytest.fixture
 def writer_user_credentials() -> tuple[str, SecretStr]:
     settings = EditorSettings.get()
     for username, password in settings.editor_user_database["write"].items():
@@ -74,7 +74,7 @@ def login_user(page: Page, username: str, password: SecretStr) -> Page:
     return page
 
 
-@pytest.fixture()
+@pytest.fixture
 def reader_user_page(
     page: Page,
     reader_user_credentials: tuple[str, SecretStr],
@@ -84,7 +84,7 @@ def reader_user_page(
     return page
 
 
-@pytest.fixture()
+@pytest.fixture
 def writer_user_page(
     page: Page,
     writer_user_credentials: tuple[str, SecretStr],
@@ -137,7 +137,7 @@ def isolate_graph_database(is_integration_test: bool) -> None:
                 driver.execute_query(f"DROP INDEX {row['name']};")
 
 
-@pytest.fixture()
+@pytest.fixture
 def dummy_data() -> list[AnyExtractedModel]:
     """Create a set of interlinked dummy data."""
     primary_source_1 = ExtractedPrimarySource(
@@ -195,7 +195,7 @@ def dummy_data() -> list[AnyExtractedModel]:
     ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def load_dummy_data(dummy_data: list[AnyExtractedModel]) -> list[AnyExtractedModel]:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()

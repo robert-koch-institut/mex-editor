@@ -1,5 +1,6 @@
 from collections.abc import Iterable
 
+from mex.common.exceptions import MExError
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
@@ -21,7 +22,11 @@ def transform_models_to_fields(
         elif isinstance(model, AnyRuleModel):
             primary_source_name = transform_value(MEX_PRIMARY_SOURCE_STABLE_TARGET_ID)
         else:
-            raise RuntimeError(f"{model} has wrong type")
+            msg = (
+                "cannot transform model, expected extracted ExtractedData or "
+                f"RuleItem, got {type(model).__name__}"
+            )
+            raise MExError(msg)
         for field_name in model.model_fields:
             editable_field = EditableField(name=field_name, primary_sources=[])
             fields_by_name.setdefault(field_name, editable_field)

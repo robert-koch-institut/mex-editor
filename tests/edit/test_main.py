@@ -7,12 +7,12 @@ from playwright.sync_api import Page, expect
 from mex.common.models import AnyExtractedModel, ExtractedActivity
 
 
-@pytest.fixture()
+@pytest.fixture
 def extracted_activity(load_dummy_data: list[AnyExtractedModel]) -> ExtractedActivity:
     return cast(ExtractedActivity, load_dummy_data[-1])
 
 
-@pytest.fixture()
+@pytest.fixture
 def edit_page(writer_user_page: Page, extracted_activity: ExtractedActivity) -> Page:
     page = writer_user_page
     page.goto(f"http://localhost:3000/item/{extracted_activity.stableTargetId}")
@@ -21,7 +21,7 @@ def edit_page(writer_user_page: Page, extracted_activity: ExtractedActivity) -> 
     return page
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_edit_nav_bar(edit_page: Page) -> None:
     page = edit_page
     nav_bar = page.get_by_test_id("nav-bar")
@@ -31,7 +31,7 @@ def test_edit_nav_bar(edit_page: Page) -> None:
     expect(nav_item).to_have_class(re.compile("rt-underline-always"))
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_edit_heading(edit_page: Page) -> None:
     page = edit_page
     heading = page.get_by_test_id("edit-heading")
@@ -40,7 +40,7 @@ def test_edit_heading(edit_page: Page) -> None:
     assert re.match(r"Aktivität 1\s*de", heading.inner_text())
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_edit_fields(edit_page: Page, extracted_activity: ExtractedActivity) -> None:
     page = edit_page
     identifier_in_primary_source = page.get_by_test_id(
@@ -52,7 +52,7 @@ def test_edit_fields(edit_page: Page, extracted_activity: ExtractedActivity) -> 
     assert len(all_fields) == len(extracted_activity.model_fields)
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_edit_primary_sources(
     edit_page: Page, extracted_activity: ExtractedActivity
 ) -> None:
@@ -67,7 +67,7 @@ def test_edit_primary_sources(
     assert len(all_primary_sources) == len(set_values)
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_edit_text(edit_page: Page) -> None:
     page = edit_page
     text = page.get_by_test_id("value-title_gGdOIbDIHRt35He616Fv5q_0")
@@ -77,7 +77,7 @@ def test_edit_text(edit_page: Page) -> None:
     expect(text).to_contain_text("de")  # language badge
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_edit_vocab(edit_page: Page) -> None:
     page = edit_page
     theme = page.get_by_test_id("value-theme_gGdOIbDIHRt35He616Fv5q_0")
@@ -87,7 +87,7 @@ def test_edit_vocab(edit_page: Page) -> None:
     expect(theme).to_contain_text("Theme")  # vocabulary name
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_edit_link(edit_page: Page) -> None:
     page = edit_page
     website = page.get_by_test_id("value-website_gGdOIbDIHRt35He616Fv5q_0")
@@ -99,7 +99,7 @@ def test_edit_link(edit_page: Page) -> None:
     expect(link).to_have_attribute("target", "_blank")  # external link
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_edit_temporal(edit_page: Page) -> None:
     page = edit_page
     start = page.get_by_test_id("value-start_gGdOIbDIHRt35He616Fv5q_0")
@@ -108,7 +108,7 @@ def test_edit_temporal(edit_page: Page) -> None:
     expect(start).to_contain_text("24. Dezember 1999")  # temporal localization
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_edit_identifier(edit_page: Page) -> None:
     page = edit_page
     contact = page.get_by_test_id("value-contact_gGdOIbDIHRt35He616Fv5q_2")

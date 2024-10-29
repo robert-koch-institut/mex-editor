@@ -71,7 +71,7 @@ class SearchState(State):
 
     def search(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results."""
-        # TODO: use the user auth for backend requests (stop-gap MX-1616)
+        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
         try:
             response = connector.fetch_merged_items(

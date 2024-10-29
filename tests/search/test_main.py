@@ -6,7 +6,7 @@ from playwright.sync_api import Page, expect
 from mex.common.models import AnyExtractedModel
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_index(
     writer_user_page: Page,
     load_dummy_data: list[AnyExtractedModel],
@@ -42,7 +42,7 @@ def test_index(
     page.screenshot(path="tests_search_test_main-test_index-focus-activity.png")
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_pagination(
     writer_user_page: Page,
@@ -59,7 +59,7 @@ def test_pagination(
     assert pagination_page_select.inner_text() == "1"
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_search_input(
     writer_user_page: Page,
@@ -88,7 +88,7 @@ def test_search_input(
     search_input.fill("")
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_entity_types(
     writer_user_page: Page,
@@ -103,9 +103,8 @@ def test_entity_types(
     # check entity types are showing and functioning
     entity_types = page.get_by_test_id("entity-types")
     expect(entity_types).to_be_visible()
-    assert (
-        "MergedPrimarySource" and "MergedPerson" in entity_types.all_text_contents()[0]
-    )
+    assert "MergedPrimarySource" in entity_types.all_text_contents()[0]
+
     entity_types.get_by_text("MergedActivity").click()
     expect(page.get_by_text("showing 1 of total 1 items found")).to_be_visible()
     page.screenshot(

@@ -25,16 +25,16 @@ def test_index(
 
     # check mex primary source is showing
     primary_source = page.get_by_text(
-        re.compile(r"^MergedPrimarySource\s*00000000000000$")
+        re.compile(r"^00000000000000\s*MergedPrimarySource$")
     )
     expect(primary_source).to_be_visible()
 
     # check activity is showing
     activity = page.get_by_text(
         re.compile(
-            r"^Aktivität 1\s*value: A1 . "
+            r"Aktivität 1\s*de\s*A1"
             + organizational_unit.stableTargetId  # unitInCharge
-            + r" . 1999-12-24 . 2023-01-01$"
+            + r"\s*24\. Dezember 1999\s*1\. Januar 2023"
         )
     )
     activity.scroll_into_view_if_needed()

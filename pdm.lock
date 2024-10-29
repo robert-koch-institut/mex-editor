@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:629baf3084549e3684c8a1176a10afa5895be3b5de9a0144241917f3a0d061a2"
+content_hash = "sha256:b6109cf7a567c07c9f7a4a206fe68180d067236d41adb93aa362bd032e86ed70"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -44,7 +44,7 @@ name = "annotated-types"
 version = "0.7.0"
 requires_python = ">=3.8"
 summary = "Reusable constraint types to use with typing.Annotated"
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "typing-extensions>=4.0.0; python_version < \"3.9\"",
 ]
@@ -58,7 +58,7 @@ name = "anyio"
 version = "4.6.2.post1"
 requires_python = ">=3.9"
 summary = "High level compatibility layer for multiple asynchronous event loop implementations"
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "exceptiongroup>=1.0.2; python_version < \"3.11\"",
     "idna>=2.8",
@@ -119,7 +119,7 @@ name = "backoff"
 version = "2.2.1"
 requires_python = ">=3.7,<4.0"
 summary = "Function decoration for backoff and retry"
-groups = ["default"]
+groups = ["default", "dev"]
 files = [
     {file = "backoff-2.2.1-py3-none-any.whl", hash = "sha256:63579f9a0628e06278f7e47b7d7d5b6ce20dc65c5e96a6f3ca99a6adca0396e8"},
     {file = "backoff-2.2.1.tar.gz", hash = "sha256:03f829f5bb1923180821643f8753b0502c3b682293992485b0eef2807afa5cba"},
@@ -234,7 +234,7 @@ name = "click"
 version = "8.1.7"
 requires_python = ">=3.7"
 summary = "Composable command line interface toolkit"
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "colorama; platform_system == \"Windows\"",
     "importlib-metadata; python_version < \"3.8\"",
@@ -340,7 +340,7 @@ name = "fastapi"
 version = "0.115.4"
 requires_python = ">=3.8"
 summary = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4",
     "starlette<0.42.0,>=0.40.0",
@@ -390,7 +390,7 @@ name = "h11"
 version = "0.14.0"
 requires_python = ">=3.7"
 summary = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "typing-extensions; python_version < \"3.8\"",
 ]
@@ -404,7 +404,7 @@ name = "httpcore"
 version = "1.0.6"
 requires_python = ">=3.8"
 summary = "A minimal low-level HTTP client."
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "certifi",
     "h11<0.15,>=0.13",
@@ -415,11 +415,28 @@ files = [
 ]
 
 [[package]]
+name = "httptools"
+version = "0.6.4"
+requires_python = ">=3.8.0"
+summary = "A collection of framework independent HTTP protocol utils."
+groups = ["dev"]
+files = [
+    {file = "httptools-0.6.4-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:f47f8ed67cc0ff862b84a1189831d1d33c963fb3ce1ee0c65d3b0cbe7b711069"},
+    {file = "httptools-0.6.4-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:0614154d5454c21b6410fdf5262b4a3ddb0f53f1e1721cfd59d55f32138c578a"},
+    {file = "httptools-0.6.4-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f8787367fbdfccae38e35abf7641dafc5310310a5987b689f4c32cc8cc3ee975"},
+    {file = "httptools-0.6.4-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:40b0f7fe4fd38e6a507bdb751db0379df1e99120c65fbdc8ee6c1d044897a636"},
+    {file = "httptools-0.6.4-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:40a5ec98d3f49904b9fe36827dcf1aadfef3b89e2bd05b0e35e94f97c2b14721"},
+    {file = "httptools-0.6.4-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:dacdd3d10ea1b4ca9df97a0a303cbacafc04b5cd375fa98732678151643d4988"},
+    {file = "httptools-0.6.4-cp311-cp311-win_amd64.whl", hash = "sha256:288cd628406cc53f9a541cfaf06041b4c71d751856bab45e3702191f931ccd17"},
+    {file = "httptools-0.6.4.tar.gz", hash = "sha256:4e93eee4add6493b59a5c514da98c939b244fce4a0d8879cd3f466562f4b7d5c"},
+]
+
+[[package]]
 name = "httpx"
 version = "0.27.2"
 requires_python = ">=3.8"
 summary = "The next generation HTTP client."
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "anyio",
     "certifi",
@@ -644,7 +661,7 @@ files = [
 name = "langdetect"
 version = "1.0.9"
 summary = "Language detection library ported from Google's language-detection."
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "six",
 ]
@@ -671,7 +688,7 @@ files = [
 name = "ldap3"
 version = "2.9.1"
 summary = "A strictly RFC 4510 conforming LDAP V3 pure Python client library"
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "pyasn1>=0.4.6",
 ]
@@ -755,6 +772,26 @@ files = [
 ]
 
 [[package]]
+name = "mex-backend"
+version = "0.20.0"
+requires_python = ">=3.11,<3.13"
+git = "https://github.com/robert-koch-institut/mex-backend.git"
+ref = "feature/model-update-v3"
+revision = "ab3fa4f624311e8e56a5390e329cde3182882a44"
+summary = "Backend server for the RKI metadata exchange."
+groups = ["dev"]
+dependencies = [
+    "fastapi<1,>=0.115.4",
+    "httpx<1,>=0.27.2",
+    "jinja2<4,>=3.1.4",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.40.0",
+    "neo4j<6,>=5.24.0",
+    "pydantic<3,>=2.9.1",
+    "starlette<1,>=0.41.2",
+    "uvicorn[standard]<1,>=0.30.6",
+]
+
+[[package]]
 name = "mex-common"
 version = "0.40.0"
 requires_python = ">=3.11,<3.13"
@@ -762,7 +799,7 @@ git = "https://github.com/robert-koch-institut/mex-common.git"
 ref = "0.40.0"
 revision = "402bfd513270659047bc8364179d7ed759685c93"
 summary = "Common library for MEx python projects."
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "backoff<3,>=2.2.1",
     "click<9,>=8.1.7",
@@ -786,7 +823,7 @@ git = "https://github.com/robert-koch-institut/mex-model.git"
 ref = "3.1.0"
 revision = "61283bbb386573e18db79ec86dbc03363b4348ce"
 summary = "JSON schema files defining the MEx metadata model."
-groups = ["default"]
+groups = ["default", "dev"]
 
 [[package]]
 name = "more-itertools"
@@ -874,7 +911,7 @@ name = "numpy"
 version = "2.1.2"
 requires_python = ">=3.10"
 summary = "Fundamental package for array computing in Python"
-groups = ["default"]
+groups = ["default", "dev"]
 files = [
     {file = "numpy-2.1.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:b42a1a511c81cc78cbc4539675713bbcf9d9c3913386243ceff0e9429ca892fe"},
     {file = "numpy-2.1.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:faa88bc527d0f097abdc2c663cddf37c05a1c2f113716601555249805cf573f1"},
@@ -905,7 +942,7 @@ name = "pandas"
 version = "2.2.3"
 requires_python = ">=3.9"
 summary = "Powerful data structures for data analysis, time series, and statistics"
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "numpy>=1.22.4; python_version < \"3.11\"",
     "numpy>=1.23.2; python_version == \"3.11\"",
@@ -1088,7 +1125,7 @@ name = "pyarrow"
 version = "17.0.0"
 requires_python = ">=3.8"
 summary = "Python library for Apache Arrow"
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "numpy>=1.16.6",
 ]
@@ -1108,7 +1145,7 @@ name = "pyasn1"
 version = "0.6.1"
 requires_python = ">=3.8"
 summary = "Pure-Python implementation of ASN.1 types and DER/BER/CER codecs (X.208)"
-groups = ["default"]
+groups = ["default", "dev"]
 files = [
     {file = "pyasn1-0.6.1-py3-none-any.whl", hash = "sha256:0d632f46f2ba09143da3a8afe9e33fb6f92fa2320ab7e886e2d0f7672af84629"},
     {file = "pyasn1-0.6.1.tar.gz", hash = "sha256:6f580d2bdd84365380830acf45550f2511469f673cb4a5ae3857a3170128b034"},
@@ -1131,7 +1168,7 @@ name = "pydantic"
 version = "2.9.2"
 requires_python = ">=3.8"
 summary = "Data validation using Python type hints"
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "annotated-types>=0.6.0",
     "pydantic-core==2.23.4",
@@ -1148,7 +1185,7 @@ name = "pydantic-core"
 version = "2.23.4"
 requires_python = ">=3.8"
 summary = "Core functionality for Pydantic validation and serialization"
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "typing-extensions!=4.7.0,>=4.6.0",
 ]
@@ -1173,7 +1210,7 @@ name = "pydantic-settings"
 version = "2.6.0"
 requires_python = ">=3.8"
 summary = "Settings management using Pydantic"
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "pydantic>=2.7.0",
     "python-dotenv>=0.21.0",
@@ -1289,7 +1326,7 @@ name = "python-dateutil"
 version = "2.9.0.post0"
 requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 summary = "Extensions to the standard Python datetime module"
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "six>=1.5",
 ]
@@ -1303,7 +1340,7 @@ name = "python-dotenv"
 version = "1.0.1"
 requires_python = ">=3.8"
 summary = "Read key-value pairs from a .env file and set them as environment variables"
-groups = ["default"]
+groups = ["default", "dev"]
 files = [
     {file = "python-dotenv-1.0.1.tar.gz", hash = "sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca"},
     {file = "python_dotenv-1.0.1-py3-none-any.whl", hash = "sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a"},
@@ -1390,7 +1427,7 @@ name = "pyyaml"
 version = "6.0.2"
 requires_python = ">=3.8"
 summary = "YAML parser and emitter for Python"
-groups = ["default"]
+groups = ["default", "dev"]
 files = [
     {file = "PyYAML-6.0.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:cc1c1159b3d456576af7a3e4d1ba7e6924cb39de8f67111c735f6fc832082774"},
     {file = "PyYAML-6.0.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:1e2120ef853f59c7419231f3bf4e7021f1b936f6ebd222406c3b60212205d2ee"},
@@ -1667,7 +1704,7 @@ name = "sniffio"
 version = "1.3.1"
 requires_python = ">=3.7"
 summary = "Sniff out which async library your code is running under"
-groups = ["default"]
+groups = ["default", "dev"]
 files = [
     {file = "sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2"},
     {file = "sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc"},
@@ -1839,7 +1876,7 @@ name = "starlette"
 version = "0.41.2"
 requires_python = ">=3.8"
 summary = "The little ASGI library that shines."
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "anyio<5,>=3.4.0",
     "typing-extensions>=3.10.0; python_version < \"3.10\"",
@@ -2001,7 +2038,7 @@ name = "tzdata"
 version = "2024.2"
 requires_python = ">=2"
 summary = "Provider of IANA time zone data"
-groups = ["default"]
+groups = ["default", "dev"]
 files = [
     {file = "tzdata-2024.2-py2.py3-none-any.whl", hash = "sha256:a48093786cdcde33cad18c2555e8532f34422074448fbc874186f0abd79565cd"},
     {file = "tzdata-2024.2.tar.gz", hash = "sha256:7d85cc416e9382e69095b7bdf4afd9e3880418a2413feec7069d533d6b4e31cc"},
@@ -2023,7 +2060,7 @@ name = "uvicorn"
 version = "0.32.0"
 requires_python = ">=3.8"
 summary = "The lightning-fast ASGI server."
-groups = ["default"]
+groups = ["default", "dev"]
 dependencies = [
     "click>=7.0",
     "h11>=0.8",
@@ -2032,6 +2069,71 @@ dependencies = [
 files = [
     {file = "uvicorn-0.32.0-py3-none-any.whl", hash = "sha256:60b8f3a5ac027dcd31448f411ced12b5ef452c646f76f02f8cc3f25d8d26fd82"},
     {file = "uvicorn-0.32.0.tar.gz", hash = "sha256:f78b36b143c16f54ccdb8190d0a26b5f1901fe5a3c777e1ab29f26391af8551e"},
+]
+
+[[package]]
+name = "uvicorn"
+version = "0.32.0"
+extras = ["standard"]
+requires_python = ">=3.8"
+summary = "The lightning-fast ASGI server."
+groups = ["dev"]
+dependencies = [
+    "colorama>=0.4; sys_platform == \"win32\"",
+    "httptools>=0.5.0",
+    "python-dotenv>=0.13",
+    "pyyaml>=5.1",
+    "uvicorn==0.32.0",
+    "uvloop!=0.15.0,!=0.15.1,>=0.14.0; (sys_platform != \"cygwin\" and sys_platform != \"win32\") and platform_python_implementation != \"PyPy\"",
+    "watchfiles>=0.13",
+    "websockets>=10.4",
+]
+files = [
+    {file = "uvicorn-0.32.0-py3-none-any.whl", hash = "sha256:60b8f3a5ac027dcd31448f411ced12b5ef452c646f76f02f8cc3f25d8d26fd82"},
+    {file = "uvicorn-0.32.0.tar.gz", hash = "sha256:f78b36b143c16f54ccdb8190d0a26b5f1901fe5a3c777e1ab29f26391af8551e"},
+]
+
+[[package]]
+name = "uvloop"
+version = "0.21.0"
+requires_python = ">=3.8.0"
+summary = "Fast implementation of asyncio event loop on top of libuv"
+groups = ["dev"]
+marker = "(sys_platform != \"cygwin\" and sys_platform != \"win32\") and platform_python_implementation != \"PyPy\""
+files = [
+    {file = "uvloop-0.21.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:c0f3fa6200b3108919f8bdabb9a7f87f20e7097ea3c543754cabc7d717d95cf8"},
+    {file = "uvloop-0.21.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:0878c2640cf341b269b7e128b1a5fed890adc4455513ca710d77d5e93aa6d6a0"},
+    {file = "uvloop-0.21.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b9fb766bb57b7388745d8bcc53a359b116b8a04c83a2288069809d2b3466c37e"},
+    {file = "uvloop-0.21.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8a375441696e2eda1c43c44ccb66e04d61ceeffcd76e4929e527b7fa401b90fb"},
+    {file = "uvloop-0.21.0-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:baa0e6291d91649c6ba4ed4b2f982f9fa165b5bbd50a9e203c416a2797bab3c6"},
+    {file = "uvloop-0.21.0-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:4509360fcc4c3bd2c70d87573ad472de40c13387f5fda8cb58350a1d7475e58d"},
+    {file = "uvloop-0.21.0.tar.gz", hash = "sha256:3bf12b0fda68447806a7ad847bfa591613177275d35b6724b1ee573faa3704e3"},
+]
+
+[[package]]
+name = "watchfiles"
+version = "0.24.0"
+requires_python = ">=3.8"
+summary = "Simple, modern and high performance file watching and code reload in python."
+groups = ["dev"]
+dependencies = [
+    "anyio>=3.0.0",
+]
+files = [
+    {file = "watchfiles-0.24.0-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:bdcd5538e27f188dd3c804b4a8d5f52a7fc7f87e7fd6b374b8e36a4ca03db428"},
+    {file = "watchfiles-0.24.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:2dadf8a8014fde6addfd3c379e6ed1a981c8f0a48292d662e27cabfe4239c83c"},
+    {file = "watchfiles-0.24.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6509ed3f467b79d95fc62a98229f79b1a60d1b93f101e1c61d10c95a46a84f43"},
+    {file = "watchfiles-0.24.0-cp311-cp311-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:8360f7314a070c30e4c976b183d1d8d1585a4a50c5cb603f431cebcbb4f66327"},
+    {file = "watchfiles-0.24.0-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:316449aefacf40147a9efaf3bd7c9bdd35aaba9ac5d708bd1eb5763c9a02bef5"},
+    {file = "watchfiles-0.24.0-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:73bde715f940bea845a95247ea3e5eb17769ba1010efdc938ffcb967c634fa61"},
+    {file = "watchfiles-0.24.0-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:3770e260b18e7f4e576edca4c0a639f704088602e0bc921c5c2e721e3acb8d15"},
+    {file = "watchfiles-0.24.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:aa0fd7248cf533c259e59dc593a60973a73e881162b1a2f73360547132742823"},
+    {file = "watchfiles-0.24.0-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:d7a2e3b7f5703ffbd500dabdefcbc9eafeff4b9444bbdd5d83d79eedf8428fab"},
+    {file = "watchfiles-0.24.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:d831ee0a50946d24a53821819b2327d5751b0c938b12c0653ea5be7dea9c82ec"},
+    {file = "watchfiles-0.24.0-cp311-none-win32.whl", hash = "sha256:49d617df841a63b4445790a254013aea2120357ccacbed00253f9c2b5dc24e2d"},
+    {file = "watchfiles-0.24.0-cp311-none-win_amd64.whl", hash = "sha256:d3dcb774e3568477275cc76554b5a565024b8ba3a0322f77c246bc7111c5bb9c"},
+    {file = "watchfiles-0.24.0-cp311-none-win_arm64.whl", hash = "sha256:9301c689051a4857d5b10777da23fafb8e8e921bcf3abe6448a058d27fb67633"},
+    {file = "watchfiles-0.24.0.tar.gz", hash = "sha256:afb72325b74fa7a428c009c1b8be4b4d7c2afedafb2982827ef2156646df2fe1"},
 ]
 
 [[package]]
@@ -2053,7 +2155,7 @@ name = "websockets"
 version = "13.1"
 requires_python = ">=3.8"
 summary = "An implementation of the WebSocket Protocol (RFC 6455 & 7692)"
-groups = ["default"]
+groups = ["default", "dev"]
 files = [
     {file = "websockets-13.1-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:61fc0dfcda609cda0fc9fe7977694c0c59cf9d749fbb17f4e9483929e3c48a19"},
     {file = "websockets-13.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:ceec59f59d092c5007e815def4ebb80c2de330e9588e101cf8bd94c143ec78a5"},

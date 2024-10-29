@@ -1,11 +1,15 @@
+import concurrent.futures
+from contextlib import closing
+
 import pytest
 from fastapi.testclient import TestClient
-from neo4j import GraphDatabase
 from playwright.sync_api import Page, expect
 from pydantic import Field, SecretStr
 from pytest import MonkeyPatch
 
+from mex.backend.graph.connector import GraphConnector
 from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.logging import logger
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
@@ -117,24 +121,27 @@ class GraphSettings(BaseSettings):
     )
 
 
+def rebuild_graph() -> str:
+    """Reset the graph and re-seed it with MEx primary source and constraints."""
+    with closing(GraphConnector()) as connector:
+        connector.driver.execute_query("MATCH (n) DETACH DELETE n;")
+        for row in connector.driver.execute_query("SHOW ALL CONSTRAINTS;").records:
+            connector.driver.execute_query(f"DROP CONSTRAINT {row['name']};")
+        for row in connector.driver.execute_query("SHOW ALL INDEXES;").records:
+            connector.driver.execute_query(f"DROP INDEX {row['name']};")
+    connector = GraphConnector.get()
+    result = connector.commit("RETURN 'rebuilt graph for next test' AS status;")
+    return result["status"]
+
+
 @pytest.fixture(autouse=True)
 def isolate_graph_database(is_integration_test: bool) -> None:
-    """Automatically flush the graph database for integration testing."""
+    """Rebuild the graph in a sub-process, so the settings won't get angry with us."""
     if is_integration_test:
-        settings = GraphSettings()
-        with GraphDatabase.driver(
-            settings.graph_url,
-            auth=(
-                settings.graph_user.get_secret_value(),
-                settings.graph_password.get_secret_value(),
-            ),
-            database=settings.graph_db,
-        ) as driver:
-            driver.execute_query("MATCH (n) DETACH DELETE n;")
-            for row in driver.execute_query("SHOW ALL CONSTRAINTS;").records:
-                driver.execute_query(f"DROP CONSTRAINT {row['name']};")
-            for row in driver.execute_query("SHOW ALL INDEXES;").records:
-                driver.execute_query(f"DROP INDEX {row['name']};")
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            future = executor.submit(rebuild_graph)
+            result = future.result()
+            logger.info(result)
 
 
 @pytest.fixture

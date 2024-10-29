@@ -83,7 +83,7 @@ def test_edit_vocab(edit_page: Page) -> None:
     theme = page.get_by_test_id("value-theme_gGdOIbDIHRt35He616Fv5q_0")
     page.screenshot(path="tests_edit_test_main-test_edit_vocab.png")
     expect(theme).to_be_visible()
-    expect(theme).to_contain_text("DIGITAL_PUBLIC_HEALTH")  # theme value
+    expect(theme).to_contain_text("INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY")  # theme value
     expect(theme).to_contain_text("Theme")  # vocabulary name
 
 

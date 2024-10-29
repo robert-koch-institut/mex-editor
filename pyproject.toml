@@ -10,12 +10,13 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "babel>=2.16.0,<3",
     "fastapi>=0.115.4,<1",
-    "mex-common@git+https://github.com/robert-koch-institut/mex-common.git@0.38.0",
+    "mex-common@git+https://github.com/robert-koch-institut/mex-common.git@0.40.0",
     "pydantic>=2.9.2,<3",
     "pytz>=2024.1,<2024.2",
     "pyyaml>=6.0.2,<7",
     "reflex-chakra>=0.6.2,<1",
     "reflex>=0.5.10,<0.6.3",
+    "requests<3,>=2.32.3",
     "starlette>=0.41.2,<1",
     "uvicorn>=0.32.0,<1",
 ]

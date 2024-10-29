@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:78d6226d16d422d1268cecf468c6aad95cf2bc34565949a5c29b930bbb20ee3d"
+content_hash = "sha256:629baf3084549e3684c8a1176a10afa5895be3b5de9a0144241917f3a0d061a2"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -756,11 +756,11 @@ files = [
 
 [[package]]
 name = "mex-common"
-version = "0.38.0"
+version = "0.40.0"
 requires_python = ">=3.11,<3.13"
 git = "https://github.com/robert-koch-institut/mex-common.git"
-ref = "0.38.0"
-revision = "c428ac48a1b6ff458573ea35374cefc7ef6cf025"
+ref = "0.40.0"
+revision = "402bfd513270659047bc8364179d7ed759685c93"
 summary = "Common library for MEx python projects."
 groups = ["default"]
 dependencies = [
@@ -768,24 +768,24 @@ dependencies = [
     "click<9,>=8.1.7",
     "langdetect<2,>=1.0.9",
     "ldap3<3,>=2.9.1",
-    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@2.5.0",
-    "numpy<3,>=2.0.1",
-    "pandas<3,>=2.2.2",
+    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@3.1.0",
+    "numpy<3,>=2.1.2",
+    "pandas<3,>=2.2.3",
     "pyarrow<18,>=17.0.0",
-    "pydantic-settings<3,>=2.4.0",
-    "pydantic<3,>=2.8.2",
+    "pydantic-settings<3,>=2.5.2",
+    "pydantic<3,>=2.9.2",
     "pytz<2024.2,>=2024.1",
     "requests<3,>=2.32.3",
 ]
 
 [[package]]
 name = "mex-model"
-version = "2.5.0"
+version = "3.1.0"
 requires_python = "<3.13,>=3.11"
 git = "https://github.com/robert-koch-institut/mex-model.git"
-ref = "2.5.0"
-revision = "463ffde9776477b127e08b949606d6a7b32ca60b"
-summary = "Conceptual and machine-readable versions of the MEx metadata model."
+ref = "3.1.0"
+revision = "61283bbb386573e18db79ec86dbc03363b4348ce"
+summary = "JSON schema files defining the MEx metadata model."
 groups = ["default"]
 
 [[package]]

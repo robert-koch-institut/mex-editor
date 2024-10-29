@@ -5,7 +5,7 @@ def test_state_logout() -> None:
     state = State(user=User(name="Test", authorization="Auth", write_access=True))
     assert state.user
 
-    assert "/" in str(state.logout())
+    assert "/" in str(state.logout(None))
     assert state.user is None
 
 

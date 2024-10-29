@@ -181,7 +181,7 @@ def dummy_data() -> list[AnyExtractedModel]:
         shortName=["A1"],
         start=[YearMonthDay(1999, 12, 24)],
         end=[YearMonthDay(2023, 1, 1)],
-        theme=[Theme["DIGITAL_PUBLIC_HEALTH"]],
+        theme=[Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]],
         title=[Text(value="Aktivität 1", language=TextLanguage.DE)],
         website=[Link(title="Activity Homepage", url="https://activity-1")],
     )

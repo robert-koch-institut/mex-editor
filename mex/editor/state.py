@@ -1,3 +1,5 @@
+from typing import Any
+
 import reflex as rx
 from reflex.event import EventSpec
 
@@ -15,7 +17,7 @@ class State(rx.State):
         NavItem(title="Merge", href_template=r"/merge/"),
     ]
 
-    def logout(self) -> EventSpec:
+    def logout(self, _: Any) -> EventSpec:
         """Log out a user."""
         self.reset()
         return rx.redirect("/")

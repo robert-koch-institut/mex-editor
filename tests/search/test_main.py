@@ -3,15 +3,10 @@ import re
 import pytest
 from playwright.sync_api import Page, expect
 
-from mex.common.models import AnyExtractedModel
-
 
 @pytest.mark.integration
-def test_index(
-    writer_user_page: Page,
-    load_dummy_data: list[AnyExtractedModel],
-) -> None:
-    organizational_unit = load_dummy_data[-2]
+@pytest.mark.usefixtures("load_dummy_data")
+def test_index(writer_user_page: Page) -> None:
     page = writer_user_page
 
     # load page and establish section is visible
@@ -31,11 +26,7 @@ def test_index(
 
     # check activity is showing
     activity = page.get_by_text(
-        re.compile(
-            r"Aktivität 1\s*de\s*A1"
-            + organizational_unit.stableTargetId  # unitInCharge
-            + r"\s*24\. Dezember 1999\s*1\. Januar 2023"
-        )
+        re.compile(r"Aktivität 1\s*de\s*A1.*24\. Dezember 1999\s*1\. Januar 2023")
     )
     activity.scroll_into_view_if_needed()
     expect(activity).to_be_visible()

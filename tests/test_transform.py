@@ -8,7 +8,7 @@ def test_render_model_title(dummy_data: list[AnyExtractedModel]) -> None:
     assert dummy_titles == [
         [
             FixedValue(
-                text=("sMgFvmdtJyegb9vkebq04"),
+                text="sMgFvmdtJyegb9vkebq04",
                 badge=None,
                 href="/item/sMgFvmdtJyegb9vkebq04",
                 tooltip=None,
@@ -17,7 +17,7 @@ def test_render_model_title(dummy_data: list[AnyExtractedModel]) -> None:
         ],
         [
             FixedValue(
-                text=("d0MGZryflsy7PbsBF3ZGXO"),
+                text="d0MGZryflsy7PbsBF3ZGXO",
                 badge=None,
                 href="/item/d0MGZryflsy7PbsBF3ZGXO",
                 tooltip=None,
@@ -104,8 +104,8 @@ def test_render_model_preview(dummy_data: list[AnyExtractedModel]) -> None:
         ],
         [
             FixedValue(
-                text="ExtractedOrganizationalUnit",
-                badge=None,
+                text="Unit 1",
+                badge="en",
                 href=None,
                 tooltip=None,
                 external=False,
@@ -120,7 +120,28 @@ def test_render_model_preview(dummy_data: list[AnyExtractedModel]) -> None:
                 external=False,
             ),
             FixedValue(
-                text=("cWWm02l1c6cucKjIhkFqY4"),
+                text="wEvxYRPlmGVQCbZx9GAbn",
+                badge=None,
+                href="/item/wEvxYRPlmGVQCbZx9GAbn",
+                tooltip=None,
+                external=False,
+            ),
+            FixedValue(
+                text="g32qzYNVH1Ez7JTEk3fvLF",
+                badge=None,
+                href="/item/g32qzYNVH1Ez7JTEk3fvLF",
+                tooltip=None,
+                external=False,
+            ),
+            FixedValue(
+                text="cWWm02l1c6cucKjIhkFqY4",
+                badge=None,
+                href="/item/cWWm02l1c6cucKjIhkFqY4",
+                tooltip=None,
+                external=False,
+            ),
+            FixedValue(
+                text="cWWm02l1c6cucKjIhkFqY4",
                 badge=None,
                 href="/item/cWWm02l1c6cucKjIhkFqY4",
                 tooltip=None,

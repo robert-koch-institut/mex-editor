@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- upgrade mex-common and model dependencies to v3
 - overhaul and simplify margins and spaces
 - move transform_models_to_fields from State to transform module
 - use dedicated backend connector methods for edit and search

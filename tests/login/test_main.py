@@ -4,8 +4,10 @@ from pydantic import SecretStr
 
 
 @pytest.mark.integration
-def test_login(page: Page, writer_user_credentials: tuple[str, SecretStr]) -> None:
-    page.goto("http://localhost:3000")
+def test_login(
+    frontend_url: str, page: Page, writer_user_credentials: tuple[str, SecretStr]
+) -> None:
+    page.goto(frontend_url)
 
     page.get_by_placeholder("Username").fill(
         writer_user_credentials[0],

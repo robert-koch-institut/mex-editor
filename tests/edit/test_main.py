@@ -13,9 +13,11 @@ def extracted_activity(load_dummy_data: list[AnyExtractedModel]) -> ExtractedAct
 
 
 @pytest.fixture
-def edit_page(writer_user_page: Page, extracted_activity: ExtractedActivity) -> Page:
+def edit_page(
+    frontend_url: str, writer_user_page: Page, extracted_activity: ExtractedActivity
+) -> Page:
     page = writer_user_page
-    page.goto(f"http://localhost:3000/item/{extracted_activity.stableTargetId}")
+    page.goto(f"{frontend_url}/item/{extracted_activity.stableTargetId}")
     section = page.get_by_test_id("edit-section")
     expect(section).to_be_visible()
     return page

@@ -6,11 +6,11 @@ from playwright.sync_api import Page, expect
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-def test_index(writer_user_page: Page) -> None:
+def test_index(frontend_url: str, writer_user_page: Page) -> None:
     page = writer_user_page
 
     # load page and establish section is visible
-    page.goto("http://localhost:3000")
+    page.goto(frontend_url)
     section = page.get_by_test_id("search-results-section")
     expect(section).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_index-on-load.png")
@@ -36,10 +36,11 @@ def test_index(writer_user_page: Page) -> None:
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_pagination(
+    frontend_url: str,
     writer_user_page: Page,
 ) -> None:
     page = writer_user_page
-    page.goto("http://localhost:3000")
+    page.goto(frontend_url)
 
     # check sidebar is showing and disabled and selector is on page 1
     pagination_previous = page.get_by_test_id("pagination-previous-button")
@@ -53,10 +54,11 @@ def test_pagination(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_search_input(
+    frontend_url: str,
     writer_user_page: Page,
 ) -> None:
     page = writer_user_page
-    page.goto("http://localhost:3000")
+    page.goto(frontend_url)
 
     # check sidebar is showing
     sidebar = page.get_by_test_id("search-sidebar")
@@ -82,10 +84,11 @@ def test_search_input(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_entity_types(
+    frontend_url: str,
     writer_user_page: Page,
 ) -> None:
     page = writer_user_page
-    page.goto("http://localhost:3000")
+    page.goto(frontend_url)
 
     # check sidebar is showing
     sidebar = page.get_by_test_id("search-sidebar")

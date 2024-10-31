@@ -45,13 +45,21 @@ def client() -> TestClient:
 
 @pytest.fixture(autouse=True)
 def settings() -> EditorSettings:
+    """Load and return the current editor settings."""
     return EditorSettings.get()
+
+
+@pytest.fixture
+def frontend_url() -> str:
+    """Return the URL of the current local frontend server for testing."""
+    return "http://localhost:3000"
 
 
 @pytest.fixture(autouse=True)
 def patch_editor_user_database(
     is_integration_test: bool, monkeypatch: MonkeyPatch, settings: EditorSettings
 ) -> None:
+    """Overwrite the user database with dummy credentials."""
     if not is_integration_test:
         monkeypatch.setattr(
             settings,
@@ -79,8 +87,10 @@ def writer_user_credentials() -> tuple[str, SecretStr]:
     raise RuntimeError("No writer configured")  # pragma: no cover
 
 
-def login_user(page: Page, username: str, password: SecretStr) -> Page:
-    page.goto("http://localhost:3000")
+def login_user(
+    frontend_url: str, page: Page, username: str, password: SecretStr
+) -> Page:
+    page.goto(frontend_url)
     page.get_by_placeholder("Username").fill(username)
     page.get_by_placeholder("Password").fill(password.get_secret_value())
     page.get_by_text("Log in").click()
@@ -89,25 +99,25 @@ def login_user(page: Page, username: str, password: SecretStr) -> Page:
 
 @pytest.fixture
 def reader_user_page(
-    page: Page,
-    reader_user_credentials: tuple[str, SecretStr],
+    page: Page, reader_user_credentials: tuple[str, SecretStr], frontend_url: str
 ) -> Page:
-    login_user(page, *reader_user_credentials)
+    login_user(frontend_url, page, *reader_user_credentials)
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
     return page
 
 
 @pytest.fixture
 def writer_user_page(
-    page: Page,
-    writer_user_credentials: tuple[str, SecretStr],
+    page: Page, writer_user_credentials: tuple[str, SecretStr], frontend_url: str
 ) -> Page:
-    login_user(page, *writer_user_credentials)
+    login_user(frontend_url, page, *writer_user_credentials)
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
     return page
 
 
 class ResettingGraphConnector(GraphConnector):
+    """Graph connector subclass for tests to resets constraints, indices and data."""
+
     def _seed_constraints(self) -> list[Result]:
         for row in self.commit("SHOW ALL CONSTRAINTS;").all():
             self.commit(f"DROP CONSTRAINT {row['name']};")

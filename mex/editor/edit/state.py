@@ -32,7 +32,11 @@ class EditState(State):
             )
         except HTTPError as exc:
             self.reset()
-            logger.error("backend error: %s", exc.response.text, exc_info=False)
+            logger.error(
+                "backend error fetching extracted items: %s",
+                exc.response.text,
+                exc_info=False,
+            )
             return rx.toast.error(
                 exc.response.text,
                 duration=5000,

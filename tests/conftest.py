@@ -21,7 +21,7 @@ from mex.mex import app
 pytest_plugins = ("mex.common.testing.plugin",)
 
 
-@pytest.fixture()
+@pytest.fixture
 def client() -> TestClient:
     """Return a fastAPI test client initialized with our app."""
     with TestClient(app.api, raise_server_exceptions=False) as test_client:
@@ -48,20 +48,22 @@ def patch_editor_user_database(
         )
 
 
-@pytest.fixture()
+@pytest.fixture
 def reader_user_credentials() -> tuple[str, SecretStr]:
     settings = EditorSettings.get()
     for username, password in settings.editor_user_database["read"].items():
         return username, password
-    raise RuntimeError("No reader configured")  # pragma: no cover
+    msg = "No reader configured"  # pragma: no cover
+    raise RuntimeError(msg)  # pragma: no cover
 
 
-@pytest.fixture()
+@pytest.fixture
 def writer_user_credentials() -> tuple[str, SecretStr]:
     settings = EditorSettings.get()
     for username, password in settings.editor_user_database["write"].items():
         return username, password
-    raise RuntimeError("No writer configured")  # pragma: no cover
+    msg = "No writer configured"  # pragma: no cover
+    raise RuntimeError(msg)  # pragma: no cover
 
 
 def login_user(page: Page, username: str, password: SecretStr) -> Page:
@@ -72,7 +74,7 @@ def login_user(page: Page, username: str, password: SecretStr) -> Page:
     return page
 
 
-@pytest.fixture()
+@pytest.fixture
 def reader_user_page(
     page: Page,
     reader_user_credentials: tuple[str, SecretStr],
@@ -82,7 +84,7 @@ def reader_user_page(
     return page
 
 
-@pytest.fixture()
+@pytest.fixture
 def writer_user_page(
     page: Page,
     writer_user_credentials: tuple[str, SecretStr],
@@ -92,7 +94,7 @@ def writer_user_page(
     return page
 
 
-@pytest.fixture()
+@pytest.fixture
 def dummy_data() -> list[AnyExtractedModel]:
     """Create a set of interlinked dummy data."""
     primary_source_1 = ExtractedPrimarySource(
@@ -150,7 +152,7 @@ def dummy_data() -> list[AnyExtractedModel]:
     ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def load_dummy_data(dummy_data: list[AnyExtractedModel]) -> list[AnyExtractedModel]:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()

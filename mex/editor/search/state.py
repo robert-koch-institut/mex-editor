@@ -76,17 +76,17 @@ class SearchState(rx.State):
 
     def refresh(self) -> None:
         """Refresh the search results."""
-        # TODO: use the user auth for backend requests (stop-gap MX-1616)
+        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
 
-        # TODO: use a specialized merged-item search method (stop-gap MX-1581)
+        # TODO(ND): use a specialized merged-item search method (stop-gap MX-1581)
         try:
             response = connector.request(
                 "GET",
                 "merged-item",
                 params={
                     "q": self.query_string,
-                    "entityType": [k for k, v in self.entity_types.items() if v],  # type: ignore
+                    "entityType": [k for k, v in self.entity_types.items() if v],
                     "skip": str(self.limit * (self.current_page - 1)),
                     "limit": str(self.limit),
                 },

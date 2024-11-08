@@ -3,7 +3,7 @@ from playwright.sync_api import Page, expect
 from pydantic import SecretStr
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_login(page: Page, writer_user_credentials: tuple[str, SecretStr]) -> None:
     page.goto("http://localhost:3000")
 

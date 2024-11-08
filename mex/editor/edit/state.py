@@ -20,17 +20,17 @@ class EditState(State):
 
     def refresh(self) -> None:
         """Refresh the search results."""
-        # TODO: use the user auth for backend requests (stop-gap MX-1616)
+        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
 
-        # TODO: use a specialized extracted-item search method
+        # TODO(ND): use a specialized extracted-item search method
         response = connector.request(
             "GET", f"extracted-item?stableTargetId={self.item_id}"
         )
         items = _BackendSearchResponse.model_validate(response).items
         self.fields = self.extracted_to_fields(items)
 
-        # TODO: use title of merged item instead of title of first item
+        # TODO(ND): use title of merged item instead of title of first item
         self.item_title = render_model_title(items[0])
 
     @staticmethod

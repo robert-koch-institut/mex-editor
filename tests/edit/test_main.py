@@ -6,7 +6,7 @@ from playwright.sync_api import Page, expect
 from mex.common.models import AnyExtractedModel
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_index(
     writer_user_page: Page,
     load_dummy_data: list[AnyExtractedModel],

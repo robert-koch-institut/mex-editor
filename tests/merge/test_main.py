@@ -2,7 +2,7 @@ import pytest
 from playwright.sync_api import Page, expect
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 def test_index(writer_user_page: Page) -> None:
     page = writer_user_page
 

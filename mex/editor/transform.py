@@ -81,7 +81,7 @@ def transform_value(value: object) -> FixedValue:
                 locale=_DEFAULT_LOCALE,
             ),
             href=None,
-            badge=None,
+            badge=value.precision.value,
             external=False,
         )
     return FixedValue(
@@ -90,6 +90,14 @@ def transform_value(value: object) -> FixedValue:
         badge=None,
         external=False,
     )
+
+
+def transform_models_to_stem_type(
+    models: Sequence[AnyExtractedModel | AnyMergedModel],
+) -> str | None:
+    if not models:
+        return None
+    return models[0].stemType
 
 
 def transform_models_to_title(

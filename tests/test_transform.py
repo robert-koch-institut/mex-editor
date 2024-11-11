@@ -11,7 +11,6 @@ def test_render_model_title(dummy_data: list[AnyExtractedModel]) -> None:
                 text="sMgFvmdtJyegb9vkebq04",
                 badge=None,
                 href="/item/sMgFvmdtJyegb9vkebq04",
-                tooltip=None,
                 external=False,
             )
         ],
@@ -20,7 +19,6 @@ def test_render_model_title(dummy_data: list[AnyExtractedModel]) -> None:
                 text="d0MGZryflsy7PbsBF3ZGXO",
                 badge=None,
                 href="/item/d0MGZryflsy7PbsBF3ZGXO",
-                tooltip=None,
                 external=False,
             )
         ],
@@ -29,7 +27,6 @@ def test_render_model_title(dummy_data: list[AnyExtractedModel]) -> None:
                 text="info@contact-point.one",
                 badge=None,
                 href=None,
-                tooltip=None,
                 external=False,
             )
         ],
@@ -38,7 +35,6 @@ def test_render_model_title(dummy_data: list[AnyExtractedModel]) -> None:
                 text="help@contact-point.two",
                 badge=None,
                 href=None,
-                tooltip=None,
                 external=False,
             )
         ],
@@ -47,7 +43,6 @@ def test_render_model_title(dummy_data: list[AnyExtractedModel]) -> None:
                 text="OU1",
                 badge=None,
                 href=None,
-                tooltip=None,
                 external=False,
             )
         ],
@@ -56,7 +51,6 @@ def test_render_model_title(dummy_data: list[AnyExtractedModel]) -> None:
                 text="Aktivität 1",
                 badge="de",
                 href=None,
-                tooltip=None,
                 external=False,
             )
         ],
@@ -71,7 +65,6 @@ def test_render_model_preview(dummy_data: list[AnyExtractedModel]) -> None:
                 text="ExtractedPrimarySource",
                 badge=None,
                 href=None,
-                tooltip=None,
                 external=False,
             )
         ],
@@ -80,7 +73,6 @@ def test_render_model_preview(dummy_data: list[AnyExtractedModel]) -> None:
                 text="ExtractedPrimarySource",
                 badge=None,
                 href=None,
-                tooltip=None,
                 external=False,
             )
         ],
@@ -89,7 +81,6 @@ def test_render_model_preview(dummy_data: list[AnyExtractedModel]) -> None:
                 text="ExtractedContactPoint",
                 badge=None,
                 href=None,
-                tooltip=None,
                 external=False,
             )
         ],
@@ -98,7 +89,6 @@ def test_render_model_preview(dummy_data: list[AnyExtractedModel]) -> None:
                 text="ExtractedContactPoint",
                 badge=None,
                 href=None,
-                tooltip=None,
                 external=False,
             )
         ],
@@ -107,7 +97,6 @@ def test_render_model_preview(dummy_data: list[AnyExtractedModel]) -> None:
                 text="Unit 1",
                 badge="en",
                 href=None,
-                tooltip=None,
                 external=False,
             )
         ],
@@ -116,49 +105,42 @@ def test_render_model_preview(dummy_data: list[AnyExtractedModel]) -> None:
                 text="A1",
                 badge=None,
                 href=None,
-                tooltip=None,
                 external=False,
             ),
             FixedValue(
                 text="wEvxYRPlmGVQCbZx9GAbn",
                 badge=None,
                 href="/item/wEvxYRPlmGVQCbZx9GAbn",
-                tooltip=None,
                 external=False,
             ),
             FixedValue(
                 text="g32qzYNVH1Ez7JTEk3fvLF",
                 badge=None,
                 href="/item/g32qzYNVH1Ez7JTEk3fvLF",
-                tooltip=None,
                 external=False,
             ),
             FixedValue(
                 text="cWWm02l1c6cucKjIhkFqY4",
                 badge=None,
                 href="/item/cWWm02l1c6cucKjIhkFqY4",
-                tooltip=None,
                 external=False,
             ),
             FixedValue(
                 text="cWWm02l1c6cucKjIhkFqY4",
                 badge=None,
                 href="/item/cWWm02l1c6cucKjIhkFqY4",
-                tooltip=None,
                 external=False,
             ),
             FixedValue(
                 text="24. Dezember 1999",
                 badge=None,
                 href=None,
-                tooltip=None,
                 external=False,
             ),
             FixedValue(
                 text="1. Januar 2023",
                 badge=None,
                 href=None,
-                tooltip=None,
                 external=False,
             ),
         ],

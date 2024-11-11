@@ -13,8 +13,8 @@ class FixedValue(rx.Base):
     text: str | None
     badge: str | None
     href: str | None
-    tooltip: str | None
     external: bool
+    enabled: bool = True
 
 
 class User(rx.Base):

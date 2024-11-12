@@ -36,7 +36,7 @@ def transform_values(values: object) -> list[FixedValue]:
     return [transform_value(v) for v in values]
 
 
-def transform_value(value: object) -> FixedValue:
+def transform_value(value: object) -> FixedValue:  # noqa: PLR0911
     """Transform a single object into a fixed value ready for rendering."""
     if value is None:
         return FixedValue(

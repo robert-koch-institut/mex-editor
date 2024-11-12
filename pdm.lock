@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:866f69047d53392697519e634e69fcbad375f2a462d732ebaf5d55c1325a92a4"
+content_hash = "sha256:6be6f008a7394739e558869c6d3d4efdbd3693880d235006d25f7778532350ec"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -770,22 +770,22 @@ files = [
 
 [[package]]
 name = "mex-backend"
-version = "0.21.0"
+version = "0.22.0"
 requires_python = ">=3.11,<3.13"
 git = "https://github.com/robert-koch-institut/mex-backend.git"
-ref = "0.21.0"
-revision = "61cf68d973a6464ae22dd14d1d6d74c4e887325a"
+ref = "feature/mx-1649-prep-edit-view"
+revision = "089ac59dce2b8e5af1b87b0eb13bc081d76a4e80"
 summary = "Backend server for the RKI metadata exchange."
 groups = ["dev"]
 dependencies = [
-    "fastapi<1,>=0.115.4",
-    "httpx<1,>=0.27.2",
-    "jinja2<4,>=3.1.4",
+    "fastapi<1,>=0.115",
+    "httpx<1,>=0.27",
+    "jinja2<4,>=3",
     "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.40.0",
-    "neo4j<6,>=5.24.0",
-    "pydantic<3,>=2.9.1",
-    "starlette<1,>=0.41.2",
-    "uvicorn[standard]<1,>=0.30.6",
+    "neo4j<6,>=5",
+    "pydantic<3,>=2",
+    "starlette<1,>=0.41",
+    "uvicorn[standard]<1,>=0.30",
 ]
 
 [[package]]
@@ -1467,7 +1467,7 @@ files = [
 
 [[package]]
 name = "reflex"
-version = "0.6.4"
+version = "0.6.2.post1"
 requires_python = "<4.0,>=3.9"
 summary = "Web apps in pure Python."
 groups = ["default"]
@@ -1492,7 +1492,7 @@ dependencies = [
     "reflex-chakra>=0.6.0",
     "reflex-hosting-cli<2.0,>=0.1.2",
     "rich<14.0,>=13.0.0",
-    "setuptools>=75.0",
+    "setuptools<70.2,>=69.1.1",
     "sqlmodel<0.1,>=0.0.14",
     "starlette-admin<1.0,>=0.11.0",
     "tomlkit<1.0,>=0.12.4",
@@ -1504,8 +1504,8 @@ dependencies = [
     "wrapt<2.0,>=1.14.0; python_version >= \"3.11\"",
 ]
 files = [
-    {file = "reflex-0.6.4-py3-none-any.whl", hash = "sha256:fc066b25c837b094deb38e67707733b4426ac7d6a8d6e935b604587ef8a0269e"},
-    {file = "reflex-0.6.4.tar.gz", hash = "sha256:fe781908c8c35839c34dbb60c525d33a7ad3baae8eb052c5400bcde2c18cfed7"},
+    {file = "reflex-0.6.2.post1-py3-none-any.whl", hash = "sha256:9f04f58bec7157e4ee80d65de0142f7dff1bd8ab2cc9a13c940d1be56b26233d"},
+    {file = "reflex-0.6.2.post1.tar.gz", hash = "sha256:3cecf7376f1b35f2f81016e0506ac7a66f9a58bca5eb321d82130d4b9a00b1ea"},
 ]
 
 [[package]]
@@ -1648,13 +1648,13 @@ files = [
 
 [[package]]
 name = "setuptools"
-version = "75.3.0"
+version = "70.1.1"
 requires_python = ">=3.8"
 summary = "Easily download, build, install, upgrade, and uninstall Python packages"
 groups = ["default"]
 files = [
-    {file = "setuptools-75.3.0-py3-none-any.whl", hash = "sha256:f2504966861356aa38616760c0f66568e535562374995367b4e69c7143cf6bcd"},
-    {file = "setuptools-75.3.0.tar.gz", hash = "sha256:fba5dd4d766e97be1b1681d98712680ae8f2f26d7881245f2ce9e40714f1a686"},
+    {file = "setuptools-70.1.1-py3-none-any.whl", hash = "sha256:a58a8fde0541dab0419750bcc521fbdf8585f6e5cb41909df3a472ef7b81ca95"},
+    {file = "setuptools-70.1.1.tar.gz", hash = "sha256:937a48c7cdb7a21eb53cd7f9b59e525503aa8abaf3584c730dc5f7a5bec3a650"},
 ]
 
 [[package]]
@@ -1978,6 +1978,17 @@ dependencies = [
 files = [
     {file = "typer-0.13.0-py3-none-any.whl", hash = "sha256:d85fe0b777b2517cc99c8055ed735452f2659cd45e451507c76f48ce5c1d00e2"},
     {file = "typer-0.13.0.tar.gz", hash = "sha256:f1c7198347939361eec90139ffa0fd8b3df3a2259d5852a0f7400e476d95985c"},
+]
+
+[[package]]
+name = "types-pytz"
+version = "2024.1.0.20240417"
+requires_python = ">=3.8"
+summary = "Typing stubs for pytz"
+groups = ["dev"]
+files = [
+    {file = "types-pytz-2024.1.0.20240417.tar.gz", hash = "sha256:6810c8a1f68f21fdf0f4f374a432487c77645a0ac0b31de4bf4690cf21ad3981"},
+    {file = "types_pytz-2024.1.0.20240417-py3-none-any.whl", hash = "sha256:8335d443310e2db7b74e007414e74c4f53b67452c0cb0d228ca359ccfba59659"},
 ]
 
 [[package]]

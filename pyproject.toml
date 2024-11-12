@@ -12,10 +12,12 @@ dependencies = [
     "fastapi>=0.115,<1",
     "mex-common@git+https://github.com/robert-koch-institut/mex-common.git@feature/mx-1649-prep-editing",
     "pydantic>=2,<3",
+    "pytz>=2024,<2024.2",
     "pyyaml>=6,<7",
     "reflex-chakra>=0.6,<1",
-    "reflex>=0.6,<1",
-    "starlette>=0.39,<1",
+    "reflex>=0.5,<0.6.3",
+    "requests>=2,<3",
+    "starlette>=0.41,<1",
     "uvicorn>=0.32,<1",
 ]
 optional-dependencies.dev = [
@@ -25,8 +27,9 @@ optional-dependencies.dev = [
     "pytest-playwright>=0.5,<1",
     "pytest-random-order>=1,<2",
     "pytest>=8,<9",
-    "ruff>=0.7,<1",
+    "ruff>=0.6,<1",
     "sphinx>=8,<9",
+    "types-pytz>=2024,<2024.2",
     "types-PyYAML>=6,<7",
     "types-requests>=2,<3",
 ]

@@ -1,57 +1,48 @@
-from pydantic import BaseModel
+import reflex as rx
+from reflex.event import EventSpec
+from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models import AnyExtractedModel
-from mex.editor.edit.models import EditableField, EditablePrimarySource
+from mex.common.logging import logger
+from mex.editor.edit.models import EditableField
+from mex.editor.edit.transform import transform_models_to_fields
+from mex.editor.models import FixedValue
 from mex.editor.state import State
-from mex.editor.transform import render_any_value, render_model_title
-
-
-class _BackendSearchResponse(BaseModel):
-    total: int
-    items: list[AnyExtractedModel]
+from mex.editor.transform import transform_models_to_title
 
 
 class EditState(State):
     """State for the edit component."""
 
     fields: list[EditableField] = []
-    item_title: str = ""
+    item_title: list[FixedValue] = []
 
-    def refresh(self) -> None:
-        """Refresh the search results."""
+    def refresh(self) -> EventSpec | None:
+        """Refresh the edit page."""
+        self.reset()
         # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
-
-        # TODO(ND): use a specialized extracted-item search method
-        response = connector.request(
-            "GET", f"extracted-item?stableTargetId={self.item_id}"
-        )
-        items = _BackendSearchResponse.model_validate(response).items
-        self.fields = self.extracted_to_fields(items)
-
-        # TODO(ND): use title of merged item instead of title of first item
-        self.item_title = render_model_title(items[0])
-
-    @staticmethod
-    def extracted_to_fields(models: list[AnyExtractedModel]) -> list[EditableField]:
-        """Convert a list of extracted models into editable field models."""
-        fields_by_name: dict[str, EditableField] = {}
-        for model in models:
-            model_dump = model.model_dump()
-            for field_name in model.model_fields:
-                editable_field = fields_by_name.setdefault(
-                    field_name, EditableField(name=field_name, primary_sources=[])
-                )
-                value = model_dump[field_name]
-                if not value:
-                    continue
-                if not isinstance(value, list):
-                    value = [value]
-                editable_field.primary_sources.append(
-                    EditablePrimarySource(
-                        name=model.hadPrimarySource,
-                        editable_values=[render_any_value(v) for v in value],
-                    )
-                )
-        return list(fields_by_name.values())
+        try:
+            response = connector.fetch_extracted_items(
+                None,
+                self.item_id,
+                None,
+                0,
+                100,
+            )
+        except HTTPError as exc:
+            self.reset()
+            logger.error(
+                "backend error fetching extracted items: %s",
+                exc.response.text,
+                exc_info=False,
+            )
+            return rx.toast.error(
+                exc.response.text,
+                duration=5000,
+                close_button=True,
+                dismissible=True,
+            )
+        self.item_title = transform_models_to_title(response.items)
+        self.fields = transform_models_to_fields(response.items)
+        return None

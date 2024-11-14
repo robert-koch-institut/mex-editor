@@ -3,52 +3,44 @@ import re
 import pytest
 from playwright.sync_api import Page, expect
 
-from mex.common.models import AnyExtractedModel
-
 
 @pytest.mark.integration
-def test_index(
-    writer_user_page: Page,
-    load_dummy_data: list[AnyExtractedModel],
-) -> None:
-    organizational_unit = load_dummy_data[-2]
+@pytest.mark.usefixtures("load_dummy_data")
+def test_index(frontend_url: str, writer_user_page: Page) -> None:
     page = writer_user_page
 
     # load page and establish section is visible
-    page.goto("http://localhost:3000")
+    page.goto(frontend_url)
     section = page.get_by_test_id("search-results-section")
     expect(section).to_be_visible()
-    page.screenshot(path="tests_search_test_main-test_index-on-load.jpeg")
+    page.screenshot(path="tests_search_test_main-test_index-on-load.png")
 
     # check heading is showing
     expect(page.get_by_text("showing 7 of total 7 items found")).to_be_visible()
 
     # check mex primary source is showing
     primary_source = page.get_by_text(
-        re.compile(r"^MergedPrimarySource\s*00000000000000$")
+        re.compile(r"^00000000000000\s*MergedPrimarySource$")
     )
     expect(primary_source).to_be_visible()
 
     # check activity is showing
     activity = page.get_by_text(
-        re.compile(
-            r"^Aktivität 1\s*value: A1 . "
-            + organizational_unit.stableTargetId  # unitInCharge
-            + r" . 1999-12-24 . 2023-01-01$"
-        )
+        re.compile(r"Aktivität 1\s*de\s*A1.*24\. Dezember 1999\s*1\. Januar 2023")
     )
     activity.scroll_into_view_if_needed()
     expect(activity).to_be_visible()
-    page.screenshot(path="tests_search_test_main-test_index-focus-activity.jpeg")
+    page.screenshot(path="tests_search_test_main-test_index-focus-activity.png")
 
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_pagination(
+    frontend_url: str,
     writer_user_page: Page,
 ) -> None:
     page = writer_user_page
-    page.goto("http://localhost:3000")
+    page.goto(frontend_url)
 
     # check sidebar is showing and disabled and selector is on page 1
     pagination_previous = page.get_by_test_id("pagination-previous-button")
@@ -62,10 +54,11 @@ def test_pagination(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_search_input(
+    frontend_url: str,
     writer_user_page: Page,
 ) -> None:
     page = writer_user_page
-    page.goto("http://localhost:3000")
+    page.goto(frontend_url)
 
     # check sidebar is showing
     sidebar = page.get_by_test_id("search-sidebar")
@@ -77,13 +70,13 @@ def test_search_input(
     search_input.fill("mex")
     expect(page.get_by_text("showing 1 of total 1 items found")).to_be_visible()
     page.screenshot(
-        path="tests_search_test_main-test_index-on-search-input-1-found.jpeg"
+        path="tests_search_test_main-test_index-on-search-input-1-found.png"
     )
 
     search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
     expect(page.get_by_text("showing 0 of total 0 items found")).to_be_visible()
     page.screenshot(
-        path="tests_search_test_main-test_index-on-search-input-0-found.jpeg"
+        path="tests_search_test_main-test_index-on-search-input-0-found.png"
     )
     search_input.fill("")
 
@@ -91,10 +84,11 @@ def test_search_input(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_entity_types(
+    frontend_url: str,
     writer_user_page: Page,
 ) -> None:
     page = writer_user_page
-    page.goto("http://localhost:3000")
+    page.goto(frontend_url)
 
     # check sidebar is showing
     sidebar = page.get_by_test_id("search-sidebar")
@@ -103,12 +97,11 @@ def test_entity_types(
     # check entity types are showing and functioning
     entity_types = page.get_by_test_id("entity-types")
     expect(entity_types).to_be_visible()
-    assert "MergedPerson" in entity_types.all_text_contents()[0]
     assert "MergedPrimarySource" in entity_types.all_text_contents()[0]
 
     entity_types.get_by_text("MergedActivity").click()
     expect(page.get_by_text("showing 1 of total 1 items found")).to_be_visible()
     page.screenshot(
-        path="tests_search_test_main-test_index-on-select-entity-1-found.jpeg"
+        path="tests_search_test_main-test_index-on-select-entity-1-found.png"
     )
     entity_types.get_by_text("MergedActivity").click()

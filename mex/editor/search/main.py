@@ -1,7 +1,7 @@
 import reflex as rx
 import reflex_chakra as rc
 
-from mex.editor import styles
+from mex.editor.components import fixed_value
 from mex.editor.layout import page
 from mex.editor.search.models import SearchResult
 from mex.editor.search.state import SearchState
@@ -11,113 +11,154 @@ def search_result(result: SearchResult) -> rx.Component:
     """Render a single merged item search result."""
     return rx.card(
         rx.link(
-            rx.text(result.title, weight="bold"),
-            rx.text(result.preview, weight="light"),
+            rx.text(
+                rx.hstack(
+                    rx.foreach(
+                        result.title,
+                        fixed_value,
+                    )
+                ),
+                weight="bold",
+                style={
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis",
+                    "maxWidth": "100%",
+                },
+            ),
+            rx.text(
+                rx.hstack(
+                    rx.foreach(
+                        result.preview,
+                        fixed_value,
+                    )
+                ),
+                weight="light",
+                style={
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis",
+                    "maxWidth": "100%",
+                },
+            ),
             href=f"/item/{result.identifier}",
         ),
         style={"width": "100%"},
     )
 
 
+def search_input() -> rx.Component:
+    """Render a search input element that will trigger the results to refresh."""
+    return rx.debounce_input(
+        rx.input(
+            rx.input.slot(rx.icon("search"), padding_left="0"),
+            placeholder="Search here...",
+            value=SearchState.query_string,
+            on_change=SearchState.set_query_string,
+            max_length=100,
+            style={
+                "--text-field-selection-color": "",
+                "--text-field-focus-color": "transparent",
+                "--text-field-border-width": "1px",
+                "backgroundClip": "content-box",
+                "backgroundColor": "transparent",
+                "boxShadow": ("inset 0 0 0 var(--text-field-border-width) transparent"),
+                "color": "",
+            },
+        ),
+        style={"margin": "1em 0 1em"},
+        debounce_timeout=250,
+    )
+
+
+def entity_type_filter() -> rx.Component:
+    """Render checkboxes for filtering the search results by entity type."""
+    return rx.vstack(
+        rx.foreach(
+            SearchState.entity_types,
+            lambda choice: rx.debounce_input(
+                rc.checkbox(
+                    choice[0],
+                    checked=choice[1],
+                    on_change=lambda val: SearchState.set_entity_type(  # type: ignore[call-arg]
+                        val,
+                        choice[0],
+                    ),
+                ),
+                debounce_timeout=100,
+            ),
+        ),
+        custom_attrs={"data-testid": "entity-types"},
+        style={"margin": "2em 0"},
+    )
+
+
 def sidebar() -> rx.Component:
     """Render sidebar with a search input and checkboxes for filtering entity types."""
     return rx.box(
-        rx.debounce_input(
-            rx.input(
-                rx.input.slot(rx.icon("search"), padding_left="0"),
-                placeholder="Search here...",
-                value=SearchState.query_string,
-                on_change=SearchState.set_query_string,
-                max_length=100,
-                style=styles.ghost_input_style,
-            ),
-            style={"margin": "1em 0 1em"},
-            debounce_timeout=250,
-        ),
-        rx.vstack(
-            rx.foreach(
-                SearchState.entity_types,
-                lambda choice: rx.debounce_input(
-                    rc.checkbox(
-                        choice[0],
-                        checked=choice[1],
-                        on_change=lambda val: SearchState.set_entity_type(
-                            val, choice[0]
-                        ),  # type: ignore[call-arg]
-                    ),
-                    debounce_timeout=100,
-                ),
-            ),
-            custom_attrs={"data-testid": "entity-types"},
-            style={"margin": "2em 0"},
-        ),
-        width="20%",
-        height="100vh",
-        padding="20px",
-        style={"margin": "2em 0 0"},
-        bg=rx.color("gray", 2),
+        search_input(),
+        entity_type_filter(),
+        width="20vw",
+        padding="2em 2em 10em",
+        bg="linear-gradient(to bottom, var(--gray-2) 0%, var(--color-background) 100%)",
         custom_attrs={"data-testid": "search-sidebar"},
     )
 
 
 def pagination() -> rx.Component:
     """Render pagination for navigating search results."""
-    return rx.box(
-        rx.center(
-            rx.button(
-                rx.text("Previous", weight="bold"),
-                on_click=SearchState.go_to_previous_page,
-                disabled=SearchState.disable_previous_page,
-                spacing="2",
-                width="120px",
-                margin_right="10px",
-                custom_attrs={"data-testid": "pagination-previous-button"},
-            ),
-            rx.select(
-                SearchState.total_pages,
-                value=SearchState.current_page.to_string(),  # type: ignore[attr-defined]
-                on_change=SearchState.set_page,
-                custom_attrs={"data-testid": "pagination-page-select"},
-            ),
-            rx.button(
-                rx.text("Next", weight="bold"),
-                on_click=SearchState.go_to_next_page,
-                disabled=SearchState.disable_next_page,
-                spacing="2",
-                width="120px",
-                margin_left="10px",
-                custom_attrs={"data-testid": "pagination-next-button"},
-            ),
+    return rx.center(
+        rx.button(
+            rx.text("Previous", weight="bold"),
+            on_click=SearchState.go_to_previous_page,
+            disabled=SearchState.disable_previous_page,
+            spacing="2",
+            width="120px",
+            margin_right="10px",
+            variant="surface",
+            custom_attrs={"data-testid": "pagination-previous-button"},
         ),
+        rx.select(
+            SearchState.total_pages,
+            value=SearchState.current_page.to_string(),  # type: ignore[attr-defined]
+            on_change=SearchState.set_page,
+            custom_attrs={"data-testid": "pagination-page-select"},
+        ),
+        rx.button(
+            rx.text("Next", weight="bold"),
+            on_click=SearchState.go_to_next_page,
+            disabled=SearchState.disable_next_page,
+            spacing="2",
+            width="120px",
+            margin_left="10px",
+            variant="surface",
+            custom_attrs={"data-testid": "pagination-next-button"},
+        ),
+        style={"margin": "1em 0"},
         width="100%",
     )
 
 
-def main_content() -> rx.Component:
+def search_results() -> rx.Component:
     """Render the search results with a heading, result list, and pagination."""
-    return rx.box(
-        rx.heading(
-            f"showing {SearchState.current_results_length} "
-            f"of total {SearchState.total} items found",
-            custom_attrs={"data-testid": "search-results-heading"},
+    return rx.vstack(
+        rx.center(
+            rx.heading(
+                f"showing {SearchState.current_results_length} "
+                f"of total {SearchState.total} items found",
+                custom_attrs={"data-testid": "search-results-heading"},
+                size="3",
+            ),
             style={"margin": "1em 0"},
-            size="3",
+            width="100%",
         ),
-        rx.vstack(
-            rx.foreach(
-                SearchState.results,
-                search_result,
-            ),
-            rx.cond(
-                SearchState.total_pages,
-                pagination(),
-            ),
-            padding="10px",
+        rx.foreach(
+            SearchState.results,
+            search_result,
         ),
-        on_mount=SearchState.refresh,
-        style={"width": "100%", "margin": "2em 0 0"},
-        width="100%",
+        pagination(),
         custom_attrs={"data-testid": "search-results-section"},
+        width="70vw",
     )
 
 
@@ -125,5 +166,5 @@ def index() -> rx.Component:
     """Return the index for the search component."""
     return page(
         sidebar(),
-        main_content(),
+        search_results(),
     )

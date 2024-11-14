@@ -1,6 +1,61 @@
+import pytest
+
+from mex.common.exceptions import MExError
 from mex.common.models import AnyExtractedModel
+from mex.common.types import APIType
 from mex.editor.models import FixedValue
-from mex.editor.transform import transform_models_to_preview, transform_models_to_title
+from mex.editor.transform import (
+    transform_models_to_preview,
+    transform_models_to_title,
+    transform_value,
+    transform_values,
+)
+
+
+@pytest.mark.parametrize(
+    ("values", "expected"),
+    [
+        (None, []),
+        (
+            "foo",
+            [
+                FixedValue(
+                    text="foo",
+                    badge=None,
+                    href=None,
+                    tooltip=None,
+                    external=False,
+                )
+            ],
+        ),
+        (
+            ["bar", APIType["REST"]],
+            [
+                FixedValue(
+                    text="bar",
+                    badge=None,
+                    href=None,
+                    tooltip=None,
+                    external=False,
+                ),
+                FixedValue(
+                    text="REST",
+                    badge="APIType",
+                    href=None,
+                    tooltip=None,
+                    external=False,
+                ),
+            ],
+        ),
+    ],
+)
+def test_transform_values(values: object, expected: list[FixedValue]) -> None:
+    assert transform_values(values) == expected
+
+
+def test_transform_value_none_error() -> None:
+    with pytest.raises(MExError, match="cannot transform null"):
+        transform_value(None)
 
 
 def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:

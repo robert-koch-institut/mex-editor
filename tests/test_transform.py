@@ -58,10 +58,15 @@ def test_transform_value_none_error() -> None:
         transform_value(None)
 
 
+def test_transform_models_to_title_empty() -> None:
+    assert transform_models_to_title([]) == []
+
+
 def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
     dummy_titles = [transform_models_to_title([d]) for d in dummy_data]
     assert dummy_titles == [
         [
+            # mex primary source has no title, renders identifier instead
             FixedValue(
                 text="sMgFvmdtJyegb9vkebq04",
                 badge=None,
@@ -71,6 +76,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
             )
         ],
         [
+            # ps-2 primary source has no title either
             FixedValue(
                 text="d0MGZryflsy7PbsBF3ZGXO",
                 badge=None,
@@ -80,6 +86,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
             )
         ],
         [
+            # contact-point renders email as text
             FixedValue(
                 text="info@contact-point.one",
                 badge=None,
@@ -89,6 +96,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
             )
         ],
         [
+            # contact-point renders email as text
             FixedValue(
                 text="help@contact-point.two",
                 badge=None,
@@ -98,6 +106,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
             )
         ],
         [
+            # unit renders shortName as text (no language badge)
             FixedValue(
                 text="OU1",
                 badge=None,
@@ -107,6 +116,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
             )
         ],
         [
+            # activity renders title as text (with language badge)
             FixedValue(
                 text="Aktivität 1",
                 badge="de",

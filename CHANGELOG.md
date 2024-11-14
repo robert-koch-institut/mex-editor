@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fix routing issues by moving the refresh handlers section.from on_mount to page.on_load
+- fix routing issues by moving the refresh handlers section from `on_mount` to `page.on_load`
 
 ### Security
 

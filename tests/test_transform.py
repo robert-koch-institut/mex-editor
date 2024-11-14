@@ -3,7 +3,7 @@ from mex.editor.models import FixedValue
 from mex.editor.transform import transform_models_to_preview, transform_models_to_title
 
 
-def test_render_model_title(dummy_data: list[AnyExtractedModel]) -> None:
+def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
     dummy_titles = [transform_models_to_title([d]) for d in dummy_data]
     assert dummy_titles == [
         [

@@ -128,6 +128,10 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
     ]
 
 
+def test_transform_models_to_preview_empty() -> None:
+    assert transform_models_to_preview([]) == []
+
+
 def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> None:
     dummy_previews = [transform_models_to_preview([d]) for d in dummy_data]
     assert dummy_previews == [

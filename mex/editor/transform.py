@@ -3,6 +3,7 @@ from collections.abc import Sequence
 import pytz
 from babel.dates import format_datetime
 
+from mex.common.exceptions import MExError
 from mex.common.models import AnyExtractedModel, AnyMergedModel
 from mex.common.types import (
     Identifier,
@@ -36,15 +37,8 @@ def transform_values(values: object) -> list[FixedValue]:
     return [transform_value(v) for v in values]
 
 
-def transform_value(value: object) -> FixedValue:  # noqa: PLR0911
+def transform_value(value: object) -> FixedValue:
     """Transform a single object into a fixed value ready for rendering."""
-    if value is None:
-        return FixedValue(
-            text=None,
-            href=None,
-            badge=None,
-            external=False,
-        )
     if isinstance(value, Text):
         return FixedValue(
             text=value.value,
@@ -84,12 +78,15 @@ def transform_value(value: object) -> FixedValue:  # noqa: PLR0911
             badge=None,
             external=False,
         )
-    return FixedValue(
-        text=str(value),
-        href=None,
-        badge=None,
-        external=False,
-    )
+    if value is not None:
+        return FixedValue(
+            text=str(value),
+            href=None,
+            badge=None,
+            external=False,
+        )
+    msg = "cannot transform null value to renderable object"
+    raise MExError(msg)
 
 
 def transform_models_to_title(

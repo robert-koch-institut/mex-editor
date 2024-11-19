@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.6.0] - 2024-11-19
+
+### Changes
+
 - upgrade mex-common and model dependencies to v3
 - overhaul and simplify margins and spaces
 - move transform_models_to_fields from State to transform module
@@ -20,15 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - scroll to top when pagination is triggered
 - update dependency versions
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - fix routing issues by moving the refresh handlers section from `on_mount` to `page.on_load`
-
-### Security
 
 ## [0.5.0] - 2024-09-19
 

@@ -1,3 +1,5 @@
+from typing import cast
+
 import reflex as rx
 
 from mex.editor.components import fixed_value
@@ -18,11 +20,13 @@ def fixed_value_card(
             fixed_value(value),
             rx.switch(
                 checked=value.enabled,
-                disabled=~EditState.editable_fields.contains(field_name),  # type: ignore[attr-defined]
-                on_change=lambda enabled: EditState.toggle_field_value(  # type: ignore[call-arg]
-                    field_name,  # type: ignore[arg-type]
+                disabled=~cast(rx.vars.ArrayVar, EditState.editable_fields).contains(
+                    field_name
+                ),
+                on_change=lambda enabled: cast(EditState, EditState).toggle_field_value(
+                    field_name,
                     value,
-                    enabled,  # type: ignore[arg-type]
+                    enabled,
                 ),
             ),
         ),
@@ -42,11 +46,15 @@ def editable_primary_source(
                 fixed_value(model.name),
                 rx.switch(
                     checked=model.enabled,
-                    disabled=~EditState.editable_fields.contains(field_name),  # type: ignore[attr-defined]
-                    on_change=lambda enabled: EditState.toggle_primary_source(  # type: ignore[call-arg]
-                        field_name,  # type: ignore[arg-type]
-                        model.name.href,  # type: ignore[arg-type]
-                        enabled,  # type: ignore[arg-type]
+                    disabled=~cast(
+                        rx.vars.ArrayVar, EditState.editable_fields
+                    ).contains(field_name),
+                    on_change=lambda enabled: cast(
+                        EditState, EditState
+                    ).toggle_primary_source(
+                        field_name,
+                        cast(str, model.name.href),
+                        enabled,
                     ),
                 ),
             ),

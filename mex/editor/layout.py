@@ -1,5 +1,8 @@
+from typing import cast
+
 import reflex as rx
 
+from mex.editor.models import User
 from mex.editor.state import NavItem, State
 
 
@@ -7,7 +10,7 @@ def user_button() -> rx.Component:
     """Return a user button with an icon that indicates their access rights."""
     return rx.button(
         rx.cond(
-            State.user.write_access,  # type: ignore[union-attr]
+            cast(User, State.user).write_access,
             rx.icon(tag="user_round_cog"),
             rx.icon(tag="user_round"),
         ),
@@ -22,7 +25,7 @@ def user_menu() -> rx.Component:
         rx.menu.trigger(user_button()),
         rx.menu.content(
             rx.menu.item(
-                State.user.name,  # type: ignore[union-attr]
+                cast(User, State.user).name,
                 disabled=True,
                 style={"color": "var(--gray-12)"},
             ),

@@ -1,3 +1,5 @@
+from typing import cast
+
 import reflex as rx
 import reflex_chakra as rc
 
@@ -80,7 +82,9 @@ def entity_type_filter() -> rx.Component:
                 rc.checkbox(
                     choice[0],
                     checked=choice[1],
-                    on_change=lambda val: SearchState.set_entity_type(  # type: ignore[call-arg]
+                    on_change=lambda val: cast(
+                        SearchState, SearchState
+                    ).set_entity_type(
                         val,
                         choice[0],
                     ),
@@ -120,7 +124,7 @@ def pagination() -> rx.Component:
         ),
         rx.select(
             SearchState.total_pages,
-            value=SearchState.current_page.to_string(),  # type: ignore[attr-defined]
+            value=cast(rx.vars.NumberVar, SearchState.current_page).to_string(),
             on_change=SearchState.set_page,
             custom_attrs={"data-testid": "pagination-page-select"},
         ),

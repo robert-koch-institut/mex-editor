@@ -1,5 +1,3 @@
-import json
-
 import reflex as rx
 from reflex.event import EventSpec
 from requests import HTTPError
@@ -27,10 +25,6 @@ class EditState(State):
     fields: list[EditableField] = []
     item_title: list[FixedValue] = []
     stem_type: str | None = None
-    preview: list[EditableField] = []
-    preview_errors: list[str] = []
-    debug_editor_fields: str = ""
-    debug_rule_set: str = ""
     editable_fields: list[str] = []
 
     def refresh(self) -> EventSpec | None:
@@ -75,43 +69,6 @@ class EditState(State):
             preventive=rule_set.preventive,
         )
         return None
-
-    def refresh_preview(self) -> None:
-        """Return a preview of the active item."""
-        if (stem_type := self.stem_type) is None:
-            self.reset()
-            return
-        self.preview.clear()
-        self.preview_errors.clear()
-        self.debug_editor_fields = json.dumps(
-            [field.dict() for field in self.fields],
-            indent=2,
-            ensure_ascii=False,
-        )
-        rule_set = transform_fields_to_rule_set(
-            stem_type,
-            self.fields,
-        )
-        self.debug_rule_set = json.dumps(
-            rule_set.model_dump(),
-            indent=2,
-            ensure_ascii=False,
-        )
-        connector = BackendApiConnector.get()
-        try:
-            response = connector.preview_merged_item(self.item_id, rule_set)
-        except HTTPError as exc:
-            self.preview_errors = [
-                ": ".join(x for x in (".".join(item["loc"]), item["msg"]) if x)
-                for item in exc.response.json()["debug"]["errors"]
-            ]
-            logger.error(
-                "backend error generating merged preview: %s",
-                exc.response.text,
-                exc_info=False,
-            )
-        else:
-            self.preview = transform_models_to_fields(response)
 
     def submit_rule_set(self) -> EventSpec | None:
         """Convert the fields to a rule set and submit it to the backend."""

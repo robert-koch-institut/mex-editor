@@ -3,6 +3,7 @@ from collections.abc import Sequence
 import pytz
 from babel.dates import format_datetime
 
+from mex.common.exceptions import MExError
 from mex.common.models import AnyExtractedModel, AnyMergedModel
 from mex.common.types import (
     Identifier,
@@ -36,21 +37,12 @@ def transform_values(values: object) -> list[FixedValue]:
     return [transform_value(v) for v in values]
 
 
-def transform_value(value: object) -> FixedValue:  # noqa: PLR0911
+def transform_value(value: object) -> FixedValue:
     """Transform a single object into a fixed value ready for rendering."""
-    if value is None:
-        return FixedValue(
-            text=None,
-            href=None,
-            badge=None,
-            external=False,
-        )
     if isinstance(value, Text):
         return FixedValue(
             text=value.value,
             badge=value.language,
-            href=None,
-            external=False,
         )
     if isinstance(value, Link):
         return FixedValue(
@@ -63,15 +55,11 @@ def transform_value(value: object) -> FixedValue:  # noqa: PLR0911
         return FixedValue(
             text=value,
             href=f"/item/{value}",
-            badge=None,
-            external=False,
         )
     if isinstance(value, VocabularyEnum):
         return FixedValue(
             text=value.name,
-            href=None,
             badge=type(value).__name__,
-            external=False,
         )
     if isinstance(value, TemporalEntity):
         return FixedValue(
@@ -80,21 +68,19 @@ def transform_value(value: object) -> FixedValue:  # noqa: PLR0911
                 format=_BABEL_FORMATS_BY_PRECISION[value.precision],
                 locale=_DEFAULT_LOCALE,
             ),
-            href=None,
-            badge=value.precision.value,
-            external=False,
         )
-    return FixedValue(
-        text=str(value),
-        href=None,
-        badge=None,
-        external=False,
-    )
+    if value is not None:
+        return FixedValue(
+            text=str(value),
+        )
+    msg = "cannot transform null value to renderable object"
+    raise MExError(msg)
 
 
 def transform_models_to_stem_type(
     models: Sequence[AnyExtractedModel | AnyMergedModel],
 ) -> str | None:
+    """Get the stem type from a list of models."""
     if not models:
         return None
     return models[0].stemType
@@ -103,7 +89,7 @@ def transform_models_to_stem_type(
 def transform_models_to_title(
     models: Sequence[AnyExtractedModel | AnyMergedModel],
 ) -> list[FixedValue]:
-    """Converts a list of models into fixed values based on the title config."""
+    """Convert a list of models into fixed values based on the title config."""
     if not models:
         return []
     titles: list[FixedValue] = []

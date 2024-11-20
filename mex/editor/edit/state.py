@@ -114,6 +114,7 @@ class EditState(State):
             self.preview = transform_models_to_fields(response)
 
     def submit_rule_set(self) -> EventSpec | None:
+        """Convert the fields to a rule set and submit it to the backend."""
         if (stem_type := self.stem_type) is None:
             self.reset()
             return None
@@ -142,6 +143,7 @@ class EditState(State):
         return rx.toast.success("Saved", duration=2000)
 
     def toggle_primary_source(self, field_name: str, href: str, enabled: bool) -> None:
+        """Toggle the `enabled` flag of a primary source."""
         for field in self.fields:
             if field.name == field_name:
                 for primary_source in field.primary_sources:
@@ -149,6 +151,7 @@ class EditState(State):
                         primary_source.enabled = enabled
 
     def toggle_field_value(self, field_name: str, value: object, enabled: bool) -> None:
+        """Toggle the `enabled` flag of a field value."""
         for field in self.fields:
             if field.name == field_name:
                 for primary_source in field.primary_sources:

@@ -24,7 +24,6 @@ from mex.common.types import (
     AnyPrimitiveType,
     AnyTemporalEntity,
     AnyVocabularyEnum,
-    Identifier,
     Link,
     MergedPrimarySourceIdentifier,
     TemporalEntityPrecision,
@@ -37,7 +36,7 @@ from mex.editor.transform import transform_value, transform_values
 
 def _get_primary_source_id_from_model(model) -> MergedPrimarySourceIdentifier:
     if isinstance(model, AnyExtractedModel):
-        return Identifier(model.hadPrimarySource)
+        return MergedPrimarySourceIdentifier(model.hadPrimarySource)
     if isinstance(model, AnyMergedModel | AnyRuleModel):
         return MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
     msg = (

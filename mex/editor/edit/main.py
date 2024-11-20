@@ -20,7 +20,9 @@ def fixed_value_card(
                 checked=value.enabled,
                 disabled=~EditState.editable_fields.contains(field_name),  # type: ignore[attr-defined]
                 on_change=lambda enabled: EditState.toggle_field_value(  # type: ignore[call-arg]
-                    field_name, value, enabled  # type: ignore[arg-type]
+                    field_name,  # type: ignore[arg-type]
+                    value,
+                    enabled,  # type: ignore[arg-type]
                 ),
             ),
         ),
@@ -42,7 +44,9 @@ def editable_primary_source(
                     checked=model.enabled,
                     disabled=~EditState.editable_fields.contains(field_name),  # type: ignore[attr-defined]
                     on_change=lambda enabled: EditState.toggle_primary_source(  # type: ignore[call-arg]
-                        field_name, model.name.href, enabled  # type: ignore[arg-type]
+                        field_name,  # type: ignore[arg-type]
+                        model.name.href,  # type: ignore[arg-type]
+                        enabled,  # type: ignore[arg-type]
                     ),
                 ),
             ),
@@ -85,6 +89,7 @@ def editable_field(model: EditableField) -> rx.Component:
 
 
 def preview_tab() -> rx.Component:
+    """Render a preview of the current merged item."""
     return rx.box(
         rx.foreach(
             EditState.preview_errors,
@@ -118,6 +123,7 @@ def preview_tab() -> rx.Component:
 
 
 def debug_tab() -> rx.Component:
+    """Render the raw editor fields alongside the raw rule set."""
     return rx.hstack(
         rx.vstack(
             rx.heading("Editor Fields", size="3"),
@@ -137,6 +143,7 @@ def debug_tab() -> rx.Component:
 
 
 def preview_dialog() -> rx.Component:
+    """Render a preview dialog with a preview tab and a debug tab."""
     return rx.dialog.root(
         rx.dialog.trigger(
             rx.button(
@@ -180,6 +187,7 @@ def preview_dialog() -> rx.Component:
 
 
 def submit_button() -> rx.Component:
+    """Render a submit button to save the rule set."""
     return rx.button(
         "Save",
         color_scheme="jade",

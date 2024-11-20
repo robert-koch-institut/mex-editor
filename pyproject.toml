@@ -1,6 +1,6 @@
 [project]
 name = "mex-editor"
-version = "0.5.0"
+version = "0.6.0"
 description = "Metadata editor web application."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -10,26 +10,26 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "babel>=2,<3",
     "fastapi>=0.115,<1",
-    "mex-common@git+https://github.com/robert-koch-institut/mex-common.git@feature/mx-1649-prep-editing",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@feature/mx-1649-prep-editing",
     "pydantic>=2,<3",
-    "pytz>=2024,<2024.2",
+    "pytz>=2024,<2025",
     "pyyaml>=6,<7",
     "reflex-chakra>=0.6,<1",
-    "reflex>=0.5,<0.6.3",
+    "reflex>=0.6,<1",
     "requests>=2,<3",
     "starlette>=0.41,<1",
     "uvicorn>=0.32,<1",
 ]
 optional-dependencies.dev = [
     "ipdb>=0.13,<1",
-    "mex-backend@git+https://github.com/robert-koch-institut/mex-backend.git@feature/mx-1649-prep-edit-view",
+    "mex-backend @ git+https://github.com/robert-koch-institut/mex-backend.git@0.23.0",
     "mypy>=1,<2",
     "pytest-playwright>=0.5,<1",
     "pytest-random-order>=1,<2",
     "pytest>=8,<9",
     "ruff>=0.6,<1",
     "sphinx>=8,<9",
-    "types-pytz>=2024,<2024.2",
+    "types-pytz>=2024,<2025",
     "types-PyYAML>=6,<7",
     "types-requests>=2,<3",
 ]

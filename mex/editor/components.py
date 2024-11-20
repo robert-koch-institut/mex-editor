@@ -34,7 +34,7 @@ def fixed_link(value: FixedValue) -> rx.Component:
 
 
 def fixed_text(value: FixedValue) -> rx.Component:
-    """Render a fixed value as a text span with language attribute."""
+    """Render a fixed value as a text span."""
     return rx.text(
         value.text,
         as_="span",

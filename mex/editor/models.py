@@ -10,10 +10,10 @@ from mex.common.models import BaseModel
 class FixedValue(rx.Base):
     """Model for describing fixed values that are not editable."""
 
-    text: str | None
-    badge: str | None
-    href: str | None
-    external: bool
+    text: str | None = None
+    badge: str | None = None
+    href: str | None = None
+    external: bool = False
     enabled: bool = True
 
 

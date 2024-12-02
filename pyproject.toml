@@ -10,7 +10,7 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "babel>=2,<3",
     "fastapi>=0.115,<1",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.41.0",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.42.0",
     "pydantic>=2,<3",
     "pytz>=2024,<2025",
     "pyyaml>=6,<7",

@@ -6,7 +6,7 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import logger
 from mex.common.models import RULE_SET_RESPONSE_CLASSES_BY_NAME
 from mex.common.transform import ensure_postfix
-from mex.editor.edit.models import EditableField
+from mex.editor.edit.models import EditableField, EditablePrimarySource
 from mex.editor.edit.transform import (
     transform_fields_to_rule_set,
     transform_models_to_fields,
@@ -78,7 +78,7 @@ class EditState(State):
         rule_set = transform_fields_to_rule_set(stem_type, self.fields)
         connector = BackendApiConnector.get()
         try:
-            # TODO(ND): use proper connector method
+            # TODO(ND): use proper connector method when available
             connector.request(
                 method="PUT",
                 endpoint=f"rule-set/{self.item_id}",
@@ -99,19 +99,24 @@ class EditState(State):
             )
         return rx.toast.success("Saved", duration=2000)
 
-    def toggle_primary_source(self, field_name: str, href: str, enabled: bool) -> None:
-        """Toggle the `enabled` flag of a primary source."""
+    def _get_primary_sources_by_field_name(
+        self, field_name: str
+    ) -> list[EditablePrimarySource]:
         for field in self.fields:
             if field.name == field_name:
-                for primary_source in field.primary_sources:
-                    if primary_source.name.href == href:
-                        primary_source.enabled = enabled
+                return field.primary_sources
+        msg = f"field not found: {field_name}"
+        raise ValueError(msg)
+
+    def toggle_primary_source(self, field_name: str, href: str, enabled: bool) -> None:
+        """Toggle the `enabled` flag of a primary source."""
+        for primary_source in self._get_primary_sources_by_field_name(field_name):
+            if primary_source.name.href == href:
+                primary_source.enabled = enabled
 
     def toggle_field_value(self, field_name: str, value: object, enabled: bool) -> None:
         """Toggle the `enabled` flag of a field value."""
-        for field in self.fields:
-            if field.name == field_name:
-                for primary_source in field.primary_sources:
-                    for editor_value in primary_source.editor_values:
-                        if editor_value == value:
-                            editor_value.enabled = enabled
+        for primary_source in self._get_primary_sources_by_field_name(field_name):
+            for editor_value in primary_source.editor_values:
+                if editor_value == value:
+                    editor_value.enabled = enabled

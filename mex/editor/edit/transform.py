@@ -1,4 +1,3 @@
-from mex.common.exceptions import MExError
 from mex.common.fields import (
     LINK_FIELDS_BY_CLASS_NAME,
     TEMPORAL_FIELDS_BY_CLASS_NAME,
@@ -34,7 +33,9 @@ from mex.editor.models import FixedValue
 from mex.editor.transform import transform_value, transform_values
 
 
-def _get_primary_source_id_from_model(model) -> MergedPrimarySourceIdentifier:
+def _get_primary_source_id_from_model(
+    model: AnyExtractedModel | AnyMergedModel | AnyRuleModel,
+) -> MergedPrimarySourceIdentifier:
     if isinstance(model, AnyExtractedModel):
         return MergedPrimarySourceIdentifier(model.hadPrimarySource)
     if isinstance(model, AnyMergedModel | AnyRuleModel):
@@ -43,7 +44,7 @@ def _get_primary_source_id_from_model(model) -> MergedPrimarySourceIdentifier:
         "cannot transform model, expected extracted ExtractedData or "
         f"MergedItem or RuleItem, got {type(model).__name__}"
     )
-    raise MExError(msg)
+    raise TypeError(msg)
 
 
 def _transform_model_to_field(

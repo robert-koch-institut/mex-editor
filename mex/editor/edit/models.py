@@ -1,20 +1,20 @@
 import reflex as rx
 
 from mex.common.types import MergedPrimarySourceIdentifier
-from mex.editor.models import FixedValue
+from mex.editor.models import EditorValue
 
 
-class EditablePrimarySource(rx.Base):
+class EditorPrimarySource(rx.Base):
     """Model for describing the editor state for one primary source."""
 
-    name: FixedValue
+    name: EditorValue
     identifier: MergedPrimarySourceIdentifier
-    editor_values: list[FixedValue]
+    editor_values: list[EditorValue]
     enabled: bool = True
 
 
-class EditableField(rx.Base):
+class EditorField(rx.Base):
     """Model for describing the editor state for a single field."""
 
     name: str
-    primary_sources: list[EditablePrimarySource]
+    primary_sources: list[EditorPrimarySource]

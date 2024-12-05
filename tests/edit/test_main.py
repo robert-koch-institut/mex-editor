@@ -46,7 +46,7 @@ def test_edit_heading(edit_page: Page) -> None:
 def test_edit_fields(edit_page: Page, extracted_activity: ExtractedActivity) -> None:
     page = edit_page
     identifier_in_primary_source = page.get_by_test_id(
-        "field-identifierInPrimarySource"
+        "field-identifierInPrimarySource-name"
     )
     page.screenshot(path="tests_edit_test_main-test_edit_fields.png")
     expect(identifier_in_primary_source).to_be_visible()
@@ -60,7 +60,7 @@ def test_edit_primary_sources(
 ) -> None:
     page = edit_page
     had_primary_source = page.get_by_test_id(
-        "primary-source-hadPrimarySource_gGdOIbDIHRt35He616Fv5q"
+        "primary-source-hadPrimarySource-gGdOIbDIHRt35He616Fv5q"
     )
     page.screenshot(path="tests_edit_test_main-test_edit_primary_sources.png")
     expect(had_primary_source).to_be_visible()
@@ -72,7 +72,7 @@ def test_edit_primary_sources(
 @pytest.mark.integration
 def test_edit_text(edit_page: Page) -> None:
     page = edit_page
-    text = page.get_by_test_id("value-title_gGdOIbDIHRt35He616Fv5q_0")
+    text = page.get_by_test_id("value-title-gGdOIbDIHRt35He616Fv5q_0")
     page.screenshot(path="tests_edit_test_main-test_edit_text.png")
     expect(text).to_be_visible()
     expect(text).to_contain_text("Aktivität 1")  # text value
@@ -82,7 +82,7 @@ def test_edit_text(edit_page: Page) -> None:
 @pytest.mark.integration
 def test_edit_vocab(edit_page: Page) -> None:
     page = edit_page
-    theme = page.get_by_test_id("value-theme_gGdOIbDIHRt35He616Fv5q_0")
+    theme = page.get_by_test_id("value-theme-gGdOIbDIHRt35He616Fv5q_0")
     page.screenshot(path="tests_edit_test_main-test_edit_vocab.png")
     expect(theme).to_be_visible()
     expect(theme).to_contain_text("INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY")  # theme value
@@ -92,7 +92,7 @@ def test_edit_vocab(edit_page: Page) -> None:
 @pytest.mark.integration
 def test_edit_link(edit_page: Page) -> None:
     page = edit_page
-    website = page.get_by_test_id("value-website_gGdOIbDIHRt35He616Fv5q_0")
+    website = page.get_by_test_id("value-website-gGdOIbDIHRt35He616Fv5q_0")
     page.screenshot(path="tests_edit_test_main-test_edit_link.png")
     expect(website).to_be_visible()
     link = website.get_by_role("link")
@@ -104,7 +104,7 @@ def test_edit_link(edit_page: Page) -> None:
 @pytest.mark.integration
 def test_edit_temporal(edit_page: Page) -> None:
     page = edit_page
-    start = page.get_by_test_id("value-start_gGdOIbDIHRt35He616Fv5q_0")
+    start = page.get_by_test_id("value-start-gGdOIbDIHRt35He616Fv5q_0")
     page.screenshot(path="tests_edit_test_main-test_edit_temporal.png")
     expect(start).to_be_visible()
     expect(start).to_contain_text("24. Dezember 1999")  # temporal localization
@@ -113,7 +113,7 @@ def test_edit_temporal(edit_page: Page) -> None:
 @pytest.mark.integration
 def test_edit_identifier(edit_page: Page) -> None:
     page = edit_page
-    contact = page.get_by_test_id("value-contact_gGdOIbDIHRt35He616Fv5q_2")
+    contact = page.get_by_test_id("value-contact-gGdOIbDIHRt35He616Fv5q_2")
     page.screenshot(path="tests_edit_test_main-test_edit_identifier.png")
     expect(contact).to_be_visible()
     link = contact.get_by_role("link")

@@ -1466,7 +1466,7 @@ files = [
 
 [[package]]
 name = "reflex"
-version = "0.6.5"
+version = "0.6.6"
 requires_python = "<4.0,>=3.9"
 summary = "Web apps in pure Python."
 groups = ["default"]
@@ -1489,7 +1489,7 @@ dependencies = [
     "python-socketio<6.0,>=5.7.0",
     "redis<6.0,>=4.3.5",
     "reflex-chakra>=0.6.0",
-    "reflex-hosting-cli<2.0,>=0.1.15",
+    "reflex-hosting-cli<2.0,>=0.1.17",
     "rich<14.0,>=13.0.0",
     "setuptools>=75.0",
     "sqlmodel<0.1,>=0.0.14",
@@ -1497,14 +1497,15 @@ dependencies = [
     "tomlkit<1.0,>=0.12.4",
     "twine<6.0,>=4.0.0",
     "typer<1.0,>=0.4.2",
+    "typing-extensions>=4.6.0",
     "uvicorn>=0.20.0",
     "wheel<1.0,>=0.42.0",
     "wrapt<2.0,>=1.11.0; python_version < \"3.11\"",
     "wrapt<2.0,>=1.14.0; python_version >= \"3.11\"",
 ]
 files = [
-    {file = "reflex-0.6.5-py3-none-any.whl", hash = "sha256:ac8e981a0decae47b539561c59d289e676f700335cb0b8298bb68454e8ab3253"},
-    {file = "reflex-0.6.5.tar.gz", hash = "sha256:65a578a00471eb5be741abfdebb7c79b27390ad14ea1b884319be54375118a7d"},
+    {file = "reflex-0.6.6-py3-none-any.whl", hash = "sha256:95bfab83d0db45148641b0e3307f7097c2558a50d203d34034a159e1cc57ed09"},
+    {file = "reflex-0.6.6.tar.gz", hash = "sha256:9aaca9d97bebecb79763b17e89f729bed710e01defce704f52f41decb5822392"},
 ]
 
 [[package]]
@@ -1523,7 +1524,7 @@ files = [
 
 [[package]]
 name = "reflex-hosting-cli"
-version = "0.1.18"
+version = "0.1.21"
 requires_python = "<4.0,>=3.8"
 summary = "Reflex Hosting CLI"
 groups = ["default"]
@@ -1540,8 +1541,8 @@ dependencies = [
     "websockets>=10.4",
 ]
 files = [
-    {file = "reflex_hosting_cli-0.1.18-py3-none-any.whl", hash = "sha256:882088616e644be328199e3ccd8512e5c415b91fd47edb5144f6fe840494011e"},
-    {file = "reflex_hosting_cli-0.1.18.tar.gz", hash = "sha256:a76aeaad31e773c928a11b57fa19e5e52b3f780f415ecaa5898def5a93732cbd"},
+    {file = "reflex_hosting_cli-0.1.21-py3-none-any.whl", hash = "sha256:ead731c682339ce31e2aeb35ea38888511094587a1acd0784093c5c881578b8e"},
+    {file = "reflex_hosting_cli-0.1.21.tar.gz", hash = "sha256:b45586cf1dda0c4bcaf46bddcfb44bc4f9e62febf0e6d3164dffbf296329040b"},
 ]
 
 [[package]]

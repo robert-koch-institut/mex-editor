@@ -13,7 +13,7 @@ from mex.common.types import (
     Text,
     VocabularyEnum,
 )
-from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, FixedValue
+from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, EditorValue
 
 _DEFAULT_LOCALE = "de_DE"
 _DEFAULT_TIMEZONE = pytz.timezone("Europe/Berlin")
@@ -28,74 +28,77 @@ _BABEL_FORMATS_BY_PRECISION = {
 }
 
 
-def transform_values(values: object) -> list[FixedValue]:
-    """Convert a single object or a list of objects into a list of fixed values."""
+def ensure_list(values: object) -> list[object]:
+    """Wrap single objects in lists, replace None with [] and return lists untouched."""
     if values is None:
         return []
-    if not isinstance(values, list):
-        values = [values]
-    return [transform_value(v) for v in values]
+    if isinstance(values, list):
+        return values
+    return [values]
 
 
-def transform_value(value: object) -> FixedValue:
-    """Transform a single object into a fixed value ready for rendering."""
+def transform_values(values: object) -> list[EditorValue]:
+    """Convert a single object or a list of objects into a list of editor values."""
+    return [transform_value(v) for v in ensure_list(values)]
+
+
+def transform_value(value: object) -> EditorValue:
+    """Transform a single object into an editor value ready for rendering."""
     if isinstance(value, Text):
-        return FixedValue(
+        return EditorValue(
             text=value.value,
             badge=value.language,
-            href=None,
-            external=False,
         )
     if isinstance(value, Link):
-        return FixedValue(
+        return EditorValue(
             text=value.title or value.url,
             href=value.url,
             badge=value.language,
             external=True,
         )
     if isinstance(value, Identifier):
-        return FixedValue(
+        return EditorValue(
             text=value,
             href=f"/item/{value}",
-            badge=None,
-            external=False,
         )
     if isinstance(value, VocabularyEnum):
-        return FixedValue(
+        return EditorValue(
             text=value.name,
-            href=None,
             badge=type(value).__name__,
-            external=False,
         )
     if isinstance(value, TemporalEntity):
-        return FixedValue(
+        return EditorValue(
             text=format_datetime(
                 _DEFAULT_TIMEZONE.localize(value.date_time),
                 format=_BABEL_FORMATS_BY_PRECISION[value.precision],
                 locale=_DEFAULT_LOCALE,
             ),
-            href=None,
-            badge=None,
-            external=False,
+            badge=value.precision.value,
         )
     if value is not None:
-        return FixedValue(
+        return EditorValue(
             text=str(value),
-            href=None,
-            badge=None,
-            external=False,
         )
     msg = "cannot transform null value to renderable object"
     raise MExError(msg)
 
 
+def transform_models_to_stem_type(
+    models: Sequence[AnyExtractedModel | AnyMergedModel],
+) -> str | None:
+    """Get the stem type from a list of models."""
+    if not models:
+        return None
+    return models[0].stemType
+
+
 def transform_models_to_title(
     models: Sequence[AnyExtractedModel | AnyMergedModel],
-) -> list[FixedValue]:
-    """Converts a list of models into fixed values based on the title config."""
+) -> list[EditorValue]:
+    """Convert a list of models into editor values based on the title config."""
     if not models:
         return []
-    titles: list[FixedValue] = []
+    titles: list[EditorValue] = []
     for model in models:
         config = MODEL_CONFIG_BY_STEM_TYPE[model.stemType]
         titles.extend(
@@ -108,11 +111,11 @@ def transform_models_to_title(
 
 def transform_models_to_preview(
     models: Sequence[AnyExtractedModel | AnyMergedModel],
-) -> list[FixedValue]:
-    """Converts a list of models into fixed values based on the preview config."""
+) -> list[EditorValue]:
+    """Converts a list of models into editor values based on the preview config."""
     if not models:
         return []
-    previews: list[FixedValue] = []
+    previews: list[EditorValue] = []
     for model in models:
         config = MODEL_CONFIG_BY_STEM_TYPE[model.stemType]
         previews.extend(

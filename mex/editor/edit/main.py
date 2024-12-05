@@ -1,64 +1,113 @@
+from typing import cast
+
 import reflex as rx
 
 from mex.editor.components import fixed_value
-from mex.editor.edit.models import EditableField, EditablePrimarySource, FixedValue
+from mex.editor.edit.models import EditorField, EditorPrimarySource, EditorValue
 from mex.editor.edit.state import EditState
 from mex.editor.layout import page
 
 
-def fixed_value_card(
-    field_name: str, primary_source: str | None, index: int, value: FixedValue
+def editor_value_card(
+    field_name: str,
+    primary_source: str | None,
+    index: int,
+    value: EditorValue,
 ) -> rx.Component:
-    """Return a card containing a single fixed value."""
+    """Return a card containing a single editor value."""
     return rx.card(
-        fixed_value(value),
+        rx.hstack(
+            fixed_value(value),
+            rx.cond(
+                cast(rx.vars.ArrayVar, EditState.editor_fields).contains(field_name),
+                rx.switch(
+                    checked=value.enabled,
+                    on_change=lambda enabled: cast(
+                        EditState, EditState
+                    ).toggle_field_value(field_name, value, enabled),
+                ),
+            ),
+        ),
         style={"width": "30vw"},
-        custom_attrs={"data-testid": f"value-{field_name}_{primary_source}_{index}"},
+        custom_attrs={"data-testid": f"value-{field_name}-{primary_source}-{index}"},
     )
 
 
-def editable_primary_source(
-    field_name: str, model: EditablePrimarySource
+def editor_primary_source(
+    field_name: str,
+    model: EditorPrimarySource,
 ) -> rx.Component:
     """Return a horizontal grid of cards for editing one primary source."""
     return rx.hstack(
         rx.card(
-            fixed_value(model.name),
+            rx.hstack(
+                fixed_value(model.name),
+                rx.cond(
+                    cast(rx.vars.ArrayVar, EditState.editor_fields).contains(
+                        field_name
+                    ),
+                    rx.switch(
+                        checked=model.enabled,
+                        on_change=lambda enabled: cast(
+                            EditState, EditState
+                        ).toggle_primary_source(
+                            field_name,
+                            cast(str, model.name.href),
+                            enabled,
+                        ),
+                    ),
+                ),
+            ),
             style={"width": "20vw"},
             custom_attrs={
-                "data-testid": f"primary-source-{field_name}_{model.name.text}"
+                "data-testid": f"primary-source-{field_name}-{model.name.text}-name"
             },
         ),
         rx.vstack(
             rx.foreach(
                 model.editor_values,
-                lambda value, index: fixed_value_card(
+                lambda value, index: editor_value_card(
                     field_name,
                     model.name.text,
                     index,
                     value,
                 ),
-            )
+            ),
         ),
+        custom_attrs={"data-testid": f"primary-source-{field_name}-{model.name.text}"},
     )
 
 
-def editable_field(model: EditableField) -> rx.Component:
+def editor_field(model: EditorField) -> rx.Component:
     """Return a horizontal grid of cards for editing one field."""
     return rx.hstack(
         rx.card(
             rx.text(model.name),
             style={"width": "15vw"},
-            custom_attrs={"data-testid": f"field-{model.name}"},
+            custom_attrs={"data-testid": f"field-{model.name}-name"},
         ),
-        rx.foreach(
-            model.primary_sources,
-            lambda primary_source: editable_primary_source(
-                model.name,
-                primary_source,
-            ),
+        rx.vstack(
+            rx.foreach(
+                model.primary_sources,
+                lambda primary_source: editor_primary_source(
+                    model.name,
+                    primary_source,
+                ),
+            )
         ),
-        role="row",
+        width="90vw",
+        custom_attrs={"data-testid": f"field-{model.name}"},
+    )
+
+
+def submit_button() -> rx.Component:
+    """Render a submit button to save the rule set."""
+    return rx.button(
+        "Save",
+        color_scheme="jade",
+        size="3",
+        on_click=EditState.submit_rule_set,
+        style={"margin": "1em 0"},
     )
 
 
@@ -85,7 +134,11 @@ def index() -> rx.Component:
             rx.vstack(
                 rx.foreach(
                     EditState.fields,
-                    editable_field,
+                    editor_field,
+                ),
+                rx.cond(
+                    EditState.fields,
+                    submit_button(),
                 ),
             ),
             style={"width": "100%", "margin": "0 2em 1em"},

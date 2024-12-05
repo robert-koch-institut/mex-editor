@@ -6,8 +6,8 @@ from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.logging import logger
 from mex.common.models import MERGED_MODEL_CLASSES_BY_NAME
+from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
@@ -82,21 +82,14 @@ class SearchState(State):
             )
         except HTTPError as exc:
             self.reset()
-            logger.error(
-                "backend error fetching merged items: %s",
-                exc.response.text,
-                exc_info=False,
+            yield from escalate_error(
+                "backend", "error fetching merged items", exc.response.text
             )
-            yield rx.toast.error(
-                exc.response.text,
-                duration=5000,
-                close_button=True,
-                dismissible=True,
-            )
-        else:
-            yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
-            self.results = transform_models_to_results(response.items)
-            self.total = response.total
+            return
+
+        yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
+        self.results = transform_models_to_results(response.items)
+        self.total = response.total
 
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search page."""

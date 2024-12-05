@@ -7,14 +7,14 @@ from pydantic import TypeAdapter
 from mex.common.models import BaseModel
 
 
-class FixedValue(rx.Base):
-    """Model for describing fixed values that are not editable."""
+class EditorValue(rx.Base):
+    """Model for describing atomic values in the editor."""
 
-    text: str | None
-    badge: str | None
-    href: str | None
-    tooltip: str | None
-    external: bool
+    text: str | None = None
+    badge: str | None = None
+    href: str | None = None
+    external: bool = False
+    enabled: bool = True
 
 
 class User(rx.Base):
@@ -30,7 +30,7 @@ class NavItem(rx.Base):
 
     title: str
     href: str = "/"
-    href_template: str
+    href_template: str = "/"
     underline: str = "none"
 
 

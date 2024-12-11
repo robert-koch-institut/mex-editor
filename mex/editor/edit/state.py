@@ -37,7 +37,7 @@ class EditState(State):
         # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
         try:
-            extracted_data = connector.fetch_extracted_items(
+            extracted_items_response = connector.fetch_extracted_items(
                 None,
                 self.item_id,
                 None,
@@ -51,8 +51,8 @@ class EditState(State):
             )
             return
 
-        self.item_title = transform_models_to_title(extracted_data.items)
-        self.stem_type = transform_models_to_stem_type(extracted_data.items)
+        self.item_title = transform_models_to_title(extracted_items_response.items)
+        self.stem_type = transform_models_to_stem_type(extracted_items_response.items)
         self.editor_fields = MERGEABLE_FIELDS_BY_CLASS_NAME[
             ensure_prefix(self.stem_type, "Merged")
         ]
@@ -74,8 +74,8 @@ class EditState(State):
                 return
 
         self.fields = transform_models_to_fields(
-            *extracted_data.items,
-            rule_set.additive,
+            *extracted_items_response.items,
+            # TODO(ND): add additive rule as a model here as well
             subtractive=rule_set.subtractive,
             preventive=rule_set.preventive,
         )

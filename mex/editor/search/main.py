@@ -3,7 +3,7 @@ from typing import cast
 import reflex as rx
 import reflex_chakra as rc
 
-from mex.editor.components import fixed_value
+from mex.editor.components import render_value
 from mex.editor.layout import page
 from mex.editor.search.models import SearchResult
 from mex.editor.search.state import SearchState
@@ -13,34 +13,26 @@ def search_result(result: SearchResult) -> rx.Component:
     """Render a single merged item search result."""
     return rx.card(
         rx.link(
-            rx.text(
+            rx.box(
                 rx.hstack(
                     rx.foreach(
                         result.title,
-                        fixed_value,
+                        render_value,
                     )
                 ),
-                weight="bold",
-                style={
-                    "whiteSpace": "nowrap",
-                    "overflow": "hidden",
-                    "textOverflow": "ellipsis",
-                    "maxWidth": "100%",
-                },
+                style={"fontWeight": "bold"},
             ),
-            rx.text(
+            rx.box(
                 rx.hstack(
                     rx.foreach(
                         result.preview,
-                        fixed_value,
+                        render_value,
                     )
                 ),
-                weight="light",
                 style={
-                    "whiteSpace": "nowrap",
-                    "overflow": "hidden",
-                    "textOverflow": "ellipsis",
-                    "maxWidth": "100%",
+                    "color": "var(--gray-12)",
+                    "fontWeight": "light",
+                    "textDecoration": "none",
                 },
             ),
             href=f"/item/{result.identifier}",

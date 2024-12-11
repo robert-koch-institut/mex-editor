@@ -3,8 +3,8 @@ import reflex as rx
 from mex.editor.edit.models import EditorValue
 
 
-def fixed_internal_link(value: EditorValue) -> rx.Component:
-    """Render an editor value as a clickable internal link that reloads the edit page."""
+def render_internal_link(value: EditorValue) -> rx.Component:
+    """Render an editor value as a clickable internal link that loads the edit page."""
     return rx.link(
         value.text,
         href=value.href,
@@ -13,8 +13,8 @@ def fixed_internal_link(value: EditorValue) -> rx.Component:
     )
 
 
-def fixed_external_link(value: EditorValue) -> rx.Component:
-    """Render an editor value as a clickable external link that opens in a new window."""
+def render_external_link(value: EditorValue) -> rx.Component:
+    """Render an editor value as a clickable external link that opens in a new tab."""
     return rx.link(
         value.text,
         href=value.href,
@@ -24,16 +24,16 @@ def fixed_external_link(value: EditorValue) -> rx.Component:
     )
 
 
-def fixed_link(value: EditorValue) -> rx.Component:
-    """Render an editor value as a clickable link that reloads the edit page."""
+def render_link(value: EditorValue) -> rx.Component:
+    """Render an editor value as an internal or external link."""
     return rx.cond(
         value.external,
-        fixed_external_link(value),
-        fixed_internal_link(value),
+        render_external_link(value),
+        render_internal_link(value),
     )
 
 
-def fixed_text(value: EditorValue) -> rx.Component:
+def render_text(value: EditorValue) -> rx.Component:
     """Render an editor value as a text span."""
     return rx.text(
         value.text,
@@ -51,13 +51,13 @@ def postfix_badge(value: EditorValue) -> rx.Component:
     )
 
 
-def fixed_value(value: EditorValue) -> rx.Component:
+def render_value(value: EditorValue) -> rx.Component:
     """Render a single editor value."""
     return rx.hstack(
         rx.cond(
             value.href,
-            fixed_link(value),
-            fixed_text(value),
+            render_link(value),
+            render_text(value),
         ),
         rx.cond(
             value.badge,

@@ -42,8 +42,8 @@ def _get_primary_source_id_from_model(
     if isinstance(model, AnyMergedModel | AnyRuleModel):
         return MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
     msg = (
-        "cannot transform model, expected extracted ExtractedData or "
-        f"MergedItem or RuleItem, got {type(model).__name__}"
+        "Cannot get primary source ID for model. Expected ExtractedModel, "
+        f"MergedModel or RuleModel, got {type(model).__name__}."
     )
     raise TypeError(msg)
 
@@ -108,7 +108,7 @@ def _transform_field_to_preventive(
                 prevented_sources.append(primary_source.identifier)
 
 
-def _transform_fixed_value_to_model_type(
+def _transform_render_value_to_model_type(
     value: EditorValue, field_name: str, class_name: str
 ) -> AnyNestedModel | AnyPrimitiveType | AnyTemporalEntity | AnyVocabularyEnum:
     if field_name in LINK_FIELDS_BY_CLASS_NAME[class_name]:
@@ -133,7 +133,7 @@ def _transform_field_to_subtractive(
         for primary_source in field.primary_sources:
             for value in primary_source.editor_values:
                 if not value.enabled:
-                    subtracted_value = _transform_fixed_value_to_model_type(
+                    subtracted_value = _transform_render_value_to_model_type(
                         value,
                         field.name,
                         ensure_prefix(subtractive.stemType, "Merged"),

@@ -55,7 +55,8 @@ class SearchState(State):
         return self.search()
 
     def set_page(
-        self, page_number: str | int
+        self,
+        page_number: str | int,
     ) -> Generator[EventSpec | None, None, None]:
         """Set the current page and refresh the results."""
         self.current_page = int(page_number)
@@ -74,11 +75,11 @@ class SearchState(State):
         # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
         try:
-            response = connector.fetch_merged_items(
-                self.query_string,
-                [k for k, v in self.entity_types.items() if v],
-                self.limit * (self.current_page - 1),
-                self.limit,
+            response = connector.fetch_preview_items(
+                query_string=self.query_string,
+                entity_type=[k for k, v in self.entity_types.items() if v],
+                skip=self.limit * (self.current_page - 1),
+                limit=self.limit,
             )
         except HTTPError as exc:
             self.reset()

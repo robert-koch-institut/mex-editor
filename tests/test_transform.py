@@ -34,7 +34,7 @@ def test_transform_values(values: object, expected: list[EditorValue]) -> None:
 
 
 def test_transform_value_none_error() -> None:
-    with pytest.raises(MExError, match="cannot transform null"):
+    with pytest.raises(MExError, match="cannot transform NoneType to editor value"):
         transform_value(None)
 
 

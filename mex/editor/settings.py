@@ -1,7 +1,8 @@
 from pydantic import Field
 
 from mex.common.settings import BaseSettings
-from mex.editor.types import EditorUserDatabase
+from mex.common.types import IdentityProvider
+from mex.editor.types import EditorIdentityProvider, EditorUserDatabase
 
 
 class EditorSettings(BaseSettings):
@@ -12,3 +13,9 @@ class EditorSettings(BaseSettings):
         description="Database of users.",
         validation_alias="MEX_BACKEND_API_USER_DATABASE",
     )
+    identity_provider: IdentityProvider | EditorIdentityProvider = Field(
+        # IdentityProvider.MEMORY,
+        EditorIdentityProvider.BACKEND,
+        description="Provider to assign stableTargetIds to new model instances.",
+        validation_alias="MEX_IDENTITY_PROVIDER",
+    )  # type: ignore[assignment]

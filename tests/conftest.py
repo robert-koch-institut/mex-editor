@@ -167,11 +167,11 @@ def dummy_data() -> list[AnyExtractedModel]:
     )
     return [
         primary_source_1,
-        # primary_source_2,
+        primary_source_2,
         contact_point_1,
-        # contact_point_2,
-        # organizational_unit_1,
-        # activity_1,
+        contact_point_2,
+        organizational_unit_1,
+        activity_1,
     ]
 
 

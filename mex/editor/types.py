@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import cast
 
 from pydantic import SecretStr
@@ -20,3 +21,9 @@ class EditorUserDatabase(BaseModel):
     ) -> dict[str, EditorUserPassword]:  # stop-gap: MX-1596
         """Return an attribute in indexing syntax."""
         return cast(dict[str, EditorUserPassword], getattr(self, key))
+
+
+class EditorIdentityProvider(Enum):
+    """Identity providers implemented by the mex-editor."""
+
+    BACKEND = "backend"

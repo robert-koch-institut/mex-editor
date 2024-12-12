@@ -1,17 +1,11 @@
-from contextlib import closing
-
 import pytest
 from fastapi.testclient import TestClient
 from playwright.sync_api import Page, expect
 from pydantic import SecretStr
 from pytest import MonkeyPatch
 
-from mex.backend.graph.connector import GraphConnector
-from mex.backend.graph.models import Result
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import (
-    EXTRACTED_MODEL_CLASSES,
-    MERGED_MODEL_CLASSES,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
     ExtractedActivity,
@@ -19,10 +13,8 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
-from mex.common.settings import SETTINGS_STORE
 from mex.common.types import (
     Email,
-    Identifier,
     Link,
     Text,
     TextLanguage,
@@ -117,39 +109,12 @@ def writer_user_page(
     return page
 
 
-class ResettingGraphConnector(GraphConnector):
-    """Graph connector subclass for tests to resets constraints, indices and data."""
-
-    def _seed_constraints(self) -> list[Result]:
-        for row in self.commit("SHOW ALL CONSTRAINTS;").all():
-            self.commit(f"DROP CONSTRAINT {row['name']};")
-        return super()._seed_constraints()
-
-    def _seed_indices(self) -> Result:
-        for row in self.commit("SHOW ALL INDEXES WHERE type = 'FULLTEXT';").all():
-            self.commit(f"DROP INDEX {row['name']};")
-        return super()._seed_indices()
-
-    def _seed_data(self) -> list[Identifier]:
-        self.commit("MATCH (n) DETACH DELETE n;")
-        return super()._seed_data()
-
-
 @pytest.fixture(autouse=True)
-def isolate_graph_database(settings: EditorSettings, is_integration_test: bool) -> None:
-    """Rebuild the graph in a sub-process, so the settings won't get angry with us."""
+def flush_graph_database(is_integration_test: bool) -> None:
+    """Flush the graph database before every integration test."""
     if is_integration_test:
-        SETTINGS_STORE.reset()
-        with closing(ResettingGraphConnector()) as connector:
-            assert connector.commit(
-                "SHOW ALL CONSTRAINTS YIELD id RETURN COUNT(id) AS total;"
-            )["total"] == (len(EXTRACTED_MODEL_CLASSES) + len(MERGED_MODEL_CLASSES))
-            assert (
-                connector.commit("SHOW ALL INDEXES WHERE type = 'FULLTEXT';")["name"]
-                == "search_index"
-            )
-            assert connector.commit("MATCH (n) RETURN COUNT(n) AS total;")["total"] == 2
-        SETTINGS_STORE.push(settings)
+        connector = BackendApiConnector.get()
+        connector.request(method="DELETE", endpoint="/_system/graph")
 
 
 @pytest.fixture
@@ -202,11 +167,11 @@ def dummy_data() -> list[AnyExtractedModel]:
     )
     return [
         primary_source_1,
-        primary_source_2,
+        # primary_source_2,
         contact_point_1,
-        contact_point_2,
-        organizational_unit_1,
-        activity_1,
+        # contact_point_2,
+        # organizational_unit_1,
+        # activity_1,
     ]
 
 

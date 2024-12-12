@@ -27,3 +27,12 @@ def test_login_state_login_error() -> None:
 
     assert "Invalid credentials" in str(state.login())
     assert not state.user
+
+
+def test_login_state_redirect_to_original_url():
+    state = LoginState(
+        username="writer",
+        password="writer_pass",  # noqa: S106
+        parent_state=State(),
+    )
+    assert state.user

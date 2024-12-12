@@ -11,6 +11,7 @@ class State(rx.State):
     """The base state for the app."""
 
     user: User | None = None
+    current_url: str | None = None
     nav_items: list[NavItem] = [
         NavItem(title="Search", href_template=r"/"),
         NavItem(title="Edit", href_template=r"/item/{item_id}/"),
@@ -25,6 +26,7 @@ class State(rx.State):
     def check_login(self) -> EventSpec | None:
         """Check if a user is logged in."""
         if self.user is None:
+            self.current_url = self.router.page.raw_path
             return rx.redirect("/login")
         return None
 

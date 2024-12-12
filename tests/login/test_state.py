@@ -33,7 +33,7 @@ def test_login_state_redirect_to_original_url() -> None:
     state = LoginState(
         username="writer",
         password="writer_pass",  # noqa: S106
-        parent_state=State(current_url="/merge/"),
+        parent_state=State(target_path_after_login="/merge/"),
     )
     assert "/merge/" in str(state.login())
     assert state.user

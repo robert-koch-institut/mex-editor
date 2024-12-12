@@ -29,10 +29,12 @@ def test_login_state_login_error() -> None:
     assert not state.user
 
 
-def test_login_state_redirect_to_original_url():
+def test_login_state_redirect_to_original_url() -> None:
     state = LoginState(
         username="writer",
         password="writer_pass",  # noqa: S106
+        current_url="/merge/",
         parent_state=State(),
     )
+    assert "/merge/" in str(state.login())
     assert state.user

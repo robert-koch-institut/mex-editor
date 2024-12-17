@@ -16,6 +16,7 @@ class State(rx.State):
         NavItem(title="Search", href_template=r"/"),
         NavItem(title="Edit", href_template=r"/item/{item_id}/"),
         NavItem(title="Merge", href_template=r"/merge/"),
+        NavItem(title="Aux Import", href_template=r"/aux-import/"),
     ]
 
     def logout(self, _: Any) -> EventSpec:

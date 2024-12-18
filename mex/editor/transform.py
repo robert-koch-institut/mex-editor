@@ -63,7 +63,7 @@ def transform_value(value: object, allow_link: bool = True) -> EditorValue:
         )
     if isinstance(value, Identifier):
         return EditorValue(
-            text=value,
+            text=str(value),
             href=f"/item/{value}" if allow_link else None,
         )
     if isinstance(value, VocabularyEnum):

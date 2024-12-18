@@ -30,7 +30,7 @@ class NavItem(rx.Base):
 
     title: str
     href: str = "/"
-    href_template: str
+    href_template: str = "/"
     underline: str = "none"
 
 
@@ -39,6 +39,7 @@ class ModelConfig(BaseModel):
 
     title: str
     preview: list[str] = []
+    icon: str
 
 
 MODEL_CONFIG_BY_STEM_TYPE = TypeAdapter(dict[str, ModelConfig]).validate_python(

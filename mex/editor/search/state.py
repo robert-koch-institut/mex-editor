@@ -55,8 +55,7 @@ class SearchState(State):
         return self.search()
 
     def set_page(
-        self,
-        page_number: str | int,
+        self, page_number: str | int
     ) -> Generator[EventSpec | None, None, None]:
         """Set the current page and refresh the results."""
         self.current_page = int(page_number)

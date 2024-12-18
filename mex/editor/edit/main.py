@@ -8,6 +8,18 @@ from mex.editor.edit.state import EditState
 from mex.editor.layout import page
 
 
+def editor_value_switch(field_name: str, value: EditorValue) -> rx.Component:
+    """Return a switch for toggling subtractive rules."""
+    return rx.switch(
+        checked=value.enabled,
+        on_change=lambda enabled: cast(EditState, EditState).toggle_field_value(
+            field_name,
+            value,
+            enabled,
+        ),
+    )
+
+
 def editor_value_card(
     field_name: str,
     primary_source: str | None,
@@ -20,16 +32,26 @@ def editor_value_card(
             render_value(value),
             rx.cond(
                 cast(rx.vars.ArrayVar, EditState.editor_fields).contains(field_name),
-                rx.switch(
-                    checked=value.enabled,
-                    on_change=lambda enabled: cast(
-                        EditState, EditState
-                    ).toggle_field_value(field_name, value, enabled),
-                ),
+                editor_value_switch(field_name, value),
             ),
         ),
         style={"width": "30vw"},
         custom_attrs={"data-testid": f"value-{field_name}-{primary_source}-{index}"},
+    )
+
+
+def primary_source_switch(
+    field_name: str,
+    model: EditorPrimarySource,
+) -> rx.Component:
+    """Return a switch for toggling preventive rules."""
+    return rx.switch(
+        checked=model.enabled,
+        on_change=lambda enabled: cast(EditState, EditState).toggle_primary_source(
+            field_name,
+            cast(str, model.name.href),
+            enabled,
+        ),
     )
 
 
@@ -43,16 +65,7 @@ def primary_source_name(
             render_value(model.name),
             rx.cond(
                 cast(rx.vars.ArrayVar, EditState.editor_fields).contains(field_name),
-                rx.switch(
-                    checked=model.enabled,
-                    on_change=lambda enabled: cast(
-                        EditState, EditState
-                    ).toggle_primary_source(
-                        field_name,
-                        cast(str, model.name.href),
-                        enabled,
-                    ),
-                ),
+                primary_source_switch(field_name, model),
             ),
         ),
         style={"width": "20vw"},

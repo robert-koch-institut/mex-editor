@@ -7,6 +7,8 @@ from mex.common.identity.models import Identity
 from mex.common.types import Identifier, MergedPrimarySourceIdentifier
 from mex.editor.settings import EditorSettings
 
+# TODO(ND): use mex-common version of BackendIdentityProvider (stop-gap MX-1763)
+
 
 class BackendIdentityProvider(BaseProvider, HTTPConnector):
     """Identity provider that communicates with the backend HTTP API."""

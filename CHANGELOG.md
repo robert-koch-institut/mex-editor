@@ -8,9 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - redirect to original URL after login
 
 ### Changes
+
+- rename FixedX and EditableX classes to EditorX for consistency
 
 ### Deprecated
 

@@ -75,7 +75,7 @@ class EditState(State):
 
         self.fields = transform_models_to_fields(
             *extracted_items_response.items,
-            # TODO(ND): add additive rule as a model here as well
+            # TODO(ND): add additive rule as a model here as well (MX-1741)
             subtractive=rule_set.subtractive,
             preventive=rule_set.preventive,
         )
@@ -88,7 +88,7 @@ class EditState(State):
         rule_set = transform_fields_to_rule_set(stem_type, self.fields)
         connector = BackendApiConnector.get()
         try:
-            # TODO(ND): use proper connector method when available
+            # TODO(ND): use proper connector method when available (stop-gap MX-1762)
             connector.request(
                 method="PUT",
                 endpoint=f"rule-set/{self.item_id}",

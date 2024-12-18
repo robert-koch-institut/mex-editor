@@ -114,6 +114,7 @@ def flush_graph_database(is_integration_test: bool) -> None:
     """Flush the graph database before every integration test."""
     if is_integration_test:
         connector = BackendApiConnector.get()
+        # TODO(ND): use proper connector method when available (stopgap mx-1762)
         connector.request(method="DELETE", endpoint="/_system/graph")
 
 

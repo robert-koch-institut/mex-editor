@@ -24,5 +24,7 @@ class LoginState(State):
                 authorization=f"Basic {encoded.decode('ascii')}",
                 write_access=write_access,
             )
+            if self.target_path_after_login:
+                return rx.redirect(self.target_path_after_login)
             return rx.redirect("/")
         return rx.window_alert("Invalid credentials.")

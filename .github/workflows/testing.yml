@@ -27,13 +27,13 @@ jobs:
 
     services:
       neo4j:
-        image: neo4j:5.25-community
+        image: neo4j:5.26-community
         env:
           NEO4J_AUTH: neo4j/password
         ports:
           - 7687:7687
       backend:
-        image: ghcr.io/robert-koch-institut/mex-backend:0.25.0
+        image: ghcr.io/robert-koch-institut/mex-backend:0.26.0
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
           MEX_BACKEND_API_KEY_DATABASE: ${{ secrets.MEX_BACKEND_API_KEY_DATABASE }}

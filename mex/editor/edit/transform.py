@@ -159,16 +159,15 @@ def _transform_field_to_subtractive(
     field: EditorField,
     subtractive: AnySubtractiveModel,
 ) -> None:
-    if (field.name in MERGEABLE_FIELDS_BY_CLASS_NAME[subtractive.entityType]) and (
-        (subtracted_values := getattr(subtractive, field.name)) is not None
-    ):
+    """Transform an editor field back to subtractive rule values."""
+    if field.name in MERGEABLE_FIELDS_BY_CLASS_NAME[subtractive.entityType]:
+        subtracted_values = getattr(subtractive, field.name)
+        merged_class_name = ensure_prefix(subtractive.stemType, "Merged")
         for primary_source in field.primary_sources:
-            for value in primary_source.editor_values:
-                if not value.enabled:
+            for editor_value in primary_source.editor_values:
+                if not editor_value.enabled:
                     subtracted_value = _transform_editor_value_to_model_value(
-                        value,
-                        field.name,
-                        ensure_prefix(subtractive.stemType, "Merged"),
+                        editor_value, field.name, merged_class_name
                     )
                     if subtracted_value not in subtracted_values:
                         subtracted_values.append(subtracted_value)

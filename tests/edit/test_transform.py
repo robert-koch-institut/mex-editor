@@ -444,9 +444,100 @@ def test_transform_render_value_to_model_type(
     assert model_value == expected
 
 
-def test_transform_field_to_subtractive() -> None:
-    assert _transform_field_to_subtractive()
+@pytest.mark.parametrize(
+    ("field", "expected"),
+    [
+        (
+            EditorField(
+                name="unknownField",
+                primary_sources=[
+                    EditorPrimarySource(
+                        name=EditorValue(text="Primary Source 1"),
+                        identifier=MergedPrimarySourceIdentifier("PrimarySource001"),
+                    )
+                ],
+            ),
+            {},
+        ),
+        (
+            EditorField(
+                name="familyName",
+                primary_sources=[
+                    EditorPrimarySource(
+                        name=EditorValue(text="Primary Source 1"),
+                        identifier=MergedPrimarySourceIdentifier("PrimarySource001"),
+                        editor_values=[
+                            EditorValue(text="active", enabled=True),
+                            EditorValue(text="inactive", enabled=False),
+                        ],
+                    ),
+                    EditorPrimarySource(
+                        name=EditorValue(text="Primary Source 2"),
+                        identifier=MergedPrimarySourceIdentifier("PrimarySource002"),
+                        editor_values=[
+                            EditorValue(text="another inactive", enabled=False),
+                        ],
+                    ),
+                ],
+            ),
+            {"familyName": ["inactive", "another inactive"]},
+        ),
+    ],
+)
+def test_transform_field_to_subtractive(
+    field: EditorField, expected: dict[str, object]
+) -> None:
+    subtractive = SubtractivePerson()
+    _transform_field_to_subtractive(field, subtractive)
+    assert subtractive.model_dump(exclude_defaults=True) == expected
 
 
 def test_transform_fields_to_rule_set() -> None:
-    assert transform_fields_to_rule_set()
+    rule_set_request = transform_fields_to_rule_set(
+        "Person",
+        [
+            EditorField(
+                name="givenName",
+                primary_sources=[
+                    EditorPrimarySource(
+                        name=EditorValue(text="Enabled Primary Source"),
+                        identifier=MergedPrimarySourceIdentifier("PrimarySource001"),
+                    ),
+                    EditorPrimarySource(
+                        name=EditorValue(text="Prevented Primary Source"),
+                        identifier=MergedPrimarySourceIdentifier("PrimarySource002"),
+                        enabled=False,
+                    ),
+                ],
+            ),
+            EditorField(
+                name="familyName",
+                primary_sources=[
+                    EditorPrimarySource(
+                        name=EditorValue(text="Primary Source 1"),
+                        identifier=MergedPrimarySourceIdentifier("PrimarySource001"),
+                        editor_values=[
+                            EditorValue(text="active", enabled=True),
+                            EditorValue(text="inactive", enabled=False),
+                        ],
+                    ),
+                    EditorPrimarySource(
+                        name=EditorValue(text="Primary Source 2"),
+                        identifier=MergedPrimarySourceIdentifier("PrimarySource002"),
+                        editor_values=[
+                            EditorValue(text="another inactive", enabled=False),
+                        ],
+                    ),
+                ],
+            ),
+        ],
+    )
+    assert rule_set_request.entityType == "PersonRuleSetRequest"
+    assert rule_set_request.model_dump(exclude_defaults=True) == {
+        "subtractive": {
+            "familyName": ["inactive", "another inactive"],
+        },
+        "preventive": {
+            "givenName": ["PrimarySource002"],
+        },
+    }

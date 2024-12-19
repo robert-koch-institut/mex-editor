@@ -25,23 +25,23 @@ def search_input() -> rx.Component:
         ),
         style={"margin": "1em 0 1em"},
         debounce_timeout=250,
+        width="100%",
     )
 
 
 def search_bar() -> rx.Component:
     """Render a bar with an extractor menu."""
-    return rx.center(
-        rx.flex(
-            rx.foreach(
-                AuxState.aux_items,
-                lambda item: rx.text(
-                    item,
-                    cursor="pointer",
-                ),
+    return rx.flex(
+        rx.foreach(
+            AuxState.aux_items,
+            lambda item: rx.text(
+                item,
+                cursor="pointer",
+                size="5",
             ),
-            direction="row",
-            gap="10px",
         ),
+        direction="row",
+        gap="50px",
     )
 
 
@@ -98,11 +98,17 @@ def search_results() -> rx.Component:
 
 def index() -> rx.Component:
     """Return the index for the search component."""
-    return page(
-        rx.vstack(
-            search_bar(),
-            search_input(),
-            search_results(),
-            spacing="5",
+    return rx.center(
+        page(
+            rx.vstack(
+                search_bar(),
+                search_input(),
+                search_results(),
+                spacing="5",
+                justify="center",
+                align="center",
+                padding="30px",
+            ),
         ),
+        width="100%",
     )

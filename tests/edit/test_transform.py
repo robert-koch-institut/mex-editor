@@ -4,6 +4,7 @@ from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AdditiveActivity,
     AdditiveContactPoint,
+    AdditivePerson,
     AnyAdditiveModel,
     AnyExtractedModel,
     AnyMergedModel,
@@ -14,6 +15,7 @@ from mex.common.models import (
     ExtractedPerson,
     MergedConsent,
     MergedContactPoint,
+    MergedPerson,
     PreventivePerson,
     SubtractiveActivity,
     SubtractivePerson,
@@ -26,13 +28,21 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    Text,
+    TextLanguage,
+    Year,
     YearMonthDayTime,
 )
 from mex.editor.edit.models import EditorField, EditorPrimarySource
 from mex.editor.edit.transform import (
     _get_primary_source_id_from_model,
+    _transform_editor_value_to_model_value,
+    _transform_field_to_preventive,
+    _transform_field_to_subtractive,
     _transform_model_to_editor_primary_source,
     _transform_model_values_to_editor_values,
+    transform_fields_to_rule_set,
+    transform_models_to_fields,
 )
 from mex.editor.models import EditorValue
 
@@ -149,7 +159,6 @@ def test_get_primary_source_id_from_model(
                     text="http://pavyzdys",
                     href="http://pavyzdys",
                     external=True,
-                    enabled=True,
                 ),
             ],
         ),
@@ -200,7 +209,6 @@ def test_transform_model_values_to_editor_values(
                         text="primarySourceId", href="/item/primarySourceId"
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
-                    editor_values=[],
                 )
             ],
         ),
@@ -263,20 +271,182 @@ def test_transform_model_to_editor_primary_source(
 
 
 def test_transform_models_to_fields() -> None:
-    pass
+    editor_fields = transform_models_to_fields(
+        MergedPerson(
+            identifier=MergedPersonIdentifier.generate(), email=["person@rki.de"]
+        ),
+        AdditivePerson(givenName=["Good"]),
+        subtractive=SubtractivePerson(givenName=["Bad"]),
+        preventive=PreventivePerson(memberOf=[MEX_PRIMARY_SOURCE_STABLE_TARGET_ID]),
+    )
+
+    assert len(editor_fields) == len(MergedPerson.get_all_fields())
+    field_names_of_interest = ("entityType", "givenName", "memberOf")
+    fields_of_interest = [f for f in editor_fields if f.name in field_names_of_interest]
+    assert fields_of_interest == [
+        EditorField(
+            name="entityType",
+            primary_sources=[
+                EditorPrimarySource(
+                    name=EditorValue(
+                        text="00000000000000", href="/item/00000000000000"
+                    ),
+                    identifier=MergedPrimarySourceIdentifier("00000000000000"),
+                    editor_values=[EditorValue(text="MergedPerson")],
+                ),
+                EditorPrimarySource(
+                    name=EditorValue(
+                        text="00000000000000", href="/item/00000000000000"
+                    ),
+                    identifier=MergedPrimarySourceIdentifier("00000000000000"),
+                    editor_values=[EditorValue(text="AdditivePerson")],
+                ),
+            ],
+        ),
+        EditorField(
+            name="givenName",
+            primary_sources=[
+                EditorPrimarySource(
+                    name=EditorValue(
+                        text="00000000000000",
+                        href="/item/00000000000000",
+                    ),
+                    identifier=MergedPrimarySourceIdentifier("00000000000000"),
+                ),
+                EditorPrimarySource(
+                    name=EditorValue(
+                        text="00000000000000",
+                        href="/item/00000000000000",
+                    ),
+                    identifier=MergedPrimarySourceIdentifier("00000000000000"),
+                    editor_values=[EditorValue(text="Good")],
+                ),
+            ],
+        ),
+        EditorField(
+            name="memberOf",
+            primary_sources=[
+                EditorPrimarySource(
+                    name=EditorValue(
+                        text="00000000000000",
+                        href="/item/00000000000000",
+                    ),
+                    identifier=MergedPrimarySourceIdentifier("00000000000000"),
+                    enabled=False,
+                ),
+                EditorPrimarySource(
+                    name=EditorValue(
+                        text="00000000000000",
+                        href="/item/00000000000000",
+                    ),
+                    identifier=MergedPrimarySourceIdentifier("00000000000000"),
+                    enabled=False,
+                ),
+            ],
+        ),
+    ]
 
 
-def test_transform_field_to_preventive() -> None:
-    pass
+@pytest.mark.parametrize(
+    ("field", "expected"),
+    [
+        (
+            EditorField(
+                name="unknownField",
+                primary_sources=[
+                    EditorPrimarySource(
+                        enabled=True,
+                        name=EditorValue(text="Enabled Primary Source"),
+                        identifier=MergedPrimarySourceIdentifier(
+                            "enabledPrimarySourceId"
+                        ),
+                    )
+                ],
+            ),
+            {},
+        ),
+        (
+            EditorField(
+                name="familyName",
+                primary_sources=[
+                    EditorPrimarySource(
+                        enabled=True,
+                        name=EditorValue(text="Enabled Primary Source"),
+                        identifier=MergedPrimarySourceIdentifier(
+                            "enabledPrimarySourceId"
+                        ),
+                    ),
+                    EditorPrimarySource(
+                        enabled=False,
+                        name=EditorValue(text="Prevented Primary Source"),
+                        identifier=MergedPrimarySourceIdentifier(
+                            "preventedPrimarySourceId"
+                        ),
+                    ),
+                ],
+            ),
+            {"familyName": ["preventedPrimarySourceId"]},
+        ),
+    ],
+)
+def test_transform_field_to_preventive(
+    field: EditorField, expected: dict[str, object]
+) -> None:
+    preventive = PreventivePerson()
+    _transform_field_to_preventive(field, preventive)
+    assert preventive.model_dump(exclude_defaults=True) == expected
 
 
-def test_transform_render_value_to_model_type() -> None:
-    pass
+@pytest.mark.parametrize(
+    ("editor_value", "field_name", "class_name", "expected"),
+    [
+        (
+            EditorValue(text="Titel", badge="de", href="https://beispiel"),
+            "documentation",
+            "MergedResource",
+            Link(url="https://beispiel", language=LinkLanguage.DE, title="Titel"),
+        ),
+        (
+            EditorValue(text="Beispiel Text", badge="de"),
+            "alternativeName",
+            "ExtractedOrganization",
+            Text(language=TextLanguage.DE, value="Beispiel Text"),
+        ),
+        (
+            EditorValue(text="VALID_FOR_PROCESSING", badge="ConsentStatus"),
+            "hasConsentType",
+            "MergedConsent",
+            ConsentStatus["VALID_FOR_PROCESSING"],
+        ),
+        (
+            EditorValue(text="2004", badge="year"),
+            "start",
+            "ExtractedActivity",
+            Year(2004),
+        ),
+        (
+            EditorValue(text="Funds for Funding e.V."),
+            "fundingProgram",
+            "ExtractedActivity",
+            "Funds for Funding e.V.",
+        ),
+    ],
+    ids=["link", "text", "vocab", "temporal", "string"],
+)
+def test_transform_render_value_to_model_type(
+    editor_value: EditorValue, field_name: str, class_name: str, expected: object
+) -> None:
+    model_value = _transform_editor_value_to_model_value(
+        editor_value,
+        field_name,
+        class_name,
+    )
+    assert model_value == expected
 
 
 def test_transform_field_to_subtractive() -> None:
-    pass
+    assert _transform_field_to_subtractive()
 
 
 def test_transform_fields_to_rule_set() -> None:
-    pass
+    assert transform_fields_to_rule_set()

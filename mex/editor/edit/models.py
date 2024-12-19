@@ -9,7 +9,7 @@ class EditorPrimarySource(rx.Base):
 
     name: EditorValue
     identifier: MergedPrimarySourceIdentifier
-    editor_values: list[EditorValue]
+    editor_values: list[EditorValue] = []
     enabled: bool = True
 
 
@@ -17,4 +17,4 @@ class EditorField(rx.Base):
     """Model for describing the editor state for a single field."""
 
     name: str
-    primary_sources: list[EditorPrimarySource]
+    primary_sources: list[EditorPrimarySource] = []

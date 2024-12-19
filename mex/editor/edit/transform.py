@@ -101,7 +101,16 @@ def transform_models_to_fields(
     subtractive: AnySubtractiveModel | None = None,
     preventive: AnyPreventiveModel | None = None,
 ) -> list[EditorField]:
-    """Convert a list of models and optional rules into editor field models."""
+    """Convert the given models and optional rules into editor field models.
+
+    Args:
+        models: A series of extracted, merged or additive models
+        subtractive: An optional subtractive rule model
+        preventive: An optional preventive rule model
+
+    Returns:
+        A list of editor field instances
+    """
     fields_by_name = {
         field_name: EditorField(name=field_name, primary_sources=[])
         for field_name in {f for m in models for f in m.get_all_fields()}
@@ -114,11 +123,12 @@ def transform_models_to_fields(
 
 
 def _transform_field_to_preventive(
-    field: EditorField, preventive: AnyPreventiveModel
+    field: EditorField,
+    preventive: AnyPreventiveModel,
 ) -> None:
-    if (field.name in MERGEABLE_FIELDS_BY_CLASS_NAME[preventive.entityType]) and (
-        (prevented_sources := getattr(preventive, field.name)) is not None
-    ):
+    """Transform an editor field back to a preventive rule field."""
+    if field.name in MERGEABLE_FIELDS_BY_CLASS_NAME[preventive.entityType]:
+        prevented_sources = getattr(preventive, field.name)
         for primary_source in field.primary_sources:
             if not primary_source.enabled and (
                 primary_source.identifier not in prevented_sources
@@ -126,9 +136,12 @@ def _transform_field_to_preventive(
                 prevented_sources.append(primary_source.identifier)
 
 
-def _transform_render_value_to_model_type(
-    value: EditorValue, field_name: str, class_name: str
+def _transform_editor_value_to_model_value(
+    value: EditorValue,
+    field_name: str,
+    class_name: str,
 ) -> AnyNestedModel | AnyPrimitiveType | AnyTemporalEntity | AnyVocabularyEnum:
+    """Transform an editor value back to a value to be used in mex.common.models."""
     if field_name in LINK_FIELDS_BY_CLASS_NAME[class_name]:
         return Link(url=value.href, language=value.badge, title=value.text)
     if field_name in TEXT_FIELDS_BY_CLASS_NAME[class_name]:
@@ -143,7 +156,8 @@ def _transform_render_value_to_model_type(
 
 
 def _transform_field_to_subtractive(
-    field: EditorField, subtractive: AnySubtractiveModel
+    field: EditorField,
+    subtractive: AnySubtractiveModel,
 ) -> None:
     if (field.name in MERGEABLE_FIELDS_BY_CLASS_NAME[subtractive.entityType]) and (
         (subtracted_values := getattr(subtractive, field.name)) is not None
@@ -151,7 +165,7 @@ def _transform_field_to_subtractive(
         for primary_source in field.primary_sources:
             for value in primary_source.editor_values:
                 if not value.enabled:
-                    subtracted_value = _transform_render_value_to_model_type(
+                    subtracted_value = _transform_editor_value_to_model_value(
                         value,
                         field.name,
                         ensure_prefix(subtractive.stemType, "Merged"),
@@ -161,9 +175,18 @@ def _transform_field_to_subtractive(
 
 
 def transform_fields_to_rule_set(
-    stem_type: str, fields: list[EditorField]
+    stem_type: str,
+    fields: list[EditorField],
 ) -> AnyRuleSetRequest:
-    """Transform the given fields to a rule set of the given stem type."""
+    """Transform the given fields to a rule set of the given stem type.
+
+    Args:
+        stem_type: The stemType the resulting rule set should have
+        fields: A list of editor fields to convert into rules
+
+    Returns:
+        Any rule set request model
+    """
     rule_set_class = RULE_SET_REQUEST_CLASSES_BY_NAME[
         ensure_postfix(stem_type, "RuleSetRequest")
     ]

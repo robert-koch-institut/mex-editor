@@ -54,6 +54,7 @@ def _transform_model_values_to_editor_values(
     field_name: str,
     subtractive: AnySubtractiveModel | None,
 ) -> list[EditorValue]:
+    """Given a model, a field and an optional subtractive rule, create editor values."""
     model_values = ensure_list(getattr(model, field_name))
     editor_values = []
     for model_value in model_values:
@@ -67,33 +68,32 @@ def _transform_model_values_to_editor_values(
     return editor_values
 
 
-def _transform_model_to_field(
+def _transform_model_to_editor_primary_source(
     fields_by_name: dict[str, EditorField],
     model: AnyExtractedModel | AnyMergedModel | AnyAdditiveModel,
     subtractive: AnySubtractiveModel | None,
     preventive: AnyPreventiveModel | None,
 ) -> None:
+    """With a model and optional rules, attach an editor primary source to the field."""
     primary_source_id = _get_primary_source_id_from_model(model)
     primary_source_name = transform_value(primary_source_id)
     for field_name in model.model_fields:
-        editor_field = fields_by_name.setdefault(
-            field_name, EditorField(name=field_name, primary_sources=[])
-        )
-        editor_field.primary_sources.append(
-            EditorPrimarySource(
-                name=primary_source_name,
-                identifier=primary_source_id,
-                editor_values=_transform_model_values_to_editor_values(
-                    model, field_name, subtractive
-                ),
-                enabled=not (
-                    preventive
-                    and field_name
-                    in MERGEABLE_FIELDS_BY_CLASS_NAME[preventive.entityType]
-                    and primary_source_id in getattr(preventive, field_name)
-                ),
+        if field_name in fields_by_name:
+            fields_by_name[field_name].primary_sources.append(
+                EditorPrimarySource(
+                    name=primary_source_name,
+                    identifier=primary_source_id,
+                    editor_values=_transform_model_values_to_editor_values(
+                        model, field_name, subtractive
+                    ),
+                    enabled=not (
+                        preventive
+                        and field_name
+                        in MERGEABLE_FIELDS_BY_CLASS_NAME[preventive.entityType]
+                        and primary_source_id in getattr(preventive, field_name)
+                    ),
+                )
             )
-        )
 
 
 def transform_models_to_fields(
@@ -101,10 +101,15 @@ def transform_models_to_fields(
     subtractive: AnySubtractiveModel | None = None,
     preventive: AnyPreventiveModel | None = None,
 ) -> list[EditorField]:
-    """Convert a list of models into editor field models."""
-    fields_by_name: dict[str, EditorField] = {}
+    """Convert a list of models and optional rules into editor field models."""
+    fields_by_name = {
+        field_name: EditorField(name=field_name, primary_sources=[])
+        for field_name in {f for m in models for f in m.get_all_fields()}
+    }
     for model in models:
-        _transform_model_to_field(fields_by_name, model, subtractive, preventive)
+        _transform_model_to_editor_primary_source(
+            fields_by_name, model, subtractive, preventive
+        )
     return list(fields_by_name.values())
 
 

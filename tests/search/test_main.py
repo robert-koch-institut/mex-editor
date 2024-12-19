@@ -19,14 +19,12 @@ def test_index(frontend_url: str, writer_user_page: Page) -> None:
     expect(page.get_by_text("showing 7 of total 7 items found")).to_be_visible()
 
     # check mex primary source is showing
-    primary_source = page.get_by_text(
-        re.compile(r"^00000000000000\s*MergedPrimarySource$")
-    )
-    expect(primary_source).to_be_visible()
+    primary_source = page.get_by_text(re.compile(r"^PrimarySource$"))
+    expect(primary_source.first).to_be_visible()
 
     # check activity is showing
     activity = page.get_by_text(
-        re.compile(r"Aktivität 1\s*de\s*A1.*24\. Dezember 1999\s*1\. Januar 2023")
+        re.compile(r"Aktivität 1\s*de\s*A1.*24\. Dezember 1999\s*day\s*1\. Januar 2023")
     )
     activity.scroll_into_view_if_needed()
     expect(activity).to_be_visible()

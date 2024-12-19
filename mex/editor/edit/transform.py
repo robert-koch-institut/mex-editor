@@ -113,7 +113,9 @@ def transform_models_to_fields(
     """
     fields_by_name = {
         field_name: EditorField(name=field_name, primary_sources=[])
-        for field_name in {f for m in models for f in m.get_all_fields()}
+        for field_name in {
+            f for m in models for f in MERGEABLE_FIELDS_BY_CLASS_NAME[m.entityType]
+        }
     }
     for model in models:
         _transform_model_to_editor_primary_source(

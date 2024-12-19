@@ -1,5 +1,6 @@
 import pytest
 
+from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AdditiveActivity,
@@ -280,23 +281,8 @@ def test_transform_models_to_fields() -> None:
         preventive=PreventivePerson(memberOf=[MEX_PRIMARY_SOURCE_STABLE_TARGET_ID]),
     )
 
-    assert len(editor_fields) == len(MergedPerson.get_all_fields())
+    assert len(editor_fields) == len(MERGEABLE_FIELDS_BY_CLASS_NAME["MergedPerson"])
     fields_by_name = {f.name: f for f in editor_fields}
-    assert fields_by_name["entityType"] == EditorField(
-        name="entityType",
-        primary_sources=[
-            EditorPrimarySource(
-                name=EditorValue(text="00000000000000", href="/item/00000000000000"),
-                identifier=MergedPrimarySourceIdentifier("00000000000000"),
-                editor_values=[EditorValue(text="MergedPerson")],
-            ),
-            EditorPrimarySource(
-                name=EditorValue(text="00000000000000", href="/item/00000000000000"),
-                identifier=MergedPrimarySourceIdentifier("00000000000000"),
-                editor_values=[EditorValue(text="AdditivePerson")],
-            ),
-        ],
-    )
     assert fields_by_name["givenName"] == EditorField(
         name="givenName",
         primary_sources=[

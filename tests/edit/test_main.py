@@ -4,6 +4,7 @@ from typing import cast
 import pytest
 from playwright.sync_api import Page, expect
 
+from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.models import AnyExtractedModel, ExtractedActivity
 
 
@@ -45,13 +46,13 @@ def test_edit_heading(edit_page: Page) -> None:
 @pytest.mark.integration
 def test_edit_fields(edit_page: Page, extracted_activity: ExtractedActivity) -> None:
     page = edit_page
-    identifier_in_primary_source = page.get_by_test_id(
-        "field-identifierInPrimarySource-name"
-    )
+    funding_program = page.get_by_test_id("field-fundingProgram-name")
     page.screenshot(path="tests_edit_test_main-test_edit_fields.png")
-    expect(identifier_in_primary_source).to_be_visible()
+    expect(funding_program).to_be_visible()
     all_fields = page.get_by_role("row").all()
-    assert len(all_fields) == len(extracted_activity.model_fields)
+    assert len(all_fields) == len(
+        MERGEABLE_FIELDS_BY_CLASS_NAME[extracted_activity.entityType]
+    )
 
 
 @pytest.mark.integration

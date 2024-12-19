@@ -53,9 +53,11 @@ class EditState(State):
 
         self.item_title = transform_models_to_title(extracted_items_response.items)
         self.stem_type = transform_models_to_stem_type(extracted_items_response.items)
-        self.editor_fields = MERGEABLE_FIELDS_BY_CLASS_NAME[
-            ensure_prefix(self.stem_type, "Merged")
-        ]
+        self.editor_fields = (
+            MERGEABLE_FIELDS_BY_CLASS_NAME[ensure_prefix(self.stem_type, "Merged")]
+            if self.stem_type
+            else []
+        )
         try:
             rule_set = connector.get_rule_set(
                 self.item_id,

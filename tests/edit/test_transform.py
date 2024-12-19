@@ -281,70 +281,63 @@ def test_transform_models_to_fields() -> None:
     )
 
     assert len(editor_fields) == len(MergedPerson.get_all_fields())
-    field_names_of_interest = ("entityType", "givenName", "memberOf")
-    fields_of_interest = [f for f in editor_fields if f.name in field_names_of_interest]
-    assert fields_of_interest == [
-        EditorField(
-            name="entityType",
-            primary_sources=[
-                EditorPrimarySource(
-                    name=EditorValue(
-                        text="00000000000000", href="/item/00000000000000"
-                    ),
-                    identifier=MergedPrimarySourceIdentifier("00000000000000"),
-                    editor_values=[EditorValue(text="MergedPerson")],
+    fields_by_name = {f.name: f for f in editor_fields}
+    assert fields_by_name["entityType"] == EditorField(
+        name="entityType",
+        primary_sources=[
+            EditorPrimarySource(
+                name=EditorValue(text="00000000000000", href="/item/00000000000000"),
+                identifier=MergedPrimarySourceIdentifier("00000000000000"),
+                editor_values=[EditorValue(text="MergedPerson")],
+            ),
+            EditorPrimarySource(
+                name=EditorValue(text="00000000000000", href="/item/00000000000000"),
+                identifier=MergedPrimarySourceIdentifier("00000000000000"),
+                editor_values=[EditorValue(text="AdditivePerson")],
+            ),
+        ],
+    )
+    assert fields_by_name["givenName"] == EditorField(
+        name="givenName",
+        primary_sources=[
+            EditorPrimarySource(
+                name=EditorValue(
+                    text="00000000000000",
+                    href="/item/00000000000000",
                 ),
-                EditorPrimarySource(
-                    name=EditorValue(
-                        text="00000000000000", href="/item/00000000000000"
-                    ),
-                    identifier=MergedPrimarySourceIdentifier("00000000000000"),
-                    editor_values=[EditorValue(text="AdditivePerson")],
+                identifier=MergedPrimarySourceIdentifier("00000000000000"),
+            ),
+            EditorPrimarySource(
+                name=EditorValue(
+                    text="00000000000000",
+                    href="/item/00000000000000",
                 ),
-            ],
-        ),
-        EditorField(
-            name="givenName",
-            primary_sources=[
-                EditorPrimarySource(
-                    name=EditorValue(
-                        text="00000000000000",
-                        href="/item/00000000000000",
-                    ),
-                    identifier=MergedPrimarySourceIdentifier("00000000000000"),
+                identifier=MergedPrimarySourceIdentifier("00000000000000"),
+                editor_values=[EditorValue(text="Good")],
+            ),
+        ],
+    )
+    assert fields_by_name["memberOf"] == EditorField(
+        name="memberOf",
+        primary_sources=[
+            EditorPrimarySource(
+                name=EditorValue(
+                    text="00000000000000",
+                    href="/item/00000000000000",
                 ),
-                EditorPrimarySource(
-                    name=EditorValue(
-                        text="00000000000000",
-                        href="/item/00000000000000",
-                    ),
-                    identifier=MergedPrimarySourceIdentifier("00000000000000"),
-                    editor_values=[EditorValue(text="Good")],
+                identifier=MergedPrimarySourceIdentifier("00000000000000"),
+                enabled=False,
+            ),
+            EditorPrimarySource(
+                name=EditorValue(
+                    text="00000000000000",
+                    href="/item/00000000000000",
                 ),
-            ],
-        ),
-        EditorField(
-            name="memberOf",
-            primary_sources=[
-                EditorPrimarySource(
-                    name=EditorValue(
-                        text="00000000000000",
-                        href="/item/00000000000000",
-                    ),
-                    identifier=MergedPrimarySourceIdentifier("00000000000000"),
-                    enabled=False,
-                ),
-                EditorPrimarySource(
-                    name=EditorValue(
-                        text="00000000000000",
-                        href="/item/00000000000000",
-                    ),
-                    identifier=MergedPrimarySourceIdentifier("00000000000000"),
-                    enabled=False,
-                ),
-            ],
-        ),
-    ]
+                identifier=MergedPrimarySourceIdentifier("00000000000000"),
+                enabled=False,
+            ),
+        ],
+    )
 
 
 @pytest.mark.parametrize(

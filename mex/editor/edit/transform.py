@@ -31,12 +31,13 @@ from mex.common.types import (
 )
 from mex.editor.edit.models import EditorField, EditorPrimarySource
 from mex.editor.models import EditorValue
-from mex.editor.transform import ensure_list, transform_value, transform_values
+from mex.editor.transform import ensure_list, transform_value
 
 
 def _get_primary_source_id_from_model(
     model: AnyExtractedModel | AnyMergedModel | AnyRuleModel,
 ) -> MergedPrimarySourceIdentifier:
+    """Given any model type, try to derive a sensible primary source identifier."""
     if isinstance(model, AnyExtractedModel):
         return MergedPrimarySourceIdentifier(model.hadPrimarySource)
     if isinstance(model, AnyMergedModel | AnyRuleModel):
@@ -46,6 +47,24 @@ def _get_primary_source_id_from_model(
         f"MergedModel or RuleModel, got {type(model).__name__}."
     )
     raise TypeError(msg)
+
+
+def _transform_model_values_to_editor_values(
+    model: AnyExtractedModel | AnyMergedModel | AnyAdditiveModel,
+    field_name: str,
+    subtractive: AnySubtractiveModel | None,
+) -> list[EditorValue]:
+    model_values = ensure_list(getattr(model, field_name))
+    editor_values = []
+    for model_value in model_values:
+        editor_value = transform_value(model_value)
+        editor_value.enabled = not (
+            subtractive
+            and field_name in MERGEABLE_FIELDS_BY_CLASS_NAME[subtractive.entityType]
+            and model_value in getattr(subtractive, field_name)
+        )
+        editor_values.append(editor_value)
+    return editor_values
 
 
 def _transform_model_to_field(
@@ -60,19 +79,13 @@ def _transform_model_to_field(
         editor_field = fields_by_name.setdefault(
             field_name, EditorField(name=field_name, primary_sources=[])
         )
-        model_values = ensure_list(getattr(model, field_name))
-        editor_values = transform_values(model_values)
-        for model_value, editor_value in zip(model_values, editor_values, strict=True):
-            editor_value.enabled = not (
-                subtractive
-                and field_name in MERGEABLE_FIELDS_BY_CLASS_NAME[subtractive.entityType]
-                and model_value in getattr(subtractive, field_name)
-            )
         editor_field.primary_sources.append(
             EditorPrimarySource(
                 name=primary_source_name,
                 identifier=primary_source_id,
-                editor_values=editor_values,
+                editor_values=_transform_model_values_to_editor_values(
+                    model, field_name, subtractive
+                ),
                 enabled=not (
                     preventive
                     and field_name

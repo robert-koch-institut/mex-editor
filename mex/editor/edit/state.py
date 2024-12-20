@@ -63,7 +63,7 @@ class EditState(State):
                 self.item_id,
             )
         except HTTPError as exc:
-            if exc.response.status_code == status.HTTP_404_NOT_FOUND:
+            if exc.response.status_code == status.HTTP_404_NOT_FOUND and self.stem_type:
                 rule_set_class = RULE_SET_RESPONSE_CLASSES_BY_NAME[
                     ensure_postfix(self.stem_type, "RuleSetResponse")
                 ]
@@ -102,7 +102,12 @@ class EditState(State):
                 "backend", "error submitting rule set", exc.response.text
             )
             return
-        yield rx.toast.success("Saved", duration=2000)
+        yield rx.toast.success(
+            "Saved",
+            duration=2000,
+            close_button=True,
+            dismissible=True,
+        )
         yield from self.refresh()
 
     def _get_primary_sources_by_field_name(

@@ -197,7 +197,10 @@ def dummy_data() -> list[AnyExtractedModel]:
 
 
 @pytest.fixture
-def load_dummy_data(dummy_data: list[AnyExtractedModel]) -> list[AnyExtractedModel]:
+def load_dummy_data(
+    dummy_data: list[AnyExtractedModel],
+    flush_graph_database: None,  # noqa: ARG001
+) -> list[AnyExtractedModel]:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
     connector.post_extracted_items(dummy_data)

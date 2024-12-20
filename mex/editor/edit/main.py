@@ -8,7 +8,12 @@ from mex.editor.edit.state import EditState
 from mex.editor.layout import page
 
 
-def editor_value_switch(field_name: str, value: EditorValue) -> rx.Component:
+def editor_value_switch(
+    field_name: str,
+    primary_source: str | None,
+    value: EditorValue,
+    index: int,
+) -> rx.Component:
     """Return a switch for toggling subtractive rules."""
     return rx.switch(
         checked=value.enabled,
@@ -17,6 +22,7 @@ def editor_value_switch(field_name: str, value: EditorValue) -> rx.Component:
             value,
             enabled,
         ),
+        custom_attrs={"data-testid": f"switch-{field_name}-{primary_source}-{index}"},
     )
 
 
@@ -32,7 +38,7 @@ def editor_value_card(
             render_value(value),
             rx.cond(
                 cast(rx.vars.ArrayVar, EditState.editor_fields).contains(field_name),
-                editor_value_switch(field_name, value),
+                editor_value_switch(field_name, primary_source, value, index),
             ),
         ),
         style={"width": "30vw"},
@@ -52,6 +58,7 @@ def primary_source_switch(
             cast(str, model.name.href),
             enabled,
         ),
+        custom_attrs={"data-testid": f"switch-{field_name}-{model.identifier}"},
     )
 
 

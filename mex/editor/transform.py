@@ -10,27 +10,11 @@ from mex.common.models import (
     AnyPreviewModel,
     AnyRuleModel,
 )
-from mex.common.types import (
-    Identifier,
-    Link,
-    TemporalEntity,
-    TemporalEntityPrecision,
-    Text,
-    VocabularyEnum,
-)
+from mex.common.types import Identifier, Link, TemporalEntity, Text, VocabularyEnum
 from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, EditorValue
 
-_DEFAULT_LOCALE = "de_DE"
+_DEFAULT_LOCALE = "en_US"
 _DEFAULT_TIMEZONE = pytz.timezone("Europe/Berlin")
-_BABEL_FORMATS_BY_PRECISION = {
-    TemporalEntityPrecision.YEAR: "yyyy",
-    TemporalEntityPrecision.MONTH: "MMMM yyyy",
-    TemporalEntityPrecision.DAY: "d. MMMM yyyy",
-    TemporalEntityPrecision.HOUR: "d. MMMM yyyy k a",
-    TemporalEntityPrecision.MINUTE: "d. MMMM yyyy H:MM",
-    TemporalEntityPrecision.SECOND: "d. MMMM yyyy H:MM:ss",
-    TemporalEntityPrecision.MICROSECOND: "d. MMMM yyyy H:MM:ss:SS",
-}
 
 
 def ensure_list(values: object) -> list[object]:
@@ -74,9 +58,7 @@ def transform_value(value: object, allow_link: bool = True) -> EditorValue:
     if isinstance(value, TemporalEntity):
         return EditorValue(
             text=format_datetime(
-                _DEFAULT_TIMEZONE.localize(value.date_time),
-                format=_BABEL_FORMATS_BY_PRECISION[value.precision],
-                locale=_DEFAULT_LOCALE,
+                _DEFAULT_TIMEZONE.localize(value.date_time), locale=_DEFAULT_LOCALE
             ),
             badge=value.precision.value,
         )

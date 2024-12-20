@@ -24,7 +24,7 @@ def test_index(frontend_url: str, writer_user_page: Page) -> None:
 
     # check activity is showing
     activity = page.get_by_text(
-        re.compile(r"Aktivität 1\s*de\s*A1.*24\. Dezember 1999\s*day\s*1\. Januar 2023")
+        re.compile(r"Aktivität 1\s*de\s*A1.*1999-12-24\s*day\s*2023-01-01")
     )
     activity.scroll_into_view_if_needed()
     expect(activity).to_be_visible()

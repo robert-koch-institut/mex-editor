@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- drop dev-dependency to mex-backend, use the flush endpoint instead
+- temporarily removed localization of temporals entity output
+
 ### Fixed
 
 ### Security

@@ -124,7 +124,7 @@ def test_edit_page_renders_temporal(
     start = page.get_by_test_id(f"value-start-{extracted_activity.hadPrimarySource}-0")
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_temporal.png")
     expect(start).to_be_visible()
-    expect(start).to_contain_text("24. Dezember 1999")  # temporal localization
+    expect(start).to_contain_text("1999-12-24")  # temporal localization
 
 
 @pytest.mark.integration

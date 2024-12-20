@@ -126,7 +126,7 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
             EditorValue(text="g32qzYNVH1Ez7JTEk3fvLF"),
             EditorValue(text="cWWm02l1c6cucKjIhkFqY4"),
             EditorValue(text="cWWm02l1c6cucKjIhkFqY4"),
-            EditorValue(text="24. Dezember 1999", badge="day"),
-            EditorValue(text="1. Januar 2023", badge="day"),
+            EditorValue(text="1999-12-24", badge="day"),
+            EditorValue(text="2023-01-01", badge="day"),
         ],
     ]

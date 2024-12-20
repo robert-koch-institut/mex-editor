@@ -1,8 +1,5 @@
 from collections.abc import Sequence
 
-import pytz
-from babel.dates import format_datetime
-
 from mex.common.exceptions import MExError
 from mex.common.models import (
     AnyExtractedModel,
@@ -12,9 +9,6 @@ from mex.common.models import (
 )
 from mex.common.types import Identifier, Link, TemporalEntity, Text, VocabularyEnum
 from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, EditorValue
-
-_DEFAULT_LOCALE = "en_US"
-_DEFAULT_TIMEZONE = pytz.timezone("Europe/Berlin")
 
 
 def ensure_list(values: object) -> list[object]:
@@ -57,9 +51,7 @@ def transform_value(value: object, allow_link: bool = True) -> EditorValue:
         )
     if isinstance(value, TemporalEntity):
         return EditorValue(
-            text=format_datetime(
-                _DEFAULT_TIMEZONE.localize(value.date_time), locale=_DEFAULT_LOCALE
-            ),
+            text=str(value),
             badge=value.precision.value,
         )
     if isinstance(value, str):

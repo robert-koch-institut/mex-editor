@@ -1,7 +1,9 @@
+from typing import cast
+
 import reflex as rx
 import reflex_chakra as rc
 
-from mex.editor.components import fixed_value
+from mex.editor.components import render_value
 from mex.editor.layout import page
 from mex.editor.search.models import SearchResult
 from mex.editor.search.state import SearchState
@@ -11,34 +13,26 @@ def search_result(result: SearchResult) -> rx.Component:
     """Render a single merged item search result."""
     return rx.card(
         rx.link(
-            rx.text(
+            rx.box(
                 rx.hstack(
                     rx.foreach(
                         result.title,
-                        fixed_value,
+                        render_value,
                     )
                 ),
-                weight="bold",
-                style={
-                    "whiteSpace": "nowrap",
-                    "overflow": "hidden",
-                    "textOverflow": "ellipsis",
-                    "maxWidth": "100%",
-                },
+                style={"fontWeight": "bold"},
             ),
-            rx.text(
+            rx.box(
                 rx.hstack(
                     rx.foreach(
                         result.preview,
-                        fixed_value,
+                        render_value,
                     )
                 ),
-                weight="light",
                 style={
-                    "whiteSpace": "nowrap",
-                    "overflow": "hidden",
-                    "textOverflow": "ellipsis",
-                    "maxWidth": "100%",
+                    "color": "var(--gray-12)",
+                    "fontWeight": "light",
+                    "textDecoration": "none",
                 },
             ),
             href=f"/item/{result.identifier}",
@@ -80,7 +74,9 @@ def entity_type_filter() -> rx.Component:
                 rc.checkbox(
                     choice[0],
                     checked=choice[1],
-                    on_change=lambda val: SearchState.set_entity_type(  # type: ignore[call-arg]
+                    on_change=lambda val: cast(
+                        SearchState, SearchState
+                    ).set_entity_type(
                         val,
                         choice[0],
                     ),
@@ -120,7 +116,7 @@ def pagination() -> rx.Component:
         ),
         rx.select(
             SearchState.total_pages,
-            value=SearchState.current_page.to_string(),  # type: ignore[attr-defined]
+            value=cast(rx.vars.NumberVar, SearchState.current_page).to_string(),
             on_change=SearchState.set_page,
             custom_attrs={"data-testid": "pagination-page-select"},
         ),

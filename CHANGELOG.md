@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - redirect to original URL after login
+- add icon identifiers to models.yaml and ModelConfig
 
 ### Changes
 

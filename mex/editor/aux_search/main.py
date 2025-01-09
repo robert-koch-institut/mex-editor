@@ -1,7 +1,48 @@
 import reflex as rx
 
-from mex.editor.aux_extractor.state import AuxState
+from mex.editor.aux_search.state import AuxResult, AuxState
+from mex.editor.components import fixed_value
 from mex.editor.layout import page
+
+
+def aux_search_result(result: AuxResult) -> rx.Component:
+    """Render a single aux search result."""
+    return rx.card(
+        rx.link(
+            rx.text(
+                rx.hstack(
+                    rx.foreach(
+                        result.title,
+                        fixed_value,
+                    )
+                ),
+                weight="bold",
+                style={
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis",
+                    "maxWidth": "100%",
+                },
+            ),
+            rx.text(
+                rx.hstack(
+                    rx.foreach(
+                        result.preview,
+                        fixed_value,
+                    )
+                ),
+                weight="light",
+                style={
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis",
+                    "maxWidth": "100%",
+                },
+            ),
+            href=f"/item/{result.identifier}",
+        ),
+        style={"width": "100%"},
+    )
 
 
 def search_input() -> rx.Component:
@@ -33,7 +74,7 @@ def search_bar() -> rx.Component:
     """Render a bar with an extractor menu."""
     return rx.flex(
         rx.foreach(
-            AuxState.aux_items,
+            AuxState.aux_data_sources,
             lambda item: rx.text(
                 item,
                 cursor="pointer",
@@ -89,6 +130,10 @@ def search_results() -> rx.Component:
             ),
             style={"margin": "1em 0"},
             width="100%",
+        ),
+        rx.foreach(
+            AuxState.results,
+            aux_search_result,
         ),
         pagination(),
         custom_attrs={"data-testid": "search-results-section"},

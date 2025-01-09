@@ -5,9 +5,9 @@ import reflex as rx
 from reflex.event import EventSpec
 from requests import HTTPError
 
+from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import logger
 from mex.common.models import MERGED_MODEL_CLASSES_BY_NAME
-from mex.common.wikidata.connector import WikidataQueryServiceConnector
 from mex.editor.models import FixedValue
 from mex.editor.state import State
 
@@ -28,13 +28,13 @@ class AuxState(State):
     query_string: str = ""
     entity_types: dict[str, bool] = {k: False for k in MERGED_MODEL_CLASSES_BY_NAME}
     current_page: int = 1
-    limit: int = 50
-    aux_items: list[str] = ["Wikidata", "LDAP"]
+    limit: str = "50"
+    aux_data_sources: list[str] = ["Wikidata", "LDAP"]
 
     @rx.var
     def total_pages(self) -> list[str]:
         """Return a list of total pages based on the number of results."""
-        return [f"{i+1}" for i in range(math.ceil(self.total / self.limit))]
+        return [f"{i+1}" for i in range(math.ceil(self.total / int(self.limit)))]
 
     @rx.var
     def current_results_length(self) -> int:
@@ -54,14 +54,22 @@ class AuxState(State):
         return self.search()
 
     def search(self) -> Generator[EventSpec | None, None, None]:
-        """Search for wikidata items based on the query string."""
-        connector = WikidataQueryServiceConnector.get()
+        """Search for wikidata organizations based on the query string."""
+        connector = BackendApiConnector.get()
         try:
-            response = connector.get_data_by_query(self.query_string)
+            response = connector.request(
+                method="GET",
+                endpoint="wikidata",
+                params={
+                    "q": self.query_string,
+                    "offset": "0",
+                    "limit": self.limit,
+                },
+            )
         except HTTPError as exc:
             self.reset()
             logger.error(
-                "backend error fetching wikidata items: %s",
+                "error fetching wikidata items: %s",
                 exc.response.text,
                 exc_info=False,
             )
@@ -72,7 +80,9 @@ class AuxState(State):
                 dismissible=True,
             )
         else:
-            self.total = len(response)
+            yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
+            self.results = response["items"]
+            self.total = response["total"]
 
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search page."""

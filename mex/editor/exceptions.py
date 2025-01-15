@@ -21,8 +21,10 @@ def escalate_error(
         f"[{namespace}] {summary}: {payload}",
     )
     yield rx.toast.error(
-        f"{namespace}: {summary}",
-        duration=5000,
+        title=f"{namespace} Error",
+        description=summary,
+        class_name="editor-toast",
         close_button=True,
         dismissible=True,
+        duration=5000,
     )

@@ -178,7 +178,7 @@ def test_edit_page_switch_roundtrip(
     submit = page.get_by_test_id("submit-button")
     submit.scroll_into_view_if_needed()
     submit.click()
-    toast = page.get_by_role("status")
+    toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
     expect(toast).to_contain_text("Saved")
     page.screenshot(path=f"{test_id}-toast_1.png")
@@ -202,7 +202,7 @@ def test_edit_page_switch_roundtrip(
     submit = page.get_by_test_id("submit-button")
     submit.scroll_into_view_if_needed()
     submit.click()
-    toast = page.get_by_role("status")
+    toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
     expect(toast).to_contain_text("Saved")
     page.screenshot(path=f"{test_id}-toast_2.png")

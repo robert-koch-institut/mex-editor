@@ -103,10 +103,12 @@ class EditState(State):
             )
             return
         yield rx.toast.success(
-            "Saved",
-            duration=2000,
+            title="Saved",
+            description=f"{self.stem_type} rule-set was saved successfully.",
+            class_name="editor-toast",
             close_button=True,
             dismissible=True,
+            duration=5000,
         )
         yield from self.refresh()
 

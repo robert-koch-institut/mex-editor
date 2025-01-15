@@ -14,7 +14,7 @@ class EditorSettings(BaseSettings):
         validation_alias="MEX_BACKEND_API_USER_DATABASE",
     )
     identity_provider: IdentityProvider | EditorIdentityProvider = Field(
-        EditorIdentityProvider.BACKEND,
+        IdentityProvider.MEMORY,
         description="Provider to assign stableTargetIds to new model instances.",
         validation_alias="MEX_IDENTITY_PROVIDER",
     )  # type: ignore[assignment]

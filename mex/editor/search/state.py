@@ -42,7 +42,7 @@ class SearchState(State):
     @rx.var
     def total_pages(self) -> list[str]:
         """Return a list of total pages based on the number of results."""
-        return [f"{i+1}" for i in range(math.ceil(self.total / self.limit))]
+        return [f"{i + 1}" for i in range(math.ceil(self.total / self.limit))]
 
     def set_query_string(self, value: str) -> Generator[EventSpec | None, None, None]:
         """Set the query string and refresh the results."""

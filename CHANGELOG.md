@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- bump cookiecutter template to 57e9b7
+
 ### Deprecated
 
 ### Removed
@@ -20,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 ## [0.7.1] - 2025-01-15
+
+- update mex-backend docker tag
 
 ## [0.7.0] - 2025-01-15
 

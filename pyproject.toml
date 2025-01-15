@@ -12,7 +12,7 @@ dependencies = [
     "fastapi>=0.115,<1",
     "mex-common@git+https://github.com/robert-koch-institut/mex-common.git@0.40.0",
     "pydantic>=2,<3",
-    "pytz>=2024,<2024.2",
+    "pytz>=2024,<2025",
     "pyyaml>=6,<7",
     "reflex-chakra>=0.6,<1",
     "reflex>=0.5,<0.6.3",
@@ -24,10 +24,10 @@ optional-dependencies.dev = [
     "ipdb>=0.13,<1",
     "mex-backend@git+https://github.com/robert-koch-institut/mex-backend.git@0.22.0",
     "mypy>=1,<2",
-    "pytest-playwright>=0.5,<1",
+    "pytest-playwright>=0.6,<1",
     "pytest-random-order>=1,<2",
     "pytest>=8,<9",
-    "ruff>=0.6,<1",
+    "ruff>=0.9,<1",
     "sphinx>=8,<9",
     "types-pytz>=2024,<2025",
     "types-PyYAML>=6,<7",
@@ -125,6 +125,9 @@ ignore = [
 select = ["ALL"]
 
 [tool.ruff.lint.per-file-ignores]
+"mex/editor/types.py" = [
+    "A005",     # Allow custom types module to shadow standard-library
+]
 "docs/**" = [
     "INP001",   # Docs folder does not need to be a package
 ]

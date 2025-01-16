@@ -1,14 +1,28 @@
 import reflex as rx
 
-from mex.editor.aux_search.state import AuxResult, AuxState
+from mex.editor.aux_search.models import AuxResult
+from mex.editor.aux_search.state import AuxState
 from mex.editor.components import fixed_value
 from mex.editor.layout import page
+
+
+def expand_properties_button(result: AuxResult) -> rx.Component:
+    """Render a button to expand all properties of a aux search result."""
+    return rx.button(
+        rx.cond(
+            result.show_properties,
+            rx.icon("minimize-2", size=15),
+            rx.icon("maximize-2", size=15),
+        ),
+        on_click=AuxState.toggle_show_properties(result),  # type: ignore [call-arg,func-returns-value]
+        align="end",
+    )
 
 
 def aux_search_result(result: AuxResult) -> rx.Component:
     """Render a single aux search result."""
     return rx.card(
-        rx.link(
+        rx.hstack(
             rx.text(
                 rx.hstack(
                     rx.foreach(
@@ -36,10 +50,10 @@ def aux_search_result(result: AuxResult) -> rx.Component:
                     "whiteSpace": "nowrap",
                     "overflow": "hidden",
                     "textOverflow": "ellipsis",
-                    "maxWidth": "100%",
+                    "maxWidth": "80%",
                 },
             ),
-            href=f"/item/{result.identifier}",
+            expand_properties_button(result),
         ),
         style={"width": "100%"},
     )
@@ -91,7 +105,8 @@ def pagination() -> rx.Component:
     return rx.center(
         rx.button(
             rx.text("Previous", weight="bold"),
-            on_click=None,
+            on_click=AuxState.go_to_previous_page,
+            disabled=AuxState.disable_previous_page,
             spacing="2",
             width="120px",
             margin_right="10px",
@@ -106,7 +121,8 @@ def pagination() -> rx.Component:
         ),
         rx.button(
             rx.text("Next", weight="bold"),
-            on_click=None,
+            on_click=AuxState.go_to_next_page,
+            disabled=AuxState.disable_next_page,
             spacing="2",
             width="120px",
             margin_left="10px",

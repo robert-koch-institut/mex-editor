@@ -51,14 +51,14 @@ def settings() -> EditorSettings:
 def set_identity_provider(is_integration_test: bool, monkeypatch: MonkeyPatch) -> None:
     """Ensure the identifier provider is set correctly for unit and int tests."""
     # TODO(ND): clean this up after MX-1708
-    for settings in (BaseSettings.get(), EditorSettings.get()):
-        if is_integration_test:
-            monkeypatch.setitem(settings.model_config, "validate_assignment", False)
-            monkeypatch.setattr(
-                settings, "identity_provider", EditorIdentityProvider.BACKEND
-            )
-        else:
-            monkeypatch.setattr(settings, "identity_provider", IdentityProvider.MEMORY)
+    settings = EditorSettings.get():    
+    if is_integration_test:
+        monkeypatch.setitem(settings.model_config, "validate_assignment", False)
+        monkeypatch.setattr(
+            settings, "identity_provider", EditorIdentityProvider.BACKEND
+        )
+    else:
+        monkeypatch.setattr(settings, "identity_provider", IdentityProvider.MEMORY)
 
 
 @pytest.fixture

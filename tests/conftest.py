@@ -13,7 +13,6 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
-from mex.common.settings import BaseSettings
 from mex.common.types import (
     Email,
     IdentityProvider,
@@ -51,7 +50,7 @@ def settings() -> EditorSettings:
 def set_identity_provider(is_integration_test: bool, monkeypatch: MonkeyPatch) -> None:
     """Ensure the identifier provider is set correctly for unit and int tests."""
     # TODO(ND): clean this up after MX-1708
-    settings = EditorSettings.get():    
+    settings = EditorSettings.get()
     if is_integration_test:
         monkeypatch.setitem(settings.model_config, "validate_assignment", False)
         monkeypatch.setattr(

@@ -2,7 +2,12 @@ from collections.abc import Iterable
 
 from mex.common.models import AnyExtractedModel
 from mex.editor.aux_search.models import AuxResult
-from mex.editor.transform import transform_models_to_preview, transform_models_to_title
+from mex.editor.models import FixedValue
+from mex.editor.transform import (
+    transform_models_to_preview,
+    transform_models_to_title,
+    transform_value,
+)
 
 
 def transform_models_to_results(models: Iterable[AnyExtractedModel]) -> list[AuxResult]:
@@ -12,7 +17,17 @@ def transform_models_to_results(models: Iterable[AnyExtractedModel]) -> list[Aux
             identifier=model.identifier,
             title=transform_models_to_title([model]),
             preview=transform_models_to_preview([model]),
-            show_properties=False,
+            all_properties=transform_all_properties(model),
+            show_properties=True,
         )
         for model in models
+    ]
+
+
+def transform_all_properties(model: AnyExtractedModel) -> list[FixedValue]:
+    """Transform all properties of a model into a dictionary."""
+    return [
+        transform_value(getattr(model, attr))
+        for attr in dict(model)
+        if not attr.startswith("_")
     ]

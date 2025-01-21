@@ -46,7 +46,7 @@ class AuxState(State):
 
     def toggle_show_properties(self, result: AuxResult) -> None:
         """Toggle the show properties state."""
-        result.show_properties = True  # doesnt work
+        result.show_properties = False
 
     def set_query_string(self, value: str) -> Generator[EventSpec | None, None, None]:
         """Set the query string and refresh the results."""

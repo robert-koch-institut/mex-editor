@@ -10,3 +10,4 @@ class AuxResult(rx.Base):
     title: list[FixedValue]
     preview: list[FixedValue]
     show_properties: bool
+    all_properties: list[FixedValue]

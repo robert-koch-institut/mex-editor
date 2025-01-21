@@ -16,44 +16,77 @@ def expand_properties_button(result: AuxResult) -> rx.Component:
         ),
         on_click=AuxState.toggle_show_properties(result),  # type: ignore [call-arg,func-returns-value]
         align="end",
+        custom_attrs={"data-testid": "expand-properties-button"},
+    )
+
+
+def render_preview(result: AuxResult) -> rx.Component:
+    """Render a preview of the aux search result."""
+    return rx.text(
+        rx.hstack(
+            rx.foreach(
+                result.preview,
+                fixed_value,
+            )
+        ),
+        weight="light",
+        style={
+            "whiteSpace": "nowrap",
+            "overflow": "hidden",
+            "textOverflow": "ellipsis",
+            "maxWidth": "80%",
+        },
+    )
+
+
+def render_all_properties(result: AuxResult) -> rx.Component:
+    """Render all properties of the aux search result."""
+    return rx.text(
+        rx.hstack(
+            rx.foreach(
+                result.all_properties,
+                fixed_value,
+            )
+        ),
+        weight="light",
+        style={
+            "whiteSpace": "nowrap",
+            "overflow": "hidden",
+            "textOverflow": "ellipsis",
+            "maxWidth": "80%",
+        },
+        custom_attrs={"data-testid": "all-properties-display"},
     )
 
 
 def aux_search_result(result: AuxResult) -> rx.Component:
     """Render a single aux search result."""
-    return rx.card(
-        rx.hstack(
-            rx.text(
-                rx.hstack(
-                    rx.foreach(
-                        result.title,
-                        fixed_value,
-                    )
+    return rx.box(
+        rx.card(
+            rx.hstack(
+                rx.text(
+                    rx.hstack(
+                        rx.foreach(
+                            result.title,
+                            fixed_value,
+                        )
+                    ),
+                    weight="bold",
+                    style={
+                        "whiteSpace": "nowrap",
+                        "overflow": "hidden",
+                        "textOverflow": "ellipsis",
+                        "maxWidth": "100%",
+                    },
                 ),
-                weight="bold",
-                style={
-                    "whiteSpace": "nowrap",
-                    "overflow": "hidden",
-                    "textOverflow": "ellipsis",
-                    "maxWidth": "100%",
-                },
+                expand_properties_button(result),
             ),
-            rx.text(
-                rx.hstack(
-                    rx.foreach(
-                        result.preview,
-                        fixed_value,
-                    )
-                ),
-                weight="light",
-                style={
-                    "whiteSpace": "nowrap",
-                    "overflow": "hidden",
-                    "textOverflow": "ellipsis",
-                    "maxWidth": "80%",
-                },
-            ),
-            expand_properties_button(result),
+            style={"width": "100%"},
+        ),
+        rx.cond(
+            result.show_properties,
+            render_all_properties(result),
+            render_preview(result),
         ),
         style={"width": "100%"},
     )
@@ -84,8 +117,8 @@ def search_input() -> rx.Component:
     )
 
 
-def search_bar() -> rx.Component:
-    """Render a bar with an extractor menu."""
+def nav_bar() -> rx.Component:
+    """Render a bar with an extractor navigation menu."""
     return rx.flex(
         rx.foreach(
             AuxState.aux_data_sources,
@@ -97,6 +130,7 @@ def search_bar() -> rx.Component:
         ),
         direction="row",
         gap="50px",
+        custom_attrs={"data-testid": "aux-nav-bar"},
     )
 
 
@@ -162,7 +196,7 @@ def index() -> rx.Component:
     return rx.center(
         page(
             rx.vstack(
-                search_bar(),
+                nav_bar(),
                 search_input(),
                 search_results(),
                 spacing="5",

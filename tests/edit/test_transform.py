@@ -19,6 +19,7 @@ from mex.common.models import (
     MergedPerson,
     PreventivePerson,
     SubtractiveActivity,
+    SubtractiveConsent,
     SubtractivePerson,
 )
 from mex.common.types import (
@@ -95,7 +96,7 @@ def test_get_primary_source_id_from_model(
                 isIndicatedAtTime=YearMonthDayTime("2022-09-30T20:48:35Z"),
             ),
             "hasConsentStatus",
-            None,
+            SubtractiveConsent(),
             [EditorValue(text="VALID_FOR_PROCESSING", badge="ConsentStatus")],
         ),
         (
@@ -105,7 +106,7 @@ def test_get_primary_source_id_from_model(
                 fullName=["Example, Name", "Dr. Example"],
             ),
             "fullName",
-            None,
+            SubtractivePerson(),
             [
                 EditorValue(text="Example, Name"),
                 EditorValue(text="Dr. Example"),
@@ -169,7 +170,7 @@ def test_get_primary_source_id_from_model(
 def test_transform_model_values_to_editor_values(
     model: AnyExtractedModel | AnyMergedModel | AnyAdditiveModel,
     field_name: str,
-    subtractive: AnySubtractiveModel | None,
+    subtractive: AnySubtractiveModel,
     expected: EditorValue,
 ) -> None:
     editor_value = _transform_model_values_to_editor_values(
@@ -193,8 +194,8 @@ def test_transform_model_values_to_editor_values(
                 hadPrimarySource=MergedPrimarySourceIdentifier("primarySourceId"),
                 givenName=["Example"],
             ),
-            None,
-            None,
+            SubtractivePerson(),
+            PreventivePerson(),
             [
                 EditorPrimarySource(
                     name=EditorValue(
@@ -254,8 +255,8 @@ def test_transform_model_values_to_editor_values(
 )
 def test_transform_model_to_editor_primary_source(
     model: AnyExtractedModel | AnyMergedModel | AnyAdditiveModel,
-    subtractive: AnySubtractiveModel | None,
-    preventive: AnyPreventiveModel | None,
+    subtractive: AnySubtractiveModel,
+    preventive: AnyPreventiveModel,
     expected_given_name: list[EditorPrimarySource],
     expected_family_name: list[EditorPrimarySource],
 ) -> None:

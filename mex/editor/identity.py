@@ -29,7 +29,7 @@ class BackendIdentityProvider(BaseProvider, HTTPConnector):
         settings = EditorSettings.get()
         self.url = urljoin(str(settings.backend_api_url), self.API_VERSION)
 
-    @cache  # noqa: B019
+    @cache  # noqa: B019 safe to ignore because this class is a singleton
     def assign(
         self,
         had_primary_source: MergedPrimarySourceIdentifier,

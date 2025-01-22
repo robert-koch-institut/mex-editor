@@ -6,8 +6,8 @@ from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.logging import logger
 from mex.common.models import MERGED_MODEL_CLASSES_BY_NAME
+from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
@@ -74,29 +74,22 @@ class SearchState(State):
         # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
         try:
-            response = connector.fetch_merged_items(
-                self.query_string,
-                [k for k, v in self.entity_types.items() if v],
-                self.limit * (self.current_page - 1),
-                self.limit,
+            response = connector.fetch_preview_items(
+                query_string=self.query_string,
+                entity_type=[k for k, v in self.entity_types.items() if v],
+                skip=self.limit * (self.current_page - 1),
+                limit=self.limit,
             )
         except HTTPError as exc:
             self.reset()
-            logger.error(
-                "backend error fetching merged items: %s",
-                exc.response.text,
-                exc_info=False,
+            yield from escalate_error(
+                "backend", "error fetching merged items", exc.response.text
             )
-            yield rx.toast.error(
-                exc.response.text,
-                duration=5000,
-                close_button=True,
-                dismissible=True,
-            )
-        else:
-            yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
-            self.results = transform_models_to_results(response.items)
-            self.total = response.total
+            return
+
+        yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
+        self.results = transform_models_to_results(response.items)
+        self.total = response.total
 
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search page."""

@@ -10,19 +10,18 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "babel>=2,<3",
     "fastapi>=0.115,<1",
-    "mex-common@git+https://github.com/robert-koch-institut/mex-common.git@0.40.0",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.46.0",
     "pydantic>=2,<3",
     "pytz>=2024,<2025",
     "pyyaml>=6,<7",
     "reflex-chakra>=0.6,<1",
-    "reflex>=0.5,<0.6.3",
+    "reflex>=0.6,<1",
     "requests>=2,<3",
     "starlette>=0.41,<1",
     "uvicorn>=0.32,<1",
 ]
 optional-dependencies.dev = [
     "ipdb>=0.13,<1",
-    "mex-backend@git+https://github.com/robert-koch-institut/mex-backend.git@0.22.0",
     "mypy>=1,<2",
     "pytest-playwright>=0.6,<1",
     "pytest-random-order>=1,<2",

@@ -9,13 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add toggles for preventive and subtractive rules
+- add functionality to edit component for submitting rules
+- add utility function to escalate errors to all consoles
+- temporarily add BackendIdentityProvider (stop-gap MX-1763)
+
 ### Changes
 
 - bump cookiecutter template to 57e9b7
+- rename FixedX and EditableX classes to EditorX for consistency
 
 ### Deprecated
 
 ### Removed
+
+- drop dev-dependency to mex-backend, use the flush endpoint instead
+- temporarily removed localization of temporals entity output
 
 ### Fixed
 

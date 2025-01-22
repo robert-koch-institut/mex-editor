@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.8.0] - 2025-01-22
+
+### Added
+
 - add toggles for preventive and subtractive rules
 - add functionality to edit component for submitting rules
 - add utility function to escalate errors to all consoles
@@ -19,16 +33,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - bump cookiecutter template to 57e9b7
 - rename FixedX and EditableX classes to EditorX for consistency
 
-### Deprecated
-
 ### Removed
 
 - drop dev-dependency to mex-backend, use the flush endpoint instead
 - temporarily removed localization of temporals entity output
-
-### Fixed
-
-### Security
 
 ## [0.7.1] - 2025-01-15
 

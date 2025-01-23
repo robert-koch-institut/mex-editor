@@ -14,7 +14,7 @@ def expand_properties_button(result: AuxResult) -> rx.Component:
             rx.icon("minimize-2", size=15),
             rx.icon("maximize-2", size=15),
         ),
-        on_click=AuxState.toggle_show_properties(result),  # type: ignore [call-arg,func-returns-value]
+        on_click=lambda: AuxState.toggle_show_properties(result),  # type: ignore[call-arg]
         align="end",
         custom_attrs={"data-testid": "expand-properties-button"},
     )
@@ -34,7 +34,7 @@ def render_preview(result: AuxResult) -> rx.Component:
             "whiteSpace": "nowrap",
             "overflow": "hidden",
             "textOverflow": "ellipsis",
-            "maxWidth": "80%",
+            "maxWidth": "100%",
         },
     )
 
@@ -45,13 +45,13 @@ def render_all_properties(result: AuxResult) -> rx.Component:
         rx.hstack(
             rx.foreach(
                 result.all_properties,
-                render_value,  # write custom function!!
+                render_value,
             )
         ),
         weight="light",
         style={
-            "whiteSpace": "nowrap",
-            "maxWidth": "80%",
+            "whiteSpace": "wrap",
+            "maxWidth": "100%",
         },
         custom_attrs={"data-testid": "all-properties-display"},
     )
@@ -74,7 +74,7 @@ def aux_search_result(result: AuxResult) -> rx.Component:
                         "whiteSpace": "nowrap",
                         "overflow": "hidden",
                         "textOverflow": "ellipsis",
-                        "maxWidth": "100%",
+                        "width": "90%",
                     },
                 ),
                 expand_properties_button(result),
@@ -84,7 +84,10 @@ def aux_search_result(result: AuxResult) -> rx.Component:
                 render_all_properties(result),
                 render_preview(result),
             ),
-            style={"width": "100%"},
+            style={
+                "width": "100%",
+                "flex_wrap": "wrap",
+            },
         ),
         style={"width": "100%"},
     )

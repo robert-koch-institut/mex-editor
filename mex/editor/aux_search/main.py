@@ -2,7 +2,7 @@ import reflex as rx
 
 from mex.editor.aux_search.models import AuxResult
 from mex.editor.aux_search.state import AuxState
-from mex.editor.components import fixed_value
+from mex.editor.components import render_value
 from mex.editor.layout import page
 
 
@@ -26,7 +26,7 @@ def render_preview(result: AuxResult) -> rx.Component:
         rx.hstack(
             rx.foreach(
                 result.preview,
-                fixed_value,
+                render_value,
             )
         ),
         weight="light",
@@ -45,14 +45,12 @@ def render_all_properties(result: AuxResult) -> rx.Component:
         rx.hstack(
             rx.foreach(
                 result.all_properties,
-                fixed_value,
+                render_value,  # write custom function!!
             )
         ),
         weight="light",
         style={
             "whiteSpace": "nowrap",
-            "overflow": "hidden",
-            "textOverflow": "ellipsis",
             "maxWidth": "80%",
         },
         custom_attrs={"data-testid": "all-properties-display"},
@@ -68,7 +66,7 @@ def aux_search_result(result: AuxResult) -> rx.Component:
                     rx.hstack(
                         rx.foreach(
                             result.title,
-                            fixed_value,
+                            render_value,
                         )
                     ),
                     weight="bold",
@@ -81,12 +79,12 @@ def aux_search_result(result: AuxResult) -> rx.Component:
                 ),
                 expand_properties_button(result),
             ),
+            rx.cond(
+                result.show_properties,
+                render_all_properties(result),
+                render_preview(result),
+            ),
             style={"width": "100%"},
-        ),
-        rx.cond(
-            result.show_properties,
-            render_all_properties(result),
-            render_preview(result),
         ),
         style={"width": "100%"},
     )

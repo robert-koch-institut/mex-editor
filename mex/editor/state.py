@@ -1,5 +1,3 @@
-from typing import Any
-
 import reflex as rx
 from reflex.event import EventSpec
 
@@ -19,7 +17,7 @@ class State(rx.State):
         NavItem(title="Aux Import", href_template=r"/aux-import/"),
     ]
 
-    def logout(self, _: Any) -> EventSpec:
+    def logout(self) -> EventSpec:
         """Log out a user."""
         self.reset()
         return rx.redirect("/")

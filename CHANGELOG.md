@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- redirect to original URL after login
-- add icon identifiers to models.yaml and ModelConfig
-
 ### Changes
 
 ### Deprecated
@@ -21,6 +18,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.8.0] - 2025-01-22
+
+### Added
+
+- add toggles for preventive and subtractive rules
+- add functionality to edit component for submitting rules
+- add utility function to escalate errors to all consoles
+- temporarily add BackendIdentityProvider (stop-gap MX-1763)
+
+### Changes
+
+- bump cookiecutter template to 57e9b7
+- rename FixedX and EditableX classes to EditorX for consistency
+
+### Removed
+
+- drop dev-dependency to mex-backend, use the flush endpoint instead
+- temporarily removed localization of temporals entity output
+
+## [0.7.1] - 2025-01-15
+
+- update mex-backend docker tag
+
+## [0.7.0] - 2025-01-15
+
+### Added
+
+- redirect to original URL after login
+- add icon identifiers to models.yaml and ModelConfig
 
 ## [0.6.0] - 2024-11-19
 

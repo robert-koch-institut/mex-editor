@@ -6,7 +6,7 @@ from mex.editor.components import render_value
 from mex.editor.layout import page
 
 
-def expand_properties_button(result: AuxResult) -> rx.Component:
+def expand_properties_button(result: AuxResult, index: int) -> rx.Component:
     """Render a button to expand all properties of a aux search result."""
     return rx.button(
         rx.cond(
@@ -14,7 +14,7 @@ def expand_properties_button(result: AuxResult) -> rx.Component:
             rx.icon("minimize-2", size=15),
             rx.icon("maximize-2", size=15),
         ),
-        on_click=lambda: AuxState.toggle_show_properties(result),  # type: ignore[call-arg]
+        on_click=lambda: AuxState.toggle_show_properties(index),  # type: ignore[call-arg, arg-type]
         align="end",
         custom_attrs={"data-testid": "expand-properties-button"},
     )
@@ -46,47 +46,50 @@ def render_all_properties(result: AuxResult) -> rx.Component:
             rx.foreach(
                 result.all_properties,
                 render_value,
-            )
+            ),
+            style={
+                "flexWrap": "wrap",
+                "alignItems": "start",
+            },
         ),
         weight="light",
-        style={
-            "whiteSpace": "wrap",
-            "maxWidth": "100%",
-        },
         custom_attrs={"data-testid": "all-properties-display"},
     )
 
 
-def aux_search_result(result: AuxResult) -> rx.Component:
-    """Render a single aux search result."""
+def aux_search_result(result: AuxResult, index: int) -> rx.Component:
+    """Render an aux search result with expand-button and preview or all properties."""
     return rx.box(
         rx.card(
-            rx.hstack(
-                rx.text(
-                    rx.hstack(
-                        rx.foreach(
-                            result.title,
-                            render_value,
-                        )
+            rx.vstack(
+                rx.hstack(
+                    rx.text(
+                        rx.hstack(
+                            rx.foreach(
+                                result.title,
+                                render_value,
+                            )
+                        ),
+                        weight="bold",
+                        style={
+                            "whiteSpace": "nowrap",
+                            "overflow": "hidden",
+                            "textOverflow": "ellipsis",
+                            "width": "95%",
+                        },
                     ),
-                    weight="bold",
-                    style={
-                        "whiteSpace": "nowrap",
-                        "overflow": "hidden",
-                        "textOverflow": "ellipsis",
-                        "width": "90%",
-                    },
+                    expand_properties_button(result, index),
+                    style={"width": "100%"},
                 ),
-                expand_properties_button(result),
-            ),
-            rx.cond(
-                result.show_properties,
-                render_all_properties(result),
-                render_preview(result),
+                rx.cond(
+                    result.show_properties,
+                    render_all_properties(result),
+                    render_preview(result),
+                ),
             ),
             style={
                 "width": "100%",
-                "flex_wrap": "wrap",
+                "flexWrap": "wrap",
             },
         ),
         style={"width": "100%"},
@@ -115,6 +118,29 @@ def search_input() -> rx.Component:
         style={"margin": "1em 0 1em"},
         debounce_timeout=250,
         width="100%",
+    )
+
+
+def search_results() -> rx.Component:
+    """Render the search results with a heading, result list, and pagination."""
+    return rx.vstack(
+        rx.center(
+            rx.heading(
+                f"showing {AuxState.current_results_length} "
+                f"of total {AuxState.total} items found",
+                custom_attrs={"data-testid": "search-results-heading"},
+                size="3",
+            ),
+            style={"margin": "1em 0"},
+            width="100%",
+        ),
+        rx.foreach(
+            AuxState.results,
+            aux_search_result,
+        ),
+        pagination(),
+        custom_attrs={"data-testid": "search-results-section"},
+        width="70vw",
     )
 
 
@@ -166,29 +192,6 @@ def pagination() -> rx.Component:
         ),
         style={"margin": "1em 0"},
         width="100%",
-    )
-
-
-def search_results() -> rx.Component:
-    """Render the search results with a heading, result list, and pagination."""
-    return rx.vstack(
-        rx.center(
-            rx.heading(
-                f"showing {AuxState.current_results_length} "
-                f"of total {AuxState.total} items found",
-                custom_attrs={"data-testid": "search-results-heading"},
-                size="3",
-            ),
-            style={"margin": "1em 0"},
-            width="100%",
-        ),
-        rx.foreach(
-            AuxState.results,
-            aux_search_result,
-        ),
-        pagination(),
-        custom_attrs={"data-testid": "search-results-section"},
-        width="70vw",
     )
 
 

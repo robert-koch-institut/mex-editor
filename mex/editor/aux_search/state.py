@@ -20,7 +20,7 @@ class AuxState(State):
     total: int = 0
     query_string: str = ""
     current_page: int = 1
-    limit: int = 10
+    limit: int = 50
     aux_data_sources: list[str] = ["Wikidata", "LDAP"]
 
     @rx.var
@@ -44,9 +44,9 @@ class AuxState(State):
         """Return the number of current search results."""
         return len(self.results)
 
-    def toggle_show_properties(self, result: AuxResult) -> None:
+    def toggle_show_properties(self, index: int) -> None:
         """Toggle the show properties state."""
-        result.show_properties = not (result.show_properties)
+        self.results[index].show_properties = not self.results[index].show_properties
 
     def set_query_string(self, value: str) -> Generator[EventSpec | None, None, None]:
         """Set the query string and refresh the results."""

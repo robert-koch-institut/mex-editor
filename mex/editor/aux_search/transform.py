@@ -12,21 +12,21 @@ from mex.editor.transform import (
 
 
 def transform_models_to_results(models: Iterable[AnyExtractedModel]) -> list[AuxResult]:
-    """Convert a list of extracted models into aux search result models."""
+    """Convert a list of extracted models into a list of aux search result models."""
     return [
         AuxResult(
             identifier=model.identifier,
             title=transform_models_to_title([model]),
             preview=transform_models_to_preview([model]),
             all_properties=models_to_all_properties([model]),
-            show_properties=True,
+            show_properties=False,
         )
         for model in models
     ]
 
 
 def models_to_all_properties(models: Sequence[AnyExtractedModel]) -> list[EditorValue]:
-    """Transform all properties of a model into a dictionary."""
+    """Transform all properties of a model into a list of EditorValues."""
     if not models:
         return []
     all_properties_lists: list[EditorValue] = []

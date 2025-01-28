@@ -30,7 +30,8 @@ def test_edit_page_updates_nav_bar(edit_page: Page) -> None:
     nav_bar = page.get_by_test_id("nav-bar")
     page.screenshot(path="tests_edit_test_main-test_edit_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
-    nav_item = nav_bar.get_by_text("Edit", exact=True)
+    nav_item = nav_bar.locator(".nav-item").all()[1]
+    expect(nav_item).to_contain_text("Edit")
     expect(nav_item).to_have_class(re.compile("rt-underline-always"))
 
 

@@ -42,27 +42,31 @@ def search_result(result: SearchResult) -> rx.Component:
 
 def search_input() -> rx.Component:
     """Render a search input element that will trigger the results to refresh."""
-    return rx.debounce_input(
-        rx.input(
-            rx.input.slot(
-                rx.icon("search"),
-                autofocus=True,
-                padding_left="0",
-                tab_index=1,
+    return rx.card(
+        rx.debounce_input(
+            rx.input(
+                rx.input.slot(
+                    rx.icon("search"),
+                    autofocus=True,
+                    padding_left="0",
+                    tab_index=1,
+                ),
+                placeholder="Search here...",
+                value=SearchState.query_string,
+                on_change=SearchState.set_query_string,
+                max_length=100,
+                style={
+                    "--text-field-selection-color": "",
+                    "--text-field-focus-color": "transparent",
+                    "--text-field-border-width": "1px",
+                    "boxShadow": (
+                        "inset 0 0 0 var(--text-field-border-width) transparent"
+                    ),
+                },
             ),
-            placeholder="Search here...",
-            value=SearchState.query_string,
-            on_change=SearchState.set_query_string,
-            max_length=100,
-            style={
-                "--text-field-selection-color": "",
-                "--text-field-focus-color": "transparent",
-                "--text-field-border-width": "1px",
-                "boxShadow": ("inset 0 0 0 var(--text-field-border-width) transparent"),
-            },
-        ),
-        style={"margin": "1em 0 1em"},
-        debounce_timeout=250,
+            style={"margin": "1em 0 1em"},
+            debounce_timeout=250,
+        )
     )
 
 
@@ -77,12 +81,14 @@ def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
 
 def entity_type_filter() -> rx.Component:
     """Render checkboxes for filtering the search results by entity type."""
-    return rx.vstack(
-        rx.foreach(
-            SearchState.entity_types,
-            entity_type_choice,
+    return rx.card(
+        rx.vstack(
+            rx.foreach(
+                SearchState.entity_types,
+                entity_type_choice,
+            ),
+            custom_attrs={"data-testid": "entity-types"},
         ),
-        custom_attrs={"data-testid": "entity-types"},
         style={"margin": "2em 0"},
     )
 
@@ -141,7 +147,7 @@ def search_results() -> rx.Component:
             rx.text(
                 f"Showing {SearchState.current_results_length} "
                 f"of {SearchState.total} items",
-                style={"userSelect": "none"},
+                style={"color": "var(--gray-12)", "userSelect": "none"},
                 weight="bold",
                 custom_attrs={"data-testid": "search-results-summary"},
             ),

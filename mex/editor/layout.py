@@ -45,6 +45,7 @@ def nav_link(item: NavItem) -> rx.Component:
         rx.text(item.title, size="4", weight="medium"),
         href=item.href,
         underline=item.underline,
+        class_name="nav-item",
     )
 
 

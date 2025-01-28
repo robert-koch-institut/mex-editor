@@ -11,9 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update mex-common to version 0.48.0
+
 ### Deprecated
 
 ### Removed
+
+- remove BackendIdentityProvider in favor of mex-common version
+- remove identity_provider from EditorSettings in favor of mex-common setting
+- remove EditorIdentityProvider enum in favor of mex-common enum
 
 ### Fixed
 

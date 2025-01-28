@@ -17,12 +17,9 @@ def editor_value_switch(
     """Return a switch for toggling subtractive rules."""
     return rx.switch(
         checked=value.enabled,
-        on_change=lambda enabled: cast(EditState, EditState).toggle_field_value(
-            field_name,
-            value,
-            enabled,
-        ),
+        on_change=cast(EditState, EditState).toggle_field_value(field_name, value),
         custom_attrs={"data-testid": f"switch-{field_name}-{primary_source}-{index}"},
+        color_scheme="jade",
     )
 
 
@@ -53,12 +50,11 @@ def primary_source_switch(
     """Return a switch for toggling preventive rules."""
     return rx.switch(
         checked=model.enabled,
-        on_change=lambda enabled: cast(EditState, EditState).toggle_primary_source(
-            field_name,
-            cast(str, model.name.href),
-            enabled,
+        on_change=cast(EditState, EditState).toggle_primary_source(
+            field_name, model.name.href
         ),
         custom_attrs={"data-testid": f"switch-{field_name}-{model.identifier}"},
+        color_scheme="jade",
     )
 
 

@@ -42,10 +42,9 @@ def user_menu() -> rx.Component:
 def nav_link(item: NavItem) -> rx.Component:
     """Return a link component for the given navigation item."""
     return rx.link(
-        item.title,
+        rx.text(item.title, size="4", weight="medium"),
         href=item.href,
         underline=item.underline,
-        padding="0.2em",
     )
 
 
@@ -53,7 +52,7 @@ def mex_editor_logo() -> rx.Component:
     """Return the editor's logo with icon and label."""
     return rx.hstack(
         rx.icon(
-            "file-pen-line",
+            "circuit-board",
             size=28,
         ),
         rx.heading(
@@ -61,24 +60,33 @@ def mex_editor_logo() -> rx.Component:
             weight="medium",
             style={"userSelect": "none"},
         ),
+        custom_attrs={"data-testid": "editor-logo"},
     )
 
 
 def nav_bar() -> rx.Component:
     """Return a navigation bar component."""
-    return rx.hstack(
-        mex_editor_logo(),
-        rx.divider(orientation="vertical", size="2"),
-        rx.foreach(State.nav_items, nav_link),
-        rx.divider(orientation="vertical", size="2"),
-        user_menu(),
-        rx.spacer(),
-        rx.color_mode.button(),
-        padding="1em",
+    return rx.card(
+        rx.hstack(
+            mex_editor_logo(),
+            rx.divider(orientation="vertical", size="2"),
+            rx.hstack(
+                rx.foreach(State.nav_items, nav_link),
+                justify="start",
+                spacing="5",
+            ),
+            rx.divider(orientation="vertical", size="2"),
+            user_menu(),
+            rx.spacer(),
+            rx.color_mode.button(),
+            justify="between",
+            align_items="center",
+        ),
+        margin="2em",
+        size="2",
+        width="calc(100% - 4em)",
         position="fixed",
-        style={"background": "var(--accent-4)"},
         top="0px",
-        width="100%",
         z_index="1000",
         custom_attrs={"data-testid": "nav-bar"},
     )
@@ -93,7 +101,8 @@ def page(*children: str | rx.Component) -> rx.Component:
             rx.hstack(
                 *children,
                 min_height="85vh",
-                margin="4em 0 0",
+                margin="6em 2em 0",
+                width="calc(100% - 6em)",
                 spacing="5",
             ),
         ),

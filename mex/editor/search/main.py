@@ -1,7 +1,6 @@
 from typing import cast
 
 import reflex as rx
-import reflex_chakra as rc
 
 from mex.editor.components import render_value
 from mex.editor.layout import page
@@ -45,7 +44,12 @@ def search_input() -> rx.Component:
     """Render a search input element that will trigger the results to refresh."""
     return rx.debounce_input(
         rx.input(
-            rx.input.slot(rx.icon("search"), padding_left="0"),
+            rx.input.slot(
+                rx.icon("search"),
+                autofocus=True,
+                padding_left="0",
+                tab_index=1,
+            ),
             placeholder="Search here...",
             value=SearchState.query_string,
             on_change=SearchState.set_query_string,
@@ -54,14 +58,20 @@ def search_input() -> rx.Component:
                 "--text-field-selection-color": "",
                 "--text-field-focus-color": "transparent",
                 "--text-field-border-width": "1px",
-                "backgroundClip": "content-box",
-                "backgroundColor": "transparent",
                 "boxShadow": ("inset 0 0 0 var(--text-field-border-width) transparent"),
-                "color": "",
             },
         ),
         style={"margin": "1em 0 1em"},
         debounce_timeout=250,
+    )
+
+
+def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
+    """Render a single checkboxes for filtering by entity type."""
+    return rx.checkbox(
+        choice[0][len("Merged") :],
+        checked=choice[1],
+        on_change=SearchState.set_entity_type(choice[0]),
     )
 
 
@@ -70,19 +80,7 @@ def entity_type_filter() -> rx.Component:
     return rx.vstack(
         rx.foreach(
             SearchState.entity_types,
-            lambda choice: rx.debounce_input(
-                rc.checkbox(
-                    choice[0],
-                    checked=choice[1],
-                    on_change=lambda val: cast(
-                        SearchState, SearchState
-                    ).set_entity_type(
-                        val,
-                        choice[0],
-                    ),
-                ),
-                debounce_timeout=100,
-            ),
+            entity_type_choice,
         ),
         custom_attrs={"data-testid": "entity-types"},
         style={"margin": "2em 0"},
@@ -94,9 +92,10 @@ def sidebar() -> rx.Component:
     return rx.box(
         search_input(),
         entity_type_filter(),
-        width="20vw",
-        padding="2em 2em 10em",
-        bg="linear-gradient(to bottom, var(--gray-2) 0%, var(--color-background) 100%)",
+        style={
+            "width": "20vw",
+            "padding": "2em 2em 10em",
+        },
         custom_attrs={"data-testid": "search-sidebar"},
     )
 
@@ -121,7 +120,7 @@ def pagination() -> rx.Component:
             custom_attrs={"data-testid": "pagination-page-select"},
         ),
         rx.button(
-            rx.text("Next", weight="bold"),
+            rx.text("Next"),
             on_click=SearchState.go_to_next_page,
             disabled=SearchState.disable_next_page,
             spacing="2",
@@ -136,16 +135,17 @@ def pagination() -> rx.Component:
 
 
 def search_results() -> rx.Component:
-    """Render the search results with a heading, result list, and pagination."""
+    """Render the search results with a summary, result list, and pagination."""
     return rx.vstack(
         rx.center(
-            rx.heading(
-                f"showing {SearchState.current_results_length} "
-                f"of total {SearchState.total} items found",
-                custom_attrs={"data-testid": "search-results-heading"},
-                size="3",
+            rx.text(
+                f"Showing {SearchState.current_results_length} "
+                f"of {SearchState.total} items",
+                style={"userSelect": "none"},
+                weight="bold",
+                custom_attrs={"data-testid": "search-results-summary"},
             ),
-            style={"margin": "1em 0"},
+            style={"margin": "2em 0 1em"},
             width="100%",
         ),
         rx.foreach(
@@ -154,7 +154,7 @@ def search_results() -> rx.Component:
         ),
         pagination(),
         custom_attrs={"data-testid": "search-results-section"},
-        width="70vw",
+        width="100%",
     )
 
 

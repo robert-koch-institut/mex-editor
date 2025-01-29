@@ -23,11 +23,7 @@ from mex.common.types import (
     YearMonthDay,
 )
 from mex.editor.settings import EditorSettings
-from mex.editor.types import (
-    EditorIdentityProvider,
-    EditorUserDatabase,
-    EditorUserPassword,
-)
+from mex.editor.types import EditorUserDatabase, EditorUserPassword
 from mex.mex import app
 
 pytest_plugins = ("mex.common.testing.plugin",)
@@ -53,9 +49,7 @@ def set_identity_provider(is_integration_test: bool, monkeypatch: MonkeyPatch) -
     settings = EditorSettings.get()
     if is_integration_test:
         monkeypatch.setitem(settings.model_config, "validate_assignment", False)
-        monkeypatch.setattr(
-            settings, "identity_provider", EditorIdentityProvider.BACKEND
-        )
+        monkeypatch.setattr(settings, "identity_provider", IdentityProvider.BACKEND)
     else:
         monkeypatch.setattr(settings, "identity_provider", IdentityProvider.MEMORY)
 

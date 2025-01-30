@@ -64,9 +64,10 @@ def search_input() -> rx.Component:
                     ),
                 },
             ),
-            style={"margin": "1em 0 1em"},
+            style={"margin": "1rem 0 1rem"},
             debounce_timeout=250,
-        )
+        ),
+        style={"width": "100%"},
     )
 
 
@@ -89,20 +90,18 @@ def entity_type_filter() -> rx.Component:
             ),
             custom_attrs={"data-testid": "entity-types"},
         ),
-        style={"margin": "2em 0"},
+        style={"width": "100%"},
     )
 
 
 def sidebar() -> rx.Component:
     """Render sidebar with a search input and checkboxes for filtering entity types."""
-    return rx.box(
+    return rx.vstack(
         search_input(),
         entity_type_filter(),
-        style={
-            "width": "20vw",
-            "padding": "2em 2em 10em",
-        },
+        spacing="4",
         custom_attrs={"data-testid": "search-sidebar"},
+        style={"width": "25%"},
     )
 
 
@@ -113,11 +112,12 @@ def pagination() -> rx.Component:
             rx.text("Previous", weight="bold"),
             on_click=SearchState.go_to_previous_page,
             disabled=SearchState.disable_previous_page,
-            spacing="2",
-            width="120px",
-            margin_right="10px",
             variant="surface",
             custom_attrs={"data-testid": "pagination-previous-button"},
+            style={
+                "width": "8rem",
+                "margin": "0 2ch",
+            },
         ),
         rx.select(
             SearchState.total_pages,
@@ -129,44 +129,60 @@ def pagination() -> rx.Component:
             rx.text("Next"),
             on_click=SearchState.go_to_next_page,
             disabled=SearchState.disable_next_page,
-            spacing="2",
-            width="120px",
-            margin_left="10px",
             variant="surface",
             custom_attrs={"data-testid": "pagination-next-button"},
+            style={
+                "width": "8rem",
+                "margin": "0 2ch",
+            },
         ),
-        style={"margin": "1em 0"},
-        width="100%",
+        style={"width": "100%"},
+    )
+
+
+def results_summary() -> rx.Component:
+    """Render a summary of the results found."""
+    return rx.center(
+        rx.text(
+            f"Showing {SearchState.current_results_length} "
+            f"of {SearchState.total} items",
+            style={
+                "color": "var(--gray-12)",
+                "userSelect": "none",
+                "fontWeight": "bold",
+                "margin": "1rem",
+            },
+            custom_attrs={"data-testid": "search-results-summary"},
+        ),
+        style={"width": "100%"},
     )
 
 
 def search_results() -> rx.Component:
     """Render the search results with a summary, result list, and pagination."""
     return rx.vstack(
-        rx.center(
-            rx.text(
-                f"Showing {SearchState.current_results_length} "
-                f"of {SearchState.total} items",
-                style={"color": "var(--gray-12)", "userSelect": "none"},
-                weight="bold",
-                custom_attrs={"data-testid": "search-results-summary"},
-            ),
-            style={"margin": "2em 0 1em"},
-            width="100%",
-        ),
+        results_summary(),
         rx.foreach(
             SearchState.results,
             search_result,
         ),
         pagination(),
+        spacing="4",
         custom_attrs={"data-testid": "search-results-section"},
-        width="100%",
+        style={"width": "100%"},
     )
 
 
 def index() -> rx.Component:
     """Return the index for the search component."""
     return page(
-        sidebar(),
-        search_results(),
+        rx.hstack(
+            sidebar(),
+            search_results(),
+            spacing="4",
+            style={
+                "margin": "0 2rem",
+                "width": "100%",
+            },
+        )
     )

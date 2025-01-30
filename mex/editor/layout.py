@@ -43,7 +43,7 @@ def nav_link(item: NavItem) -> rx.Component:
     """Return a link component for the given navigation item."""
     return rx.link(
         rx.text(item.title, size="4", weight="medium"),
-        href=item.href,
+        href=item.raw_path,
         underline=item.underline,
         class_name="nav-item",
     )
@@ -74,7 +74,7 @@ def nav_bar() -> rx.Component:
             rx.hstack(
                 rx.foreach(State.nav_items, nav_link),
                 justify="start",
-                spacing="5",
+                spacing="4",
             ),
             rx.divider(orientation="vertical", size="2"),
             user_menu(),
@@ -83,12 +83,16 @@ def nav_bar() -> rx.Component:
             justify="between",
             align_items="center",
         ),
-        margin="2em",
         size="2",
-        width="calc(100% - 4em)",
-        position="fixed",
-        top="0px",
-        z_index="1000",
+        style={
+            "margin": "2rem",
+            "maxWidth": "1480px",
+            "minWidth": "800px",
+            "position": "fixed",
+            "top": "0",
+            "width": "100%",
+            "zIndex": "1000",
+        },
         custom_attrs={"data-testid": "nav-bar"},
     )
 
@@ -101,10 +105,13 @@ def page(*children: str | rx.Component) -> rx.Component:
             nav_bar(),
             rx.hstack(
                 *children,
-                min_height="85vh",
-                margin="6em 2em 0",
-                width="calc(100% - 6em)",
-                spacing="5",
+                style={
+                    "margin": "8rem 2rem 2rem",
+                    "maxWidth": "1480px",
+                    "minWidth": "800px",
+                    "width": "100%",
+                },
+                custom_attrs={"data-testid": "page-body"},
             ),
         ),
         rx.center(

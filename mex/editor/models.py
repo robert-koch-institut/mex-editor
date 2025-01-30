@@ -1,4 +1,6 @@
 from importlib.resources import files
+from typing import Literal
+from urllib.parse import urlencode
 
 import reflex as rx
 import yaml
@@ -28,10 +30,26 @@ class User(rx.Base):
 class NavItem(rx.Base):
     """Model for one navigation bar item."""
 
-    title: str
-    href: str = "/"
-    href_template: str = "/"
-    underline: str = "none"
+    title: str = ""
+    path: str = "/"
+    raw_path: str = "/"
+    underline: Literal["always", "none"] = "none"
+
+    def update_raw_path(self, params: dict[str, int | str | list[str]]) -> None:
+        """Render the parameters into a raw path."""
+        raw_path = self.path
+        param_tuples = list(params.items())
+        for key, value in param_tuples:
+            if f"[{key}]" in raw_path:
+                raw_path = raw_path.replace(f"[{key}]", f"{value}")
+        query_tuples: list[tuple[str, str]] = []
+        for key, value in param_tuples:
+            if f"[{key}]" not in self.path:
+                value_list = value if isinstance(value, list) else [f"{value}"]
+                query_tuples.extend((key, item) for item in value_list if item)
+        if query_str := urlencode(query_tuples):
+            raw_path = f"{raw_path}?{query_str}"
+        self.raw_path = raw_path
 
 
 class ModelConfig(BaseModel):

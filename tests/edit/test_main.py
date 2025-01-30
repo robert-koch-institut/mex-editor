@@ -19,8 +19,8 @@ def edit_page(
 ) -> Page:
     page = writer_user_page
     page.goto(f"{frontend_url}/item/{extracted_activity.stableTargetId}")
-    section = page.get_by_test_id("edit-section")
-    expect(section).to_be_visible()
+    page_body = page.get_by_test_id("page-body")
+    expect(page_body).to_be_visible()
     return page
 
 

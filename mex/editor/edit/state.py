@@ -40,7 +40,7 @@ class EditState(State):
         try:
             extracted_items_response = connector.fetch_extracted_items(
                 None,
-                self.item_id,
+                self.router.page.params["item_id"],
                 None,
                 0,
                 100,
@@ -60,15 +60,15 @@ class EditState(State):
             else []
         )
         try:
-            rule_set = connector.get_rule_set(
-                self.item_id,
-            )
+            rule_set = connector.get_rule_set(self.router.page.params["item_id"])
         except HTTPError as exc:
             if exc.response.status_code == status.HTTP_404_NOT_FOUND and self.stem_type:
                 rule_set_class = RULE_SET_RESPONSE_CLASSES_BY_NAME[
                     ensure_postfix(self.stem_type, "RuleSetResponse")
                 ]
-                rule_set = rule_set_class(stableTargetId=self.item_id)
+                rule_set = rule_set_class(
+                    stableTargetId=self.router.page.params["item_id"]
+                )
             else:
                 self.reset()
                 yield from escalate_error(
@@ -95,7 +95,7 @@ class EditState(State):
             # TODO(ND): use proper connector method when available (stop-gap MX-1762)
             connector.request(
                 method="PUT",
-                endpoint=f"rule-set/{self.item_id}",
+                endpoint=f"rule-set/{self.router.page.params['item_id']}",
                 payload=rule_set,
             )
         except HTTPError as exc:

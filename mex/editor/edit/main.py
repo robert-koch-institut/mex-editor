@@ -132,7 +132,7 @@ def submit_button() -> rx.Component:
         color_scheme="jade",
         size="3",
         on_click=EditState.submit_rule_set,
-        style={"margin": "1em 0"},
+        style={"margin": "1rem 0"},
         custom_attrs={"data-testid": "submit-button"},
     )
 
@@ -148,11 +148,10 @@ def edit_heading() -> rx.Component:
         ),
         custom_attrs={"data-testid": "edit-heading"},
         style={
-            "margin": "1em 0",
             "whiteSpace": "nowrap",
             "overflow": "hidden",
             "textOverflow": "ellipsis",
-            "maxWidth": "80vw",
+            "maxWidth": "80%",
         },
     )
 
@@ -160,22 +159,19 @@ def edit_heading() -> rx.Component:
 def index() -> rx.Component:
     """Return the index for the edit component."""
     return page(
-        rx.box(
+        rx.vstack(
             edit_heading(),
-            rx.vstack(
-                rx.foreach(
-                    EditState.fields,
-                    editor_field,
-                ),
-                rx.cond(
-                    EditState.fields,
-                    submit_button(),
-                ),
+            rx.foreach(
+                EditState.fields,
+                editor_field,
+            ),
+            rx.cond(
+                EditState.fields,
+                submit_button(),
             ),
             style={
+                "margin": "0 2rem",
                 "width": "100%",
-                "margin": "0 2em 1em",
             },
-            custom_attrs={"data-testid": "edit-section"},
         ),
     )

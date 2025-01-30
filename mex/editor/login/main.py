@@ -36,7 +36,7 @@ def login_form() -> rx.Component:
             on_click=LoginState.login,
             size="3",
             tab_index=3,
-            width="6em",
+            width="6rem",
         ),
         style={"width": "100%"},
     )

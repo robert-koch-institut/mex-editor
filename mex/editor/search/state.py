@@ -27,9 +27,9 @@ class SearchState(State):
 
     def _load_url_params(self) -> None:
         """Load url params into the state."""
-        print("loading url params", self.router.page.params)
         with contextlib.suppress(ValueError):
             self.current_page = int(self.router.page.params.get("page", ""))
+        self.router.page.params["thisThingOn"] = "yes"
         self.query_string = self.router.page.params.get("q", "")
         selected_types = self.router.page.params.get("entityType", "")
         self.entity_types = {
@@ -49,12 +49,14 @@ class SearchState(State):
                 if value
             ]
         )
-        for nav_item in self.nav_items:
-            if nav_item.title == "Search":
-                nav_item.href = f"/?{url_params}"
-                nav_item.href_template = f"/?{url_params}"
+        self.nav_items[0].update_raw_path(
+            {
+                "q": self.query_string,
+                "page": self.current_page,
+                "entityType": [k for k, v in self.entity_types.items() if v],
+            }
+        )
         new_path = f"{self.router.page.path}?{url_params}"
-        print("pushing url params", new_path)
         yield rx.call_script(f"window.history.pushState(null, '', '{new_path}');")
 
     @rx.var(cache=False)

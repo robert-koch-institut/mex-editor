@@ -6,8 +6,9 @@ from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.backend_api.models import ExtractedItemsResponse
+from mex.common.backend_api.models import PaginatedItemsContainer
 from mex.common.logging import logger
+from mex.common.models import AnyExtractedModel
 from mex.editor.aux_search.models import AuxResult
 from mex.editor.aux_search.transform import transform_models_to_results
 from mex.editor.state import State
@@ -98,7 +99,9 @@ class AuxState(State):
             )
         else:
             yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
-            response = ExtractedItemsResponse.model_validate(response)  # type: ignore[assignment]
+            response = PaginatedItemsContainer[AnyExtractedModel].model_validate(
+                response
+            )  # type: ignore[assignment]
             self.results = transform_models_to_results(response.items)  # type: ignore[arg-type]
             self.total = response.total  # type: ignore[attr-defined]
 

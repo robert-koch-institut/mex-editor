@@ -12,6 +12,7 @@ def aux_page(frontend_url: str, writer_user_page: Page) -> Page:
 
 
 @pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
 def test_aux_navbar(aux_page: Page) -> None:
     page = aux_page
     nav_bar = page.get_by_test_id("aux-nav-bar")
@@ -22,6 +23,7 @@ def test_aux_navbar(aux_page: Page) -> None:
 
 
 @pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
 def test_search_results(aux_page: Page) -> None:
     page = aux_page
     search_input = page.get_by_placeholder("Search here...")
@@ -42,6 +44,7 @@ def test_search_results(aux_page: Page) -> None:
 
 
 @pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
 def test_pagination(aux_page: Page) -> None:
     page = aux_page
     pagination_previous = page.get_by_test_id("pagination-previous-button")

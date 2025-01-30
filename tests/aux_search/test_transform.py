@@ -34,14 +34,14 @@ def test_models_to_all_properties_single_model():
         ),
         patch(
             "mex.editor.transform.transform_values",
-            return_value=[EditorValue(text="transformed_value")],
+            side_effect=lambda x, allow_link: [EditorValue(text=f"value{x}")],
         ),
     ):
         result = models_to_all_properties([model])
 
     assert len(result) == 2
-    assert result[0].text == "transformed_value"
-    assert result[1].text == "transformed_value"
+    assert result[0].text == "value1"
+    assert result[1].text == "value2"
 
 
 def test_models_to_all_properties_multiple_models():
@@ -55,33 +55,35 @@ def test_models_to_all_properties_multiple_models():
     model2.attr2 = "value4"
     model2.identifier = "id2"
 
-    with patch(
-        "mex.editor.transform.transform_values",
-        return_value=[EditorValue(text="transformed_value")],
+    with (
+        patch(
+            "builtins.vars",
+            side_effect=[
+                {"attr1": model1.attr1, "attr2": model1.attr2},
+                {"attr1": model2.attr1, "attr2": model2.attr2},
+            ],
+        ),
+        patch(
+            "mex.editor.transform.transform_values",
+            side_effect=lambda x, allow_link: [EditorValue(text=f"value{x}")],
+        ),
     ):
         result = models_to_all_properties([model1, model2])
-
     assert len(result) == 4
-    assert all(r.text == "transformed_value" for r in result)
-
-
-def test_models_to_all_properties_no_attributes():
-    model = MagicMock(spec=AnyExtractedModel)
-    model.identifier = "id1"
-
-    with patch(
-        "mex.editor.transform.transform_values",
-        return_value=[EditorValue(text="transformed_value")],
-    ):
-        result = models_to_all_properties([model])
-
-    assert len(result) == 1
-    assert result[0].text == "transformed_value"
+    assert result[0].text == "value1"
+    assert result[1].text == "value2"
+    assert result[2].text == "value3"
+    assert result[3].text == "value4"
 
 
 def test_transform_models_to_results_single_model():
     model = MagicMock(spec=AnyExtractedModel)
     model.identifier = "id1"
+    model.stemType = "Organization"
+    model.officialName = "name"
+    model.shortName = "shortName"
+    model.alternativeName = "alternativeName"
+    model.wikidataId = "wikidataId"
 
     with (
         patch("mex.editor.transform.transform_models_to_title", return_value="title"),
@@ -102,14 +104,25 @@ def test_transform_models_to_results_single_model():
     assert result[0].preview == "preview"
     assert len(result[0].all_properties) == 1
     assert result[0].all_properties[0].text == "property"
+    assert result[0].show_properties is False
 
 
 def test_transform_models_to_results_multiple_models():
     model1 = MagicMock(spec=AnyExtractedModel)
     model1.identifier = "id1"
+    model1.stemType = "Organization"
+    model1.officialName = "name1"
+    model1.shortName = "shortName1"
+    model1.alternativeName = "alternativeName1"
+    model1.wikidataId = "wikidataId1"
 
     model2 = MagicMock(spec=AnyExtractedModel)
     model2.identifier = "id2"
+    model2.stemType = "Organization"
+    model2.officialName = "name2"
+    model2.shortName = "shortName2"
+    model2.alternativeName = "alternativeName2"
+    model2.wikidataId = "wikidataId2"
 
     with (
         patch("mex.editor.transform.transform_models_to_title", return_value="title"),

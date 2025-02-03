@@ -19,7 +19,11 @@ def search_result(result: SearchResult) -> rx.Component:
                         render_value,
                     )
                 ),
-                style={"fontWeight": "var(--font-weight-bold)"},
+                style={
+                    "fontWeight": "var(--font-weight-bold)",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap",
+                },
             ),
             rx.box(
                 rx.hstack(

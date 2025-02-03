@@ -24,11 +24,7 @@ def user_menu() -> rx.Component:
     return rx.menu.root(
         rx.menu.trigger(user_button()),
         rx.menu.content(
-            rx.menu.item(
-                cast(User, State.user).name,
-                disabled=True,
-                style={"color": "var(--gray-12)"},
-            ),
+            rx.menu.item(cast(User, State.user).name, disabled=True),
             rx.menu.separator(),
             rx.menu.item(
                 "Logout",
@@ -67,33 +63,47 @@ def mex_editor_logo() -> rx.Component:
 
 def nav_bar() -> rx.Component:
     """Return a navigation bar component."""
-    return rx.card(
-        rx.hstack(
-            mex_editor_logo(),
-            rx.divider(orientation="vertical", size="2"),
-            rx.hstack(
-                rx.foreach(State.nav_items, nav_link),
-                justify="start",
-                spacing="4",
-            ),
-            rx.divider(orientation="vertical", size="2"),
-            user_menu(),
-            rx.spacer(),
-            rx.color_mode.button(),
-            justify="between",
-            align_items="center",
+    return rx.vstack(
+        rx.box(
+            style={
+                "height": "var(--space-6)",
+                "width": "100%",
+                "backdropFilter": " var(--backdrop-filter-panel)",
+                "backgroundColor": "var(--card-background-color)",
+            },
         ),
-        size="2",
+        rx.card(
+            rx.hstack(
+                mex_editor_logo(),
+                rx.divider(orientation="vertical", size="2"),
+                rx.hstack(
+                    rx.foreach(State.nav_items, nav_link),
+                    justify="start",
+                    spacing="4",
+                ),
+                rx.divider(orientation="vertical", size="2"),
+                user_menu(),
+                rx.spacer(),
+                rx.color_mode.button(),
+                justify="between",
+                align_items="center",
+            ),
+            size="2",
+            custom_attrs={"data-testid": "nav-bar"},
+            style={
+                "width": "100%",
+                "marginTop": "calc(-1 * var(--base-card-border-width))",
+            },
+        ),
+        spacing="0",
         style={
-            "margin": "2rem",
-            "maxWidth": "1480px",
-            "minWidth": "800px",
+            "maxWidth": "calc(1480px * var(--scaling))",
+            "minWidth": "calc(800px * var(--scaling))",
             "position": "fixed",
             "top": "0",
             "width": "100%",
             "zIndex": "1000",
         },
-        custom_attrs={"data-testid": "nav-bar"},
     )
 
 
@@ -101,14 +111,14 @@ def page(*children: str | rx.Component) -> rx.Component:
     """Return a page fragment with navigation bar and given children."""
     return rx.cond(
         State.user,
-        rx.fragment(
+        rx.center(
             nav_bar(),
             rx.hstack(
                 *children,
                 style={
-                    "margin": "8rem 2rem 2rem",
-                    "maxWidth": "1480px",
-                    "minWidth": "800px",
+                    "maxWidth": "calc(1480px * var(--scaling))",
+                    "minWidth": "calc(800px * var(--scaling))",
+                    "padding": "calc(var(--space-6) * 4) var(--space-6) var(--space-6)",
                     "width": "100%",
                 },
                 custom_attrs={"data-testid": "page-body"},

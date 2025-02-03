@@ -132,7 +132,7 @@ def submit_button() -> rx.Component:
         color_scheme="jade",
         size="3",
         on_click=EditState.submit_rule_set,
-        style={"margin": "1rem 0"},
+        style={"margin": "var(--line-height-1) 0"},
         custom_attrs={"data-testid": "submit-button"},
     )
 
@@ -169,9 +169,6 @@ def index() -> rx.Component:
                 EditState.fields,
                 submit_button(),
             ),
-            style={
-                "margin": "0 2rem",
-                "width": "100%",
-            },
+            style={"width": "100%"},
         ),
     )

@@ -19,7 +19,7 @@ def search_result(result: SearchResult) -> rx.Component:
                         render_value,
                     )
                 ),
-                style={"fontWeight": "bold"},
+                style={"fontWeight": "var(--font-weight-bold)"},
             ),
             rx.box(
                 rx.hstack(
@@ -30,7 +30,7 @@ def search_result(result: SearchResult) -> rx.Component:
                 ),
                 style={
                     "color": "var(--gray-12)",
-                    "fontWeight": "light",
+                    "fontWeight": "var(--font-weight-light)",
                     "textDecoration": "none",
                 },
             ),
@@ -58,13 +58,13 @@ def search_input() -> rx.Component:
                 style={
                     "--text-field-selection-color": "",
                     "--text-field-focus-color": "transparent",
-                    "--text-field-border-width": "1px",
+                    "--text-field-border-width": "calc(1px * var(--scaling))",
                     "boxShadow": (
                         "inset 0 0 0 var(--text-field-border-width) transparent"
                     ),
                 },
             ),
-            style={"margin": "1rem 0 1rem"},
+            style={"margin": "var(--space-4) 0 var(--space-4)"},
             debounce_timeout=250,
         ),
         style={"width": "100%"},
@@ -114,10 +114,7 @@ def pagination() -> rx.Component:
             disabled=SearchState.disable_previous_page,
             variant="surface",
             custom_attrs={"data-testid": "pagination-previous-button"},
-            style={
-                "width": "8rem",
-                "margin": "0 2ch",
-            },
+            style={"minWidth": "10%"},
         ),
         rx.select(
             SearchState.total_pages,
@@ -131,11 +128,9 @@ def pagination() -> rx.Component:
             disabled=SearchState.disable_next_page,
             variant="surface",
             custom_attrs={"data-testid": "pagination-next-button"},
-            style={
-                "width": "8rem",
-                "margin": "0 2ch",
-            },
+            style={"minWidth": "10%"},
         ),
+        spacing="4",
         style={"width": "100%"},
     )
 
@@ -148,9 +143,9 @@ def results_summary() -> rx.Component:
             f"of {SearchState.total} items",
             style={
                 "color": "var(--gray-12)",
+                "fontWeight": "var(--font-weight-bold)",
+                "margin": "var(--space-4)",
                 "userSelect": "none",
-                "fontWeight": "bold",
-                "margin": "1rem",
             },
             custom_attrs={"data-testid": "search-results-summary"},
         ),
@@ -180,9 +175,6 @@ def index() -> rx.Component:
             sidebar(),
             search_results(),
             spacing="4",
-            style={
-                "margin": "0 2rem",
-                "width": "100%",
-            },
+            style={"width": "100%"},
         )
     )

@@ -9,6 +9,5 @@ def index() -> rx.Component:
         rx.heading(
             "Merge",
             custom_attrs={"data-testid": "merge-heading"},
-            style={"margin": "1rem 0"},
         )
     )

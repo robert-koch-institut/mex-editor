@@ -34,7 +34,7 @@ optional-dependencies.dev = [
 ]
 
 [project.scripts]
-editor = "mex.editor:main"
+editor = "mex.editor.main:main"
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"

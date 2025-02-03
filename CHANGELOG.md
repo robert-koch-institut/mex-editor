@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - update mex-common to version 0.48.0
+- BREAKING: you must start the local dev mode simply with `pdm run editor` (no 2nd run)
+- use more idiomatic variables for styling elements with colors or spacing
+- update look and feel to be more inline with mex-drop
+- remember url parameters for search in nav-items to allow going back and forth
 
 ### Deprecated
 
@@ -20,8 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - remove BackendIdentityProvider in favor of mex-common version
 - remove identity_provider from EditorSettings in favor of mex-common setting
 - remove EditorIdentityProvider enum in favor of mex-common enum
+- remove dependency to reflex-chakra, use default checkboxes instead
 
 ### Fixed
+
+- decorate state handlers with `@rx.event` to satisfy new reflex versions
+- explicitly define cache strategies for vars with `@rx.var(cache=False)`
 
 ### Security
 

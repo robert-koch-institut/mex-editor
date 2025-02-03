@@ -125,7 +125,10 @@ class EditState(State):
 
     @rx.event
     def toggle_primary_source(
-        self, field_name: str, href: object, enabled: bool
+        self,
+        field_name: str,
+        href: str | None,
+        enabled: bool,
     ) -> None:
         """Toggle the `enabled` flag of a primary source."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
@@ -133,7 +136,12 @@ class EditState(State):
                 primary_source.enabled = enabled
 
     @rx.event
-    def toggle_field_value(self, field_name: str, value: object, enabled: bool) -> None:
+    def toggle_field_value(
+        self,
+        field_name: str,
+        value: EditorValue,
+        enabled: bool,
+    ) -> None:
         """Toggle the `enabled` flag of a field value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             for editor_value in primary_source.editor_values:

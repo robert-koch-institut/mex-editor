@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - update mex-common to version 0.49.3
 - BREAKING: you must start the local dev mode simply with `pdm run editor` (no 2nd run)
+- BREAKING: rename postfix_badge to render_badge (for consistency)
 - simplify some styles
 
 ### Deprecated

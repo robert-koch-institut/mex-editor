@@ -113,7 +113,7 @@ def pagination() -> rx.Component:
     """Render pagination for navigating search results."""
     return rx.center(
         rx.button(
-            rx.text("Previous", weight="bold"),
+            rx.text("Previous"),
             on_click=SearchState.go_to_previous_page,
             disabled=SearchState.disable_previous_page,
             variant="surface",

@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update mex-common to version 0.48.0
+- update mex-common to version 0.49.3
 - BREAKING: you must start the local dev mode simply with `pdm run editor` (no 2nd run)
 - use more idiomatic variables for styling elements with colors or spacing
 - update look and feel to be more inline with mex-drop

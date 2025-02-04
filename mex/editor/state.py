@@ -16,11 +16,13 @@ class State(rx.State):
         NavItem(title="Merge", href_template=r"/merge/"),
     ]
 
+    @rx.event
     def logout(self) -> EventSpec:
         """Log out a user."""
         self.reset()
         return rx.redirect("/")
 
+    @rx.event
     def check_login(self) -> EventSpec | None:
         """Check if a user is logged in."""
         if self.user is None:
@@ -28,6 +30,7 @@ class State(rx.State):
             return rx.redirect("/login")
         return None
 
+    @rx.event
     def load_nav(self) -> None:
         """Event hook for updating the navigation on page loads."""
         self.item_id = self.router.page.params.get("item_id")

@@ -105,4 +105,4 @@ components of the MEx project are open-sourced under the same license as well.
 
 ### Editor
 
-- `pdm run editor run` starts the editor service
+- `pdm run editor` starts the editor service

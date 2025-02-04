@@ -11,7 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update mex-common to version 0.48.0
+- update mex-common to version 0.49.3
+- BREAKING: you must start the local dev mode simply with `pdm run editor` (no 2nd run)
+- BREAKING: rename postfix_badge to render_badge (for consistency)
+- simplify some styles
 
 ### Deprecated
 
@@ -22,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - remove EditorIdentityProvider enum in favor of mex-common enum
 
 ### Fixed
+
+- decorate state handlers with `@rx.event` to satisfy new reflex versions
+- explicitly define cache strategies for vars with `@rx.var(cache=False)`
 
 ### Security
 

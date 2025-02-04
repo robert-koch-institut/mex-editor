@@ -105,7 +105,7 @@ def pagination() -> rx.Component:
     """Render pagination for navigating search results."""
     return rx.center(
         rx.button(
-            rx.text("Previous", weight="bold"),
+            rx.text("Previous"),
             on_click=SearchState.go_to_previous_page,
             disabled=SearchState.disable_previous_page,
             spacing="2",
@@ -121,7 +121,7 @@ def pagination() -> rx.Component:
             custom_attrs={"data-testid": "pagination-page-select"},
         ),
         rx.button(
-            rx.text("Next", weight="bold"),
+            rx.text("Next"),
             on_click=SearchState.go_to_next_page,
             disabled=SearchState.disable_next_page,
             spacing="2",

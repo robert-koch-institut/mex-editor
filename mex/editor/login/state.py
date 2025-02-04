@@ -13,8 +13,9 @@ class LoginState(State):
     username: str
     password: str
 
+    @rx.event
     def login(self) -> EventSpec:
-        """Log in a user."""
+        """Login a user."""
         read_access = has_read_access(self.username, self.password)
         write_access = has_write_access(self.username, self.password)
         if read_access:
@@ -25,6 +26,9 @@ class LoginState(State):
                 write_access=write_access,
             )
             if self.target_path_after_login:
-                return rx.redirect(self.target_path_after_login)
-            return rx.redirect("/")
+                target_path_after_login = self.target_path_after_login
+            else:
+                target_path_after_login = "/"
+            self.reset()  # reset username/password
+            return rx.redirect(target_path_after_login)
         return rx.window_alert("Invalid credentials.")

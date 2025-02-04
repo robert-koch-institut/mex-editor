@@ -22,7 +22,10 @@ def user_button() -> rx.Component:
 def user_menu() -> rx.Component:
     """Return a user menu with a trigger, the user's name and a logout button."""
     return rx.menu.root(
-        rx.menu.trigger(user_button()),
+        rx.menu.trigger(
+            user_button(),
+            custom_attrs={"data-testid": "user-menu"},
+        ),
         rx.menu.content(
             rx.menu.item(cast(User, State.user).name, disabled=True),
             rx.menu.separator(),
@@ -31,7 +34,6 @@ def user_menu() -> rx.Component:
                 on_select=State.logout,
             ),
         ),
-        custom_attrs={"data-testid": "user-menu"},
     )
 
 
@@ -45,8 +47,8 @@ def nav_link(item: NavItem) -> rx.Component:
     )
 
 
-def mex_editor_logo() -> rx.Component:
-    """Return the editor's logo with icon and label."""
+def app_logo() -> rx.Component:
+    """Return the app logo with icon and label."""
     return rx.hstack(
         rx.icon(
             "circuit-board",
@@ -57,7 +59,7 @@ def mex_editor_logo() -> rx.Component:
             weight="medium",
             style={"userSelect": "none"},
         ),
-        custom_attrs={"data-testid": "editor-logo"},
+        custom_attrs={"data-testid": "app-logo"},
     )
 
 
@@ -74,7 +76,7 @@ def nav_bar() -> rx.Component:
         ),
         rx.card(
             rx.hstack(
-                mex_editor_logo(),
+                app_logo(),
                 rx.divider(orientation="vertical", size="2"),
                 rx.hstack(
                     rx.foreach(State.nav_items, nav_link),
@@ -107,7 +109,7 @@ def nav_bar() -> rx.Component:
     )
 
 
-def page(*children: str | rx.Component) -> rx.Component:
+def page(*children: rx.Component) -> rx.Component:
     """Return a page fragment with navigation bar and given children."""
     return rx.cond(
         State.user,

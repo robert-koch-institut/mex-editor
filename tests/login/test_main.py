@@ -17,7 +17,12 @@ def test_login(
     )
     page.screenshot(path="tests_login_test_main-test_login-on-load.png")
 
-    page.get_by_text("Log in").click()
+    page.get_by_text("Login").click()
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
     expect(page.get_by_test_id("merge-heading")).to_be_visible()
     page.screenshot(path="tests_login_test_main-test_login-after-login.png")
+
+    page.get_by_test_id("user-menu").click()
+    expect(page.locator("text=Logout")).to_be_visible()
+    page.get_by_text("Logout").click()
+    expect(page.get_by_test_id("login-button")).to_be_visible()

@@ -48,6 +48,10 @@ app.api.add_api_route(
     check_system_status,
     tags=["system"],
 )
+app.api.title = "mex-editor"
+app.api.version = "v0"
+app.api.contact = {"name": "MEx Team", "email": "mex@rki.de"}
+app.api.description = "Metadata editor web application."
 app.register_lifespan_task(
     lambda: logger.info(EditorSettings.get().text()),
 )

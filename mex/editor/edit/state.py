@@ -31,6 +31,7 @@ class EditState(State):
     stem_type: str | None = None
     editor_fields: list[str] = []
 
+    @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the edit page."""
         self.reset()
@@ -82,6 +83,7 @@ class EditState(State):
             preventive=rule_set.preventive,
         )
 
+    @rx.event
     def submit_rule_set(self) -> Generator[EventSpec | None, None, None]:
         """Convert the fields to a rule set and submit it to the backend."""
         if (stem_type := self.stem_type) is None:
@@ -121,13 +123,25 @@ class EditState(State):
         msg = f"field not found: {field_name}"
         raise ValueError(msg)
 
-    def toggle_primary_source(self, field_name: str, href: str, enabled: bool) -> None:
+    @rx.event
+    def toggle_primary_source(
+        self,
+        field_name: str,
+        href: str | None,
+        enabled: bool,
+    ) -> None:
         """Toggle the `enabled` flag of a primary source."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             if primary_source.name.href == href:
                 primary_source.enabled = enabled
 
-    def toggle_field_value(self, field_name: str, value: object, enabled: bool) -> None:
+    @rx.event
+    def toggle_field_value(
+        self,
+        field_name: str,
+        value: EditorValue,
+        enabled: bool,
+    ) -> None:
         """Toggle the `enabled` flag of a field value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             for editor_value in primary_source.editor_values:

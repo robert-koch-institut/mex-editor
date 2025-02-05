@@ -1,27 +1,33 @@
 import math
 from collections.abc import Generator
+from typing import TYPE_CHECKING, Annotated
 
 import reflex as rx
+from pydantic import Field
 from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models import MERGED_MODEL_CLASSES_BY_NAME
+from mex.common.models import MERGED_MODEL_CLASSES
+from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
+
+if TYPE_CHECKING:
+    from reflex.istate.data import RouterData
 
 
 class SearchState(State):
     """State management for the search page."""
 
     results: list[SearchResult] = []
-    total: int = 0
-    query_string: str = ""
-    entity_types: dict[str, bool] = {k: False for k in MERGED_MODEL_CLASSES_BY_NAME}
-    current_page: int = 1
-    limit: int = 50
+    total: Annotated[int, Field(ge=0)] = 0
+    query_string: Annotated[str, Field(max_length=1000)] = ""
+    entity_types: dict[str, bool] = {k.stemType: False for k in MERGED_MODEL_CLASSES}
+    current_page: Annotated[int, Field(ge=1)] = 1
+    limit: Annotated[int, Field(ge=1, le=100)] = 50
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:
@@ -45,48 +51,69 @@ class SearchState(State):
         return [f"{i + 1}" for i in range(math.ceil(self.total / self.limit))]
 
     @rx.event
-    def set_query_string(self, value: str) -> Generator[EventSpec | None, None, None]:
-        """Set the query string and refresh the results."""
-        self.query_string = value
-        self.current_page = 1
-        yield from self.search()
+    def load_search_params(self) -> None:
+        """Load url params into the state."""
+        router: RouterData = self.get_value("router")
+        self.set_page(router.page.params.get("page", 1))
+        self.query_string = router.page.params.get("q", "")
+        type_params = router.page.params.get("entityType", [])
+        type_params = type_params if isinstance(type_params, list) else [type_params]
+        self.entity_types = {
+            k.stemType: k.stemType in type_params for k in MERGED_MODEL_CLASSES
+        }
 
     @rx.event
-    def set_entity_type(
-        self, index: str, value: bool
-    ) -> Generator[EventSpec | None, None, None]:
+    def push_search_params(self) -> Generator[EventSpec | None, None, None]:
+        """Push a new browser history item with updated search parameters."""
+        yield from self.push_url_params(
+            q=self.query_string,
+            page=self.current_page,
+            entityType=[k for k, v in self.entity_types.items() if v],
+        )
+
+    @rx.event
+    def set_entity_type(self, index: str, value: bool) -> None:
         """Set the entity type for filtering and refresh the results."""
         self.entity_types[index] = value
-        self.current_page = 1
-        yield from self.search()
 
     @rx.event
-    def set_page(
-        self, page_number: str | int
-    ) -> Generator[EventSpec | None, None, None]:
+    def set_page(self, page_number: str | int) -> None:
         """Set the current page and refresh the results."""
         self.current_page = int(page_number)
-        yield from self.search()
 
     @rx.event
-    def go_to_previous_page(self) -> Generator[EventSpec | None, None, None]:
+    def go_to_first_page(self) -> None:
+        """Navigate to the first page."""
+        self.set_page(1)
+
+    @rx.event
+    def go_to_previous_page(self) -> None:
         """Navigate to the previous page."""
-        yield from self.set_page(self.current_page - 1)
+        self.set_page(self.current_page - 1)
 
     @rx.event
-    def go_to_next_page(self) -> Generator[EventSpec | None, None, None]:
+    def go_to_next_page(self) -> None:
         """Navigate to the next page."""
-        yield from self.set_page(self.current_page + 1)
+        self.set_page(self.current_page + 1)
 
     @rx.event
-    def search(self) -> Generator[EventSpec | None, None, None]:
+    def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
+        """Scroll the page to the top."""
+        yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
+
+    @rx.event
+    def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results."""
         # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
         try:
             response = connector.fetch_preview_items(
                 query_string=self.query_string,
-                entity_type=[k for k, v in self.entity_types.items() if v],
+                entity_type=[
+                    ensure_prefix(k, "Merged")
+                    for k, v in self.entity_types.items()
+                    if v
+                ],
                 skip=self.limit * (self.current_page - 1),
                 limit=self.limit,
             )
@@ -100,9 +127,3 @@ class SearchState(State):
         else:
             self.results = transform_models_to_results(response.items)
             self.total = response.total
-            yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
-
-    @rx.event
-    def refresh(self) -> Generator[EventSpec | None, None, None]:
-        """Refresh the search page."""
-        yield from self.search()

@@ -34,15 +34,6 @@ class NavItem(rx.Base):
     raw_path: str = "/"
     underline: Literal["always", "none"] = "none"
 
-    def update_raw_path(self, params: dict[str, int | str | list[str]]) -> None:
-        """Render the parameters into a raw path."""
-        raw_path = self.path
-        param_tuples = list(params.items())
-        for key, value in param_tuples:
-            if f"[{key}]" in raw_path:
-                raw_path = raw_path.replace(f"[{key}]", f"{value}")
-        self.raw_path = raw_path
-
 
 class ModelConfig(BaseModel):
     """Configuration for how to display an entity type in the frontend."""

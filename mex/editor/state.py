@@ -1,3 +1,6 @@
+from collections.abc import Generator
+from urllib.parse import urlencode
+
 import reflex as rx
 from reflex.event import EventSpec
 
@@ -14,7 +17,7 @@ class State(rx.State):
         NavItem(
             title="Search",
             path="/",
-            raw_path="/",
+            raw_path="/?page=1",
         ),
         NavItem(
             title="Edit",
@@ -42,12 +45,42 @@ class State(rx.State):
             return rx.redirect("/login")
         return None
 
+    @staticmethod
+    def _update_raw_path(nav_item: NavItem, **params: int | str | list[str]) -> str:
+        """Render the parameters into a raw path."""
+        raw_path = nav_item.path
+        param_tuples = list(params.items())
+        for key, value in param_tuples:
+            if f"[{key}]" in raw_path:
+                raw_path = raw_path.replace(f"[{key}]", f"{value}")
+        query_tuples: list[tuple[str, str]] = []
+        for key, value in param_tuples:
+            if f"[{key}]" not in nav_item.path:
+                value_list = value if isinstance(value, list) else [f"{value}"]
+                query_tuples.extend((key, item) for item in value_list if item)
+        if query_str := urlencode(query_tuples):
+            raw_path = f"{raw_path}?{query_str}"
+        nav_item.raw_path = raw_path
+        return query_str
+
+    @rx.event
+    def push_url_params(
+        self, **params: int | str | list[str]
+    ) -> Generator[EventSpec | None, None, None]:
+        """Return the current nav item."""
+        url_params = ""
+        for nav_item in self.nav_items:
+            if self.router.page.path == nav_item.path:
+                url_params = self._update_raw_path(nav_item, **params)
+        new_path = f"{self.router.page.path}?{url_params}".rstrip("?")
+        yield rx.call_script(f"window.history.pushState(null, '', '{new_path}');")
+
     @rx.event
     def load_nav(self) -> None:
         """Event hook for updating the navigation on page loads."""
         for nav_item in self.nav_items:
             if self.router.page.path == nav_item.path:
-                nav_item.update_raw_path(self.router.page.params)
+                self._update_raw_path(nav_item, **self.router.page.params)
                 nav_item.underline = "always"
             else:
                 nav_item.underline = "none"

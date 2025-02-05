@@ -7,7 +7,7 @@ from pydantic import SecretStr
 def test_login(
     frontend_url: str, page: Page, writer_user_credentials: tuple[str, SecretStr]
 ) -> None:
-    page.goto(frontend_url + "/merge")
+    page.goto(f"{frontend_url}/merge")
 
     page.get_by_placeholder("Username").fill(
         writer_user_credentials[0],

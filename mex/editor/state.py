@@ -14,7 +14,7 @@ class State(rx.State):
         NavItem(
             title="Search",
             path="/",
-            raw_path="/?page=1",
+            raw_path="/",
         ),
         NavItem(
             title="Edit",

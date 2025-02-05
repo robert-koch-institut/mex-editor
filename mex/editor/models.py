@@ -1,6 +1,5 @@
 from importlib.resources import files
 from typing import Literal
-from urllib.parse import urlencode
 
 import reflex as rx
 import yaml
@@ -42,13 +41,6 @@ class NavItem(rx.Base):
         for key, value in param_tuples:
             if f"[{key}]" in raw_path:
                 raw_path = raw_path.replace(f"[{key}]", f"{value}")
-        query_tuples: list[tuple[str, str]] = []
-        for key, value in param_tuples:
-            if f"[{key}]" not in self.path:
-                value_list = value if isinstance(value, list) else [f"{value}"]
-                query_tuples.extend((key, item) for item in value_list if item)
-        if query_str := urlencode(query_tuples):
-            raw_path = f"{raw_path}?{query_str}"
         self.raw_path = raw_path
 
 

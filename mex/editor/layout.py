@@ -32,6 +32,7 @@ def user_menu() -> rx.Component:
             rx.menu.item(
                 "Logout",
                 on_select=State.logout,
+                custom_attrs={"data-testid": "logout-button"},
             ),
         ),
     )

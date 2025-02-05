@@ -1,4 +1,3 @@
-from collections.abc import Generator
 from urllib.parse import urlencode
 
 import reflex as rx
@@ -46,8 +45,8 @@ class State(rx.State):
         return None
 
     @staticmethod
-    def _update_raw_path(nav_item: NavItem, **params: int | str | list[str]) -> str:
-        """Render the parameters into a raw path."""
+    def _update_raw_path(nav_item: NavItem, **params: int | str | list[str]) -> None:
+        """Update the raw path of a nav item with the given parameters."""
         raw_path = nav_item.path
         param_tuples = list(params.items())
         for key, value in param_tuples:
@@ -61,19 +60,17 @@ class State(rx.State):
         if query_str := urlencode(query_tuples):
             raw_path = f"{raw_path}?{query_str}"
         nav_item.raw_path = raw_path
-        return query_str
 
     @rx.event
-    def push_url_params(
-        self, **params: int | str | list[str]
-    ) -> Generator[EventSpec | None, None, None]:
-        """Return the current nav item."""
-        url_params = ""
+    def push_url_params(self, **params: int | str | list[str]) -> EventSpec | None:
+        """Event handler to push updated url parameter to the browser history."""
         for nav_item in self.nav_items:
             if self.router.page.path == nav_item.path:
-                url_params = self._update_raw_path(nav_item, **params)
-        new_path = f"{self.router.page.path}?{url_params}".rstrip("?")
-        yield rx.call_script(f"window.history.pushState(null, '', '{new_path}');")
+                self._update_raw_path(nav_item, **params)
+                return rx.call_script(
+                    f"window.history.pushState(null, '', '{nav_item.raw_path}');"
+                )
+        return None
 
     @rx.event
     def load_nav(self) -> None:

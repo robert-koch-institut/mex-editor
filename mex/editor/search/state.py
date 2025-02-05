@@ -63,9 +63,9 @@ class SearchState(State):
         }
 
     @rx.event
-    def push_search_params(self) -> Generator[EventSpec | None, None, None]:
+    def push_search_params(self) -> EventSpec | None:
         """Push a new browser history item with updated search parameters."""
-        yield from self.push_url_params(
+        return self.push_url_params(
             q=self.query_string,
             page=self.current_page,
             entityType=[k for k, v in self.entity_types.items() if v],

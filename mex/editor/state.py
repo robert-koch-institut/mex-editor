@@ -18,7 +18,7 @@ class State(rx.State):
         ),
         NavItem(
             title="Edit",
-            path="/item/[item_id]",
+            path="/item/[identifier]",
             raw_path=f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}/",
         ),
         NavItem(

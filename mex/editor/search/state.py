@@ -1,7 +1,5 @@
-import contextlib
 import math
 from collections.abc import Generator
-from urllib.parse import urlencode
 
 import reflex as rx
 from reflex.event import EventSpec
@@ -24,40 +22,6 @@ class SearchState(State):
     entity_types: dict[str, bool] = {k: False for k in MERGED_MODEL_CLASSES_BY_NAME}
     current_page: int = 1
     limit: int = 50
-
-    def _load_url_params(self) -> None:
-        """Load url params into the state."""
-        with contextlib.suppress(ValueError):
-            self.current_page = int(self.router.page.params.get("page", ""))
-        self.router.page.params["thisThingOn"] = "yes"
-        self.query_string = self.router.page.params.get("q", "")
-        selected_types = self.router.page.params.get("entityType", "")
-        self.entity_types = {
-            k: k in selected_types for k in MERGED_MODEL_CLASSES_BY_NAME
-        }
-
-    def _push_url_params(self) -> Generator[EventSpec | None, None, None]:
-        """Update the url with variables from the state."""
-        url_params = urlencode(
-            [
-                (key, value)
-                for key, value in (
-                    [("q", self.query_string)] if self.query_string else []
-                )
-                + ([("page", self.current_page)] if self.current_page > 1 else [])
-                + [("entityType", k) for k, v in self.entity_types.items() if v]
-                if value
-            ]
-        )
-        self.nav_items[0].update_raw_path(
-            {
-                "q": self.query_string,
-                "page": self.current_page,
-                "entityType": [k for k, v in self.entity_types.items() if v],
-            }
-        )
-        new_path = f"{self.router.page.path}?{url_params}"
-        yield rx.call_script(f"window.history.pushState(null, '', '{new_path}');")
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:
@@ -85,7 +49,6 @@ class SearchState(State):
         """Set the query string and refresh the results."""
         self.query_string = value
         self.current_page = 1
-        yield from self._push_url_params()
         yield from self.search()
 
     @rx.event
@@ -95,7 +58,6 @@ class SearchState(State):
         """Set the entity type for filtering and refresh the results."""
         self.entity_types[index] = value
         self.current_page = 1
-        yield from self._push_url_params()
         yield from self.search()
 
     @rx.event
@@ -104,7 +66,6 @@ class SearchState(State):
     ) -> Generator[EventSpec | None, None, None]:
         """Set the current page and refresh the results."""
         self.current_page = int(page_number)
-        yield from self._push_url_params()
         yield from self.search()
 
     @rx.event
@@ -144,5 +105,4 @@ class SearchState(State):
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search page."""
-        self._load_url_params()
         yield from self.search()

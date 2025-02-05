@@ -22,7 +22,7 @@ app = rx.App(
 )
 app.add_page(
     edit_index,
-    route="/item/[item_id]",
+    route="/item/[identifier]",
     title="MEx Editor | Edit",
     on_load=[State.check_login, State.load_nav, EditState.refresh],
 )

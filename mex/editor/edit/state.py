@@ -78,7 +78,7 @@ class EditState(State):
 
         self.fields = transform_models_to_fields(
             *extracted_items_response.items,
-            # TODO(ND): add additive rule as a model here as well (MX-1741)
+            rule_set.additive,
             subtractive=rule_set.subtractive,
             preventive=rule_set.preventive,
         )

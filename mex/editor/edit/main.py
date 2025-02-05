@@ -119,7 +119,6 @@ def editor_field(model: EditorField) -> rx.Component:
                 ),
             )
         ),
-        width="90vw",
         custom_attrs={"data-testid": f"field-{model.name}"},
         role="row",
     )

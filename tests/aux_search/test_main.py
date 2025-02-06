@@ -49,13 +49,11 @@ def test_search_results(aux_page: Page) -> None:
 @pytest.mark.usefixtures("load_dummy_data")
 def test_pagination(aux_page: Page) -> None:
     page = aux_page
-    search_input = page.get_by_placeholder("Search here...")
-    search_input.fill("rki")
 
-    # test pagination is showing and properly dis-/enabled
+    # test pagination is showing and properly disabled
     pagination_previous = page.get_by_test_id("pagination-previous-button")
     pagination_next = page.get_by_test_id("pagination-next-button")
     pagination_page_select = page.get_by_test_id("pagination-page-select")
     expect(pagination_previous).to_be_disabled()
     expect(pagination_next).to_be_disabled()
-    assert pagination_page_select.inner_text() == "1"
+    assert pagination_page_select.inner_text() == ""

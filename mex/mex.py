@@ -16,7 +16,10 @@ from mex.editor.state import State
 
 app = rx.App(
     html_lang="en",
-    theme=themes.theme(accent_color="blue"),
+    theme=themes.theme(
+        accent_color="blue",
+        has_background=False,
+    ),
 )
 app.add_page(
     edit_index,

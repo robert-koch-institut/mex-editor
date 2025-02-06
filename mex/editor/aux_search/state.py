@@ -103,7 +103,7 @@ class AuxState(State):
                 response
             )  # type: ignore[assignment]
             self.results = transform_models_to_results(response.items)  # type: ignore[arg-type]
-            self.total = response.total  # type: ignore[attr-defined]
+            self.total = max(response.total, len(self.results))  # type: ignore[attr-defined]
 
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search page."""

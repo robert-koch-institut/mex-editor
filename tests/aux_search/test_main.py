@@ -6,7 +6,7 @@ from playwright.sync_api import Page, expect
 def aux_page(frontend_url: str, writer_user_page: Page) -> Page:
     page = writer_user_page
     page.goto(f"{frontend_url}/aux-import")
-    section = page.get_by_test_id("aux-search-bar")
+    section = page.get_by_test_id("aux-nav-bar")
     expect(section).to_be_visible()
     return page
 
@@ -36,7 +36,9 @@ def test_search_results(aux_page: Page) -> None:
 
     # test expand button works
     search_input.fill("rki")
-    expand_all_properties_button = page.get_by_test_id("expand-properties-button")
+    expand_all_properties_button = page.get_by_test_id("expand-properties-button").nth(
+        1
+    )
     expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
     expand_all_properties_button.click()
     expect(page.get_by_test_id("all-properties-display")).to_be_visible()
@@ -47,10 +49,13 @@ def test_search_results(aux_page: Page) -> None:
 @pytest.mark.usefixtures("load_dummy_data")
 def test_pagination(aux_page: Page) -> None:
     page = aux_page
+    search_input = page.get_by_placeholder("Search here...")
+    search_input.fill("rki")
+
+    # test pagination is showing and properly dis-/enabled
     pagination_previous = page.get_by_test_id("pagination-previous-button")
     pagination_next = page.get_by_test_id("pagination-next-button")
     pagination_page_select = page.get_by_test_id("pagination-page-select")
     expect(pagination_previous).to_be_disabled()
     expect(pagination_next).to_be_disabled()
     assert pagination_page_select.inner_text() == "1"
-    # test after test results

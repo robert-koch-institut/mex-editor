@@ -16,7 +16,6 @@ from mex.common.models import (
     ExtractedPerson,
     MergedConsent,
     MergedContactPoint,
-    MergedPerson,
     PreventivePerson,
     SubtractiveActivity,
     SubtractiveConsent,
@@ -39,8 +38,8 @@ from mex.editor.edit.models import EditorField, EditorPrimarySource
 from mex.editor.edit.transform import (
     _get_primary_source_id_from_model,
     _transform_editor_value_to_model_value,
-    _transform_field_to_preventive,
-    _transform_field_to_subtractive,
+    _transform_fields_to_preventive,
+    _transform_fields_to_subtractive,
     _transform_model_to_editor_primary_sources,
     _transform_model_values_to_editor_values,
     transform_fields_to_rule_set,
@@ -254,7 +253,7 @@ def test_transform_model_values_to_editor_values(
     ids=["without rules", "with rules"],
 )
 def test_transform_model_to_editor_primary_sources(
-    model: AnyExtractedModel | AnyMergedModel | AnyAdditiveModel,
+    model: AnyExtractedModel | AnyAdditiveModel,
     subtractive: AnySubtractiveModel,
     preventive: AnyPreventiveModel,
     expected_given_name: list[EditorPrimarySource],
@@ -275,8 +274,10 @@ def test_transform_model_to_editor_primary_sources(
 def test_transform_models_to_fields() -> None:
     editor_fields = transform_models_to_fields(
         [
-            MergedPerson(
-                identifier=MergedPersonIdentifier.generate(), email=["person@rki.de"]
+            ExtractedPerson(
+                email=["person000@rki.de"],
+                hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+                identifierInPrimarySource="person-000",
             )
         ],
         additive=AdditivePerson(givenName=["Good"]),
@@ -286,47 +287,63 @@ def test_transform_models_to_fields() -> None:
 
     assert len(editor_fields) == len(MERGEABLE_FIELDS_BY_CLASS_NAME["MergedPerson"])
     fields_by_name = {f.name: f for f in editor_fields}
-    assert fields_by_name["givenName"] == EditorField(
-        name="givenName",
-        primary_sources=[
-            EditorPrimarySource(
-                name=EditorValue(
-                    text="00000000000000",
-                    href="/item/00000000000000",
-                ),
-                identifier=MergedPrimarySourceIdentifier("00000000000000"),
-            ),
-            EditorPrimarySource(
-                name=EditorValue(
-                    text="00000000000000",
-                    href="/item/00000000000000",
-                ),
-                identifier=MergedPrimarySourceIdentifier("00000000000000"),
-                editor_values=[EditorValue(text="Good")],
-            ),
+    assert fields_by_name["givenName"].dict() == {
+        "name": "givenName",
+        "primary_sources": [
+            {
+                "name": {
+                    "text": "00000000000000",
+                    "badge": None,
+                    "href": "/item/00000000000000",
+                    "external": False,
+                    "enabled": True,
+                },
+                "identifier": "00000000000000",
+                "editor_values": [],
+                "enabled": True,
+                "input_config": None,
+            },
+            {
+                "name": {
+                    "text": "00000000000000",
+                    "badge": None,
+                    "href": "/item/00000000000000",
+                    "external": False,
+                    "enabled": True,
+                },
+                "identifier": "00000000000000",
+                "editor_values": [
+                    {
+                        "text": "Good",
+                        "badge": None,
+                        "href": None,
+                        "external": False,
+                        "enabled": True,
+                    }
+                ],
+                "enabled": True,
+                "input_config": {"data_type": "string"},
+            },
         ],
-    )
-    assert fields_by_name["memberOf"] == EditorField(
-        name="memberOf",
-        primary_sources=[
-            EditorPrimarySource(
-                name=EditorValue(
-                    text="00000000000000",
-                    href="/item/00000000000000",
-                ),
-                identifier=MergedPrimarySourceIdentifier("00000000000000"),
-                enabled=False,
-            ),
-            EditorPrimarySource(
-                name=EditorValue(
-                    text="00000000000000",
-                    href="/item/00000000000000",
-                ),
-                identifier=MergedPrimarySourceIdentifier("00000000000000"),
-                enabled=False,
-            ),
+    }
+    assert fields_by_name["memberOf"].dict() == {
+        "name": "memberOf",
+        "primary_sources": [
+            {
+                "name": {
+                    "text": "00000000000000",
+                    "badge": None,
+                    "href": "/item/00000000000000",
+                    "external": False,
+                    "enabled": True,
+                },
+                "identifier": "00000000000000",
+                "editor_values": [],
+                "enabled": False,
+                "input_config": None,
+            }
         ],
-    )
+    }
 
 
 @pytest.mark.parametrize(
@@ -371,12 +388,11 @@ def test_transform_models_to_fields() -> None:
         ),
     ],
 )
-def test_transform_field_to_preventive(
+def test_transform_fields_to_preventive(
     field: EditorField, expected: dict[str, object]
 ) -> None:
-    preventive = PreventivePerson()
-    _transform_field_to_preventive(field, preventive)
-    assert preventive.model_dump(exclude_defaults=True) == expected
+    preventive = _transform_fields_to_preventive([field], "Person")
+    assert preventive == expected
 
 
 @pytest.mark.parametrize(
@@ -466,12 +482,11 @@ def test_transform_render_value_to_model_type(
         ),
     ],
 )
-def test_transform_field_to_subtractive(
+def test_transform_fields_to_subtractive(
     field: EditorField, expected: dict[str, object]
 ) -> None:
-    subtractive = SubtractivePerson()
-    _transform_field_to_subtractive(field, subtractive)
-    assert subtractive.model_dump(exclude_defaults=True) == expected
+    subtractive = _transform_fields_to_subtractive([field], "Person")
+    assert subtractive == expected
 
 
 def test_transform_fields_to_rule_set() -> None:

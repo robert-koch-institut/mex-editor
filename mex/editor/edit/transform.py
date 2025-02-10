@@ -109,7 +109,7 @@ def _create_editor_primary_source(  # noqa: PLR0913
     )
 
 
-def _transform_extracted_to_editor_primary_sources(
+def _transform_model_to_editor_primary_sources(
     fields_by_name: dict[str, EditorField],
     model: AnyExtractedModel | AnyAdditiveModel,
     subtractive: AnySubtractiveModel,
@@ -163,7 +163,7 @@ def transform_models_to_fields(
     Returns:
         A list of editor field instances
     """
-    eligible_fields = sorted(
+    mergeable_fields = sorted(
         {
             f
             for e in extracted_items
@@ -172,16 +172,16 @@ def transform_models_to_fields(
     )
     fields_by_name = {
         field_name: EditorField(name=field_name, primary_sources=[])
-        for field_name in eligible_fields
+        for field_name in mergeable_fields
     }
     for extracted in extracted_items:
-        _transform_extracted_to_editor_primary_sources(
+        _transform_model_to_editor_primary_sources(
             fields_by_name,
             extracted,
             subtractive,
             preventive,
         )
-    _transform_extracted_to_editor_primary_sources(
+    _transform_model_to_editor_primary_sources(
         fields_by_name,
         additive,
         subtractive,

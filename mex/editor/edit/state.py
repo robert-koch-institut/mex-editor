@@ -6,9 +6,7 @@ from requests import HTTPError
 from starlette import status
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models import (
-    RULE_SET_RESPONSE_CLASSES_BY_NAME,
-)
+from mex.common.models import RULE_SET_RESPONSE_CLASSES_BY_NAME
 from mex.common.transform import ensure_postfix
 from mex.editor.edit.models import EditorField, EditorPrimarySource
 from mex.editor.edit.transform import (

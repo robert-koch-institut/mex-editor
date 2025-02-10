@@ -8,6 +8,7 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
+    AnyRuleSetResponse,
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedOrganizationalUnit,
@@ -191,10 +192,9 @@ def dummy_data() -> list[AnyExtractedModel]:
 
 @pytest.fixture
 def load_dummy_data(
-    dummy_data: list[AnyExtractedModel],
+    dummy_data: list[AnyExtractedModel | AnyRuleSetResponse],
     flush_graph_database: None,  # noqa: ARG001
-) -> list[AnyExtractedModel]:
+) -> list[AnyExtractedModel | AnyRuleSetResponse]:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
-    connector.post_extracted_items(dummy_data)
-    return dummy_data
+    return connector.ingest(dummy_data)

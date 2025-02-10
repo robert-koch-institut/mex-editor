@@ -7,7 +7,10 @@ from starlette import status
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
-from mex.common.models import RULE_SET_RESPONSE_CLASSES_BY_NAME
+from mex.common.models import (
+    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    RULE_SET_RESPONSE_CLASSES_BY_NAME,
+)
 from mex.common.transform import ensure_postfix, ensure_prefix
 from mex.editor.edit.models import EditorField, EditorPrimarySource
 from mex.editor.edit.transform import (
@@ -78,7 +81,7 @@ class EditState(State):
 
         self.fields = transform_models_to_fields(
             *extracted_items_response.items,
-            rule_set.additive,
+            additive=rule_set.additive,
             subtractive=rule_set.subtractive,
             preventive=rule_set.preventive,
         )
@@ -144,6 +147,30 @@ class EditState(State):
     ) -> None:
         """Toggle the `enabled` flag of a field value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
-            for editor_value in primary_source.editor_values:
+            for editor_value in [
+                *primary_source.editor_values,
+                *primary_source.additive_values,
+            ]:
                 if editor_value == value:
                     editor_value.enabled = enabled
+
+    @rx.event
+    def add_additive_value(self, field_name: str) -> None:
+        """Add an additive rule to the given field."""
+        for primary_source in self._get_primary_sources_by_field_name(field_name):
+            if primary_source.identifier == MEX_PRIMARY_SOURCE_STABLE_TARGET_ID:
+                primary_source.additive_values.append(EditorValue())
+
+    @rx.event
+    def remove_additive_value(self, field_name: str, index: int) -> None:
+        """Remove an additive rule from the given field."""
+        for primary_source in self._get_primary_sources_by_field_name(field_name):
+            if primary_source.identifier == MEX_PRIMARY_SOURCE_STABLE_TARGET_ID:
+                primary_source.additive_values.pop(index)
+
+    @rx.event
+    def set_string_value(self, field_name: str, index: int, value: str) -> None:
+        """Set the value for an additive string rule on the given field."""
+        for primary_source in self._get_primary_sources_by_field_name(field_name):
+            if primary_source.identifier == MEX_PRIMARY_SOURCE_STABLE_TARGET_ID:
+                primary_source.additive_values[index].text = value

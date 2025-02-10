@@ -1,6 +1,8 @@
 from mex.common.fields import (
+    EMAIL_FIELDS_BY_CLASS_NAME,
     LINK_FIELDS_BY_CLASS_NAME,
     MERGEABLE_FIELDS_BY_CLASS_NAME,
+    STRING_FIELDS_BY_CLASS_NAME,
     TEMPORAL_FIELDS_BY_CLASS_NAME,
     TEXT_FIELDS_BY_CLASS_NAME,
     VOCABULARY_FIELDS_BY_CLASS_NAME,
@@ -29,7 +31,7 @@ from mex.common.types import (
     TemporalEntityPrecision,
     Text,
 )
-from mex.editor.edit.models import EditorField, EditorPrimarySource
+from mex.editor.edit.models import EditorField, EditorPrimarySource, InputConfig
 from mex.editor.models import EditorValue
 from mex.editor.transform import ensure_list, transform_value
 
@@ -70,45 +72,119 @@ def _transform_model_values_to_editor_values(
     return editor_values
 
 
-def _transform_model_to_editor_primary_source(
-    fields_by_name: dict[str, EditorField],
+def _transform_model_to_additive_input_config(
+    field_name: str,
     model: AnyExtractedModel | AnyMergedModel | AnyAdditiveModel,
+) -> InputConfig | None:
+    """Determine the input type for a given field of a given model."""
+    if not isinstance(model, AnyAdditiveModel):
+        return None
+    if (
+        field_name in STRING_FIELDS_BY_CLASS_NAME[model.entityType]
+        or field_name in EMAIL_FIELDS_BY_CLASS_NAME[model.entityType]
+    ):
+        data_type = "string"
+    else:
+        data_type = None
+    return InputConfig(data_type=data_type)
+
+
+def _create_editor_primary_source(  # noqa: PLR0913
+    primary_source_name: EditorValue,
+    primary_source_id: MergedPrimarySourceIdentifier,
+    editor_values: list[EditorValue],
+    additive_values: list[EditorValue],
+    field_name: str,
+    preventive: AnyPreventiveModel,
+    input_config: InputConfig | None,
+) -> EditorPrimarySource:
+    """Create a new editor primary source from the given parameters."""
+    return EditorPrimarySource(
+        name=primary_source_name,
+        identifier=primary_source_id,
+        editor_values=editor_values,
+        additive_values=additive_values,
+        # we disable the primary source, when either:
+        enabled=(
+            # - the field is not supposed to be edited anyway
+            field_name not in MERGEABLE_FIELDS_BY_CLASS_NAME[preventive.entityType]
+            # - the primary source was prevented by the given rule
+            or primary_source_id not in getattr(preventive, field_name)
+        ),
+        input_config=input_config,
+    )
+
+
+def _transform_extracted_to_editor_primary_sources(
+    fields_by_name: dict[str, EditorField],
+    extracted: AnyExtractedModel,
     subtractive: AnySubtractiveModel,
     preventive: AnyPreventiveModel,
 ) -> None:
     """With a model and rules, attach an editor primary source to the field."""
-    primary_source_id = _get_primary_source_id_from_model(model)
+    primary_source_id = _get_primary_source_id_from_model(extracted)
     primary_source_name = transform_value(primary_source_id)
-    for field_name in model.model_fields:
+    for field_name in extracted.model_fields:
         if field_name in fields_by_name:
-            fields_by_name[field_name].primary_sources.append(
-                EditorPrimarySource(
-                    name=primary_source_name,
-                    identifier=primary_source_id,
-                    editor_values=_transform_model_values_to_editor_values(
-                        model, field_name, subtractive
-                    ),
-                    # we disable the primary source, when either:
-                    enabled=(
-                        # - the field is not supposed to be edited anyway
-                        field_name
-                        not in MERGEABLE_FIELDS_BY_CLASS_NAME[preventive.entityType]
-                        # - the primary source was prevented by the given rule
-                        or primary_source_id not in getattr(preventive, field_name)
-                    ),
-                )
+            editor_values = _transform_model_values_to_editor_values(
+                extracted,
+                field_name,
+                subtractive,
             )
+            primary_source = _create_editor_primary_source(
+                primary_source_name,
+                primary_source_id,
+                editor_values,
+                [],
+                field_name,
+                preventive,
+                None,
+            )
+            fields_by_name[field_name].primary_sources.append(primary_source)
+
+
+def _transform_additive_to_editor_primary_sources(
+    fields_by_name: dict[str, EditorField],
+    additive: AnyAdditiveModel,
+    subtractive: AnySubtractiveModel,
+    preventive: AnyPreventiveModel,
+) -> None:
+    primary_source_id = _get_primary_source_id_from_model(additive)
+    primary_source_name = transform_value(primary_source_id)
+    for field_name in additive.model_fields:
+        if field_name in fields_by_name:
+            additive_values = _transform_model_values_to_editor_values(
+                additive,
+                field_name,
+                subtractive,
+            )
+            input_config = _transform_model_to_additive_input_config(
+                field_name,
+                additive,
+            )
+            primary_source = _create_editor_primary_source(
+                primary_source_name,
+                primary_source_id,
+                [],
+                additive_values,
+                field_name,
+                preventive,
+                input_config=input_config,
+            )
+            fields_by_name[field_name].primary_sources.append(primary_source)
 
 
 def transform_models_to_fields(
-    *models: AnyExtractedModel | AnyMergedModel | AnyAdditiveModel,
+    *extracted_items: AnyExtractedModel,
+    additive: AnyAdditiveModel,
     subtractive: AnySubtractiveModel,
     preventive: AnyPreventiveModel,
 ) -> list[EditorField]:
     """Convert the given models and rules into editor field models.
 
     Args:
-        models: A series of extracted, merged or additive models
+        extracted_items: A series of extracted, merged or additive models
+        additive: An additive rule model
         subtractive: A subtractive rule model
         preventive: A preventive rule model
 
@@ -118,14 +194,35 @@ def transform_models_to_fields(
     fields_by_name = {
         field_name: EditorField(name=field_name, primary_sources=[])
         for field_name in {
-            f for m in models for f in MERGEABLE_FIELDS_BY_CLASS_NAME[m.entityType]
+            f
+            for e in extracted_items
+            for f in MERGEABLE_FIELDS_BY_CLASS_NAME[e.entityType]
         }
     }
-    for model in models:
-        _transform_model_to_editor_primary_source(
-            fields_by_name, model, subtractive, preventive
+    for extracted in extracted_items:
+        _transform_extracted_to_editor_primary_sources(
+            fields_by_name, extracted, subtractive, preventive
         )
+    _transform_additive_to_editor_primary_sources(
+        fields_by_name, additive, subtractive, preventive
+    )
     return list(fields_by_name.values())
+
+
+def _transform_field_to_additive(
+    field: EditorField,
+    additive: AnyAdditiveModel,
+) -> None:
+    """Transform an editor field back to an additive rule field."""
+    if field.name in MERGEABLE_FIELDS_BY_CLASS_NAME[additive.entityType]:
+        additive_values = []
+        for primary_source in field.primary_sources:
+            for value in primary_source.additive_values:
+                if value.text:
+                    additive_values.append(  # noqa: PERF401
+                        value.text
+                    )  # TODO(ND): transform other types too
+        setattr(additive, field.name, additive_values)
 
 
 def _transform_field_to_preventive(
@@ -170,7 +267,10 @@ def _transform_field_to_subtractive(
         subtracted_values = getattr(subtractive, field.name)
         merged_class_name = ensure_prefix(subtractive.stemType, "Merged")
         for primary_source in field.primary_sources:
-            for editor_value in primary_source.editor_values:
+            for editor_value in [
+                *primary_source.editor_values,
+                *primary_source.additive_values,
+            ]:
                 if not editor_value.enabled:
                     subtracted_value = _transform_editor_value_to_model_value(
                         editor_value, field.name, merged_class_name
@@ -197,6 +297,7 @@ def transform_fields_to_rule_set(
     ]
     rule_set = rule_set_class()
     for field in fields:
+        _transform_field_to_additive(field, rule_set.additive)
         _transform_field_to_preventive(field, rule_set.preventive)
         _transform_field_to_subtractive(field, rule_set.subtractive)
     return rule_set

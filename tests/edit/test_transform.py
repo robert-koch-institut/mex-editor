@@ -41,7 +41,7 @@ from mex.editor.edit.transform import (
     _transform_editor_value_to_model_value,
     _transform_field_to_preventive,
     _transform_field_to_subtractive,
-    _transform_model_to_editor_primary_source,
+    _transform_model_to_editor_primary_sources,
     _transform_model_values_to_editor_values,
     transform_fields_to_rule_set,
     transform_models_to_fields,
@@ -253,7 +253,7 @@ def test_transform_model_values_to_editor_values(
     ],
     ids=["without rules", "with rules"],
 )
-def test_transform_model_to_editor_primary_source(
+def test_transform_model_to_editor_primary_sources(
     model: AnyExtractedModel | AnyMergedModel | AnyAdditiveModel,
     subtractive: AnySubtractiveModel,
     preventive: AnyPreventiveModel,
@@ -264,7 +264,7 @@ def test_transform_model_to_editor_primary_source(
     family_name = EditorField(name="familyName", primary_sources=[])
     fields_by_name = {"givenName": given_name, "familyName": family_name}
 
-    _transform_model_to_editor_primary_source(
+    _transform_model_to_editor_primary_sources(
         fields_by_name, model, subtractive, preventive
     )
 

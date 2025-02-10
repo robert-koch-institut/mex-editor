@@ -52,7 +52,7 @@ def app_logo() -> rx.Component:
     """Return the app logo with icon and label."""
     return rx.hstack(
         rx.icon(
-            "circuit-board",
+            tag="circuit-board",
             size=28,
         ),
         rx.heading(

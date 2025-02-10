@@ -100,7 +100,7 @@ def login_user(
     page.goto(frontend_url)
     page.get_by_placeholder("Username").fill(username)
     page.get_by_placeholder("Password").fill(password.get_secret_value())
-    page.get_by_text("Log in").click()
+    page.get_by_test_id("login-button").click()
     return page
 
 

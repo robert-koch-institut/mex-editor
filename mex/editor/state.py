@@ -11,9 +11,21 @@ class State(rx.State):
     user: User | None = None
     target_path_after_login: str | None = None
     nav_items: list[NavItem] = [
-        NavItem(title="Search", href_template=r"/"),
-        NavItem(title="Edit", href_template=r"/item/{item_id}/"),
-        NavItem(title="Merge", href_template=r"/merge/"),
+        NavItem(
+            title="Search",
+            path="/",
+            raw_path="/",
+        ),
+        NavItem(
+            title="Edit",
+            path="/item/[identifier]",
+            raw_path=f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}/",
+        ),
+        NavItem(
+            title="Merge",
+            path="/merge",
+            raw_path="/merge/",
+        ),
     ]
 
     @rx.event
@@ -33,9 +45,9 @@ class State(rx.State):
     @rx.event
     def load_nav(self) -> None:
         """Event hook for updating the navigation on page loads."""
-        self.item_id = self.router.page.params.get("item_id")
-        item_id = self.item_id or MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
         for nav_item in self.nav_items:
-            nav_item.href = nav_item.href_template.format(item_id=item_id)
-            current_nav = self.router.page.raw_path == nav_item.href
-            nav_item.underline = "always" if current_nav else "none"
+            if self.router.page.path == nav_item.path:
+                nav_item.update_raw_path(self.router.page.params)
+                nav_item.underline = "always"
+            else:
+                nav_item.underline = "none"

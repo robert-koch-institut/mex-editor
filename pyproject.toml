@@ -14,7 +14,6 @@ dependencies = [
     "pydantic>=2,<3",
     "pytz>=2024,<2025",
     "pyyaml>=6,<7",
-    "reflex-chakra>=0.6,<1",
     "reflex>=0.6,<1",
     "requests>=2,<3",
     "starlette>=0.41,<1",
@@ -53,10 +52,6 @@ plugins = ["pydantic.mypy"]
 module = "reflex.*"
 ignore_missing_imports = true
 
-[[tool.mypy.overrides]]
-module = "reflex_chakra.*"
-ignore_missing_imports = true
-
 [tool.pdm]
 distribution = true
 
@@ -64,7 +59,7 @@ distribution = true
 update-all = { cmd = "pdm update --group :all --update-all --save-compatible" }
 lock-all = { cmd = "pdm lock --group :all --python='==3.11.*'" }
 install-lockfile = { cmd = "pdm install --group :all --frozen-lockfile" }
-install-playwright = { cmd = "playwright install firefox" }
+install-playwright = { cmd = "pdm run playwright install firefox" }
 install-all = { composite = ["install-lockfile", "install-playwright"] }
 export-all = { cmd = "pdm export --group :all --no-hashes -f requirements" }
 apidoc = { cmd = "pdm run sphinx-apidoc -f -o docs/source mex" }

@@ -48,13 +48,17 @@ class SearchState(State):
     def set_query_string(self, value: str) -> Generator[EventSpec | None, None, None]:
         """Set the query string and refresh the results."""
         self.query_string = value
-        return self.search()
+        self.current_page = 1
+        yield from self.search()
 
     @rx.event
-    def set_entity_type(self, value, index) -> Generator[EventSpec | None, None, None]:
+    def set_entity_type(
+        self, index: str, value: bool
+    ) -> Generator[EventSpec | None, None, None]:
         """Set the entity type for filtering and refresh the results."""
         self.entity_types[index] = value
-        return self.search()
+        self.current_page = 1
+        yield from self.search()
 
     @rx.event
     def set_page(
@@ -62,17 +66,17 @@ class SearchState(State):
     ) -> Generator[EventSpec | None, None, None]:
         """Set the current page and refresh the results."""
         self.current_page = int(page_number)
-        return self.search()
+        yield from self.search()
 
     @rx.event
     def go_to_previous_page(self) -> Generator[EventSpec | None, None, None]:
         """Navigate to the previous page."""
-        return self.set_page(self.current_page - 1)
+        yield from self.set_page(self.current_page - 1)
 
     @rx.event
     def go_to_next_page(self) -> Generator[EventSpec | None, None, None]:
         """Navigate to the next page."""
-        return self.set_page(self.current_page + 1)
+        yield from self.set_page(self.current_page + 1)
 
     @rx.event
     def search(self) -> Generator[EventSpec | None, None, None]:
@@ -87,18 +91,18 @@ class SearchState(State):
                 limit=self.limit,
             )
         except HTTPError as exc:
-            self.reset()
+            self.results = []
+            self.total = 0
+            self.current_page = 1
             yield from escalate_error(
                 "backend", "error fetching merged items", exc.response.text
             )
-            return
-
-        yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
-        self.results = transform_models_to_results(response.items)
-        self.total = response.total
+        else:
+            self.results = transform_models_to_results(response.items)
+            self.total = response.total
+            yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search page."""
-        self.reset()
-        return self.search()
+        yield from self.search()

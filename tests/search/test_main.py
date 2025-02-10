@@ -16,7 +16,7 @@ def test_index(frontend_url: str, writer_user_page: Page) -> None:
     page.screenshot(path="tests_search_test_main-test_index-on-load.png")
 
     # check heading is showing
-    expect(page.get_by_text("showing 7 of total 7 items found")).to_be_visible()
+    expect(page.get_by_text("Showing 7 of 7 items")).to_be_visible()
 
     # check mex primary source is showing
     primary_source = page.get_by_text(re.compile(r"^PrimarySource$"))
@@ -66,13 +66,13 @@ def test_search_input(
     search_input = page.get_by_placeholder("Search here...")
     expect(search_input).to_be_visible()
     search_input.fill("mex")
-    expect(page.get_by_text("showing 1 of total 1 items found")).to_be_visible()
+    expect(page.get_by_text("Showing 1 of 1 items")).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_index-on-search-input-1-found.png"
     )
 
     search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
-    expect(page.get_by_text("showing 0 of total 0 items found")).to_be_visible()
+    expect(page.get_by_text("Showing 0 of 0 items")).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_index-on-search-input-0-found.png"
     )
@@ -95,11 +95,11 @@ def test_entity_types(
     # check entity types are showing and functioning
     entity_types = page.get_by_test_id("entity-types")
     expect(entity_types).to_be_visible()
-    assert "MergedPrimarySource" in entity_types.all_text_contents()[0]
+    assert "PrimarySource" in entity_types.all_text_contents()[0]
 
-    entity_types.get_by_text("MergedActivity").click()
-    expect(page.get_by_text("showing 1 of total 1 items found")).to_be_visible()
+    entity_types.get_by_text("Activity").click()
+    expect(page.get_by_text("Showing 1 of 1 items")).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_index-on-select-entity-1-found.png"
     )
-    entity_types.get_by_text("MergedActivity").click()
+    entity_types.get_by_text("Activity").click()

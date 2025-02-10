@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update mex-common to version 0.49.3
 - BREAKING: you must start the local dev mode simply with `pdm run editor` (no 2nd run)
 - BREAKING: rename postfix_badge to render_badge (for consistency)
-- simplify some styles
+- simplify some styles and update look and feel to be more inline with mex-drop
+- use more idiomatic variables for styling elements with colors or spacing
 
 ### Deprecated
 
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - remove BackendIdentityProvider in favor of mex-common version
 - remove identity_provider from EditorSettings in favor of mex-common setting
 - remove EditorIdentityProvider enum in favor of mex-common enum
+- remove dependency to reflex-chakra, use default checkboxes instead
 
 ### Fixed
 

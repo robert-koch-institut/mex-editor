@@ -19,6 +19,7 @@ def editor_value_switch(
         checked=value.enabled,
         on_change=cast(EditState, EditState).toggle_field_value(field_name, value),
         custom_attrs={"data-testid": f"switch-{field_name}-{primary_source}-{index}"},
+        color_scheme="jade",
     )
 
 
@@ -53,6 +54,7 @@ def primary_source_switch(
             field_name, model.name.href
         ),
         custom_attrs={"data-testid": f"switch-{field_name}-{model.identifier}"},
+        color_scheme="jade",
     )
 
 
@@ -130,7 +132,7 @@ def submit_button() -> rx.Component:
         color_scheme="jade",
         size="3",
         on_click=EditState.submit_rule_set,
-        style={"margin": "1em 0"},
+        style={"margin": "var(--line-height-1) 0"},
         custom_attrs={"data-testid": "submit-button"},
     )
 
@@ -146,11 +148,8 @@ def edit_heading() -> rx.Component:
         ),
         custom_attrs={"data-testid": "edit-heading"},
         style={
-            "margin": "1em 0",
             "whiteSpace": "nowrap",
             "overflow": "hidden",
-            "textOverflow": "ellipsis",
-            "maxWidth": "80vw",
         },
     )
 
@@ -158,22 +157,16 @@ def edit_heading() -> rx.Component:
 def index() -> rx.Component:
     """Return the index for the edit component."""
     return page(
-        rx.box(
+        rx.vstack(
             edit_heading(),
-            rx.vstack(
-                rx.foreach(
-                    EditState.fields,
-                    editor_field,
-                ),
-                rx.cond(
-                    EditState.fields,
-                    submit_button(),
-                ),
+            rx.foreach(
+                EditState.fields,
+                editor_field,
             ),
-            style={
-                "width": "100%",
-                "margin": "0 2em 1em",
-            },
-            custom_attrs={"data-testid": "edit-section"},
+            rx.cond(
+                EditState.fields,
+                submit_button(),
+            ),
+            style={"width": "100%"},
         ),
     )

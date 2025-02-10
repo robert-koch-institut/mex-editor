@@ -45,8 +45,8 @@ def render_badge(value: EditorValue) -> rx.Component:
     """Render a generic badge for an editor value."""
     return rx.badge(
         value.badge,
-        radius="full",
-        variant="surface",
+        radius="large",
+        variant="soft",
         style={"margin": "auto 0"},
     )
 

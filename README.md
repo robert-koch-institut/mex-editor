@@ -103,6 +103,6 @@ components of the MEx project are open-sourced under the same license as well.
 - run `pdm run {command} --help` to print instructions
 - run `pdm run {command} --debug` for interactive debugging
 
-### Editor
+### editor
 
-- `pdm run editor` starts the editor service
+- `editor` starts the editor service

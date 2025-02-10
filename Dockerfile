@@ -43,4 +43,4 @@ USER mex
 EXPOSE 8030
 EXPOSE 8040
 
-ENTRYPOINT [ "editor", "run" ]
+ENTRYPOINT [ "editor" ]

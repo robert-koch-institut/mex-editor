@@ -274,10 +274,12 @@ def test_transform_model_to_editor_primary_sources(
 
 def test_transform_models_to_fields() -> None:
     editor_fields = transform_models_to_fields(
-        MergedPerson(
-            identifier=MergedPersonIdentifier.generate(), email=["person@rki.de"]
-        ),
-        AdditivePerson(givenName=["Good"]),
+        [
+            MergedPerson(
+                identifier=MergedPersonIdentifier.generate(), email=["person@rki.de"]
+            )
+        ],
+        additive=AdditivePerson(givenName=["Good"]),
         subtractive=SubtractivePerson(givenName=["Bad"]),
         preventive=PreventivePerson(memberOf=[MEX_PRIMARY_SOURCE_STABLE_TARGET_ID]),
     )

@@ -7,7 +7,7 @@ from mex.editor.models import EditorValue
 class InputConfig(rx.Base):
     """Model for configuring input masks."""
 
-    data_type: str | None = None
+    data_type: str
 
 
 class EditorPrimarySource(rx.Base):
@@ -18,7 +18,6 @@ class EditorPrimarySource(rx.Base):
     editor_values: list[EditorValue] = []
     enabled: bool = True
     input_config: InputConfig | None = None
-    additive_values: list[EditorValue] = []
 
 
 class EditorField(rx.Base):

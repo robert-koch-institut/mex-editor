@@ -28,110 +28,118 @@ def editor_value_switch(
     )
 
 
-def editor_value_card(
+def editor_static_value(
     field_name: str,
     primary_source: str | None,
     index: int,
     value: EditorValue,
 ) -> rx.Component:
-    """Return a card containing a single editor value."""
-    return rx.card(
-        rx.hstack(
-            render_value(value),
-            rx.cond(
-                cast(rx.vars.ArrayVar, EditState.editor_fields).contains(field_name),
-                editor_value_switch(field_name, primary_source, value, index),
-            ),
+    """Render a static value with an optional subtractive rule switch."""
+    return rx.hstack(
+        render_value(value),
+        editor_value_switch(field_name, primary_source, value, index),
+    )
+
+
+def remove_additive_button(
+    field_name: str,
+    index: int,
+) -> rx.Component:
+    """Render a button to remove an additive value."""
+    return rx.button(
+        rx.icon(
+            tag="circle-minus",
+            height="1rem",
+            width="1rem",
         ),
-        style={"width": "100%"},
-        custom_attrs={"data-testid": f"value-{field_name}-{primary_source}-{index}"},
+        f"Remove {field_name}",
+        color_scheme="tomato",
+        variant="soft",
+        size="1",
+        on_click=cast(EditState, EditState).remove_additive_value(field_name, index),
+        custom_attrs={
+            "data-testid": f"additive-rule-{field_name}-{index}-remove-button"
+        },
     )
 
 
 def editor_additive_string(
     field_name: str,
-    primary_source: str | None,
     index: int,
     value: EditorValue,
 ) -> rx.Component:
     """Render an input component for additive string rules."""
-    return rx.card(
-        rx.hstack(
-            rx.input(
-                placeholder=field_name,
-                value=value.text,
-                on_change=cast(EditState, EditState).set_string_value(
-                    field_name, index
-                ),
-                style={"margin": "calc(-1 * var(--space-1))"},
-                custom_attrs={
-                    "data-testid": f"additive-rule-{field_name}-{index}-string-input"
-                },
-            ),
-            rx.button(
-                rx.icon(
-                    tag="circle-minus",
-                    height="1rem",
-                    width="1rem",
-                ),
-                "Remove",
-                color_scheme="tomato",
-                variant="soft",
-                size="1",
-                on_click=cast(EditState, EditState).remove_additive_value(
-                    field_name, index
-                ),
-                custom_attrs={
-                    "data-testid": f"additive-rule-{field_name}-{index}-minus-button"
-                },
-            ),
-            rx.cond(
-                cast(rx.vars.ArrayVar, EditState.editor_fields).contains(field_name),
-                editor_value_switch(field_name, primary_source, value, index),
-            ),
+    return rx.hstack(
+        rx.input(
+            placeholder=field_name,
+            value=value.text,
+            on_change=cast(EditState, EditState).set_string_value(field_name, index),
+            style={
+                "margin": "calc(-1 * var(--space-1))",
+                "maxWidth": "calc(400px * var(--scaling))",
+                "width": "100%",
+            },
+            custom_attrs={
+                "data-testid": f"additive-rule-{field_name}-{index}-string-input"
+            },
         ),
-        style={"width": "100%"},
+        remove_additive_button(
+            field_name,
+            index,
+        ),
     )
 
 
-def editor_additive_rules(
+def editor_value_card_body(
     field_name: str,
-    primary_source: str | None,
-    input_config: InputConfig,
-    additive_values: list[EditorValue],
+    primary_source: EditorPrimarySource,
+    index: int,
+    value: EditorValue,
 ) -> rx.Component:
-    """Return a component to create additive rules."""
+    """Render the body of an editor value card."""
     return rx.cond(
-        input_config.data_type == "string",
-        rx.fragment(
-            rx.foreach(
-                additive_values,
-                lambda value, index: editor_additive_string(
+        primary_source.input_config,
+        rx.match(
+            cast(InputConfig, primary_source.input_config).data_type,
+            (
+                "string",
+                editor_additive_string(
                     field_name,
-                    primary_source,
                     index,
                     value,
                 ),
             ),
-            rx.card(
-                rx.button(
-                    rx.icon(
-                        tag="circle-plus",
-                        height="1rem",
-                        width="1rem",
-                    ),
-                    f"New {field_name}",
-                    color_scheme="jade",
-                    variant="soft",
-                    size="1",
-                    on_click=cast(EditState, EditState).add_additive_value(field_name),
-                    custom_attrs={
-                        "data-testid": f"additive-rule-{field_name}-plus-button"
-                    },
-                ),
-                style={"width": "100%"},
-            ),
         ),
+        editor_static_value(
+            field_name,
+            primary_source.name.text,
+            index,
+            value,
+        ),
+    )
+
+
+def editor_value_card(
+    field_name: str,
+    primary_source: EditorPrimarySource,
+    index: int,
+    value: EditorValue,
+) -> rx.Component:
+    """Return a card containing a single editor value."""
+    return rx.card(
+        editor_value_card_body(
+            field_name,
+            primary_source,
+            index,
+            value,
+        ),
+        background=rx.cond(
+            primary_source.enabled & value.enabled, "inherit", "var(--gray-a4)"
+        ),
+        style={"width": "100%"},
+        custom_attrs={
+            "data-testid": f"value-{field_name}-{primary_source.name.text}-{index}"
+        },
     )
 
 
@@ -159,14 +167,64 @@ def primary_source_name(
         rx.hstack(
             render_value(model.name),
             rx.cond(
-                cast(rx.vars.ArrayVar, EditState.editor_fields).contains(field_name),
+                ~cast(rx.vars.BooleanVar, model.input_config),
                 primary_source_switch(field_name, model),
             ),
         ),
+        background=rx.cond(model.enabled, "inherit", "var(--gray-a4)"),
         style={"width": "25%"},
         custom_attrs={
             "data-testid": f"primary-source-{field_name}-{model.name.text}-name"
         },
+    )
+
+
+def new_additive_button(
+    field_name: str,
+    primary_source: str | None,
+) -> rx.Component:
+    """Render a button for adding new additive rules to a given field."""
+    return rx.card(
+        rx.button(
+            rx.icon(
+                tag="circle-plus",
+                height="1rem",
+                width="1rem",
+            ),
+            f"New {field_name}",
+            color_scheme="jade",
+            variant="soft",
+            size="1",
+            on_click=cast(EditState, EditState).add_additive_value(field_name),
+            custom_attrs={"data-testid": f"new-additive-{field_name}-{primary_source}"},
+        ),
+        style={"width": "100%"},
+    )
+
+
+def editor_primary_source_stack(
+    field_name: str,
+    model: EditorPrimarySource,
+) -> rx.Component:
+    """Render a stack of editor value cards and input elements for a primary source."""
+    return rx.vstack(
+        rx.foreach(
+            model.editor_values,
+            lambda value, index: editor_value_card(
+                field_name,
+                model,
+                index,
+                value,
+            ),
+        ),
+        rx.cond(
+            model.input_config,
+            new_additive_button(
+                field_name,
+                model.name.text,
+            ),
+        ),
+        style={"width": "100%"},
     )
 
 
@@ -176,27 +234,13 @@ def editor_primary_source(
 ) -> rx.Component:
     """Return a horizontal grid of cards for editing one primary source."""
     return rx.hstack(
-        primary_source_name(field_name, model),
-        rx.vstack(
-            rx.foreach(
-                model.editor_values,
-                lambda value, index: editor_value_card(
-                    field_name,
-                    model.name.text,
-                    index,
-                    value,
-                ),
-            ),
-            rx.cond(
-                model.input_config,
-                editor_additive_rules(
-                    field_name,
-                    model.name.text,
-                    cast(InputConfig, model.input_config),
-                    model.additive_values,
-                ),
-            ),
-            style={"width": "100%"},
+        primary_source_name(
+            field_name,
+            model,
+        ),
+        editor_primary_source_stack(
+            field_name,
+            model,
         ),
         style={"width": "100%"},
         custom_attrs={

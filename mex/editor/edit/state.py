@@ -6,12 +6,10 @@ from requests import HTTPError
 from starlette import status
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.models import (
-    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     RULE_SET_RESPONSE_CLASSES_BY_NAME,
 )
-from mex.common.transform import ensure_postfix, ensure_prefix
+from mex.common.transform import ensure_postfix
 from mex.editor.edit.models import EditorField, EditorPrimarySource
 from mex.editor.edit.transform import (
     transform_fields_to_rule_set,
@@ -32,7 +30,6 @@ class EditState(State):
     fields: list[EditorField] = []
     item_title: list[EditorValue] = []
     stem_type: str | None = None
-    editor_fields: list[str] = []
 
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:
@@ -57,11 +54,6 @@ class EditState(State):
 
         self.item_title = transform_models_to_title(extracted_items_response.items)
         self.stem_type = transform_models_to_stem_type(extracted_items_response.items)
-        self.editor_fields = (
-            MERGEABLE_FIELDS_BY_CLASS_NAME[ensure_prefix(self.stem_type, "Merged")]
-            if self.stem_type
-            else []
-        )
         try:
             rule_set = connector.get_rule_set(self.router.page.params["identifier"])
         except HTTPError as exc:
@@ -80,7 +72,7 @@ class EditState(State):
                 return
 
         self.fields = transform_models_to_fields(
-            *extracted_items_response.items,
+            extracted_items_response.items,
             additive=rule_set.additive,
             subtractive=rule_set.subtractive,
             preventive=rule_set.preventive,
@@ -135,8 +127,9 @@ class EditState(State):
     ) -> None:
         """Toggle the `enabled` flag of a primary source."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if primary_source.name.href == href:
-                primary_source.enabled = enabled
+            if primary_source.input_config is None:  # noqa: SIM102
+                if primary_source.name.href == href:
+                    primary_source.enabled = enabled
 
     @rx.event
     def toggle_field_value(
@@ -147,30 +140,28 @@ class EditState(State):
     ) -> None:
         """Toggle the `enabled` flag of a field value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
-            for editor_value in [
-                *primary_source.editor_values,
-                *primary_source.additive_values,
-            ]:
-                if editor_value == value:
-                    editor_value.enabled = enabled
+            if primary_source.input_config is None:
+                for editor_value in primary_source.editor_values:
+                    if editor_value == value:
+                        editor_value.enabled = enabled
 
     @rx.event
     def add_additive_value(self, field_name: str) -> None:
         """Add an additive rule to the given field."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if primary_source.identifier == MEX_PRIMARY_SOURCE_STABLE_TARGET_ID:
-                primary_source.additive_values.append(EditorValue())
+            if primary_source.input_config:
+                primary_source.editor_values.append(EditorValue())
 
     @rx.event
     def remove_additive_value(self, field_name: str, index: int) -> None:
         """Remove an additive rule from the given field."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if primary_source.identifier == MEX_PRIMARY_SOURCE_STABLE_TARGET_ID:
-                primary_source.additive_values.pop(index)
+            if primary_source.input_config:
+                primary_source.editor_values.pop(index)
 
     @rx.event
     def set_string_value(self, field_name: str, index: int, value: str) -> None:
         """Set the value for an additive string rule on the given field."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if primary_source.identifier == MEX_PRIMARY_SOURCE_STABLE_TARGET_ID:
-                primary_source.additive_values[index].text = value
+            if primary_source.input_config:
+                primary_source.editor_values[index].text = value

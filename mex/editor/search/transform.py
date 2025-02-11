@@ -12,8 +12,8 @@ def transform_models_to_results(
     return [
         SearchResult(
             identifier=model.identifier,
-            title=transform_models_to_title([model]),  # type: ignore[list-item]
-            preview=transform_models_to_preview([model]),  # type: ignore[list-item]
+            title=transform_models_to_title([model]),
+            preview=transform_models_to_preview([model]),
         )
         for model in models
     ]

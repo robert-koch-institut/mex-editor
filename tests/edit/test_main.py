@@ -147,6 +147,44 @@ def test_edit_page_renders_identifier(
     expect(link).not_to_have_attribute("target", "_blank")  # internal link
 
 
+@pytest.mark.integration
+def test_edit_page_renders_new_additive_button(edit_page: Page) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id(
+        "new-additive-fundingProgram-00000000000000"
+    )
+    new_additive_button.scroll_into_view_if_needed()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_renders_new_additive_button.png"
+    )
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+
+    additive_rule_input = page.get_by_test_id(
+        "additive-rule-fundingProgram-0-string-input"
+    )
+    expect(additive_rule_input).to_be_visible()
+
+
+@pytest.mark.integration
+def test_edit_page_renders_remove_additive_button(edit_page: Page) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id(
+        "new-additive-fundingProgram-00000000000000"
+    )
+    new_additive_button.scroll_into_view_if_needed()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_renders_remove_additive_button.png"
+    )
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+
+    remove_additive_rule_button = page.get_by_test_id(
+        "additive-rule-fundingProgram-0-remove-button"
+    )
+    expect(remove_additive_rule_button).to_be_visible()
+
+
 @pytest.mark.parametrize(
     ("switch_id"),
     [

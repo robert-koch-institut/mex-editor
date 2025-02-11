@@ -4,6 +4,7 @@ from mex.common.exceptions import MExError
 from mex.common.models import (
     AnyExtractedModel,
     AnyMergedModel,
+    AnyPreviewModel,
     AnyRuleModel,
 )
 from mex.common.types import Identifier, Link, TemporalEntity, Text, VocabularyEnum
@@ -62,7 +63,9 @@ def transform_value(value: object, allow_link: bool = True) -> EditorValue:
 
 
 def transform_models_to_stem_type(
-    models: Sequence[AnyRuleModel | AnyExtractedModel | AnyMergedModel],
+    models: Sequence[
+        AnyRuleModel | AnyExtractedModel | AnyPreviewModel | AnyMergedModel
+    ],
 ) -> str | None:
     """Get the stem type from a list of models."""
     if not models:
@@ -71,7 +74,9 @@ def transform_models_to_stem_type(
 
 
 def transform_models_to_title(
-    models: Sequence[AnyRuleModel | AnyExtractedModel | AnyMergedModel],
+    models: Sequence[
+        AnyRuleModel | AnyExtractedModel | AnyPreviewModel | AnyMergedModel
+    ],
 ) -> list[EditorValue]:
     """Convert a list of models into editor values based on the title config."""
     if not models:
@@ -88,7 +93,9 @@ def transform_models_to_title(
 
 
 def transform_models_to_preview(
-    models: Sequence[AnyRuleModel | AnyExtractedModel | AnyMergedModel],
+    models: Sequence[
+        AnyRuleModel | AnyExtractedModel | AnyPreviewModel | AnyMergedModel
+    ],
 ) -> list[EditorValue]:
     """Converts a list of models into editor values based on the preview config."""
     if not models:

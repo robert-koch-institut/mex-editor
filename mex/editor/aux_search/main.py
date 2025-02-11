@@ -38,8 +38,8 @@ def render_preview(result: AuxResult) -> rx.Component:
                 render_value,
             )
         ),
-        weight="light",
         style={
+            "fontWeight": "var(--font-weight-light)",
             "whiteSpace": "nowrap",
             "overflow": "hidden",
             "textOverflow": "ellipsis",
@@ -57,11 +57,11 @@ def render_all_properties(result: AuxResult) -> rx.Component:
                 render_value,
             ),
             style={
+                "fontWeight": "var(--font-weight-light)",
                 "flexWrap": "wrap",
                 "alignItems": "start",
             },
         ),
-        weight="light",
         custom_attrs={"data-testid": "all-properties-display"},
     )
 
@@ -76,11 +76,10 @@ def result_title_and_buttons(result: AuxResult, index: int) -> rx.Component:
                     render_value,
                 )
             ),
-            weight="bold",
             style={
+                "fontWeight": "var(--font-weight-bold)",
                 "whiteSpace": "nowrap",
                 "overflow": "hidden",
-                "textOverflow": "ellipsis",
                 "width": "95%",
             },
         ),
@@ -140,14 +139,18 @@ def search_results() -> rx.Component:
     """Render the search results with a heading, result list, and pagination."""
     return rx.vstack(
         rx.center(
-            rx.heading(
-                f"showing {AuxState.current_results_length} "
-                f"of total {AuxState.total} items found",
+            rx.text(
+                f"Showing {AuxState.current_results_length} "
+                f"of {AuxState.total} items found",
+                style={
+                    "color": "var(--gray-12)",
+                    "fontWeight": "var(--font-weight-bold)",
+                    "margin": "var(--space-4)",
+                    "userSelect": "none",
+                },
                 custom_attrs={"data-testid": "search-results-heading"},
-                size="3",
             ),
-            style={"margin": "1em 0"},
-            width="100%",
+            style={"width": "100%"},
         ),
         rx.foreach(
             AuxState.results_transformed,
@@ -180,14 +183,12 @@ def pagination() -> rx.Component:
     """Render pagination for navigating search results."""
     return rx.center(
         rx.button(
-            rx.text("Previous", weight="bold"),
+            rx.text("Previous"),
             on_click=AuxState.go_to_previous_page,
             disabled=AuxState.disable_previous_page,
-            spacing="2",
-            width="120px",
-            margin_right="10px",
             variant="surface",
             custom_attrs={"data-testid": "pagination-previous-button"},
+            style={"minWidth": "10%"},
         ),
         rx.select(
             AuxState.total_pages,
@@ -199,14 +200,12 @@ def pagination() -> rx.Component:
             rx.text("Next", weight="bold"),
             on_click=AuxState.go_to_next_page,
             disabled=AuxState.disable_next_page,
-            spacing="2",
-            width="120px",
-            margin_left="10px",
             variant="surface",
             custom_attrs={"data-testid": "pagination-next-button"},
+            style={"minWidth": "10%"},
         ),
-        style={"margin": "1em 0"},
-        width="100%",
+        spacing="4",
+        style={"width": "100%"},
     )
 
 

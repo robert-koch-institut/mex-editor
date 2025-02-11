@@ -7,17 +7,18 @@ from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.backend_api.models import PaginatedItemsContainer
-from mex.common.logging import logger
 from mex.common.models import AnyExtractedModel
 from mex.editor.aux_search.models import AuxResult
 from mex.editor.aux_search.transform import transform_models_to_results
+from mex.editor.exceptions import escalate_error
 from mex.editor.state import State
 
 
 class AuxState(State):
     """State management for the aux extractor search page."""
 
-    results: list[AuxResult] = []
+    results_transformed: list[AuxResult] = []
+    results_extracted: list[AnyExtractedModel] = []
     total: int = 0
     query_string: str = ""
     current_page: int = 1
@@ -43,11 +44,13 @@ class AuxState(State):
     @rx.var
     def current_results_length(self) -> int:
         """Return the number of current search results."""
-        return len(self.results)
+        return len(self.results_transformed)
 
     def toggle_show_properties(self, index: int) -> None:
         """Toggle the show properties state."""
-        self.results[index].show_properties = not self.results[index].show_properties
+        self.results_transformed[index].show_properties = not self.results_transformed[
+            index
+        ].show_properties
 
     def set_query_string(self, value: str) -> Generator[EventSpec | None, None, None]:
         """Set the query string and refresh the results."""
@@ -69,6 +72,25 @@ class AuxState(State):
         """Navigate to the next page."""
         return self.set_page(self.current_page + 1)
 
+    def import_result(self, index: int) -> Generator[EventSpec | None, None, None]:
+        """Import the selected result to MEx backend."""
+        connector = BackendApiConnector.get()
+        try:
+            connector.post_extracted_items(
+                extracted_items=[self.results_extracted[index].model_copy()],
+            )
+        except HTTPError as exc:
+            yield from escalate_error(
+                "backend", "error importing aux search result: %s", exc.response.text
+            )
+        else:
+            yield rx.toast.success(
+                "Aux search result imported successfully",
+                duration=5000,
+                close_button=True,
+                dismissible=True,
+            )
+
     def search(self) -> Generator[EventSpec | None, None, None]:
         """Search for wikidata organizations based on the query string."""
         if self.query_string == "":
@@ -86,24 +108,17 @@ class AuxState(State):
             )
         except HTTPError as exc:
             self.reset()
-            logger.error(
-                "error fetching wikidata items: %s",
-                exc.response.text,
-                exc_info=False,
-            )
-            yield rx.toast.error(
-                exc.response.text,
-                duration=5000,
-                close_button=True,
-                dismissible=True,
+            yield from escalate_error(
+                "backend", "error fetching wikidata items: %s", exc.response.text
             )
         else:
             yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
-            response = PaginatedItemsContainer[AnyExtractedModel].model_validate(
+            container = PaginatedItemsContainer[AnyExtractedModel].model_validate(
                 response
-            )  # type: ignore[assignment]
-            self.results = transform_models_to_results(response.items)  # type: ignore[arg-type]
-            self.total = max(response.total, len(self.results))  # type: ignore[attr-defined]
+            )
+            self.results_extracted = container.items
+            self.results_transformed = transform_models_to_results(container.items)
+            self.total = max(container.total, len(self.results_transformed))
 
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search page."""

@@ -20,6 +20,15 @@ def expand_properties_button(result: AuxResult, index: int) -> rx.Component:
     )
 
 
+def import_button(index: int) -> rx.Component:
+    """Render a button to import the aux search result to the MEx backend."""
+    return rx.button(
+        "Import",
+        on_click=lambda: AuxState.import_result(index),  # type: ignore[call-arg, arg-type]
+        align="end",
+    )
+
+
 def render_preview(result: AuxResult) -> rx.Component:
     """Render a preview of the aux search result."""
     return rx.text(
@@ -57,30 +66,36 @@ def render_all_properties(result: AuxResult) -> rx.Component:
     )
 
 
+def result_title_and_buttons(result: AuxResult, index: int) -> rx.Component:
+    """Render the title and buttons for an aux search result."""
+    return rx.hstack(
+        rx.text(
+            rx.hstack(
+                rx.foreach(
+                    result.title,
+                    render_value,
+                )
+            ),
+            weight="bold",
+            style={
+                "whiteSpace": "nowrap",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis",
+                "width": "95%",
+            },
+        ),
+        expand_properties_button(result, index),
+        import_button(index),
+        style={"width": "100%"},
+    )
+
+
 def aux_search_result(result: AuxResult, index: int) -> rx.Component:
-    """Render an aux search result with expand-button and preview or all properties."""
+    """Render an aux search result with title, buttons and preview or all properties."""
     return rx.box(
         rx.card(
             rx.vstack(
-                rx.hstack(
-                    rx.text(
-                        rx.hstack(
-                            rx.foreach(
-                                result.title,
-                                render_value,
-                            )
-                        ),
-                        weight="bold",
-                        style={
-                            "whiteSpace": "nowrap",
-                            "overflow": "hidden",
-                            "textOverflow": "ellipsis",
-                            "width": "95%",
-                        },
-                    ),
-                    expand_properties_button(result, index),
-                    style={"width": "100%"},
-                ),
+                result_title_and_buttons(result, index),
                 rx.cond(
                     result.show_properties,
                     render_all_properties(result),
@@ -135,7 +150,7 @@ def search_results() -> rx.Component:
             width="100%",
         ),
         rx.foreach(
-            AuxState.results,
+            AuxState.results_transformed,
             aux_search_result,
         ),
         pagination(),

@@ -125,9 +125,8 @@ class EditState(State):
     ) -> None:
         """Toggle the `enabled` flag of a primary source."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if primary_source.input_config is None:  # noqa: SIM102
-                if primary_source.name.href == href:
-                    primary_source.enabled = enabled
+            if primary_source.name.href == href:
+                primary_source.enabled = enabled
 
     @rx.event
     def toggle_field_value(
@@ -138,10 +137,9 @@ class EditState(State):
     ) -> None:
         """Toggle the `enabled` flag of a field value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if primary_source.input_config is None:
-                for editor_value in primary_source.editor_values:
-                    if editor_value == value:
-                        editor_value.enabled = enabled
+            for editor_value in primary_source.editor_values:
+                if editor_value == value:
+                    editor_value.enabled = enabled
 
     @rx.event
     def add_additive_value(self, field_name: str) -> None:

@@ -9,9 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add color mode toggle to login screen
+- added new/remove buttons for additive rules for string fields
+- add event handlers for adding/removing additive value input cards
+- added text input field for string fields
+- add event handler for setting string input values
+
 ### Changes
 
-- update mex-common to version 0.49.3
+- update mex-common to version 0.50.0
+- update mex-backend to version 0.30.0
 - BREAKING: you must start the local dev mode simply with `pdm run editor` (no 2nd run)
 - BREAKING: rename postfix_badge to render_badge (for consistency)
 - simplify some styles and update look and feel to be more inline with mex-drop
@@ -19,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update url parameters when search options change
 - load url parameters on page load (i.e. when a link/bookmark is clicked)
 - search parameters as state vars when switching editor components
+- combine SearchState.editor_fields and SearchState.fields
+- update transformation logic to handle strings from additive rules
 
 ### Deprecated
 

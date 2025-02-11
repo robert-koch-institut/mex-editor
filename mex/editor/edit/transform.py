@@ -199,14 +199,15 @@ def _transform_fields_to_additive(
     additive_class_name = ensure_prefix(stem_type, "Additive")
     field_names = MERGEABLE_FIELDS_BY_CLASS_NAME[additive_class_name]
     for field in fields:
-        if field.name in field_names:
-            raw_rule[field.name] = field_values = []
-            for primary_source in field.primary_sources:
-                if primary_source.input_config:
-                    for value in primary_source.editor_values:
-                        if value.text:
-                            # TODO(ND): transform other types too
-                            field_values.append(value.text)  # noqa: PERF401
+        if field.name not in field_names:
+            continue
+        raw_rule[field.name] = field_values = []
+        for primary_source in field.primary_sources:
+            if primary_source.input_config:
+                for value in primary_source.editor_values:
+                    if value.text:
+                        # TODO(ND): transform other types too
+                        field_values.append(value.text)  # noqa: PERF401
     return raw_rule
 
 
@@ -219,13 +220,14 @@ def _transform_fields_to_preventive(
     preventive_class_name = ensure_prefix(stem_type, "Preventive")
     field_names = MERGEABLE_FIELDS_BY_CLASS_NAME[preventive_class_name]
     for field in fields:
-        if field.name in field_names:
-            raw_rule[field.name] = field_values = []
-            for primary_source in field.primary_sources:
-                if not primary_source.enabled and (
-                    primary_source.identifier not in field_values
-                ):
-                    field_values.append(primary_source.identifier)
+        if field.name not in field_names:
+            continue
+        raw_rule[field.name] = field_values = []
+        for primary_source in field.primary_sources:
+            if not primary_source.enabled and (
+                primary_source.identifier not in field_values
+            ):
+                field_values.append(primary_source.identifier)
     return raw_rule
 
 
@@ -258,16 +260,19 @@ def _transform_fields_to_subtractive(
     subtractive_class_name = ensure_prefix(stem_type, "Subtractive")
     field_names = MERGEABLE_FIELDS_BY_CLASS_NAME[subtractive_class_name]
     for field in fields:
-        if field.name in field_names:
-            raw_rule[field.name] = field_values = []
-            for primary_source in field.primary_sources:
-                for editor_value in primary_source.editor_values:
-                    if not editor_value.enabled:
-                        subtracted_value = _transform_editor_value_to_model_value(
-                            editor_value, field.name, merged_class_name
-                        )
-                        if subtracted_value not in field_values:
-                            field_values.append(subtracted_value)
+        if field.name not in field_names:
+            continue
+        raw_rule[field.name] = field_values = []
+        for primary_source in field.primary_sources:
+            for editor_value in primary_source.editor_values:
+                if not editor_value.enabled:
+                    subtracted_value = _transform_editor_value_to_model_value(
+                        editor_value,
+                        field.name,
+                        merged_class_name,
+                    )
+                    if subtracted_value not in field_values:
+                        field_values.append(subtracted_value)
     return raw_rule
 
 

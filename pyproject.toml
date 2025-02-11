@@ -88,8 +88,8 @@ addopts = [
     "--random-order-bucket=global",
 ]
 markers = [
-"integration: mark a test as integration test",
-"external: mark a test as external integration test"
+    "integration: mark a test as integration test",
+    "external: mark a test as external integration test"
 ]
 
 [tool.ruff]

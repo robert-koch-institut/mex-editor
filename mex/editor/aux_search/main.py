@@ -7,7 +7,7 @@ from mex.editor.layout import page
 
 
 def expand_properties_button(result: AuxResult, index: int) -> rx.Component:
-    """Render a button to expand all properties of a aux search result."""
+    """Render a button to expand all properties of an aux search result."""
     return rx.button(
         rx.cond(
             result.show_properties,

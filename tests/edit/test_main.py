@@ -147,44 +147,6 @@ def test_edit_page_renders_identifier(
     expect(link).not_to_have_attribute("target", "_blank")  # internal link
 
 
-@pytest.mark.integration
-def test_edit_page_renders_new_additive_button(edit_page: Page) -> None:
-    page = edit_page
-    new_additive_button = page.get_by_test_id(
-        "new-additive-fundingProgram-00000000000000"
-    )
-    new_additive_button.scroll_into_view_if_needed()
-    page.screenshot(
-        path="tests_edit_test_main-test_edit_page_renders_new_additive_button.png"
-    )
-    expect(new_additive_button).to_be_visible()
-    new_additive_button.click()
-
-    additive_rule_input = page.get_by_test_id(
-        "additive-rule-fundingProgram-0-string-input"
-    )
-    expect(additive_rule_input).to_be_visible()
-
-
-@pytest.mark.integration
-def test_edit_page_renders_remove_additive_button(edit_page: Page) -> None:
-    page = edit_page
-    new_additive_button = page.get_by_test_id(
-        "new-additive-fundingProgram-00000000000000"
-    )
-    new_additive_button.scroll_into_view_if_needed()
-    page.screenshot(
-        path="tests_edit_test_main-test_edit_page_renders_remove_additive_button.png"
-    )
-    expect(new_additive_button).to_be_visible()
-    new_additive_button.click()
-
-    remove_additive_rule_button = page.get_by_test_id(
-        "additive-rule-fundingProgram-0-remove-button"
-    )
-    expect(remove_additive_rule_button).to_be_visible()
-
-
 @pytest.mark.parametrize(
     ("switch_id"),
     [
@@ -227,8 +189,9 @@ def test_edit_page_switch_roundtrip(
 
     # verify the state after first saving: toggle is off
     switch = page.get_by_test_id(switch_id)
-    page.screenshot(path=f"{test_id}-reload_1.png")
     expect(switch).to_have_count(1)
+    switch.scroll_into_view_if_needed()
+    page.screenshot(path=f"{test_id}-reload_1.png")
     expect(switch).to_be_visible()
     expect(switch).to_have_attribute("data-state", "unchecked")
 
@@ -255,3 +218,109 @@ def test_edit_page_switch_roundtrip(
     expect(switch).to_have_count(1)
     expect(switch).to_be_visible()
     expect(switch).to_have_attribute("data-state", "checked")
+
+
+@pytest.mark.integration
+def test_edit_page_renders_new_additive_button(edit_page: Page) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id(
+        "new-additive-fundingProgram-00000000000000"
+    )
+    new_additive_button.scroll_into_view_if_needed()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_renders_new_additive_button.png"
+    )
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+
+    additive_rule_input = page.get_by_test_id(
+        "additive-rule-fundingProgram-0-string-input"
+    )
+    expect(additive_rule_input).to_be_visible()
+
+
+@pytest.mark.integration
+def test_edit_page_renders_remove_additive_button(edit_page: Page) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id(
+        "new-additive-fundingProgram-00000000000000"
+    )
+    new_additive_button.scroll_into_view_if_needed()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_renders_remove_additive_button.png"
+    )
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+
+    remove_additive_rule_button = page.get_by_test_id(
+        "additive-rule-fundingProgram-0-remove-button"
+    )
+    expect(remove_additive_rule_button).to_be_visible()
+
+
+@pytest.mark.integration
+def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
+    page = edit_page
+    test_id = "tests_edit_test_main-test_edit_page_additive_rule_roundtrip"
+
+    # click button for new additive rule on fundingProgram field
+    new_additive_button = page.get_by_test_id(
+        "new-additive-fundingProgram-00000000000000"
+    )
+    new_additive_button.scroll_into_view_if_needed()
+    page.screenshot(path=f"{test_id}-on_load.png")
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+
+    # fill a string into the additive rule input
+    input_id = "additive-rule-fundingProgram-0-string-input"
+    additive_rule_input = page.get_by_test_id(input_id)
+    expect(additive_rule_input).to_be_visible()
+    rule_value = "FundEverything e.V."
+    additive_rule_input.fill(rule_value)
+    page.screenshot(path=f"{test_id}-input-filled.png")
+
+    # save the rule-set
+    submit_button = page.get_by_test_id("submit-button")
+    submit_button.scroll_into_view_if_needed()
+    submit_button.click()
+
+    # click on the save button and verify the toast
+    toast = page.locator(".editor-toast").first
+    expect(toast).to_be_visible()
+    expect(toast).to_contain_text("Saved")
+    page.screenshot(path=f"{test_id}-toast.png")
+
+    # force a page reload
+    page.reload()
+
+    # verify the state after first saving: additive rule is present
+    additive_rule_input = page.get_by_test_id(input_id)
+    expect(additive_rule_input).to_have_count(1)
+    additive_rule_input.scroll_into_view_if_needed()
+    page.screenshot(path=f"{test_id}-reload_1.png")
+    expect(additive_rule_input).to_be_visible()
+    expect(additive_rule_input).to_have_attribute("value", rule_value)
+
+    # now remove the additive rule for a full roundtrip
+    remove_additive_rule_button = page.get_by_test_id(
+        "additive-rule-fundingProgram-0-remove-button"
+    )
+    expect(remove_additive_rule_button).to_be_visible()
+    remove_additive_rule_button.click()
+
+    # check the rule input is gone
+    additive_rule_input = page.get_by_test_id(input_id)
+    expect(additive_rule_input).to_have_count(0)
+
+    # click on the save button and force a page reload again
+    submit_button = page.get_by_test_id("submit-button")
+    submit_button.scroll_into_view_if_needed()
+    submit_button.click()
+    page.reload()
+
+    # check the rule input is still gone
+    page.get_by_test_id("field-fundingProgram").scroll_into_view_if_needed()
+    page.screenshot(path=f"{test_id}-reload_2.png")
+    additive_rule_input = page.get_by_test_id(input_id)
+    expect(additive_rule_input).to_have_count(0)

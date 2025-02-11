@@ -30,7 +30,7 @@ available to external researchers as well as the interested (professional) publi
 find research data from the RKI.
 
 For further details, please consult our
-[project page](https://www.rki.de/DE/Content/Forsch/MEx/MEx_node.html).
+[project page](https://www.rki.de/DE/Aktuelles/Publikationen/Forschungsdaten/MEx/metadata-exchange-plattform-mex-node.html).
 
 [^1]: FAIR is referencing the so-called
 [FAIR data principles](https://www.go-fair.org/fair-principles/) – guidelines to make
@@ -103,6 +103,6 @@ components of the MEx project are open-sourced under the same license as well.
 - run `pdm run {command} --help` to print instructions
 - run `pdm run {command} --debug` for interactive debugging
 
-### Editor
+### editor
 
-- `pdm run editor` starts the editor service
+- `editor` starts the editor service

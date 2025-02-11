@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:498dc0f6284794c74aad5b984f3abfe7e8fc0aedd6f6fbb717597431aaefd409"
+content_hash = "sha256:625c8962cb7016370d642939aa8a834cac6dde643a836c192f6542adf0e2c1b8"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -1911,13 +1911,13 @@ files = [
 
 [[package]]
 name = "types-pytz"
-version = "2024.2.0.20241221"
-requires_python = ">=3.8"
+version = "2025.1.0.20250204"
+requires_python = ">=3.9"
 summary = "Typing stubs for pytz"
 groups = ["dev"]
 files = [
-    {file = "types_pytz-2024.2.0.20241221-py3-none-any.whl", hash = "sha256:8fc03195329c43637ed4f593663df721fef919b60a969066e22606edf0b53ad5"},
-    {file = "types_pytz-2024.2.0.20241221.tar.gz", hash = "sha256:06d7cde9613e9f7504766a0554a270c369434b50e00975b3a4a0f6eed0f2c1a9"},
+    {file = "types_pytz-2025.1.0.20250204-py3-none-any.whl", hash = "sha256:32ca4a35430e8b94f6603b35beb7f56c32260ddddd4f4bb305fdf8f92358b87e"},
+    {file = "types_pytz-2025.1.0.20250204.tar.gz", hash = "sha256:00f750132769f1c65a4f7240bc84f13985b4da774bd17dfbe5d9cd442746bd49"},
 ]
 
 [[package]]

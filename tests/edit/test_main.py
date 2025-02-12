@@ -150,8 +150,8 @@ def test_edit_page_renders_identifier(
 @pytest.mark.parametrize(
     ("switch_id"),
     [
-        (r"switch-abstract-{primary_source_id}"),
-        (r"switch-abstract-{primary_source_id}-1"),
+        (r"{prefix}"),
+        (r"{prefix}-1"),
     ],
     ids=["toggle primary source", "toggle value"],
 )
@@ -159,8 +159,11 @@ def test_edit_page_renders_identifier(
 def test_edit_page_switch_roundtrip(
     edit_page: Page, extracted_activity: ExtractedActivity, switch_id: str
 ) -> None:
-    switch_id = switch_id.format(primary_source_id=extracted_activity.hadPrimarySource)
-    test_id = f"tests_edit_test_main-test_edit_page_switch_roundtrip-{switch_id}"
+    prefix = f"switch-abstract-{extracted_activity.hadPrimarySource}"
+    test_id = switch_id.format(
+        prefix="tests_edit_test_main-test_edit_page_switch_roundtrip"
+    )
+    switch_id = switch_id.format(prefix=prefix)
     page = edit_page
 
     # verify initial state: toggle is enabled

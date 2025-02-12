@@ -1,3 +1,5 @@
+from functools import cache
+
 from mex.common.fields import (
     EMAIL_FIELDS_BY_CLASS_NAME,
     LINK_FIELDS_BY_CLASS_NAME,
@@ -8,6 +10,7 @@ from mex.common.fields import (
     VOCABULARY_FIELDS_BY_CLASS_NAME,
 )
 from mex.common.models import (
+    ADDITIVE_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     RULE_SET_REQUEST_CLASSES_BY_NAME,
     AnyAdditiveModel,
@@ -22,10 +25,6 @@ from mex.common.transform import ensure_postfix, ensure_prefix
 from mex.common.types import (
     TEMPORAL_ENTITY_CLASSES_BY_PRECISION,
     VOCABULARY_ENUMS_BY_NAME,
-    AnyNestedModel,
-    AnyPrimitiveType,
-    AnyTemporalEntity,
-    AnyVocabularyEnum,
     Link,
     MergedPrimarySourceIdentifier,
     TemporalEntityPrecision,
@@ -34,6 +33,7 @@ from mex.common.types import (
 from mex.editor.edit.models import EditorField, EditorPrimarySource, InputConfig
 from mex.editor.models import EditorValue
 from mex.editor.transform import ensure_list, transform_value
+from mex.editor.types import AnyModelValue
 
 
 def _get_primary_source_id_from_model(
@@ -72,14 +72,16 @@ def _transform_model_values_to_editor_values(
     return editor_values
 
 
+@cache
 def _transform_model_to_additive_input_config(
     field_name: str,
-    model: AnyExtractedModel | AnyMergedModel | AnyAdditiveModel,
+    entity_type: str,
 ) -> InputConfig | None:
     """Determine the input type for a given field of a given model."""
-    if isinstance(model, AnyAdditiveModel) and (
-        field_name in STRING_FIELDS_BY_CLASS_NAME[model.entityType]
-        or field_name in EMAIL_FIELDS_BY_CLASS_NAME[model.entityType]
+    if (entity_type in ADDITIVE_MODEL_CLASSES_BY_NAME) and field_name in (
+        STRING_FIELDS_BY_CLASS_NAME[entity_type]
+        + EMAIL_FIELDS_BY_CLASS_NAME[entity_type]
+        + TEMPORAL_FIELDS_BY_CLASS_NAME[entity_type]
     ):
         return InputConfig(data_type="string")
     return None
@@ -129,7 +131,7 @@ def _transform_model_to_editor_primary_sources(
                 if not (
                     input_config := _transform_model_to_additive_input_config(
                         field_name,
-                        model,
+                        model.entityType,
                     )
                 ):
                     continue
@@ -193,9 +195,9 @@ def transform_models_to_fields(
 def _transform_fields_to_additive(
     fields: list[EditorField],
     stem_type: str,
-) -> dict[str, list[str]]:
+) -> dict[str, list[AnyModelValue]]:
     """Transform a list of editor fields back to a raw additive rule."""
-    raw_rule: dict[str, list[str]] = {}
+    raw_rule: dict[str, list[AnyModelValue]] = {}
     additive_class_name = ensure_prefix(stem_type, "Additive")
     field_names = MERGEABLE_FIELDS_BY_CLASS_NAME[additive_class_name]
     for field in fields:
@@ -203,11 +205,16 @@ def _transform_fields_to_additive(
             continue
         raw_rule[field.name] = field_values = []
         for primary_source in field.primary_sources:
-            if primary_source.input_config:
-                for value in primary_source.editor_values:
-                    if value.text:
-                        # TODO(ND): transform other types too
-                        field_values.append(value.text)  # noqa: PERF401
+            if not primary_source.input_config:
+                continue
+            for editor_value in primary_source.editor_values:
+                additive_value = _transform_editor_value_to_model_value(
+                    editor_value,
+                    field.name,
+                    additive_class_name,
+                )
+                if additive_value not in field_values:
+                    field_values.append(additive_value)
     return raw_rule
 
 
@@ -235,7 +242,7 @@ def _transform_editor_value_to_model_value(
     value: EditorValue,
     field_name: str,
     class_name: str,
-) -> AnyNestedModel | AnyPrimitiveType | AnyTemporalEntity | AnyVocabularyEnum:
+) -> AnyModelValue:
     """Transform an editor value back to a value to be used in mex.common.models."""
     if field_name in LINK_FIELDS_BY_CLASS_NAME[class_name]:
         return Link(url=value.href, language=value.badge, title=value.text)

@@ -15,7 +15,7 @@ from mex.editor.layout import page
 
 def editor_value_switch(
     field_name: str,
-    primary_source: str | None,
+    primary_source: EditorPrimarySource,
     value: EditorValue,
     index: int,
 ) -> rx.Component:
@@ -23,14 +23,16 @@ def editor_value_switch(
     return rx.switch(
         checked=value.enabled,
         on_change=cast(EditState, EditState).toggle_field_value(field_name, value),
-        custom_attrs={"data-testid": f"switch-{field_name}-{primary_source}-{index}"},
-        color_scheme="jade",
+        custom_attrs={
+            "data-testid": f"switch-{field_name}-{primary_source.name.text}-{index}"
+        },
+        color_scheme=rx.cond(primary_source.enabled, "jade", "gray"),
     )
 
 
 def editor_static_value(
     field_name: str,
-    primary_source: str | None,
+    primary_source: EditorPrimarySource,
     index: int,
     value: EditorValue,
 ) -> rx.Component:
@@ -112,7 +114,7 @@ def editor_value_card_body(
         ),
         editor_static_value(
             field_name,
-            primary_source.name.text,
+            primary_source,
             index,
             value,
         ),

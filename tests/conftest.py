@@ -82,8 +82,8 @@ def reader_user_credentials() -> tuple[str, SecretStr]:
     settings = EditorSettings.get()
     for username, password in settings.editor_user_database["read"].items():
         return username, password
-    msg = "No reader configured"  # pragma: no cover
-    raise RuntimeError(msg)  # pragma: no cover
+    msg = "No reader configured"
+    raise RuntimeError(msg)
 
 
 @pytest.fixture
@@ -91,8 +91,8 @@ def writer_user_credentials() -> tuple[str, SecretStr]:
     settings = EditorSettings.get()
     for username, password in settings.editor_user_database["write"].items():
         return username, password
-    msg = "No writer configured"  # pragma: no cover
-    raise RuntimeError(msg)  # pragma: no cover
+    msg = "No writer configured"
+    raise RuntimeError(msg)
 
 
 def login_user(

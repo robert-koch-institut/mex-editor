@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add color mode toggle to login screen
 - added new/remove buttons for additive rules for string fields
 - add event handlers for adding/removing additive value input cards
-- added text input field for string fields
+- added text input field for string fields (and reference fields, temporarily)
 - add event handler for setting string input values
 
 ### Changes

@@ -123,6 +123,7 @@ dmypy.json
 
 # Default exports
 *.ndjson
+.states/
 data/
 identity.csv
 schema.json

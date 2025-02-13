@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.9.0] - 2025-02-13
+
+### Added
+
 - aux extractor search for wikidata
 
 ### Changes
@@ -18,8 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: rename postfix_badge to render_badge (for consistency)
 - simplify some styles and update look and feel to be more inline with mex-drop
 - use more idiomatic variables for styling elements with colors or spacing
-
-### Deprecated
 
 ### Removed
 
@@ -32,8 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - decorate state handlers with `@rx.event` to satisfy new reflex versions
 - explicitly define cache strategies for vars with `@rx.var(cache=False)`
-
-### Security
 
 ## [0.8.0] - 2025-01-22
 

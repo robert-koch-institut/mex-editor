@@ -46,17 +46,20 @@ class AuxState(State):
         """Return the number of current search results."""
         return len(self.results_transformed)
 
+    @rx.event
     def toggle_show_properties(self, index: int) -> None:
         """Toggle the show properties state."""
         self.results_transformed[index].show_properties = not self.results_transformed[
             index
         ].show_properties
 
+    @rx.event
     def set_query_string(self, value: str) -> Generator[EventSpec | None, None, None]:
         """Set the query string and refresh the results."""
         self.query_string = value
         return self.search()
 
+    @rx.event
     def set_page(
         self, page_number: str | int
     ) -> Generator[EventSpec | None, None, None]:
@@ -64,14 +67,17 @@ class AuxState(State):
         self.current_page = int(page_number)
         return self.search()
 
+    @rx.event
     def go_to_previous_page(self) -> Generator[EventSpec | None, None, None]:
         """Navigate to the previous page."""
         return self.set_page(self.current_page - 1)
 
+    @rx.event
     def go_to_next_page(self) -> Generator[EventSpec | None, None, None]:
         """Navigate to the next page."""
         return self.set_page(self.current_page + 1)
 
+    @rx.event
     def import_result(self, index: int) -> Generator[EventSpec | None, None, None]:
         """Import the selected result to MEx backend."""
         connector = BackendApiConnector.get()
@@ -91,6 +97,7 @@ class AuxState(State):
                 dismissible=True,
             )
 
+    @rx.event
     def search(self) -> Generator[EventSpec | None, None, None]:
         """Search for wikidata organizations based on the query string."""
         if self.query_string == "":
@@ -120,6 +127,7 @@ class AuxState(State):
             self.results_transformed = transform_models_to_results(container.items)
             self.total = max(container.total, len(self.results_transformed))
 
+    @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search page."""
         self.reset()

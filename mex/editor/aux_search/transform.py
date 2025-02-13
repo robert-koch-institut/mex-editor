@@ -1,4 +1,4 @@
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable
 
 from mex.common.models import AnyExtractedModel
 from mex.editor.aux_search.models import AuxResult
@@ -18,25 +18,24 @@ def transform_models_to_results(models: Iterable[AnyExtractedModel]) -> list[Aux
             identifier=model.identifier,
             title=transform_models_to_title([model]),
             preview=transform_models_to_preview([model]),
-            all_properties=models_to_all_properties([model]),
+            all_properties=model_to_all_properties(model),
             show_properties=False,
         )
         for model in models
     ]
 
 
-def models_to_all_properties(models: Sequence[AnyExtractedModel]) -> list[EditorValue]:
+def model_to_all_properties(model: AnyExtractedModel) -> list[EditorValue]:
     """Transform all properties of a model into a list of EditorValues."""
-    if not models:
+    if not model:
         return []
     all_properties_lists: list[EditorValue] = []
-    for model in models:
-        attributes = {attr: getattr(model, attr) for attr in vars(model)}
-        all_properties_lists.extend(
-            value
-            for field_value in attributes
-            for value in transform_values(getattr(model, field_value), allow_link=False)
-        )
+    attributes = {attr: getattr(model, attr) for attr in vars(model)}
+    all_properties_lists.extend(
+        value
+        for field_value in attributes
+        for value in transform_values(getattr(model, field_value), allow_link=False)
+    )
     if all_properties_lists:
         return all_properties_lists
-    return transform_values(transform_models_to_stem_type(models))
+    return transform_values(transform_models_to_stem_type([model]))

@@ -1,3 +1,5 @@
+from typing import cast
+
 import reflex as rx
 
 from mex.editor.aux_search.models import AuxResult
@@ -14,7 +16,7 @@ def expand_properties_button(result: AuxResult, index: int) -> rx.Component:
             rx.icon("minimize-2", size=15),
             rx.icon("maximize-2", size=15),
         ),
-        on_click=lambda: AuxState.toggle_show_properties(index),  # type: ignore[call-arg, arg-type]
+        on_click=lambda: AuxState.toggle_show_properties(index),
         align="end",
         custom_attrs={"data-testid": "expand-properties-button"},
     )
@@ -24,8 +26,9 @@ def import_button(index: int) -> rx.Component:
     """Render a button to import the aux search result to the MEx backend."""
     return rx.button(
         "Import",
-        on_click=lambda: AuxState.import_result(index),  # type: ignore[call-arg, arg-type]
+        on_click=lambda: AuxState.import_result(index),
         align="end",
+        disabled=True,
     )
 
 
@@ -192,7 +195,7 @@ def pagination() -> rx.Component:
         ),
         rx.select(
             AuxState.total_pages,
-            value=AuxState.current_page.to_string(),  # type: ignore[attr-defined]
+            value=cast(rx.vars.NumberVar, AuxState.current_page).to_string(),
             on_change=AuxState.set_page,
             custom_attrs={"data-testid": "pagination-page-select"},
         ),

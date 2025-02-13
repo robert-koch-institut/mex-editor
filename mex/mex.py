@@ -43,7 +43,7 @@ app.add_page(
     aux_import_index,
     route="/aux-import",
     title="MEx Editor | Aux Import",
-    on_load=[State.check_login, State.load_nav],
+    on_load=[State.check_login, State.load_nav, AuxState.refresh],
 )
 app.add_page(
     login_index,

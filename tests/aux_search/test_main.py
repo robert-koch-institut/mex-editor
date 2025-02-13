@@ -46,7 +46,6 @@ def test_search_results(aux_page: Page) -> None:
 
 
 @pytest.mark.integration
-@pytest.mark.usefixtures("load_dummy_data")
 def test_pagination(aux_page: Page) -> None:
     page = aux_page
 

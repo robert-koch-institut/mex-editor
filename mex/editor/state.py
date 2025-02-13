@@ -26,6 +26,11 @@ class State(rx.State):
             path="/merge",
             raw_path="/merge/",
         ),
+        NavItem(
+            title="Aux Import",
+            path="/aux-import",
+            raw_path="/aux-import/",
+        ),
     ]
 
     @rx.event

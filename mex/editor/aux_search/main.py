@@ -211,17 +211,13 @@ def pagination() -> rx.Component:
 
 def index() -> rx.Component:
     """Return the index for the search component."""
-    return rx.center(
-        page(
-            rx.vstack(
-                nav_bar(),
-                search_input(),
-                search_results(),
-                spacing="5",
-                justify="center",
-                align="center",
-                padding="30px",
-            ),
-        ),
-        width="100%",
+    return page(
+        rx.vstack(
+            nav_bar(),
+            search_input(),
+            search_results(),
+            spacing="5",
+            justify="center",
+            align="center",
+        )
     )

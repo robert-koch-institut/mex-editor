@@ -5,6 +5,7 @@ from reflex.utils.console import info as log_info
 from mex.common.logging import logger
 from mex.editor.api.main import check_system_status
 from mex.editor.aux_search.main import index as aux_import_index
+from mex.editor.aux_search.state import AuxState
 from mex.editor.edit.main import index as edit_index
 from mex.editor.edit.state import EditState
 from mex.editor.login.main import index as login_index

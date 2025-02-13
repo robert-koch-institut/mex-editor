@@ -39,6 +39,7 @@ def test_search_results(aux_page: Page) -> None:
     expand_all_properties_button = page.get_by_test_id("expand-properties-button").nth(
         1
     )
+    expect(page.get_by_text("Robert Koch-Institut")).to_be_visible()
     expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
     expand_all_properties_button.click()
     expect(page.get_by_test_id("all-properties-display")).to_be_visible()

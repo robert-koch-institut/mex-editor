@@ -27,8 +27,6 @@ def transform_models_to_results(models: Iterable[AnyExtractedModel]) -> list[Aux
 
 def model_to_all_properties(model: AnyExtractedModel) -> list[EditorValue]:
     """Transform all properties of a model into a list of EditorValues."""
-    if not model:
-        return []
     all_properties_lists: list[EditorValue] = []
     attributes = {attr: getattr(model, attr) for attr in vars(model)}
     all_properties_lists.extend(

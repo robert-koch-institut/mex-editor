@@ -24,7 +24,6 @@ def test_aux_navbar(aux_page: Page) -> None:
 
 @pytest.mark.integration
 @pytest.mark.external
-@pytest.mark.usefixtures("load_dummy_data")
 def test_search_results(aux_page: Page) -> None:
     page = aux_page
     search_input = page.get_by_placeholder("Search here...")

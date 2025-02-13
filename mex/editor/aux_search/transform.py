@@ -27,13 +27,13 @@ def transform_models_to_results(models: Iterable[AnyExtractedModel]) -> list[Aux
 
 def model_to_all_properties(model: AnyExtractedModel) -> list[EditorValue]:
     """Transform all properties of a model into a list of EditorValues."""
-    all_properties_lists: list[EditorValue] = []
-    attributes = {attr: getattr(model, attr) for attr in vars(model)}
-    all_properties_lists.extend(
+    all_properties_list: list[EditorValue] = []
+    attributes = model.model_dump()
+    all_properties_list.extend(
         value
         for field_value in attributes
         for value in transform_values(getattr(model, field_value), allow_link=False)
     )
-    if all_properties_lists:
-        return all_properties_lists
+    if all_properties_list:
+        return all_properties_list
     return transform_values(transform_models_to_stem_type([model]))

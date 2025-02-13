@@ -19,18 +19,13 @@ def app_state() -> AuxState:
 
 def test_model_to_all_properties():
     model = MagicMock(spec=AnyExtractedModel)
-    model.attr1 = "value1"
-    model.attr2 = "value2"
-    model.identifier = "id1"
+    model.field1 = "value1"
+    model.field2 = "value2"
+    model.model_dump = MagicMock(return_value={"field1": "value1", "field2": "value2"})
 
-    with (
-        patch(
-            "builtins.vars", return_value={"attr1": model.attr1, "attr2": model.attr2}
-        ),
-        patch(
-            "mex.editor.transform.transform_values",
-            side_effect=lambda x, allow_link: [EditorValue(text=f"value{x}")],
-        ),
+    with patch(
+        "mex.editor.transform.transform_values",
+        side_effect=lambda x, allow_link: [EditorValue(text=f"value{x}")],
     ):
         result = model_to_all_properties(model)
 

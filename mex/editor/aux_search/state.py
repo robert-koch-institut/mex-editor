@@ -6,8 +6,7 @@ from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.backend_api.models import PaginatedItemsContainer
-from mex.common.models import AnyExtractedModel
+from mex.common.models import AnyExtractedModel, PaginatedItemsContainer
 from mex.editor.aux_search.models import AuxResult
 from mex.editor.aux_search.transform import transform_models_to_results
 from mex.editor.exceptions import escalate_error
@@ -25,23 +24,23 @@ class AuxState(State):
     limit: int = 50
     aux_data_sources: list[str] = ["Wikidata", "LDAP"]
 
-    @rx.var
+    @rx.var(cache=False)
     def total_pages(self) -> list[str]:
         """Return a list of total pages based on the number of results."""
         return [f"{i + 1}" for i in range(math.ceil(self.total / self.limit))]
 
-    @rx.var
+    @rx.var(cache=False)
     def disable_previous_page(self) -> bool:
         """Disable the 'Previous' button if on the first page."""
         return self.current_page <= 1
 
-    @rx.var
+    @rx.var(cache=False)
     def disable_next_page(self) -> bool:
         """Disable the 'Next' button if on the last page."""
         max_page = math.ceil(self.total / self.limit)
         return self.current_page >= max_page
 
-    @rx.var
+    @rx.var(cache=False)
     def current_results_length(self) -> int:
         """Return the number of current search results."""
         return len(self.results_transformed)
@@ -82,9 +81,7 @@ class AuxState(State):
         """Import the selected result to MEx backend."""
         connector = BackendApiConnector.get()
         try:
-            connector.post_extracted_items(
-                extracted_items=[self.results_extracted[index].model_copy()],
-            )
+            connector.ingest([self.results_extracted[index]])
         except HTTPError as exc:
             yield from escalate_error(
                 "backend", "error importing aux search result: %s", exc.response.text

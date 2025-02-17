@@ -11,6 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.9.0] - 2025-02-13
+
+### Added
+
+- aux extractor search for wikidata
+
+### Changes
+
 - update mex-common to version 0.49.3
 - BREAKING: you must start the local dev mode simply with `pdm run editor` (no 2nd run)
 - BREAKING: rename postfix_badge to render_badge (for consistency)
@@ -19,8 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update url parameters when search options change
 - load url parameters on page load (i.e. when a link/bookmark is clicked)
 - search parameters as state vars when switching editor components
-
-### Deprecated
 
 ### Removed
 
@@ -33,8 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - decorate state handlers with `@rx.event` to satisfy new reflex versions
 - explicitly define cache strategies for vars with `@rx.var(cache=False)`
-
-### Security
 
 ## [0.8.0] - 2025-01-22
 

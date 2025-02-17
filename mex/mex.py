@@ -4,6 +4,8 @@ from reflex.utils.console import info as log_info
 
 from mex.common.logging import logger
 from mex.editor.api.main import check_system_status
+from mex.editor.aux_search.main import index as aux_import_index
+from mex.editor.aux_search.state import AuxState
 from mex.editor.edit.main import index as edit_index
 from mex.editor.edit.state import EditState
 from mex.editor.login.main import index as login_index
@@ -42,6 +44,12 @@ app.add_page(
         SearchState.load_search_params,
         SearchState.refresh,
     ],
+)
+app.add_page(
+    aux_import_index,
+    route="/aux-import",
+    title="MEx Editor | Aux Import",
+    on_load=[State.check_login, State.load_nav, AuxState.refresh],
 )
 app.add_page(
     login_index,

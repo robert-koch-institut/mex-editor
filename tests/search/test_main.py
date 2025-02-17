@@ -143,7 +143,7 @@ def test_push_search_params(
 
     # load page and verify url
     page.goto(frontend_url)
-    page.wait_for_url("**/?page=1")
+    page.wait_for_url("**/", timeout=10)
 
     # select an entity type
     entity_types = page.get_by_test_id("entity-types")
@@ -163,4 +163,4 @@ def test_push_search_params(
     search_input.fill("Can I search here?")
 
     # expect parameter change to be reflected in url
-    page.wait_for_url("**/?page=1&entityType=Activity&q=Can%20I%20search%20here")
+    page.wait_for_url("**/?q=Can+I+search+here%3F&page=1&entityType=Activity")

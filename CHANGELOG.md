@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update mex-common to version 0.51.1
+- pin mex-backend container version to 0.30.1
+- update url parameters when search options change
+- load url parameters on page load (i.e. when a link/bookmark is clicked)
+- search parameters as state vars when switching editor components
+
 ### Deprecated
 
 ### Removed
@@ -32,9 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BREAKING: rename postfix_badge to render_badge (for consistency)
 - simplify some styles and update look and feel to be more inline with mex-drop
 - use more idiomatic variables for styling elements with colors or spacing
-- update url parameters when search options change
-- load url parameters on page load (i.e. when a link/bookmark is clicked)
-- search parameters as state vars when switching editor components
 
 ### Removed
 

@@ -51,7 +51,7 @@ def search_input() -> rx.Component:
         rx.debounce_input(
             rx.input(
                 rx.input.slot(
-                    rx.icon(tag="search"),
+                    rx.icon("search"),
                     autofocus=True,
                     padding_left="0",
                     tab_index=1,

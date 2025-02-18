@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update url parameters when search options change
 - load url parameters on page load (i.e. when a link/bookmark is clicked)
 - search parameters as state vars when switching editor components
-- combine SearchState.editor_fields and SearchState.fields
+- combine EditState.editor_fields and EditState.fields
 - update transformation logic to handle strings from additive rules
 
 ### Deprecated

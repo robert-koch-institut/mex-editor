@@ -41,6 +41,7 @@ def search_result(result: SearchResult) -> rx.Component:
             href=f"/item/{result.identifier}",
         ),
         style={"width": "100%"},
+        class_name="search-result-card",
     )
 
 
@@ -57,7 +58,12 @@ def search_input() -> rx.Component:
                 ),
                 placeholder="Search here...",
                 value=SearchState.query_string,
-                on_change=SearchState.set_query_string,
+                on_change=[
+                    SearchState.set_query_string,
+                    SearchState.go_to_first_page,
+                    SearchState.push_search_params,
+                    SearchState.refresh,
+                ],
                 max_length=100,
                 style={
                     "--text-field-selection-color": "",
@@ -76,11 +82,16 @@ def search_input() -> rx.Component:
 
 
 def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
-    """Render a single checkboxes for filtering by entity type."""
+    """Render a single checkbox for filtering by entity type."""
     return rx.checkbox(
-        choice[0][len("Merged") :],
+        choice[0],
         checked=choice[1],
-        on_change=SearchState.set_entity_type(choice[0]),
+        on_change=[
+            SearchState.set_entity_type(choice[0]),
+            SearchState.go_to_first_page,
+            SearchState.push_search_params,
+            SearchState.refresh,
+        ],
     )
 
 
@@ -114,7 +125,12 @@ def pagination() -> rx.Component:
     return rx.center(
         rx.button(
             rx.text("Previous"),
-            on_click=SearchState.go_to_previous_page,
+            on_click=[
+                SearchState.go_to_previous_page,
+                SearchState.push_search_params,
+                SearchState.scroll_to_top,
+                SearchState.refresh,
+            ],
             disabled=SearchState.disable_previous_page,
             variant="surface",
             custom_attrs={"data-testid": "pagination-previous-button"},
@@ -123,12 +139,22 @@ def pagination() -> rx.Component:
         rx.select(
             SearchState.total_pages,
             value=cast(rx.vars.NumberVar, SearchState.current_page).to_string(),
-            on_change=SearchState.set_page,
+            on_change=[
+                SearchState.set_page,
+                SearchState.push_search_params,
+                SearchState.scroll_to_top,
+                SearchState.refresh,
+            ],
             custom_attrs={"data-testid": "pagination-page-select"},
         ),
         rx.button(
             rx.text("Next"),
-            on_click=SearchState.go_to_next_page,
+            on_click=[
+                SearchState.go_to_next_page,
+                SearchState.push_search_params,
+                SearchState.scroll_to_top,
+                SearchState.refresh,
+            ],
             disabled=SearchState.disable_next_page,
             variant="surface",
             custom_attrs={"data-testid": "pagination-next-button"},

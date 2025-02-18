@@ -68,13 +68,13 @@ def test_search_input(
     search_input.fill("mex")
     expect(page.get_by_text("Showing 1 of 1 items")).to_be_visible()
     page.screenshot(
-        path="tests_search_test_main-test_index-on-search-input-1-found.png"
+        path="tests_search_test_main-test_search_input-on-search-input-1-found.png"
     )
 
     search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
     expect(page.get_by_text("Showing 0 of 0 items")).to_be_visible()
     page.screenshot(
-        path="tests_search_test_main-test_index-on-search-input-0-found.png"
+        path="tests_search_test_main-test_search_input-on-search-input-0-found.png"
     )
     search_input.fill("")
 
@@ -100,6 +100,67 @@ def test_entity_types(
     entity_types.get_by_text("Activity").click()
     expect(page.get_by_text("Showing 1 of 1 items")).to_be_visible()
     page.screenshot(
-        path="tests_search_test_main-test_index-on-select-entity-1-found.png"
+        path="tests_search_test_main-test_entity_types-on-select-entity-1-found.png"
     )
     entity_types.get_by_text("Activity").click()
+
+
+@pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
+def test_load_search_params(
+    frontend_url: str,
+    writer_user_page: Page,
+) -> None:
+    page = writer_user_page
+    page.goto(
+        f"{frontend_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
+    )
+
+    # check 1 item is showing
+    expect(page.get_by_text("Showing 1 of 1 items")).to_be_visible()
+    page.screenshot(
+        path="tests_search_test_main-test_load_search_params-on-params-loaded.png"
+    )
+    search_result_cards = page.locator(".search-result-card")
+    expect(search_result_cards).to_have_count(1)
+    expect(search_result_cards).to_contain_text("help@contact-point.two")
+
+    # check entity types are loaded from url
+    entity_types = page.get_by_test_id("entity-types")
+    unchecked = entity_types.get_by_role("checkbox", checked=False)
+    expect(unchecked).to_have_count(11)
+    checked = entity_types.get_by_role("checkbox", checked=True)
+    expect(checked).to_have_count(2)
+
+
+@pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
+def test_push_search_params(
+    frontend_url: str,
+    writer_user_page: Page,
+) -> None:
+    page = writer_user_page
+
+    # load page and verify url
+    page.goto(frontend_url)
+    page.wait_for_url("**/", timeout=10)
+
+    # select an entity type
+    entity_types = page.get_by_test_id("entity-types")
+    expect(entity_types).to_be_visible()
+    page.screenshot(path="tests_search_test_main-test_push_search_params-on-load.png")
+    entity_types.get_by_text("Activity").click()
+    checked = entity_types.get_by_role("checkbox", checked=True)
+    expect(checked).to_have_count(1)
+    page.screenshot(path="tests_search_test_main-test_push_search_params-on-click.png")
+
+    # expect parameter change to be reflected in url
+    page.wait_for_url("**/?page=1&entityType=Activity")
+
+    # add a query string to the search constraints
+    search_input = page.get_by_placeholder("Search here...")
+    expect(search_input).to_be_visible()
+    search_input.fill("Can I search here?")
+
+    # expect parameter change to be reflected in url
+    page.wait_for_url("**/?q=Can+I+search+here%3F&page=1&entityType=Activity")

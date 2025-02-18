@@ -196,5 +196,4 @@ def load_dummy_data(
 ) -> list[AnyExtractedModel]:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
-    connector.post_extracted_items(dummy_data)
-    return dummy_data
+    return connector.ingest(dummy_data)

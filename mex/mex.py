@@ -38,7 +38,12 @@ app.add_page(
     search_index,
     route="/",
     title="MEx Editor | Search",
-    on_load=[State.check_login, State.load_nav, SearchState.refresh],
+    on_load=[
+        State.check_login,
+        State.load_nav,
+        SearchState.load_search_params,
+        SearchState.refresh,
+    ],
 )
 app.add_page(
     aux_import_index,

@@ -82,7 +82,7 @@ def search_input() -> rx.Component:
 
 
 def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
-    """Render a single checkboxes for filtering by entity type."""
+    """Render a single checkbox for filtering by entity type."""
     return rx.checkbox(
         choice[0],
         checked=choice[1],

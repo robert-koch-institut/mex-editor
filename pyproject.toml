@@ -1,6 +1,6 @@
 [project]
 name = "mex-editor"
-version = "0.8.0"
+version = "0.9.0"
 description = "Metadata editor web application."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -10,7 +10,7 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "babel>=2,<3",
     "fastapi>=0.115,<1",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.50.0",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.51.1",
     "pydantic>=2,<3",
     "pytz>=2024,<2025",
     "pyyaml>=6,<7",
@@ -70,7 +70,7 @@ wheel = { cmd = "pdm build --no-sdist" }
 mypy-daemon = { cmd = "pdm run dmypy run --timeout 7200 -- mex" }
 lint = { cmd = "pre-commit run --all-files" }
 unit = { cmd = "pdm run pytest -m 'not integration'" }
-test = { cmd = "pdm run pytest" }
+test = { cmd = "pdm run pytest -m 'not external'" }
 all = { composite = ["install-all", "lint", "test", "doc"] }
 
 [tool.pydantic-mypy]
@@ -88,7 +88,10 @@ addopts = [
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--random-order-bucket=global",
 ]
-markers = "integration: mark a test as integration test"
+markers = [
+    "integration: mark a test as integration test",
+    "external: mark a test as external integration test"
+]
 
 [tool.ruff]
 fix = true

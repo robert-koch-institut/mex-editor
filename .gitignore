@@ -128,7 +128,6 @@ assets/external/
 
 # Default exports
 *.ndjson
-.states/
 data/
 identity.csv
 schema.json

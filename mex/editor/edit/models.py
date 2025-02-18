@@ -1,7 +1,4 @@
-from typing import Annotated
-
 import reflex as rx
-from pydantic import Field
 
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.editor.models import EditorValue
@@ -10,7 +7,10 @@ from mex.editor.models import EditorValue
 class InputConfig(rx.Base):
     """Model for configuring input masks."""
 
-    data_type: Annotated[str, Field(frozen=True)]
+    badge_options: list[str] = []
+    editable_href: bool = False
+    editable_badge: bool = False
+    editable_text: bool = False
 
 
 class EditorPrimarySource(rx.Base):

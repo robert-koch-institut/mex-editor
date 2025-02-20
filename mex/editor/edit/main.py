@@ -305,6 +305,7 @@ def edit_heading() -> rx.Component:
         style={
             "whiteSpace": "nowrap",
             "overflow": "hidden",
+            "width": "100%",
         },
     )
 

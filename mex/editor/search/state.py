@@ -8,7 +8,7 @@ from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models import MERGED_MODEL_CLASSES
+from mex.common.models import MERGED_MODEL_CLASSES, MergedPrimarySource
 from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchResult
@@ -26,6 +26,8 @@ class SearchState(State):
     total: Annotated[int, Field(ge=0)] = 0
     query_string: Annotated[str, Field(max_length=1000)] = ""
     entity_types: dict[str, bool] = {k.stemType: False for k in MERGED_MODEL_CLASSES}
+    available_primary_sources: list[str] = []
+    primary_sources: dict[str, bool] = {}
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 50
 
@@ -61,6 +63,15 @@ class SearchState(State):
         self.entity_types = {
             k.stemType: k.stemType in type_params for k in MERGED_MODEL_CLASSES
         }
+        primary_source_params = router.page.params.get("primarySource", [])
+        primary_source_params = (
+            primary_source_params
+            if isinstance(primary_source_params, list)
+            else [primary_source_params]
+        )
+        self.primary_sources = {
+            p: p in primary_source_params for p in self.available_primary_sources
+        }
 
     @rx.event
     def push_search_params(self) -> EventSpec | None:
@@ -69,12 +80,18 @@ class SearchState(State):
             q=self.query_string,
             page=self.current_page,
             entityType=[k for k, v in self.entity_types.items() if v],
+            primarySource=[k for k, v in self.primary_sources.items() if v],
         )
 
     @rx.event
     def set_entity_type(self, index: str, value: bool) -> None:
         """Set the entity type for filtering and refresh the results."""
         self.entity_types[index] = value
+
+    @rx.event
+    def set_primary_source(self, index: str, value: bool) -> None:
+        """Set the entity type for filtering and refresh the results."""
+        self.primary_sources[index] = value
 
     @rx.event
     def set_page(self, page_number: str | int) -> None:
@@ -117,6 +134,12 @@ class SearchState(State):
                 skip=self.limit * (self.current_page - 1),
                 limit=self.limit,
             )
+            primary_sources_response = connector.fetch_preview_items(
+                query_string=None,
+                entity_type=[ensure_prefix(MergedPrimarySource.stemType, "Merged")],
+                skip=0,
+                limit=100,
+            )
         except HTTPError as exc:
             self.results = []
             self.total = 0
@@ -127,3 +150,9 @@ class SearchState(State):
         else:
             self.results = transform_models_to_results(response.items)
             self.total = response.total
+            available_primary_sources = transform_models_to_results(
+                primary_sources_response.items
+            )
+            self.available_primary_sources = [
+                str(source.identifier) for source in available_primary_sources
+            ]

@@ -109,11 +109,40 @@ def entity_type_filter() -> rx.Component:
     )
 
 
+def primary_source_choice(choice: tuple[str, bool]) -> rx.Component:
+    """Render a single checkbox for filtering by primary source."""
+    return rx.checkbox(
+        choice[0],
+        checked=choice[1],
+        on_change=[
+            SearchState.set_primary_source(choice[0]),
+            SearchState.go_to_first_page,
+            SearchState.push_search_params,
+            SearchState.refresh,
+        ],
+    )
+
+
+def primary_source_filter() -> rx.Component:
+    """Render checkboxes for filtering the search results by primary source."""
+    return rx.card(
+        rx.vstack(
+            rx.foreach(
+                SearchState.primary_sources,
+                primary_source_choice,
+            ),
+            custom_attrs={"data-testid": "primary-sources"},
+        ),
+        style={"width": "100%"},
+    )
+
+
 def sidebar() -> rx.Component:
     """Render sidebar with a search input and checkboxes for filtering entity types."""
     return rx.vstack(
         search_input(),
         entity_type_filter(),
+        primary_source_filter(),
         spacing="4",
         custom_attrs={"data-testid": "search-sidebar"},
         style={"width": "25%"},

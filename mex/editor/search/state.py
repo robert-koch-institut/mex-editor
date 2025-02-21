@@ -131,12 +131,18 @@ class SearchState(State):
                     for k, v in self.entity_types.items()
                     if v
                 ],
+                had_primary_source=[
+                    identifier
+                    for identifier, include in self.primary_sources.items()
+                    if include
+                ],
                 skip=self.limit * (self.current_page - 1),
                 limit=self.limit,
             )
             primary_sources_response = connector.fetch_preview_items(
                 query_string=None,
                 entity_type=[ensure_prefix(MergedPrimarySource.stemType, "Merged")],
+                had_primary_source=None,
                 skip=0,
                 limit=100,
             )

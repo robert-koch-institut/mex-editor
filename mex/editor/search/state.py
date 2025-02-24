@@ -139,13 +139,6 @@ class SearchState(State):
                 skip=self.limit * (self.current_page - 1),
                 limit=self.limit,
             )
-            primary_sources_response = connector.fetch_preview_items(
-                query_string=None,
-                entity_type=[ensure_prefix(MergedPrimarySource.stemType, "Merged")],
-                had_primary_source=None,
-                skip=0,
-                limit=100,
-            )
         except HTTPError as exc:
             self.results = []
             self.total = 0
@@ -156,6 +149,25 @@ class SearchState(State):
         else:
             self.results = transform_models_to_results(response.items)
             self.total = response.total
+
+    @rx.event
+    def get_available_primary_sources(self):
+        """Get all available primary sources."""
+        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
+        connector = BackendApiConnector.get()
+        try:
+            primary_sources_response = connector.fetch_preview_items(
+                query_string=None,
+                entity_type=[ensure_prefix(MergedPrimarySource.stemType, "Merged")],
+                had_primary_source=None,
+                skip=0,
+                limit=100,
+            )
+        except HTTPError as exc:
+            yield from escalate_error(
+                "backend", "error fetching primary sources", exc.response.text
+            )
+        else:
             available_primary_sources = transform_models_to_results(
                 primary_sources_response.items
             )

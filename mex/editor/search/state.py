@@ -8,6 +8,7 @@ from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.exceptions import MExError
 from mex.common.models import MERGED_MODEL_CLASSES, MergedPrimarySource
 from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
@@ -155,6 +156,7 @@ class SearchState(State):
         """Get all available primary sources."""
         # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
+        maximum_number_of_primary_sources = 100
         try:
             primary_sources_response = connector.fetch_preview_items(
                 query_string=None,
@@ -171,6 +173,12 @@ class SearchState(State):
             available_primary_sources = transform_models_to_results(
                 primary_sources_response.items
             )
+            if len(available_primary_sources) == maximum_number_of_primary_sources:
+                msg = (
+                    f"Cannot handle more than {maximum_number_of_primary_sources} "
+                    "primary sources."
+                )
+                raise MExError(msg)
             self.available_primary_sources = [
                 str(source.identifier) for source in available_primary_sources
             ]

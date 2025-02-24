@@ -140,6 +140,7 @@ def test_load_search_params(
     page = writer_user_page
     page.goto(
         f"{frontend_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
+        "&primarySource=bFQoRhcVH5DHUr"
     )
 
     # check 1 item is showing
@@ -157,6 +158,13 @@ def test_load_search_params(
     expect(unchecked).to_have_count(11)
     checked = entity_types.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(2)
+
+    # check primary sources are loaded from url
+    primary_sources = page.get_by_test_id("primary-sources")
+    unchecked = primary_sources.get_by_role("checkbox", checked=False)
+    expect(unchecked).to_have_count(2)
+    checked = primary_sources.get_by_role("checkbox", checked=True)
+    expect(checked).to_have_count(1)
 
 
 @pytest.mark.integration
@@ -190,3 +198,19 @@ def test_push_search_params(
 
     # expect parameter change to be reflected in url
     page.wait_for_url("**/?q=Can+I+search+here%3F&page=1&entityType=Activity")
+
+    # select a primary source
+    primary_sources = page.get_by_test_id("primary-sources")
+    expect(primary_sources).to_be_visible()
+    page.screenshot(path="tests_search_test_main-test_push_search_params-on-load-2.png")
+    primary_sources.get_by_text("00000000000000").click()
+    checked = primary_sources.get_by_role("checkbox", checked=True)
+    expect(checked).to_have_count(1)
+    page.screenshot(
+        path="tests_search_test_main-test_push_search_params-on-click-2.png"
+    )
+
+    # expect parameter change to be reflected in url
+    page.wait_for_url(
+        "**/?q=Can+I+search+here%3F&page=1&entityType=Activity&primarySource=00000000000000"
+    )

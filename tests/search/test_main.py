@@ -107,6 +107,32 @@ def test_entity_types(
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
+def test_primary_sources(
+    frontend_url: str,
+    writer_user_page: Page,
+) -> None:
+    page = writer_user_page
+    page.goto(frontend_url)
+
+    # check sidebar is showing
+    sidebar = page.get_by_test_id("search-sidebar")
+    expect(sidebar).to_be_visible()
+
+    # check entity types are showing and functioning
+    primary_sources = page.get_by_test_id("primary-sources")
+    expect(primary_sources).to_be_visible()
+    assert "00000000000000" in primary_sources.all_text_contents()[0]
+
+    primary_sources.get_by_text("00000000000000").click()
+    expect(page.get_by_text("Showing 3 of 3 items")).to_be_visible()
+    page.screenshot(
+        path="tests_search_test_main-test_primary_sources-on-select-primary-source-1-found.png"
+    )
+    primary_sources.get_by_text("00000000000000").click()
+
+
+@pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
 def test_load_search_params(
     frontend_url: str,
     writer_user_page: Page,

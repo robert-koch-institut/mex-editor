@@ -107,7 +107,7 @@ def test_entity_types(
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-def test_primary_sources(
+def test_had_primary_sources(
     frontend_url: str,
     writer_user_page: Page,
 ) -> None:
@@ -119,14 +119,14 @@ def test_primary_sources(
     expect(sidebar).to_be_visible()
 
     # check entity types are showing and functioning
-    primary_sources = page.get_by_test_id("primary-sources")
+    primary_sources = page.get_by_test_id("had-primary-sources")
     expect(primary_sources).to_be_visible()
     assert "00000000000000" in primary_sources.all_text_contents()[0]
 
     primary_sources.get_by_text("00000000000000").click()
     expect(page.get_by_text("Showing 3 of 3 items")).to_be_visible()
     page.screenshot(
-        path="tests_search_test_main-test_primary_sources-on-select-primary-source-1-found.png"
+        path="tests_search_test_main-test_had_primary_sources-on-select-primary-source-1-found.png"
     )
     primary_sources.get_by_text("00000000000000").click()
 
@@ -140,7 +140,7 @@ def test_load_search_params(
     page = writer_user_page
     page.goto(
         f"{frontend_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
-        "&primarySource=bFQoRhcVH5DHUr"
+        "&hadPrimarySource=bFQoRhcVH5DHUr"
     )
 
     # check 1 item is showing
@@ -160,7 +160,7 @@ def test_load_search_params(
     expect(checked).to_have_count(2)
 
     # check primary sources are loaded from url
-    primary_sources = page.get_by_test_id("primary-sources")
+    primary_sources = page.get_by_test_id("had-primary-sources")
     unchecked = primary_sources.get_by_role("checkbox", checked=False)
     expect(unchecked).to_have_count(2)
     checked = primary_sources.get_by_role("checkbox", checked=True)
@@ -200,7 +200,7 @@ def test_push_search_params(
     page.wait_for_url("**/?q=Can+I+search+here%3F&page=1&entityType=Activity")
 
     # select a primary source
-    primary_sources = page.get_by_test_id("primary-sources")
+    primary_sources = page.get_by_test_id("had-primary-sources")
     expect(primary_sources).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load-2.png")
     primary_sources.get_by_text("00000000000000").click()
@@ -212,5 +212,5 @@ def test_push_search_params(
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
-        "**/?q=Can+I+search+here%3F&page=1&entityType=Activity&primarySource=00000000000000"
+        "**/?q=Can+I+search+here%3F&page=1&entityType=Activity&hadPrimarySource=00000000000000"
     )

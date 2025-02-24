@@ -115,7 +115,7 @@ def primary_source_choice(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            SearchState.set_primary_source(choice[0]),
+            SearchState.set_had_primary_source(choice[0]),
             SearchState.go_to_first_page,
             SearchState.push_search_params,
             SearchState.refresh,
@@ -128,10 +128,10 @@ def primary_source_filter() -> rx.Component:
     return rx.card(
         rx.vstack(
             rx.foreach(
-                SearchState.primary_sources,
+                SearchState.had_primary_sources,
                 primary_source_choice,
             ),
-            custom_attrs={"data-testid": "primary-sources"},
+            custom_attrs={"data-testid": "had-primary-sources"},
         ),
         style={"width": "100%"},
     )

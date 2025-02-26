@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:83c7771d2951fc970ce018f77d0fffebab0309d099dfbe1ba17575bcdd5cf560"
+content_hash = "sha256:f05b2dfcc0780abdb2639a02cc8257c2a9d22db4ff7d0ed25fead4f0a263bf30"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -772,11 +772,11 @@ files = [
 
 [[package]]
 name = "mex-common"
-version = "0.52.0"
+version = "0.53.0"
 requires_python = ">=3.11,<3.13"
 git = "https://github.com/robert-koch-institut/mex-common.git"
-ref = "feature/mx-1706-add-primary-source-filter"
-revision = "dafd1c593b8596eb18987b8bd547505e25df4e2f"
+ref = "0.53.0"
+revision = "73fd6c4673a3c32904e60d26b2830f14f6eadf29"
 summary = "Common library for MEx python projects."
 groups = ["default"]
 dependencies = [
@@ -788,7 +788,7 @@ dependencies = [
     "numpy<3,>=2",
     "pandas<3,>=2",
     "pyarrow<20,>=19",
-    "pydantic-settings<3,>=2",
+    "pydantic-settings<=2.7.1,>=2",
     "pydantic<2.10,>=2",
     "pytz<2024.2,>=2024",
     "requests<3,>=2",

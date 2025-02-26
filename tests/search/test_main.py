@@ -140,7 +140,7 @@ def test_load_search_params(
     page = writer_user_page
     page.goto(
         f"{frontend_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
-        "&hadPrimarySource=bFQoRhcVH5DHUr"
+        "&hadPrimarySource=fhctDghnJSM9HRwNwm2szu"
     )
 
     # check 1 item is showing

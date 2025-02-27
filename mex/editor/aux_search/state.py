@@ -81,12 +81,13 @@ class AuxState(State):
         """Import the selected result to MEx backend."""
         connector = BackendApiConnector.get()
         try:
-            connector.ingest([self.results_extracted[index]])
+            connector.ingest([self.results_extracted[index].model_copy(deep=True)])
         except HTTPError as exc:
             yield from escalate_error(
                 "backend", "error importing aux search result: %s", exc.response.text
             )
         else:
+            self.results_transformed[index].import_button_disabled = True
             yield rx.toast.success(
                 "Aux search result imported successfully",
                 duration=5000,

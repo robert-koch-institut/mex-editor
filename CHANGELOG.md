@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- button to import and ingest wikidata organizations
+
 ### Changes
 
 - update mex-common to version 0.51.1

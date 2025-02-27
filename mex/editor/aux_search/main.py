@@ -22,13 +22,20 @@ def expand_properties_button(result: AuxResult, index: int) -> rx.Component:
     )
 
 
-def import_button(index: int) -> rx.Component:
+def import_button(result: AuxResult, index: int) -> rx.Component:
     """Render a button to import the aux search result to the MEx backend."""
-    return rx.button(
-        "Import",
-        on_click=lambda: AuxState.import_result(index),
-        align="end",
-        disabled=True,
+    return rx.cond(
+        result.import_button_disabled,
+        rx.button(
+            "Import",
+            align="end",
+            disabled=True,
+        ),
+        rx.button(
+            "Import",
+            on_click=lambda: AuxState.import_result(index),  # type: ignore[missing-parameter]
+            align="end",
+        ),
     )
 
 
@@ -87,7 +94,7 @@ def result_title_and_buttons(result: AuxResult, index: int) -> rx.Component:
             },
         ),
         expand_properties_button(result, index),
-        import_button(index),
+        import_button(result, index),
         style={"width": "100%"},
     )
 

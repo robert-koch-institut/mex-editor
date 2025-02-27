@@ -24,7 +24,7 @@ def test_aux_navbar(aux_page: Page) -> None:
 
 @pytest.mark.integration
 @pytest.mark.external
-def test_search_results(aux_page: Page) -> None:
+def test_search_and_import_results(aux_page: Page) -> None:
     page = aux_page
     search_input = page.get_by_placeholder("Search here...")
     expect(search_input).to_be_visible()
@@ -44,6 +44,13 @@ def test_search_results(aux_page: Page) -> None:
     expand_all_properties_button.click()
     expect(page.get_by_test_id("all-properties-display")).to_be_visible()
     page.screenshot(path="tests_aux_search_test_main-test_expand_button.png")
+
+    # test import button works
+    import_button = page.get_by_text("Import").nth(1)
+    import_button.click()
+    expect(page.get_by_text("Aux search result imported successfully")).to_be_visible()
+    expect(import_button).to_be_disabled()
+    page.screenshot(path="tests_aux_search_test_main-test_import_button.png")
 
 
 @pytest.mark.integration

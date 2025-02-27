@@ -3,6 +3,8 @@ import re
 import pytest
 from playwright.sync_api import Page, expect
 
+from mex.common.models import AnyExtractedModel
+
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
@@ -132,15 +134,18 @@ def test_had_primary_sources(
 
 
 @pytest.mark.integration
-@pytest.mark.usefixtures("load_dummy_data")
 def test_load_search_params(
     frontend_url: str,
     writer_user_page: Page,
+    load_dummy_data: list[AnyExtractedModel],
 ) -> None:
     page = writer_user_page
+    expected_model, *_ = [
+        m for m in load_dummy_data if m.identifierInPrimarySource == "cp-2"
+    ]
     page.goto(
         f"{frontend_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
-        "&hadPrimarySource=fhctDghnJSM9HRwNwm2szu"
+        f"&hadPrimarySource={expected_model.hadPrimarySource}"
     )
 
     # check 1 item is showing

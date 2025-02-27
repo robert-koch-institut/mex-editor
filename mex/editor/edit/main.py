@@ -169,7 +169,7 @@ def primary_source_name(
         rx.hstack(
             render_value(model.name),
             rx.cond(
-                ~cast(rx.vars.BooleanVar, model.input_config),
+                ~cast(rx.vars.ObjectVar, model.input_config),
                 primary_source_switch(field_name, model),
             ),
         ),

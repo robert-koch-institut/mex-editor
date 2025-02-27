@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:615899f6d997f53ed8bc3a04fe93ab891a1050324f16c79a9fa03596ffabe6b3"
+content_hash = "sha256:f7c109ffa4ef7bab32db114361bbaeef5b6fee538a6d338c74d21c3035b4944e"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -1463,8 +1463,8 @@ files = [
 
 [[package]]
 name = "reflex"
-version = "0.7.1"
-requires_python = "<4.0,>=3.10"
+version = "0.6.8"
+requires_python = "<4.0,>=3.9"
 summary = "Web apps in pure Python."
 groups = ["default"]
 dependencies = [
@@ -1480,27 +1480,43 @@ dependencies = [
     "packaging<25.0,>=23.1",
     "platformdirs<5.0,>=3.10.0",
     "psutil<7.0,>=5.9.4",
-    "pydantic<3.0,>=1.10.21",
+    "pydantic<3.0,>=1.10.2",
     "python-engineio!=4.6.0",
     "python-multipart<0.1,>=0.0.5",
     "python-socketio<6.0,>=5.7.0",
     "redis<6.0,>=4.3.5",
-    "reflex-hosting-cli>=0.1.29",
+    "reflex-chakra>=0.6.0",
+    "reflex-hosting-cli<2.0,>=0.1.29",
     "rich<14.0,>=13.0.0",
     "setuptools>=75.0",
     "sqlmodel<0.1,>=0.0.14",
     "starlette-admin<1.0,>=0.11.0",
     "tomlkit<1.0,>=0.12.4",
     "twine<7.0,>=4.0.0",
-    "typer<1.0,>=0.15.1",
+    "typer<1.0,>=0.4.2",
     "typing-extensions>=4.6.0",
     "uvicorn>=0.20.0",
     "wheel<1.0,>=0.42.0",
-    "wrapt<2.0,>=1.17.0",
+    "wrapt<2.0,>=1.11.0; python_version < \"3.11\"",
+    "wrapt<2.0,>=1.14.0; python_version >= \"3.11\"",
 ]
 files = [
-    {file = "reflex-0.7.1-py3-none-any.whl", hash = "sha256:0756a36a058f6c5572ea169765e1e0b0dcbc5481d6b1fa6bcdb0e89a8e8d60db"},
-    {file = "reflex-0.7.1.tar.gz", hash = "sha256:adf2579ce4c907d8ef747ffdfeddb0da0b924aa4387bb99cf43f71f4d3501927"},
+    {file = "reflex-0.6.8-py3-none-any.whl", hash = "sha256:958f4e81eff1eccd553200dc80b93980b5888dd712bbf51f436d4d245037acec"},
+    {file = "reflex-0.6.8.tar.gz", hash = "sha256:cc6892e235902b6c86bc64ee6c0459d7c73f9ffedbc37f91d8b48de76a74a688"},
+]
+
+[[package]]
+name = "reflex-chakra"
+version = "0.6.3"
+requires_python = "<4.0,>=3.9"
+summary = "reflex using chakra components"
+groups = ["default"]
+dependencies = [
+    "reflex>=0.6.0a",
+]
+files = [
+    {file = "reflex_chakra-0.6.3-py3-none-any.whl", hash = "sha256:f3b92ba399451986ae5d09341265ca1e134edfdc2fab3a57ea83b7f652469d9a"},
+    {file = "reflex_chakra-0.6.3.tar.gz", hash = "sha256:ff7c1c7638809c99104997bffbf861793c832f6d2288e30bd4ace65fec0f40e3"},
 ]
 
 [[package]]
@@ -2086,6 +2102,7 @@ version = "1.17.2"
 requires_python = ">=3.8"
 summary = "Module for decorators, wrappers and monkey patching."
 groups = ["default"]
+marker = "python_version >= \"3.11\""
 files = [
     {file = "wrapt-1.17.2-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:ff04ef6eec3eee8a5efef2401495967a916feaa353643defcc03fc74fe213b58"},
     {file = "wrapt-1.17.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:4db983e7bca53819efdbd64590ee96c9213894272c776966ca6306b73e4affda"},

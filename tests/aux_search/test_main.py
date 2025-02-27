@@ -1,6 +1,8 @@
 import pytest
 from playwright.sync_api import Page, expect
 
+from mex.common.backend_api.connector import BackendApiConnector
+
 
 @pytest.fixture
 def aux_page(frontend_url: str, writer_user_page: Page) -> Page:
@@ -51,6 +53,11 @@ def test_search_and_import_results(aux_page: Page) -> None:
     expect(page.get_by_text("Aux search result imported successfully")).to_be_visible()
     expect(import_button).to_be_disabled()
     page.screenshot(path="tests_aux_search_test_main-test_import_button.png")
+
+    # test node was ingested into backend
+    connector = BackendApiConnector.get()
+    result = connector.fetch_extracted_items(q="Robert Koch-Institut")
+    assert result["total"] >= 1
 
 
 @pytest.mark.integration

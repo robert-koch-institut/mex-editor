@@ -95,7 +95,7 @@ def _create_editor_primary_source(  # noqa: PLR0913
     preventive: AnyPreventiveModel,
     input_config: InputConfig | None,
 ) -> EditorPrimarySource:
-    """Create a new editor primary source from the given parameters."""
+    """Create a new primary source from the given parameters."""
     return EditorPrimarySource(
         name=primary_source_name,
         identifier=primary_source_id,
@@ -128,12 +128,11 @@ def _transform_model_to_editor_primary_sources(
                 subtractive,
             )
             if isinstance(model, AnyAdditiveModel):
-                if not (
-                    input_config := _transform_model_to_additive_input_config(
+                input_config = _transform_model_to_additive_input_config(
                         field_name,
                         model.entityType,
                     )
-                ):
+                if input_config is None:
                     continue
             else:
                 input_config = None

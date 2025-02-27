@@ -129,9 +129,9 @@ def _transform_model_to_editor_primary_sources(
             )
             if isinstance(model, AnyAdditiveModel):
                 input_config = _transform_model_to_additive_input_config(
-                        field_name,
-                        model.entityType,
-                    )
+                    field_name,
+                    model.entityType,
+                )
                 if input_config is None:
                     continue
             else:

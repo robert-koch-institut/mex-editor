@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:9b6fb5b9bbdeab5ac03cd0ab68de51ca3630368733ba2c2f3956a810fae037a9"
+content_hash = "sha256:fc56cb305702ebe9e7c1761a375cabedc51ffc2355ef3ee6560a357a37a89386"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -819,11 +819,11 @@ files = [
 
 [[package]]
 name = "mex-common"
-version = "0.52.2"
+version = "0.53.0"
 requires_python = ">=3.11,<3.13"
 git = "https://github.com/robert-koch-institut/mex-common.git"
-ref = "0.52.2"
-revision = "b603a8ec2548f6c5da09f80c78e2167d4046c177"
+ref = "0.53.0"
+revision = "73fd6c4673a3c32904e60d26b2830f14f6eadf29"
 summary = "Common library for MEx python projects."
 groups = ["default"]
 dependencies = [
@@ -1463,7 +1463,7 @@ files = [
 
 [[package]]
 name = "reflex"
-version = "0.7.0"
+version = "0.7.1"
 requires_python = "<4.0,>=3.10"
 summary = "Web apps in pure Python."
 groups = ["default"]
@@ -1480,7 +1480,7 @@ dependencies = [
     "packaging<25.0,>=23.1",
     "platformdirs<5.0,>=3.10.0",
     "psutil<7.0,>=5.9.4",
-    "pydantic<3.0,>=1.10.2",
+    "pydantic<3.0,>=1.10.21",
     "python-engineio!=4.6.0",
     "python-multipart<0.1,>=0.0.5",
     "python-socketio<6.0,>=5.7.0",
@@ -1492,16 +1492,15 @@ dependencies = [
     "starlette-admin<1.0,>=0.11.0",
     "tomlkit<1.0,>=0.12.4",
     "twine<7.0,>=4.0.0",
-    "typer<1.0,>=0.4.2",
+    "typer<1.0,>=0.15.1",
     "typing-extensions>=4.6.0",
     "uvicorn>=0.20.0",
     "wheel<1.0,>=0.42.0",
-    "wrapt<2.0,>=1.11.0; python_version < \"3.11\"",
-    "wrapt<2.0,>=1.14.0; python_version >= \"3.11\"",
+    "wrapt<2.0,>=1.17.0",
 ]
 files = [
-    {file = "reflex-0.7.0-py3-none-any.whl", hash = "sha256:e18c2c888cd9a63d37eb63a8cde3e59c161463b2f724e1254a51db720c9f583e"},
-    {file = "reflex-0.7.0.tar.gz", hash = "sha256:343e8d8acbd4643a72ddeee935b045a8627791847d69fe9ae4af2a600e6d5c99"},
+    {file = "reflex-0.7.1-py3-none-any.whl", hash = "sha256:0756a36a058f6c5572ea169765e1e0b0dcbc5481d6b1fa6bcdb0e89a8e8d60db"},
+    {file = "reflex-0.7.1.tar.gz", hash = "sha256:adf2579ce4c907d8ef747ffdfeddb0da0b924aa4387bb99cf43f71f4d3501927"},
 ]
 
 [[package]]
@@ -1639,13 +1638,13 @@ files = [
 
 [[package]]
 name = "setuptools"
-version = "75.8.1"
+version = "75.8.2"
 requires_python = ">=3.9"
 summary = "Easily download, build, install, upgrade, and uninstall Python packages"
 groups = ["default"]
 files = [
-    {file = "setuptools-75.8.1-py3-none-any.whl", hash = "sha256:3bc32c0b84c643299ca94e77f834730f126efd621de0cc1de64119e0e17dab1f"},
-    {file = "setuptools-75.8.1.tar.gz", hash = "sha256:65fb779a8f28895242923582eadca2337285f0891c2c9e160754df917c3d2530"},
+    {file = "setuptools-75.8.2-py3-none-any.whl", hash = "sha256:558e47c15f1811c1fa7adbd0096669bf76c1d3f433f58324df69f3f5ecac4e8f"},
+    {file = "setuptools-75.8.2.tar.gz", hash = "sha256:4880473a969e5f23f2a2be3646b2dfd84af9028716d398e46192f84bc36900d2"},
 ]
 
 [[package]]
@@ -2087,7 +2086,6 @@ version = "1.17.2"
 requires_python = ">=3.8"
 summary = "Module for decorators, wrappers and monkey patching."
 groups = ["default"]
-marker = "python_version >= \"3.11\""
 files = [
     {file = "wrapt-1.17.2-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:ff04ef6eec3eee8a5efef2401495967a916feaa353643defcc03fc74fe213b58"},
     {file = "wrapt-1.17.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:4db983e7bca53819efdbd64590ee96c9213894272c776966ca6306b73e4affda"},

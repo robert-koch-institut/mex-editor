@@ -17,9 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update mex-common to version 0.52.2
 - combine EditState.editor_fields and EditState.fields
 - update transformation logic to handle strings from additive rules
-- update mex-common to version 0.52.2
 
 ### Deprecated
 

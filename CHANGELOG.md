@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add event handlers for adding/removing additive value input cards
 - added text input field for email, string and temporal fields
 - add event handler for setting string input values
+- filter for hadPrimarySource
 
 ### Changes
 

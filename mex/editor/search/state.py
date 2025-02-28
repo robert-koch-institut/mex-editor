@@ -8,7 +8,8 @@ from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models import MERGED_MODEL_CLASSES
+from mex.common.exceptions import MExError
+from mex.common.models import MERGED_MODEL_CLASSES, MergedPrimarySource
 from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchResult
@@ -26,6 +27,8 @@ class SearchState(State):
     total: Annotated[int, Field(ge=0)] = 0
     query_string: Annotated[str, Field(max_length=1000)] = ""
     entity_types: dict[str, bool] = {k.stemType: False for k in MERGED_MODEL_CLASSES}
+    available_primary_sources: list[str] = []
+    had_primary_sources: dict[str, bool] = {}
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 50
 
@@ -61,6 +64,15 @@ class SearchState(State):
         self.entity_types = {
             k.stemType: k.stemType in type_params for k in MERGED_MODEL_CLASSES
         }
+        had_primary_source_params = router.page.params.get("hadPrimarySource", [])
+        had_primary_source_params = (
+            had_primary_source_params
+            if isinstance(had_primary_source_params, list)
+            else [had_primary_source_params]
+        )
+        self.had_primary_sources = {
+            p: p in had_primary_source_params for p in self.available_primary_sources
+        }
 
     @rx.event
     def push_search_params(self) -> EventSpec | None:
@@ -69,12 +81,18 @@ class SearchState(State):
             q=self.query_string,
             page=self.current_page,
             entityType=[k for k, v in self.entity_types.items() if v],
+            hadPrimarySource=[k for k, v in self.had_primary_sources.items() if v],
         )
 
     @rx.event
     def set_entity_type(self, index: str, value: bool) -> None:
         """Set the entity type for filtering and refresh the results."""
         self.entity_types[index] = value
+
+    @rx.event
+    def set_had_primary_source(self, index: str, value: bool) -> None:
+        """Set the entity type for filtering and refresh the results."""
+        self.had_primary_sources[index] = value
 
     @rx.event
     def set_page(self, page_number: str | int) -> None:
@@ -114,7 +132,11 @@ class SearchState(State):
                     for k, v in self.entity_types.items()
                     if v
                 ],
-                had_primary_source=None,
+                had_primary_source=[
+                    identifier
+                    for identifier, include in self.had_primary_sources.items()
+                    if include
+                ],
                 skip=self.limit * (self.current_page - 1),
                 limit=self.limit,
             )
@@ -128,3 +150,35 @@ class SearchState(State):
         else:
             self.results = transform_models_to_results(response.items)
             self.total = response.total
+
+    @rx.event
+    def get_available_primary_sources(self):
+        """Get all available primary sources."""
+        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
+        connector = BackendApiConnector.get()
+        maximum_number_of_primary_sources = 100
+        try:
+            primary_sources_response = connector.fetch_preview_items(
+                query_string=None,
+                entity_type=[ensure_prefix(MergedPrimarySource.stemType, "Merged")],
+                had_primary_source=None,
+                skip=0,
+                limit=100,
+            )
+        except HTTPError as exc:
+            yield from escalate_error(
+                "backend", "error fetching primary sources", exc.response.text
+            )
+        else:
+            available_primary_sources = transform_models_to_results(
+                primary_sources_response.items
+            )
+            if len(available_primary_sources) == maximum_number_of_primary_sources:
+                msg = (
+                    f"Cannot handle more than {maximum_number_of_primary_sources} "
+                    "primary sources."
+                )
+                raise MExError(msg)
+            self.available_primary_sources = [
+                str(source.identifier) for source in available_primary_sources
+            ]

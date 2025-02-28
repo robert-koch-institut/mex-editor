@@ -114,6 +114,7 @@ class SearchState(State):
                     for k, v in self.entity_types.items()
                     if v
                 ],
+                had_primary_source=None,
                 skip=self.limit * (self.current_page - 1),
                 limit=self.limit,
             )

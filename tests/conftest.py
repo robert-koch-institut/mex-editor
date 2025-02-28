@@ -78,21 +78,12 @@ def patch_editor_user_database(
 
 
 @pytest.fixture
-def reader_user_credentials() -> tuple[str, SecretStr]:
-    settings = EditorSettings.get()
-    for username, password in settings.editor_user_database["read"].items():
-        return username, password
-    msg = "No reader configured"
-    raise RuntimeError(msg)
-
-
-@pytest.fixture
 def writer_user_credentials() -> tuple[str, SecretStr]:
     settings = EditorSettings.get()
     for username, password in settings.editor_user_database["write"].items():
         return username, password
-    msg = "No writer configured"
-    raise RuntimeError(msg)
+    msg = "No writer configured"  # pragma: no cover
+    raise RuntimeError(msg)  # pragma: no cover
 
 
 def login_user(
@@ -102,15 +93,6 @@ def login_user(
     page.get_by_placeholder("Username").fill(username)
     page.get_by_placeholder("Password").fill(password.get_secret_value())
     page.get_by_test_id("login-button").click()
-    return page
-
-
-@pytest.fixture
-def reader_user_page(
-    page: Page, reader_user_credentials: tuple[str, SecretStr], frontend_url: str
-) -> Page:
-    login_user(frontend_url, page, *reader_user_credentials)
-    expect(page.get_by_test_id("nav-bar")).to_be_visible()
     return page
 
 

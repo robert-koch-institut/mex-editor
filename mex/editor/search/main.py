@@ -225,7 +225,10 @@ def search_results() -> rx.Component:
         pagination(),
         spacing="4",
         custom_attrs={"data-testid": "search-results-section"},
-        style={"width": "100%"},
+        style={
+            "minWidth": "0",
+            "width": "100%",
+        },
     )
 
 

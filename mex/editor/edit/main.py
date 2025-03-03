@@ -65,58 +65,59 @@ def remove_additive_button(
     )
 
 
-def editor_additive_string(
+def additive_rule_input(
     field_name: str,
+    input_config: InputConfig,
     index: int,
     value: EditorValue,
 ) -> rx.Component:
-    """Render an input component for additive string rules."""
+    """Return an input mask for additive rules."""
     return rx.hstack(
-        rx.input(
-            placeholder=field_name,
-            value=value.text,
-            on_change=cast(EditState, EditState).set_string_value(field_name, index),
-            style={
-                "margin": "calc(-1 * var(--space-1))",
-                "maxWidth": "calc(400px * var(--scaling))",
-                "width": "100%",
-            },
-            custom_attrs={
-                "data-testid": f"additive-rule-{field_name}-{index}-string-input"
-            },
+        rx.cond(
+            input_config.editable_href,
+            rx.input(
+                placeholder="URL",
+                value=value.href,
+                on_change=cast(EditState, EditState).set_href_value(field_name, index),
+                style={
+                    "margin": "calc(-1 * var(--space-1))",
+                    "width": "100%",
+                },
+                custom_attrs={
+                    "data-testid": f"additive-rule-{field_name}-{index}-href"
+                },
+            ),
+        ),
+        rx.cond(
+            input_config.editable_text,
+            rx.input(
+                placeholder="Text",
+                value=value.text,
+                on_change=cast(EditState, EditState).set_text_value(field_name, index),
+                style={
+                    "margin": "calc(-1 * var(--space-1))",
+                    "width": "100%",
+                },
+                custom_attrs={
+                    "data-testid": f"additive-rule-{field_name}-{index}-text"
+                },
+            ),
+        ),
+        rx.cond(
+            input_config.editable_badge,
+            rx.select(
+                input_config.badge_options,
+                value=input_config.badge_options[0],
+                size="1",
+                on_change=cast(EditState, EditState).set_badge_value(field_name, index),
+                custom_attrs={
+                    "data-testid": f"additive-rule-{field_name}-{index}-badge"
+                },
+            ),
         ),
         remove_additive_button(
             field_name,
             index,
-        ),
-    )
-
-
-def editor_value_card_body(
-    field_name: str,
-    primary_source: EditorPrimarySource,
-    index: int,
-    value: EditorValue,
-) -> rx.Component:
-    """Render the body of an editor value card."""
-    return rx.cond(
-        primary_source.input_config,
-        rx.match(
-            cast(InputConfig, primary_source.input_config).data_type,
-            (
-                "string",
-                editor_additive_string(
-                    field_name,
-                    index,
-                    value,
-                ),
-            ),
-        ),
-        editor_static_value(
-            field_name,
-            primary_source,
-            index,
-            value,
         ),
     )
 
@@ -129,11 +130,15 @@ def editor_value_card(
 ) -> rx.Component:
     """Return a card containing a single editor value."""
     return rx.card(
-        editor_value_card_body(
-            field_name,
-            primary_source,
-            index,
-            value,
+        rx.cond(
+            primary_source.input_config,
+            additive_rule_input(
+                field_name,
+                cast(InputConfig, primary_source.input_config),
+                index,
+                value,
+            ),
+            editor_static_value(field_name, primary_source, index, value),
         ),
         background=rx.cond(
             primary_source.enabled & value.enabled, "inherit", "var(--gray-a4)"
@@ -301,6 +306,7 @@ def edit_heading() -> rx.Component:
         style={
             "whiteSpace": "nowrap",
             "overflow": "hidden",
+            "width": "100%",
         },
     )
 

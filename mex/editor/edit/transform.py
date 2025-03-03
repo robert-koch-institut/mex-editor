@@ -26,9 +26,11 @@ from mex.common.types import (
     TEMPORAL_ENTITY_CLASSES_BY_PRECISION,
     VOCABULARY_ENUMS_BY_NAME,
     Link,
+    LinkLanguage,
     MergedPrimarySourceIdentifier,
     TemporalEntityPrecision,
     Text,
+    TextLanguage,
 )
 from mex.editor.edit.models import EditorField, EditorPrimarySource, InputConfig
 from mex.editor.models import EditorValue
@@ -78,12 +80,28 @@ def _transform_model_to_additive_input_config(
     entity_type: str,
 ) -> InputConfig | None:
     """Determine the input type for a given field of a given model."""
-    if (entity_type in ADDITIVE_MODEL_CLASSES_BY_NAME) and field_name in (
-        STRING_FIELDS_BY_CLASS_NAME[entity_type]
-        + EMAIL_FIELDS_BY_CLASS_NAME[entity_type]
-        + TEMPORAL_FIELDS_BY_CLASS_NAME[entity_type]
-    ):
-        return InputConfig(data_type="string")
+    if entity_type in ADDITIVE_MODEL_CLASSES_BY_NAME:
+        if field_name in (
+            STRING_FIELDS_BY_CLASS_NAME[entity_type]
+            + EMAIL_FIELDS_BY_CLASS_NAME[entity_type]
+            + TEMPORAL_FIELDS_BY_CLASS_NAME[entity_type]
+        ):
+            return InputConfig(
+                editable_text=True,
+            )
+        if field_name in (TEXT_FIELDS_BY_CLASS_NAME[entity_type]):
+            return InputConfig(
+                editable_text=True,
+                editable_badge=True,
+                badge_options=list(TextLanguage),
+            )
+        if field_name in (LINK_FIELDS_BY_CLASS_NAME[entity_type]):
+            return InputConfig(
+                editable_text=True,
+                editable_badge=True,
+                editable_href=True,
+                badge_options=list(LinkLanguage),
+            )
     return None
 
 

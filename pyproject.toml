@@ -8,27 +8,24 @@ license = { file = "LICENSE" }
 urls = { Repository = "https://github.com/robert-koch-institut/mex-editor" }
 requires-python = ">=3.11,<3.12"
 dependencies = [
-    "babel>=2,<3",
     "fastapi>=0.115,<1",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.53.0",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.54.1",
     "pydantic>=2,<3",
-    "pytz>=2024,<2025",
     "pyyaml>=6,<7",
-    "reflex>=0.6,<1",
+    "reflex>=0.6,<0.7",
     "requests>=2,<3",
     "starlette>=0.41,<1",
     "typer>=0.15,<1",
-    "uvicorn>=0.32,<1",
 ]
 optional-dependencies.dev = [
     "ipdb>=0.13,<1",
     "mypy>=1,<2",
-    "pytest-playwright>=0.6,<1",
+    "pytest-cov>=5,<6",
+    "pytest-playwright>=0.7,<1",
     "pytest-random-order>=1,<2",
     "pytest>=8,<9",
     "ruff>=0.9,<1",
     "sphinx>=8,<9",
-    "types-pytz>=2024,<2025",
     "types-PyYAML>=6,<7",
     "types-requests>=2,<3",
 ]
@@ -79,6 +76,11 @@ warn_untyped_fields = true
 addopts = [
     "--verbose",
     "--browser=firefox",
+    "--cov",
+    "--no-cov-on-fail",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-fail-under=70",
+    "--cov-branch",
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--random-order-bucket=global",
 ]

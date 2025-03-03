@@ -8,6 +8,7 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
+    AnyRuleSetResponse,
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedOrganizationalUnit,
@@ -77,15 +78,6 @@ def patch_editor_user_database(
 
 
 @pytest.fixture
-def reader_user_credentials() -> tuple[str, SecretStr]:
-    settings = EditorSettings.get()
-    for username, password in settings.editor_user_database["read"].items():
-        return username, password
-    msg = "No reader configured"  # pragma: no cover
-    raise RuntimeError(msg)  # pragma: no cover
-
-
-@pytest.fixture
 def writer_user_credentials() -> tuple[str, SecretStr]:
     settings = EditorSettings.get()
     for username, password in settings.editor_user_database["write"].items():
@@ -101,15 +93,6 @@ def login_user(
     page.get_by_placeholder("Username").fill(username)
     page.get_by_placeholder("Password").fill(password.get_secret_value())
     page.get_by_test_id("login-button").click()
-    return page
-
-
-@pytest.fixture
-def reader_user_page(
-    page: Page, reader_user_credentials: tuple[str, SecretStr], frontend_url: str
-) -> Page:
-    login_user(frontend_url, page, *reader_user_credentials)
-    expect(page.get_by_test_id("nav-bar")).to_be_visible()
     return page
 
 
@@ -191,9 +174,9 @@ def dummy_data() -> list[AnyExtractedModel]:
 
 @pytest.fixture
 def load_dummy_data(
-    dummy_data: list[AnyExtractedModel],
+    dummy_data: list[AnyExtractedModel | AnyRuleSetResponse],
     flush_graph_database: None,  # noqa: ARG001
-) -> list[AnyExtractedModel]:
+) -> list[AnyExtractedModel | AnyRuleSetResponse]:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
     return connector.ingest(dummy_data)

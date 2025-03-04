@@ -25,16 +25,13 @@ def expand_properties_button(result: AuxResult, index: int) -> rx.Component:
 def import_button(result: AuxResult, index: int) -> rx.Component:
     """Render a button to import the aux search result to the MEx backend."""
     return rx.cond(
-        result.import_button_disabled,
+        result.show_import_button,
         rx.button(
             "Import",
             align="end",
-            disabled=True,
         ),
         rx.button(
-            "Import",
-            on_click=lambda: AuxState.import_result(index),  # type: ignore[missing-parameter]
-            align="end",
+            "Import", on_click=AuxState.import_result(index), align="end", disabled=True
         ),
     )
 

@@ -11,4 +11,4 @@ class AuxResult(rx.Base):
     preview: list[EditorValue]
     show_properties: bool
     all_properties: list[EditorValue]
-    import_button_disabled: bool
+    show_import_button: bool

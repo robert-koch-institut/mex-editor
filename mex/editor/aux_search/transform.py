@@ -20,7 +20,7 @@ def transform_models_to_results(models: Iterable[AnyExtractedModel]) -> list[Aux
             preview=transform_models_to_preview([model]),
             all_properties=model_to_all_properties(model),
             show_properties=False,
-            import_button_disabled=False,
+            show_import_button=True,
         )
         for model in models
     ]

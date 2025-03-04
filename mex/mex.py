@@ -41,6 +41,7 @@ app.add_page(
     on_load=[
         State.check_login,
         State.load_nav,
+        SearchState.get_available_primary_sources,
         SearchState.load_search_params,
         SearchState.refresh,
     ],
@@ -49,7 +50,11 @@ app.add_page(
     aux_import_index,
     route="/aux-import",
     title="MEx Editor | Aux Import",
-    on_load=[State.check_login, State.load_nav, AuxState.refresh],
+    on_load=[
+        State.check_login,
+        State.load_nav,
+        AuxState.refresh,
+    ],
 )
 app.add_page(
     login_index,

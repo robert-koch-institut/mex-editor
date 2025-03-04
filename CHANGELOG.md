@@ -10,10 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - button to import and ingest wikidata organizations
+- add color mode toggle to login screen
+- added new/remove buttons for additive rules for string fields
+- add event handlers for adding/removing additive value input cards
+- added text input field for email, string and temporal fields
+- add event handler for setting string input values
+- filter for hadPrimarySource
 
 ### Changes
 
-- update mex-common to version 0.52.2
+- update mex-common to version 0.54.0
+- combine EditState.editor_fields and EditState.fields
+- update transformation logic to handle strings from additive rules
 
 ### Deprecated
 

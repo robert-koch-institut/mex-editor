@@ -3,6 +3,16 @@ from typing import cast
 from pydantic import SecretStr
 
 from mex.common.models import BaseModel
+from mex.common.types import (
+    AnyNestedModel,
+    AnyPrimitiveType,
+    AnyTemporalEntity,
+    AnyVocabularyEnum,
+)
+
+AnyModelValue = (
+    AnyNestedModel | AnyPrimitiveType | AnyTemporalEntity | AnyVocabularyEnum
+)
 
 
 class EditorUserPassword(SecretStr):

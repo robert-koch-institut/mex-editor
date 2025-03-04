@@ -3,14 +3,19 @@ from typing import cast
 import reflex as rx
 
 from mex.editor.components import render_value
-from mex.editor.edit.models import EditorField, EditorPrimarySource, EditorValue
+from mex.editor.edit.models import (
+    EditorField,
+    EditorPrimarySource,
+    EditorValue,
+    InputConfig,
+)
 from mex.editor.edit.state import EditState
 from mex.editor.layout import page
 
 
 def editor_value_switch(
     field_name: str,
-    primary_source: str | None,
+    primary_source: EditorPrimarySource,
     value: EditorValue,
     index: int,
 ) -> rx.Component:
@@ -18,28 +23,125 @@ def editor_value_switch(
     return rx.switch(
         checked=value.enabled,
         on_change=cast(EditState, EditState).toggle_field_value(field_name, value),
-        custom_attrs={"data-testid": f"switch-{field_name}-{primary_source}-{index}"},
-        color_scheme="jade",
+        custom_attrs={
+            "data-testid": f"switch-{field_name}-{primary_source.name.text}-{index}"
+        },
+        color_scheme=rx.cond(primary_source.enabled, "jade", "gray"),
+    )
+
+
+def editor_static_value(
+    field_name: str,
+    primary_source: EditorPrimarySource,
+    index: int,
+    value: EditorValue,
+) -> rx.Component:
+    """Render a static value with an optional subtractive rule switch."""
+    return rx.hstack(
+        render_value(value),
+        editor_value_switch(field_name, primary_source, value, index),
+    )
+
+
+def remove_additive_button(
+    field_name: str,
+    index: int,
+) -> rx.Component:
+    """Render a button to remove an additive value."""
+    return rx.button(
+        rx.icon(
+            tag="circle-minus",
+            height="1rem",
+            width="1rem",
+        ),
+        f"Remove {field_name}",
+        color_scheme="tomato",
+        variant="soft",
+        size="1",
+        on_click=cast(EditState, EditState).remove_additive_value(field_name, index),
+        custom_attrs={
+            "data-testid": f"additive-rule-{field_name}-{index}-remove-button"
+        },
+    )
+
+
+def editor_additive_string(
+    field_name: str,
+    index: int,
+    value: EditorValue,
+) -> rx.Component:
+    """Render an input component for additive string rules."""
+    return rx.hstack(
+        rx.input(
+            placeholder=field_name,
+            value=value.text,
+            on_change=cast(EditState, EditState).set_string_value(field_name, index),
+            style={
+                "margin": "calc(-1 * var(--space-1))",
+                "maxWidth": "calc(400px * var(--scaling))",
+                "width": "100%",
+            },
+            custom_attrs={
+                "data-testid": f"additive-rule-{field_name}-{index}-string-input"
+            },
+        ),
+        remove_additive_button(
+            field_name,
+            index,
+        ),
+    )
+
+
+def editor_value_card_body(
+    field_name: str,
+    primary_source: EditorPrimarySource,
+    index: int,
+    value: EditorValue,
+) -> rx.Component:
+    """Render the body of an editor value card."""
+    return rx.cond(
+        primary_source.input_config,
+        rx.match(
+            cast(InputConfig, primary_source.input_config).data_type,
+            (
+                "string",
+                editor_additive_string(
+                    field_name,
+                    index,
+                    value,
+                ),
+            ),
+        ),
+        editor_static_value(
+            field_name,
+            primary_source,
+            index,
+            value,
+        ),
     )
 
 
 def editor_value_card(
     field_name: str,
-    primary_source: str | None,
+    primary_source: EditorPrimarySource,
     index: int,
     value: EditorValue,
 ) -> rx.Component:
     """Return a card containing a single editor value."""
     return rx.card(
-        rx.hstack(
-            render_value(value),
-            rx.cond(
-                cast(rx.vars.ArrayVar, EditState.editor_fields).contains(field_name),
-                editor_value_switch(field_name, primary_source, value, index),
-            ),
+        editor_value_card_body(
+            field_name,
+            primary_source,
+            index,
+            value,
         ),
-        style={"width": "30vw"},
-        custom_attrs={"data-testid": f"value-{field_name}-{primary_source}-{index}"},
+        background=rx.cond(
+            primary_source.enabled & value.enabled, "inherit", "var(--gray-a4)"
+        ),
+        style={"width": "100%"},
+        custom_attrs={
+            "data-testid": f"value-{field_name}-{primary_source.name.text}-{index}"
+        },
     )
 
 
@@ -67,14 +169,65 @@ def primary_source_name(
         rx.hstack(
             render_value(model.name),
             rx.cond(
-                cast(rx.vars.ArrayVar, EditState.editor_fields).contains(field_name),
+                ~cast(rx.vars.ObjectVar, model.input_config),
                 primary_source_switch(field_name, model),
             ),
+            wrap="wrap",
         ),
-        style={"width": "20vw"},
+        background=rx.cond(model.enabled, "inherit", "var(--gray-a4)"),
+        style={"width": "33%"},
         custom_attrs={
             "data-testid": f"primary-source-{field_name}-{model.name.text}-name"
         },
+    )
+
+
+def new_additive_button(
+    field_name: str,
+    primary_source: str | None,
+) -> rx.Component:
+    """Render a button for adding new additive rules to a given field."""
+    return rx.card(
+        rx.button(
+            rx.icon(
+                tag="circle-plus",
+                height="1rem",
+                width="1rem",
+            ),
+            f"New {field_name}",
+            color_scheme="jade",
+            variant="soft",
+            size="1",
+            on_click=cast(EditState, EditState).add_additive_value(field_name),
+            custom_attrs={"data-testid": f"new-additive-{field_name}-{primary_source}"},
+        ),
+        style={"width": "100%"},
+    )
+
+
+def editor_primary_source_stack(
+    field_name: str,
+    model: EditorPrimarySource,
+) -> rx.Component:
+    """Render a stack of editor value cards and input elements for a primary source."""
+    return rx.vstack(
+        rx.foreach(
+            model.editor_values,
+            lambda value, index: editor_value_card(
+                field_name,
+                model,
+                index,
+                value,
+            ),
+        ),
+        rx.cond(
+            model.input_config,
+            new_additive_button(
+                field_name,
+                model.name.text,
+            ),
+        ),
+        style={"width": "100%"},
     )
 
 
@@ -84,18 +237,15 @@ def editor_primary_source(
 ) -> rx.Component:
     """Return a horizontal grid of cards for editing one primary source."""
     return rx.hstack(
-        primary_source_name(field_name, model),
-        rx.vstack(
-            rx.foreach(
-                model.editor_values,
-                lambda value, index: editor_value_card(
-                    field_name,
-                    model.name.text,
-                    index,
-                    value,
-                ),
-            ),
+        primary_source_name(
+            field_name,
+            model,
         ),
+        editor_primary_source_stack(
+            field_name,
+            model,
+        ),
+        style={"width": "100%"},
         custom_attrs={
             "data-testid": f"primary-source-{field_name}-{model.name.text}",
         },
@@ -107,7 +257,7 @@ def editor_field(model: EditorField) -> rx.Component:
     return rx.hstack(
         rx.card(
             rx.text(model.name),
-            style={"width": "15vw"},
+            style={"width": "25%"},
             custom_attrs={"data-testid": f"field-{model.name}-name"},
         ),
         rx.vstack(
@@ -117,9 +267,10 @@ def editor_field(model: EditorField) -> rx.Component:
                     model.name,
                     primary_source,
                 ),
-            )
+            ),
+            style={"width": "100%"},
         ),
-        width="90vw",
+        style={"width": "100%"},
         custom_attrs={"data-testid": f"field-{model.name}"},
         role="row",
     )

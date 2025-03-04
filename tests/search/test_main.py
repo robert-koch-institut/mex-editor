@@ -3,6 +3,8 @@ import re
 import pytest
 from playwright.sync_api import Page, expect
 
+from mex.common.models import AnyExtractedModel
+
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
@@ -107,13 +109,43 @@ def test_entity_types(
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-def test_load_search_params(
+def test_had_primary_sources(
     frontend_url: str,
     writer_user_page: Page,
 ) -> None:
     page = writer_user_page
+    page.goto(frontend_url)
+
+    # check sidebar is showing
+    sidebar = page.get_by_test_id("search-sidebar")
+    expect(sidebar).to_be_visible()
+
+    # check entity types are showing and functioning
+    primary_sources = page.get_by_test_id("had-primary-sources")
+    expect(primary_sources).to_be_visible()
+    assert "00000000000000" in primary_sources.all_text_contents()[0]
+
+    primary_sources.get_by_text("00000000000000").click()
+    expect(page.get_by_text("Showing 3 of 3 items")).to_be_visible()
+    page.screenshot(
+        path="tests_search_test_main-test_had_primary_sources-on-select-primary-source-1-found.png"
+    )
+    primary_sources.get_by_text("00000000000000").click()
+
+
+@pytest.mark.integration
+def test_load_search_params(
+    frontend_url: str,
+    writer_user_page: Page,
+    load_dummy_data: list[AnyExtractedModel],
+) -> None:
+    page = writer_user_page
+    expected_model, *_ = [
+        m for m in load_dummy_data if m.identifierInPrimarySource == "cp-2"
+    ]
     page.goto(
         f"{frontend_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
+        f"&hadPrimarySource={expected_model.hadPrimarySource}"
     )
 
     # check 1 item is showing
@@ -131,6 +163,13 @@ def test_load_search_params(
     expect(unchecked).to_have_count(11)
     checked = entity_types.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(2)
+
+    # check primary sources are loaded from url
+    primary_sources = page.get_by_test_id("had-primary-sources")
+    unchecked = primary_sources.get_by_role("checkbox", checked=False)
+    expect(unchecked).to_have_count(2)
+    checked = primary_sources.get_by_role("checkbox", checked=True)
+    expect(checked).to_have_count(1)
 
 
 @pytest.mark.integration
@@ -164,3 +203,19 @@ def test_push_search_params(
 
     # expect parameter change to be reflected in url
     page.wait_for_url("**/?q=Can+I+search+here%3F&page=1&entityType=Activity")
+
+    # select a primary source
+    primary_sources = page.get_by_test_id("had-primary-sources")
+    expect(primary_sources).to_be_visible()
+    page.screenshot(path="tests_search_test_main-test_push_search_params-on-load-2.png")
+    primary_sources.get_by_text("00000000000000").click()
+    checked = primary_sources.get_by_role("checkbox", checked=True)
+    expect(checked).to_have_count(1)
+    page.screenshot(
+        path="tests_search_test_main-test_push_search_params-on-click-2.png"
+    )
+
+    # expect parameter change to be reflected in url
+    page.wait_for_url(
+        "**/?q=Can+I+search+here%3F&page=1&entityType=Activity&hadPrimarySource=00000000000000"
+    )

@@ -23,7 +23,7 @@ class AuxState(State):
     query_string: str = ""
     current_page: int = 1
     limit: int = 50
-    aux_data_sources: list[str] = ["Wikidata", "LDAP"]
+    current_aux_extractor: str = "wikidata"
 
     @rx.var(cache=False)
     def total_pages(self) -> list[str]:
@@ -52,6 +52,12 @@ class AuxState(State):
         self.results_transformed[index].show_properties = not self.results_transformed[
             index
         ].show_properties
+
+    @rx.event
+    def change_extractor(self, value: str) -> Generator[EventSpec | None, None, None]:
+        """Change the current extractor."""
+        self.current_aux_extractor = value
+        return self.search()
 
     @rx.event
     def set_query_string(self, value: str) -> Generator[EventSpec | None, None, None]:
@@ -99,14 +105,16 @@ class AuxState(State):
 
     @rx.event
     def search(self) -> Generator[EventSpec | None, None, None]:
-        """Search for wikidata organizations based on the query string."""
+        """Search in aux-extractor for items based on the query string."""
         if self.query_string == "":
             return
+        if self.current_aux_extractor == "ldap":
+            self.query_string = self.query_string + "*"
         connector = BackendApiConnector.get()
         try:
             response = connector.request(
                 method="GET",
-                endpoint="wikidata",
+                endpoint=self.current_aux_extractor,
                 params={
                     "q": self.query_string,
                     "offset": str((self.current_page - 1) * self.limit),
@@ -116,7 +124,7 @@ class AuxState(State):
         except HTTPError as exc:
             self.reset()
             yield from escalate_error(
-                "backend", "error fetching wikidata items: %s", exc.response.text
+                "backend", "error fetching items: %s", exc.response.text
             )
         else:
             yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")

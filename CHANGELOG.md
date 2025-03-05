@@ -16,12 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added text input field for email, string and temporal fields
 - add event handler for setting string input values
 - filter for hadPrimarySource
+- add new entrypoints `editor-api` and `editor-frontend` for prod mode
+- add new settings for ports, hosts and paths for prod mode execution
 
 ### Changes
 
 - update mex-common to version 0.54.0
 - combine EditState.editor_fields and EditState.fields
 - update transformation logic to handle strings from additive rules
+- BREAKING: change default ports to 8030/8031 for dockerfile
 
 ### Deprecated
 

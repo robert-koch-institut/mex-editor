@@ -113,7 +113,7 @@ def _create_editor_primary_source(  # noqa: PLR0913
     preventive: AnyPreventiveModel,
     input_config: InputConfig | None,
 ) -> EditorPrimarySource:
-    """Create a new editor primary source from the given parameters."""
+    """Create a new primary source from the given parameters."""
     return EditorPrimarySource(
         name=primary_source_name,
         identifier=primary_source_id,

@@ -3,6 +3,7 @@ from collections.abc import Generator
 
 import reflex as rx
 from reflex.event import EventSpec
+from reflex.state import serialize_mutable_proxy
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -81,12 +82,14 @@ class AuxState(State):
         """Import the selected result to MEx backend."""
         connector = BackendApiConnector.get()
         try:
-            connector.ingest([self.results_extracted[index]])
+            model = serialize_mutable_proxy(self.results_extracted[index])
+            connector.ingest([model])
         except HTTPError as exc:
             yield from escalate_error(
                 "backend", "error importing aux search result: %s", exc.response.text
             )
         else:
+            self.results_transformed[index].show_import_button = False
             yield rx.toast.success(
                 "Aux search result imported successfully",
                 duration=5000,

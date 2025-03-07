@@ -11,7 +11,7 @@ def escalate_error(
 ) -> Generator[EventSpec, None, None]:
     """Escalate an error by spreading it to the python and browser logs and the UI."""
     logger.error(
-        "{%s} - %s: %s",
+        "%s - %s: %s",
         namespace,
         summary,
         payload,

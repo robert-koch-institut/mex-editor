@@ -106,15 +106,6 @@ def login_user(
 
 
 @pytest.fixture
-def reader_user_page(
-    page: Page, reader_user_credentials: tuple[str, SecretStr], frontend_url: str
-) -> Page:
-    login_user(frontend_url, page, *reader_user_credentials)
-    expect(page.get_by_test_id("nav-bar")).to_be_visible()
-    return page
-
-
-@pytest.fixture
 def writer_user_page(
     page: Page, writer_user_credentials: tuple[str, SecretStr], frontend_url: str
 ) -> Page:

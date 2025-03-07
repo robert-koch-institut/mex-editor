@@ -37,11 +37,11 @@ class EditState(State):
         connector = BackendApiConnector.get()
         try:
             extracted_items_response = connector.fetch_extracted_items(
-                None,
-                self.router.page.params["identifier"],
-                None,
-                0,
-                100,
+                query_string=None,
+                stable_target_id=self.router.page.params["identifier"],
+                entity_type=None,
+                skip=0,
+                limit=100,
             )
         except HTTPError as exc:
             self.reset()

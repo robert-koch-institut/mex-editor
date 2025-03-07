@@ -174,12 +174,13 @@ def primary_source_name(
         rx.hstack(
             render_value(model.name),
             rx.cond(
-                ~cast(rx.vars.BooleanVar, model.input_config),
+                ~cast(rx.vars.ObjectVar, model.input_config),
                 primary_source_switch(field_name, model),
             ),
+            wrap="wrap",
         ),
         background=rx.cond(model.enabled, "inherit", "var(--gray-a4)"),
-        style={"width": "25%"},
+        style={"width": "33%"},
         custom_attrs={
             "data-testid": f"primary-source-{field_name}-{model.name.text}-name"
         },

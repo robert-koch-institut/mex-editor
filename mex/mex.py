@@ -1,5 +1,8 @@
 import reflex as rx
+from reflex.app import UnevaluatedPage
+from reflex.components.core.client_side_routing import Default404Page
 from reflex.components.radix import themes
+from reflex.constants import Page404
 from reflex.utils.console import info as log_info
 
 from mex.common.logging import logger
@@ -39,6 +42,7 @@ app.add_page(
     on_load=[
         State.check_login,
         State.load_nav,
+        SearchState.get_available_primary_sources,
         SearchState.load_search_params,
         SearchState.refresh,
     ],
@@ -58,6 +62,17 @@ app.add_page(
     route="/login",
     title="MEx Editor | Login",
 )
+# side-step `add_page` to avoid `wait_for_client_redirect`,
+# because that breaks deployment behind a base path.
+app.unevaluated_pages[Page404.SLUG] = UnevaluatedPage(
+    component=Default404Page.create(),
+    route=Page404.SLUG,
+    title=Page404.TITLE,
+    description=Page404.DESCRIPTION,
+    image=Page404.IMAGE,
+    on_load=None,
+    meta=[],
+)
 app.api.add_api_route(
     "/_system/check",
     check_system_status,
@@ -67,6 +82,7 @@ app.api.title = "mex-editor"
 app.api.version = "v0"
 app.api.contact = {"name": "MEx Team", "email": "mex@rki.de"}
 app.api.description = "Metadata editor web application."
+
 app.register_lifespan_task(
     lambda: logger.info(EditorSettings.get().text()),
 )

@@ -1,20 +1,12 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from mex.common.models import AnyExtractedModel
 from mex.editor.aux_search.models import AuxResult
-from mex.editor.aux_search.state import AuxState
 from mex.editor.aux_search.transform import (
     model_to_all_properties,
     transform_models_to_results,
 )
 from mex.editor.models import EditorValue
-
-
-@pytest.fixture
-def app_state() -> AuxState:
-    return AuxState()
 
 
 def test_model_to_all_properties():

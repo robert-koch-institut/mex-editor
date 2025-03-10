@@ -217,7 +217,7 @@ def test_transform_model_values_to_editor_values(
             ),
         ),
         ("AdditiveResource", "minTypicalAge", None),
-        ("Unknown type", None),
+        ("Unknown type", "someField", None),
     ],
     ids=[
         "string field",

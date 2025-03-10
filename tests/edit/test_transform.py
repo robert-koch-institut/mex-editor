@@ -192,13 +192,30 @@ def test_transform_model_values_to_editor_values(
         "expected",
     ),
     [
-        ("AdditiveActivity", "fundingProgram", InputConfig(data_type="string")),
-        ("AdditiveResource", "created", InputConfig(data_type="string")),
-        ("AdditiveContactPoint", "email", InputConfig(data_type="string")),
+        ("AdditiveActivity", "fundingProgram", InputConfig(editable_text=True)),
+        ("AdditiveResource", "created", InputConfig(editable_text=True)),
+        ("AdditiveContactPoint", "email", InputConfig(editable_text=True)),
         ("AdditivePerson", "affiliation", None),
         ("AdditiveResource", "license", None),
-        ("AdditiveResource", "documentation", None),
-        ("AdditiveResource", "keyword", None),
+        (
+            "AdditiveResource",
+            "documentation",
+            InputConfig(
+                badge_options=["de", "en"],
+                editable_href=True,
+                editable_badge=True,
+                editable_text=True,
+            ),
+        ),
+        (
+            "AdditiveResource",
+            "keyword",
+            InputConfig(
+                badge_options=["de", "en"],
+                editable_badge=True,
+                editable_text=True,
+            ),
+        ),
         ("AdditiveResource", "minTypicalAge", None),
     ],
     ids=[
@@ -372,7 +389,12 @@ def test_transform_models_to_fields() -> None:
                     }
                 ],
                 "enabled": True,
-                "input_config": {"data_type": "string"},
+                "input_config": {
+                    "badge_options": [],
+                    "editable_badge": False,
+                    "editable_href": False,
+                    "editable_text": True,
+                },
             },
         ],
     }
@@ -419,8 +441,8 @@ def test_transform_models_to_fields() -> None:
                 primary_sources=[
                     EditorPrimarySource(
                         enabled=True,
-                        input_config=InputConfig(data_type="string"),
-                        name=EditorValue(text="String data type"),
+                        input_config=InputConfig(editable_text=True),
+                        name=EditorValue(text="PS1"),
                         identifier=MergedPrimarySourceIdentifier("PrimarySource000001"),
                         editor_values=[
                             EditorValue(text="GoodName"),
@@ -428,8 +450,8 @@ def test_transform_models_to_fields() -> None:
                     ),
                     EditorPrimarySource(
                         enabled=True,
-                        input_config=InputConfig(data_type="other"),
-                        name=EditorValue(text="Unknown data type"),
+                        input_config=InputConfig(editable_text=True),
+                        name=EditorValue(text="PS2"),
                         identifier=MergedPrimarySourceIdentifier("PrimarySource000002"),
                         editor_values=[
                             EditorValue(text="Duplicate"),
@@ -651,7 +673,7 @@ def test_transform_fields_to_rule_set() -> None:
                         editor_values=[
                             EditorValue(text="SomeName", enabled=True),
                         ],
-                        input_config=InputConfig(data_type="string"),
+                        input_config=InputConfig(editable_text=True),
                         enabled=True,
                     ),
                 ],

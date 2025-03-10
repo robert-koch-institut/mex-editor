@@ -236,9 +236,7 @@ def test_edit_page_renders_new_additive_button(edit_page: Page) -> None:
     expect(new_additive_button).to_be_visible()
     new_additive_button.click()
 
-    additive_rule_input = page.get_by_test_id(
-        "additive-rule-fundingProgram-0-string-input"
-    )
+    additive_rule_input = page.get_by_test_id("additive-rule-fundingProgram-0-text")
     expect(additive_rule_input).to_be_visible()
 
 
@@ -262,6 +260,38 @@ def test_edit_page_renders_remove_additive_button(edit_page: Page) -> None:
 
 
 @pytest.mark.integration
+def test_edit_page_renders_text_input(edit_page: Page) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id("new-additive-shortName-00000000000000")
+    new_additive_button.scroll_into_view_if_needed()
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+    page.screenshot(path="tests_edit_test_main-test_edit_page_renders_text_input.png")
+
+    text_input = page.get_by_test_id("additive-rule-shortName-0-text")
+    expect(text_input).to_be_visible()
+    badge_select = page.get_by_test_id("additive-rule-shortName-0-badge")
+    expect(badge_select).to_be_visible()
+
+
+@pytest.mark.integration
+def test_edit_page_renders_link_input(edit_page: Page) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id("new-additive-website-00000000000000")
+    new_additive_button.scroll_into_view_if_needed()
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+    page.screenshot(path="tests_edit_test_main-test_edit_page_renders_link_input.png")
+
+    text_input = page.get_by_test_id("additive-rule-website-0-text")
+    expect(text_input).to_be_visible()
+    badge_select = page.get_by_test_id("additive-rule-website-0-badge")
+    expect(badge_select).to_be_visible()
+    href_input = page.get_by_test_id("additive-rule-website-0-href")
+    expect(href_input).to_be_visible()
+
+
+@pytest.mark.integration
 def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     page = edit_page
     test_id = "tests_edit_test_main-test_edit_page_additive_rule_roundtrip"
@@ -276,7 +306,7 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     new_additive_button.click()
 
     # fill a string into the additive rule input
-    input_id = "additive-rule-fundingProgram-0-string-input"
+    input_id = "additive-rule-fundingProgram-0-text"
     additive_rule_input = page.get_by_test_id(input_id)
     expect(additive_rule_input).to_be_visible()
     rule_value = "FundEverything e.V."

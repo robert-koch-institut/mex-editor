@@ -146,12 +146,11 @@ def _transform_model_to_editor_primary_sources(
                 subtractive,
             )
             if isinstance(model, AnyAdditiveModel):
-                if not (
-                    input_config := _transform_model_to_additive_input_config(
-                        field_name,
-                        model.entityType,
-                    )
-                ):
+                input_config = _transform_model_to_additive_input_config(
+                    field_name,
+                    model.entityType,
+                )
+                if input_config is None:
                     continue
             else:
                 input_config = None

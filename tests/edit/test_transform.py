@@ -217,6 +217,7 @@ def test_transform_model_values_to_editor_values(
             ),
         ),
         ("AdditiveResource", "minTypicalAge", None),
+        ("Unknown type", None),
     ],
     ids=[
         "string field",
@@ -227,6 +228,7 @@ def test_transform_model_values_to_editor_values(
         "link field",  # stopgap: MX-1650
         "text field",  # stopgap: MX-1650
         "integer field",  # stopgap: MX-1793
+        "unknown type",
     ],
 )
 def test_transform_model_to_additive_input_config(

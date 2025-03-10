@@ -20,7 +20,7 @@ class EditorPrimarySource(rx.Base):
     identifier: MergedPrimarySourceIdentifier
     input_config: InputConfig | None
     editor_values: list[EditorValue] = []
-    enabled: bool
+    enabled: bool = True
 
 
 class EditorField(rx.Base):

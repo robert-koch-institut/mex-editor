@@ -79,10 +79,10 @@ class EditState(State):
     @rx.event
     def submit_rule_set(self) -> Generator[EventSpec | None, None, None]:
         """Convert the fields to a rule set and submit it to the backend."""
-        if (stem_type := self.stem_type) is None:
+        if self.stem_type is None:
             self.reset()
-            return None
-        rule_set = transform_fields_to_rule_set(stem_type, self.fields)
+            return
+        rule_set = transform_fields_to_rule_set(self.stem_type, self.fields)
         connector = BackendApiConnector.get()
         try:
             # TODO(ND): use proper connector method when available (stop-gap MX-1762)

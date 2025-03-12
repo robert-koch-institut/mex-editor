@@ -13,9 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update mex-common to 0.54.2
+- fix some styles
+
 ### Deprecated
 
 ### Removed
+
+- remove `merged` page boilerplate, for now
 
 ### Fixed
 

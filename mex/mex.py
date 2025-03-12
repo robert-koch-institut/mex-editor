@@ -12,7 +12,6 @@ from mex.editor.aux_search.state import AuxState
 from mex.editor.edit.main import index as edit_index
 from mex.editor.edit.state import EditState
 from mex.editor.login.main import index as login_index
-from mex.editor.merge.main import index as merge_index
 from mex.editor.search.main import index as search_index
 from mex.editor.search.state import SearchState
 from mex.editor.settings import EditorSettings
@@ -28,12 +27,6 @@ app.add_page(
     route="/item/[identifier]",
     title="MEx Editor | Edit",
     on_load=[State.check_login, State.load_nav, EditState.refresh],
-)
-app.add_page(
-    merge_index,
-    route="/merge",
-    title="MEx Editor | Merge",
-    on_load=[State.check_login, State.load_nav],
 )
 app.add_page(
     search_index,

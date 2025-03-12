@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from mex.common.models import AnyExtractedModel
 from mex.editor.aux_search.models import AuxResult
@@ -9,11 +9,11 @@ from mex.editor.aux_search.transform import (
 from mex.editor.models import EditorValue
 
 
-def test_model_to_all_properties():
+def test_model_to_all_properties() -> None:
     model = MagicMock(spec=AnyExtractedModel)
     model.field1 = "value1"
     model.field2 = "value2"
-    model.model_dump = MagicMock(return_value={"field1": "value1", "field2": "value2"})
+    model.model_fields = {"field1": Mock(), "field2": Mock()}
 
     with patch(
         "mex.editor.transform.transform_values",
@@ -26,7 +26,7 @@ def test_model_to_all_properties():
     assert result[1].text == "value2"
 
 
-def test_transform_models_to_results_single_model():
+def test_transform_models_to_results_single_model() -> None:
     model = MagicMock(spec=AnyExtractedModel)
     model.identifier = "id1"
     model.stemType = "Organization"
@@ -63,7 +63,7 @@ def test_transform_models_to_results_single_model():
     assert result[0].show_properties is False
 
 
-def test_transform_models_to_results_multiple_models():
+def test_transform_models_to_results_multiple_models() -> None:
     model1 = MagicMock(spec=AnyExtractedModel)
     model1.identifier = "id1"
     model1.stemType = "Organization"

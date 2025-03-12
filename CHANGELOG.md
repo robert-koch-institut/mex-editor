@@ -11,18 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update mex-common to 0.54.2
-- fix some styles
-
 ### Deprecated
 
 ### Removed
 
-- remove `merged` page boilerplate, for now
-
 ### Fixed
 
 ### Security
+
+## [0.11.2] - 2025-03-12
+
+### Changes
+
+- update mex-common to 0.54.2
+- fix some styles
+
+### Removed
+
+- remove `merged` page boilerplate, for now
 
 ## [0.11.1] - 2025-03-12
 

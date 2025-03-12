@@ -1,8 +1,10 @@
+from importlib.metadata import version
 from urllib.parse import urlencode
 
 import reflex as rx
 from reflex.event import EventSpec
 
+from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
 from mex.editor.models import NavItem, User
 
@@ -86,3 +88,16 @@ class State(rx.State):
                 nav_item.underline = "always"
             else:
                 nav_item.underline = "none"
+
+    @rx.var(cache=True)
+    def editor_version(self) -> str:
+        """Return the version of mex-editor."""
+        return version("mex-editor")
+
+    @rx.var(cache=True)
+    def backend_version(self) -> str:
+        """Return the version of mex-backend."""
+        connector = BackendApiConnector.get()
+        # TODO(ND): use proper connector method when available (stop-gap MX-1762)
+        response = connector.request("GET", "_system/check")
+        return str(response.get("version", "N/A"))

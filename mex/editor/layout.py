@@ -50,17 +50,28 @@ def nav_link(item: NavItem) -> rx.Component:
 
 def app_logo() -> rx.Component:
     """Return the app logo with icon and label."""
-    return rx.hstack(
-        rx.icon(
-            "circuit-board",
-            size=28,
+    return rx.hover_card.root(
+        rx.hover_card.trigger(
+            rx.hstack(
+                rx.icon(
+                    "circuit-board",
+                    size=28,
+                ),
+                rx.heading(
+                    "MEx Editor",
+                    weight="medium",
+                    style={"userSelect": "none"},
+                ),
+                custom_attrs={"data-testid": "app-logo"},
+            )
         ),
-        rx.heading(
-            "MEx Editor",
-            weight="medium",
-            style={"userSelect": "none"},
+        rx.hover_card.content(
+            rx.vstack(
+                rx.code(f"mex-editor=={State.editor_version}", variant="outline"),
+                rx.code(f"mex-backend=={State.backend_version}", variant="outline"),
+            ),
         ),
-        custom_attrs={"data-testid": "app-logo"},
+        open_delay=500,
     )
 
 

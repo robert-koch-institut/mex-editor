@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- show mex-editor and mex-backend versions when hovering over logo
-
 ### Changes
 
 ### Deprecated
@@ -20,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.11.1] - 2025-03-12
+
+### Added
+
+- show mex-editor and mex-backend versions when hovering over logo
 
 ## [0.11.0] - 2025-03-05
 

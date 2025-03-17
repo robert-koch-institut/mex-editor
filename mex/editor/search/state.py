@@ -1,4 +1,3 @@
-import asyncio
 import math
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Annotated
@@ -162,7 +161,6 @@ class SearchState(State):
                     async with self:
                         preview.display_text = await resolve_identifier(preview.text)
                         preview.is_resolved = True
-                        await asyncio.sleep(0.5)
 
         async with self:
             self._n_resolve_identifier_tasks -= 1

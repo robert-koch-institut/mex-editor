@@ -38,6 +38,7 @@ app.add_page(
         SearchState.get_available_primary_sources,
         SearchState.load_search_params,
         SearchState.refresh,
+        SearchState.resolve_identifiers,
     ],
 )
 app.add_page(

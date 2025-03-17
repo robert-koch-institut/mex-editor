@@ -12,10 +12,13 @@ class EditorValue(rx.Base):
     """Model for describing atomic values in the editor."""
 
     text: str | None = None
+    display_text: str | None = None
     badge: str | None = None
     href: str | None = None
     external: bool = False
     enabled: bool = True
+    is_identifier: bool = False
+    is_resolved: bool = False
 
 
 class User(rx.Base):

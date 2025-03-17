@@ -1,3 +1,4 @@
+import asyncio
 import math
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Annotated
@@ -31,6 +32,7 @@ class SearchState(State):
     had_primary_sources: dict[str, bool] = {}
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 50
+    _n_resolve_identifier_tasks: int = 0
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:
@@ -118,6 +120,26 @@ class SearchState(State):
     def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
+
+    @rx.event(background=True)
+    async def resolve_identifiers(self):
+        """Resolve identifiers to human readable display values."""
+        async with self:
+            # check if there is already a running task
+            if self._n_resolve_identifier_tasks > 0:
+                return
+            self._n_resolve_identifier_tasks += 1
+
+        for result in self.results:
+            for preview in result.preview:
+                if preview.is_identifier and not preview.is_resolved:
+                    async with self:
+                        preview.display_text = f"resolved-{preview.text}"
+                        preview.is_resolved = True
+                        await asyncio.sleep(0.5)
+
+        async with self:
+            self._n_resolve_identifier_tasks -= 1
 
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:

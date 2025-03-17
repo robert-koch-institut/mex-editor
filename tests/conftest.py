@@ -120,11 +120,13 @@ def dummy_data() -> list[AnyExtractedModel]:
     primary_source_1 = ExtractedPrimarySource(
         hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
         identifierInPrimarySource="ps-1",
+        title=[Text(value="Primary Source One", language=TextLanguage.EN)],
     )
     primary_source_2 = ExtractedPrimarySource(
         hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
         identifierInPrimarySource="ps-2",
         version="Cool Version v2.13",
+        title=[Text(value="Primary Source Two", language=TextLanguage.EN)],
     )
     contact_point_1 = ExtractedContactPoint(
         email=[Email("info@contact-point.one")],

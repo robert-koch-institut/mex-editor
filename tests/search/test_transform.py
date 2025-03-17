@@ -20,19 +20,25 @@ def test_transform_models_to_results() -> None:
         "title": [
             {
                 "text": "OU1",
+                "display_text": "OU1",
                 "badge": None,
                 "href": None,
                 "external": False,
                 "enabled": True,
+                "is_identifier": False,
+                "is_resolved": True,
             }
         ],
         "preview": [
             {
                 "text": "Unit 1",
+                "display_text": "Unit 1",
                 "badge": "en",
                 "href": None,
                 "external": False,
                 "enabled": True,
+                "is_identifier": False,
+                "is_resolved": True,
             }
         ],
     }

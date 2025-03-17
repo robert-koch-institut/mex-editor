@@ -32,13 +32,27 @@ def test_state_get_primary_sources_by_field_name() -> None:
 
     assert primary_sources == [
         EditorPrimarySource(
-            name=EditorValue(text="somePrimarySource", href="/item/somePrimarySource"),
+            name=EditorValue(
+                text="somePrimarySource",
+                display_text="somePrimarySource",
+                href="/item/somePrimarySource",
+                is_identifier=True,
+            ),
             identifier="somePrimarySource",
             input_config=None,
-            editor_values=[EditorValue(text="test@foo.bar")],
+            editor_values=[
+                EditorValue(
+                    text="test@foo.bar", display_text="test@foo.bar", is_resolved=True
+                )
+            ],
         ),
         EditorPrimarySource(
-            name=EditorValue(text="00000000000000", href="/item/00000000000000"),
+            name=EditorValue(
+                text="00000000000000",
+                display_text="00000000000000",
+                href="/item/00000000000000",
+                is_identifier=True,
+            ),
             identifier="00000000000000",
             input_config=InputConfig(editable_text=True),
             editor_values=[],

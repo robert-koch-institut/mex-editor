@@ -4,13 +4,19 @@ from collections.abc import Generator
 from typing import TYPE_CHECKING, Annotated
 
 import reflex as rx
+from async_lru import alru_cache
 from pydantic import Field
 from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import MExError
-from mex.common.models import MERGED_MODEL_CLASSES, MergedPrimarySource
+from mex.common.models import (
+    MERGED_MODEL_CLASSES,
+    AnyPreviewModel,
+    MergedPrimarySource,
+    PaginatedItemsContainer,
+)
 from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchResult
@@ -19,6 +25,26 @@ from mex.editor.state import State
 
 if TYPE_CHECKING:
     from reflex.istate.data import RouterData
+
+
+@alru_cache
+async def resolve_identifier(identifier: str) -> str:
+    """Resolve identifiers to human readable display values."""
+    # TODO(HS): use the user auth for backend requests (stop-gap MX-1616)
+    connector = BackendApiConnector.get()
+    # TODO(HS): use proper connector method when available (stop-gap MX-1762)
+    response = connector.request(
+        method="GET",
+        endpoint="preview-item",
+        params={
+            "identifier": identifier,
+            "skip": "0",
+            "limit": "1",
+        },
+    )
+    container = PaginatedItemsContainer[AnyPreviewModel].model_validate(response)
+    result, *_ = transform_models_to_results(container.items)
+    return f"{result.title[0].display_text}"
 
 
 class SearchState(State):
@@ -134,7 +160,7 @@ class SearchState(State):
             for preview in result.preview:
                 if preview.is_identifier and not preview.is_resolved:
                     async with self:
-                        preview.display_text = f"resolved-{preview.text}"
+                        preview.display_text = await resolve_identifier(preview.text)
                         preview.is_resolved = True
                         await asyncio.sleep(0.5)
 

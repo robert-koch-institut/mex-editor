@@ -9,19 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- button to import and ingest wikidata organizations
-- add color mode toggle to login screen
-- added new/remove buttons for additive rules for string fields
-- add event handlers for adding/removing additive value input cards
-- added text input field for email, string and temporal fields
-- add event handler for setting string input values
-- filter for hadPrimarySource
-
 ### Changes
-
-- update mex-common to version 0.54.0
-- combine EditState.editor_fields and EditState.fields
-- update transformation logic to handle strings from additive rules
 
 ### Deprecated
 
@@ -30,6 +18,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.12.0] - 2025-03-13
+
+### Added
+
+- implement editing for text and link fields
+
+## [0.11.2] - 2025-03-12
+
+### Changes
+
+- update mex-common to 0.54.2
+- fix some styles
+
+### Removed
+
+- remove `merged` page boilerplate, for now
+
+## [0.11.1] - 2025-03-12
+
+### Added
+
+- show mex-editor and mex-backend versions when hovering over logo
+
+## [0.11.0] - 2025-03-05
+
+### Added
+
+- button to import and ingest wikidata organizations
+- add color mode toggle to login screen
+- added new/remove buttons for additive rules for string fields
+- add event handlers for adding/removing additive value input cards
+- added text input field for email, string and temporal fields
+- add event handler for setting string input values
+- filter for hadPrimarySource
+- add new entrypoints `editor-api` and `editor-frontend` for prod mode
+- add new settings for ports, hosts and paths for prod mode execution
+
+### Changes
+
+- update mex-common to version 0.54.0
+- combine EditState.editor_fields and EditState.fields
+- update transformation logic to handle strings from additive rules
+- BREAKING: change default ports to 8030/8031 for dockerfile
+
+### Fixed
+
+- fix redirect bug on 404 pages, by side-stepping add_page
 
 ## [0.10.0] - 2025-02-18
 

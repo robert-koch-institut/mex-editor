@@ -79,10 +79,10 @@ class EditState(State):
     @rx.event
     def submit_rule_set(self) -> Generator[EventSpec | None, None, None]:
         """Convert the fields to a rule set and submit it to the backend."""
-        if (stem_type := self.stem_type) is None:
+        if self.stem_type is None:
             self.reset()
-            return None
-        rule_set = transform_fields_to_rule_set(stem_type, self.fields)
+            return
+        rule_set = transform_fields_to_rule_set(self.stem_type, self.fields)
         connector = BackendApiConnector.get()
         try:
             # TODO(ND): use proper connector method when available (stop-gap MX-1762)
@@ -156,8 +156,23 @@ class EditState(State):
                 primary_source.editor_values.pop(index)
 
     @rx.event
-    def set_string_value(self, field_name: str, index: int, value: str) -> None:
-        """Set the value for an additive string rule on the given field."""
+    def set_text_value(self, field_name: str, index: int, value: str) -> None:
+        """Set the text attribute on an additive editor value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             if primary_source.input_config:
                 primary_source.editor_values[index].text = value
+
+    @rx.event
+    def set_badge_value(self, field_name: str, index: int, value: str) -> None:
+        """Set the badge attribute on an additive editor value."""
+        for primary_source in self._get_primary_sources_by_field_name(field_name):
+            if primary_source.input_config:
+                primary_source.editor_values[index].badge = value
+
+    @rx.event
+    def set_href_value(self, field_name: str, index: int, value: str) -> None:
+        """Set an external href on an additive editor value."""
+        for primary_source in self._get_primary_sources_by_field_name(field_name):
+            if primary_source.input_config:
+                primary_source.editor_values[index].href = value
+                primary_source.editor_values[index].external = True

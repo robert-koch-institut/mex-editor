@@ -63,6 +63,7 @@ def search_input() -> rx.Component:
                     SearchState.go_to_first_page,
                     SearchState.push_search_params,
                     SearchState.refresh,
+                    SearchState.resolve_identifiers,
                 ],
                 max_length=100,
                 style={
@@ -91,6 +92,7 @@ def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
             SearchState.go_to_first_page,
             SearchState.push_search_params,
             SearchState.refresh,
+            SearchState.resolve_identifiers,
         ],
     )
 
@@ -120,6 +122,7 @@ def primary_source_choice(choice: tuple[str, bool]) -> rx.Component:
             SearchState.go_to_first_page,
             SearchState.push_search_params,
             SearchState.refresh,
+            SearchState.resolve_identifiers,
         ],
     )
 
@@ -161,6 +164,7 @@ def pagination() -> rx.Component:
                 SearchState.push_search_params,
                 SearchState.scroll_to_top,
                 SearchState.refresh,
+                SearchState.resolve_identifiers,
             ],
             disabled=SearchState.disable_previous_page,
             variant="surface",
@@ -175,6 +179,7 @@ def pagination() -> rx.Component:
                 SearchState.push_search_params,
                 SearchState.scroll_to_top,
                 SearchState.refresh,
+                SearchState.resolve_identifiers,
             ],
             custom_attrs={"data-testid": "pagination-page-select"},
         ),
@@ -185,6 +190,7 @@ def pagination() -> rx.Component:
                 SearchState.push_search_params,
                 SearchState.scroll_to_top,
                 SearchState.refresh,
+                SearchState.resolve_identifiers,
             ],
             disabled=SearchState.disable_next_page,
             variant="surface",

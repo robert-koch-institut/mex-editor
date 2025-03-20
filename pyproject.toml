@@ -1,6 +1,6 @@
 [project]
 name = "mex-editor"
-version = "0.10.0"
+version = "0.12.0"
 description = "Metadata editor web application."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -9,13 +9,14 @@ urls = { Repository = "https://github.com/robert-koch-institut/mex-editor" }
 requires-python = ">=3.11,<3.12"
 dependencies = [
     "fastapi>=0.115,<1",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.54.1",
+    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.54.2",
     "pydantic>=2,<3",
     "pyyaml>=6,<7",
     "reflex>=0.6,<0.7",
     "requests>=2,<3",
     "starlette>=0.41,<1",
     "typer>=0.15,<1",
+    "uvicorn>=0.34,<1",
 ]
 optional-dependencies.dev = [
     "ipdb>=0.13,<1",
@@ -32,6 +33,8 @@ optional-dependencies.dev = [
 
 [project.scripts]
 editor = "mex.editor.main:main"
+editor-api = "mex.editor.main:editor_api"
+editor-frontend = "mex.editor.main:editor_frontend"
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"
@@ -125,6 +128,9 @@ ignore = [
 select = ["ALL"]
 
 [tool.ruff.lint.per-file-ignores]
+"mex/editor/logging.py" = [
+    "A005",     # Allow custom logging module to shadow standard-library
+]
 "mex/editor/types.py" = [
     "A005",     # Allow custom types module to shadow standard-library
 ]

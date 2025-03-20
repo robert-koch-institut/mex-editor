@@ -19,10 +19,11 @@ ENV PIP_PROGRESS_BAR=off
 ENV APP_NAME=mex
 ENV FRONTEND_PORT=8030
 ENV DEPLOY_URL=http://0.0.0.0:8030
-ENV BACKEND_PORT=8040
-ENV API_URL=http://0.0.0.0:8040
+ENV BACKEND_PORT=8031
+ENV API_URL=http://0.0.0.0:8031
 ENV TELEMETRY_ENABLED=False
 ENV REFLEX_ENV_MODE=prod
+ENV REFLEX_DIR=/app/reflex
 
 WORKDIR /app
 
@@ -32,15 +33,16 @@ RUN adduser \
     --shell "/sbin/nologin" \
     --no-create-home \
     --uid "10001" \
-    mex
+    mex && \
+    chown mex .
 
-COPY . .
+COPY --chown=mex . .
 
 RUN --mount=type=cache,target=/root/.cache/pip pip install -r locked-requirements.txt --no-deps
 
 USER mex
 
 EXPOSE 8030
-EXPOSE 8040
+EXPOSE 8031
 
 ENTRYPOINT [ "editor" ]

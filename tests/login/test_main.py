@@ -7,7 +7,7 @@ from pydantic import SecretStr
 def test_login(
     frontend_url: str, page: Page, writer_user_credentials: tuple[str, SecretStr]
 ) -> None:
-    page.goto(f"{frontend_url}/merge")
+    page.goto(f"{frontend_url}/")
 
     page.get_by_placeholder("Username").fill(
         writer_user_credentials[0],
@@ -19,7 +19,7 @@ def test_login(
 
     page.get_by_test_id("login-button").click()
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
-    expect(page.get_by_test_id("merge-heading")).to_be_visible()
+    expect(page.get_by_test_id("search-results-section")).to_be_visible()
     page.screenshot(path="tests_login_test_main-test_login-after-login.png")
 
     page.get_by_test_id("user-menu").click()

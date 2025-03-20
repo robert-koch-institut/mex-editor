@@ -4,21 +4,16 @@ services:
     build:
       context: .
     ports:
-      - 3000:3000
-      - 8000:8000
+      - 8030:8030
+      - 8031:8031
     environment:
-      - APP_NAME=mex
-      - FRONTEND_PORT=3000
-      - DEPLOY_URL=http://0.0.0.0:3000
-      - BACKEND_PORT=8000
-      - API_URL=http://0.0.0.0:8000
-      - TELEMETRY_ENABLED=False
-      - REFLEX_DIR=/app/data
+      - MEX_EDITOR_API_HOST=0.0.0.0
+      - MEX_EDITOR_USER_DATABASE={"mex":["mex"]}
     expose:
-      - 3000
-      - 8000
+      - 8030
+      - 8031
     healthcheck:
-      test: [ "CMD", "curl", "http://0.0.0.0:8000/_system/check" ]
+      test: [ "CMD", "curl", "http://0.0.0.0:8031/_system/check" ]
       interval: 60s
       timeout: 5s
       retries: 5

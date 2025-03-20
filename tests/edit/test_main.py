@@ -15,16 +15,19 @@ from mex.common.types import Identifier
 
 @pytest.fixture
 def extracted_activity(
-    loaded_dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> ExtractedActivity:
-    extracted_activity = loaded_dummy_data_by_identifier_in_primary_source["a-1"]
+    extracted_activity = dummy_data_by_identifier_in_primary_source["a-1"]
     assert type(extracted_activity) is ExtractedActivity
     return extracted_activity
 
 
 @pytest.fixture
 def edit_page(
-    frontend_url: str, writer_user_page: Page, extracted_activity: ExtractedActivity
+    frontend_url: str,
+    writer_user_page: Page,
+    extracted_activity: ExtractedActivity,
+    load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
     page = writer_user_page
     page.goto(f"{frontend_url}/item/{extracted_activity.stableTargetId}")
@@ -71,10 +74,10 @@ def test_edit_page_renders_fields(
 def test_edit_page_renders_primary_sources(
     edit_page: Page,
     extracted_activity: ExtractedActivity,
-    loaded_dummy_data_by_stable_target_id: dict[Identifier, AnyExtractedModel],
+    dummy_data_by_stable_target_id: dict[Identifier, AnyExtractedModel],
 ) -> None:
     page = edit_page
-    had_primary_source = loaded_dummy_data_by_stable_target_id[
+    had_primary_source = dummy_data_by_stable_target_id[
         extracted_activity.hadPrimarySource
     ]
     assert type(had_primary_source) is ExtractedPrimarySource
@@ -147,11 +150,11 @@ def test_edit_page_renders_temporal(
 @pytest.mark.integration
 def test_edit_page_renders_identifier(
     edit_page: Page,
-    loaded_dummy_data_by_stable_target_id: dict[Identifier, AnyExtractedModel],
+    dummy_data_by_stable_target_id: dict[Identifier, AnyExtractedModel],
     extracted_activity: ExtractedActivity,
 ) -> None:
     page = edit_page
-    extracted_organizational_unit = loaded_dummy_data_by_stable_target_id[
+    extracted_organizational_unit = dummy_data_by_stable_target_id[
         extracted_activity.contact[2]
     ]
     assert type(extracted_organizational_unit) is ExtractedOrganizationalUnit

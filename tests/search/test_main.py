@@ -134,13 +134,14 @@ def test_had_primary_sources(
 
 
 @pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
 def test_load_search_params(
     frontend_url: str,
     writer_user_page: Page,
-    loaded_dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     page = writer_user_page
-    expected_model = loaded_dummy_data_by_identifier_in_primary_source["cp-2"]
+    expected_model = dummy_data_by_identifier_in_primary_source["cp-2"]
     page.goto(
         f"{frontend_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
         f"&hadPrimarySource={expected_model.hadPrimarySource}"

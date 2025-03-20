@@ -177,6 +177,20 @@ def dummy_data() -> list[AnyExtractedModel]:
 
 
 @pytest.fixture
+def dummy_data_by_identifier_in_primary_source(
+    dummy_data: list[AnyExtractedModel],
+) -> dict[str, AnyExtractedModel]:
+    return {model.identifierInPrimarySource: model for model in dummy_data}
+
+
+@pytest.fixture
+def dummy_data_by_stable_target_id(
+    dummy_data: list[AnyExtractedModel],
+) -> dict[Identifier, AnyExtractedModel]:
+    return {model.stableTargetId: model for model in dummy_data}
+
+
+@pytest.fixture
 def load_dummy_data(
     dummy_data: list[AnyExtractedModel],
     flush_graph_database: None,  # noqa: ARG001
@@ -184,17 +198,3 @@ def load_dummy_data(
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
     return cast(list[AnyExtractedModel], connector.ingest(dummy_data))
-
-
-@pytest.fixture
-def loaded_dummy_data_by_identifier_in_primary_source(
-    load_dummy_data: list[AnyExtractedModel],
-) -> dict[str, AnyExtractedModel]:
-    return {model.identifierInPrimarySource: model for model in load_dummy_data}
-
-
-@pytest.fixture
-def loaded_dummy_data_by_stable_target_id(
-    load_dummy_data: list[AnyExtractedModel],
-) -> dict[Identifier, AnyExtractedModel]:
-    return {model.stableTargetId: model for model in load_dummy_data}

@@ -137,12 +137,10 @@ def test_had_primary_sources(
 def test_load_search_params(
     frontend_url: str,
     writer_user_page: Page,
-    load_dummy_data: list[AnyExtractedModel],
+    loaded_dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     page = writer_user_page
-    expected_model, *_ = [
-        m for m in load_dummy_data if m.identifierInPrimarySource == "cp-2"
-    ]
+    expected_model = loaded_dummy_data_by_identifier_in_primary_source["cp-2"]
     page.goto(
         f"{frontend_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
         f"&hadPrimarySource={expected_model.hadPrimarySource}"

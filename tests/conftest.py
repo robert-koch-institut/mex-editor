@@ -1,3 +1,5 @@
+from typing import cast
+
 import pytest
 from fastapi.testclient import TestClient
 from playwright.sync_api import Page, expect
@@ -8,7 +10,6 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
-    AnyRuleSetResponse,
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedOrganizationalUnit,
@@ -16,6 +17,7 @@ from mex.common.models import (
 )
 from mex.common.types import (
     Email,
+    Identifier,
     IdentityProvider,
     Link,
     Text,
@@ -176,9 +178,23 @@ def dummy_data() -> list[AnyExtractedModel]:
 
 @pytest.fixture
 def load_dummy_data(
-    dummy_data: list[AnyExtractedModel | AnyRuleSetResponse],
+    dummy_data: list[AnyExtractedModel],
     flush_graph_database: None,  # noqa: ARG001
-) -> list[AnyExtractedModel | AnyRuleSetResponse]:
+) -> list[AnyExtractedModel]:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
-    return connector.ingest(dummy_data)
+    return cast(list[AnyExtractedModel], connector.ingest(dummy_data))
+
+
+@pytest.fixture
+def loaded_dummy_data_by_identifier_in_primary_source(
+    load_dummy_data: list[AnyExtractedModel],
+) -> dict[str, AnyExtractedModel]:
+    return {model.identifierInPrimarySource: model for model in load_dummy_data}
+
+
+@pytest.fixture
+def loaded_dummy_data_by_stable_target_id(
+    load_dummy_data: list[AnyExtractedModel],
+) -> dict[Identifier, AnyExtractedModel]:
+    return {model.stableTargetId: model for model in load_dummy_data}

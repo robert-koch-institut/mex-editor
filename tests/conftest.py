@@ -1,5 +1,3 @@
-from typing import cast
-
 import pytest
 from fastapi.testclient import TestClient
 from playwright.sync_api import Page, expect
@@ -194,7 +192,7 @@ def dummy_data_by_stable_target_id(
 def load_dummy_data(
     dummy_data: list[AnyExtractedModel],
     flush_graph_database: None,  # noqa: ARG001
-) -> list[AnyExtractedModel]:
+) -> None:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
-    return cast(list[AnyExtractedModel], connector.ingest(dummy_data))
+    connector.ingest(dummy_data)

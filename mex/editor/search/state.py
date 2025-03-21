@@ -9,12 +9,16 @@ from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import MExError
-from mex.common.models import MERGED_MODEL_CLASSES, MergedPrimarySource
+from mex.common.models import (
+    MERGED_MODEL_CLASSES,
+    MergedPrimarySource,
+)
 from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
+from mex.editor.utils import resolve_identifier
 
 if TYPE_CHECKING:
     from reflex.istate.data import RouterData
@@ -31,6 +35,7 @@ class SearchState(State):
     had_primary_sources: dict[str, bool] = {}
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 50
+    _n_resolve_identifier_tasks: int = 0
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:
@@ -118,6 +123,25 @@ class SearchState(State):
     def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
+
+    @rx.event(background=True)
+    async def resolve_identifiers(self):
+        """Resolve identifiers to human readable display values."""
+        async with self:
+            # check if there is already a running task
+            if self._n_resolve_identifier_tasks > 0:
+                return
+            self._n_resolve_identifier_tasks += 1
+
+        for result in self.results:
+            for preview in result.preview:
+                if preview.is_identifier and not preview.is_resolved:
+                    async with self:
+                        preview.display_text = await resolve_identifier(preview.text)
+                        preview.is_resolved = True
+
+        async with self:
+            self._n_resolve_identifier_tasks -= 1
 
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:

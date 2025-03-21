@@ -104,6 +104,7 @@ class AuxState(State):
             return
         connector = BackendApiConnector.get()
         try:
+            # TODO(HS): use proper connector method when available (stop-gap MX-1762)
             response = connector.request(
                 method="GET",
                 endpoint="wikidata",

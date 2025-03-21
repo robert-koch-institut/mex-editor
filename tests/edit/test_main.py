@@ -1,21 +1,33 @@
 import re
-from typing import cast
 
 import pytest
 from playwright.sync_api import Page, expect
 
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
-from mex.common.models import AnyExtractedModel, ExtractedActivity
+from mex.common.models import (
+    AnyExtractedModel,
+    ExtractedActivity,
+    ExtractedOrganizationalUnit,
+    ExtractedPrimarySource,
+)
+from mex.common.types import Identifier
 
 
 @pytest.fixture
-def extracted_activity(load_dummy_data: list[AnyExtractedModel]) -> ExtractedActivity:
-    return cast(ExtractedActivity, load_dummy_data[-1])
+def extracted_activity(
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+) -> ExtractedActivity:
+    extracted_activity = dummy_data_by_identifier_in_primary_source["a-1"]
+    assert type(extracted_activity) is ExtractedActivity
+    return extracted_activity
 
 
 @pytest.fixture
 def edit_page(
-    frontend_url: str, writer_user_page: Page, extracted_activity: ExtractedActivity
+    frontend_url: str,
+    writer_user_page: Page,
+    extracted_activity: ExtractedActivity,
+    load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
     page = writer_user_page
     page.goto(f"{frontend_url}/item/{extracted_activity.stableTargetId}")
@@ -60,9 +72,16 @@ def test_edit_page_renders_fields(
 
 @pytest.mark.integration
 def test_edit_page_renders_primary_sources(
-    edit_page: Page, extracted_activity: ExtractedActivity
+    edit_page: Page,
+    extracted_activity: ExtractedActivity,
+    dummy_data_by_stable_target_id: dict[Identifier, AnyExtractedModel],
 ) -> None:
     page = edit_page
+    had_primary_source = dummy_data_by_stable_target_id[
+        extracted_activity.hadPrimarySource
+    ]
+    assert type(had_primary_source) is ExtractedPrimarySource
+
     primary_source = page.get_by_test_id(
         f"primary-source-title-{extracted_activity.hadPrimarySource}-name"
     )
@@ -70,7 +89,7 @@ def test_edit_page_renders_primary_sources(
         path="tests_edit_test_main-test_edit_page_renders_primary_sources.png"
     )
     expect(primary_source).to_be_visible()
-    expect(primary_source).to_contain_text(extracted_activity.hadPrimarySource)
+    expect(primary_source).to_contain_text(had_primary_source.title[0].value)
     link = primary_source.get_by_role("link")
     expect(link).to_have_attribute(
         "href", f"/item/{extracted_activity.hadPrimarySource}/"
@@ -130,16 +149,25 @@ def test_edit_page_renders_temporal(
 
 @pytest.mark.integration
 def test_edit_page_renders_identifier(
-    edit_page: Page, extracted_activity: ExtractedActivity
+    edit_page: Page,
+    dummy_data_by_stable_target_id: dict[Identifier, AnyExtractedModel],
+    extracted_activity: ExtractedActivity,
 ) -> None:
     page = edit_page
+    extracted_organizational_unit = dummy_data_by_stable_target_id[
+        extracted_activity.contact[2]
+    ]
+    assert type(extracted_organizational_unit) is ExtractedOrganizationalUnit
+
     contact = page.get_by_test_id(
         f"value-contact-{extracted_activity.hadPrimarySource}-2"
     )
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_identifier.png")
     expect(contact).to_be_visible()
     link = contact.get_by_role("link")
-    expect(link).to_contain_text(extracted_activity.contact[2])  # not resolved yet
+    expect(link).to_contain_text(
+        extracted_organizational_unit.shortName[0].value
+    )  # resolved short name of unit
     expect(link).to_have_attribute(
         "href",
         f"/item/{extracted_activity.contact[2]}/",  # link href

@@ -20,6 +20,7 @@ from mex.editor.transform import (
     transform_models_to_stem_type,
     transform_models_to_title,
 )
+from mex.editor.utils import resolve_identifier
 
 
 class EditState(State):
@@ -28,6 +29,34 @@ class EditState(State):
     fields: list[EditorField] = []
     item_title: list[EditorValue] = []
     stem_type: str | None = None
+    _n_resolve_identifier_tasks: int = 0
+
+    @rx.event(background=True)
+    async def resolve_identifiers(self):
+        """Resolve identifiers to human readable display values."""
+        async with self:
+            # check if there is already a running task
+            if self._n_resolve_identifier_tasks > 0:
+                return
+            self._n_resolve_identifier_tasks += 1
+
+        for field in self.fields:
+            for primary_source in field.primary_sources:
+                name = primary_source.name
+                if name.is_identifier and not name.is_resolved:
+                    async with self:
+                        name.display_text = await resolve_identifier(name.text)
+                        name.is_resolved = True
+                for editor_value in primary_source.editor_values:
+                    if editor_value.is_identifier and not editor_value.is_resolved:
+                        async with self:
+                            editor_value.display_text = await resolve_identifier(
+                                editor_value.text
+                            )
+                            editor_value.is_resolved = True
+
+        async with self:
+            self._n_resolve_identifier_tasks -= 1
 
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:

@@ -20,7 +20,7 @@ from mex.editor.transform import (
         (
             "foo",
             True,
-            [EditorValue(text="foo")],
+            [EditorValue(text="foo", display_text="foo", is_resolved=True)],
         ),
         (
             [
@@ -31,11 +31,23 @@ from mex.editor.transform import (
             ],
             True,
             [
-                EditorValue(text="bar"),
-                EditorValue(text="REST", badge="APIType"),
-                EditorValue(text="hi there", badge="en"),
+                EditorValue(text="bar", display_text="bar", is_resolved=True),
                 EditorValue(
-                    text="homepage", badge="en", href="http://mex", external=True
+                    text="REST", display_text="REST", badge="APIType", is_resolved=True
+                ),
+                EditorValue(
+                    text="hi there",
+                    display_text="hi there",
+                    badge="en",
+                    is_resolved=True,
+                ),
+                EditorValue(
+                    text="homepage",
+                    display_text="homepage",
+                    badge="en",
+                    href="http://mex",
+                    external=True,
+                    is_resolved=True,
                 ),
             ],
         ),
@@ -44,14 +56,25 @@ from mex.editor.transform import (
             True,
             [
                 EditorValue(
-                    text="cWWm02l1c6cucKjIhkFqY4", href="/item/cWWm02l1c6cucKjIhkFqY4"
+                    text="cWWm02l1c6cucKjIhkFqY4",
+                    display_text="cWWm02l1c6cucKjIhkFqY4",
+                    href="/item/cWWm02l1c6cucKjIhkFqY4",
+                    is_identifier=True,
+                    is_resolved=False,
                 )
             ],
         ),
         (
             Identifier("cWWm02l1c6cucKjIhkFqY4"),
             False,
-            [EditorValue(text="cWWm02l1c6cucKjIhkFqY4")],
+            [
+                EditorValue(
+                    text="cWWm02l1c6cucKjIhkFqY4",
+                    display_text="cWWm02l1c6cucKjIhkFqY4",
+                    is_identifier=True,
+                    is_resolved=False,
+                )
+            ],
         ),
     ],
 )
@@ -82,28 +105,51 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
     dummy_titles = [transform_models_to_title([d]) for d in dummy_data]
     assert dummy_titles == [
         [
-            # mex primary source has no title, renders type instead
-            EditorValue(text="PrimarySource")
+            # ps-1 primary source renders title as text
+            EditorValue(
+                text="Primary Source One",
+                display_text="Primary Source One",
+                badge="en",
+                is_resolved=True,
+            )
         ],
         [
-            # ps-2 primary source has no title either
-            EditorValue(text="PrimarySource")
+            # ps-2 primary source renders title as text
+            EditorValue(
+                text="Primary Source Two",
+                display_text="Primary Source Two",
+                badge="en",
+                is_resolved=True,
+            )
         ],
         [
             # contact-point renders email as text
-            EditorValue(text="info@contact-point.one")
+            EditorValue(
+                text="info@contact-point.one",
+                display_text="info@contact-point.one",
+                is_resolved=True,
+            )
         ],
         [
             # contact-point renders email as text
-            EditorValue(text="help@contact-point.two")
+            EditorValue(
+                text="help@contact-point.two",
+                display_text="help@contact-point.two",
+                is_resolved=True,
+            )
         ],
         [
             # unit renders shortName as text (no language badge)
-            EditorValue(text="OU1")
+            EditorValue(text="OU1", display_text="OU1", is_resolved=True)
         ],
         [
             # activity renders title as text (with language badge)
-            EditorValue(text="Aktivität 1", badge="de")
+            EditorValue(
+                text="Aktivität 1",
+                display_text="Aktivität 1",
+                badge="de",
+                is_resolved=True,
+            )
         ],
     ]
 
@@ -115,18 +161,68 @@ def test_transform_models_to_preview_empty() -> None:
 def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> None:
     dummy_previews = [transform_models_to_preview([d]) for d in dummy_data]
     assert dummy_previews == [
-        [EditorValue(text="PrimarySource")],
-        [EditorValue(text="PrimarySource")],
-        [EditorValue(text="ContactPoint")],
-        [EditorValue(text="ContactPoint")],
-        [EditorValue(text="Unit 1", badge="en", enabled=True)],
         [
-            EditorValue(text="A1", enabled=True),
-            EditorValue(text="wEvxYRPlmGVQCbZx9GAbn"),
-            EditorValue(text="g32qzYNVH1Ez7JTEk3fvLF"),
-            EditorValue(text="cWWm02l1c6cucKjIhkFqY4"),
-            EditorValue(text="cWWm02l1c6cucKjIhkFqY4"),
-            EditorValue(text="1999-12-24", badge="day"),
-            EditorValue(text="2023-01-01", badge="day"),
+            EditorValue(
+                text="PrimarySource", display_text="PrimarySource", is_resolved=True
+            )
+        ],
+        [
+            EditorValue(
+                text="PrimarySource", display_text="PrimarySource", is_resolved=True
+            )
+        ],
+        [
+            EditorValue(
+                text="ContactPoint", display_text="ContactPoint", is_resolved=True
+            )
+        ],
+        [
+            EditorValue(
+                text="ContactPoint", display_text="ContactPoint", is_resolved=True
+            )
+        ],
+        [
+            EditorValue(
+                text="Unit 1",
+                display_text="Unit 1",
+                badge="en",
+                enabled=True,
+                is_resolved=True,
+            )
+        ],
+        [
+            EditorValue(text="A1", display_text="A1", enabled=True, is_resolved=True),
+            EditorValue(
+                text="wEvxYRPlmGVQCbZx9GAbn",
+                display_text="wEvxYRPlmGVQCbZx9GAbn",
+                is_identifier=True,
+            ),
+            EditorValue(
+                text="g32qzYNVH1Ez7JTEk3fvLF",
+                display_text="g32qzYNVH1Ez7JTEk3fvLF",
+                is_identifier=True,
+            ),
+            EditorValue(
+                text="cWWm02l1c6cucKjIhkFqY4",
+                display_text="cWWm02l1c6cucKjIhkFqY4",
+                is_identifier=True,
+            ),
+            EditorValue(
+                text="cWWm02l1c6cucKjIhkFqY4",
+                display_text="cWWm02l1c6cucKjIhkFqY4",
+                is_identifier=True,
+            ),
+            EditorValue(
+                text="1999-12-24",
+                display_text="1999-12-24",
+                badge="day",
+                is_resolved=True,
+            ),
+            EditorValue(
+                text="2023-01-01",
+                display_text="2023-01-01",
+                badge="day",
+                is_resolved=True,
+            ),
         ],
     ]

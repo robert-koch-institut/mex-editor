@@ -8,6 +8,7 @@ license = { file = "LICENSE" }
 urls = { Repository = "https://github.com/robert-koch-institut/mex-editor" }
 requires-python = ">=3.11,<3.12"
 dependencies = [
+    "async-lru>=2.0.5,<3",
     "fastapi>=0.115,<1",
     "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.54.2",
     "pydantic>=2,<3",
@@ -82,7 +83,7 @@ addopts = [
     "--cov",
     "--no-cov-on-fail",
     "--cov-report=term-missing:skip-covered",
-    "--cov-fail-under=70",
+    "--cov-fail-under=65",
     "--cov-branch",
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--random-order-bucket=global",

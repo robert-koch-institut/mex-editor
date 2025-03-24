@@ -1,4 +1,5 @@
 from functools import cache
+from typing import TYPE_CHECKING, cast
 
 from mex.common.fields import (
     EMAIL_FIELDS_BY_CLASS_NAME,
@@ -24,7 +25,7 @@ from mex.common.models import (
 from mex.common.transform import ensure_postfix, ensure_prefix
 from mex.common.types import (
     TEMPORAL_ENTITY_CLASSES_BY_PRECISION,
-    VOCABULARY_ENUMS_BY_NAME,
+    AnyVocabularyEnum,
     Link,
     LinkLanguage,
     MergedPrimarySourceIdentifier,
@@ -35,7 +36,10 @@ from mex.common.types import (
 from mex.editor.edit.models import EditorField, EditorPrimarySource, InputConfig
 from mex.editor.models import EditorValue
 from mex.editor.transform import ensure_list, transform_value
-from mex.editor.types import AnyModelValue
+from mex.editor.types import TYPES_BY_FIELDS_BY_CLASS_NAMES, AnyModelValue
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def _get_primary_source_id_from_model(
@@ -93,14 +97,30 @@ def _transform_model_to_additive_input_config(
             return InputConfig(
                 editable_text=True,
                 editable_badge=True,
-                badge_options=list(TextLanguage),
+                badge_options=[e.name for e in TextLanguage],
+                badge_default=TextLanguage.DE,
+                badge_title=TextLanguage.__name__,
             )
         if field_name in (LINK_FIELDS_BY_CLASS_NAME[entity_type]):
             return InputConfig(
                 editable_text=True,
                 editable_badge=True,
                 editable_href=True,
-                badge_options=list(LinkLanguage),
+                badge_options=[e.name for e in LinkLanguage],
+                badge_default=LinkLanguage.DE,
+                badge_title=LinkLanguage.__name__,
+            )
+        if field_name in (VOCABULARY_FIELDS_BY_CLASS_NAME[entity_type]):
+            vocabulary = cast(
+                "type[AnyVocabularyEnum]",
+                next(iter(TYPES_BY_FIELDS_BY_CLASS_NAMES[entity_type][field_name])),
+            )
+            default_enum = next(cast("Iterator[AnyVocabularyEnum]", iter(vocabulary)))
+            return InputConfig(
+                editable_badge=True,
+                badge_options=[e.name for e in vocabulary],
+                badge_default=default_enum.name,
+                badge_title=vocabulary.__name__,
             )
     return None
 
@@ -266,7 +286,13 @@ def _transform_editor_value_to_model_value(
     if field_name in TEXT_FIELDS_BY_CLASS_NAME[class_name]:
         return Text(language=value.badge, value=value.text)
     if field_name in VOCABULARY_FIELDS_BY_CLASS_NAME[class_name]:
-        return VOCABULARY_ENUMS_BY_NAME[str(value.badge)][str(value.text)]
+        vocabulary = cast(
+            "type[AnyVocabularyEnum]",
+            next(iter(TYPES_BY_FIELDS_BY_CLASS_NAMES[class_name][field_name])),
+        )
+        if value.badge:
+            return vocabulary[value.badge]
+        return next(cast("Iterator[AnyVocabularyEnum]", iter(vocabulary)))
     if field_name in TEMPORAL_FIELDS_BY_CLASS_NAME[class_name]:
         precision = TemporalEntityPrecision(value.badge)
         temporal_class = TEMPORAL_ENTITY_CLASSES_BY_PRECISION[precision]

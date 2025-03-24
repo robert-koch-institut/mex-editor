@@ -41,10 +41,10 @@ def render_text(value: EditorValue) -> rx.Component:
     )
 
 
-def render_badge(value: EditorValue) -> rx.Component:
-    """Render a generic badge for an editor value."""
+def render_badge(text: str | None) -> rx.Component:
+    """Render a generic badge with the given text."""
     return rx.badge(
-        value.badge,
+        text,
         radius="large",
         variant="soft",
         style={"margin": "auto 0"},
@@ -61,7 +61,7 @@ def render_value(value: EditorValue) -> rx.Component:
         ),
         rx.cond(
             value.badge,
-            render_badge(value),
+            render_badge(value.badge),
         ),
         spacing="1",
     )

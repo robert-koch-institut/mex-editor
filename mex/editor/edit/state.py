@@ -163,13 +163,6 @@ class EditState(State):
                 primary_source.editor_values[index].text = value
 
     @rx.event
-    def set_badge_value(self, field_name: str, index: int, value: str) -> None:
-        """Set the badge attribute on an additive editor value."""
-        for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if primary_source.input_config:
-                primary_source.editor_values[index].badge = value
-
-    @rx.event
     def set_href_value(self, field_name: str, index: int, value: str) -> None:
         """Set an external href on an additive editor value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):

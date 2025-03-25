@@ -1,7 +1,10 @@
+import nest_asyncio
 import pytest
 
 from mex.common.models import AnyExtractedModel, ExtractedPrimarySource
 from mex.editor.utils import resolve_identifier
+
+nest_asyncio.apply()
 
 
 @pytest.fixture

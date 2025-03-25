@@ -9,10 +9,7 @@ from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import MExError
-from mex.common.models import (
-    MERGED_MODEL_CLASSES,
-    MergedPrimarySource,
-)
+from mex.common.models import MERGED_MODEL_CLASSES, MergedPrimarySource
 from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchPrimarySource, SearchResult

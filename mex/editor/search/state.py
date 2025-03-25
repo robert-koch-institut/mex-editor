@@ -15,7 +15,7 @@ from mex.common.models import (
 )
 from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
-from mex.editor.search.models import SearchResult
+from mex.editor.search.models import SearchPrimarySource, SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
 from mex.editor.utils import resolve_identifier
@@ -31,8 +31,7 @@ class SearchState(State):
     total: Annotated[int, Field(ge=0)] = 0
     query_string: Annotated[str, Field(max_length=1000)] = ""
     entity_types: dict[str, bool] = {k.stemType: False for k in MERGED_MODEL_CLASSES}
-    available_primary_sources: list[str] = []
-    had_primary_sources: dict[str, bool] = {}
+    had_primary_sources: dict[str, SearchPrimarySource] = {}
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 50
     _n_resolve_identifier_tasks: int = 0
@@ -75,9 +74,8 @@ class SearchState(State):
             if isinstance(had_primary_source_params, list)
             else [had_primary_source_params]
         )
-        self.had_primary_sources = {
-            p: p in had_primary_source_params for p in self.available_primary_sources
-        }
+        for primary_source_identifier in had_primary_source_params:
+            self.had_primary_sources[primary_source_identifier].checked = True
 
     @rx.event
     def push_search_params(self) -> EventSpec | None:
@@ -86,7 +84,9 @@ class SearchState(State):
             q=self.query_string,
             page=self.current_page,
             entityType=[k for k, v in self.entity_types.items() if v],
-            hadPrimarySource=[k for k, v in self.had_primary_sources.items() if v],
+            hadPrimarySource=[
+                k for k, v in self.had_primary_sources.items() if v.checked
+            ],
         )
 
     @rx.event
@@ -97,7 +97,7 @@ class SearchState(State):
     @rx.event
     def set_had_primary_source(self, index: str, value: bool) -> None:
         """Set the entity type for filtering and refresh the results."""
-        self.had_primary_sources[index] = value
+        self.had_primary_sources[index].checked = value
 
     @rx.event
     def set_page(self, page_number: str | int) -> None:
@@ -158,8 +158,8 @@ class SearchState(State):
                 ],
                 had_primary_source=[
                     identifier
-                    for identifier, include in self.had_primary_sources.items()
-                    if include
+                    for identifier, primary_source in self.had_primary_sources.items()
+                    if primary_source.checked
                 ],
                 skip=self.limit * (self.current_page - 1),
                 limit=self.limit,
@@ -203,6 +203,13 @@ class SearchState(State):
                     "primary sources."
                 )
                 raise MExError(msg)
-            self.available_primary_sources = [
-                str(source.identifier) for source in available_primary_sources
-            ]
+            self.had_primary_sources = {
+                str(source.identifier): SearchPrimarySource(
+                    identifier=source.identifier,
+                    title=source.title[0].display_text
+                    if source.title[0].display_text != "PrimarySource"
+                    else source.identifier,
+                    checked=False,
+                )
+                for source in available_primary_sources
+            }

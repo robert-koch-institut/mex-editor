@@ -9,3 +9,11 @@ class SearchResult(rx.Base):
     identifier: str
     title: list[EditorValue]
     preview: list[EditorValue]
+
+
+class SearchPrimarySource(rx.Base):
+    """Primary source filter."""
+
+    identifier: str
+    title: str
+    checked: bool

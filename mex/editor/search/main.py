@@ -4,7 +4,7 @@ import reflex as rx
 
 from mex.editor.components import render_value
 from mex.editor.layout import page
-from mex.editor.search.models import SearchResult
+from mex.editor.search.models import SearchPrimarySource, SearchResult
 from mex.editor.search.state import SearchState
 
 
@@ -112,11 +112,11 @@ def entity_type_filter() -> rx.Component:
     )
 
 
-def primary_source_choice(choice: tuple[str, bool]) -> rx.Component:
+def primary_source_choice(choice: tuple[str, SearchPrimarySource]) -> rx.Component:
     """Render a single checkbox for filtering by primary source."""
     return rx.checkbox(
-        choice[0],
-        checked=choice[1],
+        choice[1].title,
+        checked=choice[1].checked,
         on_change=[
             SearchState.set_had_primary_source(choice[0]),
             SearchState.go_to_first_page,

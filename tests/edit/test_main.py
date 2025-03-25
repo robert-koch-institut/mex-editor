@@ -14,15 +14,6 @@ from mex.common.types import Identifier
 
 
 @pytest.fixture
-def extracted_activity(
-    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
-) -> ExtractedActivity:
-    extracted_activity = dummy_data_by_identifier_in_primary_source["a-1"]
-    assert type(extracted_activity) is ExtractedActivity
-    return extracted_activity
-
-
-@pytest.fixture
 def edit_page(
     frontend_url: str,
     writer_user_page: Page,

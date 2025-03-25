@@ -196,3 +196,12 @@ def load_dummy_data(
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
     connector.ingest(dummy_data)
+
+
+@pytest.fixture
+def extracted_activity(
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+) -> ExtractedActivity:
+    extracted_activity = dummy_data_by_identifier_in_primary_source["a-1"]
+    assert type(extracted_activity) is ExtractedActivity
+    return extracted_activity

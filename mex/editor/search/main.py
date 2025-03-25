@@ -42,6 +42,7 @@ def search_result(result: SearchResult) -> rx.Component:
         ),
         style={"width": "100%"},
         class_name="search-result-card",
+        custom_attrs={"data-testid": f"result-{result.identifier}"},
     )
 
 

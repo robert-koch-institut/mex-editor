@@ -35,6 +35,8 @@ def test_index(
     activity = page.get_by_test_id(f"result-{extracted_activity.stableTargetId}")
     activity.scroll_into_view_if_needed()
     expect(activity).to_be_visible()
+    expect(activity).to_contain_text("info@contact-point.one")  # resolved preview
+
     page.screenshot(path="tests_search_test_main-test_index-focus-activity.png")
 
 

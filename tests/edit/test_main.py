@@ -139,7 +139,7 @@ def test_edit_page_renders_temporal(
 
 
 @pytest.mark.integration
-def test_edit_page_renders_identifier(
+def test_edit_page_resolves_identifier(
     edit_page: Page,
     dummy_data_by_stable_target_id: dict[Identifier, AnyExtractedModel],
     extracted_activity: ExtractedActivity,

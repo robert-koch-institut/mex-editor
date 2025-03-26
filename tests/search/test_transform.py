@@ -15,7 +15,7 @@ def test_transform_models_to_results() -> None:
     )
     search_result = transform_models_to_results([unit_preview])
     assert len(search_result) == 1
-    assert search_result[0].model_dump() == {
+    assert search_result[0].dict() == {
         "identifier": "000000000012345",
         "title": [
             {

@@ -11,7 +11,7 @@ def test_login_state_login_success() -> None:
 
     assert "/" in str(state.login())
     assert state.user
-    assert state.user.model_dump() == {
+    assert state.user.dict() == {
         "name": "writer",
         "authorization": "Basic d3JpdGVyOndyaXRlcl9wYXNz",
         "write_access": True,

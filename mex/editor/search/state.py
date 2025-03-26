@@ -199,8 +199,8 @@ class SearchState(State):
                     "primary sources."
                 )
                 raise MExError(msg)
-            self.had_primary_sources = {
-                str(source.identifier): SearchPrimarySource(
+            search_primary_sources = [
+                SearchPrimarySource(
                     identifier=source.identifier,
                     title=source.title[0].display_text
                     if source.title[0].display_text != "PrimarySource"
@@ -208,4 +208,10 @@ class SearchState(State):
                     checked=False,
                 )
                 for source in available_primary_sources
+            ]
+            self.had_primary_sources = {
+                str(source.identifier): source
+                for source in sorted(
+                    search_primary_sources, key=lambda source: source.title.lower()
+                )
             }

@@ -1,7 +1,7 @@
 import nest_asyncio
 import pytest
 
-from mex.common.exceptions import MExError
+from mex.common.exceptions import EmptySearchResultError, MExError
 from mex.common.models import AnyExtractedModel, ExtractedPrimarySource
 from mex.editor.models import EditorValue
 from mex.editor.utils import resolve_editor_value, resolve_identifier
@@ -24,6 +24,9 @@ async def test_resolve_identifier(
     assert isinstance(dummy_primary_source, ExtractedPrimarySource)
     returned = await resolve_identifier(dummy_primary_source.stableTargetId)
     assert returned == dummy_primary_source.title[0].value
+
+    with pytest.raises(EmptySearchResultError):
+        await resolve_identifier("IdentifierDoesNotExist")
 
 
 @pytest.mark.integration

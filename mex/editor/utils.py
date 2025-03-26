@@ -1,7 +1,7 @@
 from async_lru import alru_cache
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.exceptions import MExError
+from mex.common.exceptions import EmptySearchResultError, MExError
 from mex.common.models import AnyPreviewModel, PaginatedItemsContainer
 from mex.editor.models import EditorValue
 from mex.editor.search.transform import transform_models_to_results
@@ -23,6 +23,9 @@ async def resolve_identifier(identifier: str) -> str:
         },
     )
     container = PaginatedItemsContainer[AnyPreviewModel].model_validate(response)
+    if len(container.items) != 1:
+        msg = f"No item found for identifier '{identifier}'"
+        raise EmptySearchResultError(msg)
     result, *_ = transform_models_to_results(container.items)
     return f"{result.title[0].display_text}"
 

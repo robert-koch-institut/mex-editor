@@ -20,7 +20,7 @@ from mex.editor.transform import (
     transform_models_to_stem_type,
     transform_models_to_title,
 )
-from mex.editor.utils import resolve_identifier
+from mex.editor.utils import resolve_editor_value
 
 
 class EditState(State):
@@ -43,17 +43,13 @@ class EditState(State):
         for field in self.fields:
             for primary_source in field.primary_sources:
                 name = primary_source.name
-                if name.is_identifier and not name.resolved:
+                if not name.resolved:
                     async with self:
-                        name.display_text = await resolve_identifier(name.text)
-                        name.resolved = True
+                        await resolve_editor_value(name)
                 for editor_value in primary_source.editor_values:
-                    if editor_value.is_identifier and not editor_value.resolved:
+                    if not editor_value.resolved:
                         async with self:
-                            editor_value.display_text = await resolve_identifier(
-                                editor_value.text
-                            )
-                            editor_value.resolved = True
+                            await resolve_editor_value(editor_value)
 
         async with self:
             self._n_resolve_identifier_tasks -= 1

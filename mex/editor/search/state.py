@@ -15,7 +15,7 @@ from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchPrimarySource, SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
-from mex.editor.utils import resolve_identifier
+from mex.editor.utils import resolve_editor_value
 
 if TYPE_CHECKING:
     from reflex.istate.data import RouterData
@@ -132,10 +132,9 @@ class SearchState(State):
 
         for result in self.results:
             for preview in result.preview:
-                if preview.is_identifier and not preview.resolved:
+                if not preview.resolved:
                     async with self:
-                        preview.display_text = await resolve_identifier(preview.text)
-                        preview.resolved = True
+                        await resolve_editor_value(preview)
 
         async with self:
             self._n_resolve_identifier_tasks -= 1

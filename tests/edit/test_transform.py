@@ -398,7 +398,7 @@ def test_transform_models_to_fields() -> None:
 
     assert len(editor_fields) == len(MERGEABLE_FIELDS_BY_CLASS_NAME["MergedPerson"])
     fields_by_name = {f.name: f for f in editor_fields}
-    assert fields_by_name["givenName"].dict() == {
+    assert fields_by_name["givenName"].model_dump() == {
         "name": "givenName",
         "primary_sources": [
             {
@@ -451,7 +451,7 @@ def test_transform_models_to_fields() -> None:
             },
         ],
     }
-    assert fields_by_name["memberOf"].dict() == {
+    assert fields_by_name["memberOf"].model_dump() == {
         "name": "memberOf",
         "primary_sources": [
             {

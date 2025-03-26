@@ -18,7 +18,7 @@ class EditorValue(rx.Base):
     external: bool = False
     enabled: bool = True
     is_identifier: bool = False
-    is_resolved: bool = False
+    resolved: bool = False
 
 
 class User(rx.Base):

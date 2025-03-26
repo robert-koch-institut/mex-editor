@@ -52,7 +52,7 @@ def test_transform_models_to_results_single_model() -> None:
             href=None,
             external=False,
             enabled=True,
-            is_resolved=True,
+            resolved=True,
         )
     ]
     assert result[0].preview == [
@@ -63,7 +63,7 @@ def test_transform_models_to_results_single_model() -> None:
             href=None,
             external=False,
             enabled=True,
-            is_resolved=True,
+            resolved=True,
         ),
         EditorValue(
             text="alternativeName",
@@ -72,7 +72,7 @@ def test_transform_models_to_results_single_model() -> None:
             href=None,
             external=False,
             enabled=True,
-            is_resolved=True,
+            resolved=True,
         ),
         EditorValue(
             text="wikidataId",
@@ -81,7 +81,7 @@ def test_transform_models_to_results_single_model() -> None:
             href=None,
             external=False,
             enabled=True,
-            is_resolved=True,
+            resolved=True,
         ),
     ]
     assert len(result[0].all_properties) == 1
@@ -122,7 +122,7 @@ def test_transform_models_to_results_multiple_models() -> None:
             href=None,
             external=False,
             enabled=True,
-            is_resolved=True,
+            resolved=True,
         )
     ]
     assert result[0].preview == [
@@ -133,7 +133,7 @@ def test_transform_models_to_results_multiple_models() -> None:
             href=None,
             external=False,
             enabled=True,
-            is_resolved=True,
+            resolved=True,
         ),
         EditorValue(
             text="alternativeName1",
@@ -142,7 +142,7 @@ def test_transform_models_to_results_multiple_models() -> None:
             href=None,
             external=False,
             enabled=True,
-            is_resolved=True,
+            resolved=True,
         ),
         EditorValue(
             text="wikidataId1",
@@ -151,7 +151,7 @@ def test_transform_models_to_results_multiple_models() -> None:
             href=None,
             external=False,
             enabled=True,
-            is_resolved=True,
+            resolved=True,
         ),
     ]
     assert len(result[0].all_properties) == 1
@@ -166,7 +166,7 @@ def test_transform_models_to_results_multiple_models() -> None:
             href=None,
             external=False,
             enabled=True,
-            is_resolved=True,
+            resolved=True,
         )
     ]
     assert result[1].preview == [
@@ -177,7 +177,7 @@ def test_transform_models_to_results_multiple_models() -> None:
             href=None,
             external=False,
             enabled=True,
-            is_resolved=True,
+            resolved=True,
         ),
         EditorValue(
             text="alternativeName2",
@@ -186,7 +186,7 @@ def test_transform_models_to_results_multiple_models() -> None:
             href=None,
             external=False,
             enabled=True,
-            is_resolved=True,
+            resolved=True,
         ),
         EditorValue(
             text="wikidataId2",
@@ -195,7 +195,7 @@ def test_transform_models_to_results_multiple_models() -> None:
             href=None,
             external=False,
             enabled=True,
-            is_resolved=True,
+            resolved=True,
         ),
     ]
     assert len(result[1].all_properties) == 1

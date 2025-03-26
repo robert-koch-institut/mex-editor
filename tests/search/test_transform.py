@@ -26,7 +26,7 @@ def test_transform_models_to_results() -> None:
                 "external": False,
                 "enabled": True,
                 "is_identifier": False,
-                "is_resolved": True,
+                "resolved": True,
             }
         ],
         "preview": [
@@ -38,7 +38,7 @@ def test_transform_models_to_results() -> None:
                 "external": False,
                 "enabled": True,
                 "is_identifier": False,
-                "is_resolved": True,
+                "resolved": True,
             }
         ],
     }

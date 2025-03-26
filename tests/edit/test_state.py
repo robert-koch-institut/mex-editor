@@ -42,7 +42,7 @@ def test_state_get_primary_sources_by_field_name() -> None:
             input_config=None,
             editor_values=[
                 EditorValue(
-                    text="test@foo.bar", display_text="test@foo.bar", is_resolved=True
+                    text="test@foo.bar", display_text="test@foo.bar", resolved=True
                 )
             ],
         ),

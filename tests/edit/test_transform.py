@@ -108,7 +108,7 @@ def test_get_primary_source_id_from_model_error() -> None:
                     text="VALID_FOR_PROCESSING",
                     display_text="VALID_FOR_PROCESSING",
                     badge="ConsentStatus",
-                    is_resolved=True,
+                    resolved=True,
                 )
             ],
         ),
@@ -122,10 +122,10 @@ def test_get_primary_source_id_from_model_error() -> None:
             SubtractivePerson(),
             [
                 EditorValue(
-                    text="Example, Name", display_text="Example, Name", is_resolved=True
+                    text="Example, Name", display_text="Example, Name", resolved=True
                 ),
                 EditorValue(
-                    text="Dr. Example", display_text="Dr. Example", is_resolved=True
+                    text="Dr. Example", display_text="Dr. Example", resolved=True
                 ),
             ],
         ),
@@ -145,7 +145,7 @@ def test_get_primary_source_id_from_model_error() -> None:
                     display_text="gGdOIbDIHRt35He616Fv5q",
                     href="/item/gGdOIbDIHRt35He616Fv5q",
                     is_identifier=True,
-                    is_resolved=False,
+                    resolved=False,
                 ),
             ],
         ),
@@ -178,14 +178,14 @@ def test_get_primary_source_id_from_model_error() -> None:
                     href="http://example",
                     external=True,
                     enabled=False,
-                    is_resolved=True,
+                    resolved=True,
                 ),
                 EditorValue(
                     text="http://pavyzdys",
                     display_text="http://pavyzdys",
                     href="http://pavyzdys",
                     external=True,
-                    is_resolved=True,
+                    resolved=True,
                 ),
             ],
         ),
@@ -287,7 +287,7 @@ def test_transform_model_to_additive_input_config(
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
                     editor_values=[
                         EditorValue(
-                            text="Example", display_text="Example", is_resolved=True
+                            text="Example", display_text="Example", resolved=True
                         )
                     ],
                     input_config=None,
@@ -331,14 +331,12 @@ def test_transform_model_to_additive_input_config(
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
                     editor_values=[
-                        EditorValue(
-                            text="Given", display_text="Given", is_resolved=True
-                        ),
+                        EditorValue(text="Given", display_text="Given", resolved=True),
                         EditorValue(
                             text="Gegeben",
                             display_text="Gegeben",
                             enabled=False,
-                            is_resolved=True,
+                            resolved=True,
                         ),
                     ],
                     input_config=None,
@@ -355,9 +353,7 @@ def test_transform_model_to_additive_input_config(
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
                     editor_values=[
-                        EditorValue(
-                            text="Family", display_text="Family", is_resolved=True
-                        )
+                        EditorValue(text="Family", display_text="Family", resolved=True)
                     ],
                     enabled=False,
                     input_config=None,
@@ -414,7 +410,7 @@ def test_transform_models_to_fields() -> None:
                     "external": False,
                     "enabled": True,
                     "is_identifier": True,
-                    "is_resolved": False,
+                    "resolved": False,
                 },
                 "identifier": "00000000000000",
                 "editor_values": [],
@@ -430,7 +426,7 @@ def test_transform_models_to_fields() -> None:
                     "external": False,
                     "enabled": True,
                     "is_identifier": True,
-                    "is_resolved": False,
+                    "resolved": False,
                 },
                 "identifier": "00000000000000",
                 "editor_values": [
@@ -442,7 +438,7 @@ def test_transform_models_to_fields() -> None:
                         "external": False,
                         "enabled": True,
                         "is_identifier": False,
-                        "is_resolved": True,
+                        "resolved": True,
                     }
                 ],
                 "enabled": True,
@@ -467,7 +463,7 @@ def test_transform_models_to_fields() -> None:
                     "external": False,
                     "enabled": True,
                     "is_identifier": True,
-                    "is_resolved": False,
+                    "resolved": False,
                 },
                 "identifier": "00000000000000",
                 "editor_values": [],

@@ -20,7 +20,7 @@ from mex.editor.transform import (
         (
             "foo",
             True,
-            [EditorValue(text="foo", display_text="foo", is_resolved=True)],
+            [EditorValue(text="foo", display_text="foo", resolved=True)],
         ),
         (
             [
@@ -31,15 +31,15 @@ from mex.editor.transform import (
             ],
             True,
             [
-                EditorValue(text="bar", display_text="bar", is_resolved=True),
+                EditorValue(text="bar", display_text="bar", resolved=True),
                 EditorValue(
-                    text="REST", display_text="REST", badge="APIType", is_resolved=True
+                    text="REST", display_text="REST", badge="APIType", resolved=True
                 ),
                 EditorValue(
                     text="hi there",
                     display_text="hi there",
                     badge="en",
-                    is_resolved=True,
+                    resolved=True,
                 ),
                 EditorValue(
                     text="homepage",
@@ -47,7 +47,7 @@ from mex.editor.transform import (
                     badge="en",
                     href="http://mex",
                     external=True,
-                    is_resolved=True,
+                    resolved=True,
                 ),
             ],
         ),
@@ -60,7 +60,7 @@ from mex.editor.transform import (
                     display_text="cWWm02l1c6cucKjIhkFqY4",
                     href="/item/cWWm02l1c6cucKjIhkFqY4",
                     is_identifier=True,
-                    is_resolved=False,
+                    resolved=False,
                 )
             ],
         ),
@@ -72,7 +72,7 @@ from mex.editor.transform import (
                     text="cWWm02l1c6cucKjIhkFqY4",
                     display_text="cWWm02l1c6cucKjIhkFqY4",
                     is_identifier=True,
-                    is_resolved=False,
+                    resolved=False,
                 )
             ],
         ),
@@ -110,7 +110,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
                 text="Primary Source One",
                 display_text="Primary Source One",
                 badge="en",
-                is_resolved=True,
+                resolved=True,
             )
         ],
         [
@@ -119,7 +119,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
                 text="Primary Source Two",
                 display_text="Primary Source Two",
                 badge="en",
-                is_resolved=True,
+                resolved=True,
             )
         ],
         [
@@ -127,7 +127,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
             EditorValue(
                 text="info@contact-point.one",
                 display_text="info@contact-point.one",
-                is_resolved=True,
+                resolved=True,
             )
         ],
         [
@@ -135,12 +135,12 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
             EditorValue(
                 text="help@contact-point.two",
                 display_text="help@contact-point.two",
-                is_resolved=True,
+                resolved=True,
             )
         ],
         [
             # unit renders shortName as text (no language badge)
-            EditorValue(text="OU1", display_text="OU1", is_resolved=True)
+            EditorValue(text="OU1", display_text="OU1", resolved=True)
         ],
         [
             # activity renders title as text (with language badge)
@@ -148,7 +148,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
                 text="Aktivität 1",
                 display_text="Aktivität 1",
                 badge="de",
-                is_resolved=True,
+                resolved=True,
             )
         ],
     ]
@@ -163,35 +163,27 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
     assert dummy_previews == [
         [
             EditorValue(
-                text="PrimarySource", display_text="PrimarySource", is_resolved=True
+                text="PrimarySource", display_text="PrimarySource", resolved=True
             )
         ],
         [
             EditorValue(
-                text="PrimarySource", display_text="PrimarySource", is_resolved=True
+                text="PrimarySource", display_text="PrimarySource", resolved=True
             )
         ],
-        [
-            EditorValue(
-                text="ContactPoint", display_text="ContactPoint", is_resolved=True
-            )
-        ],
-        [
-            EditorValue(
-                text="ContactPoint", display_text="ContactPoint", is_resolved=True
-            )
-        ],
+        [EditorValue(text="ContactPoint", display_text="ContactPoint", resolved=True)],
+        [EditorValue(text="ContactPoint", display_text="ContactPoint", resolved=True)],
         [
             EditorValue(
                 text="Unit 1",
                 display_text="Unit 1",
                 badge="en",
                 enabled=True,
-                is_resolved=True,
+                resolved=True,
             )
         ],
         [
-            EditorValue(text="A1", display_text="A1", enabled=True, is_resolved=True),
+            EditorValue(text="A1", display_text="A1", enabled=True, resolved=True),
             EditorValue(
                 text="wEvxYRPlmGVQCbZx9GAbn",
                 display_text="wEvxYRPlmGVQCbZx9GAbn",
@@ -216,13 +208,13 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
                 text="1999-12-24",
                 display_text="1999-12-24",
                 badge="day",
-                is_resolved=True,
+                resolved=True,
             ),
             EditorValue(
                 text="2023-01-01",
                 display_text="2023-01-01",
                 badge="day",
-                is_resolved=True,
+                resolved=True,
             ),
         ],
     ]

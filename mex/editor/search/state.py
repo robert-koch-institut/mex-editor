@@ -132,10 +132,10 @@ class SearchState(State):
 
         for result in self.results:
             for preview in result.preview:
-                if preview.is_identifier and not preview.is_resolved:
+                if preview.is_identifier and not preview.resolved:
                     async with self:
                         preview.display_text = await resolve_identifier(preview.text)
-                        preview.is_resolved = True
+                        preview.resolved = True
 
         async with self:
             self._n_resolve_identifier_tasks -= 1

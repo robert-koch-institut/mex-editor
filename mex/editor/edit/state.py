@@ -20,7 +20,7 @@ from mex.editor.transform import (
     transform_models_to_stem_type,
     transform_models_to_title,
 )
-from mex.editor.utils import resolve_editor_value
+from mex.editor.utils import resolve_editor_value, resolve_identifier
 
 
 class EditState(State):
@@ -122,6 +122,7 @@ class EditState(State):
                 "backend", "error submitting rule set", exc.response.text
             )
             return
+        resolve_identifier.cache_clear()
         yield rx.toast.success(
             title="Saved",
             description=f"{self.stem_type} rule-set was saved successfully.",

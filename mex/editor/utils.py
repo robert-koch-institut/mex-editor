@@ -7,7 +7,7 @@ from mex.editor.models import EditorValue
 from mex.editor.transform import transform_models_to_title
 
 
-@alru_cache
+@alru_cache(maxsize=5000)
 async def resolve_identifier(identifier: str) -> str:
     """Resolve identifiers to human readable display values."""
     # TODO(HS): use the user auth for backend requests (stop-gap MX-1616)

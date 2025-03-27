@@ -6,7 +6,7 @@ from mex.editor.edit.models import EditorValue
 def render_internal_link(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable internal link that loads the edit page."""
     return rx.link(
-        value.text,
+        value.display_text,
         href=value.href,
         high_contrast=True,
         role="link",
@@ -16,7 +16,7 @@ def render_internal_link(value: EditorValue) -> rx.Component:
 def render_external_link(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable external link that opens in a new tab."""
     return rx.link(
-        value.text,
+        value.display_text,
         href=value.href,
         high_contrast=True,
         is_external=True,
@@ -36,7 +36,7 @@ def render_link(value: EditorValue) -> rx.Component:
 def render_text(value: EditorValue) -> rx.Component:
     """Render an editor value as a text span."""
     return rx.text(
-        value.text,
+        value.display_text,
         as_="span",
     )
 

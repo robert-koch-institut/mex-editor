@@ -29,17 +29,10 @@ class EditState(State):
     fields: list[EditorField] = []
     item_title: list[EditorValue] = []
     stem_type: str | None = None
-    _n_resolve_identifier_tasks: int = 0
 
     @rx.event(background=True)
     async def resolve_identifiers(self):
         """Resolve identifiers to human readable display values."""
-        async with self:
-            # check if there is already a running task
-            if self._n_resolve_identifier_tasks > 0:
-                return
-            self._n_resolve_identifier_tasks += 1
-
         for field in self.fields:
             for primary_source in field.primary_sources:
                 name = primary_source.name
@@ -50,9 +43,6 @@ class EditState(State):
                     if not editor_value.resolved:
                         async with self:
                             await resolve_editor_value(editor_value)
-
-        async with self:
-            self._n_resolve_identifier_tasks -= 1
 
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:

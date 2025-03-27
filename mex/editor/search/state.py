@@ -31,7 +31,6 @@ class SearchState(State):
     had_primary_sources: dict[str, SearchPrimarySource] = {}
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 50
-    _n_resolve_identifier_tasks: int = 0
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:
@@ -124,20 +123,11 @@ class SearchState(State):
     @rx.event(background=True)
     async def resolve_identifiers(self):
         """Resolve identifiers to human readable display values."""
-        async with self:
-            # check if there is already a running task
-            if self._n_resolve_identifier_tasks > 0:
-                return
-            self._n_resolve_identifier_tasks += 1
-
         for result in self.results:
             for preview in result.preview:
                 if not preview.resolved:
                     async with self:
                         await resolve_editor_value(preview)
-
-        async with self:
-            self._n_resolve_identifier_tasks -= 1
 
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:

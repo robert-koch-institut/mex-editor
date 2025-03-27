@@ -122,6 +122,7 @@ class EditState(State):
                 "backend", "error submitting rule set", exc.response.text
             )
             return
+        # clear cache to show edits in the UI
         resolve_identifier.cache_clear()
         yield rx.toast.success(
             title="Saved",

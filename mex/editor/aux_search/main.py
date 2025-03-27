@@ -28,10 +28,13 @@ def import_button(result: AuxResult, index: int) -> rx.Component:
         result.show_import_button,
         rx.button(
             "Import",
+            on_click=AuxState.import_result(index),
             align="end",
         ),
         rx.button(
-            "Import", on_click=AuxState.import_result(index), align="end", disabled=True
+            "Imported",
+            align="end",
+            disabled=True,
         ),
     )
 
@@ -172,16 +175,51 @@ def search_results() -> rx.Component:
 def nav_bar() -> rx.Component:
     """Render a bar with an extractor navigation menu."""
     return rx.flex(
-        rx.foreach(
-            AuxState.aux_data_sources,
-            lambda item: rx.text(
-                item,
-                cursor="pointer",
-                size="5",
+        rx.tabs.root(
+            rx.tabs.list(
+                rx.spacer(),
+                rx.tabs.trigger("Wikidata", value="wikidata"),
+                rx.tabs.trigger("LDAP", value="ldap"),
+                rx.tabs.trigger("Orchid", value="orchid"),
+                rx.spacer(),
+                size="2",
             ),
+            rx.spacer(),
+            rx.tabs.content(
+                rx.vstack(
+                    search_input(),
+                    search_results(),
+                    justify="center",
+                    align="center",
+                    spacing="5",
+                ),
+                value="wikidata",
+            ),
+            rx.tabs.content(
+                rx.vstack(
+                    search_input(),
+                    search_results(),
+                    justify="center",
+                    align="center",
+                    spacing="5",
+                ),
+                value="ldap",
+            ),
+            rx.tabs.content(
+                rx.vstack(
+                    search_input(),
+                    search_results(),
+                    justify="center",
+                    align="center",
+                    spacing="5",
+                ),
+                value="orchid",
+                disabled=True,
+            ),
+            default_value="wikidata",
+            on_change=lambda value: AuxState.change_extractor(value),
         ),
-        direction="row",
-        gap="50px",
+        margin="1em",
         custom_attrs={"data-testid": "aux-nav-bar"},
     )
 
@@ -220,13 +258,6 @@ def index() -> rx.Component:
     """Return the index for the search component."""
     return rx.center(
         page(
-            rx.vstack(
-                nav_bar(),
-                search_input(),
-                search_results(),
-                spacing="5",
-                justify="center",
-                align="center",
-            )
+            nav_bar(),
         )
     )

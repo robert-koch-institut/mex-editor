@@ -135,7 +135,6 @@ def test_had_primary_sources(
     primary_sources = page.get_by_test_id("had-primary-sources")
     primary_sources.scroll_into_view_if_needed()
     expect(primary_sources).to_be_visible()
-    assert "00000000000000" in primary_sources.all_text_contents()[0]
     # check that title is resolved if primary source has a title
     assert (
         extracted_primary_source_one.title[0].value
@@ -193,8 +192,11 @@ def test_load_search_params(
 def test_push_search_params(
     frontend_url: str,
     writer_user_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     page = writer_user_page
+    primary_source = dummy_data_by_identifier_in_primary_source["ps-1"]
+    assert type(primary_source) is ExtractedPrimarySource
 
     # load page and verify url
     page.goto(frontend_url)
@@ -224,7 +226,7 @@ def test_push_search_params(
     primary_sources = page.get_by_test_id("had-primary-sources")
     expect(primary_sources).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load-2.png")
-    primary_sources.get_by_text("00000000000000").click()
+    primary_sources.get_by_text(primary_source.title[0].value).click()
     checked = primary_sources.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
     page.screenshot(
@@ -233,5 +235,6 @@ def test_push_search_params(
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
-        "**/?q=Can+I+search+here%3F&page=1&entityType=Activity&hadPrimarySource=00000000000000"
+        "**/?q=Can+I+search+here%3F&page=1&entityType=Activity"
+        f"&hadPrimarySource={primary_source.stableTargetId}"
     )

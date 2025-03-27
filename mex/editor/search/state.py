@@ -202,9 +202,7 @@ class SearchState(State):
             search_primary_sources = [
                 SearchPrimarySource(
                     identifier=source.identifier,
-                    title=source.title[0].display_text
-                    if source.title[0].display_text != "PrimarySource"
-                    else source.identifier,
+                    title=source.title[0].display_text,
                     checked=False,
                 )
                 for source in available_primary_sources

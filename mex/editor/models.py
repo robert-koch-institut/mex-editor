@@ -12,6 +12,7 @@ class EditorValue(rx.Base):
     """Model for describing atomic values in the editor."""
 
     text: str | None = None
+    identifier: str | None = None
     display_text: str | None = None
     badge: str | None = None
     href: str | None = None

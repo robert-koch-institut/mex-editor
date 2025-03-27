@@ -3,10 +3,14 @@ import reflex as rx
 from mex.editor.edit.models import EditorValue
 
 
-def render_internal_link(value: EditorValue) -> rx.Component:
+def render_identifier(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable internal link that loads the edit page."""
     return rx.link(
-        value.display_text,
+        rx.cond(
+            value.display_text,
+            value.display_text,
+            value.identifier,
+        ),
         href=value.href,
         high_contrast=True,
         role="link",
@@ -27,9 +31,9 @@ def render_external_link(value: EditorValue) -> rx.Component:
 def render_link(value: EditorValue) -> rx.Component:
     """Render an editor value as an internal or external link."""
     return rx.cond(
-        value.external,
+        value.identifier,
+        render_identifier(value),
         render_external_link(value),
-        render_internal_link(value),
     )
 
 

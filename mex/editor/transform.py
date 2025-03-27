@@ -46,7 +46,7 @@ def transform_value(value: object, allow_link: bool = True) -> EditorValue:
     if isinstance(value, Identifier):
         return EditorValue(
             text=str(value),
-            display_text=str(value),
+            identifier=str(value),
             href=f"/item/{value}" if allow_link else None,
             is_identifier=True,
         )

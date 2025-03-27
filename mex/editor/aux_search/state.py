@@ -54,10 +54,9 @@ class AuxState(State):
         ].show_properties
 
     @rx.event
-    def change_extractor(self, value: str) -> Generator[EventSpec | None, None, None]:
+    def change_extractor(self, value: str) -> None:
         """Change the current extractor."""
         self.current_aux_extractor = value
-        return self.search()
 
     @rx.event
     def set_query_string(self, value: str) -> Generator[EventSpec | None, None, None]:
@@ -108,8 +107,6 @@ class AuxState(State):
         """Search in aux-extractor for items based on the query string."""
         if self.query_string == "":
             return
-        if self.current_aux_extractor == "ldap":
-            self.query_string = self.query_string + "*"
         connector = BackendApiConnector.get()
         try:
             response = connector.request(

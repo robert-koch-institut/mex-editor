@@ -26,7 +26,7 @@ def test_aux_navbar(aux_page: Page) -> None:
 
 @pytest.mark.integration
 @pytest.mark.external
-def test_search_and_import_results(aux_page: Page) -> None:
+def test_wikidata_search_and_import_results(aux_page: Page) -> None:
     page = aux_page
     search_input = page.get_by_placeholder("Search here...")
     expect(search_input).to_be_visible()
@@ -57,6 +57,43 @@ def test_search_and_import_results(aux_page: Page) -> None:
     # test node was ingested into backend
     connector = BackendApiConnector.get()
     result = connector.fetch_extracted_items(q="Robert Koch-Institut")
+    assert result["total"] >= 1
+
+
+@pytest.mark.integration
+@pytest.mark.external
+def test_ldap_search_and_import_results(aux_page: Page) -> None:
+    page = aux_page
+    page.get_by_text("LDAP").click()
+    search_input = page.get_by_placeholder("Search here...")
+    expect(search_input).to_be_visible()
+
+    # test search input is showing correctly
+    search_input.fill("this doesn't exist gs871s9j91kksWN0shx345jnj")
+    expect(page.get_by_text("showing 0 of total 0 items found")).to_be_visible()
+    page.screenshot(path="tests_aux_search_test_main-test_search-input-0-found.png")
+
+    # test expand button works
+    search_input.fill("Ciftci*")
+    expand_all_properties_button = page.get_by_test_id("expand-properties-button").nth(
+        1
+    )
+    expect(page.get_by_text("Ciftci, Zehra")).to_be_visible()
+    expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
+    expand_all_properties_button.click()
+    expect(page.get_by_test_id("all-properties-display")).to_be_visible()
+    page.screenshot(path="tests_aux_search_test_main-test_expand_button.png")
+
+    # test import button works
+    import_button = page.get_by_text("Import").nth(1)
+    import_button.click()
+    expect(page.get_by_text("Aux search result imported successfully")).to_be_visible()
+    expect(import_button).to_be_disabled()
+    page.screenshot(path="tests_aux_search_test_main-test_import_button.png")
+
+    # test node was ingested into backend
+    connector = BackendApiConnector.get()
+    result = connector.fetch_extracted_items(q="Ciftci")
     assert result["total"] >= 1
 
 

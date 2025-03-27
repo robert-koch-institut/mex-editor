@@ -28,10 +28,13 @@ def import_button(result: AuxResult, index: int) -> rx.Component:
         result.show_import_button,
         rx.button(
             "Import",
+            on_click=AuxState.import_result(index),
             align="end",
         ),
         rx.button(
-            "Import", on_click=AuxState.import_result(index), align="end", disabled=True
+            "Imported",
+            align="end",
+            disabled=True,
         ),
     )
 
@@ -188,7 +191,7 @@ def nav_bar() -> rx.Component:
                     search_results(),
                     justify="center",
                     align="center",
-                    spacing="4",
+                    spacing="5",
                 ),
                 value="wikidata",
             ),
@@ -198,7 +201,7 @@ def nav_bar() -> rx.Component:
                     search_results(),
                     justify="center",
                     align="center",
-                    spacing="4",
+                    spacing="5",
                 ),
                 value="ldap",
             ),
@@ -208,7 +211,7 @@ def nav_bar() -> rx.Component:
                     search_results(),
                     justify="center",
                     align="center",
-                    spacing="4",
+                    spacing="5",
                 ),
                 value="orchid",
                 disabled=True,
@@ -216,6 +219,8 @@ def nav_bar() -> rx.Component:
             default_value="wikidata",
             on_change=lambda value: AuxState.change_extractor(value),
         ),
+        margin="1em",
+        custom_attrs={"data-testid": "aux-nav-bar"},
     )
 
 

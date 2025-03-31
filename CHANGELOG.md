@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- apply ruff TC006 by quoting type expressions in `typing.cast` calls
+
 ### Deprecated
 
 ### Removed

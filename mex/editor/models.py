@@ -13,13 +13,10 @@ class EditorValue(rx.Base):
 
     text: str | None = None
     identifier: str | None = None
-    display_text: str | None = None
     badge: str | None = None
     href: str | None = None
     external: bool = False
     enabled: bool = True
-    is_identifier: bool = False
-    resolved: bool = False
 
 
 class User(rx.Base):

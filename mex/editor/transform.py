@@ -30,45 +30,33 @@ def transform_value(value: object, allow_link: bool = True) -> EditorValue:
     if isinstance(value, Text):
         return EditorValue(
             text=value.value,
-            display_text=value.value,
             badge=value.language,
-            resolved=True,
         )
     if isinstance(value, Link):
         return EditorValue(
             text=value.title or value.url,
-            display_text=value.title or value.url,
             href=value.url if allow_link else None,
             badge=value.language,
             external=True,
-            resolved=True,
         )
     if isinstance(value, Identifier):
         return EditorValue(
-            text=str(value),
             identifier=str(value),
             href=f"/item/{value}" if allow_link else None,
-            is_identifier=True,
         )
     if isinstance(value, VocabularyEnum):
         return EditorValue(
             text=value.name,
-            display_text=value.name,
             badge=type(value).__name__,
-            resolved=True,
         )
     if isinstance(value, TemporalEntity):
         return EditorValue(
             text=str(value),
-            display_text=str(value),
             badge=value.precision.value,
-            resolved=True,
         )
     if isinstance(value, str):
         return EditorValue(
             text=str(value),
-            display_text=str(value),
-            resolved=True,
         )
     msg = f"cannot transform {type(value).__name__} to editor value"
     raise MExError(msg)

@@ -36,11 +36,11 @@ class EditState(State):
         for field in self.fields:
             for primary_source in field.primary_sources:
                 name = primary_source.name
-                if not name.resolved:
+                if name.identifier and not name.text:
                     async with self:
                         await resolve_editor_value(name)
                 for editor_value in primary_source.editor_values:
-                    if not editor_value.resolved:
+                    if editor_value.identifier and not editor_value.text:
                         async with self:
                             await resolve_editor_value(editor_value)
 

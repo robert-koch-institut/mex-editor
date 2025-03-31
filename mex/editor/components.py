@@ -7,8 +7,8 @@ def render_identifier(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable internal link that loads the edit page."""
     return rx.link(
         rx.cond(
-            value.display_text,
-            value.display_text,
+            value.text,
+            value.text,
             value.identifier,
         ),
         href=value.href,
@@ -20,7 +20,7 @@ def render_identifier(value: EditorValue) -> rx.Component:
 def render_external_link(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable external link that opens in a new tab."""
     return rx.link(
-        value.display_text,
+        value.text,
         href=value.href,
         high_contrast=True,
         is_external=True,
@@ -40,7 +40,7 @@ def render_link(value: EditorValue) -> rx.Component:
 def render_text(value: EditorValue) -> rx.Component:
     """Render an editor value as a text span."""
     return rx.text(
-        value.display_text,
+        value.text,
         as_="span",
     )
 

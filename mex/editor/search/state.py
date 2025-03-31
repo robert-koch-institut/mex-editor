@@ -125,7 +125,7 @@ class SearchState(State):
         """Resolve identifiers to human readable display values."""
         for result in self.results:
             for preview in result.preview:
-                if not preview.resolved:
+                if preview.identifier and not preview.text:
                     async with self:
                         await resolve_editor_value(preview)
 
@@ -192,7 +192,7 @@ class SearchState(State):
             search_primary_sources = [
                 SearchPrimarySource(
                     identifier=source.identifier,
-                    title=source.title[0].display_text,
+                    title=source.title[0].text,
                     checked=False,
                 )
                 for source in available_primary_sources

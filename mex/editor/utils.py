@@ -27,14 +27,13 @@ async def resolve_identifier(identifier: str) -> str:
         msg = f"No item found for identifier '{identifier}'"
         raise EmptySearchResultError(msg)
     title = transform_models_to_title(container.items)[0]
-    return f"{title.display_text}"
+    return f"{title.text}"
 
 
 async def resolve_editor_value(editor_value: EditorValue) -> None:
     """Resolve editor text values to human readable display values."""
-    if editor_value.is_identifier:
-        editor_value.display_text = await resolve_identifier(editor_value.text)
-        editor_value.resolved = True
+    if editor_value.identifier:
+        editor_value.text = await resolve_identifier(editor_value.identifier)
     else:
         msg = f"Cannot resolve editor value: {editor_value}"
         raise MExError(msg)

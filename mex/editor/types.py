@@ -29,4 +29,4 @@ class EditorUserDatabase(BaseModel):
         self, key: str
     ) -> dict[str, EditorUserPassword]:  # stop-gap: MX-1596
         """Return an attribute in indexing syntax."""
-        return cast(dict[str, EditorUserPassword], getattr(self, key))
+        return cast("dict[str, EditorUserPassword]", getattr(self, key))

@@ -7,9 +7,9 @@ from mex.editor.models import EditorValue
 class InputConfig(rx.Base):
     """Model for configuring input masks."""
 
-    badge_options: list[str] = []
     badge_default: str | None = None
-    badge_title: str | None = None
+    badge_options: list[str] = []
+    badge_titles: list[str] = []
     editable_href: bool = False
     editable_badge: bool = False
     editable_text: bool = False

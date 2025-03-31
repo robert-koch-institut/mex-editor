@@ -124,9 +124,9 @@ def additive_rule_input(
                 },
             ),
         ),
-        rx.cond(
-            input_config.badge_title,
-            render_badge(input_config.badge_title),
+        rx.foreach(
+            input_config.badge_titles,
+            render_badge,
         ),
         remove_additive_button(
             field_name,

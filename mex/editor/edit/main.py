@@ -22,7 +22,7 @@ def editor_value_switch(
     """Return a switch for toggling subtractive rules."""
     return rx.switch(
         checked=value.enabled,
-        on_change=cast(EditState, EditState).toggle_field_value(field_name, value),
+        on_change=cast("EditState", EditState).toggle_field_value(field_name, value),
         custom_attrs={
             "data-testid": f"switch-{field_name}-{primary_source.name.text}-{index}"
         },
@@ -58,7 +58,7 @@ def remove_additive_button(
         color_scheme="tomato",
         variant="soft",
         size="1",
-        on_click=cast(EditState, EditState).remove_additive_value(field_name, index),
+        on_click=cast("EditState", EditState).remove_additive_value(field_name, index),
         custom_attrs={
             "data-testid": f"additive-rule-{field_name}-{index}-remove-button"
         },
@@ -78,7 +78,9 @@ def additive_rule_input(
             rx.input(
                 placeholder="URL",
                 value=value.href,
-                on_change=cast(EditState, EditState).set_href_value(field_name, index),
+                on_change=cast("EditState", EditState).set_href_value(
+                    field_name, index
+                ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
                     "width": "100%",
@@ -93,7 +95,9 @@ def additive_rule_input(
             rx.input(
                 placeholder="Text",
                 value=value.text,
-                on_change=cast(EditState, EditState).set_text_value(field_name, index),
+                on_change=cast("EditState", EditState).set_text_value(
+                    field_name, index
+                ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
                     "width": "100%",
@@ -109,7 +113,9 @@ def additive_rule_input(
                 input_config.badge_options,
                 value=input_config.badge_options[0],
                 size="1",
-                on_change=cast(EditState, EditState).set_badge_value(field_name, index),
+                on_change=cast("EditState", EditState).set_badge_value(
+                    field_name, index
+                ),
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-badge"
                 },
@@ -134,7 +140,7 @@ def editor_value_card(
             primary_source.input_config,
             additive_rule_input(
                 field_name,
-                cast(InputConfig, primary_source.input_config),
+                cast("InputConfig", primary_source.input_config),
                 index,
                 value,
             ),
@@ -157,7 +163,7 @@ def primary_source_switch(
     """Return a switch for toggling preventive rules."""
     return rx.switch(
         checked=model.enabled,
-        on_change=cast(EditState, EditState).toggle_primary_source(
+        on_change=cast("EditState", EditState).toggle_primary_source(
             field_name, model.name.href
         ),
         custom_attrs={"data-testid": f"switch-{field_name}-{model.identifier}"},
@@ -174,7 +180,7 @@ def primary_source_name(
         rx.hstack(
             render_value(model.name),
             rx.cond(
-                ~cast(rx.vars.ObjectVar, model.input_config),
+                ~cast("rx.vars.ObjectVar", model.input_config),
                 primary_source_switch(field_name, model),
             ),
             wrap="wrap",
@@ -203,7 +209,7 @@ def new_additive_button(
             color_scheme="jade",
             variant="soft",
             size="1",
-            on_click=cast(EditState, EditState).add_additive_value(field_name),
+            on_click=cast("EditState", EditState).add_additive_value(field_name),
             custom_attrs={"data-testid": f"new-additive-{field_name}-{primary_source}"},
         ),
         style={"width": "100%"},

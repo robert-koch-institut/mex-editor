@@ -174,7 +174,7 @@ def pagination() -> rx.Component:
         ),
         rx.select(
             SearchState.total_pages,
-            value=cast(rx.vars.NumberVar, SearchState.current_page).to_string(),
+            value=cast("rx.vars.NumberVar", SearchState.current_page).to_string(),
             on_change=[
                 SearchState.set_page,
                 SearchState.push_search_params,

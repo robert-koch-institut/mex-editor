@@ -403,14 +403,12 @@ def test_transform_models_to_fields() -> None:
         "primary_sources": [
             {
                 "name": {
-                    "text": "00000000000000",
-                    "display_text": "00000000000000",
+                    "text": None,
+                    "identifier": "00000000000000",
                     "badge": None,
                     "href": "/item/00000000000000",
                     "external": False,
                     "enabled": True,
-                    "is_identifier": True,
-                    "resolved": False,
                 },
                 "identifier": "00000000000000",
                 "editor_values": [],
@@ -419,26 +417,21 @@ def test_transform_models_to_fields() -> None:
             },
             {
                 "name": {
-                    "text": "00000000000000",
-                    "display_text": "00000000000000",
+                    "text": None,
+                    "identifier": "00000000000000",
                     "badge": None,
                     "href": "/item/00000000000000",
                     "external": False,
                     "enabled": True,
-                    "is_identifier": True,
-                    "resolved": False,
                 },
                 "identifier": "00000000000000",
                 "editor_values": [
                     {
                         "text": "Good",
-                        "display_text": "Good",
                         "badge": None,
                         "href": None,
                         "external": False,
                         "enabled": True,
-                        "is_identifier": False,
-                        "resolved": True,
                     }
                 ],
                 "enabled": True,
@@ -456,14 +449,12 @@ def test_transform_models_to_fields() -> None:
         "primary_sources": [
             {
                 "name": {
-                    "text": "00000000000000",
-                    "display_text": "00000000000000",
+                    "text": None,
+                    "identifier": "00000000000000",
                     "badge": None,
                     "href": "/item/00000000000000",
                     "external": False,
                     "enabled": True,
-                    "is_identifier": True,
-                    "resolved": False,
                 },
                 "identifier": "00000000000000",
                 "editor_values": [],
@@ -612,8 +603,28 @@ def test_transform_fields_to_preventive(
             "ExtractedActivity",
             "Funds for Funding e.V.",
         ),
+        (
+            EditorValue(identifier="abcdefhijkglmno"),
+            "hadPrimarySource",
+            "ExtractedActivity",
+            "abcdefhijkglmno",
+        ),
+        (
+            EditorValue(identifier="abcdefhijkglmno", text="foo"),
+            "hadPrimarySource",
+            "ExtractedActivity",
+            "abcdefhijkglmno",
+        ),
     ],
-    ids=["link", "text", "vocab", "temporal", "string"],
+    ids=[
+        "link",
+        "text",
+        "vocab",
+        "temporal",
+        "string",
+        "identifier",
+        "resolved_identifier",
+    ],
 )
 def test_transform_render_value_to_model_type(
     editor_value: EditorValue, field_name: str, class_name: str, expected: object

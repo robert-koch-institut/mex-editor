@@ -20,6 +20,7 @@ from mex.editor.transform import (
     transform_models_to_stem_type,
     transform_models_to_title,
 )
+from mex.editor.utils import resolve_editor_value, resolve_identifier
 
 
 class EditState(State):
@@ -28,6 +29,20 @@ class EditState(State):
     fields: list[EditorField] = []
     item_title: list[EditorValue] = []
     stem_type: str | None = None
+
+    @rx.event(background=True)
+    async def resolve_identifiers(self):
+        """Resolve identifiers to human readable display values."""
+        for field in self.fields:
+            for primary_source in field.primary_sources:
+                name = primary_source.name
+                if name.identifier and not name.text:
+                    async with self:
+                        await resolve_editor_value(name)
+                for editor_value in primary_source.editor_values:
+                    if editor_value.identifier and not editor_value.text:
+                        async with self:
+                            await resolve_editor_value(editor_value)
 
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:
@@ -97,6 +112,8 @@ class EditState(State):
                 "backend", "error submitting rule set", exc.response.text
             )
             return
+        # clear cache to show edits in the UI
+        resolve_identifier.cache_clear()
         yield rx.toast.success(
             title="Saved",
             description=f"{self.stem_type} rule-set was saved successfully.",

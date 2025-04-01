@@ -26,7 +26,12 @@ app.add_page(
     edit_index,
     route="/item/[identifier]",
     title="MEx Editor | Edit",
-    on_load=[State.check_login, State.load_nav, EditState.refresh],
+    on_load=[
+        State.check_login,
+        State.load_nav,
+        EditState.refresh,
+        EditState.resolve_identifiers,
+    ],
 )
 app.add_page(
     search_index,
@@ -38,6 +43,7 @@ app.add_page(
         SearchState.get_available_primary_sources,
         SearchState.load_search_params,
         SearchState.refresh,
+        SearchState.resolve_identifiers,
     ],
 )
 app.add_page(

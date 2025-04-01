@@ -33,9 +33,15 @@ from mex.editor.transform import (
             [
                 EditorValue(text="bar"),
                 EditorValue(text="REST", badge="APIType"),
-                EditorValue(text="hi there", badge="en"),
                 EditorValue(
-                    text="homepage", badge="en", href="http://mex", external=True
+                    text="hi there",
+                    badge="en",
+                ),
+                EditorValue(
+                    text="homepage",
+                    badge="en",
+                    href="http://mex",
+                    external=True,
                 ),
             ],
         ),
@@ -44,14 +50,19 @@ from mex.editor.transform import (
             True,
             [
                 EditorValue(
-                    text="cWWm02l1c6cucKjIhkFqY4", href="/item/cWWm02l1c6cucKjIhkFqY4"
+                    href="/item/cWWm02l1c6cucKjIhkFqY4",
+                    identifier="cWWm02l1c6cucKjIhkFqY4",
                 )
             ],
         ),
         (
             Identifier("cWWm02l1c6cucKjIhkFqY4"),
             False,
-            [EditorValue(text="cWWm02l1c6cucKjIhkFqY4")],
+            [
+                EditorValue(
+                    identifier="cWWm02l1c6cucKjIhkFqY4",
+                )
+            ],
         ),
     ],
 )
@@ -82,20 +93,30 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
     dummy_titles = [transform_models_to_title([d]) for d in dummy_data]
     assert dummy_titles == [
         [
-            # mex primary source has no title, renders type instead
-            EditorValue(text="PrimarySource")
+            # ps-1 primary source renders title as text
+            EditorValue(
+                text="Primary Source One",
+                badge="en",
+            )
         ],
         [
-            # ps-2 primary source has no title either
-            EditorValue(text="PrimarySource")
+            # ps-2 primary source renders title as text
+            EditorValue(
+                text="Primary Source Two",
+                badge="en",
+            )
         ],
         [
             # contact-point renders email as text
-            EditorValue(text="info@contact-point.one")
+            EditorValue(
+                text="info@contact-point.one",
+            )
         ],
         [
             # contact-point renders email as text
-            EditorValue(text="help@contact-point.two")
+            EditorValue(
+                text="help@contact-point.two",
+            )
         ],
         [
             # unit renders shortName as text (no language badge)
@@ -103,7 +124,10 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
         ],
         [
             # activity renders title as text (with language badge)
-            EditorValue(text="Aktivität 1", badge="de")
+            EditorValue(
+                text="Aktivität 1",
+                badge="de",
+            )
         ],
     ]
 
@@ -119,14 +143,34 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
         [EditorValue(text="PrimarySource")],
         [EditorValue(text="ContactPoint")],
         [EditorValue(text="ContactPoint")],
-        [EditorValue(text="Unit 1", badge="en", enabled=True)],
+        [
+            EditorValue(
+                text="Unit 1",
+                badge="en",
+                enabled=True,
+            )
+        ],
         [
             EditorValue(text="A1", enabled=True),
-            EditorValue(text="wEvxYRPlmGVQCbZx9GAbn"),
-            EditorValue(text="g32qzYNVH1Ez7JTEk3fvLF"),
-            EditorValue(text="cWWm02l1c6cucKjIhkFqY4"),
-            EditorValue(text="cWWm02l1c6cucKjIhkFqY4"),
-            EditorValue(text="1999-12-24", badge="day"),
-            EditorValue(text="2023-01-01", badge="day"),
+            EditorValue(
+                identifier="wEvxYRPlmGVQCbZx9GAbn",
+            ),
+            EditorValue(
+                identifier="g32qzYNVH1Ez7JTEk3fvLF",
+            ),
+            EditorValue(
+                identifier="cWWm02l1c6cucKjIhkFqY4",
+            ),
+            EditorValue(
+                identifier="cWWm02l1c6cucKjIhkFqY4",
+            ),
+            EditorValue(
+                text="1999-12-24",
+                badge="day",
+            ),
+            EditorValue(
+                text="2023-01-01",
+                badge="day",
+            ),
         ],
     ]

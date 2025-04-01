@@ -4,7 +4,7 @@ import reflex as rx
 
 from mex.editor.components import render_value
 from mex.editor.layout import page
-from mex.editor.search.models import SearchResult
+from mex.editor.search.models import SearchPrimarySource, SearchResult
 from mex.editor.search.state import SearchState
 
 
@@ -42,6 +42,7 @@ def search_result(result: SearchResult) -> rx.Component:
         ),
         style={"width": "100%"},
         class_name="search-result-card",
+        custom_attrs={"data-testid": f"result-{result.identifier}"},
     )
 
 
@@ -63,6 +64,7 @@ def search_input() -> rx.Component:
                     SearchState.go_to_first_page,
                     SearchState.push_search_params,
                     SearchState.refresh,
+                    SearchState.resolve_identifiers,
                 ],
                 max_length=100,
                 style={
@@ -91,6 +93,7 @@ def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
             SearchState.go_to_first_page,
             SearchState.push_search_params,
             SearchState.refresh,
+            SearchState.resolve_identifiers,
         ],
     )
 
@@ -110,16 +113,17 @@ def entity_type_filter() -> rx.Component:
     )
 
 
-def primary_source_choice(choice: tuple[str, bool]) -> rx.Component:
+def primary_source_choice(choice: tuple[str, SearchPrimarySource]) -> rx.Component:
     """Render a single checkbox for filtering by primary source."""
     return rx.checkbox(
-        choice[0],
-        checked=choice[1],
+        choice[1].title,
+        checked=choice[1].checked,
         on_change=[
             SearchState.set_had_primary_source(choice[0]),
             SearchState.go_to_first_page,
             SearchState.push_search_params,
             SearchState.refresh,
+            SearchState.resolve_identifiers,
         ],
     )
 
@@ -161,6 +165,7 @@ def pagination() -> rx.Component:
                 SearchState.push_search_params,
                 SearchState.scroll_to_top,
                 SearchState.refresh,
+                SearchState.resolve_identifiers,
             ],
             disabled=SearchState.disable_previous_page,
             variant="surface",
@@ -175,6 +180,7 @@ def pagination() -> rx.Component:
                 SearchState.push_search_params,
                 SearchState.scroll_to_top,
                 SearchState.refresh,
+                SearchState.resolve_identifiers,
             ],
             custom_attrs={"data-testid": "pagination-page-select"},
         ),
@@ -185,6 +191,7 @@ def pagination() -> rx.Component:
                 SearchState.push_search_params,
                 SearchState.scroll_to_top,
                 SearchState.refresh,
+                SearchState.resolve_identifiers,
             ],
             disabled=SearchState.disable_next_page,
             variant="surface",

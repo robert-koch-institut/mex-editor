@@ -20,7 +20,7 @@ class EditorPrimarySource(rx.Base):
 
     name: EditorValue
     identifier: MergedPrimarySourceIdentifier
-    input_config: InputConfig | None
+    input_config: InputConfig
     editor_values: list[EditorValue] = []
     enabled: bool = True
 

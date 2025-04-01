@@ -23,6 +23,7 @@ from mex.common.models import (
 )
 from mex.common.types import (
     ConsentStatus,
+    ConsentType,
     Link,
     LinkLanguage,
     MergedActivityIdentifier,
@@ -195,13 +196,26 @@ def test_transform_model_values_to_editor_values(
         ("AdditiveActivity", "fundingProgram", InputConfig(editable_text=True)),
         ("AdditiveResource", "created", InputConfig(editable_text=True)),
         ("AdditiveContactPoint", "email", InputConfig(editable_text=True)),
-        ("AdditivePerson", "affiliation", None),
-        ("AdditiveResource", "license", None),
+        ("AdditivePerson", "affiliation", InputConfig()),
+        (
+            "AdditiveResource",
+            "license",
+            InputConfig(
+                badge_default="CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL",
+                badge_options=["CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL"],
+                badge_titles=["License"],
+                editable_href=False,
+                editable_badge=True,
+                editable_text=False,
+            ),
+        ),
         (
             "AdditiveResource",
             "documentation",
             InputConfig(
-                badge_options=["de", "en"],
+                badge_options=["DE", "EN"],
+                badge_default="DE",
+                badge_titles=["LinkLanguage"],
                 editable_href=True,
                 editable_badge=True,
                 editable_text=True,
@@ -211,32 +225,36 @@ def test_transform_model_values_to_editor_values(
             "AdditiveResource",
             "keyword",
             InputConfig(
-                badge_options=["de", "en"],
+                badge_options=["DE", "EN"],
+                badge_default="DE",
+                badge_titles=["TextLanguage"],
                 editable_badge=True,
                 editable_text=True,
             ),
         ),
-        ("AdditiveResource", "minTypicalAge", None),
-        ("Unknown type", "someField", None),
+        ("AdditiveResource", "minTypicalAge", InputConfig()),
+        ("AdditiveResource", "unknown", InputConfig()),
     ],
     ids=[
         "string field",
         "temporal field",
         "email field",  # stopgap: MX-1766
         "reference field",  # stopgap: MX-1652
-        "vocabulary field",  # stopgap: MX-1651
+        "vocabulary field",
         "link field",  # stopgap: MX-1650
         "text field",  # stopgap: MX-1650
         "integer field",  # stopgap: MX-1793
-        "unknown type",
+        "unknown field",
     ],
 )
 def test_transform_model_to_additive_input_config(
     entity_type: str,
     field_name: str,
-    expected: InputConfig | None,
+    expected: InputConfig,
 ) -> None:
-    input_config = _transform_model_to_additive_input_config(field_name, entity_type)
+    input_config = _transform_model_to_additive_input_config(
+        field_name, entity_type, True
+    )
     assert input_config == expected
 
 
@@ -264,7 +282,7 @@ def test_transform_model_to_additive_input_config(
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
                     editor_values=[EditorValue(text="Example")],
-                    input_config=None,
+                    input_config=InputConfig(),
                     enabled=True,
                 )
             ],
@@ -274,7 +292,7 @@ def test_transform_model_to_additive_input_config(
                         text="primarySourceId", href="/item/primarySourceId"
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
-                    input_config=None,
+                    input_config=InputConfig(),
                     enabled=True,
                 )
             ],
@@ -302,19 +320,20 @@ def test_transform_model_to_additive_input_config(
                         EditorValue(text="Given"),
                         EditorValue(text="Gegeben", enabled=False),
                     ],
-                    input_config=None,
+                    input_config=InputConfig(),
                     enabled=True,
                 )
             ],
             [
                 EditorPrimarySource(
                     name=EditorValue(
-                        text="primarySourceId", href="/item/primarySourceId"
+                        text="primarySourceId",
+                        href="/item/primarySourceId",
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
                     editor_values=[EditorValue(text="Family")],
                     enabled=False,
-                    input_config=None,
+                    input_config=InputConfig(),
                 )
             ],
         ),
@@ -368,9 +387,16 @@ def test_transform_models_to_fields() -> None:
                     "enabled": True,
                 },
                 "identifier": "00000000000000",
+                "input_config": {
+                    "badge_default": None,
+                    "badge_options": [],
+                    "badge_titles": [],
+                    "editable_href": False,
+                    "editable_badge": False,
+                    "editable_text": True,
+                },
                 "editor_values": [],
                 "enabled": True,
-                "input_config": None,
             },
             {
                 "name": {
@@ -381,6 +407,14 @@ def test_transform_models_to_fields() -> None:
                     "enabled": True,
                 },
                 "identifier": "00000000000000",
+                "input_config": {
+                    "badge_default": None,
+                    "badge_options": [],
+                    "badge_titles": [],
+                    "editable_href": False,
+                    "editable_badge": False,
+                    "editable_text": True,
+                },
                 "editor_values": [
                     {
                         "text": "Good",
@@ -391,12 +425,6 @@ def test_transform_models_to_fields() -> None:
                     }
                 ],
                 "enabled": True,
-                "input_config": {
-                    "badge_options": [],
-                    "editable_badge": False,
-                    "editable_href": False,
-                    "editable_text": True,
-                },
             },
         ],
     }
@@ -412,10 +440,37 @@ def test_transform_models_to_fields() -> None:
                     "enabled": True,
                 },
                 "identifier": "00000000000000",
+                "input_config": {
+                    "badge_default": None,
+                    "badge_options": [],
+                    "badge_titles": [],
+                    "editable_href": False,
+                    "editable_badge": False,
+                    "editable_text": False,
+                },
                 "editor_values": [],
                 "enabled": False,
-                "input_config": None,
-            }
+            },
+            {
+                "name": {
+                    "text": "00000000000000",
+                    "badge": None,
+                    "href": "/item/00000000000000",
+                    "external": False,
+                    "enabled": True,
+                },
+                "identifier": "00000000000000",
+                "input_config": {
+                    "badge_default": None,
+                    "badge_options": [],
+                    "badge_titles": [],
+                    "editable_href": False,
+                    "editable_badge": False,
+                    "editable_text": False,
+                },
+                "editor_values": [],
+                "enabled": False,
+            },
         ],
     }
 
@@ -429,7 +484,7 @@ def test_transform_models_to_fields() -> None:
                 primary_sources=[
                     EditorPrimarySource(
                         enabled=True,
-                        input_config=None,
+                        input_config=InputConfig(),
                         name=EditorValue(text="No Input Config"),
                         identifier=MergedPrimarySourceIdentifier("PrimarySource000000"),
                     )
@@ -444,17 +499,8 @@ def test_transform_models_to_fields() -> None:
                     EditorPrimarySource(
                         enabled=True,
                         input_config=InputConfig(editable_text=True),
-                        name=EditorValue(text="PS1"),
-                        identifier=MergedPrimarySourceIdentifier("PrimarySource000001"),
-                        editor_values=[
-                            EditorValue(text="GoodName"),
-                        ],
-                    ),
-                    EditorPrimarySource(
-                        enabled=True,
-                        input_config=InputConfig(editable_text=True),
                         name=EditorValue(text="PS2"),
-                        identifier=MergedPrimarySourceIdentifier("PrimarySource000002"),
+                        identifier=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
                         editor_values=[
                             EditorValue(text="Duplicate"),
                             EditorValue(text="Duplicate"),
@@ -462,7 +508,7 @@ def test_transform_models_to_fields() -> None:
                     ),
                 ],
             ),
-            {"familyName": ["GoodName", "Duplicate"]},
+            {"familyName": ["Duplicate"]},
         ),
     ],
 )
@@ -482,7 +528,7 @@ def test_transform_fields_to_additive(
                 primary_sources=[
                     EditorPrimarySource(
                         enabled=True,
-                        input_config=None,
+                        input_config=InputConfig(),
                         name=EditorValue(text="Enabled Primary Source"),
                         identifier=MergedPrimarySourceIdentifier(
                             "enabledPrimarySourceId"
@@ -498,7 +544,7 @@ def test_transform_fields_to_additive(
                 primary_sources=[
                     EditorPrimarySource(
                         enabled=True,
-                        input_config=None,
+                        input_config=InputConfig(),
                         name=EditorValue(text="Enabled Primary Source"),
                         identifier=MergedPrimarySourceIdentifier(
                             "enabledPrimarySourceId"
@@ -506,7 +552,7 @@ def test_transform_fields_to_additive(
                     ),
                     EditorPrimarySource(
                         enabled=False,
-                        input_config=None,
+                        input_config=InputConfig(),
                         name=EditorValue(text="Prevented Primary Source"),
                         identifier=MergedPrimarySourceIdentifier(
                             "preventedPrimarySourceId"
@@ -531,43 +577,55 @@ def test_transform_fields_to_preventive(
         (
             EditorValue(text="Titel", badge="de", href="https://beispiel"),
             "documentation",
-            "MergedResource",
+            "AdditiveResource",
             Link(url="https://beispiel", language=LinkLanguage.DE, title="Titel"),
         ),
         (
             EditorValue(text="Beispiel Text", badge="de"),
             "alternativeName",
-            "ExtractedOrganization",
+            "AdditiveOrganization",
             Text(language=TextLanguage.DE, value="Beispiel Text"),
         ),
         (
-            EditorValue(text="VALID_FOR_PROCESSING", badge="ConsentStatus"),
+            EditorValue(text="EXPRESSED_CONSENT", badge="ConsentStatus"),
             "hasConsentType",
-            "MergedConsent",
-            ConsentStatus["VALID_FOR_PROCESSING"],
+            "AdditiveConsent",
+            ConsentType["EXPRESSED_CONSENT"],
+        ),
+        (
+            EditorValue(),
+            "hasConsentType",
+            "AdditiveConsent",
+            ConsentType["IMPLIED_CONSENT"],
         ),
         (
             EditorValue(text="2004", badge="year"),
             "start",
-            "ExtractedActivity",
+            "AdditiveActivity",
             Year(2004),
         ),
         (
             EditorValue(text="Funds for Funding e.V."),
             "fundingProgram",
-            "ExtractedActivity",
+            "AdditiveActivity",
             "Funds for Funding e.V.",
         ),
     ],
-    ids=["link", "text", "vocab", "temporal", "string"],
+    ids=["link", "text", "vocab", "default vocab", "temporal", "string"],
 )
-def test_transform_render_value_to_model_type(
+def test_transform_editor_value_to_model_value(
     editor_value: EditorValue, field_name: str, class_name: str, expected: object
 ) -> None:
+    input_config = _transform_model_to_additive_input_config(
+        field_name, class_name, True
+    )
+    assert input_config
+
     model_value = _transform_editor_value_to_model_value(
         editor_value,
         field_name,
         class_name,
+        input_config,
     )
     assert model_value == expected
 
@@ -582,7 +640,7 @@ def test_transform_render_value_to_model_type(
                     EditorPrimarySource(
                         name=EditorValue(text="Primary Source 1"),
                         identifier=MergedPrimarySourceIdentifier("PrimarySource001"),
-                        input_config=None,
+                        input_config=InputConfig(),
                         enabled=True,
                     )
                 ],
@@ -600,7 +658,7 @@ def test_transform_render_value_to_model_type(
                             EditorValue(text="active", enabled=True),
                             EditorValue(text="inactive", enabled=False),
                         ],
-                        input_config=None,
+                        input_config=InputConfig(),
                         enabled=True,
                     ),
                     EditorPrimarySource(
@@ -610,7 +668,7 @@ def test_transform_render_value_to_model_type(
                             EditorValue(text="inactive", enabled=False),
                             EditorValue(text="another inactive", enabled=False),
                         ],
-                        input_config=None,
+                        input_config=InputConfig(),
                         enabled=True,
                     ),
                 ],
@@ -636,14 +694,14 @@ def test_transform_fields_to_rule_set() -> None:
                     EditorPrimarySource(
                         name=EditorValue(text="Enabled Primary Source"),
                         identifier=MergedPrimarySourceIdentifier("PrimarySource001"),
-                        input_config=None,
+                        input_config=InputConfig(),
                         enabled=True,
                     ),
                     EditorPrimarySource(
                         name=EditorValue(text="Prevented Primary Source"),
                         identifier=MergedPrimarySourceIdentifier("PrimarySource002"),
                         enabled=False,
-                        input_config=None,
+                        input_config=InputConfig(),
                     ),
                 ],
             ),
@@ -657,7 +715,7 @@ def test_transform_fields_to_rule_set() -> None:
                             EditorValue(text="active", enabled=True),
                             EditorValue(text="inactive", enabled=False),
                         ],
-                        input_config=None,
+                        input_config=InputConfig(),
                         enabled=True,
                     ),
                     EditorPrimarySource(
@@ -666,12 +724,12 @@ def test_transform_fields_to_rule_set() -> None:
                         editor_values=[
                             EditorValue(text="another inactive", enabled=False),
                         ],
-                        input_config=None,
+                        input_config=InputConfig(),
                         enabled=True,
                     ),
                     EditorPrimarySource(
                         name=EditorValue(text="Primary Source 3"),
-                        identifier=MergedPrimarySourceIdentifier("PrimarySource003"),
+                        identifier=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
                         editor_values=[
                             EditorValue(text="SomeName", enabled=True),
                         ],

@@ -34,7 +34,7 @@ def test_state_get_primary_sources_by_field_name() -> None:
         EditorPrimarySource(
             name=EditorValue(text="somePrimarySource", href="/item/somePrimarySource"),
             identifier="somePrimarySource",
-            input_config=None,
+            input_config=InputConfig(),
             editor_values=[EditorValue(text="test@foo.bar")],
         ),
         EditorPrimarySource(

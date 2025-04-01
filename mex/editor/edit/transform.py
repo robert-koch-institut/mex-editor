@@ -1,7 +1,5 @@
 from functools import cache
-from typing import Union
-
-from pydantic import TypeAdapter
+from typing import cast
 
 from mex.common.fields import (
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
@@ -15,7 +13,6 @@ from mex.common.fields import (
     VOCABULARY_FIELDS_BY_CLASS_NAME,
 )
 from mex.common.models import (
-    ADDITIVE_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     RULE_SET_REQUEST_CLASSES_BY_NAME,
     AnyAdditiveModel,
@@ -29,6 +26,7 @@ from mex.common.models import (
 from mex.common.transform import ensure_postfix, ensure_prefix
 from mex.common.types import (
     TEMPORAL_ENTITY_CLASSES_BY_PRECISION,
+    AnyVocabularyEnum,
     Link,
     LinkLanguage,
     MergedPrimarySourceIdentifier,
@@ -82,44 +80,44 @@ def _transform_model_values_to_editor_values(
 def _transform_model_to_additive_input_config(
     field_name: str,
     entity_type: str,
-) -> InputConfig | None:
+    editable: bool,
+) -> InputConfig:
     """Determine the input type for a given field of a given model."""
-    if entity_type in ADDITIVE_MODEL_CLASSES_BY_NAME:
-        if field_name in (
-            STRING_FIELDS_BY_CLASS_NAME[entity_type]
-            + EMAIL_FIELDS_BY_CLASS_NAME[entity_type]
-            + TEMPORAL_FIELDS_BY_CLASS_NAME[entity_type]
-        ):
-            return InputConfig(
-                editable_text=True,
-            )
-        if field_name in (TEXT_FIELDS_BY_CLASS_NAME[entity_type]):
-            return InputConfig(
-                editable_text=True,
-                editable_badge=True,
-                badge_default=TextLanguage.DE,
-                badge_options=[e.name for e in TextLanguage],
-                badge_titles=[TextLanguage.__name__],
-            )
-        if field_name in (LINK_FIELDS_BY_CLASS_NAME[entity_type]):
-            return InputConfig(
-                editable_text=True,
-                editable_badge=True,
-                editable_href=True,
-                badge_default=LinkLanguage.DE,
-                badge_options=[e.name for e in LinkLanguage],
-                badge_titles=[LinkLanguage.__name__],
-            )
-        if field_name in (VOCABULARY_FIELDS_BY_CLASS_NAME[entity_type]):
-            options = VOCABULARIES_BY_FIELDS_BY_CLASS_NAMES[entity_type][field_name]
-            vocabularies = ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES[entity_type][field_name]
-            return InputConfig(
-                editable_badge=True,
-                badge_default=options[0].name,
-                badge_options=[e.name for e in options],
-                badge_titles=[v.__name__ for v in vocabularies],
-            )
-    return None
+    if field_name in (
+        STRING_FIELDS_BY_CLASS_NAME[entity_type]
+        + EMAIL_FIELDS_BY_CLASS_NAME[entity_type]
+        + TEMPORAL_FIELDS_BY_CLASS_NAME[entity_type]
+    ):
+        return InputConfig(
+            editable_text=editable,
+        )
+    if field_name in (TEXT_FIELDS_BY_CLASS_NAME[entity_type]):
+        return InputConfig(
+            editable_text=editable,
+            editable_badge=editable,
+            badge_default=TextLanguage.DE.name,
+            badge_options=[e.name for e in TextLanguage],
+            badge_titles=[TextLanguage.__name__],
+        )
+    if field_name in (LINK_FIELDS_BY_CLASS_NAME[entity_type]):
+        return InputConfig(
+            editable_text=editable,
+            editable_badge=editable,
+            editable_href=editable,
+            badge_default=LinkLanguage.DE.name,
+            badge_options=[e.name for e in LinkLanguage],
+            badge_titles=[LinkLanguage.__name__],
+        )
+    if field_name in (VOCABULARY_FIELDS_BY_CLASS_NAME[entity_type]):
+        options = VOCABULARIES_BY_FIELDS_BY_CLASS_NAMES[entity_type][field_name]
+        vocabularies = ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES[entity_type][field_name]
+        return InputConfig(
+            editable_badge=editable,
+            badge_default=options[0].name,
+            badge_options=[e.name for e in options],
+            badge_titles=[v.__name__ for v in vocabularies],
+        )
+    return InputConfig()
 
 
 def _create_editor_primary_source(  # noqa: PLR0913
@@ -128,7 +126,7 @@ def _create_editor_primary_source(  # noqa: PLR0913
     editor_values: list[EditorValue],
     field_name: str,
     preventive: AnyPreventiveModel,
-    input_config: InputConfig | None,
+    input_config: InputConfig,
 ) -> EditorPrimarySource:
     """Create a new primary source from the given parameters."""
     return EditorPrimarySource(
@@ -162,15 +160,11 @@ def _transform_model_to_editor_primary_sources(
                 field_name,
                 subtractive,
             )
-            if isinstance(model, AnyAdditiveModel):
-                input_config = _transform_model_to_additive_input_config(
-                    field_name,
-                    model.entityType,
-                )
-                if input_config is None:
-                    continue
-            else:
-                input_config = None
+            input_config = _transform_model_to_additive_input_config(
+                field_name,
+                model.entityType,
+                primary_source_id == MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+            )
             primary_source = _create_editor_primary_source(
                 primary_source_name,
                 primary_source_id,
@@ -237,15 +231,16 @@ def _transform_fields_to_additive(
     for field in fields:
         if field.name not in field_names:
             continue
-        raw_rule[field.name] = field_values = []
+        field_values = raw_rule.setdefault(field.name, [])
         for primary_source in field.primary_sources:
-            if not primary_source.input_config:
+            if primary_source.identifier != MEX_PRIMARY_SOURCE_STABLE_TARGET_ID:
                 continue
             for editor_value in primary_source.editor_values:
                 additive_value = _transform_editor_value_to_model_value(
                     editor_value,
                     field.name,
                     additive_class_name,
+                    primary_source.input_config,
                 )
                 if additive_value not in field_values:
                     field_values.append(additive_value)
@@ -276,6 +271,7 @@ def _transform_editor_value_to_model_value(
     value: EditorValue,
     field_name: str,
     class_name: str,
+    input_config: InputConfig,
 ) -> AnyModelValue:
     """Transform an editor value back to a value to be used in mex.common.models."""
     if field_name in LINK_FIELDS_BY_CLASS_NAME[class_name]:
@@ -283,11 +279,9 @@ def _transform_editor_value_to_model_value(
     if field_name in TEXT_FIELDS_BY_CLASS_NAME[class_name]:
         return Text(language=value.badge, value=value.text)
     if field_name in VOCABULARY_FIELDS_BY_CLASS_NAME[class_name]:
-        options = VOCABULARIES_BY_FIELDS_BY_CLASS_NAMES[class_name][field_name]
-        field_types = ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES[class_name][field_name]
-        if value.badge:
-            return TypeAdapter(Union[*field_types]).validate_python(value.badge)
-        return options[0]
+        for vocabulary in ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES[class_name][field_name]:
+            if vocabulary_name := value.text or input_config.badge_default:
+                return cast("type[AnyVocabularyEnum]", vocabulary)[vocabulary_name]
     if field_name in TEMPORAL_FIELDS_BY_CLASS_NAME[class_name]:
         precision = TemporalEntityPrecision(value.badge)
         temporal_class = TEMPORAL_ENTITY_CLASSES_BY_PRECISION[precision]
@@ -315,6 +309,7 @@ def _transform_fields_to_subtractive(
                         editor_value,
                         field.name,
                         merged_class_name,
+                        primary_source.input_config,
                     )
                     if subtracted_value not in field_values:
                         field_values.append(subtracted_value)

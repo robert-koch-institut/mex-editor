@@ -33,7 +33,7 @@ def test_search_and_import_results(aux_page: Page) -> None:
 
     # test search input is showing correctly
     search_input.fill("this doesn't exist gs871s9j91kksWN0shx345jnj")
-    expect(page.get_by_text("showing 0 of total 0 items found")).to_be_visible()
+    expect(page.get_by_text("Showing 0 of 0 items")).to_be_visible()
     page.screenshot(path="tests_aux_search_test_main-test_search-input-0-found.png")
 
     # test expand button works

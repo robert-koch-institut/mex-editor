@@ -6,7 +6,10 @@ from requests import HTTPError
 from starlette import status
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models import RULE_SET_RESPONSE_CLASSES_BY_NAME
+from mex.common.models import (
+    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    RULE_SET_RESPONSE_CLASSES_BY_NAME,
+)
 from mex.common.transform import ensure_postfix
 from mex.editor.edit.models import EditorField, EditorPrimarySource
 from mex.editor.edit.transform import (
@@ -116,6 +119,15 @@ class EditState(State):
         msg = f"field not found: {field_name}"
         raise ValueError(msg)
 
+    def _get_mex_primary_source_by_field_name(
+        self, field_name: str
+    ) -> EditorPrimarySource:
+        for primary_source in self._get_primary_sources_by_field_name(field_name):
+            if primary_source.identifier == MEX_PRIMARY_SOURCE_STABLE_TARGET_ID:
+                return primary_source
+        msg = f"mex field not found: {field_name}"
+        raise ValueError(msg)
+
     @rx.event
     def toggle_primary_source(
         self,
@@ -144,28 +156,24 @@ class EditState(State):
     @rx.event
     def add_additive_value(self, field_name: str) -> None:
         """Add an additive rule to the given field."""
-        for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if primary_source.input_config:
-                primary_source.editor_values.append(EditorValue())
+        primary_source = self._get_mex_primary_source_by_field_name(field_name)
+        primary_source.editor_values.append(EditorValue())
 
     @rx.event
     def remove_additive_value(self, field_name: str, index: int) -> None:
         """Remove an additive rule from the given field."""
-        for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if primary_source.input_config:
-                primary_source.editor_values.pop(index)
+        primary_source = self._get_mex_primary_source_by_field_name(field_name)
+        primary_source.editor_values.pop(index)
 
     @rx.event
     def set_text_value(self, field_name: str, index: int, value: str) -> None:
         """Set the text attribute on an additive editor value."""
-        for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if primary_source.input_config:
-                primary_source.editor_values[index].text = value
+        primary_source = self._get_mex_primary_source_by_field_name(field_name)
+        primary_source.editor_values[index].text = value
 
     @rx.event
     def set_href_value(self, field_name: str, index: int, value: str) -> None:
         """Set an external href on an additive editor value."""
-        for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if primary_source.input_config:
-                primary_source.editor_values[index].href = value
-                primary_source.editor_values[index].external = True
+        primary_source = self._get_mex_primary_source_by_field_name(field_name)
+        primary_source.editor_values[index].href = value
+        primary_source.editor_values[index].external = True

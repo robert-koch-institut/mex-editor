@@ -10,7 +10,7 @@ from mex.common.models import AnyExtractedModel, ExtractedActivity
 
 @pytest.fixture
 def extracted_activity(load_dummy_data: list[AnyExtractedModel]) -> ExtractedActivity:
-    return cast(ExtractedActivity, load_dummy_data[-1])
+    return cast("ExtractedActivity", load_dummy_data[-1])
 
 
 @pytest.fixture

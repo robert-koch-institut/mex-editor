@@ -237,7 +237,7 @@ def pagination() -> rx.Component:
         ),
         rx.select(
             AuxState.total_pages,
-            value=cast(rx.vars.NumberVar, AuxState.current_page).to_string(),
+            value=cast("rx.vars.NumberVar", AuxState.current_page).to_string(),
             on_change=AuxState.set_page,
             custom_attrs={"data-testid": "pagination-page-select"},
         ),

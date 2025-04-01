@@ -47,41 +47,33 @@ def test_transform_models_to_results_single_model() -> None:
     assert result[0].title == [
         EditorValue(
             text="name",
-            display_text="name",
             badge=None,
             href=None,
             external=False,
             enabled=True,
-            resolved=True,
         )
     ]
     assert result[0].preview == [
         EditorValue(
             text="shortName",
-            display_text="shortName",
             badge=None,
             href=None,
             external=False,
             enabled=True,
-            resolved=True,
         ),
         EditorValue(
             text="alternativeName",
-            display_text="alternativeName",
             badge=None,
             href=None,
             external=False,
             enabled=True,
-            resolved=True,
         ),
         EditorValue(
             text="wikidataId",
-            display_text="wikidataId",
             badge=None,
             href=None,
             external=False,
             enabled=True,
-            resolved=True,
         ),
     ]
     assert len(result[0].all_properties) == 1
@@ -117,41 +109,33 @@ def test_transform_models_to_results_multiple_models() -> None:
     assert result[0].title == [
         EditorValue(
             text="name1",
-            display_text="name1",
             badge=None,
             href=None,
             external=False,
             enabled=True,
-            resolved=True,
         )
     ]
     assert result[0].preview == [
         EditorValue(
             text="shortName1",
-            display_text="shortName1",
             badge=None,
             href=None,
             external=False,
             enabled=True,
-            resolved=True,
         ),
         EditorValue(
             text="alternativeName1",
-            display_text="alternativeName1",
             badge=None,
             href=None,
             external=False,
             enabled=True,
-            resolved=True,
         ),
         EditorValue(
             text="wikidataId1",
-            display_text="wikidataId1",
             badge=None,
             href=None,
             external=False,
             enabled=True,
-            resolved=True,
         ),
     ]
     assert len(result[0].all_properties) == 1
@@ -161,41 +145,33 @@ def test_transform_models_to_results_multiple_models() -> None:
     assert result[1].title == [
         EditorValue(
             text="name2",
-            display_text="name2",
             badge=None,
             href=None,
             external=False,
             enabled=True,
-            resolved=True,
         )
     ]
     assert result[1].preview == [
         EditorValue(
             text="shortName2",
-            display_text="shortName2",
             badge=None,
             href=None,
             external=False,
             enabled=True,
-            resolved=True,
         ),
         EditorValue(
             text="alternativeName2",
-            display_text="alternativeName2",
             badge=None,
             href=None,
             external=False,
             enabled=True,
-            resolved=True,
         ),
         EditorValue(
             text="wikidataId2",
-            display_text="wikidataId2",
             badge=None,
             href=None,
             external=False,
             enabled=True,
-            resolved=True,
         ),
     ]
     assert len(result[1].all_properties) == 1

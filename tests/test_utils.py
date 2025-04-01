@@ -38,18 +38,14 @@ async def test_resolve_editor_value(
     dummy_primary_source = dummy_data_by_identifier_in_primary_source["ps-1"]
     assert isinstance(dummy_primary_source, ExtractedPrimarySource)
     editor_value = EditorValue(
-        text=dummy_primary_source.stableTargetId,
-        is_identifier=True,
-        resolved=False,
+        identifier=dummy_primary_source.stableTargetId,
     )
     expected = EditorValue(
-        text=dummy_primary_source.stableTargetId,
-        display_text=dummy_primary_source.title[0].value,
-        is_identifier=True,
-        resolved=True,
+        identifier=dummy_primary_source.stableTargetId,
+        text=dummy_primary_source.title[0].value,
     )
     await resolve_editor_value(editor_value)
     assert editor_value == expected
 
     with pytest.raises(MExError):
-        await resolve_editor_value(EditorValue(is_identifier=False))
+        await resolve_editor_value(EditorValue(identifier=None))

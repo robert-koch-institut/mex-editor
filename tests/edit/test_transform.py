@@ -106,9 +106,7 @@ def test_get_primary_source_id_from_model_error() -> None:
             [
                 EditorValue(
                     text="VALID_FOR_PROCESSING",
-                    display_text="VALID_FOR_PROCESSING",
                     badge="ConsentStatus",
-                    resolved=True,
                 )
             ],
         ),
@@ -121,12 +119,8 @@ def test_get_primary_source_id_from_model_error() -> None:
             "fullName",
             SubtractivePerson(),
             [
-                EditorValue(
-                    text="Example, Name", display_text="Example, Name", resolved=True
-                ),
-                EditorValue(
-                    text="Dr. Example", display_text="Dr. Example", resolved=True
-                ),
+                EditorValue(text="Example, Name"),
+                EditorValue(text="Dr. Example"),
             ],
         ),
         (
@@ -141,11 +135,8 @@ def test_get_primary_source_id_from_model_error() -> None:
             ),
             [
                 EditorValue(
-                    text="gGdOIbDIHRt35He616Fv5q",
-                    display_text="gGdOIbDIHRt35He616Fv5q",
                     href="/item/gGdOIbDIHRt35He616Fv5q",
-                    is_identifier=True,
-                    resolved=False,
+                    identifier="gGdOIbDIHRt35He616Fv5q",
                 ),
             ],
         ),
@@ -173,19 +164,15 @@ def test_get_primary_source_id_from_model_error() -> None:
             [
                 EditorValue(
                     text="Example Homepage",
-                    display_text="Example Homepage",
                     badge="en",
                     href="http://example",
                     external=True,
                     enabled=False,
-                    resolved=True,
                 ),
                 EditorValue(
                     text="http://pavyzdys",
-                    display_text="http://pavyzdys",
                     href="http://pavyzdys",
                     external=True,
-                    resolved=True,
                 ),
             ],
         ),
@@ -279,17 +266,11 @@ def test_transform_model_to_additive_input_config(
             [
                 EditorPrimarySource(
                     name=EditorValue(
-                        text="primarySourceId",
-                        display_text="primarySourceId",
+                        identifier="primarySourceId",
                         href="/item/primarySourceId",
-                        is_identifier=True,
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
-                    editor_values=[
-                        EditorValue(
-                            text="Example", display_text="Example", resolved=True
-                        )
-                    ],
+                    editor_values=[EditorValue(text="Example")],
                     input_config=None,
                     enabled=True,
                 )
@@ -297,10 +278,8 @@ def test_transform_model_to_additive_input_config(
             [
                 EditorPrimarySource(
                     name=EditorValue(
-                        text="primarySourceId",
-                        display_text="primarySourceId",
+                        identifier="primarySourceId",
                         href="/item/primarySourceId",
-                        is_identifier=True,
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
                     input_config=None,
@@ -324,19 +303,15 @@ def test_transform_model_to_additive_input_config(
             [
                 EditorPrimarySource(
                     name=EditorValue(
-                        text="primarySourceId",
-                        display_text="primarySourceId",
+                        identifier="primarySourceId",
                         href="/item/primarySourceId",
-                        is_identifier=True,
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
                     editor_values=[
-                        EditorValue(text="Given", display_text="Given", resolved=True),
+                        EditorValue(text="Given"),
                         EditorValue(
                             text="Gegeben",
-                            display_text="Gegeben",
                             enabled=False,
-                            resolved=True,
                         ),
                     ],
                     input_config=None,
@@ -346,15 +321,11 @@ def test_transform_model_to_additive_input_config(
             [
                 EditorPrimarySource(
                     name=EditorValue(
-                        text="primarySourceId",
-                        display_text="primarySourceId",
+                        identifier="primarySourceId",
                         href="/item/primarySourceId",
-                        is_identifier=True,
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
-                    editor_values=[
-                        EditorValue(text="Family", display_text="Family", resolved=True)
-                    ],
+                    editor_values=[EditorValue(text="Family")],
                     enabled=False,
                     input_config=None,
                 )
@@ -430,6 +401,7 @@ def test_transform_models_to_fields() -> None:
                         "text": "Good",
                         "badge": None,
                         "href": None,
+                        "identifier": None,
                         "external": False,
                         "enabled": True,
                     }

@@ -33,20 +33,28 @@ def render_link(value: EditorValue) -> rx.Component:
     )
 
 
-def render_text(value: EditorValue) -> rx.Component:
-    """Render an editor value as a text span."""
+def render_span(text: str | None) -> rx.Component:
+    """Render a generic span with the given text."""
     return rx.text(
-        value.text,
+        text,
         as_="span",
     )
 
 
-def render_badge(value: EditorValue) -> rx.Component:
-    """Render a generic badge for an editor value."""
+def render_text(value: EditorValue) -> rx.Component:
+    """Render an editor value as a text span."""
+    return render_span(
+        value.text,
+    )
+
+
+def render_badge(text: str | None) -> rx.Component:
+    """Render a generic badge with the given text."""
     return rx.badge(
-        value.badge,
+        text,
         radius="large",
         variant="soft",
+        color_scheme="gray",
         style={"margin": "auto 0"},
     )
 
@@ -61,7 +69,7 @@ def render_value(value: EditorValue) -> rx.Component:
         ),
         rx.cond(
             value.badge,
-            render_badge(value),
+            render_badge(value.badge),
         ),
         spacing="1",
     )

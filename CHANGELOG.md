@@ -9,9 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- create InputConfig for all fields, not just mex primary source
+- add `badge_default` and `badge_titles` to input config
+
 ### Changes
 
 - apply ruff TC006 by quoting type expressions in `typing.cast` calls
+- update mex-common to 0.56.1
+- save vocabulary choice in `EditorValue.text` instead of `badge`
 
 ### Deprecated
 

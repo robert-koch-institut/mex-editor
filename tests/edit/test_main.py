@@ -41,7 +41,7 @@ def test_edit_page_renders_heading(edit_page: Page) -> None:
     heading = page.get_by_test_id("edit-heading")
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_heading.png")
     expect(heading).to_be_visible()
-    assert re.match(r"Aktivität 1\s*de", heading.inner_text())
+    assert re.match(r"Aktivität 1\s*DE", heading.inner_text())
 
 
 @pytest.mark.integration
@@ -86,7 +86,7 @@ def test_edit_page_renders_text(
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_text.png")
     expect(text).to_be_visible()
     expect(text).to_contain_text("Aktivität 1")  # text value
-    expect(text).to_contain_text("de")  # language badge
+    expect(text).to_contain_text("DE")  # language badge
 
 
 @pytest.mark.integration

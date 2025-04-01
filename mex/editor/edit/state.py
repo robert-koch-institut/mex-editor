@@ -7,7 +7,6 @@ from starlette import status
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import (
-    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     RULE_SET_RESPONSE_CLASSES_BY_NAME,
 )
 from mex.common.transform import ensure_postfix
@@ -119,13 +118,17 @@ class EditState(State):
         msg = f"field not found: {field_name}"
         raise ValueError(msg)
 
-    def _get_mex_primary_source_by_field_name(
+    def _get_editable_primary_source_by_field_name(
         self, field_name: str
     ) -> EditorPrimarySource:
         for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if primary_source.identifier == MEX_PRIMARY_SOURCE_STABLE_TARGET_ID:
+            if (
+                primary_source.input_config.editable_text
+                or primary_source.input_config.editable_href
+                or primary_source.input_config.editable_badge
+            ):
                 return primary_source
-        msg = f"mex field not found: {field_name}"
+        msg = f"editable field not found: {field_name}"
         raise ValueError(msg)
 
     @rx.event
@@ -156,24 +159,30 @@ class EditState(State):
     @rx.event
     def add_additive_value(self, field_name: str) -> None:
         """Add an additive rule to the given field."""
-        primary_source = self._get_mex_primary_source_by_field_name(field_name)
+        primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.append(EditorValue())
 
     @rx.event
     def remove_additive_value(self, field_name: str, index: int) -> None:
         """Remove an additive rule from the given field."""
-        primary_source = self._get_mex_primary_source_by_field_name(field_name)
+        primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.pop(index)
 
     @rx.event
     def set_text_value(self, field_name: str, index: int, value: str) -> None:
         """Set the text attribute on an additive editor value."""
-        primary_source = self._get_mex_primary_source_by_field_name(field_name)
+        primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].text = value
+
+    @rx.event
+    def set_badge_value(self, field_name: str, index: int, value: str) -> None:
+        """Set the badge attribute on an additive editor value."""
+        primary_source = self._get_editable_primary_source_by_field_name(field_name)
+        primary_source.editor_values[index].badge = value
 
     @rx.event
     def set_href_value(self, field_name: str, index: int, value: str) -> None:
         """Set an external href on an additive editor value."""
-        primary_source = self._get_mex_primary_source_by_field_name(field_name)
+        primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].href = value
         primary_source.editor_values[index].external = True

@@ -33,11 +33,18 @@ def render_link(value: EditorValue) -> rx.Component:
     )
 
 
+def render_span(text: str | None) -> rx.Component:
+    """Render a generic span with the given text."""
+    return rx.text(
+        text,
+        as_="span",
+    )
+
+
 def render_text(value: EditorValue) -> rx.Component:
     """Render an editor value as a text span."""
-    return rx.text(
+    return render_span(
         value.text,
-        as_="span",
     )
 
 
@@ -47,6 +54,7 @@ def render_badge(text: str | None) -> rx.Component:
         text,
         radius="large",
         variant="soft",
+        color_scheme="gray",
         style={"margin": "auto 0"},
     )
 

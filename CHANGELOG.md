@@ -16,7 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - apply ruff TC006 by quoting type expressions in `typing.cast` calls
 - update mex-common to 0.56.1
-- save vocabulary choice in `EditorValue.text` instead of `badge`
 
 ### Deprecated
 

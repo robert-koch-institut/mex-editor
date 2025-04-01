@@ -104,7 +104,7 @@ def test_get_primary_source_id_from_model_error() -> None:
             ),
             "hasConsentStatus",
             SubtractiveConsent(),
-            [EditorValue(text="VALID_FOR_PROCESSING", badge="ConsentStatus")],
+            [EditorValue(text="ConsentStatus", badge="VALID_FOR_PROCESSING")],
         ),
         (
             ExtractedPerson(
@@ -159,7 +159,7 @@ def test_get_primary_source_id_from_model_error() -> None:
             [
                 EditorValue(
                     text="Example Homepage",
-                    badge="en",
+                    badge="EN",
                     href="http://example",
                     external=True,
                     enabled=False,
@@ -393,7 +393,7 @@ def test_transform_models_to_fields() -> None:
                     "badge_titles": [],
                     "editable_href": False,
                     "editable_badge": False,
-                    "editable_text": True,
+                    "editable_text": False,
                 },
                 "editor_values": [],
                 "enabled": True,
@@ -575,13 +575,13 @@ def test_transform_fields_to_preventive(
     ("editor_value", "field_name", "class_name", "expected"),
     [
         (
-            EditorValue(text="Titel", badge="de", href="https://beispiel"),
+            EditorValue(text="Titel", badge="DE", href="https://beispiel"),
             "documentation",
             "AdditiveResource",
             Link(url="https://beispiel", language=LinkLanguage.DE, title="Titel"),
         ),
         (
-            EditorValue(text="Beispiel Text", badge="de"),
+            EditorValue(text="Beispiel Text", badge="DE"),
             "alternativeName",
             "AdditiveOrganization",
             Text(language=TextLanguage.DE, value="Beispiel Text"),

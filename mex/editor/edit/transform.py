@@ -163,7 +163,7 @@ def _transform_model_to_editor_primary_sources(
             input_config = _transform_model_to_additive_input_config(
                 field_name,
                 model.entityType,
-                primary_source_id == MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+                editable=isinstance(model, AnyAdditiveModel),
             )
             primary_source = _create_editor_primary_source(
                 primary_source_name,
@@ -275,9 +275,16 @@ def _transform_editor_value_to_model_value(
 ) -> AnyModelValue:
     """Transform an editor value back to a value to be used in mex.common.models."""
     if field_name in LINK_FIELDS_BY_CLASS_NAME[class_name]:
-        return Link(url=value.href, language=value.badge, title=value.text)
+        return Link(
+            url=value.href,
+            language=LinkLanguage[value.badge] if value.badge else None,
+            title=value.text,
+        )
     if field_name in TEXT_FIELDS_BY_CLASS_NAME[class_name]:
-        return Text(language=value.badge, value=value.text)
+        return Text(
+            language=TextLanguage[value.badge] if value.badge else None,
+            value=value.text,
+        )
     if field_name in VOCABULARY_FIELDS_BY_CLASS_NAME[class_name]:
         for vocabulary in ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES[class_name][field_name]:
             if vocabulary_name := value.text or input_config.badge_default:

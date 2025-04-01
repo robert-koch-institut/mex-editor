@@ -3,7 +3,7 @@ from typing import cast
 import reflex as rx
 
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
-from mex.editor.components import render_badge, render_value
+from mex.editor.components import render_span, render_value
 from mex.editor.edit.models import (
     EditorField,
     EditorPrimarySource,
@@ -110,24 +110,27 @@ def additive_rule_input(
         ),
         rx.cond(
             input_config.editable_badge,
-            rx.select(
-                input_config.badge_options,
-                value=cast("rx.Var", value.text)
-                | cast("rx.Var", input_config.badge_default),
-                size="1",
-                variant="surface",
-                radius="large",
-                on_change=cast("EditState", EditState).set_text_value(
-                    field_name, index
+            rx.fragment(
+                rx.foreach(
+                    input_config.badge_titles,
+                    render_span,
                 ),
-                custom_attrs={
-                    "data-testid": f"additive-rule-{field_name}-{index}-badge"
-                },
+                rx.select(
+                    input_config.badge_options,
+                    value=cast("rx.Var", value.badge)
+                    | cast("rx.Var", input_config.badge_default),
+                    size="1",
+                    variant="soft",
+                    radius="large",
+                    color_scheme="gray",
+                    on_change=cast("EditState", EditState).set_badge_value(
+                        field_name, index
+                    ),
+                    custom_attrs={
+                        "data-testid": f"additive-rule-{field_name}-{index}-badge"
+                    },
+                ),
             ),
-        ),
-        rx.foreach(
-            input_config.badge_titles,
-            render_badge,
         ),
         remove_additive_button(
             field_name,
@@ -145,7 +148,9 @@ def editor_value_card(
     """Return a card containing a single editor value."""
     return rx.card(
         rx.cond(
-            primary_source.identifier == MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+            primary_source.input_config.editable_text
+            | primary_source.input_config.editable_href
+            | primary_source.input_config.editable_badge,
             additive_rule_input(
                 field_name,
                 primary_source.input_config,
@@ -240,7 +245,9 @@ def editor_primary_source_stack(
             ),
         ),
         rx.cond(
-            model.identifier == MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+            model.input_config.editable_text
+            | model.input_config.editable_href
+            | model.input_config.editable_badge,
             new_additive_button(
                 field_name,
                 model.name.text,

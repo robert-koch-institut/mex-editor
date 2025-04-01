@@ -32,10 +32,10 @@ from mex.editor.transform import (
             True,
             [
                 EditorValue(text="bar"),
-                EditorValue(text="REST", badge="APIType"),
-                EditorValue(text="hi there", badge="en"),
+                EditorValue(text="APIType", badge="REST"),
+                EditorValue(text="hi there", badge="EN"),
                 EditorValue(
-                    text="homepage", badge="en", href="http://mex", external=True
+                    text="homepage", badge="EN", href="http://mex", external=True
                 ),
             ],
         ),
@@ -103,7 +103,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
         ],
         [
             # activity renders title as text (with language badge)
-            EditorValue(text="Aktivität 1", badge="de")
+            EditorValue(text="Aktivität 1", badge="DE")
         ],
     ]
 
@@ -119,7 +119,7 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
         [EditorValue(text="PrimarySource")],
         [EditorValue(text="ContactPoint")],
         [EditorValue(text="ContactPoint")],
-        [EditorValue(text="Unit 1", badge="en", enabled=True)],
+        [EditorValue(text="Unit 1", badge="EN", enabled=True)],
         [
             EditorValue(text="A1", enabled=True),
             EditorValue(text="wEvxYRPlmGVQCbZx9GAbn"),

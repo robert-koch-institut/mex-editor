@@ -29,7 +29,7 @@ def test_transform_models_to_results() -> None:
         "preview": [
             {
                 "text": "Unit 1",
-                "badge": "en",
+                "badge": "EN",
                 "href": None,
                 "external": False,
                 "enabled": True,

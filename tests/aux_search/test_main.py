@@ -39,6 +39,7 @@ def test_wikidata_search_and_import_results(aux_page: Page) -> None:
     expand_all_properties_button = page.get_by_test_id("expand-properties-button").nth(
         1
     )
+    page.screenshot(path="tests_aux_search_test_main-search_result.png")
     expect(page.get_by_text("Robert Koch-Institut").nth(1)).to_be_visible()
     expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
     expand_all_properties_button.click()
@@ -59,6 +60,7 @@ def test_wikidata_search_and_import_results(aux_page: Page) -> None:
 
 
 @pytest.mark.integration
+@pytest.mark.external
 def test_ldap_search_and_import_results(aux_page: Page) -> None:
     page = aux_page
     ldap_tab = page.get_by_role("tab", name="LDAP")
@@ -67,7 +69,7 @@ def test_ldap_search_and_import_results(aux_page: Page) -> None:
     expect(search_input).to_be_visible()
 
     # test search input is showing correctly
-    search_input.fill("doesn't exist gs871s9j91kksW*")
+    search_input.fill("doesn't exist gs871s9j91k*")
     expect(page.get_by_text("Showing 0 of")).to_be_visible()
     page.screenshot(
         path="tests_aux_search_test_main-test_ldap_search-input-0-found.png"
@@ -78,7 +80,7 @@ def test_ldap_search_and_import_results(aux_page: Page) -> None:
     expand_all_properties_button = page.get_by_test_id("expand-properties-button").nth(
         1
     )
-    page.screenshot(path="tests_aux_search_test_main-search_result.png")
+    page.screenshot(path="tests_aux_search_test_main-search_result_lap.png")
     expect(page.get_by_text("Ciftci")).to_be_visible()
     expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
     expand_all_properties_button.click()

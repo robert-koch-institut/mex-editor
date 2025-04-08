@@ -27,7 +27,7 @@ class AuxState(State):
     aux_provider_items: list[AuxNavItem] = [
         AuxNavItem(title="Wikidata", value="wikidata"),
         AuxNavItem(title="LDAP", value="ldap"),
-        AuxNavItem(title="Orchid", value="orchid"),
+        AuxNavItem(title="Orcid", value="orcid"),
     ]
 
     @rx.var(cache=False)

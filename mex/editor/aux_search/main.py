@@ -222,7 +222,7 @@ def nav_bar() -> rx.Component:
                     align="center",
                     spacing="5",
                 ),
-                value="orchid",
+                value="orcid",
             ),
             default_value="wikidata",
             on_change=lambda value: AuxState.change_extractor(value),

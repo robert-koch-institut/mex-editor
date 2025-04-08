@@ -2,7 +2,7 @@ from typing import cast
 
 import reflex as rx
 
-from mex.editor.aux_search.models import AuxResult
+from mex.editor.aux_search.models import AuxNavItem, AuxResult
 from mex.editor.aux_search.state import AuxState
 from mex.editor.components import render_value
 from mex.editor.layout import page
@@ -172,15 +172,24 @@ def search_results() -> rx.Component:
     )
 
 
+def aux_provider_tab(item: AuxNavItem) -> rx.Component:
+    """Render a tab for an aux provider."""
+    return rx.tabs.trigger(
+        item.title,
+        value=item.value,
+    )
+
+
 def nav_bar() -> rx.Component:
     """Render a bar with an extractor navigation menu."""
     return rx.flex(
         rx.tabs.root(
             rx.tabs.list(
                 rx.spacer(),
-                rx.tabs.trigger("Wikidata", value="wikidata"),
-                rx.tabs.trigger("LDAP", value="ldap"),
-                rx.tabs.trigger("Orchid", value="orchid"),
+                rx.foreach(
+                    AuxState.aux_provider_items,
+                    lambda item: aux_provider_tab(item),
+                ),
                 rx.spacer(),
                 size="2",
             ),
@@ -214,12 +223,10 @@ def nav_bar() -> rx.Component:
                     spacing="5",
                 ),
                 value="orchid",
-                disabled=True,
             ),
             default_value="wikidata",
             on_change=lambda value: AuxState.change_extractor(value),
         ),
-        margin="1em",
         custom_attrs={"data-testid": "aux-nav-bar"},
     )
 

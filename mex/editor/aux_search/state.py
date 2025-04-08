@@ -126,7 +126,7 @@ class AuxState(State):
         except HTTPError as exc:
             self.reset()
             yield from escalate_error(
-                "backend", "error fetching items: %s", exc.response.text
+                "backend", "error fetching items", exc.response.text
             )
         else:
             yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")

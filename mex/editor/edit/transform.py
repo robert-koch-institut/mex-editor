@@ -86,7 +86,6 @@ def _transform_model_to_additive_input_config(
     if field_name in (
         STRING_FIELDS_BY_CLASS_NAME[entity_type]
         + EMAIL_FIELDS_BY_CLASS_NAME[entity_type]
-        + TEMPORAL_FIELDS_BY_CLASS_NAME[entity_type]
     ):
         return InputConfig(
             editable_text=editable,
@@ -287,7 +286,7 @@ def _transform_editor_value_to_model_value(
         )
     if field_name in VOCABULARY_FIELDS_BY_CLASS_NAME[class_name]:
         for vocabulary in ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES[class_name][field_name]:
-            if vocabulary_name := value.text or input_config.badge_default:
+            if vocabulary_name := value.badge or input_config.badge_default:
                 return cast("type[AnyVocabularyEnum]", vocabulary)[vocabulary_name]
     if field_name in TEMPORAL_FIELDS_BY_CLASS_NAME[class_name]:
         precision = TemporalEntityPrecision(value.badge)

@@ -84,7 +84,7 @@ def additive_rule_input(
                 ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
-                    "width": "100%",
+                    "minWidth": "33%",
                 },
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-href"
@@ -101,7 +101,7 @@ def additive_rule_input(
                 ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
-                    "width": "100%",
+                    "minWidth": "33%",
                 },
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-text"
@@ -115,20 +115,22 @@ def additive_rule_input(
                     input_config.badge_titles,
                     render_span,
                 ),
-                rx.select(
-                    input_config.badge_options,
-                    value=cast("rx.Var", value.badge)
-                    | cast("rx.Var", input_config.badge_default),
-                    size="1",
-                    variant="soft",
-                    radius="large",
-                    color_scheme="gray",
-                    on_change=cast("EditState", EditState).set_badge_value(
-                        field_name, index
+                rx.box(
+                    rx.select(
+                        input_config.badge_options,
+                        value=cast("rx.Var", value.badge)
+                        | cast("rx.Var", input_config.badge_default),
+                        size="1",
+                        variant="soft",
+                        radius="large",
+                        color_scheme="gray",
+                        on_change=cast("EditState", EditState).set_badge_value(
+                            field_name, index
+                        ),
+                        custom_attrs={
+                            "data-testid": f"additive-rule-{field_name}-{index}-badge"
+                        },
                     ),
-                    custom_attrs={
-                        "data-testid": f"additive-rule-{field_name}-{index}-badge"
-                    },
                 ),
             ),
         ),

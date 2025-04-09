@@ -89,16 +89,27 @@ def _transform_model_to_additive_input_config(
     ):
         return InputConfig(
             editable_text=editable,
+            allow_additive=editable,
         )
-    if field_name in (TEXT_FIELDS_BY_CLASS_NAME[entity_type]):
+    if field_name in TEMPORAL_FIELDS_BY_CLASS_NAME[entity_type]:
+        return InputConfig(
+            editable_text=editable,
+            editable_badge=editable,
+            badge_default=TemporalEntityPrecision.YEAR.value,
+            badge_options=[e.value for e in TemporalEntityPrecision],
+            badge_titles=[TemporalEntityPrecision.__name__],
+            allow_additive=editable,
+        )
+    if field_name in TEXT_FIELDS_BY_CLASS_NAME[entity_type]:
         return InputConfig(
             editable_text=editable,
             editable_badge=editable,
             badge_default=TextLanguage.DE.name,
             badge_options=[e.name for e in TextLanguage],
             badge_titles=[TextLanguage.__name__],
+            allow_additive=editable,
         )
-    if field_name in (LINK_FIELDS_BY_CLASS_NAME[entity_type]):
+    if field_name in LINK_FIELDS_BY_CLASS_NAME[entity_type]:
         return InputConfig(
             editable_text=editable,
             editable_badge=editable,
@@ -106,8 +117,9 @@ def _transform_model_to_additive_input_config(
             badge_default=LinkLanguage.DE.name,
             badge_options=[e.name for e in LinkLanguage],
             badge_titles=[LinkLanguage.__name__],
+            allow_additive=editable,
         )
-    if field_name in (VOCABULARY_FIELDS_BY_CLASS_NAME[entity_type]):
+    if field_name in VOCABULARY_FIELDS_BY_CLASS_NAME[entity_type]:
         options = VOCABULARIES_BY_FIELDS_BY_CLASS_NAMES[entity_type][field_name]
         vocabularies = ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES[entity_type][field_name]
         return InputConfig(
@@ -115,6 +127,7 @@ def _transform_model_to_additive_input_config(
             badge_default=options[0].name,
             badge_options=[e.name for e in options],
             badge_titles=[v.__name__ for v in vocabularies],
+            allow_additive=editable,
         )
     return InputConfig()
 

@@ -84,7 +84,7 @@ def additive_rule_input(
                 ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
-                    "minWidth": "33%",
+                    "minWidth": "30%",
                 },
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-href"
@@ -101,7 +101,7 @@ def additive_rule_input(
                 ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
-                    "minWidth": "33%",
+                    "minWidth": "30%",
                 },
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-text"
@@ -150,9 +150,7 @@ def editor_value_card(
     """Return a card containing a single editor value."""
     return rx.card(
         rx.cond(
-            primary_source.input_config.editable_text
-            | primary_source.input_config.editable_href
-            | primary_source.input_config.editable_badge,
+            primary_source.input_config.allow_additive,
             additive_rule_input(
                 field_name,
                 primary_source.input_config,

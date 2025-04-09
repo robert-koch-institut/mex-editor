@@ -13,6 +13,7 @@ class InputConfig(rx.Base):
     editable_href: bool = False
     editable_badge: bool = False
     editable_text: bool = False
+    allow_additive: bool = False
 
 
 class EditorPrimarySource(rx.Base):

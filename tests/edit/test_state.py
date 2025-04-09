@@ -40,7 +40,6 @@ def test_state_get_primary_sources_by_field_name() -> None:
         EditorPrimarySource(
             name=EditorValue(text="00000000000000", href="/item/00000000000000"),
             identifier="00000000000000",
-            input_config=InputConfig(editable_text=True),
-            editor_values=[],
+            input_config=InputConfig(editable_text=True, allow_additive=True),
         ),
     ]

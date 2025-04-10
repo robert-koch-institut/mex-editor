@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- create InputConfig for all fields, not just mex primary source
+- add `badge_default`, `badge_titles` and fine grained edit control to input config
+- allow editing for vocabulary fields and harmonize with link/text language editing
 - search and import ldap persons
 - resolve identifiers in search and edit view to their preferred title attributes
 - resolve identifiers in primary source search filter to their preferred title attribute
@@ -16,12 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - apply ruff TC006 by quoting type expressions in `typing.cast` calls
+- update mex-common to 0.57.0
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- fixed editing for temporal fields by showing select menu for precisions
 
 ### Security
 

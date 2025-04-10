@@ -6,6 +6,7 @@ from mex.common.fields import (
     EMAIL_FIELDS_BY_CLASS_NAME,
     LINK_FIELDS_BY_CLASS_NAME,
     MERGEABLE_FIELDS_BY_CLASS_NAME,
+    REFERENCE_FIELDS_BY_CLASS_NAME,
     STRING_FIELDS_BY_CLASS_NAME,
     TEMPORAL_FIELDS_BY_CLASS_NAME,
     TEXT_FIELDS_BY_CLASS_NAME,
@@ -305,6 +306,8 @@ def _transform_editor_value_to_model_value(
         precision = TemporalEntityPrecision(value.badge)
         temporal_class = TEMPORAL_ENTITY_CLASSES_BY_PRECISION[precision]
         return temporal_class(str(value.text), precision=precision)
+    if field_name in REFERENCE_FIELDS_BY_CLASS_NAME[class_name]:
+        return value.identifier
     return value.text
 
 

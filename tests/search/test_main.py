@@ -1,14 +1,19 @@
-import re
-
 import pytest
 from playwright.sync_api import Page, expect
 
-from mex.common.models import AnyExtractedModel
+from mex.common.models import (
+    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    AnyExtractedModel,
+    ExtractedActivity,
+    ExtractedPrimarySource,
+)
 
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-def test_index(frontend_url: str, writer_user_page: Page) -> None:
+def test_index(
+    frontend_url: str, writer_user_page: Page, extracted_activity: ExtractedActivity
+) -> None:
     page = writer_user_page
 
     # load page and establish section is visible
@@ -21,15 +26,17 @@ def test_index(frontend_url: str, writer_user_page: Page) -> None:
     expect(page.get_by_text("Showing 7 of 7 items")).to_be_visible()
 
     # check mex primary source is showing
-    primary_source = page.get_by_text(re.compile(r"^PrimarySource$"))
+    primary_source = page.get_by_test_id(
+        f"result-{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    )
     expect(primary_source.first).to_be_visible()
 
     # check activity is showing
-    activity = page.get_by_text(
-        re.compile(r"Aktivität 1\s*DE\s*A1.*1999-12-24\s*day\s*2023-01-01")
-    )
+    activity = page.get_by_test_id(f"result-{extracted_activity.stableTargetId}")
     activity.scroll_into_view_if_needed()
     expect(activity).to_be_visible()
+    expect(activity).to_contain_text("info@contact-point.one")  # resolved preview
+
     page.screenshot(path="tests_search_test_main-test_index-focus-activity.png")
 
 
@@ -112,37 +119,45 @@ def test_entity_types(
 def test_had_primary_sources(
     frontend_url: str,
     writer_user_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     page = writer_user_page
     page.goto(frontend_url)
+
+    extracted_primary_source_one = dummy_data_by_identifier_in_primary_source["ps-1"]
+    assert isinstance(extracted_primary_source_one, ExtractedPrimarySource)
 
     # check sidebar is showing
     sidebar = page.get_by_test_id("search-sidebar")
     expect(sidebar).to_be_visible()
 
-    # check entity types are showing and functioning
+    # check primary sources are showing and functioning
     primary_sources = page.get_by_test_id("had-primary-sources")
+    primary_sources.scroll_into_view_if_needed()
     expect(primary_sources).to_be_visible()
-    assert "00000000000000" in primary_sources.all_text_contents()[0]
+    # check that title is resolved if primary source has a title
+    assert (
+        extracted_primary_source_one.title[0].value
+        in primary_sources.all_text_contents()[0]
+    )
 
-    primary_sources.get_by_text("00000000000000").click()
+    primary_sources.get_by_text("Primary Source One").click()
     expect(page.get_by_text("Showing 3 of 3 items")).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_had_primary_sources-on-select-primary-source-1-found.png"
     )
-    primary_sources.get_by_text("00000000000000").click()
+    primary_sources.get_by_text("Primary Source One").click()
 
 
 @pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
 def test_load_search_params(
     frontend_url: str,
     writer_user_page: Page,
-    load_dummy_data: list[AnyExtractedModel],
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     page = writer_user_page
-    expected_model, *_ = [
-        m for m in load_dummy_data if m.identifierInPrimarySource == "cp-2"
-    ]
+    expected_model = dummy_data_by_identifier_in_primary_source["cp-2"]
     page.goto(
         f"{frontend_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
         f"&hadPrimarySource={expected_model.hadPrimarySource}"
@@ -177,8 +192,11 @@ def test_load_search_params(
 def test_push_search_params(
     frontend_url: str,
     writer_user_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     page = writer_user_page
+    primary_source = dummy_data_by_identifier_in_primary_source["ps-1"]
+    assert type(primary_source) is ExtractedPrimarySource
 
     # load page and verify url
     page.goto(frontend_url)
@@ -208,7 +226,7 @@ def test_push_search_params(
     primary_sources = page.get_by_test_id("had-primary-sources")
     expect(primary_sources).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load-2.png")
-    primary_sources.get_by_text("00000000000000").click()
+    primary_sources.get_by_text(primary_source.title[0].value).click()
     checked = primary_sources.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
     page.screenshot(
@@ -217,5 +235,6 @@ def test_push_search_params(
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
-        "**/?q=Can+I+search+here%3F&page=1&entityType=Activity&hadPrimarySource=00000000000000"
+        "**/?q=Can+I+search+here%3F&page=1&entityType=Activity"
+        f"&hadPrimarySource={primary_source.stableTargetId}"
     )

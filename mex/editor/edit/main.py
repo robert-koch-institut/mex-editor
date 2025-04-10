@@ -24,7 +24,7 @@ def editor_value_switch(
         checked=value.enabled,
         on_change=cast("EditState", EditState).toggle_field_value(field_name, value),
         custom_attrs={
-            "data-testid": f"switch-{field_name}-{primary_source.name.text}-{index}"
+            "data-testid": f"switch-{field_name}-{primary_source.identifier}-{index}"
         },
         color_scheme=rx.cond(primary_source.enabled, "jade", "gray"),
     )
@@ -163,7 +163,7 @@ def editor_value_card(
         ),
         style={"width": "100%"},
         custom_attrs={
-            "data-testid": f"value-{field_name}-{primary_source.name.text}-{index}"
+            "data-testid": f"value-{field_name}-{primary_source.identifier}-{index}"
         },
     )
 
@@ -200,14 +200,14 @@ def primary_source_name(
         background=rx.cond(model.enabled, "inherit", "var(--gray-a4)"),
         style={"width": "33%"},
         custom_attrs={
-            "data-testid": f"primary-source-{field_name}-{model.name.text}-name"
+            "data-testid": f"primary-source-{field_name}-{model.identifier}-name"
         },
     )
 
 
 def new_additive_button(
     field_name: str,
-    primary_source: str | None,
+    primary_source_identifier: str,
 ) -> rx.Component:
     """Render a button for adding new additive rules to a given field."""
     return rx.card(
@@ -222,7 +222,9 @@ def new_additive_button(
             variant="soft",
             size="1",
             on_click=cast("EditState", EditState).add_additive_value(field_name),
-            custom_attrs={"data-testid": f"new-additive-{field_name}-{primary_source}"},
+            custom_attrs={
+                "data-testid": f"new-additive-{field_name}-{primary_source_identifier}"
+            },
         ),
         style={"width": "100%"},
     )
@@ -247,7 +249,7 @@ def editor_primary_source_stack(
             model.input_config.allow_additive,
             new_additive_button(
                 field_name,
-                model.name.text,
+                model.identifier,
             ),
         ),
         style={"width": "100%"},
@@ -270,7 +272,7 @@ def editor_primary_source(
         ),
         style={"width": "100%"},
         custom_attrs={
-            "data-testid": f"primary-source-{field_name}-{model.name.text}",
+            "data-testid": f"primary-source-{field_name}-{model.identifier}",
         },
     )
 

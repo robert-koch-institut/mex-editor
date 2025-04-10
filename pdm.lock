@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:d4726ca0147e2b11165ee44c6652db5266cc8603c08ef110f93fde4b1e0c5cff"
+content_hash = "sha256:fcbd96f661c84b0a160d9b8779fd1b7e39607083ead2682b8eb0ae93bc9544a7"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -78,6 +78,20 @@ marker = "python_version >= \"3.11\""
 files = [
     {file = "asttokens-3.0.0-py3-none-any.whl", hash = "sha256:e3078351a059199dd5138cb1c706e6430c05eff2ff136af5eb4790f9d28932e2"},
     {file = "asttokens-3.0.0.tar.gz", hash = "sha256:0dcd8baa8d62b0c1d118b399b2ddba3c4aff271d0d7a9e0d4c1681c79035bbc7"},
+]
+
+[[package]]
+name = "async-lru"
+version = "2.0.5"
+requires_python = ">=3.9"
+summary = "Simple LRU cache for asyncio"
+groups = ["default"]
+dependencies = [
+    "typing-extensions>=4.0.0; python_version < \"3.11\"",
+]
+files = [
+    {file = "async_lru-2.0.5-py3-none-any.whl", hash = "sha256:ab95404d8d2605310d345932697371a5f40def0487c03d6d0ad9138de52c9943"},
+    {file = "async_lru-2.0.5.tar.gz", hash = "sha256:481d52ccdd27275f42c43a928b4a50c3bfb2d67af4e78b170e3e0bb39c66e5bb"},
 ]
 
 [[package]]
@@ -916,6 +930,17 @@ files = [
 ]
 
 [[package]]
+name = "nest-asyncio"
+version = "1.6.0"
+requires_python = ">=3.5"
+summary = "Patch asyncio to allow nested event loops"
+groups = ["dev"]
+files = [
+    {file = "nest_asyncio-1.6.0-py3-none-any.whl", hash = "sha256:87af6efd6b5e897c81050477ef65c62e2b2f35d51703cae01aff2905b1852e1c"},
+    {file = "nest_asyncio-1.6.0.tar.gz", hash = "sha256:6f172d5449aca15afd6c646851f4e31e02c598d553a667e38cafa997cfec55fe"},
+]
+
+[[package]]
 name = "nh3"
 version = "0.2.21"
 requires_python = ">=3.8"
@@ -1540,7 +1565,7 @@ files = [
 
 [[package]]
 name = "reflex-hosting-cli"
-version = "0.1.36"
+version = "0.1.38"
 requires_python = "<4.0,>=3.9"
 summary = "Reflex Hosting CLI"
 groups = ["default"]
@@ -1555,8 +1580,8 @@ dependencies = [
     "typer<1,>=0.15.0",
 ]
 files = [
-    {file = "reflex_hosting_cli-0.1.36-py3-none-any.whl", hash = "sha256:187b494f5cf028cd1ec7c243f474d36c71a3f70ead932e2d049c0fd4657a41e0"},
-    {file = "reflex_hosting_cli-0.1.36.tar.gz", hash = "sha256:69d2efe5ff629234d6bf20b55067e0a1c6d2045861a937a8e092fcb4b3b58f2c"},
+    {file = "reflex_hosting_cli-0.1.38-py3-none-any.whl", hash = "sha256:b1ed0b488c612d67b640b72e3bfb9307781f0b715b2edfe395320556c3103cf7"},
+    {file = "reflex_hosting_cli-0.1.38.tar.gz", hash = "sha256:a0e8c45724de596855d2ed1d62278b5ad34027108c0ce2115e926968c8f62ceb"},
 ]
 
 [[package]]

@@ -22,6 +22,7 @@ def test_transform_models_to_results() -> None:
                 "text": "OU1",
                 "badge": None,
                 "href": None,
+                "identifier": None,
                 "external": False,
                 "enabled": True,
             }
@@ -31,6 +32,7 @@ def test_transform_models_to_results() -> None:
                 "text": "Unit 1",
                 "badge": "EN",
                 "href": None,
+                "identifier": None,
                 "external": False,
                 "enabled": True,
             }

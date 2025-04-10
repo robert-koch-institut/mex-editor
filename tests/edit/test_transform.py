@@ -131,7 +131,8 @@ def test_get_primary_source_id_from_model_error() -> None:
             ),
             [
                 EditorValue(
-                    text="gGdOIbDIHRt35He616Fv5q", href="/item/gGdOIbDIHRt35He616Fv5q"
+                    href="/item/gGdOIbDIHRt35He616Fv5q",
+                    identifier="gGdOIbDIHRt35He616Fv5q",
                 ),
             ],
         ),
@@ -308,7 +309,8 @@ def test_transform_model_to_additive_input_config(
             [
                 EditorPrimarySource(
                     name=EditorValue(
-                        text="primarySourceId", href="/item/primarySourceId"
+                        identifier="primarySourceId",
+                        href="/item/primarySourceId",
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
                     editor_values=[EditorValue(text="Example")],
@@ -319,7 +321,8 @@ def test_transform_model_to_additive_input_config(
             [
                 EditorPrimarySource(
                     name=EditorValue(
-                        text="primarySourceId", href="/item/primarySourceId"
+                        identifier="primarySourceId",
+                        href="/item/primarySourceId",
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
                     input_config=InputConfig(),
@@ -343,12 +346,16 @@ def test_transform_model_to_additive_input_config(
             [
                 EditorPrimarySource(
                     name=EditorValue(
-                        text="primarySourceId", href="/item/primarySourceId"
+                        identifier="primarySourceId",
+                        href="/item/primarySourceId",
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
                     editor_values=[
                         EditorValue(text="Given"),
-                        EditorValue(text="Gegeben", enabled=False),
+                        EditorValue(
+                            text="Gegeben",
+                            enabled=False,
+                        ),
                     ],
                     input_config=InputConfig(),
                     enabled=True,
@@ -357,7 +364,7 @@ def test_transform_model_to_additive_input_config(
             [
                 EditorPrimarySource(
                     name=EditorValue(
-                        text="primarySourceId",
+                        identifier="primarySourceId",
                         href="/item/primarySourceId",
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
@@ -410,7 +417,8 @@ def test_transform_models_to_fields() -> None:
         "primary_sources": [
             {
                 "name": {
-                    "text": "00000000000000",
+                    "text": None,
+                    "identifier": "00000000000000",
                     "badge": None,
                     "href": "/item/00000000000000",
                     "external": False,
@@ -431,7 +439,8 @@ def test_transform_models_to_fields() -> None:
             },
             {
                 "name": {
-                    "text": "00000000000000",
+                    "text": None,
+                    "identifier": "00000000000000",
                     "badge": None,
                     "href": "/item/00000000000000",
                     "external": False,
@@ -452,6 +461,7 @@ def test_transform_models_to_fields() -> None:
                         "text": "Good",
                         "badge": None,
                         "href": None,
+                        "identifier": None,
                         "external": False,
                         "enabled": True,
                     }
@@ -465,7 +475,8 @@ def test_transform_models_to_fields() -> None:
         "primary_sources": [
             {
                 "name": {
-                    "text": "00000000000000",
+                    "text": None,
+                    "identifier": "00000000000000",
                     "badge": None,
                     "href": "/item/00000000000000",
                     "external": False,
@@ -644,8 +655,29 @@ def test_transform_fields_to_preventive(
             "AdditiveActivity",
             "Funds for Funding e.V.",
         ),
+        (
+            EditorValue(identifier="abcdefhijkglmno"),
+            "hadPrimarySource",
+            "ExtractedActivity",
+            "abcdefhijkglmno",
+        ),
+        (
+            EditorValue(identifier="abcdefhijkglmno", text="foo"),
+            "hadPrimarySource",
+            "ExtractedActivity",
+            "abcdefhijkglmno",
+        ),
     ],
-    ids=["link", "text", "vocab", "default vocab", "temporal", "string"],
+    ids=[
+        "link",
+        "text",
+        "vocab",
+        "default_vocab",
+        "temporal",
+        "string",
+        "identifier",
+        "resolved_identifier",
+    ],
 )
 def test_transform_editor_value_to_model_value(
     editor_value: EditorValue, field_name: str, class_name: str, expected: object

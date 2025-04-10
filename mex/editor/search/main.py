@@ -49,35 +49,26 @@ def search_result(result: SearchResult) -> rx.Component:
 def search_input() -> rx.Component:
     """Render a search input element that will trigger the results to refresh."""
     return rx.card(
-        rx.debounce_input(
-            rx.input(
-                rx.input.slot(
-                    rx.icon("search"),
+        rx.form.root(
+            rx.hstack(
+                rx.input(
                     autofocus=True,
-                    padding_left="0",
+                    name="query_string",
+                    placeholder="Search here...",
+                    type="text",
                     tab_index=1,
+                    default_value=SearchState.query_string,
                 ),
-                placeholder="Search here...",
-                value=SearchState.query_string,
-                on_change=[
-                    SearchState.set_query_string,
-                    SearchState.go_to_first_page,
-                    SearchState.push_search_params,
-                    SearchState.refresh,
-                    SearchState.resolve_identifiers,
-                ],
-                max_length=100,
-                style={
-                    "--text-field-selection-color": "",
-                    "--text-field-focus-color": "transparent",
-                    "--text-field-border-width": "calc(1px * var(--scaling))",
-                    "boxShadow": (
-                        "inset 0 0 0 var(--text-field-border-width) transparent"
-                    ),
-                },
+                rx.button(rx.icon("search"), type="submit"),
+                width="100%",
             ),
-            style={"margin": "var(--space-4) 0 var(--space-4)"},
-            debounce_timeout=250,
+            on_submit=[
+                SearchState.handle_submit,
+                SearchState.go_to_first_page,
+                SearchState.push_search_params,
+                SearchState.refresh,
+                SearchState.resolve_identifiers,
+            ],
         ),
         style={"width": "100%"},
     )

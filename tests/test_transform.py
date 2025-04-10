@@ -88,29 +88,19 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
     assert dummy_titles == [
         [
             # ps-1 primary source renders title as text
-            EditorValue(
-                text="Primary Source One",
-                badge="en",
-            )
+            EditorValue(text="Primary Source One", badge="EN")
         ],
         [
             # ps-2 primary source renders title as text
-            EditorValue(
-                text="Primary Source Two",
-                badge="en",
-            )
+            EditorValue(text="Primary Source Two", badge="EN")
         ],
         [
             # contact-point renders email as text
-            EditorValue(
-                text="info@contact-point.one",
-            )
+            EditorValue(text="info@contact-point.one")
         ],
         [
             # contact-point renders email as text
-            EditorValue(
-                text="help@contact-point.two",
-            )
+            EditorValue(text="help@contact-point.two")
         ],
         [
             # unit renders shortName as text (no language badge)

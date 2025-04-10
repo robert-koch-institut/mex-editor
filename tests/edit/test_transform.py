@@ -497,7 +497,8 @@ def test_transform_models_to_fields() -> None:
             },
             {
                 "name": {
-                    "text": "00000000000000",
+                    "text": None,
+                    "identifier": "00000000000000",
                     "badge": None,
                     "href": "/item/00000000000000",
                     "external": False,

@@ -2,7 +2,7 @@ from typing import cast
 
 import reflex as rx
 
-from mex.editor.aux_search.models import AuxResult
+from mex.editor.aux_search.models import AuxNavItem, AuxResult
 from mex.editor.aux_search.state import AuxState
 from mex.editor.components import render_value
 from mex.editor.layout import page
@@ -28,10 +28,13 @@ def import_button(result: AuxResult, index: int) -> rx.Component:
         result.show_import_button,
         rx.button(
             "Import",
+            on_click=AuxState.import_result(index),
             align="end",
         ),
         rx.button(
-            "Import", on_click=AuxState.import_result(index), align="end", disabled=True
+            "Imported",
+            align="end",
+            disabled=True,
         ),
     )
 
@@ -169,19 +172,61 @@ def search_results() -> rx.Component:
     )
 
 
+def aux_provider_tab(item: AuxNavItem) -> rx.Component:
+    """Render a tab for an aux provider."""
+    return rx.tabs.trigger(
+        item.title,
+        value=item.value,
+    )
+
+
 def nav_bar() -> rx.Component:
     """Render a bar with an extractor navigation menu."""
     return rx.flex(
-        rx.foreach(
-            AuxState.aux_data_sources,
-            lambda item: rx.text(
-                item,
-                cursor="pointer",
-                size="5",
+        rx.tabs.root(
+            rx.tabs.list(
+                rx.spacer(),
+                rx.foreach(
+                    AuxState.aux_provider_items,
+                    lambda item: aux_provider_tab(item),
+                ),
+                rx.spacer(),
+                size="2",
             ),
+            rx.spacer(),
+            rx.tabs.content(
+                rx.vstack(
+                    search_input(),
+                    search_results(),
+                    justify="center",
+                    align="center",
+                    spacing="5",
+                ),
+                value="wikidata",
+            ),
+            rx.tabs.content(
+                rx.vstack(
+                    search_input(),
+                    search_results(),
+                    justify="center",
+                    align="center",
+                    spacing="5",
+                ),
+                value="ldap",
+            ),
+            rx.tabs.content(
+                rx.vstack(
+                    search_input(),
+                    search_results(),
+                    justify="center",
+                    align="center",
+                    spacing="5",
+                ),
+                value="orcid",
+            ),
+            default_value="wikidata",
+            on_change=lambda value: AuxState.change_extractor(value),
         ),
-        direction="row",
-        gap="50px",
         custom_attrs={"data-testid": "aux-nav-bar"},
     )
 
@@ -220,13 +265,6 @@ def index() -> rx.Component:
     """Return the index for the search component."""
     return rx.center(
         page(
-            rx.vstack(
-                nav_bar(),
-                search_input(),
-                search_results(),
-                spacing="5",
-                justify="center",
-                align="center",
-            )
+            nav_bar(),
         )
     )

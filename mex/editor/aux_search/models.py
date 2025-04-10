@@ -12,3 +12,10 @@ class AuxResult(rx.Base):
     show_properties: bool
     all_properties: list[EditorValue]
     show_import_button: bool
+
+
+class AuxNavItem(rx.Base):
+    """Model for one aux navigation bar item."""
+
+    title: str = ""
+    value: str = "/"

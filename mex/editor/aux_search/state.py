@@ -8,7 +8,7 @@ from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import AnyExtractedModel, PaginatedItemsContainer
-from mex.editor.aux_search.models import AuxResult
+from mex.editor.aux_search.models import AuxNavItem, AuxResult
 from mex.editor.aux_search.transform import transform_models_to_results
 from mex.editor.exceptions import escalate_error
 from mex.editor.state import State
@@ -23,7 +23,12 @@ class AuxState(State):
     query_string: str = ""
     current_page: int = 1
     limit: int = 50
-    aux_data_sources: list[str] = ["Wikidata", "LDAP"]
+    current_aux_provider: str = "wikidata"
+    aux_provider_items: list[AuxNavItem] = [
+        AuxNavItem(title="Wikidata", value="wikidata"),
+        AuxNavItem(title="LDAP", value="ldap"),
+        AuxNavItem(title="Orcid", value="orcid"),
+    ]
 
     @rx.var(cache=False)
     def total_pages(self) -> list[str]:
@@ -52,6 +57,11 @@ class AuxState(State):
         self.results_transformed[index].show_properties = not self.results_transformed[
             index
         ].show_properties
+
+    @rx.event
+    def change_extractor(self, value: str) -> None:
+        """Change the current extractor."""
+        self.current_aux_provider = value
 
     @rx.event
     def set_query_string(self, value: str) -> Generator[EventSpec | None, None, None]:
@@ -99,7 +109,7 @@ class AuxState(State):
 
     @rx.event
     def search(self) -> Generator[EventSpec | None, None, None]:
-        """Search for wikidata organizations based on the query string."""
+        """Search in aux-extractor for items based on the query string."""
         if self.query_string == "":
             return
         connector = BackendApiConnector.get()
@@ -107,7 +117,7 @@ class AuxState(State):
             # TODO(HS): use proper connector method when available (stop-gap MX-1762)
             response = connector.request(
                 method="GET",
-                endpoint="wikidata",
+                endpoint=self.current_aux_provider,
                 params={
                     "q": self.query_string,
                     "offset": str((self.current_page - 1) * self.limit),
@@ -117,7 +127,7 @@ class AuxState(State):
         except HTTPError as exc:
             self.reset()
             yield from escalate_error(
-                "backend", "error fetching wikidata items: %s", exc.response.text
+                "backend", "error fetching items", exc.response.text
             )
         else:
             yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")

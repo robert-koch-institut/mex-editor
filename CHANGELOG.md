@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- search and import ldap persons
 - resolve identifiers in search and edit view to their preferred title attributes
 - resolve identifiers in primary source search filter to their preferred title attribute
 

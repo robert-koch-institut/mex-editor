@@ -110,6 +110,7 @@ class EditState(State):
     def _get_primary_sources_by_field_name(
         self, field_name: str
     ) -> list[EditorPrimarySource]:
+        """Get all primary sources for the given field name."""
         for field in self.fields:
             if field.name == field_name:
                 return field.primary_sources
@@ -119,12 +120,9 @@ class EditState(State):
     def _get_editable_primary_source_by_field_name(
         self, field_name: str
     ) -> EditorPrimarySource:
+        """Get the (first) primary source that allows an editable rule."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
-            if (
-                primary_source.input_config.editable_text
-                or primary_source.input_config.editable_href
-                or primary_source.input_config.editable_badge
-            ):
+            if primary_source.input_config.allow_additive:
                 return primary_source
         msg = f"editable field not found: {field_name}"
         raise ValueError(msg)

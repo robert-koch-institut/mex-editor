@@ -193,9 +193,36 @@ def test_transform_model_values_to_editor_values(
         "expected",
     ),
     [
-        ("AdditiveActivity", "fundingProgram", InputConfig(editable_text=True)),
-        ("AdditiveResource", "created", InputConfig(editable_text=True)),
-        ("AdditiveContactPoint", "email", InputConfig(editable_text=True)),
+        (
+            "AdditiveActivity",
+            "fundingProgram",
+            InputConfig(editable_text=True, allow_additive=True),
+        ),
+        (
+            "AdditiveResource",
+            "created",
+            InputConfig(
+                badge_default="year",
+                badge_options=[
+                    "year",
+                    "month",
+                    "day",
+                    "hour",
+                    "minute",
+                    "second",
+                    "microsecond",
+                ],
+                badge_titles=["TemporalEntityPrecision"],
+                editable_badge=True,
+                editable_text=True,
+                allow_additive=True,
+            ),
+        ),
+        (
+            "AdditiveContactPoint",
+            "email",
+            InputConfig(editable_text=True, allow_additive=True),
+        ),
         ("AdditivePerson", "affiliation", InputConfig()),
         (
             "AdditiveResource",
@@ -207,6 +234,7 @@ def test_transform_model_values_to_editor_values(
                 editable_href=False,
                 editable_badge=True,
                 editable_text=False,
+                allow_additive=True,
             ),
         ),
         (
@@ -219,6 +247,7 @@ def test_transform_model_values_to_editor_values(
                 editable_href=True,
                 editable_badge=True,
                 editable_text=True,
+                allow_additive=True,
             ),
         ),
         (
@@ -230,6 +259,7 @@ def test_transform_model_values_to_editor_values(
                 badge_titles=["TextLanguage"],
                 editable_badge=True,
                 editable_text=True,
+                allow_additive=True,
             ),
         ),
         ("AdditiveResource", "minTypicalAge", InputConfig()),
@@ -394,6 +424,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_href": False,
                     "editable_badge": False,
                     "editable_text": False,
+                    "allow_additive": False,
                 },
                 "editor_values": [],
                 "enabled": True,
@@ -414,6 +445,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_href": False,
                     "editable_badge": False,
                     "editable_text": True,
+                    "allow_additive": True,
                 },
                 "editor_values": [
                     {
@@ -447,6 +479,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_href": False,
                     "editable_badge": False,
                     "editable_text": False,
+                    "allow_additive": False,
                 },
                 "editor_values": [],
                 "enabled": False,
@@ -467,6 +500,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_href": False,
                     "editable_badge": False,
                     "editable_text": False,
+                    "allow_additive": False,
                 },
                 "editor_values": [],
                 "enabled": False,
@@ -587,7 +621,7 @@ def test_transform_fields_to_preventive(
             Text(language=TextLanguage.DE, value="Beispiel Text"),
         ),
         (
-            EditorValue(text="EXPRESSED_CONSENT", badge="ConsentStatus"),
+            EditorValue(text="ConsentStatus", badge="EXPRESSED_CONSENT"),
             "hasConsentType",
             "AdditiveConsent",
             ConsentType["EXPRESSED_CONSENT"],

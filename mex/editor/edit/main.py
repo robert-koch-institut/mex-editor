@@ -2,7 +2,6 @@ from typing import cast
 
 import reflex as rx
 
-from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
 from mex.editor.components import render_span, render_value
 from mex.editor.edit.models import (
     EditorField,
@@ -84,7 +83,7 @@ def additive_rule_input(
                 ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
-                    "width": "100%",
+                    "minWidth": "30%",
                 },
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-href"
@@ -101,7 +100,7 @@ def additive_rule_input(
                 ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
-                    "width": "100%",
+                    "minWidth": "30%",
                 },
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-text"
@@ -115,20 +114,22 @@ def additive_rule_input(
                     input_config.badge_titles,
                     render_span,
                 ),
-                rx.select(
-                    input_config.badge_options,
-                    value=cast("rx.Var", value.badge)
-                    | cast("rx.Var", input_config.badge_default),
-                    size="1",
-                    variant="soft",
-                    radius="large",
-                    color_scheme="gray",
-                    on_change=cast("EditState", EditState).set_badge_value(
-                        field_name, index
+                rx.box(
+                    rx.select(
+                        input_config.badge_options,
+                        value=cast("rx.Var", value.badge)
+                        | cast("rx.Var", input_config.badge_default),
+                        size="1",
+                        variant="soft",
+                        radius="large",
+                        color_scheme="gray",
+                        on_change=cast("EditState", EditState).set_badge_value(
+                            field_name, index
+                        ),
+                        custom_attrs={
+                            "data-testid": f"additive-rule-{field_name}-{index}-badge"
+                        },
                     ),
-                    custom_attrs={
-                        "data-testid": f"additive-rule-{field_name}-{index}-badge"
-                    },
                 ),
             ),
         ),
@@ -148,9 +149,7 @@ def editor_value_card(
     """Return a card containing a single editor value."""
     return rx.card(
         rx.cond(
-            primary_source.input_config.editable_text
-            | primary_source.input_config.editable_href
-            | primary_source.input_config.editable_badge,
+            primary_source.input_config.allow_additive,
             additive_rule_input(
                 field_name,
                 primary_source.input_config,
@@ -193,7 +192,7 @@ def primary_source_name(
         rx.hstack(
             render_value(model.name),
             rx.cond(
-                model.identifier != MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+                ~cast("rx.vars.BooleanVar", model.input_config.allow_additive),
                 primary_source_switch(field_name, model),
             ),
             wrap="wrap",
@@ -245,9 +244,7 @@ def editor_primary_source_stack(
             ),
         ),
         rx.cond(
-            model.input_config.editable_text
-            | model.input_config.editable_href
-            | model.input_config.editable_badge,
+            model.input_config.allow_additive,
             new_additive_button(
                 field_name,
                 model.name.text,

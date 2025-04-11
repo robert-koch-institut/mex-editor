@@ -75,12 +75,14 @@ def test_search_input(
     search_input = page.get_by_placeholder("Search here...")
     expect(search_input).to_be_visible()
     search_input.fill("mex")
+    search_input.press("Enter")
     expect(page.get_by_text("Showing 1 of 1 items")).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-1-found.png"
     )
 
     search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
+    search_input.press("Enter")
     expect(page.get_by_text("Showing 0 of 0 items")).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-0-found.png"
@@ -218,6 +220,7 @@ def test_push_search_params(
     search_input = page.get_by_placeholder("Search here...")
     expect(search_input).to_be_visible()
     search_input.fill("Can I search here?")
+    search_input.press("Enter")
 
     # expect parameter change to be reflected in url
     page.wait_for_url("**/?q=Can+I+search+here%3F&page=1&entityType=Activity")

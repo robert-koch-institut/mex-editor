@@ -31,11 +31,13 @@ def test_wikidata_search_and_import_results(aux_page: Page) -> None:
 
     # test search input is showing correctly
     search_input.fill("this doesn't exist gs871s9j91kksWN0shx345jnj")
+    search_input.press("Enter")
     page.screenshot(path="tests_aux_search_test_main-test_search-input-0-found.png")
     expect(page.get_by_text("showing 0 of")).to_be_visible()
 
     # test expand button works
     search_input.fill("rki")
+    search_input.press("Enter")
     expand_all_properties_button = page.get_by_test_id("expand-properties-button").nth(
         1
     )
@@ -70,6 +72,7 @@ def test_ldap_search_and_import_results(aux_page: Page) -> None:
 
     # test search input is showing correctly
     search_input.fill("doesn't exist gs871s9j91k*")
+    search_input.press("Enter")
     expect(page.get_by_text("Showing 0 of")).to_be_visible()
     page.screenshot(
         path="tests_aux_search_test_main-test_ldap_search-input-0-found.png"
@@ -77,6 +80,7 @@ def test_ldap_search_and_import_results(aux_page: Page) -> None:
 
     # test expand button works
     search_input.fill("Ciftci*")
+    search_input.press("Enter")
     expand_all_properties_button = page.get_by_test_id("expand-properties-button").nth(
         1
     )

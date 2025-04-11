@@ -122,31 +122,35 @@ def aux_search_result(result: AuxResult, index: int) -> rx.Component:
 
 def search_input() -> rx.Component:
     """Render a search input element that will trigger the results to refresh."""
-    return rx.form(
-        rx.hstack(
-            rx.input(
-                autofocus=True,
-                max_length=100,
-                name="query_string",
-                placeholder="Search here...",
-                style={
-                    "--text-field-selection-color": "",
-                    "--text-field-focus-color": "transparent",
-                    "--text-field-border-width": "1px",
-                    "backgroundClip": "content-box",
-                    "backgroundColor": "transparent",
-                    "boxShadow": (
-                        "inset 0 0 0 var(--text-field-border-width) transparent"
-                    ),
-                    "color": "",
-                },
-                type="text",
+    return rx.center(
+        rx.form(
+            rx.hstack(
+                rx.input(
+                    autofocus=True,
+                    max_length=100,
+                    name="query_string",
+                    placeholder="Search here...",
+                    style={
+                        "--text-field-selection-color": "",
+                        "--text-field-focus-color": "transparent",
+                        "--text-field-border-width": "1px",
+                        "backgroundClip": "content-box",
+                        "backgroundColor": "transparent",
+                        "boxShadow": (
+                            "inset 0 0 0 var(--text-field-border-width) transparent"
+                        ),
+                        "color": "",
+                    },
+                    type="text",
+                ),
+                rx.button(rx.icon("search"), type="submit"),
+                width="100%",
             ),
-            rx.button(rx.icon("search"), type="submit"),
-            width="100%",
-        ),
-        on_submit=[AuxState.handle_submit, AuxState.search],
-        style={"margin": "1em 0 1em"},
+            on_submit=[AuxState.handle_submit, AuxState.search],
+            style={"margin": "1em 0 1em"},
+            justify="center",
+            align="center",
+        )
     )
 
 

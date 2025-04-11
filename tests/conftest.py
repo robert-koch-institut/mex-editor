@@ -12,8 +12,10 @@ from mex.common.models import (
     ExtractedContactPoint,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
+    ExtractedResource,
 )
 from mex.common.types import (
+    AccessRestriction,
     Email,
     Identifier,
     IdentityProvider,
@@ -164,6 +166,15 @@ def dummy_data() -> list[AnyExtractedModel]:
         title=[Text(value="Aktivität 1", language=TextLanguage.DE)],
         website=[Link(title="Activity Homepage", url="https://activity-1")],
     )
+    resource_1 = ExtractedResource(
+        hadPrimarySource=primary_source_1.stableTargetId,
+        identifierInPrimarySource="r-1",
+        accessRestriction=AccessRestriction["OPEN"],
+        contact=[contact_point_1.stableTargetId],
+        theme=[Theme["BIOINFORMATICS_AND_SYSTEMS_BIOLOGY"]],
+        title=[Text(value="Bioinformatics Resource 1", language=None)],
+        unitInCharge=[organizational_unit_1.stableTargetId],
+    )
     return [
         primary_source_1,
         primary_source_2,
@@ -171,6 +182,7 @@ def dummy_data() -> list[AnyExtractedModel]:
         contact_point_2,
         organizational_unit_1,
         activity_1,
+        resource_1,
     ]
 
 

@@ -1,6 +1,5 @@
 import pytest
 
-from mex.common.exceptions import MExError
 from mex.common.models import AnyExtractedModel
 from mex.common.types import APIType, Identifier, Link, LinkLanguage, Text, TextLanguage
 from mex.editor.models import EditorValue
@@ -67,7 +66,9 @@ def test_transform_values(
 
 
 def test_transform_value_none_error() -> None:
-    with pytest.raises(MExError, match="cannot transform NoneType to editor value"):
+    with pytest.raises(
+        NotImplementedError, match="cannot transform NoneType to editor value"
+    ):
         transform_value(None)
 
 

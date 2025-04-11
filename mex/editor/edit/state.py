@@ -1,6 +1,7 @@
 from collections.abc import Generator
 
 import reflex as rx
+from pydantic import ValidationError
 from reflex.event import EventSpec
 from requests import HTTPError
 from starlette import status
@@ -8,10 +9,11 @@ from starlette import status
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import RULE_SET_RESPONSE_CLASSES_BY_NAME
 from mex.common.transform import ensure_postfix
-from mex.editor.edit.models import EditorField, EditorPrimarySource
+from mex.editor.edit.models import EditorField, EditorPrimarySource, ValidationMessage
 from mex.editor.edit.transform import (
     transform_fields_to_rule_set,
     transform_models_to_fields,
+    transform_validation_error_to_messages,
 )
 from mex.editor.exceptions import escalate_error
 from mex.editor.models import EditorValue
@@ -29,6 +31,7 @@ class EditState(State):
     fields: list[EditorField] = []
     item_title: list[EditorValue] = []
     stem_type: str | None = None
+    validation_messages: list[ValidationMessage] = []
 
     @rx.event(background=True)
     async def resolve_identifiers(self):
@@ -97,7 +100,11 @@ class EditState(State):
         if self.stem_type is None:
             self.reset()
             return
-        rule_set = transform_fields_to_rule_set(self.stem_type, self.fields)
+        try:
+            rule_set = transform_fields_to_rule_set(self.stem_type, self.fields)
+        except ValidationError as exc:
+            self.validation_messages = transform_validation_error_to_messages(exc)
+            return
         connector = BackendApiConnector.get()
         try:
             # TODO(ND): use proper connector method when available (stop-gap MX-1762)
@@ -116,13 +123,18 @@ class EditState(State):
         resolve_identifier.cache_clear()
         yield rx.toast.success(
             title="Saved",
-            description=f"{self.stem_type} rule-set was saved successfully.",
+            description=f"{self.stem_type} was saved successfully.",
             class_name="editor-toast",
             close_button=True,
             dismissible=True,
             duration=5000,
         )
         yield from self.refresh()
+
+    @rx.event
+    def clear_validation_messages(self) -> None:
+        """Clear all validation messages."""
+        self.validation_messages.clear()
 
     def _get_primary_sources_by_field_name(
         self, field_name: str

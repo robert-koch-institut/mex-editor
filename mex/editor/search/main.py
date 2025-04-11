@@ -53,11 +53,20 @@ def search_input() -> rx.Component:
             rx.hstack(
                 rx.input(
                     autofocus=True,
+                    default_value=SearchState.query_string,
+                    max_length=100,
                     name="query_string",
                     placeholder="Search here...",
-                    type="text",
+                    style={
+                        "--text-field-selection-color": "",
+                        "--text-field-focus-color": "transparent",
+                        "--text-field-border-width": "calc(1px * var(--scaling))",
+                        "boxShadow": (
+                            "inset 0 0 0 var(--text-field-border-width) transparent"
+                        ),
+                    },
                     tab_index=1,
-                    default_value=SearchState.query_string,
+                    type="text",
                 ),
                 rx.button(rx.icon("search"), type="submit"),
                 width="100%",
@@ -69,6 +78,7 @@ def search_input() -> rx.Component:
                 SearchState.refresh,
                 SearchState.resolve_identifiers,
             ],
+            style={"margin": "var(--space-4) 0 var(--space-4)"},
         ),
         style={"width": "100%"},
     )

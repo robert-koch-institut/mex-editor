@@ -212,6 +212,7 @@ def primary_source_name(
     return rx.card(
         rx.hstack(
             render_value(model.name),
+            rx.spacer(),
             rx.cond(
                 ~cast("rx.vars.BooleanVar", model.input_config.allow_additive),
                 primary_source_switch(field_name, model),

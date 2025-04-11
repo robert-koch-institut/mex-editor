@@ -1,6 +1,5 @@
 from collections.abc import Sequence
 
-from mex.common.exceptions import MExError
 from mex.common.models import (
     AnyExtractedModel,
     AnyMergedModel,
@@ -54,12 +53,12 @@ def transform_value(value: object, allow_link: bool = True) -> EditorValue:
             text=str(value),
             badge=value.precision.value,
         )
-    if isinstance(value, str):
+    if isinstance(value, str | int):
         return EditorValue(
             text=str(value),
         )
     msg = f"cannot transform {type(value).__name__} to editor value"
-    raise MExError(msg)
+    raise NotImplementedError(msg)
 
 
 def transform_models_to_stem_type(

@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - apply ruff TC006 by quoting type expressions in `typing.cast` calls
-- update mex-common to 0.57.0
+- search initiation now requires hitting enter or clicking the search button
+- update mex-common to 0.58.0
 
 ### Deprecated
 

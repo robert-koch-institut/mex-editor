@@ -82,7 +82,7 @@ def test_search_input(
     )
 
     search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
-    search_input.press("Enter")
+    page.get_by_test_id("search-button").click()
     expect(page.get_by_text("Showing 0 of 0 items")).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-0-found.png"

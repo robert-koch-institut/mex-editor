@@ -146,7 +146,7 @@ def search_input() -> rx.Component:
                 rx.button(rx.icon("search"), type="submit"),
                 width="100%",
             ),
-            on_submit=[AuxState.handle_submit, AuxState.search],
+            on_submit=AuxState.handle_submit,
             style={"margin": "1em 0 1em"},
             justify="center",
             align="center",

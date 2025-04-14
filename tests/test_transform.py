@@ -128,25 +128,16 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
         [EditorValue(text="Unit 1", badge="EN", enabled=True)],
         [
             EditorValue(text="A1", enabled=True),
-            EditorValue(
-                identifier="wEvxYRPlmGVQCbZx9GAbn",
-            ),
-            EditorValue(
-                identifier="g32qzYNVH1Ez7JTEk3fvLF",
-            ),
-            EditorValue(
-                identifier="cWWm02l1c6cucKjIhkFqY4",
-            ),
-            EditorValue(
-                identifier="cWWm02l1c6cucKjIhkFqY4",
-            ),
-            EditorValue(
-                text="1999-12-24",
-                badge="day",
-            ),
-            EditorValue(
-                text="2023-01-01",
-                badge="day",
-            ),
+            EditorValue(identifier="wEvxYRPlmGVQCbZx9GAbn"),
+            EditorValue(identifier="g32qzYNVH1Ez7JTEk3fvLF"),
+            EditorValue(identifier="cWWm02l1c6cucKjIhkFqY4"),
+            EditorValue(identifier="cWWm02l1c6cucKjIhkFqY4"),
+            EditorValue(text="1999-12-24", badge="day"),
+            EditorValue(text="2023-01-01", badge="day"),
+        ],
+        [
+            EditorValue(identifier="cWWm02l1c6cucKjIhkFqY4"),
+            EditorValue(text="Theme", badge="BIOINFORMATICS_AND_SYSTEMS_BIOLOGY"),
+            EditorValue(text="AccessRestriction", badge="OPEN"),
         ],
     ]

@@ -101,6 +101,11 @@ class SearchState(State):
         self.current_page = int(page_number)
 
     @rx.event
+    def handle_submit(self, form_data: dict) -> None:
+        """Handle the form submit."""
+        self.query_string = form_data["query_string"]
+
+    @rx.event
     def go_to_first_page(self) -> None:
         """Navigate to the first page."""
         self.set_page(1)

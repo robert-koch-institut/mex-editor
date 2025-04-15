@@ -68,9 +68,11 @@ def search_input() -> rx.Component:
                     tab_index=1,
                     type="text",
                 ),
+                rx.spacer(),
                 rx.button(
                     rx.icon("search"),
                     type="submit",
+                    variant="surface",
                     disabled=SearchState.is_loading,
                     custom_attrs={"data-testid": "search-button"},
                 ),

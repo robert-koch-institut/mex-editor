@@ -111,6 +111,10 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
             # activity renders title as text (with language badge)
             EditorValue(text="Aktivität 1", badge="DE")
         ],
+        [
+            # resource renders title as text
+            EditorValue(text="Bioinformatics Resource 1"),
+        ],
     ]
 
 

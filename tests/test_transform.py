@@ -32,16 +32,10 @@ from mex.editor.transform import (
             True,
             [
                 EditorValue(text="bar"),
-                EditorValue(text="REST", badge="APIType"),
+                EditorValue(text="APIType", badge="REST"),
+                EditorValue(text="hi there", badge="EN"),
                 EditorValue(
-                    text="hi there",
-                    badge="en",
-                ),
-                EditorValue(
-                    text="homepage",
-                    badge="en",
-                    href="http://mex",
-                    external=True,
+                    text="homepage", badge="EN", href="http://mex", external=True
                 ),
             ],
         ),
@@ -94,29 +88,19 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
     assert dummy_titles == [
         [
             # ps-1 primary source renders title as text
-            EditorValue(
-                text="Primary Source One",
-                badge="en",
-            )
+            EditorValue(text="Primary Source One", badge="EN")
         ],
         [
             # ps-2 primary source renders title as text
-            EditorValue(
-                text="Primary Source Two",
-                badge="en",
-            )
+            EditorValue(text="Primary Source Two", badge="EN")
         ],
         [
             # contact-point renders email as text
-            EditorValue(
-                text="info@contact-point.one",
-            )
+            EditorValue(text="info@contact-point.one")
         ],
         [
             # contact-point renders email as text
-            EditorValue(
-                text="help@contact-point.two",
-            )
+            EditorValue(text="help@contact-point.two")
         ],
         [
             # unit renders shortName as text (no language badge)
@@ -124,10 +108,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
         ],
         [
             # activity renders title as text (with language badge)
-            EditorValue(
-                text="Aktivität 1",
-                badge="de",
-            )
+            EditorValue(text="Aktivität 1", badge="DE")
         ],
     ]
 
@@ -143,13 +124,7 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
         [EditorValue(text="PrimarySource")],
         [EditorValue(text="ContactPoint")],
         [EditorValue(text="ContactPoint")],
-        [
-            EditorValue(
-                text="Unit 1",
-                badge="en",
-                enabled=True,
-            )
-        ],
+        [EditorValue(text="Unit 1", badge="EN", enabled=True)],
         [
             EditorValue(text="A1", enabled=True),
             EditorValue(

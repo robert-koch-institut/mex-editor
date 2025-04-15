@@ -8,7 +8,6 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
-    AnyRuleSetResponse,
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedOrganizationalUnit,
@@ -16,6 +15,7 @@ from mex.common.models import (
 )
 from mex.common.types import (
     Email,
+    Identifier,
     IdentityProvider,
     Link,
     Text,
@@ -120,11 +120,13 @@ def dummy_data() -> list[AnyExtractedModel]:
     primary_source_1 = ExtractedPrimarySource(
         hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
         identifierInPrimarySource="ps-1",
+        title=[Text(value="Primary Source One", language=TextLanguage.EN)],
     )
     primary_source_2 = ExtractedPrimarySource(
         hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
         identifierInPrimarySource="ps-2",
         version="Cool Version v2.13",
+        title=[Text(value="Primary Source Two", language=TextLanguage.EN)],
     )
     contact_point_1 = ExtractedContactPoint(
         email=[Email("info@contact-point.one")],
@@ -173,10 +175,33 @@ def dummy_data() -> list[AnyExtractedModel]:
 
 
 @pytest.fixture
+def dummy_data_by_identifier_in_primary_source(
+    dummy_data: list[AnyExtractedModel],
+) -> dict[str, AnyExtractedModel]:
+    return {model.identifierInPrimarySource: model for model in dummy_data}
+
+
+@pytest.fixture
+def dummy_data_by_stable_target_id(
+    dummy_data: list[AnyExtractedModel],
+) -> dict[Identifier, AnyExtractedModel]:
+    return {model.stableTargetId: model for model in dummy_data}
+
+
+@pytest.fixture
 def load_dummy_data(
-    dummy_data: list[AnyExtractedModel | AnyRuleSetResponse],
+    dummy_data: list[AnyExtractedModel],
     flush_graph_database: None,  # noqa: ARG001
-) -> list[AnyExtractedModel | AnyRuleSetResponse]:
+) -> None:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
-    return connector.ingest(dummy_data)
+    connector.ingest(dummy_data)
+
+
+@pytest.fixture
+def extracted_activity(
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+) -> ExtractedActivity:
+    extracted_activity = dummy_data_by_identifier_in_primary_source["a-1"]
+    assert type(extracted_activity) is ExtractedActivity
+    return extracted_activity

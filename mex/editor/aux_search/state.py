@@ -64,9 +64,9 @@ class AuxState(State):
         self.current_aux_provider = value
 
     @rx.event
-    def set_query_string(self, value: str) -> Generator[EventSpec | None, None, None]:
-        """Set the query string and refresh the results."""
-        self.query_string = value
+    def handle_submit(self, form_data: dict) -> Generator[EventSpec | None, None, None]:
+        """Handle the form submit."""
+        self.query_string = form_data["query_string"]
         return self.search()
 
     @rx.event
@@ -114,6 +114,7 @@ class AuxState(State):
             return
         connector = BackendApiConnector.get()
         try:
+            # TODO(HS): use proper connector method when available (stop-gap MX-1762)
             response = connector.request(
                 method="GET",
                 endpoint=self.current_aux_provider,

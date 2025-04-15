@@ -86,7 +86,7 @@ def _transform_model_values_to_editor_values(
 
 
 @cache
-def _transform_model_to_additive_input_config(
+def _transform_model_to_input_config(
     field_name: str,
     entity_type: str,
     editable: bool,
@@ -182,7 +182,7 @@ def _transform_model_to_editor_primary_sources(
                 field_name,
                 subtractive,
             )
-            input_config = _transform_model_to_additive_input_config(
+            input_config = _transform_model_to_input_config(
                 field_name,
                 model.entityType,
                 editable=isinstance(model, AnyAdditiveModel),
@@ -309,7 +309,7 @@ def _transform_editor_value_to_model_value(
         )
     if field_name in VOCABULARY_FIELDS_BY_CLASS_NAME[class_name]:
         for vocabulary in ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES[class_name][field_name]:
-            if vocabulary_name := value.badge or input_config.badge_default:
+            if vocabulary_name := (value.badge or input_config.badge_default):
                 return cast("type[AnyVocabularyEnum]", vocabulary)[vocabulary_name]
     if field_name in TEMPORAL_FIELDS_BY_CLASS_NAME[class_name]:
         precision = TemporalEntityPrecision(value.badge)

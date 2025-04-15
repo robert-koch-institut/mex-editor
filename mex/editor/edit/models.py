@@ -9,7 +9,7 @@ class InputConfig(rx.Base):
 
     badge_default: str | None = None  # value to pre-select in drop-down menu
     badge_options: list[str] = []  # possible values to show in drop-down menu
-    badge_titles: list[str] = []  # title explaining the drop-drown choice
+    badge_titles: list[str] = []  # title for the collection of drop-drown choices
     editable_href: bool = False  # whether the href attribute is editable as text
     editable_badge: bool = False  # whether the badge is editable as a drop-down
     editable_text: bool = False  # whether the text is editable as plain text

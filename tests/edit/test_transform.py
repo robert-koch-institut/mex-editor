@@ -42,8 +42,8 @@ from mex.editor.edit.transform import (
     _transform_fields_to_additive,
     _transform_fields_to_preventive,
     _transform_fields_to_subtractive,
-    _transform_model_to_additive_input_config,
     _transform_model_to_editor_primary_sources,
+    _transform_model_to_input_config,
     _transform_model_values_to_editor_values,
     transform_fields_to_rule_set,
     transform_models_to_fields,
@@ -280,20 +280,18 @@ def test_transform_model_values_to_editor_values(
         "email field",  # stopgap: MX-1766
         "reference field",  # stopgap: MX-1652
         "vocabulary field",
-        "link field",  # stopgap: MX-1650
-        "text field",  # stopgap: MX-1650
+        "link field",
+        "text field",
         "integer field",  # stopgap: MX-1793
         "unknown field",
     ],
 )
-def test_transform_model_to_additive_input_config(
+def test_transform_model_to_input_config(
     entity_type: str,
     field_name: str,
     expected: InputConfig,
 ) -> None:
-    input_config = _transform_model_to_additive_input_config(
-        field_name, entity_type, True
-    )
+    input_config = _transform_model_to_input_config(field_name, entity_type, True)
     assert input_config == expected
 
 
@@ -691,9 +689,7 @@ def test_transform_fields_to_preventive(
 def test_transform_editor_value_to_model_value(
     editor_value: EditorValue, field_name: str, class_name: str, expected: object
 ) -> None:
-    input_config = _transform_model_to_additive_input_config(
-        field_name, class_name, True
-    )
+    input_config = _transform_model_to_input_config(field_name, class_name, True)
     assert input_config
 
     model_value = _transform_editor_value_to_model_value(

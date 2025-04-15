@@ -144,15 +144,63 @@ def additive_rule_input(
     return rx.hstack(
         rx.cond(
             input_config.editable_href,
-            href_input(field_name, index, value.href),
+            rx.input(
+                placeholder="URL",
+                value=value.href,
+                on_change=cast("EditState", EditState).set_href_value(
+                    field_name, index
+                ),
+                style={
+                    "margin": "calc(-1 * var(--space-1))",
+                    "minWidth": "30%",
+                },
+                custom_attrs={
+                    "data-testid": f"additive-rule-{field_name}-{index}-href"
+                },
+            ),
         ),
         rx.cond(
             input_config.editable_text,
-            text_input(field_name, index, value.text),
+            rx.input(
+                placeholder="Text",
+                value=value.text,
+                on_change=cast("EditState", EditState).set_text_value(
+                    field_name, index
+                ),
+                style={
+                    "margin": "calc(-1 * var(--space-1))",
+                    "minWidth": "30%",
+                },
+                custom_attrs={
+                    "data-testid": f"additive-rule-{field_name}-{index}-text"
+                },
+            ),
         ),
         rx.cond(
             input_config.editable_badge,
-            badge_input(field_name, index, input_config, value.badge),
+            rx.fragment(
+                rx.foreach(
+                    input_config.badge_titles,
+                    render_span,
+                ),
+                rx.box(
+                    rx.select(
+                        input_config.badge_options,
+                        value=cast("rx.Var", value.badge)
+                        | cast("rx.Var", input_config.badge_default),
+                        size="1",
+                        variant="soft",
+                        radius="large",
+                        color_scheme="gray",
+                        on_change=cast("EditState", EditState).set_badge_value(
+                            field_name, index
+                        ),
+                        custom_attrs={
+                            "data-testid": f"additive-rule-{field_name}-{index}-badge"
+                        },
+                    ),
+                ),
+            ),
         ),
         remove_additive_button(
             field_name,

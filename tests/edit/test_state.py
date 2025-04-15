@@ -37,7 +37,7 @@ def test_state_get_primary_sources_by_field_name() -> None:
                 href="/item/somePrimarySource",
             ),
             identifier="somePrimarySource",
-            input_config=None,
+            input_config=InputConfig(),
             editor_values=[EditorValue(text="test@foo.bar")],
         ),
         EditorPrimarySource(
@@ -46,7 +46,6 @@ def test_state_get_primary_sources_by_field_name() -> None:
                 href="/item/00000000000000",
             ),
             identifier="00000000000000",
-            input_config=InputConfig(editable_text=True),
-            editor_values=[],
+            input_config=InputConfig(editable_text=True, allow_additive=True),
         ),
     ]

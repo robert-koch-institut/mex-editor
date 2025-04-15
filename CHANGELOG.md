@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.14.0] - 2025-04-15
+
+### Added
+
 - create InputConfig for all fields, not just mex primary source
 - add `badge_default`, `badge_titles` and fine grained edit control to input config
 - allow editing for vocabulary fields and harmonize with link/text language editing
@@ -20,15 +34,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - update mex-common to 0.58.0
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - fixed editing for temporal fields by showing select menu for precisions
-
-### Security
 
 ## [0.13.0] - 2025-04-14
 

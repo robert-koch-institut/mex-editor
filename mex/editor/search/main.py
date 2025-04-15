@@ -71,6 +71,7 @@ def search_input() -> rx.Component:
                 rx.button(
                     rx.icon("search"),
                     type="submit",
+                    disabled=SearchState.is_loading,
                     custom_attrs={"data-testid": "search-button"},
                 ),
                 width="100%",
@@ -82,7 +83,6 @@ def search_input() -> rx.Component:
                 SearchState.refresh,
                 SearchState.resolve_identifiers,
             ],
-            style={"margin": "var(--space-4) 0 var(--space-4)"},
         ),
         style={"width": "100%"},
     )
@@ -100,6 +100,7 @@ def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
             SearchState.refresh,
             SearchState.resolve_identifiers,
         ],
+        disabled=SearchState.is_loading,
     )
 
 
@@ -130,6 +131,7 @@ def primary_source_choice(choice: tuple[str, SearchPrimarySource]) -> rx.Compone
             SearchState.refresh,
             SearchState.resolve_identifiers,
         ],
+        disabled=SearchState.is_loading,
     )
 
 
@@ -228,19 +230,29 @@ def results_summary() -> rx.Component:
 
 def search_results() -> rx.Component:
     """Render the search results with a summary, result list, and pagination."""
-    return rx.vstack(
-        results_summary(),
-        rx.foreach(
-            SearchState.results,
-            search_result,
+    return rx.cond(
+        SearchState.is_loading,
+        rx.center(
+            rx.spinner(size="3"),
+            style={
+                "marginTop": "var(--space-6)",
+                "width": "100%",
+            },
         ),
-        pagination(),
-        spacing="4",
-        custom_attrs={"data-testid": "search-results-section"},
-        style={
-            "minWidth": "0",
-            "width": "100%",
-        },
+        rx.vstack(
+            results_summary(),
+            rx.foreach(
+                SearchState.results,
+                search_result,
+            ),
+            pagination(),
+            spacing="4",
+            custom_attrs={"data-testid": "search-results-section"},
+            style={
+                "minWidth": "0",
+                "width": "100%",
+            },
+        ),
     )
 
 

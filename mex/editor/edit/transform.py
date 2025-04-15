@@ -78,7 +78,7 @@ def _transform_model_values_to_editor_values(
 
 
 @cache
-def _transform_model_to_additive_input_config(
+def _transform_model_to_input_config(
     field_name: str,
     entity_type: str,
     editable: bool,
@@ -173,7 +173,7 @@ def _transform_model_to_editor_primary_sources(
                 field_name,
                 subtractive,
             )
-            input_config = _transform_model_to_additive_input_config(
+            input_config = _transform_model_to_input_config(
                 field_name,
                 model.entityType,
                 editable=isinstance(model, AnyAdditiveModel),

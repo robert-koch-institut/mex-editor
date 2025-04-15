@@ -12,10 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - create InputConfig for all fields, not just mex primary source
 - add `badge_default`, `badge_titles` and fine grained edit control to input config
 - allow editing for vocabulary fields and harmonize with link/text language editing
+- allow editing for integer fields
+- show spinner while loading search results
+- show validation errors in table format
 
 ### Changes
-
-- update mex-common to 0.58.0
 
 ### Deprecated
 

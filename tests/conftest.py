@@ -60,7 +60,7 @@ def set_identity_provider(is_integration_test: bool, monkeypatch: MonkeyPatch) -
 @pytest.fixture
 def frontend_url() -> str:
     """Return the URL of the current local frontend server for testing."""
-    return "http://localhost:3001"
+    return "http://localhost:3000"
 
 
 @pytest.fixture(autouse=True)

@@ -36,13 +36,13 @@ def test_wikidata_search_and_import_results(aux_page: Page) -> None:
     expect(page.get_by_text("showing 0 of")).to_be_visible()
 
     # test expand button works
-    search_input.fill("rki")
+    search_input.fill("Q12345")
     search_input.press("Enter")
     expand_all_properties_button = page.get_by_test_id("expand-properties-button").nth(
         1
     )
     page.screenshot(path="tests_aux_search_test_main-search_result.png")
-    expect(page.get_by_text("Robert Koch-Institut").nth(1)).to_be_visible()
+    expect(page.get_by_text("Count von Count")).to_be_visible()
     expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
     expand_all_properties_button.click()
     expect(page.get_by_test_id("all-properties-display")).to_be_visible()
@@ -57,7 +57,7 @@ def test_wikidata_search_and_import_results(aux_page: Page) -> None:
 
     # test node was ingested into backend
     connector = BackendApiConnector.get()
-    result = connector.fetch_extracted_items(q="Robert Koch-Institut")
+    result = connector.fetch_extracted_items(q="Count von Count")
     assert result["total"] >= 1
 
 

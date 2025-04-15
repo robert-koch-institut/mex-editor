@@ -272,8 +272,8 @@ def test_transform_model_values_to_editor_values(
         "email field",  # stopgap: MX-1766
         "reference field",  # stopgap: MX-1652
         "vocabulary field",
-        "link field",  # stopgap: MX-1650
-        "text field",  # stopgap: MX-1650
+        "link field",
+        "text field",
         "integer field",  # stopgap: MX-1793
         "unknown field",
     ],

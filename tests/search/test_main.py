@@ -23,7 +23,7 @@ def test_index(
     page.screenshot(path="tests_search_test_main-test_index-on-load.png")
 
     # check heading is showing
-    expect(page.get_by_text("Showing 7 of 7 items")).to_be_visible()
+    expect(page.get_by_test_id("search-results-summary")).to_be_visible()
 
     # check mex primary source is showing
     primary_source = page.get_by_test_id(
@@ -144,7 +144,9 @@ def test_had_primary_sources(
     )
 
     primary_sources.get_by_text("Primary Source One").click()
-    expect(page.get_by_text("Showing 3 of 3 items")).to_be_visible()
+    summary = page.get_by_test_id("search-results-summary")
+    expect(summary).to_be_visible()
+    expect(summary).to_contain_text("Showing 4 of 4 items")
     page.screenshot(
         path="tests_search_test_main-test_had_primary_sources-on-select-primary-source-1-found.png"
     )

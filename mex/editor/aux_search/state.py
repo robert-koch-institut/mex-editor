@@ -92,19 +92,23 @@ class AuxState(State):
         """Import the selected result to MEx backend."""
         connector = BackendApiConnector.get()
         try:
-            model = serialize_mutable_proxy(self.results_extracted[index])
+            model: AnyExtractedModel = serialize_mutable_proxy(
+                self.results_extracted[index]
+            )
             connector.ingest([model])
         except HTTPError as exc:
             yield from escalate_error(
-                "backend", "error importing aux search result: %s", exc.response.text
+                "backend", f"error importing {model.stemType}", exc.response.text
             )
         else:
             self.results_transformed[index].show_import_button = False
             yield rx.toast.success(
-                "Aux search result imported successfully",
-                duration=5000,
+                title="Imported",
+                description=f"{model.stemType} was imported successfully.",
+                class_name="editor-toast",
                 close_button=True,
                 dismissible=True,
+                duration=5000,
             )
 
     @rx.event

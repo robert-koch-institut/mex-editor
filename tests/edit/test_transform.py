@@ -197,7 +197,10 @@ def test_transform_model_values_to_editor_values(
         (
             "AdditiveActivity",
             "fundingProgram",
-            InputConfig(editable_text=True, allow_additive=True),
+            InputConfig(
+                editable_text=True,
+                allow_additive=True,
+            ),
         ),
         (
             "AdditiveResource",
@@ -232,9 +235,7 @@ def test_transform_model_values_to_editor_values(
                 badge_default="CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL",
                 badge_options=["CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL"],
                 badge_titles=["License"],
-                editable_href=False,
                 editable_badge=True,
-                editable_text=False,
                 allow_additive=True,
             ),
         ),
@@ -263,7 +264,14 @@ def test_transform_model_values_to_editor_values(
                 allow_additive=True,
             ),
         ),
-        ("AdditiveResource", "minTypicalAge", InputConfig()),
+        (
+            "AdditiveResource",
+            "minTypicalAge",
+            InputConfig(
+                editable_text=True,
+                allow_additive=True,
+            ),
+        ),
         ("AdditiveResource", "unknown", InputConfig()),
     ],
     ids=[

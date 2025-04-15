@@ -1,9 +1,12 @@
 from functools import cache
 from typing import cast
 
+from pydantic import ValidationError
+
 from mex.common.fields import (
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
     EMAIL_FIELDS_BY_CLASS_NAME,
+    INTEGER_FIELDS_BY_CLASS_NAME,
     LINK_FIELDS_BY_CLASS_NAME,
     MERGEABLE_FIELDS_BY_CLASS_NAME,
     REFERENCE_FIELDS_BY_CLASS_NAME,
@@ -35,7 +38,12 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.editor.edit.models import EditorField, EditorPrimarySource, InputConfig
+from mex.editor.edit.models import (
+    EditorField,
+    EditorPrimarySource,
+    InputConfig,
+    ValidationMessage,
+)
 from mex.editor.models import EditorValue
 from mex.editor.transform import ensure_list, transform_value
 from mex.editor.types import AnyModelValue
@@ -86,7 +94,8 @@ def _transform_model_to_input_config(
     """Determine the input type for a given field of a given model."""
     if field_name in (
         STRING_FIELDS_BY_CLASS_NAME[entity_type]
-        + EMAIL_FIELDS_BY_CLASS_NAME[entity_type]
+        + EMAIL_FIELDS_BY_CLASS_NAME[entity_type]  # stopgap: MX-1766
+        + INTEGER_FIELDS_BY_CLASS_NAME[entity_type]
     ):
         return InputConfig(
             editable_text=editable,
@@ -361,3 +370,17 @@ def transform_fields_to_rule_set(
             "subtractive": _transform_fields_to_subtractive(fields, stem_type),
         }
     )
+
+
+def transform_validation_error_to_messages(
+    error: ValidationError,
+) -> list[ValidationMessage]:
+    """Transform a pydantic validation error into validation messages."""
+    return [
+        ValidationMessage(
+            field_name="→".join(str(loc) for loc in error["loc"][1:]),
+            message=error["msg"],
+            input=error["input"],
+        )
+        for error in error.errors()
+    ]

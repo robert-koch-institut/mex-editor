@@ -31,6 +31,7 @@ class SearchState(State):
     had_primary_sources: dict[str, SearchPrimarySource] = {}
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 50
+    is_loading: bool = False
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:
@@ -139,30 +140,36 @@ class SearchState(State):
         """Refresh the search results."""
         # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
+        entity_type = [
+            ensure_prefix(k, "Merged") for k, v in self.entity_types.items() if v
+        ]
+        had_primary_source = [
+            identifier
+            for identifier, primary_source in self.had_primary_sources.items()
+            if primary_source.checked
+        ]
+        skip = self.limit * (self.current_page - 1)
+        self.is_loading = True
+        yield None
         try:
             response = connector.fetch_preview_items(
                 query_string=self.query_string,
-                entity_type=[
-                    ensure_prefix(k, "Merged")
-                    for k, v in self.entity_types.items()
-                    if v
-                ],
-                had_primary_source=[
-                    identifier
-                    for identifier, primary_source in self.had_primary_sources.items()
-                    if primary_source.checked
-                ],
-                skip=self.limit * (self.current_page - 1),
+                entity_type=entity_type,
+                had_primary_source=had_primary_source,
+                skip=skip,
                 limit=self.limit,
             )
         except HTTPError as exc:
+            self.is_loading = False
             self.results = []
             self.total = 0
             self.current_page = 1
+            yield None
             yield from escalate_error(
                 "backend", "error fetching merged items", exc.response.text
             )
         else:
+            self.is_loading = False
             self.results = transform_models_to_results(response.items)
             self.total = response.total
 

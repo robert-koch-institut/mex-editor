@@ -16,6 +16,14 @@ class InputConfig(rx.Base):
     allow_additive: bool = False  # whether this field belongs to an additive rule
 
 
+class ValidationMessage(rx.Base):
+    """Model for describing validation errors."""
+
+    field_name: str
+    message: str
+    input: str
+
+
 class EditorPrimarySource(rx.Base):
     """Model for describing the editor state for one primary source."""
 

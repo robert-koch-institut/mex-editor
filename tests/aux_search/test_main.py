@@ -36,13 +36,13 @@ def test_wikidata_search_and_import_results(aux_page: Page) -> None:
     expect(page.get_by_text("showing 0 of")).to_be_visible()
 
     # test expand button works
-    search_input.fill("rki")
+    search_input.fill("Q12345")
     search_input.press("Enter")
     expand_all_properties_button = page.get_by_test_id("expand-properties-button").nth(
         1
     )
     page.screenshot(path="tests_aux_search_test_main-search_result.png")
-    expect(page.get_by_text("Robert Koch-Institut").nth(1)).to_be_visible()
+    expect(page.get_by_text("Count von Count")).to_be_visible()
     expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
     expand_all_properties_button.click()
     expect(page.get_by_test_id("all-properties-display")).to_be_visible()
@@ -57,7 +57,7 @@ def test_wikidata_search_and_import_results(aux_page: Page) -> None:
 
     # test node was ingested into backend
     connector = BackendApiConnector.get()
-    result = connector.fetch_extracted_items(q="Robert Koch-Institut")
+    result = connector.fetch_extracted_items(q="Count von Count")
     assert result["total"] >= 1
 
 
@@ -85,7 +85,7 @@ def test_ldap_search_and_import_results(aux_page: Page) -> None:
         1
     )
     page.screenshot(path="tests_aux_search_test_main-search_result_lap.png")
-    expect(page.get_by_text("Ciftci")).to_be_visible()
+    expect(page.get_by_text("Ciftci, Zehra")).to_be_visible()
     expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
     expand_all_properties_button.click()
     expect(page.get_by_test_id("all-properties-display")).to_be_visible()
@@ -101,6 +101,47 @@ def test_ldap_search_and_import_results(aux_page: Page) -> None:
     # test node was ingested into backend
     connector = BackendApiConnector.get()
     result = connector.fetch_extracted_items(q="Ciftci")
+    assert result["total"] >= 1
+
+
+@pytest.mark.integration
+@pytest.mark.external
+def test_orcid_search_and_import_results(aux_page: Page) -> None:
+    page = aux_page
+    orcid_tab = page.get_by_role("tab", name="Orcid")
+    orcid_tab.click()
+    search_input = page.get_by_placeholder("Search here...")
+    expect(search_input).to_be_visible()
+
+    # test search input is showing correctly
+    search_input.fill("doesn't exist gs871s9j91k*")
+    expect(page.get_by_text("Showing 0 of")).to_be_visible()
+    page.screenshot(
+        path="tests_aux_search_test_main-test_orcid_search-input-0-found.png"
+    )
+
+    # test expand button works
+    search_input.fill("Kamran")
+    expand_all_properties_button = page.get_by_test_id("expand-properties-button").nth(
+        1
+    )
+    page.screenshot(path="tests_aux_search_test_main-search_result_orcid.png")
+    expect(page.get_by_text("Kamran")).to_be_visible()
+    expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
+    expand_all_properties_button.click()
+    expect(page.get_by_test_id("all-properties-display")).to_be_visible()
+    page.screenshot(path="tests_aux_search_test_main-test_orcid_expand_button.png")
+
+    # test import button works
+    import_button = page.get_by_text("Import").nth(1)
+    import_button.click()
+    expect(page.get_by_text("Aux search result imported successfully")).to_be_visible()
+    expect(import_button).to_be_disabled()
+    page.screenshot(path="tests_aux_search_test_main-test_orcid_import_button.png")
+
+    # test node was ingested into backend
+    connector = BackendApiConnector.get()
+    result = connector.fetch_extracted_items(q="Kamran")
     assert result["total"] >= 1
 
 

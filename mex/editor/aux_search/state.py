@@ -136,7 +136,7 @@ class AuxState(State):
             )
             self.results_extracted = container.items
             self.results_transformed = transform_models_to_results(container.items)
-            self.total = max(container.total, len(self.results_transformed))
+            self.total = len(self.results_transformed)
 
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:

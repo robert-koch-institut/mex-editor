@@ -45,17 +45,35 @@ def test_transform_models_to_results_single_model() -> None:
     assert isinstance(result[0], AuxResult)
     assert result[0].identifier == "id1"
     assert result[0].title == [
-        EditorValue(text="name", badge=None, href=None, external=False, enabled=True)
+        EditorValue(
+            text="name",
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
+        )
     ]
     assert result[0].preview == [
         EditorValue(
-            text="shortName", badge=None, href=None, external=False, enabled=True
+            text="shortName",
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
         ),
         EditorValue(
-            text="alternativeName", badge=None, href=None, external=False, enabled=True
+            text="alternativeName",
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
         ),
         EditorValue(
-            text="wikidataId", badge=None, href=None, external=False, enabled=True
+            text="wikidataId",
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
         ),
     ]
     assert len(result[0].all_properties) == 1
@@ -89,17 +107,35 @@ def test_transform_models_to_results_multiple_models() -> None:
     assert len(result) == 2
     assert result[0].identifier == "id1"
     assert result[0].title == [
-        EditorValue(text="name1", badge=None, href=None, external=False, enabled=True)
+        EditorValue(
+            text="name1",
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
+        )
     ]
     assert result[0].preview == [
         EditorValue(
-            text="shortName1", badge=None, href=None, external=False, enabled=True
+            text="shortName1",
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
         ),
         EditorValue(
-            text="alternativeName1", badge=None, href=None, external=False, enabled=True
+            text="alternativeName1",
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
         ),
         EditorValue(
-            text="wikidataId1", badge=None, href=None, external=False, enabled=True
+            text="wikidataId1",
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
         ),
     ]
     assert len(result[0].all_properties) == 1
@@ -107,17 +143,35 @@ def test_transform_models_to_results_multiple_models() -> None:
 
     assert result[1].identifier == "id2"
     assert result[1].title == [
-        EditorValue(text="name2", badge=None, href=None, external=False, enabled=True)
+        EditorValue(
+            text="name2",
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
+        )
     ]
     assert result[1].preview == [
         EditorValue(
-            text="shortName2", badge=None, href=None, external=False, enabled=True
+            text="shortName2",
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
         ),
         EditorValue(
-            text="alternativeName2", badge=None, href=None, external=False, enabled=True
+            text="alternativeName2",
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
         ),
         EditorValue(
-            text="wikidataId2", badge=None, href=None, external=False, enabled=True
+            text="wikidataId2",
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
         ),
     ]
     assert len(result[1].all_properties) == 1

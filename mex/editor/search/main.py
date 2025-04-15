@@ -4,7 +4,7 @@ import reflex as rx
 
 from mex.editor.components import render_value
 from mex.editor.layout import page
-from mex.editor.search.models import SearchResult
+from mex.editor.search.models import SearchPrimarySource, SearchResult
 from mex.editor.search.state import SearchState
 
 
@@ -42,40 +42,47 @@ def search_result(result: SearchResult) -> rx.Component:
         ),
         style={"width": "100%"},
         class_name="search-result-card",
+        custom_attrs={"data-testid": f"result-{result.identifier}"},
     )
 
 
 def search_input() -> rx.Component:
     """Render a search input element that will trigger the results to refresh."""
     return rx.card(
-        rx.debounce_input(
-            rx.input(
-                rx.input.slot(
-                    rx.icon("search"),
+        rx.form.root(
+            rx.hstack(
+                rx.input(
                     autofocus=True,
-                    padding_left="0",
+                    default_value=SearchState.query_string,
+                    max_length=100,
+                    name="query_string",
+                    placeholder="Search here...",
+                    style={
+                        "--text-field-selection-color": "",
+                        "--text-field-focus-color": "transparent",
+                        "--text-field-border-width": "calc(1px * var(--scaling))",
+                        "boxShadow": (
+                            "inset 0 0 0 var(--text-field-border-width) transparent"
+                        ),
+                    },
                     tab_index=1,
+                    type="text",
                 ),
-                placeholder="Search here...",
-                value=SearchState.query_string,
-                on_change=[
-                    SearchState.set_query_string,
-                    SearchState.go_to_first_page,
-                    SearchState.push_search_params,
-                    SearchState.refresh,
-                ],
-                max_length=100,
-                style={
-                    "--text-field-selection-color": "",
-                    "--text-field-focus-color": "transparent",
-                    "--text-field-border-width": "calc(1px * var(--scaling))",
-                    "boxShadow": (
-                        "inset 0 0 0 var(--text-field-border-width) transparent"
-                    ),
-                },
+                rx.button(
+                    rx.icon("search"),
+                    type="submit",
+                    custom_attrs={"data-testid": "search-button"},
+                ),
+                width="100%",
             ),
+            on_submit=[
+                SearchState.handle_submit,
+                SearchState.go_to_first_page,
+                SearchState.push_search_params,
+                SearchState.refresh,
+                SearchState.resolve_identifiers,
+            ],
             style={"margin": "var(--space-4) 0 var(--space-4)"},
-            debounce_timeout=250,
         ),
         style={"width": "100%"},
     )
@@ -91,6 +98,7 @@ def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
             SearchState.go_to_first_page,
             SearchState.push_search_params,
             SearchState.refresh,
+            SearchState.resolve_identifiers,
         ],
     )
 
@@ -110,16 +118,17 @@ def entity_type_filter() -> rx.Component:
     )
 
 
-def primary_source_choice(choice: tuple[str, bool]) -> rx.Component:
+def primary_source_choice(choice: tuple[str, SearchPrimarySource]) -> rx.Component:
     """Render a single checkbox for filtering by primary source."""
     return rx.checkbox(
-        choice[0],
-        checked=choice[1],
+        choice[1].title,
+        checked=choice[1].checked,
         on_change=[
             SearchState.set_had_primary_source(choice[0]),
             SearchState.go_to_first_page,
             SearchState.push_search_params,
             SearchState.refresh,
+            SearchState.resolve_identifiers,
         ],
     )
 
@@ -161,6 +170,7 @@ def pagination() -> rx.Component:
                 SearchState.push_search_params,
                 SearchState.scroll_to_top,
                 SearchState.refresh,
+                SearchState.resolve_identifiers,
             ],
             disabled=SearchState.disable_previous_page,
             variant="surface",
@@ -175,6 +185,7 @@ def pagination() -> rx.Component:
                 SearchState.push_search_params,
                 SearchState.scroll_to_top,
                 SearchState.refresh,
+                SearchState.resolve_identifiers,
             ],
             custom_attrs={"data-testid": "pagination-page-select"},
         ),
@@ -185,6 +196,7 @@ def pagination() -> rx.Component:
                 SearchState.push_search_params,
                 SearchState.scroll_to_top,
                 SearchState.refresh,
+                SearchState.resolve_identifiers,
             ],
             disabled=SearchState.disable_next_page,
             variant="surface",

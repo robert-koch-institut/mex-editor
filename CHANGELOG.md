@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- search and import ldap persons
-
 ### Changes
-
-- apply ruff TC006 by quoting type expressions in `typing.cast` calls
 
 ### Deprecated
 
@@ -22,6 +18,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.13.0] - 2025-04-14
+
+### Added
+
+- search and import ldap persons
+- resolve identifiers in search and edit view to their preferred title attributes
+- resolve identifiers in primary source search filter to their preferred title attribute
+
+### Changes
+
+- apply ruff TC006 by quoting type expressions in `typing.cast` calls
+- search initiation now requires hitting enter or clicking the search button
 
 ## [0.12.0] - 2025-03-13
 

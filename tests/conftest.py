@@ -1,5 +1,3 @@
-from collections.abc import Sequence
-
 import pytest
 from fastapi.testclient import TestClient
 from playwright.sync_api import Page, expect
@@ -224,15 +222,13 @@ def extracted_activity(
 
 
 @pytest.fixture
-def artificial_extracted_items(
-    locale: str = "de_DE",  # adapt parameters to your liking
-    seed: int = 42,
-    count: int = 25,
-    chattiness: int = 16,
-    stem_types: Sequence[str] = EXTRACTED_MODEL_CLASSES_BY_NAME,
-) -> list[AnyExtractedModel]:
+def artificial_extracted_items() -> list[AnyExtractedModel]:
     return generate_artificial_extracted_items(
-        locale, seed, count, chattiness, stem_types
+        locale="de_DE",
+        seed=42,
+        count=25,
+        chattiness=16,
+        stem_types=EXTRACTED_MODEL_CLASSES_BY_NAME,
     )
 
 

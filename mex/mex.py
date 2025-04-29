@@ -9,6 +9,8 @@ from mex.common.logging import logger
 from mex.editor.api.main import check_system_status
 from mex.editor.aux_search.main import index as aux_import_index
 from mex.editor.aux_search.state import AuxState
+from mex.editor.create.main import index as create_index
+from mex.editor.create.state import CreateState
 from mex.editor.edit.main import index as edit_index
 from mex.editor.edit.state import EditState
 from mex.editor.login.main import index as login_index
@@ -54,6 +56,16 @@ app.add_page(
         State.check_login,
         State.load_nav,
         AuxState.refresh,
+    ],
+)
+app.add_page(
+    create_index,
+    route="/create",
+    title="MEx Editor | Create",
+    on_load=[
+        State.check_login,
+        State.load_nav,
+        CreateState.refresh,
     ],
 )
 app.add_page(

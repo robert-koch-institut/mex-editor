@@ -8,12 +8,11 @@ from mex.editor.edit.models import (
     InputConfig,
 )
 from mex.editor.layout import page
+from mex.editor.models import EditorValue
 
 
 def editor_value_input(
-    field_name: str,
-    input_config: InputConfig,
-    index: int,
+    field_name: str, input_config: InputConfig, index: int, value: EditorValue
 ) -> rx.Component:
     """Return an input mask for additive rules."""
     return rx.hstack(
@@ -21,8 +20,9 @@ def editor_value_input(
             input_config.editable_href,
             rx.input(
                 placeholder="URL",
+                value=value.href,
                 on_change=cast("CreateState", CreateState).set_href_value(
-                    field_name, index
+                    field_name, index, value
                 ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
@@ -37,8 +37,9 @@ def editor_value_input(
             input_config.editable_text,
             rx.input(
                 placeholder="Text",
+                value=value.text,
                 on_change=cast("CreateState", CreateState).set_text_value(
-                    field_name, index
+                    field_name, index, value
                 ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
@@ -53,10 +54,11 @@ def editor_value_input(
             input_config.editable_badge,
             rx.select(
                 input_config.badge_options,
-                value=input_config.badge_options[0],
+                value=cast("rx.Var", value.badge)
+                | cast("rx.Var", input_config.badge_default),
                 size="1",
                 on_change=cast("CreateState", CreateState).set_badge_value(
-                    field_name, index
+                    field_name, index, value
                 ),
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-badge"
@@ -68,7 +70,6 @@ def editor_value_input(
 
 def editor_field(
     field: EditorField,
-    index: int,
 ) -> rx.Component:
     """Return a horizontal grid of cards for editing one field."""
     return rx.foreach(
@@ -80,12 +81,13 @@ def editor_field(
                 custom_attrs={"data-testid": f"field-{field.name}-name"},
             ),
             rx.vstack(
-                rx.cond(
-                    primary_source.input_config,
-                    editor_value_input(
+                rx.foreach(
+                    primary_source.editor_values,
+                    lambda value, index: editor_value_input(
                         field.name,
                         cast("InputConfig", primary_source.input_config),
                         index,
+                        value,
                     ),
                 ),
             ),
@@ -105,14 +107,13 @@ def create_input() -> rx.Component:
                 rx.select(
                     ["ExtractedOrganization", "ExtractedResource"],
                     value=CreateState.entity_type,
-                    on_change=CreateState.change_entity_type,
+                    on_change=cast("CreateState", CreateState).change_entity_type,
                 ),
             ),
             rx.foreach(
                 CreateState.fields,
-                lambda field, index: editor_field(
+                lambda field: editor_field(
                     field,
-                    index,
                 ),
             ),
         ),

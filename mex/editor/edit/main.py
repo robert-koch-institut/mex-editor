@@ -2,12 +2,13 @@ from typing import cast
 
 import reflex as rx
 
-from mex.editor.components import render_value
+from mex.editor.components import render_span, render_value
 from mex.editor.edit.models import (
     EditorField,
     EditorPrimarySource,
     EditorValue,
     InputConfig,
+    ValidationMessage,
 )
 from mex.editor.edit.state import EditState
 from mex.editor.layout import page
@@ -65,6 +66,74 @@ def remove_additive_button(
     )
 
 
+def href_input(
+    field_name: str,
+    index: int,
+    href: str | None,
+) -> rx.Component:
+    """Render an input component for editing a href attribute."""
+    return rx.input(
+        placeholder="URL",
+        value=href,
+        on_change=cast("EditState", EditState).set_href_value(field_name, index),
+        style={
+            "margin": "calc(-1 * var(--space-1))",
+            "minWidth": "30%",
+        },
+        custom_attrs={"data-testid": f"additive-rule-{field_name}-{index}-href"},
+    )
+
+
+def text_input(
+    field_name: str,
+    index: int,
+    text: str | None,
+) -> rx.Component:
+    """Render an input component for editing a text attribute."""
+    return rx.input(
+        placeholder="Text",
+        value=text,
+        on_change=cast("EditState", EditState).set_text_value(field_name, index),
+        style={
+            "margin": "calc(-1 * var(--space-1))",
+            "minWidth": "30%",
+        },
+        custom_attrs={"data-testid": f"additive-rule-{field_name}-{index}-text"},
+    )
+
+
+def badge_input(
+    field_name: str,
+    index: int,
+    input_config: InputConfig,
+    badge: str | None,
+) -> rx.Component:
+    """Render an input component for editing a badge attribute."""
+    return rx.fragment(
+        rx.foreach(
+            input_config.badge_titles,
+            render_span,
+        ),
+        rx.box(
+            rx.select(
+                input_config.badge_options,
+                value=cast("rx.Var", badge)
+                | cast("rx.Var", input_config.badge_default),
+                size="1",
+                variant="soft",
+                radius="large",
+                color_scheme="gray",
+                on_change=cast("EditState", EditState).set_badge_value(
+                    field_name, index
+                ),
+                custom_attrs={
+                    "data-testid": f"additive-rule-{field_name}-{index}-badge"
+                },
+            ),
+        ),
+    )
+
+
 def additive_rule_input(
     field_name: str,
     input_config: InputConfig,
@@ -83,7 +152,7 @@ def additive_rule_input(
                 ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
-                    "width": "100%",
+                    "minWidth": "30%",
                 },
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-href"
@@ -100,7 +169,7 @@ def additive_rule_input(
                 ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
-                    "width": "100%",
+                    "minWidth": "30%",
                 },
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-text"
@@ -109,16 +178,28 @@ def additive_rule_input(
         ),
         rx.cond(
             input_config.editable_badge,
-            rx.select(
-                input_config.badge_options,
-                value=input_config.badge_options[0],
-                size="1",
-                on_change=cast("EditState", EditState).set_badge_value(
-                    field_name, index
+            rx.fragment(
+                rx.foreach(
+                    input_config.badge_titles,
+                    render_span,
                 ),
-                custom_attrs={
-                    "data-testid": f"additive-rule-{field_name}-{index}-badge"
-                },
+                rx.box(
+                    rx.select(
+                        input_config.badge_options,
+                        value=cast("rx.Var", value.badge)
+                        | cast("rx.Var", input_config.badge_default),
+                        size="1",
+                        variant="soft",
+                        radius="large",
+                        color_scheme="gray",
+                        on_change=cast("EditState", EditState).set_badge_value(
+                            field_name, index
+                        ),
+                        custom_attrs={
+                            "data-testid": f"additive-rule-{field_name}-{index}-badge"
+                        },
+                    ),
+                ),
             ),
         ),
         remove_additive_button(
@@ -137,10 +218,10 @@ def editor_value_card(
     """Return a card containing a single editor value."""
     return rx.card(
         rx.cond(
-            primary_source.input_config,
+            primary_source.input_config.allow_additive,
             additive_rule_input(
                 field_name,
-                cast("InputConfig", primary_source.input_config),
+                primary_source.input_config,
                 index,
                 value,
             ),
@@ -179,8 +260,9 @@ def primary_source_name(
     return rx.card(
         rx.hstack(
             render_value(model.name),
+            rx.spacer(),
             rx.cond(
-                ~cast("rx.vars.ObjectVar", model.input_config),
+                ~cast("rx.vars.BooleanVar", model.input_config.allow_additive),
                 primary_source_switch(field_name, model),
             ),
             wrap="wrap",
@@ -234,7 +316,7 @@ def editor_primary_source_stack(
             ),
         ),
         rx.cond(
-            model.input_config,
+            model.input_config.allow_additive,
             new_additive_button(
                 field_name,
                 model.identifier,
@@ -283,19 +365,70 @@ def editor_field(model: EditorField) -> rx.Component:
             ),
             style={"width": "100%"},
         ),
-        style={"width": "100%"},
+        style={
+            "width": "100%",
+            "margin": "var(--space-3) 0",
+        },
         custom_attrs={"data-testid": f"field-{model.name}"},
         role="row",
+    )
+
+
+def validation_message(error: ValidationMessage) -> rx.Component:
+    """Render a single validation error message."""
+    return rx.data_list.item(
+        rx.data_list.label(error.field_name),
+        rx.data_list.value(
+            render_span(error.message),
+            render_span(" (Input: "),
+            rx.code(error.input),
+            render_span(")"),
+            style={"display": "inline"},
+        ),
+        align="center",
+    )
+
+
+def validation_errors() -> rx.Component:
+    """Return an overlay showing validation errors."""
+    return rx.box(
+        rx.alert_dialog.root(
+            rx.alert_dialog.content(
+                rx.alert_dialog.title("Validation Errors"),
+                rx.alert_dialog.description(
+                    rx.card(
+                        rx.data_list.root(
+                            rx.foreach(
+                                EditState.validation_messages, validation_message
+                            )
+                        ),
+                    ),
+                ),
+                rx.alert_dialog.action(
+                    rx.button(
+                        "Close",
+                        on_click=EditState.clear_validation_messages,
+                        style={"margin": "var(--line-height-1) 0"},
+                        custom_attrs={"data-testid": "close-validation-errors-button"},
+                    ),
+                    style={"justify-content": "flex-end"},
+                ),
+            ),
+            open=cast("rx.vars.ArrayVar", EditState.validation_messages).bool(),
+        )
     )
 
 
 def submit_button() -> rx.Component:
     """Render a submit button to save the rule set."""
     return rx.button(
-        "Save",
-        color_scheme="jade",
+        f"Save {EditState.stem_type}",
         size="3",
-        on_click=EditState.submit_rule_set,
+        color_scheme="jade",
+        on_click=[
+            EditState.submit_rule_set,
+            EditState.resolve_identifiers,
+        ],
         style={"margin": "var(--line-height-1) 0"},
         custom_attrs={"data-testid": "submit-button"},
     )
@@ -303,18 +436,37 @@ def submit_button() -> rx.Component:
 
 def edit_heading() -> rx.Component:
     """Return the heading for the edit page."""
-    return rx.heading(
-        rx.hstack(
-            rx.foreach(
-                EditState.item_title,
-                render_value,
+    return rx.hstack(
+        rx.heading(
+            rx.hstack(
+                rx.foreach(
+                    EditState.item_title,
+                    render_value,
+                ),
+                as_child=True,
             ),
+            custom_attrs={"data-testid": "edit-heading"},
+            style={
+                "whiteSpace": "nowrap",
+            },
         ),
-        custom_attrs={"data-testid": "edit-heading"},
+        rx.spacer(),
+        rx.cond(
+            EditState.stem_type,
+            submit_button(),
+        ),
         style={
-            "whiteSpace": "nowrap",
             "overflow": "hidden",
             "width": "100%",
+            "top": "calc(var(--space-6) * 3)",
+            "position": "fixed",
+            "marginTop": "calc(-1 * var(--space-1))",
+            "padding": "var(--space-4) 0",
+            "backdropFilter": " var(--backdrop-filter-panel)",
+            "backgroundColor": "var(--color-panel-translucent)",
+            "maxWidth": "calc(var(--app-max-width) - var(--space-6) * 2)",
+            "zIndex": "999",
+            "alignItems": "baseline",
         },
     )
 
@@ -328,10 +480,10 @@ def index() -> rx.Component:
                 EditState.fields,
                 editor_field,
             ),
-            rx.cond(
-                EditState.fields,
-                submit_button(),
-            ),
-            style={"width": "100%"},
+            validation_errors(),
+            style={
+                "width": "100%",
+                "marginTop": "calc(2 * var(--space-6))",
+            },
         ),
     )

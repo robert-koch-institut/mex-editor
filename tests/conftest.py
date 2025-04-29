@@ -4,16 +4,20 @@ from playwright.sync_api import Page, expect
 from pydantic import SecretStr
 from pytest import MonkeyPatch
 
+from mex.artificial.helpers import generate_artificial_extracted_items
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import (
+    EXTRACTED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
+    ExtractedResource,
 )
 from mex.common.types import (
+    AccessRestriction,
     Email,
     Identifier,
     IdentityProvider,
@@ -164,6 +168,15 @@ def dummy_data() -> list[AnyExtractedModel]:
         title=[Text(value="Aktivität 1", language=TextLanguage.DE)],
         website=[Link(title="Activity Homepage", url="https://activity-1")],
     )
+    resource_1 = ExtractedResource(
+        hadPrimarySource=primary_source_1.stableTargetId,
+        identifierInPrimarySource="r-1",
+        accessRestriction=AccessRestriction["OPEN"],
+        contact=[contact_point_1.stableTargetId],
+        theme=[Theme["BIOINFORMATICS_AND_SYSTEMS_BIOLOGY"]],
+        title=[Text(value="Bioinformatics Resource 1", language=None)],
+        unitInCharge=[organizational_unit_1.stableTargetId],
+    )
     return [
         primary_source_1,
         primary_source_2,
@@ -171,6 +184,7 @@ def dummy_data() -> list[AnyExtractedModel]:
         contact_point_2,
         organizational_unit_1,
         activity_1,
+        resource_1,
     ]
 
 
@@ -205,3 +219,23 @@ def extracted_activity(
     extracted_activity = dummy_data_by_identifier_in_primary_source["a-1"]
     assert type(extracted_activity) is ExtractedActivity
     return extracted_activity
+
+
+@pytest.fixture
+def artificial_extracted_items() -> list[AnyExtractedModel]:
+    return generate_artificial_extracted_items(
+        locale="de_DE",
+        seed=42,
+        count=25,
+        chattiness=16,
+        stem_types=EXTRACTED_MODEL_CLASSES_BY_NAME,
+    )
+
+
+@pytest.fixture
+def load_artificial_extracted_items(
+    artificial_extracted_items: list[AnyExtractedModel],
+) -> list[AnyExtractedModel]:
+    """Ingest artificial data into the graph."""
+    connector = BackendApiConnector.get()
+    connector.ingest(artificial_extracted_items)

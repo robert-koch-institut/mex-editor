@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- import artifical data helper and use in test
+
 ### Changes
 
 ### Deprecated
@@ -18,6 +20,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.14.0] - 2025-04-15
+
+### Added
+
+- create InputConfig for all fields, not just mex primary source
+- add `badge_default`, `badge_titles` and fine grained edit control to input config
+- allow editing for vocabulary fields and harmonize with link/text language editing
+- allow editing for integer fields
+- show spinner while loading search results
+- show validation errors in table format
+
+### Changes
+
+- update mex-common to 0.58.0
+
+### Fixed
+
+- fixed editing for temporal fields by showing select menu for precisions
 
 ## [0.13.0] - 2025-04-14
 

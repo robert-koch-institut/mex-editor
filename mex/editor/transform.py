@@ -1,6 +1,5 @@
 from collections.abc import Sequence
 
-from mex.common.exceptions import MExError
 from mex.common.models import (
     AnyExtractedModel,
     AnyMergedModel,
@@ -30,13 +29,13 @@ def transform_value(value: object, allow_link: bool = True) -> EditorValue:
     if isinstance(value, Text):
         return EditorValue(
             text=value.value,
-            badge=value.language,
+            badge=value.language.name if value.language else None,
         )
     if isinstance(value, Link):
         return EditorValue(
             text=value.title or value.url,
             href=value.url if allow_link else None,
-            badge=value.language,
+            badge=value.language.name if value.language else None,
             external=True,
         )
     if isinstance(value, Identifier):
@@ -46,20 +45,20 @@ def transform_value(value: object, allow_link: bool = True) -> EditorValue:
         )
     if isinstance(value, VocabularyEnum):
         return EditorValue(
-            text=value.name,
-            badge=type(value).__name__,
+            text=type(value).__name__,
+            badge=value.name,
         )
     if isinstance(value, TemporalEntity):
         return EditorValue(
             text=str(value),
             badge=value.precision.value,
         )
-    if isinstance(value, str):
+    if isinstance(value, str | int):
         return EditorValue(
             text=str(value),
         )
     msg = f"cannot transform {type(value).__name__} to editor value"
-    raise MExError(msg)
+    raise NotImplementedError(msg)
 
 
 def transform_models_to_stem_type(

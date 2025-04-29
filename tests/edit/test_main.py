@@ -44,7 +44,7 @@ def test_edit_page_renders_heading(edit_page: Page) -> None:
     heading = page.get_by_test_id("edit-heading")
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_heading.png")
     expect(heading).to_be_visible()
-    assert re.match(r"Aktivität 1\s*de", heading.inner_text())
+    assert re.match(r"Aktivität 1\s*DE", heading.inner_text())
 
 
 @pytest.mark.integration
@@ -96,7 +96,7 @@ def test_edit_page_renders_text(
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_text.png")
     expect(text).to_be_visible()
     expect(text).to_contain_text("Aktivität 1")  # text value
-    expect(text).to_contain_text("de")  # language badge
+    expect(text).to_contain_text("DE")  # language badge
 
 
 @pytest.mark.integration
@@ -308,6 +308,30 @@ def test_edit_page_renders_link_input(edit_page: Page) -> None:
     expect(badge_select).to_be_visible()
     href_input = page.get_by_test_id("additive-rule-website-0-href")
     expect(href_input).to_be_visible()
+
+
+@pytest.mark.integration
+def test_edit_page_renders_vocabulary_input(edit_page: Page) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id(
+        "new-additive-activityType-00000000000000"
+    )
+    new_additive_button.scroll_into_view_if_needed()
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_renders_vocabulary_input.png"
+    )
+
+    badge_select = page.get_by_test_id("additive-rule-activityType-0-badge")
+    expect(badge_select).to_be_visible()
+    expect(page.get_by_text("THIRD_PARTY_FUNDED_PROJECT")).to_be_visible()
+    badge_select.focus()
+    page.keyboard.press("ArrowDown")
+    page.keyboard.press("ArrowDown")
+    page.keyboard.press("Enter")
+    page.locator("body").focus()
+    expect(page.get_by_text("INTERNAL_PROJECT_ENDEAVOR")).to_be_visible()
 
 
 @pytest.mark.integration

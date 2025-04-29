@@ -85,7 +85,7 @@ def nav_bar() -> rx.Component:
                 "height": "var(--space-6)",
                 "width": "100%",
                 "backdropFilter": " var(--backdrop-filter-panel)",
-                "backgroundColor": "var(--card-background-color)",
+                "backgroundColor": "var(--color-panel-translucent)",
             },
         ),
         rx.card(
@@ -113,8 +113,8 @@ def nav_bar() -> rx.Component:
         ),
         spacing="0",
         style={
-            "maxWidth": "calc(1480px * var(--scaling))",
-            "minWidth": "calc(800px * var(--scaling))",
+            "maxWidth": "var(--app-max-width)",
+            "minWidth": "var(--app-min-width)",
             "position": "fixed",
             "top": "0",
             "width": "100%",
@@ -132,13 +132,17 @@ def page(*children: rx.Component) -> rx.Component:
             rx.hstack(
                 *children,
                 style={
-                    "maxWidth": "calc(1480px * var(--scaling))",
-                    "minWidth": "calc(800px * var(--scaling))",
+                    "maxWidth": "var(--app-max-width)",
+                    "minWidth": "var(--app-min-width)",
                     "padding": "calc(var(--space-6) * 4) var(--space-6) var(--space-6)",
                     "width": "100%",
                 },
                 custom_attrs={"data-testid": "page-body"},
             ),
+            style={
+                "--app-max-width": "calc(1480px * var(--scaling))",
+                "--app-min-width": "calc(800px * var(--scaling))",
+            },
         ),
         rx.center(
             rx.spinner(size="3"),

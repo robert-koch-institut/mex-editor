@@ -4,8 +4,10 @@ from playwright.sync_api import Page, expect
 from pydantic import SecretStr
 from pytest import MonkeyPatch
 
+from mex.artificial.helpers import generate_artificial_extracted_items
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import (
+    EXTRACTED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
     ExtractedActivity,
@@ -217,3 +219,23 @@ def extracted_activity(
     extracted_activity = dummy_data_by_identifier_in_primary_source["a-1"]
     assert type(extracted_activity) is ExtractedActivity
     return extracted_activity
+
+
+@pytest.fixture
+def artificial_extracted_items() -> list[AnyExtractedModel]:
+    return generate_artificial_extracted_items(
+        locale="de_DE",
+        seed=42,
+        count=25,
+        chattiness=16,
+        stem_types=EXTRACTED_MODEL_CLASSES_BY_NAME,
+    )
+
+
+@pytest.fixture
+def load_artificial_extracted_items(
+    artificial_extracted_items: list[AnyExtractedModel],
+) -> list[AnyExtractedModel]:
+    """Ingest artificial data into the graph."""
+    connector = BackendApiConnector.get()
+    connector.ingest(artificial_extracted_items)

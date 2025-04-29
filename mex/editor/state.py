@@ -30,6 +30,11 @@ class State(rx.State):
             path="/aux-search",
             raw_path="/aux-search/",
         ),
+        NavItem(
+            title="Create",
+            path="/create",
+            raw_path="/create/",
+        ),
     ]
 
     @rx.event

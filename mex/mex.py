@@ -8,7 +8,7 @@ from reflex.utils.console import info as log_info
 
 from mex.common.logging import logger
 from mex.editor.api.main import check_system_status, get_prometheus_metrics
-from mex.editor.aux_search.main import index as aux_import_index
+from mex.editor.aux_search.main import index as aux_search_index
 from mex.editor.aux_search.state import AuxState
 from mex.editor.edit.main import index as edit_index
 from mex.editor.edit.state import EditState
@@ -48,13 +48,14 @@ app.add_page(
     ],
 )
 app.add_page(
-    aux_import_index,
-    route="/aux-import",
-    title="MEx Editor | Aux Import",
+    aux_search_index,
+    route="/aux-search",
+    title="MEx Editor | Aux Search",
     on_load=[
         State.check_login,
         State.load_nav,
         AuxState.refresh,
+        AuxState.resolve_identifiers,
     ],
 )
 app.add_page(

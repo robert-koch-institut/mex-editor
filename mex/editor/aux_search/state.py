@@ -1,7 +1,9 @@
 import math
 from collections.abc import Generator
+from typing import Annotated
 
 import reflex as rx
+from pydantic import Field
 from reflex.event import EventSpec
 from reflex.state import serialize_mutable_proxy
 from requests import HTTPError
@@ -12,6 +14,7 @@ from mex.editor.aux_search.models import AuxNavItem, AuxResult
 from mex.editor.aux_search.transform import transform_models_to_results
 from mex.editor.exceptions import escalate_error
 from mex.editor.state import State
+from mex.editor.utils import resolve_editor_value
 
 
 class AuxState(State):
@@ -19,16 +22,17 @@ class AuxState(State):
 
     results_transformed: list[AuxResult] = []
     results_extracted: list[AnyExtractedModel] = []
-    total: int = 0
-    query_string: str = ""
-    current_page: int = 1
-    limit: int = 50
-    current_aux_provider: str = "wikidata"
+    total: Annotated[int, Field(ge=0)] = 0
+    query_string: Annotated[str, Field(max_length=1000)] = ""
+    current_page: Annotated[int, Field(ge=1)] = 1
+    limit: Annotated[int, Field(ge=1, le=100)] = 50
+    current_aux_provider: str = "ldap"
     aux_provider_items: list[AuxNavItem] = [
-        AuxNavItem(title="Wikidata", value="wikidata"),
         AuxNavItem(title="LDAP", value="ldap"),
         AuxNavItem(title="Orcid", value="orcid"),
+        AuxNavItem(title="Wikidata", value="wikidata"),
     ]
+    is_loading: bool = False
 
     @rx.var(cache=False)
     def total_pages(self) -> list[str]:
@@ -64,28 +68,29 @@ class AuxState(State):
         self.current_aux_provider = value
 
     @rx.event
-    def handle_submit(self, form_data: dict) -> Generator[EventSpec | None, None, None]:
-        """Handle the form submit."""
-        self.query_string = form_data["query_string"]
-        return self.search()
-
-    @rx.event
-    def set_page(
-        self, page_number: str | int
-    ) -> Generator[EventSpec | None, None, None]:
+    def set_page(self, page_number: str | int) -> None:
         """Set the current page and refresh the results."""
         self.current_page = int(page_number)
-        return self.search()
 
     @rx.event
-    def go_to_previous_page(self) -> Generator[EventSpec | None, None, None]:
+    def handle_submit(self, form_data: dict) -> None:
+        """Handle the form submit."""
+        self.query_string = form_data["query_string"]
+
+    @rx.event
+    def go_to_first_page(self) -> None:
+        """Navigate to the first page."""
+        self.set_page(1)
+
+    @rx.event
+    def go_to_previous_page(self) -> None:
         """Navigate to the previous page."""
-        return self.set_page(self.current_page - 1)
+        self.set_page(self.current_page - 1)
 
     @rx.event
-    def go_to_next_page(self) -> Generator[EventSpec | None, None, None]:
+    def go_to_next_page(self) -> None:
         """Navigate to the next page."""
-        return self.set_page(self.current_page + 1)
+        self.set_page(self.current_page + 1)
 
     @rx.event
     def import_result(self, index: int) -> Generator[EventSpec | None, None, None]:
@@ -112,38 +117,53 @@ class AuxState(State):
             )
 
     @rx.event
-    def search(self) -> Generator[EventSpec | None, None, None]:
-        """Search in aux-extractor for items based on the query string."""
-        if self.query_string == "":
-            return
+    def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
+        """Scroll the page to the top."""
+        yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
+
+    @rx.event(background=True)
+    async def resolve_identifiers(self):
+        """Resolve identifiers to human readable display values."""
+        for result in self.results_transformed:
+            for value in [*result.title, *result.preview, *result.all_properties]:
+                if value.identifier and not value.text:
+                    async with self:
+                        await resolve_editor_value(value)
+
+    @rx.event
+    def refresh(self) -> Generator[EventSpec | None, None, None]:
+        """Refresh the search results."""
         connector = BackendApiConnector.get()
+        offset = self.limit * (self.current_page - 1)
+        self.is_loading = True
+        yield None
         try:
-            # TODO(HS): use proper connector method when available (stop-gap MX-1762)
             response = connector.request(
                 method="GET",
                 endpoint=self.current_aux_provider,
                 params={
-                    "q": self.query_string,
-                    "offset": str((self.current_page - 1) * self.limit),
+                    "q": self.query_string or None,
+                    "offset": str(offset),
                     "limit": str(self.limit),
                 },
             )
         except HTTPError as exc:
-            self.reset()
+            self.is_loading = False
+            self.results_transformed = []
+            self.results_extracted = []
+            self.total = 0
+            self.current_page = 1
+            yield None
             yield from escalate_error(
-                "backend", "error fetching items", exc.response.text
+                "backend",
+                f"error fetching {self.current_aux_provider} items",
+                exc.response.text,
             )
         else:
-            yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
+            self.is_loading = False
             container = PaginatedItemsContainer[AnyExtractedModel].model_validate(
                 response
             )
             self.results_extracted = container.items
             self.results_transformed = transform_models_to_results(container.items)
-            self.total = len(self.results_transformed)
-
-    @rx.event
-    def refresh(self) -> Generator[EventSpec | None, None, None]:
-        """Refresh the search page."""
-        self.reset()
-        return self.search()
+            self.total = container.total

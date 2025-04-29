@@ -7,18 +7,18 @@ from mex.common.backend_api.connector import BackendApiConnector
 @pytest.fixture
 def aux_page(frontend_url: str, writer_user_page: Page) -> Page:
     page = writer_user_page
-    page.goto(f"{frontend_url}/aux-import")
-    section = page.get_by_test_id("aux-nav-bar")
+    page.goto(f"{frontend_url}/aux-search")
+    section = page.get_by_test_id("aux-tab-section")
     expect(section).to_be_visible()
     return page
 
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_artificial_extracted_items")
-def test_aux_navbar(aux_page: Page) -> None:
+def test_aux_tab_section(aux_page: Page) -> None:
     page = aux_page
-    nav_bar = page.get_by_test_id("aux-nav-bar")
-    page.screenshot(path="tests_aux_search_test_main-test_aux_navbar.png")
+    nav_bar = page.get_by_test_id("aux-tab-section")
+    page.screenshot(path="tests_aux_search_test_main-test_aux_tab_section.png")
     expect(nav_bar).to_be_visible()
 
 

@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- import artifical data helper and use in test
+- import artificial data helper and use in test
 
 ### Changes
+
+- update mex-common to 0.59.1
 
 ### Deprecated
 

@@ -2,5 +2,3 @@ cruft==2.16.0
 mex-release==0.3.0
 pdm==2.23.1
 pre-commit==4.2.0
-
-reflex==0.6.8

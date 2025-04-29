@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:99a573223fea3d31197c2b80184a8f2419377d150d737e398bdcd718fd486dfa"
+content_hash = "sha256:302beff9a48ab857e3233b1b6eb8f3522338c5d831845baa96ba51e10b108f33"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -174,13 +174,13 @@ files = [
 
 [[package]]
 name = "certifi"
-version = "2025.1.31"
+version = "2025.4.26"
 requires_python = ">=3.6"
 summary = "Python package for providing Mozilla's CA Bundle."
 groups = ["default", "dev"]
 files = [
-    {file = "certifi-2025.1.31-py3-none-any.whl", hash = "sha256:ca78db4565a652026a4db2bcdf68f2fb589ea80d0be70e03929ed730746b84fe"},
-    {file = "certifi-2025.1.31.tar.gz", hash = "sha256:3d5da6925056f6f18f119200434a4780a94263f10d1c21d032a6f6b2baa20651"},
+    {file = "certifi-2025.4.26-py3-none-any.whl", hash = "sha256:30350364dfe371162649852c63336a15c70c6510c2ad5015b21c2345311805f3"},
+    {file = "certifi-2025.4.26.tar.gz", hash = "sha256:0a816057ea3cdefcef70270d2c515e4506bbc954f417fa5ade2021213bb8f0c6"},
 ]
 
 [[package]]
@@ -543,7 +543,7 @@ files = [
 
 [[package]]
 name = "importlib-metadata"
-version = "8.6.1"
+version = "8.7.0"
 requires_python = ">=3.9"
 summary = "Read metadata from Python packages"
 groups = ["default"]
@@ -553,8 +553,8 @@ dependencies = [
     "zipp>=3.20",
 ]
 files = [
-    {file = "importlib_metadata-8.6.1-py3-none-any.whl", hash = "sha256:02a89390c1e15fdfdc0d7c6b25cb3e62650d0494005c97d6f148bf5b9787525e"},
-    {file = "importlib_metadata-8.6.1.tar.gz", hash = "sha256:310b41d755445d74569f993ccfc22838295d9fe005425094fad953d7f15c8580"},
+    {file = "importlib_metadata-8.7.0-py3-none-any.whl", hash = "sha256:e5dd1551894c77868a30651cef00984d50e1002d06942a7101d34870c5f02afd"},
+    {file = "importlib_metadata-8.7.0.tar.gz", hash = "sha256:d13b81ad223b890aa16c5471f2ac3056cf76c5f10f82d6f9292f0b415f389000"},
 ]
 
 [[package]]
@@ -601,7 +601,7 @@ files = [
 
 [[package]]
 name = "ipython"
-version = "9.1.0"
+version = "9.2.0"
 requires_python = ">=3.11"
 summary = "IPython: Productive Interactive Computing"
 groups = ["dev"]
@@ -620,8 +620,8 @@ dependencies = [
     "typing-extensions>=4.6; python_version < \"3.12\"",
 ]
 files = [
-    {file = "ipython-9.1.0-py3-none-any.whl", hash = "sha256:2df07257ec2f84a6b346b8d83100bcf8fa501c6e01ab75cd3799b0bb253b3d2a"},
-    {file = "ipython-9.1.0.tar.gz", hash = "sha256:a47e13a5e05e02f3b8e1e7a0f9db372199fe8c3763532fe7a1e0379e4e135f16"},
+    {file = "ipython-9.2.0-py3-none-any.whl", hash = "sha256:fef5e33c4a1ae0759e0bba5917c9db4eb8c53fee917b6a526bd973e1ca5159f6"},
+    {file = "ipython-9.2.0.tar.gz", hash = "sha256:62a9373dbc12f28f9feaf4700d052195bf89806279fc8ca11f3f54017d04751b"},
 ]
 
 [[package]]
@@ -880,11 +880,11 @@ dependencies = [
 
 [[package]]
 name = "mex-common"
-version = "0.58.0"
+version = "0.59.1"
 requires_python = ">=3.11,<3.13"
 git = "https://github.com/robert-koch-institut/mex-common.git"
-ref = "0.58.0"
-revision = "7cf56d21046ca8de4ff32d5bc1d26e44fef76d34"
+ref = "0.59.1"
+revision = "7086778a60c24d48de706370957e36d4bab41528"
 summary = "Common library for MEx python projects."
 groups = ["default", "dev"]
 dependencies = [
@@ -892,7 +892,7 @@ dependencies = [
     "click<9,>=8",
     "langdetect<2,>=1",
     "ldap3<3,>=2",
-    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@3.5.6",
+    "mex-model @ git+https://github.com/robert-koch-institut/mex-model.git@3.5.7",
     "numpy<3,>=2",
     "pandas<3,>=2",
     "pyarrow<20,>=19",
@@ -904,11 +904,11 @@ dependencies = [
 
 [[package]]
 name = "mex-model"
-version = "3.5.6"
+version = "3.5.7"
 requires_python = ">=3.11,<3.13"
 git = "https://github.com/robert-koch-institut/mex-model.git"
-ref = "3.5.6"
-revision = "43c0c56f3a2a2cb5a20d0005fec13e083e7471c9"
+ref = "3.5.7"
+revision = "eadf925e9f5ca1ef3556ac4bf5d7063076117955"
 summary = "JSON schema files defining the MEx metadata model."
 groups = ["default", "dev"]
 
@@ -1593,8 +1593,8 @@ files = [
 
 [[package]]
 name = "reflex-hosting-cli"
-version = "0.1.43"
-requires_python = ">=3.9"
+version = "0.1.47"
+requires_python = ">=3.10"
 summary = "Reflex Hosting CLI"
 groups = ["default"]
 dependencies = [
@@ -1607,8 +1607,8 @@ dependencies = [
     "tabulate>=0.9.0",
 ]
 files = [
-    {file = "reflex_hosting_cli-0.1.43-py3-none-any.whl", hash = "sha256:65142a85685e6224f7eb07e44a8835ac86e6d25bd5e22c169901c923b7f4a622"},
-    {file = "reflex_hosting_cli-0.1.43.tar.gz", hash = "sha256:04457b64c7b60f291e8c42e1d7b3c1a68d7af4ab4fa39fc0d0a372767126a061"},
+    {file = "reflex_hosting_cli-0.1.47-py3-none-any.whl", hash = "sha256:4fd352bb6b3d0989e590de5107c631669090e8b8d150cedae78ce08f74f06949"},
+    {file = "reflex_hosting_cli-0.1.47.tar.gz", hash = "sha256:44f5dd2dc9ee5c10d74067e0168e4467e32806bee79c99950f5c524709161436"},
 ]
 
 [[package]]
@@ -1725,13 +1725,13 @@ files = [
 
 [[package]]
 name = "setuptools"
-version = "79.0.1"
+version = "80.0.0"
 requires_python = ">=3.9"
 summary = "Easily download, build, install, upgrade, and uninstall Python packages"
 groups = ["default"]
 files = [
-    {file = "setuptools-79.0.1-py3-none-any.whl", hash = "sha256:e147c0549f27767ba362f9da434eab9c5dc0045d5304feb602a0af001089fc51"},
-    {file = "setuptools-79.0.1.tar.gz", hash = "sha256:128ce7b8f33c3079fd1b067ecbb4051a66e8526e7b65f6cec075dfc650ddfa88"},
+    {file = "setuptools-80.0.0-py3-none-any.whl", hash = "sha256:a38f898dcd6e5380f4da4381a87ec90bd0a7eec23d204a5552e80ee3cab6bd27"},
+    {file = "setuptools-80.0.0.tar.gz", hash = "sha256:c40a5b3729d58dd749c0f08f1a07d134fb8a0a3d7f87dc33e7c5e1f762138650"},
 ]
 
 [[package]]
@@ -2042,7 +2042,7 @@ files = [
 
 [[package]]
 name = "typer"
-version = "0.15.2"
+version = "0.15.3"
 requires_python = ">=3.7"
 summary = "Typer, build great CLIs. Easy to code. Based on Python type hints."
 groups = ["default", "dev"]
@@ -2053,8 +2053,8 @@ dependencies = [
     "typing-extensions>=3.7.4.3",
 ]
 files = [
-    {file = "typer-0.15.2-py3-none-any.whl", hash = "sha256:46a499c6107d645a9c13f7ee46c5d5096cae6f5fc57dd11eccbbb9ae3e44ddfc"},
-    {file = "typer-0.15.2.tar.gz", hash = "sha256:ab2fab47533a813c49fe1f16b1a370fd5819099c00b119e0633df65f22144ba5"},
+    {file = "typer-0.15.3-py3-none-any.whl", hash = "sha256:c86a65ad77ca531f03de08d1b9cb67cd09ad02ddddf4b34745b5008f43b239bd"},
+    {file = "typer-0.15.3.tar.gz", hash = "sha256:818873625d0569653438316567861899f7e9972f2e6e0c16dab608345ced713c"},
 ]
 
 [[package]]

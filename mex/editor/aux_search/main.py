@@ -2,7 +2,7 @@ from typing import cast
 
 import reflex as rx
 
-from mex.editor.aux_search.models import AuxNavItem, AuxResult
+from mex.editor.aux_search.models import AuxResult
 from mex.editor.aux_search.state import AuxState
 from mex.editor.components import render_value
 from mex.editor.layout import page
@@ -16,8 +16,10 @@ def expand_properties_button(result: AuxResult, index: int) -> rx.Component:
             rx.icon("minimize-2", size=15),
             rx.icon("maximize-2", size=15),
         ),
-        on_click=lambda: AuxState.toggle_show_properties(index),
+        on_click=AuxState.toggle_show_properties(index),
         align="end",
+        color_scheme="gray",
+        variant="surface",
         custom_attrs={"data-testid": "expand-properties-button"},
     )
 
@@ -28,13 +30,19 @@ def import_button(result: AuxResult, index: int) -> rx.Component:
         result.show_import_button,
         rx.button(
             "Import",
-            on_click=AuxState.import_result(index),
             align="end",
+            color_scheme="jade",
+            variant="surface",
+            on_click=AuxState.import_result(index),
+            width="calc(8em * var(--scaling))",
         ),
         rx.button(
             "Imported",
             align="end",
+            color_scheme="gray",
+            variant="surface",
             disabled=True,
+            width="calc(8em * var(--scaling))",
         ),
     )
 
@@ -143,10 +151,21 @@ def search_input() -> rx.Component:
                     },
                     type="text",
                 ),
-                rx.button(rx.icon("search"), type="submit"),
+                rx.button(
+                    rx.icon("search"),
+                    type="submit",
+                    variant="surface",
+                    disabled=AuxState.is_loading,
+                    custom_attrs={"data-testid": "search-button"},
+                ),
                 width="100%",
             ),
-            on_submit=AuxState.handle_submit,
+            on_submit=[
+                AuxState.handle_submit,
+                AuxState.go_to_first_page,
+                AuxState.refresh,
+                AuxState.resolve_identifiers,
+            ],
             style={"margin": "1em 0 1em"},
             justify="center",
             align="center",
@@ -156,87 +175,38 @@ def search_input() -> rx.Component:
 
 def search_results() -> rx.Component:
     """Render the search results with a heading, result list, and pagination."""
-    return rx.vstack(
+    return rx.cond(
+        AuxState.is_loading,
         rx.center(
-            rx.text(
-                f"Showing {AuxState.current_results_length} "
-                f"of {AuxState.total} items found",
-                style={
-                    "color": "var(--gray-12)",
-                    "fontWeight": "var(--font-weight-bold)",
-                    "margin": "var(--space-4)",
-                    "userSelect": "none",
-                },
-                custom_attrs={"data-testid": "search-results-heading"},
+            rx.spinner(size="3"),
+            style={
+                "marginTop": "var(--space-6)",
+                "width": "100%",
+            },
+        ),
+        rx.vstack(
+            rx.center(
+                rx.text(
+                    f"Showing {AuxState.current_results_length} "
+                    f"of {AuxState.total} items",
+                    style={
+                        "color": "var(--gray-12)",
+                        "fontWeight": "var(--font-weight-bold)",
+                        "margin": "var(--space-4)",
+                        "userSelect": "none",
+                    },
+                    custom_attrs={"data-testid": "search-results-heading"},
+                ),
+                style={"width": "100%"},
             ),
+            rx.foreach(
+                AuxState.results_transformed,
+                aux_search_result,
+            ),
+            pagination(),
+            custom_attrs={"data-testid": "search-results-section"},
             style={"width": "100%"},
         ),
-        rx.foreach(
-            AuxState.results_transformed,
-            aux_search_result,
-        ),
-        pagination(),
-        custom_attrs={"data-testid": "search-results-section"},
-        width="70vw",
-    )
-
-
-def aux_provider_tab(item: AuxNavItem) -> rx.Component:
-    """Render a tab for an aux provider."""
-    return rx.tabs.trigger(
-        item.title,
-        value=item.value,
-    )
-
-
-def nav_bar() -> rx.Component:
-    """Render a bar with an extractor navigation menu."""
-    return rx.flex(
-        rx.tabs.root(
-            rx.tabs.list(
-                rx.spacer(),
-                rx.foreach(
-                    AuxState.aux_provider_items,
-                    lambda item: aux_provider_tab(item),
-                ),
-                rx.spacer(),
-                size="2",
-            ),
-            rx.spacer(),
-            rx.tabs.content(
-                rx.vstack(
-                    search_input(),
-                    search_results(),
-                    justify="center",
-                    align="center",
-                    spacing="5",
-                ),
-                value="wikidata",
-            ),
-            rx.tabs.content(
-                rx.vstack(
-                    search_input(),
-                    search_results(),
-                    justify="center",
-                    align="center",
-                    spacing="5",
-                ),
-                value="ldap",
-            ),
-            rx.tabs.content(
-                rx.vstack(
-                    search_input(),
-                    search_results(),
-                    justify="center",
-                    align="center",
-                    spacing="5",
-                ),
-                value="orcid",
-            ),
-            default_value="wikidata",
-            on_change=lambda value: AuxState.change_extractor(value),
-        ),
-        custom_attrs={"data-testid": "aux-nav-bar"},
     )
 
 
@@ -245,7 +215,12 @@ def pagination() -> rx.Component:
     return rx.center(
         rx.button(
             rx.text("Previous"),
-            on_click=AuxState.go_to_previous_page,
+            on_click=[
+                AuxState.go_to_previous_page,
+                AuxState.scroll_to_top,
+                AuxState.refresh,
+                AuxState.resolve_identifiers,
+            ],
             disabled=AuxState.disable_previous_page,
             variant="surface",
             custom_attrs={"data-testid": "pagination-previous-button"},
@@ -254,12 +229,22 @@ def pagination() -> rx.Component:
         rx.select(
             AuxState.total_pages,
             value=cast("rx.vars.NumberVar", AuxState.current_page).to_string(),
-            on_change=AuxState.set_page,
+            on_change=[
+                AuxState.set_page,
+                AuxState.scroll_to_top,
+                AuxState.refresh,
+                AuxState.resolve_identifiers,
+            ],
             custom_attrs={"data-testid": "pagination-page-select"},
         ),
         rx.button(
             rx.text("Next", weight="bold"),
-            on_click=AuxState.go_to_next_page,
+            on_click=[
+                AuxState.go_to_next_page,
+                AuxState.scroll_to_top,
+                AuxState.refresh,
+                AuxState.resolve_identifiers,
+            ],
             disabled=AuxState.disable_next_page,
             variant="surface",
             custom_attrs={"data-testid": "pagination-next-button"},
@@ -270,10 +255,60 @@ def pagination() -> rx.Component:
     )
 
 
+def tab_list() -> rx.Component:
+    """Render the list of aux providers as a tab navigation."""
+    return rx.center(
+        rx.tabs.list(
+            rx.spacer(),
+            rx.foreach(
+                AuxState.aux_provider_items,
+                lambda item: rx.tabs.trigger(
+                    item.title,
+                    value=item.value,
+                    disabled=AuxState.is_loading,
+                ),
+            ),
+            rx.spacer(),
+            style={"width": "calc(24em * var(--scaling))"},
+        )
+    )
+
+
+def tab_content() -> rx.Component:
+    """Render the tab content with search components for each aux provider."""
+    return rx.foreach(
+        AuxState.aux_provider_items,
+        lambda item: rx.tabs.content(
+            rx.vstack(
+                search_input(),
+                search_results(),
+                justify="center",
+                align="center",
+                spacing="5",
+            ),
+            value=item.value,
+        ),
+    )
+
+
 def index() -> rx.Component:
     """Return the index for the search component."""
-    return rx.center(
-        page(
-            nav_bar(),
+    return page(
+        rx.tabs.root(
+            tab_list(),
+            rx.spacer(),
+            tab_content(),
+            default_value=AuxState.current_aux_provider,
+            on_change=[
+                AuxState.change_extractor,
+                AuxState.go_to_first_page,
+                AuxState.refresh,
+                AuxState.resolve_identifiers,
+            ],
+            custom_attrs={"data-testid": "aux-tab-section"},
+            style={
+                "width": "75%",
+                "margin": "0 auto",
+            },
         )
     )

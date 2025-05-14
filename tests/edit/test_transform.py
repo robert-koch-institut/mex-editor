@@ -227,7 +227,14 @@ def test_transform_model_values_to_editor_values(
             "email",
             InputConfig(editable_text=True, allow_additive=True),
         ),
-        ("AdditivePerson", "affiliation", InputConfig()),
+        (
+            "AdditivePerson",
+            "affiliation",
+            InputConfig(
+                editable_text=True,
+                allow_additive=True,
+            ),
+        ),
         (
             "AdditiveResource",
             "license",

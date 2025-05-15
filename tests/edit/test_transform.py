@@ -233,7 +233,7 @@ def test_transform_model_values_to_editor_values(
             "AdditivePerson",
             "affiliation",
             InputConfig(
-                editable_text=True,
+                editable_identifier=True,
                 allow_additive=True,
                 pattern=IDENTIFIER_PATTERN,
             ),

@@ -110,7 +110,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
         )
     if field_name in REFERENCE_FIELDS_BY_CLASS_NAME[entity_type]:
         return InputConfig(
-            editable_text=editable,
+            editable_identifier=editable,
             allow_additive=editable,
             pattern=IDENTIFIER_PATTERN,
         )

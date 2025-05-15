@@ -194,26 +194,28 @@ class EditState(State):
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.pop(index)
 
-    @rx.event
-    def set_text_value(self, field_name: str, index: int, value: str) -> None:
-        """Set the text attribute on an additive editor value."""
-        primary_source = self._get_editable_primary_source_by_field_name(field_name)
+    def _validate_value(
+        self, field_name: str, primary_source: EditorPrimarySource, value: str
+    ):
+        """Validate a value with the respective input configs regular expression."""
         if (pattern := primary_source.input_config.pattern) and (
             not re.fullmatch(pattern, value)
         ):
             msg = f"Input for {field_name} does not match pattern: " + pattern
             raise ValueError(msg)
+
+    @rx.event
+    def set_text_value(self, field_name: str, index: int, value: str) -> None:
+        """Set the text attribute on an additive editor value."""
+        primary_source = self._get_editable_primary_source_by_field_name(field_name)
+        self._validate_value(field_name, primary_source, value)
         primary_source.editor_values[index].text = value
 
     @rx.event
     def set_identifier_value(self, field_name: str, index: int, value: str) -> None:
         """Set the identifier attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
-        if (pattern := primary_source.input_config.pattern) and (
-            not re.fullmatch(pattern, value)
-        ):
-            msg = f"Input for {field_name} does not match pattern: " + pattern
-            raise ValueError(msg)
+        self._validate_value(field_name, primary_source, value)
         primary_source.editor_values[index].identifier = value
 
     @rx.event

@@ -2,10 +2,12 @@ from typing import cast
 
 import reflex as rx
 
+from mex.editor.components import render_span
 from mex.editor.create.state import CreateState
 from mex.editor.edit.models import (
     EditorField,
     InputConfig,
+    ValidationMessage,
 )
 from mex.editor.layout import page
 from mex.editor.models import EditorValue
@@ -22,7 +24,7 @@ def editor_value_input(
                 placeholder="URL",
                 value=value.href,
                 on_change=cast("CreateState", CreateState).set_href_value(
-                    field_name, index, value
+                    field_name, index
                 ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
@@ -39,7 +41,7 @@ def editor_value_input(
                 placeholder="Text",
                 value=value.text,
                 on_change=cast("CreateState", CreateState).set_text_value(
-                    field_name, index, value
+                    field_name, index
                 ),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
@@ -52,17 +54,28 @@ def editor_value_input(
         ),
         rx.cond(
             input_config.editable_badge,
-            rx.select(
-                input_config.badge_options,
-                value=cast("rx.Var", value.badge)
-                | cast("rx.Var", input_config.badge_default),
-                size="1",
-                on_change=cast("CreateState", CreateState).set_badge_value(
-                    field_name, index, value
+            rx.fragment(
+                rx.foreach(
+                    input_config.badge_titles,
+                    render_span,
                 ),
-                custom_attrs={
-                    "data-testid": f"additive-rule-{field_name}-{index}-badge"
-                },
+                rx.box(
+                    rx.select(
+                        input_config.badge_options,
+                        value=cast("rx.Var", value.badge)
+                        | cast("rx.Var", input_config.badge_default),
+                        size="1",
+                        variant="soft",
+                        radius="large",
+                        color_scheme="gray",
+                        on_change=cast("CreateState", CreateState).set_badge_value(
+                            field_name, index
+                        ),
+                        custom_attrs={
+                            "data-testid": f"additive-rule-{field_name}-{index}-badge"
+                        },
+                    ),
+                ),
             ),
         ),
     )
@@ -105,9 +118,9 @@ def create_input() -> rx.Component:
             rx.hstack(
                 rx.text("Entity Type", size="3"),
                 rx.select(
-                    ["ExtractedOrganization", "ExtractedResource"],
+                    ["Resource"],  # move to state
                     value=CreateState.entity_type,
-                    on_change=cast("CreateState", CreateState).change_entity_type,
+                    on_change=cast("CreateState", CreateState).set_entity_type,
                 ),
             ),
             rx.foreach(
@@ -126,13 +139,58 @@ def create_input() -> rx.Component:
     )
 
 
+def validation_message(error: ValidationMessage) -> rx.Component:
+    """Render a single validation error message."""
+    return rx.data_list.item(
+        rx.data_list.label(error.field_name),
+        rx.data_list.value(
+            render_span(error.message),
+            render_span(" (Input: "),
+            rx.code(error.input),
+            render_span(")"),
+            style={"display": "inline"},
+        ),
+        align="center",
+    )
+
+
+def validation_errors() -> rx.Component:
+    """Return an overlay showing validation errors."""
+    return rx.box(
+        rx.alert_dialog.root(
+            rx.alert_dialog.content(
+                rx.alert_dialog.title("Validation Errors"),
+                rx.alert_dialog.description(
+                    rx.card(
+                        rx.data_list.root(
+                            rx.foreach(
+                                CreateState.validation_messages, validation_message
+                            )
+                        ),
+                    ),
+                ),
+                rx.alert_dialog.action(
+                    rx.button(
+                        "Close",
+                        on_click=CreateState.clear_validation_messages,
+                        style={"margin": "var(--line-height-1) 0"},
+                        custom_attrs={"data-testid": "close-validation-errors-button"},
+                    ),
+                    style={"justify-content": "flex-end"},
+                ),
+            ),
+            open=cast("rx.vars.ArrayVar", CreateState.validation_messages).bool(),
+        )
+    )
+
+
 def submit_button() -> rx.Component:
     """Render a submit button to save the rule set."""
     return rx.button(
         "Save",
         color_scheme="jade",
         size="3",
-        on_click=CreateState.submit_new_item,
+        on_click=CreateState.submit_rule_set,
         style={"margin": "var(--line-height-1) 0"},
         custom_attrs={"data-testid": "submit-button"},
     )
@@ -161,6 +219,7 @@ def index() -> rx.Component:
                 CreateState.fields,
                 submit_button(),
             ),
+            validation_errors(),
             style={"width": "100%"},
         ),
     )

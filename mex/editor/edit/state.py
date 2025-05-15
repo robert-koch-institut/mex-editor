@@ -1,3 +1,4 @@
+import re
 from collections.abc import Generator
 
 import reflex as rx
@@ -197,6 +198,11 @@ class EditState(State):
     def set_text_value(self, field_name: str, index: int, value: str) -> None:
         """Set the text attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
+        if (pattern := primary_source.input_config.pattern) and (
+            not re.fullmatch(pattern, value)
+        ):
+            msg = f"Input for {field_name} does not match pattern: " + pattern
+            raise ValueError(msg)
         primary_source.editor_values[index].text = value
 
     @rx.event

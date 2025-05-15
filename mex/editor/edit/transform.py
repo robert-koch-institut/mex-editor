@@ -29,6 +29,8 @@ from mex.common.models import (
 )
 from mex.common.transform import ensure_postfix, ensure_prefix
 from mex.common.types import (
+    EMAIL_PATTERN,
+    IDENTIFIER_PATTERN,
     TEMPORAL_ENTITY_CLASSES_BY_PRECISION,
     AnyVocabularyEnum,
     Link,
@@ -94,17 +96,23 @@ def _transform_model_to_input_config(  # noqa: PLR0911
     """Determine the input type for a given field of a given model."""
     if field_name in (
         STRING_FIELDS_BY_CLASS_NAME[entity_type]
-        + EMAIL_FIELDS_BY_CLASS_NAME[entity_type]  # stopgap: MX-1766
         + INTEGER_FIELDS_BY_CLASS_NAME[entity_type]
     ):
         return InputConfig(
             editable_text=editable,
             allow_additive=editable,
         )
+    if field_name in EMAIL_FIELDS_BY_CLASS_NAME[entity_type]:  # stopgap: MX-1766
+        return InputConfig(
+            editable_text=editable,
+            allow_additive=editable,
+            pattern=EMAIL_PATTERN,
+        )
     if field_name in REFERENCE_FIELDS_BY_CLASS_NAME[entity_type]:
         return InputConfig(
             editable_text=editable,
             allow_additive=editable,
+            pattern=IDENTIFIER_PATTERN,
         )
     if field_name in TEMPORAL_FIELDS_BY_CLASS_NAME[entity_type]:
         return InputConfig(

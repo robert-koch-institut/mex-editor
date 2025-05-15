@@ -22,6 +22,8 @@ from mex.common.models import (
     SubtractivePerson,
 )
 from mex.common.types import (
+    EMAIL_PATTERN,
+    IDENTIFIER_PATTERN,
     ConsentStatus,
     ConsentType,
     Link,
@@ -225,7 +227,7 @@ def test_transform_model_values_to_editor_values(
         (
             "AdditiveContactPoint",
             "email",
-            InputConfig(editable_text=True, allow_additive=True),
+            InputConfig(editable_text=True, allow_additive=True, pattern=EMAIL_PATTERN),
         ),
         (
             "AdditivePerson",
@@ -233,6 +235,7 @@ def test_transform_model_values_to_editor_values(
             InputConfig(
                 editable_text=True,
                 allow_additive=True,
+                pattern=IDENTIFIER_PATTERN,
             ),
         ),
         (
@@ -446,6 +449,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_badge": False,
                     "editable_text": False,
                     "allow_additive": False,
+                    "pattern": None,
                 },
                 "editor_values": [],
                 "enabled": True,
@@ -468,6 +472,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_badge": False,
                     "editable_text": True,
                     "allow_additive": True,
+                    "pattern": None,
                 },
                 "editor_values": [
                     {
@@ -504,6 +509,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_badge": False,
                     "editable_text": False,
                     "allow_additive": False,
+                    "pattern": IDENTIFIER_PATTERN,
                 },
                 "editor_values": [],
                 "enabled": False,
@@ -526,6 +532,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_badge": False,
                     "editable_text": True,
                     "allow_additive": True,
+                    "pattern": IDENTIFIER_PATTERN,
                 },
                 "editor_values": [],
                 "enabled": False,

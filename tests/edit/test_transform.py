@@ -196,15 +196,16 @@ def test_transform_model_values_to_editor_values(
         "expected",
     ),
     [
-        (
+        pytest.param(
             "AdditiveActivity",
             "fundingProgram",
             InputConfig(
                 editable_text=True,
                 allow_additive=True,
             ),
+            id="string field",
         ),
-        (
+        pytest.param(
             "AdditiveResource",
             "created",
             InputConfig(
@@ -223,13 +224,15 @@ def test_transform_model_values_to_editor_values(
                 editable_text=True,
                 allow_additive=True,
             ),
+            id="temporal field",
         ),
-        (
+        pytest.param(
             "AdditiveContactPoint",
             "email",
             InputConfig(editable_text=True, allow_additive=True, pattern=EMAIL_PATTERN),
-        ),
-        (
+            id="email field",
+        ),  # stopgap: MX-1766
+        pytest.param(
             "AdditivePerson",
             "affiliation",
             InputConfig(
@@ -237,8 +240,9 @@ def test_transform_model_values_to_editor_values(
                 allow_additive=True,
                 pattern=IDENTIFIER_PATTERN,
             ),
+            id="reference field",
         ),
-        (
+        pytest.param(
             "AdditiveResource",
             "license",
             InputConfig(
@@ -248,8 +252,9 @@ def test_transform_model_values_to_editor_values(
                 editable_badge=True,
                 allow_additive=True,
             ),
+            id="vocabulary field",
         ),
-        (
+        pytest.param(
             "AdditiveResource",
             "documentation",
             InputConfig(
@@ -261,8 +266,9 @@ def test_transform_model_values_to_editor_values(
                 editable_text=True,
                 allow_additive=True,
             ),
+            id="link field",
         ),
-        (
+        pytest.param(
             "AdditiveResource",
             "keyword",
             InputConfig(
@@ -273,27 +279,18 @@ def test_transform_model_values_to_editor_values(
                 editable_text=True,
                 allow_additive=True,
             ),
+            id="text field",
         ),
-        (
+        pytest.param(
             "AdditiveResource",
             "minTypicalAge",
             InputConfig(
                 editable_text=True,
                 allow_additive=True,
             ),
+            id="integer field",
         ),
-        ("AdditiveResource", "unknown", InputConfig()),
-    ],
-    ids=[
-        "string field",
-        "temporal field",
-        "email field",  # stopgap: MX-1766
-        "reference field",  # stopgap: MX-1652
-        "vocabulary field",
-        "link field",
-        "text field",
-        "integer field",  # stopgap: MX-1793
-        "unknown field",
+        pytest.param("AdditiveResource", "unknown", InputConfig(), id="unknown field"),
     ],
 )
 def test_transform_model_to_input_config(

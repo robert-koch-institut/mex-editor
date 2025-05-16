@@ -177,6 +177,23 @@ def additive_rule_input(
             ),
         ),
         rx.cond(
+            input_config.editable_identifier,
+            rx.input(
+                placeholder="Identifier",
+                value=value.identifier,
+                on_change=cast("EditState", EditState).set_identifier_value(
+                    field_name, index
+                ),
+                style={
+                    "margin": "calc(-1 * var(--space-1))",
+                    "minWidth": "30%",
+                },
+                custom_attrs={
+                    "data-testid": f"additive-rule-{field_name}-{index}-identifier"
+                },
+            ),
+        ),
+        rx.cond(
             input_config.editable_badge,
             rx.fragment(
                 rx.foreach(

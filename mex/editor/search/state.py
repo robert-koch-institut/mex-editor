@@ -87,12 +87,20 @@ class SearchState(State):
         )
 
     @rx.event
-    def set_entity_type(self, index: str, value: bool) -> None:
+    def set_entity_type(
+        self,
+        index: str,
+        value: bool,  # noqa: FBT001
+    ) -> None:
         """Set the entity type for filtering and refresh the results."""
         self.entity_types[index] = value
 
     @rx.event
-    def set_had_primary_source(self, index: str, value: bool) -> None:
+    def set_had_primary_source(
+        self,
+        index: str,
+        value: bool,  # noqa: FBT001
+    ) -> None:
         """Set the entity type for filtering and refresh the results."""
         self.had_primary_sources[index].checked = value
 
@@ -127,7 +135,7 @@ class SearchState(State):
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
     @rx.event(background=True)
-    async def resolve_identifiers(self):
+    async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results:
             for preview in result.preview:
@@ -174,7 +182,7 @@ class SearchState(State):
             self.total = response.total
 
     @rx.event
-    def get_available_primary_sources(self):
+    def get_available_primary_sources(self) -> Generator[EventSpec, None, None]:
         """Get all available primary sources."""
         # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()

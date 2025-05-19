@@ -34,7 +34,7 @@ class EditState(State):
     validation_messages: list[ValidationMessage] = []
 
     @rx.event(background=True)
-    async def resolve_identifiers(self):
+    async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for field in self.fields:
             for primary_source in field.primary_sources:
@@ -161,7 +161,7 @@ class EditState(State):
         self,
         field_name: str,
         href: str | None,
-        enabled: bool,
+        enabled: bool,  # noqa: FBT001
     ) -> None:
         """Toggle the `enabled` flag of a primary source."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
@@ -173,7 +173,7 @@ class EditState(State):
         self,
         field_name: str,
         value: EditorValue,
-        enabled: bool,
+        enabled: bool,  # noqa: FBT001
     ) -> None:
         """Toggle the `enabled` flag of a field value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):

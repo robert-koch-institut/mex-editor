@@ -60,7 +60,9 @@ from mex.editor.transform import (
     ],
 )
 def test_transform_values(
-    values: object, allow_link: bool, expected: list[EditorValue]
+    values: object,
+    allow_link: bool,  # noqa: FBT001
+    expected: list[EditorValue],
 ) -> None:
     assert transform_values(values, allow_link=allow_link) == expected
 

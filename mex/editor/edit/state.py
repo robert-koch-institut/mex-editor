@@ -161,7 +161,7 @@ class EditState(State):
         self,
         field_name: str,
         href: str | None,
-        enabled: bool,
+        enabled: bool,  # noqa: FBT001
     ) -> None:
         """Toggle the `enabled` flag of a primary source."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
@@ -173,7 +173,7 @@ class EditState(State):
         self,
         field_name: str,
         value: EditorValue,
-        enabled: bool,
+        enabled: bool,  # noqa: FBT001
     ) -> None:
         """Toggle the `enabled` flag of a field value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):

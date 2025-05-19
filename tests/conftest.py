@@ -233,7 +233,7 @@ def artificial_extracted_items() -> list[AnyExtractedModel]:
         seed=42,
         count=25,
         chattiness=16,
-        stem_types=EXTRACTED_MODEL_CLASSES_BY_NAME,
+        stem_types=list(EXTRACTED_MODEL_CLASSES_BY_NAME),
     )
 
 
@@ -244,3 +244,4 @@ def load_artificial_extracted_items(
     """Ingest artificial data into the graph."""
     connector = BackendApiConnector.get()
     connector.ingest(artificial_extracted_items)
+    return artificial_extracted_items

@@ -13,6 +13,30 @@ from mex.editor.layout import page
 from mex.editor.models import EditorValue
 
 
+def remove_additive_button(
+    field_name: str,
+    index: int,
+) -> rx.Component:
+    """Render a button to remove an additive value."""
+    return rx.button(
+        rx.icon(
+            tag="circle-minus",
+            height="1rem",
+            width="1rem",
+        ),
+        f"Remove {field_name}",
+        color_scheme="tomato",
+        variant="soft",
+        size="1",
+        on_click=cast("CreateState", CreateState).remove_additive_value(
+            field_name, index
+        ),
+        custom_attrs={
+            "data-testid": f"additive-rule-{field_name}-{index}-remove-button"
+        },
+    )
+
+
 def editor_value_input(
     field_name: str, input_config: InputConfig, index: int, value: EditorValue
 ) -> rx.Component:
@@ -78,6 +102,35 @@ def editor_value_input(
                 ),
             ),
         ),
+        remove_additive_button(
+            field_name,
+            index,
+        ),
+    )
+
+
+def new_additive_button(
+    field_name: str,
+    primary_source_identifier: str,
+) -> rx.Component:
+    """Render a button for adding new additive rules to a given field."""
+    return rx.card(
+        rx.button(
+            rx.icon(
+                tag="circle-plus",
+                height="1rem",
+                width="1rem",
+            ),
+            f"New {field_name}",
+            color_scheme="jade",
+            variant="soft",
+            size="1",
+            on_click=cast("CreateState", CreateState).add_additive_value(field_name),
+            custom_attrs={
+                "data-testid": f"new-additive-{field_name}-{primary_source_identifier}"
+            },
+        ),
+        style={"width": "100%"},
     )
 
 
@@ -102,6 +155,13 @@ def editor_field(
                         index,
                         value,
                     ),
+                ),
+            ),
+            rx.cond(
+                primary_source.input_config.allow_additive,
+                new_additive_button(
+                    field.name,
+                    primary_source.identifier,
                 ),
             ),
             style={"width": "100%"},

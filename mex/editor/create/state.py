@@ -43,12 +43,6 @@ class CreateState(State):
                 subtractive=PreventiveResource(),  # type: ignore[arg-type]
                 preventive=SubtractiveResource(),  # type: ignore[arg-type]
             )
-        for field in self.fields:
-            for source in field.primary_sources:
-                if not source.editor_values and source.input_config.allow_additive:
-                    source.editor_values.append(
-                        EditorValue(badge=source.input_config.badge_default)
-                    )
 
     @rx.event
     def clean_up_editor_values(self) -> None:
@@ -123,6 +117,18 @@ class CreateState(State):
                 return primary_source
         msg = f"editable field not found: {field_name}"
         raise ValueError(msg)
+
+    @rx.event
+    def add_additive_value(self, field_name: str) -> None:
+        """Add an additive rule to the given field."""
+        primary_source = self._get_editable_primary_source_by_field_name(field_name)
+        primary_source.editor_values.append(EditorValue())
+
+    @rx.event
+    def remove_additive_value(self, field_name: str, index: int) -> None:
+        """Remove an additive rule from the given field."""
+        primary_source = self._get_editable_primary_source_by_field_name(field_name)
+        primary_source.editor_values.pop(index)
 
     @rx.event
     def set_entity_type(self, entity_type: str) -> None:

@@ -1,4 +1,4 @@
-from functools import cache
+from functools import lru_cache
 from typing import cast
 
 from pydantic import ValidationError
@@ -85,11 +85,11 @@ def _transform_model_values_to_editor_values(
     return editor_values
 
 
-@cache
+@lru_cache(maxsize=5000)
 def _transform_model_to_input_config(
     field_name: str,
     entity_type: str,
-    editable: bool,
+    editable: bool,  # noqa: FBT001
 ) -> InputConfig:
     """Determine the input type for a given field of a given model."""
     if field_name in (

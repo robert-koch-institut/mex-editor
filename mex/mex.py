@@ -1,4 +1,5 @@
 import reflex as rx
+from fastapi.responses import PlainTextResponse
 from reflex.app import UnevaluatedPage
 from reflex.components.core.client_side_routing import Default404Page
 from reflex.components.radix import themes
@@ -6,8 +7,8 @@ from reflex.constants import Page404
 from reflex.utils.console import info as log_info
 
 from mex.common.logging import logger
-from mex.editor.api.main import check_system_status
-from mex.editor.aux_search.main import index as aux_import_index
+from mex.editor.api.main import check_system_status, get_prometheus_metrics
+from mex.editor.aux_search.main import index as aux_search_index
 from mex.editor.aux_search.state import AuxState
 from mex.editor.create.main import index as create_index
 from mex.editor.create.state import CreateState
@@ -49,13 +50,14 @@ app.add_page(
     ],
 )
 app.add_page(
-    aux_import_index,
-    route="/aux-import",
-    title="MEx Editor | Aux Import",
+    aux_search_index,
+    route="/aux-search",
+    title="MEx Editor | Aux Search",
     on_load=[
         State.check_login,
         State.load_nav,
         AuxState.refresh,
+        AuxState.resolve_identifiers,
     ],
 )
 app.add_page(
@@ -87,6 +89,12 @@ app.unevaluated_pages[Page404.SLUG] = UnevaluatedPage(
 app.api.add_api_route(
     "/_system/check",
     check_system_status,
+    tags=["system"],
+)
+app.api.add_api_route(
+    "/_system/metrics",
+    get_prometheus_metrics,
+    response_class=PlainTextResponse,
     tags=["system"],
 )
 app.api.title = "mex-editor"

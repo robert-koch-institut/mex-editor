@@ -2,7 +2,6 @@ import pytest
 from reflex.state import serialize_mutable_proxy
 
 from mex.common.models import ContactPointRuleSetResponse, ExtractedContactPoint
-from mex.common.types import EMAIL_PATTERN
 from mex.editor.edit.models import EditorPrimarySource, InputConfig
 from mex.editor.edit.state import EditState
 from mex.editor.edit.transform import transform_models_to_fields
@@ -38,7 +37,7 @@ def test_state_get_primary_sources_by_field_name() -> None:
                 href="/item/somePrimarySource",
             ),
             identifier="somePrimarySource",
-            input_config=InputConfig(pattern=EMAIL_PATTERN),
+            input_config=InputConfig(),
             editor_values=[EditorValue(text="test@foo.bar")],
         ),
         EditorPrimarySource(
@@ -47,8 +46,6 @@ def test_state_get_primary_sources_by_field_name() -> None:
                 href="/item/00000000000000",
             ),
             identifier="00000000000000",
-            input_config=InputConfig(
-                editable_text=True, allow_additive=True, pattern=EMAIL_PATTERN
-            ),
+            input_config=InputConfig(editable_text=True, allow_additive=True),
         ),
     ]

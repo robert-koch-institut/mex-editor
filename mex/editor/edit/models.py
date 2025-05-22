@@ -15,7 +15,6 @@ class InputConfig(rx.Base):
     editable_identifier: bool = False  # whether the identifier is editable as text
     editable_text: bool = False  # whether the text is editable as plain text
     allow_additive: bool = False  # whether this field belongs to an additive rule
-    pattern: str | None = None  # regular expression for validating text
 
 
 class ValidationMessage(rx.Base):

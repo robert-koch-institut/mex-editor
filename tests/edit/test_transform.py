@@ -22,8 +22,6 @@ from mex.common.models import (
     SubtractivePerson,
 )
 from mex.common.types import (
-    EMAIL_PATTERN,
-    IDENTIFIER_PATTERN,
     ConsentStatus,
     ConsentType,
     Link,
@@ -229,7 +227,7 @@ def test_transform_model_values_to_editor_values(
         pytest.param(
             "AdditiveContactPoint",
             "email",
-            InputConfig(editable_text=True, allow_additive=True, pattern=EMAIL_PATTERN),
+            InputConfig(editable_text=True, allow_additive=True),
             id="email field",
         ),  # stopgap: MX-1766
         pytest.param(
@@ -238,7 +236,6 @@ def test_transform_model_values_to_editor_values(
             InputConfig(
                 editable_identifier=True,
                 allow_additive=True,
-                pattern=IDENTIFIER_PATTERN,
             ),
             id="reference field",
         ),
@@ -447,7 +444,6 @@ def test_transform_models_to_fields() -> None:
                     "editable_identifier": False,
                     "editable_text": False,
                     "allow_additive": False,
-                    "pattern": None,
                 },
                 "editor_values": [],
                 "enabled": True,
@@ -471,7 +467,6 @@ def test_transform_models_to_fields() -> None:
                     "editable_identifier": False,
                     "editable_text": True,
                     "allow_additive": True,
-                    "pattern": None,
                 },
                 "editor_values": [
                     {
@@ -509,7 +504,6 @@ def test_transform_models_to_fields() -> None:
                     "editable_identifier": False,
                     "editable_text": False,
                     "allow_additive": False,
-                    "pattern": IDENTIFIER_PATTERN,
                 },
                 "editor_values": [],
                 "enabled": False,
@@ -533,7 +527,6 @@ def test_transform_models_to_fields() -> None:
                     "editable_identifier": True,
                     "editable_text": False,
                     "allow_additive": True,
-                    "pattern": IDENTIFIER_PATTERN,
                 },
                 "editor_values": [],
                 "enabled": False,

@@ -34,6 +34,7 @@ def test_transform_model_to_template_fields() -> None:
                     "badge_titles": [],
                     "editable_badge": False,
                     "editable_href": False,
+                    "editable_identifier": False,
                     "editable_text": True,
                 },
                 "name": {
@@ -61,6 +62,7 @@ def test_transform_model_to_template_fields() -> None:
                     "badge_titles": [],
                     "editable_badge": False,
                     "editable_href": False,
+                    "editable_identifier": False,
                     "editable_text": True,
                 },
                 "name": {

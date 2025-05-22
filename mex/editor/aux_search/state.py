@@ -122,7 +122,7 @@ class AuxState(State):
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
     @rx.event(background=True)
-    async def resolve_identifiers(self):
+    async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results_transformed:
             for value in [*result.title, *result.preview, *result.all_properties]:

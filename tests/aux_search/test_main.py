@@ -14,7 +14,7 @@ def aux_page(frontend_url: str, writer_user_page: Page) -> Page:
 
 
 @pytest.mark.integration
-@pytest.mark.usefixtures("load_artificial_extracted_items")
+@pytest.mark.usefixtures("load_dummy_data")
 def test_aux_tab_section(aux_page: Page) -> None:
     page = aux_page
     nav_bar = page.get_by_test_id("aux-tab-section")

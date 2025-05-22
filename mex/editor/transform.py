@@ -19,12 +19,18 @@ def ensure_list(values: object) -> list[object]:
     return [values]
 
 
-def transform_values(values: object, allow_link: bool = True) -> list[EditorValue]:
+def transform_values(
+    values: object,
+    allow_link: bool = True,  # noqa: FBT001, FBT002
+) -> list[EditorValue]:
     """Convert a single object or a list of objects into a list of editor values."""
     return [transform_value(v, allow_link) for v in ensure_list(values)]
 
 
-def transform_value(value: object, allow_link: bool = True) -> EditorValue:
+def transform_value(
+    value: object,
+    allow_link: bool = True,  # noqa: FBT001, FBT002
+) -> EditorValue:
     """Transform a single object into an editor value ready for rendering."""
     if isinstance(value, Text):
         return EditorValue(

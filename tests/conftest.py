@@ -48,12 +48,15 @@ def settings() -> EditorSettings:
 
 
 @pytest.fixture(autouse=True)
-def set_identity_provider(is_integration_test: bool, monkeypatch: MonkeyPatch) -> None:
+def set_identity_provider(
+    is_integration_test: bool,  # noqa: FBT001
+    monkeypatch: MonkeyPatch,
+) -> None:
     """Ensure the identifier provider is set correctly for unit and int tests."""
     # TODO(ND): clean this up after MX-1708
     settings = EditorSettings.get()
     if is_integration_test:
-        monkeypatch.setitem(settings.model_config, "validate_assignment", False)
+        monkeypatch.setitem(settings.model_config, "validate_assignment", False)  # noqa: FBT003
         monkeypatch.setattr(settings, "identity_provider", IdentityProvider.BACKEND)
     else:
         monkeypatch.setattr(settings, "identity_provider", IdentityProvider.MEMORY)
@@ -67,7 +70,9 @@ def frontend_url() -> str:
 
 @pytest.fixture(autouse=True)
 def patch_editor_user_database(
-    is_integration_test: bool, monkeypatch: MonkeyPatch, settings: EditorSettings
+    is_integration_test: bool,  # noqa: FBT001
+    monkeypatch: MonkeyPatch,
+    settings: EditorSettings,
 ) -> None:
     """Overwrite the user database with dummy credentials."""
     if not is_integration_test:
@@ -110,7 +115,7 @@ def writer_user_page(
 
 
 @pytest.fixture(autouse=True)
-def flush_graph_database(is_integration_test: bool) -> None:
+def flush_graph_database(is_integration_test: bool) -> None:  # noqa: FBT001
     """Flush the graph database before every integration test."""
     if is_integration_test:
         connector = BackendApiConnector.get()
@@ -228,7 +233,7 @@ def artificial_extracted_items() -> list[AnyExtractedModel]:
         seed=42,
         count=25,
         chattiness=16,
-        stem_types=EXTRACTED_MODEL_CLASSES_BY_NAME,
+        stem_types=list(EXTRACTED_MODEL_CLASSES_BY_NAME),
     )
 
 
@@ -239,3 +244,4 @@ def load_artificial_extracted_items(
     """Ingest artificial data into the graph."""
     connector = BackendApiConnector.get()
     connector.ingest(artificial_extracted_items)
+    return artificial_extracted_items

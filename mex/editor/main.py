@@ -62,13 +62,16 @@ def editor_frontend() -> None:  # pragma: no cover
     get_compiled_app()
 
     # Set up the frontend for prod mode.
-    setup_frontend_prod(Path.cwd(), True)
+    setup_frontend_prod(
+        Path.cwd(),
+        disable_telemetry=True,
+    )
 
     # Run the frontend.
     run_frontend_prod(
         Path.cwd(),
         str(settings.editor_frontend_port),
-        False,
+        backend_present=False,
     )
 
 

@@ -17,6 +17,7 @@ env:
   PIP_NO_CLEAN: on
   PIP_NO_INPUT: on
   PIP_PREFER_BINARY: on
+  PY_COLORS: "1"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -35,7 +36,7 @@ jobs:
         ports:
           - 7687:7687
       backend:
-        image: ghcr.io/robert-koch-institut/mex-backend:0.33.2
+        image: ghcr.io/robert-koch-institut/mex-backend:0.37.3
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
           MEX_BACKEND_API_KEY_DATABASE: ${{ secrets.MEX_BACKEND_API_KEY_DATABASE }}

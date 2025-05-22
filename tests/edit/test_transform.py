@@ -298,7 +298,7 @@ def test_transform_model_to_input_config(
     field_name: str,
     expected: InputConfig,
 ) -> None:
-    input_config = _transform_model_to_input_config(field_name, entity_type, True)
+    input_config = _transform_model_to_input_config(field_name, entity_type, True)  # noqa: FBT003
     assert input_config == expected
 
 
@@ -704,7 +704,7 @@ def test_transform_fields_to_preventive(
 def test_transform_editor_value_to_model_value(
     editor_value: EditorValue, field_name: str, class_name: str, expected: object
 ) -> None:
-    input_config = _transform_model_to_input_config(field_name, class_name, True)
+    input_config = _transform_model_to_input_config(field_name, class_name, True)  # noqa: FBT003
     assert input_config
 
     model_value = _transform_editor_value_to_model_value(

@@ -91,7 +91,7 @@ def _transform_model_values_to_editor_values(
 def _transform_model_to_input_config(  # noqa: PLR0911
     field_name: str,
     entity_type: str,
-    editable: bool,
+    editable: bool,  # noqa: FBT001
 ) -> InputConfig:
     """Determine the input type for a given field of a given model."""
     if field_name in (

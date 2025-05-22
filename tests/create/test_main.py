@@ -67,7 +67,7 @@ def test_create_page_test_additive_buttons(create_page: Page) -> None:
     expect(additive_rule_input).to_be_visible()
 
     remove_additive_rule_button = page.get_by_test_id(
-        "additive-documentation-0-remove-button"
+        "additive-rule-documentation-0-remove-button"
     )
     expect(remove_additive_rule_button).to_be_visible()
     remove_additive_rule_button.click()

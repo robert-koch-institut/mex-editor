@@ -14,7 +14,7 @@ def transform_model_to_template_fields(
     subtractive: AnySubtractiveModel,
     preventive: AnyPreventiveModel,
 ) -> list[EditorField]:
-    """Convert the given models and rules into editor field models.
+    """Convert the given model into editor fields.
 
     Args:
         entity_type: Entity type of the model

@@ -40,8 +40,8 @@ class CreateState(State):
             self.fields = transform_model_to_template_fields(
                 ensure_prefix(self.entity_type, "Extracted"),
                 additive=AdditiveResource(),
-                subtractive=PreventiveResource(),  # type: ignore[arg-type]
-                preventive=SubtractiveResource(),  # type: ignore[arg-type]
+                subtractive=SubtractiveResource(),
+                preventive=PreventiveResource(),
             )
 
     @rx.event

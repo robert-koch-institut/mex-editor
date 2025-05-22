@@ -12,6 +12,7 @@ class InputConfig(rx.Base):
     badge_titles: list[str] = []  # title for the collection of drop-drown choices
     editable_href: bool = False  # whether the href attribute is editable as text
     editable_badge: bool = False  # whether the badge is editable as a drop-down
+    editable_identifier: bool = False  # whether the identifier is editable as text
     editable_text: bool = False  # whether the text is editable as plain text
     allow_additive: bool = False  # whether this field belongs to an additive rule
 

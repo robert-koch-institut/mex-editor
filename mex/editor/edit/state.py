@@ -200,6 +200,12 @@ class EditState(State):
         primary_source.editor_values[index].text = value
 
     @rx.event
+    def set_identifier_value(self, field_name: str, index: int, value: str) -> None:
+        """Set the identifier attribute on an additive editor value."""
+        primary_source = self._get_editable_primary_source_by_field_name(field_name)
+        primary_source.editor_values[index].identifier = value
+
+    @rx.event
     def set_badge_value(self, field_name: str, index: int, value: str) -> None:
         """Set the badge attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)

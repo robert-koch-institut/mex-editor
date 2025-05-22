@@ -87,7 +87,7 @@ def _transform_model_values_to_editor_values(
 
 
 @lru_cache(maxsize=5000)
-def _transform_model_to_input_config(
+def _transform_model_to_input_config(  # noqa: PLR0911
     field_name: str,
     entity_type: str,
     editable: bool,  # noqa: FBT001
@@ -100,6 +100,11 @@ def _transform_model_to_input_config(
     ):
         return InputConfig(
             editable_text=editable,
+            allow_additive=editable,
+        )
+    if field_name in REFERENCE_FIELDS_BY_CLASS_NAME[entity_type]:
+        return InputConfig(
+            editable_identifier=editable,
             allow_additive=editable,
         )
     if field_name in TEMPORAL_FIELDS_BY_CLASS_NAME[entity_type]:

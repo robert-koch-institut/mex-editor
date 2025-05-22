@@ -41,71 +41,70 @@ def editor_value_input(
     field_name: str, input_config: InputConfig, index: int, value: EditorValue
 ) -> rx.Component:
     """Return an input mask for additive rules."""
-    return rx.hstack(
-        rx.cond(
-            input_config.editable_href,
-            rx.input(
-                placeholder="URL",
-                value=value.href,
-                on_change=cast("CreateState", CreateState).set_href_value(
-                    field_name, index
+    return rx.card(
+        rx.hstack(
+            rx.cond(
+                input_config.editable_href,
+                rx.input(
+                    placeholder="URL",
+                    value=value.href,
+                    on_change=cast("CreateState", CreateState).set_href_value(
+                        field_name, index
+                    ),
+                    style={
+                        "margin": "calc(-1 * var(--space-1))",
+                        "width": "30%",
+                    },
+                    custom_attrs={"data-testid": f"additive-{field_name}-{index}-href"},
                 ),
-                style={
-                    "margin": "calc(-1 * var(--space-1))",
-                    "width": "100%",
-                },
-                custom_attrs={
-                    "data-testid": f"additive-rule-{field_name}-{index}-href"
-                },
             ),
-        ),
-        rx.cond(
-            input_config.editable_text,
-            rx.input(
-                placeholder="Text",
-                value=value.text,
-                on_change=cast("CreateState", CreateState).set_text_value(
-                    field_name, index
+            rx.cond(
+                input_config.editable_text,
+                rx.input(
+                    placeholder="Text",
+                    value=value.text,
+                    on_change=cast("CreateState", CreateState).set_text_value(
+                        field_name, index
+                    ),
+                    style={
+                        "margin": "calc(-1 * var(--space-1))",
+                        "width": "30%",
+                    },
+                    custom_attrs={"data-testid": f"additive-{field_name}-{index}-text"},
                 ),
-                style={
-                    "margin": "calc(-1 * var(--space-1))",
-                    "width": "100%",
-                },
-                custom_attrs={
-                    "data-testid": f"additive-rule-{field_name}-{index}-text"
-                },
             ),
-        ),
-        rx.cond(
-            input_config.editable_badge,
-            rx.fragment(
-                rx.foreach(
-                    input_config.badge_titles,
-                    render_span,
-                ),
-                rx.box(
-                    rx.select(
-                        input_config.badge_options,
-                        value=cast("rx.Var", value.badge)
-                        | cast("rx.Var", input_config.badge_default),
-                        size="1",
-                        variant="soft",
-                        radius="large",
-                        color_scheme="gray",
-                        on_change=cast("CreateState", CreateState).set_badge_value(
-                            field_name, index
+            rx.cond(
+                input_config.editable_badge,
+                rx.fragment(
+                    rx.foreach(
+                        input_config.badge_titles,
+                        render_span,
+                    ),
+                    rx.box(
+                        rx.select(
+                            input_config.badge_options,
+                            value=cast("rx.Var", value.badge)
+                            | cast("rx.Var", input_config.badge_default),
+                            size="1",
+                            variant="soft",
+                            radius="large",
+                            color_scheme="gray",
+                            on_change=cast("CreateState", CreateState).set_badge_value(
+                                field_name, index
+                            ),
+                            custom_attrs={
+                                "data-testid": f"additive-{field_name}-{index}-badge"
+                            },
                         ),
-                        custom_attrs={
-                            "data-testid": f"additive-rule-{field_name}-{index}-badge"
-                        },
                     ),
                 ),
             ),
+            remove_additive_button(
+                field_name,
+                index,
+            ),
         ),
-        remove_additive_button(
-            field_name,
-            index,
-        ),
+        style={"width": "100%"},
     )
 
 
@@ -156,12 +155,12 @@ def editor_field(
                         value,
                     ),
                 ),
-            ),
-            rx.cond(
-                primary_source.input_config.allow_additive,
-                new_additive_button(
-                    field.name,
-                    primary_source.identifier,
+                rx.cond(
+                    primary_source.input_config.allow_additive,
+                    new_additive_button(
+                        field.name,
+                        primary_source.identifier,
+                    ),
                 ),
             ),
             style={"width": "100%"},
@@ -181,6 +180,7 @@ def create_input() -> rx.Component:
                     ["Resource"],  # move to state
                     value=CreateState.entity_type,
                     on_change=cast("CreateState", CreateState).set_entity_type,
+                    custom_attrs={"data-testid": "entity-type-select"},
                 ),
             ),
             rx.foreach(

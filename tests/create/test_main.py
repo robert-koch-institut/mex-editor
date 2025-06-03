@@ -74,6 +74,7 @@ def test_create_page_test_additive_buttons(create_page: Page) -> None:
     expect(remove_additive_rule_button).not_to_be_visible()
 
 
+@pytest.mark.external
 @pytest.mark.integration
 def test_create_page_submit_item(create_page: Page) -> None:
     page = create_page

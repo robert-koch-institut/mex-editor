@@ -90,8 +90,7 @@ class CreateState(State):
             dismissible=True,
             duration=5000,
         )
-
-    # refresh?
+        self.refresh()
 
     @rx.event
     def clear_validation_messages(self) -> None:

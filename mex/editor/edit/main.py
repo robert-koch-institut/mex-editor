@@ -369,6 +369,10 @@ def editor_field(model: EditorField) -> rx.Component:
     return rx.hstack(
         rx.card(
             rx.text(model.name),
+            rx.cond(
+                model.is_required,
+                rx.text("*", style={"color": "red", "marginLeft": "0.25rem"}),
+            ),
             style={"width": "25%"},
             custom_attrs={"data-testid": f"field-{model.name}-name"},
         ),

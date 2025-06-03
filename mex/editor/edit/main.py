@@ -368,10 +368,13 @@ def editor_field(model: EditorField) -> rx.Component:
     """Return a horizontal grid of cards for editing one field."""
     return rx.hstack(
         rx.card(
-            rx.text(model.name),
-            rx.cond(
-                model.is_required,
-                rx.text("*", style={"color": "red", "marginLeft": "0.25rem"}),
+            rx.hstack(
+                rx.text(model.name),
+                rx.cond(
+                    model.is_required,
+                    rx.text("*", style={"color": "red"}),
+                ),
+                align="center",
             ),
             style={"width": "25%"},
             custom_attrs={"data-testid": f"field-{model.name}-name"},

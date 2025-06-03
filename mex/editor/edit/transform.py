@@ -1,7 +1,7 @@
 from functools import lru_cache  # noqa: I001
-from typing import Any, cast
+from typing import cast
 
-from pydantic import BaseModel, TypeAdapter, ValidationError
+from pydantic import BaseModel, ValidationError
 
 from mex.common.fields import (
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
@@ -38,7 +38,11 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.common.utils import get_field_names_allowing_none, get_all_fields
+from mex.common.utils import (
+    get_field_names_allowing_none,
+    get_all_fields,
+    get_field_names_allowing_empty_list,
+)
 from mex.editor.edit.models import (
     EditorField,
     EditorPrimarySource,
@@ -228,6 +232,7 @@ def transform_models_to_fields(
             for f in MERGEABLE_FIELDS_BY_CLASS_NAME[e.entityType]
         }
     )
+
     required_fields = get_required_field_names(type(extracted_items[0]))
 
     fields_by_name = {
@@ -253,6 +258,18 @@ def transform_models_to_fields(
         preventive,
     )
     return list(fields_by_name.values())
+
+
+@lru_cache(maxsize=4048)
+def get_required_field_names(model: type[BaseModel]) -> list[str]:
+    """Returns list of required fields."""
+    allow_none_fields = set(get_field_names_allowing_none(model))
+    allow_empty_list_fields = set(get_field_names_allowing_empty_list(model))
+    all_model_fields_names = set(get_all_fields(model).keys())
+    required_fields = (
+        all_model_fields_names - allow_none_fields - allow_empty_list_fields
+    )
+    return list(required_fields)
 
 
 def _transform_fields_to_additive(
@@ -397,29 +414,3 @@ def transform_validation_error_to_messages(
         )
         for error in error.errors()
     ]
-
-
-@lru_cache(maxsize=4048)
-def get_field_names_allowing_empty_list(model: type[BaseModel]) -> list[str]:
-    """Returns a list of optional fields with type annotation list."""
-    field_names: list[str] = []
-    for field_name, field_info in get_all_fields(model).items():
-        validator: TypeAdapter[Any] = TypeAdapter(field_info.annotation)
-        try:
-            validator.validate_python([])
-        except ValidationError:
-            continue
-        field_names.append(field_name)
-    return field_names
-
-
-@lru_cache(maxsize=4048)
-def get_required_field_names(model: type[BaseModel]) -> list[str]:
-    """Returns list of required fields."""
-    allow_none_fields = set(get_field_names_allowing_none(model))
-    allow_empty_list_fields = set(get_field_names_allowing_empty_list(model))
-    all_model_fields_names = set(get_all_fields(model).keys())
-    required_fields = (
-        all_model_fields_names - allow_none_fields - allow_empty_list_fields
-    )
-    return list(required_fields)

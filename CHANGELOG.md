@@ -14,9 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- bump cookiecutter template to ed5deb
-- BREAKING: set mex-backend compatibility to 0.37.1
-
 ### Deprecated
 
 ### Removed
@@ -24,6 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.16.0] - 2025-05-22
+
+### Added
+
+- allow editing for identifier fields
+
+### Changes
+
+- bump cookiecutter template to ed5deb
+- BREAKING: set mex-backend compatibility to 0.37.1
 
 ## [0.15.0] - 2025-04-29
 

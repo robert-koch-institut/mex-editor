@@ -194,15 +194,16 @@ def test_transform_model_values_to_editor_values(
         "expected",
     ),
     [
-        (
+        pytest.param(
             "AdditiveActivity",
             "fundingProgram",
             InputConfig(
                 editable_text=True,
                 allow_additive=True,
             ),
+            id="string field",
         ),
-        (
+        pytest.param(
             "AdditiveResource",
             "created",
             InputConfig(
@@ -221,14 +222,24 @@ def test_transform_model_values_to_editor_values(
                 editable_text=True,
                 allow_additive=True,
             ),
+            id="temporal field",
         ),
-        (
+        pytest.param(
             "AdditiveContactPoint",
             "email",
             InputConfig(editable_text=True, allow_additive=True),
+            id="email field",
+        ),  # stopgap: MX-1766
+        pytest.param(
+            "AdditivePerson",
+            "affiliation",
+            InputConfig(
+                editable_identifier=True,
+                allow_additive=True,
+            ),
+            id="reference field",
         ),
-        ("AdditivePerson", "affiliation", InputConfig()),
-        (
+        pytest.param(
             "AdditiveResource",
             "license",
             InputConfig(
@@ -238,8 +249,9 @@ def test_transform_model_values_to_editor_values(
                 editable_badge=True,
                 allow_additive=True,
             ),
+            id="vocabulary field",
         ),
-        (
+        pytest.param(
             "AdditiveResource",
             "documentation",
             InputConfig(
@@ -251,8 +263,9 @@ def test_transform_model_values_to_editor_values(
                 editable_text=True,
                 allow_additive=True,
             ),
+            id="link field",
         ),
-        (
+        pytest.param(
             "AdditiveResource",
             "keyword",
             InputConfig(
@@ -263,27 +276,18 @@ def test_transform_model_values_to_editor_values(
                 editable_text=True,
                 allow_additive=True,
             ),
+            id="text field",
         ),
-        (
+        pytest.param(
             "AdditiveResource",
             "minTypicalAge",
             InputConfig(
                 editable_text=True,
                 allow_additive=True,
             ),
+            id="integer field",
         ),
-        ("AdditiveResource", "unknown", InputConfig()),
-    ],
-    ids=[
-        "string field",
-        "temporal field",
-        "email field",  # stopgap: MX-1766
-        "reference field",  # stopgap: MX-1652
-        "vocabulary field",
-        "link field",
-        "text field",
-        "integer field",  # stopgap: MX-1793
-        "unknown field",
+        pytest.param("AdditiveResource", "unknown", InputConfig(), id="unknown field"),
     ],
 )
 def test_transform_model_to_input_config(
@@ -437,6 +441,7 @@ def test_transform_models_to_fields() -> None:
                     "badge_titles": [],
                     "editable_href": False,
                     "editable_badge": False,
+                    "editable_identifier": False,
                     "editable_text": False,
                     "allow_additive": False,
                 },
@@ -459,6 +464,7 @@ def test_transform_models_to_fields() -> None:
                     "badge_titles": [],
                     "editable_href": False,
                     "editable_badge": False,
+                    "editable_identifier": False,
                     "editable_text": True,
                     "allow_additive": True,
                 },
@@ -495,6 +501,7 @@ def test_transform_models_to_fields() -> None:
                     "badge_titles": [],
                     "editable_href": False,
                     "editable_badge": False,
+                    "editable_identifier": False,
                     "editable_text": False,
                     "allow_additive": False,
                 },
@@ -517,8 +524,9 @@ def test_transform_models_to_fields() -> None:
                     "badge_titles": [],
                     "editable_href": False,
                     "editable_badge": False,
+                    "editable_identifier": True,
                     "editable_text": False,
-                    "allow_additive": False,
+                    "allow_additive": True,
                 },
                 "editor_values": [],
                 "enabled": False,

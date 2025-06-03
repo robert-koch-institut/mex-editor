@@ -294,6 +294,23 @@ def test_edit_page_renders_text_input(edit_page: Page) -> None:
 
 
 @pytest.mark.integration
+def test_edit_page_renders_identifier_input(edit_page: Page) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id(
+        "new-additive-involvedUnit-00000000000000"
+    )
+    new_additive_button.scroll_into_view_if_needed()
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_renders_identifier_input.png"
+    )
+
+    identifier_input = page.get_by_test_id("additive-rule-involvedUnit-0-identifier")
+    expect(identifier_input).to_be_visible()
+
+
+@pytest.mark.integration
 def test_edit_page_renders_link_input(edit_page: Page) -> None:
     page = edit_page
     new_additive_button = page.get_by_test_id("new-additive-website-00000000000000")

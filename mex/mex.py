@@ -13,6 +13,8 @@ from mex.editor.aux_search.state import AuxState
 from mex.editor.edit.main import index as edit_index
 from mex.editor.edit.state import EditState
 from mex.editor.login.main import index as login_index
+from mex.editor.merge_items.main import index as merge_items_index
+from mex.editor.merge_items.state import MergeState
 from mex.editor.search.main import index as search_index
 from mex.editor.search.state import SearchState
 from mex.editor.settings import EditorSettings
@@ -45,6 +47,16 @@ app.add_page(
         SearchState.load_search_params,
         SearchState.refresh,
         SearchState.resolve_identifiers,
+    ],
+)
+app.add_page(
+    merge_items_index,
+    route="/merge_items",
+    title="MEx Editor | Merge Items",
+    on_load=[
+        State.check_login,
+        State.load_nav,
+        MergeState.refresh,
     ],
 )
 app.add_page(

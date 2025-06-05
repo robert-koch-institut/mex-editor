@@ -1,4 +1,4 @@
-from functools import lru_cache  # noqa: I001
+from functools import lru_cache
 from typing import cast
 
 from pydantic import BaseModel, ValidationError

@@ -182,10 +182,22 @@ class EditState(State):
                     editor_value.enabled = enabled
 
     @rx.event
+    def toggle_field_value_editing(
+        self,
+        field_name: str,
+        index: int,
+    ) -> None:
+        """Toggle editing of a field value."""
+        primary_source = self._get_editable_primary_source_by_field_name(field_name)
+        primary_source.editor_values[
+            index
+        ].being_edited = not primary_source.editor_values[index].being_edited
+
+    @rx.event
     def add_additive_value(self, field_name: str) -> None:
         """Add an additive rule to the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
-        primary_source.editor_values.append(EditorValue())
+        primary_source.editor_values.append(EditorValue(being_edited=True))
 
     @rx.event
     def remove_additive_value(self, field_name: str, index: int) -> None:
@@ -204,6 +216,7 @@ class EditState(State):
         """Set the identifier attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].identifier = value
+        primary_source.editor_values[index].href = f"/item/{value}"
 
     @rx.event
     def set_badge_value(self, field_name: str, index: int, value: str) -> None:

@@ -31,6 +31,39 @@ def editor_value_switch(
     )
 
 
+def editor_edit_button(
+    field_name: str,
+    primary_source: EditorPrimarySource,
+    value: EditorValue,
+    index: int,
+) -> rx.Component:
+    """Return a button for toggling editing."""
+    return rx.icon_button(
+        rx.cond(
+            value.being_edited,
+            rx.icon(
+                "pencil-off",
+                height="1rem",
+                width="1rem",
+            ),
+            rx.icon(
+                "pencil",
+                height="1rem",
+                width="1rem",
+            ),
+        ),
+        variant="soft",
+        size="1",
+        on_click=[
+            cast("EditState", EditState).toggle_field_value_editing(field_name, index),
+            cast("EditState", EditState).resolve_identifiers(),
+        ],
+        custom_attrs={
+            "data-testid": f"button-{field_name}-{primary_source.identifier}-{index}"
+        },
+    )
+
+
 def editor_static_value(
     field_name: str,
     primary_source: EditorPrimarySource,
@@ -41,6 +74,32 @@ def editor_static_value(
     return rx.hstack(
         render_value(value),
         editor_value_switch(field_name, primary_source, value, index),
+    )
+
+
+def editor_editable_value(
+    field_name: str,
+    primary_source: EditorPrimarySource,
+    index: int,
+    value: EditorValue,
+) -> rx.Component:
+    """Render an editable value with buttons for editing and removal."""
+    return rx.hstack(
+        rx.cond(
+            value.being_edited,
+            additive_rule_input(
+                field_name,
+                primary_source.input_config,
+                index,
+                value,
+            ),
+            render_value(value),
+        ),
+        editor_edit_button(field_name, primary_source, value, index),
+        remove_additive_button(
+            field_name,
+            index,
+        ),
     )
 
 
@@ -219,10 +278,6 @@ def additive_rule_input(
                 ),
             ),
         ),
-        remove_additive_button(
-            field_name,
-            index,
-        ),
     )
 
 
@@ -236,9 +291,9 @@ def editor_value_card(
     return rx.card(
         rx.cond(
             primary_source.input_config.allow_additive,
-            additive_rule_input(
+            editor_editable_value(
                 field_name,
-                primary_source.input_config,
+                primary_source,
                 index,
                 value,
             ),

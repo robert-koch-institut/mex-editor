@@ -388,10 +388,22 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     page.reload()
 
     # verify the state after first saving: additive rule is present
-    additive_rule_input = page.get_by_test_id(input_id)
-    expect(additive_rule_input).to_have_count(1)
-    additive_rule_input.scroll_into_view_if_needed()
+    rendered_input_id = "additive-rule-fundingProgram-0"
+    additive_rule_rendered = page.get_by_test_id(rendered_input_id)
+    expect(additive_rule_rendered).to_have_count(1)
+    additive_rule_rendered.scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-reload_1.png")
+    expect(additive_rule_rendered).to_be_visible()
+
+    # click edit button
+    edit_button = page.get_by_test_id("button-fundingProgram-00000000000000-0")
+    edit_button.scroll_into_view_if_needed()
+    page.screenshot(path=f"{test_id}-on_load.png")
+    expect(edit_button).to_be_visible()
+    edit_button.click()
+
+    # verify content of additive rule
+    additive_rule_input = page.get_by_test_id(input_id)
     expect(additive_rule_input).to_be_visible()
     expect(additive_rule_input).to_have_attribute("value", rule_value)
 
@@ -403,8 +415,8 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     remove_additive_rule_button.click()
 
     # check the rule input is gone
-    additive_rule_input = page.get_by_test_id(input_id)
-    expect(additive_rule_input).to_have_count(0)
+    additive_rule_rendered = page.get_by_test_id(rendered_input_id)
+    expect(additive_rule_rendered).to_have_count(0)
 
     # click on the save button and force a page reload again
     submit_button = page.get_by_test_id("submit-button")
@@ -415,5 +427,5 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     # check the rule input is still gone
     page.get_by_test_id("field-fundingProgram").scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-reload_2.png")
-    additive_rule_input = page.get_by_test_id(input_id)
-    expect(additive_rule_input).to_have_count(0)
+    additive_rule_rendered = page.get_by_test_id(rendered_input_id)
+    expect(additive_rule_rendered).to_have_count(0)

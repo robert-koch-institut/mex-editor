@@ -21,6 +21,7 @@ def test_transform_models_to_results() -> None:
             {
                 "text": "OU1",
                 "badge": None,
+                "being_edited": False,
                 "href": None,
                 "identifier": None,
                 "external": False,
@@ -31,6 +32,7 @@ def test_transform_models_to_results() -> None:
             {
                 "text": "Unit 1",
                 "badge": "EN",
+                "being_edited": False,
                 "href": None,
                 "identifier": None,
                 "external": False,

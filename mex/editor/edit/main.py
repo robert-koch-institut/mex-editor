@@ -77,13 +77,13 @@ def editor_static_value(
     )
 
 
-def editor_editable_value(
+def editor_additive_value(
     field_name: str,
     primary_source: EditorPrimarySource,
     index: int,
     value: EditorValue,
 ) -> rx.Component:
-    """Render an editable value with buttons for editing and removal."""
+    """Render an additive value with buttons for editing and removal."""
     return rx.hstack(
         rx.cond(
             value.being_edited,
@@ -100,6 +100,7 @@ def editor_editable_value(
             field_name,
             index,
         ),
+        custom_attrs={"data-testid": f"additive-rule-{field_name}-{index}"},
     )
 
 
@@ -291,7 +292,7 @@ def editor_value_card(
     return rx.card(
         rx.cond(
             primary_source.input_config.allow_additive,
-            editor_editable_value(
+            editor_additive_value(
                 field_name,
                 primary_source,
                 index,

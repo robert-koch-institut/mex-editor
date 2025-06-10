@@ -311,6 +311,45 @@ def test_edit_page_renders_identifier_input(edit_page: Page) -> None:
 
 
 @pytest.mark.integration
+def test_edit_page_resolves_additive_identifier(
+    edit_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id(
+        "new-additive-involvedUnit-00000000000000"
+    )
+    new_additive_button.scroll_into_view_if_needed()
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+
+    organizational_unit = dummy_data_by_identifier_in_primary_source["ou-1"]
+    assert isinstance(organizational_unit, ExtractedOrganizationalUnit)
+    identifier_input = page.get_by_test_id("additive-rule-involvedUnit-0-identifier")
+    expect(identifier_input).to_be_visible()
+    identifier_input.fill(organizational_unit.stableTargetId)
+    edit_button = page.get_by_test_id("button-involvedUnit-00000000000000-0")
+    edit_button.click()
+    page.screenshot(path="wip.png")
+
+    # verify identifier is correctly rendered
+    identifier_card = page.get_by_test_id("additive-rule-involvedUnit-0")
+    rendered_identifier = identifier_card.get_by_role(
+        "link", name=organizational_unit.shortName[0].value
+    )
+    expect(rendered_identifier).to_have_count(1)
+    assert (
+        rendered_identifier.first.get_attribute("href")
+        == f"/item/{organizational_unit.stableTargetId}/"
+    )
+
+    # assert raw identifier value is retained
+    edit_button.click()
+    identifier_input = page.get_by_test_id("additive-rule-involvedUnit-0-identifier")
+    assert identifier_input.get_attribute("value") == organizational_unit.stableTargetId
+
+
+@pytest.mark.integration
 def test_edit_page_renders_link_input(edit_page: Page) -> None:
     page = edit_page
     new_additive_button = page.get_by_test_id("new-additive-website-00000000000000")

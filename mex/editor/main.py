@@ -52,8 +52,9 @@ def editor_frontend() -> None:  # pragma: no cover
     # Set the log level.
     set_log_level(constants.LogLevel.INFO)
 
-    # Set env mode in the environment.
+    # Configure the environment.
     environment.REFLEX_ENV_MODE.set(constants.Env.PROD)
+    environment.REFLEX_CHECK_LATEST_VERSION.set(True)
 
     # Initialize the app in the current directory.
     _init(name="mex", loglevel=constants.LogLevel.INFO)
@@ -77,4 +78,5 @@ def editor_frontend() -> None:  # pragma: no cover
 
 def main() -> None:  # pragma: no cover
     """Start the editor api together with frontend."""
+    environment.REFLEX_USE_NPM.set(True)
     typer.run(run)

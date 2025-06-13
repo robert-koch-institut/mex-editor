@@ -39,6 +39,7 @@ def test_transform_model_to_template_fields() -> None:
                 },
                 "name": {
                     "badge": None,
+                    "being_edited": False,
                     "enabled": True,
                     "external": False,
                     "href": "/item/00000000000000",
@@ -67,6 +68,7 @@ def test_transform_model_to_template_fields() -> None:
                 },
                 "name": {
                     "badge": None,
+                    "being_edited": False,
                     "enabled": True,
                     "external": False,
                     "href": "/item/00000000000000",

@@ -2,10 +2,10 @@ import pytest
 from reflex.state import serialize_mutable_proxy
 
 from mex.common.models import ContactPointRuleSetResponse, ExtractedContactPoint
-from mex.editor.edit.models import EditorPrimarySource, InputConfig
 from mex.editor.edit.state import EditState
-from mex.editor.edit.transform import transform_models_to_fields
 from mex.editor.models import EditorValue
+from mex.editor.rules.models import EditorPrimarySource, InputConfig
+from mex.editor.rules.transform import transform_models_to_fields
 
 
 def test_state_get_primary_sources_by_field_name() -> None:

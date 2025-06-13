@@ -35,8 +35,9 @@ from mex.common.types import (
     Year,
     YearMonthDayTime,
 )
-from mex.editor.edit.models import EditorField, EditorPrimarySource, InputConfig
-from mex.editor.edit.transform import (
+from mex.editor.models import EditorValue
+from mex.editor.rules.models import EditorField, EditorPrimarySource, InputConfig
+from mex.editor.rules.transform import (
     _get_primary_source_id_from_model,
     _transform_editor_value_to_model_value,
     _transform_fields_to_additive,
@@ -48,7 +49,6 @@ from mex.editor.edit.transform import (
     transform_fields_to_rule_set,
     transform_models_to_fields,
 )
-from mex.editor.models import EditorValue
 
 
 @pytest.mark.parametrize(

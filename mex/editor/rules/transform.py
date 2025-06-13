@@ -38,14 +38,14 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.editor.edit.models import (
+from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, EditorValue
+from mex.editor.rules.models import (
     EditorField,
     EditorPrimarySource,
     InputConfig,
     ValidationMessage,
 )
-from mex.editor.models import EditorValue
-from mex.editor.transform import ensure_list, transform_value
+from mex.editor.transform import ensure_list, transform_value, transform_values
 from mex.editor.types import AnyModelValue
 
 
@@ -223,7 +223,7 @@ def transform_models_to_fields(
     mergeable_fields = sorted(
         {
             f
-            for e in extracted_items
+            for e in [*extracted_items, additive]
             for f in MERGEABLE_FIELDS_BY_CLASS_NAME[e.entityType]
         }
     )
@@ -389,3 +389,19 @@ def transform_validation_error_to_messages(
         )
         for error in error.errors()
     ]
+
+
+def transform_fields_to_title(
+    stem_type: str,
+    fields: list[EditorField],
+) -> list[EditorValue]:
+    """Convert a list of editor fields into title values based on the title config."""
+    config = MODEL_CONFIG_BY_STEM_TYPE[stem_type]
+    for field in fields:
+        if field.name == config.title:
+            return [
+                value
+                for primary_source in field.primary_sources
+                for value in primary_source.editor_values
+            ]
+    return transform_values(stem_type)

@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import cast
 
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from mex.common.fields import (
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
@@ -37,6 +37,11 @@ from mex.common.types import (
     TemporalEntityPrecision,
     Text,
     TextLanguage,
+)
+from mex.common.utils import (
+    get_field_names_allowing_none,
+    get_all_fields,
+    get_field_names_allowing_empty_list,
 )
 from mex.editor.edit.models import (
     EditorField,
@@ -227,10 +232,18 @@ def transform_models_to_fields(
             for f in MERGEABLE_FIELDS_BY_CLASS_NAME[e.entityType]
         }
     )
+
+    required_fields = get_required_field_names(type(extracted_items[0]))
+
     fields_by_name = {
-        field_name: EditorField(name=field_name, primary_sources=[])
+        field_name: EditorField(
+            name=field_name,
+            primary_sources=[],
+            is_required=field_name in required_fields,
+        )
         for field_name in mergeable_fields
     }
+
     for extracted in extracted_items:
         _transform_model_to_editor_primary_sources(
             fields_by_name,
@@ -245,6 +258,18 @@ def transform_models_to_fields(
         preventive,
     )
     return list(fields_by_name.values())
+
+
+@lru_cache(maxsize=4048)
+def get_required_field_names(model: type[BaseModel]) -> list[str]:
+    """Returns list of required fields."""
+    allow_none_fields = set(get_field_names_allowing_none(model))
+    allow_empty_list_fields = set(get_field_names_allowing_empty_list(model))
+    all_model_fields_names = set(get_all_fields(model).keys())
+    required_fields = (
+        all_model_fields_names - allow_none_fields - allow_empty_list_fields
+    )
+    return list(required_fields)
 
 
 def _transform_fields_to_additive(

@@ -54,7 +54,7 @@ def editor_frontend() -> None:  # pragma: no cover
 
     # Configure the environment.
     environment.REFLEX_ENV_MODE.set(constants.Env.PROD)
-    environment.REFLEX_CHECK_LATEST_VERSION.set(True)
+    environment.REFLEX_CHECK_LATEST_VERSION.set(False)
 
     # Initialize the app in the current directory.
     _init(name="mex", loglevel=constants.LogLevel.INFO)

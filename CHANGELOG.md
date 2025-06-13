@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* edit view: button for switching between rendered and input view for additive field values
+- import artifical data helper and use in test
+- page to create new rule-set in editor
+- button for switching between rendered and input view for additive field values
 
 ### Changes
 

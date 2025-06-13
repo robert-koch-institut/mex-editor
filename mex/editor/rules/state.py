@@ -25,9 +25,7 @@ from mex.editor.rules.transform import (
     transform_validation_error_to_messages,
 )
 from mex.editor.state import State
-from mex.editor.transform import (
-    transform_models_to_stem_type,
-)
+from mex.editor.transform import transform_models_to_stem_type
 from mex.editor.utils import resolve_editor_value, resolve_identifier
 
 
@@ -213,7 +211,7 @@ class RuleState(State):
     def add_additive_value(self, field_name: str) -> None:
         """Add an additive rule to the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
-        primary_source.editor_values.append(EditorValue())
+        primary_source.editor_values.append(EditorValue(being_edited=True))
 
     @rx.event
     def remove_additive_value(self, field_name: str, index: int) -> None:
@@ -232,6 +230,7 @@ class RuleState(State):
         """Set the identifier attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].identifier = value
+        primary_source.editor_values[index].href = f"/item/{value}"
 
     @rx.event
     def set_badge_value(self, field_name: str, index: int, value: str) -> None:

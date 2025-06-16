@@ -109,7 +109,13 @@ def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
 def entity_type_filter() -> rx.Component:
     """Render checkboxes for filtering the search results by entity type."""
     return rx.card(
-        rx.text("entityType", margin_bottom="0.5em"),
+        rx.text(
+            "entityType",
+            style={
+                "marginBottom": "var(--space-4)",
+                "userSelect": "none",
+            },
+        ),
         rx.vstack(
             rx.foreach(
                 SearchState.entity_types,
@@ -140,7 +146,13 @@ def primary_source_choice(choice: tuple[str, SearchPrimarySource]) -> rx.Compone
 def primary_source_filter() -> rx.Component:
     """Render checkboxes for filtering the search results by primary source."""
     return rx.card(
-        rx.text("hadPrimarySource", margin_bottom="0.5em"),
+        rx.text(
+            "hadPrimarySource",
+            style={
+                "marginBottom": "var(--space-4)",
+                "userSelect": "none",
+            },
+        ),
         rx.vstack(
             rx.foreach(
                 SearchState.had_primary_sources,

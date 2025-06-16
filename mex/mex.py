@@ -15,6 +15,7 @@ from mex.editor.create.state import CreateState
 from mex.editor.edit.main import index as edit_index
 from mex.editor.edit.state import EditState
 from mex.editor.login.main import index as login_index
+from mex.editor.rules.state import RuleState
 from mex.editor.search.main import index as search_index
 from mex.editor.search.state import SearchState
 from mex.editor.settings import EditorSettings
@@ -32,8 +33,10 @@ app.add_page(
     on_load=[
         State.check_login,
         State.load_nav,
-        EditState.refresh,
-        EditState.resolve_identifiers,
+        RuleState.refresh,
+        EditState.load_item_title,
+        EditState.show_submit_success_toast_on_redirect,
+        RuleState.resolve_identifiers,
     ],
 )
 app.add_page(
@@ -67,7 +70,9 @@ app.add_page(
     on_load=[
         State.check_login,
         State.load_nav,
-        CreateState.refresh,
+        CreateState.reset_stem_type,
+        RuleState.refresh,
+        RuleState.resolve_identifiers,
     ],
 )
 app.add_page(

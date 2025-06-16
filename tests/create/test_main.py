@@ -25,7 +25,7 @@ def test_create_page_updates_nav_bar(create_page: Page) -> None:
     nav_bar = page.get_by_test_id("nav-bar")
     page.screenshot(path="tests_create_test_main-test_create_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
-    nav_item = nav_bar.locator(".nav-item").all()[3]
+    nav_item = nav_bar.locator(".nav-item").all()[1]
     expect(nav_item).to_contain_text("Create")
     expect(nav_item).to_have_class(re.compile("rt-underline-always"))
 
@@ -42,7 +42,7 @@ def test_create_page_renders_heading(create_page: Page) -> None:
 def test_create_page_renders_fields(create_page: Page) -> None:
     page = create_page
     page.get_by_test_id("entity-type-select").click()
-    page.get_by_role("option", name="Resource").click()
+    page.get_by_role("option", name="Resource", exact=True).click()
     page.screenshot(
         path="tests_create_test_main-test_create_page_renders_fields_select.png"
     )
@@ -53,9 +53,7 @@ def test_create_page_renders_fields(create_page: Page) -> None:
 @pytest.mark.integration
 def test_create_page_test_additive_buttons(create_page: Page) -> None:
     page = create_page
-    new_additive_button = page.get_by_test_id(
-        "new-additive-documentation-00000000000000"
-    )
+    new_additive_button = page.get_by_test_id("new-additive-description-00000000000000")
     new_additive_button.scroll_into_view_if_needed()
     page.screenshot(
         path="tests_create_test_main-test_edit_page_renders_new_additive_button.png"
@@ -63,11 +61,11 @@ def test_create_page_test_additive_buttons(create_page: Page) -> None:
     expect(new_additive_button).to_be_visible()
     new_additive_button.click()
 
-    additive_rule_input = page.get_by_test_id("additive-documentation-0-text")
+    additive_rule_input = page.get_by_test_id("additive-rule-description-0-text")
     expect(additive_rule_input).to_be_visible()
 
     remove_additive_rule_button = page.get_by_test_id(
-        "additive-rule-documentation-0-remove-button"
+        "additive-rule-description-0-remove-button"
     )
     expect(remove_additive_rule_button).to_be_visible()
     remove_additive_rule_button.click()
@@ -83,7 +81,7 @@ def test_create_page_submit_item(create_page: Page) -> None:
     expect(new_additive_button).to_be_visible()
     new_additive_button.click()
 
-    additive_rule_input = page.get_by_test_id("additive-title-0-text")
+    additive_rule_input = page.get_by_test_id("additive-rule-title-0-text")
     expect(additive_rule_input).to_be_visible()
     additive_rule_input.fill("Test01234567")
     page.screenshot(path="tests_create_test_main-test_edit_page_save_item_input.png")

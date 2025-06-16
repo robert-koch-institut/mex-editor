@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- import artifical data helper and use in test
+- import artificial data helper and use in test
 - page to create new rule-set in editor
+- new rules module containing shared code of create and edit pages
 - button for switching between rendered and input view for additive field values
 
 ### Changes

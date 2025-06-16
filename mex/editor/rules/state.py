@@ -32,6 +32,7 @@ from mex.editor.utils import resolve_editor_value, resolve_identifier
 class RuleState(State):
     """Base state for the edit and create components."""
 
+    item_id: str | None = None
     fields: list[EditorField] = []
     stem_type: str | None = None
     validation_messages: list[ValidationMessage] = []
@@ -52,11 +53,11 @@ class RuleState(State):
 
     def _get_extracted_items(self) -> list[AnyExtractedModel]:
         """Get the list of extracted items the rules should apply to."""
-        if stable_target_id := self.router.page.params.get("identifier"):
+        if self.item_id:
             connector = BackendApiConnector.get()
             extracted_items_response = connector.fetch_extracted_items(
                 query_string=None,
-                stable_target_id=stable_target_id,
+                stable_target_id=self.item_id,
                 entity_type=None,
                 skip=0,
                 limit=100,
@@ -66,10 +67,10 @@ class RuleState(State):
 
     def _get_rule_set(self) -> AnyRuleSetRequest | AnyRuleSetResponse:
         """Get or create a rule set request or response."""
-        if stable_target_id := self.router.page.params.get("identifier"):
+        if self.item_id:
             connector = BackendApiConnector.get()
             try:
-                return connector.get_rule_set(stable_target_id)
+                return connector.get_rule_set(self.item_id)
             except HTTPError as exc:
                 if (
                     exc.response.status_code == status.HTTP_404_NOT_FOUND
@@ -78,7 +79,7 @@ class RuleState(State):
                     rule_set_response_class = RULE_SET_RESPONSE_CLASSES_BY_NAME[
                         ensure_postfix(self.stem_type, "RuleSetResponse")
                     ]
-                    return rule_set_response_class(stableTargetId=stable_target_id)
+                    return rule_set_response_class(stableTargetId=self.item_id)
                 raise
         if stem_type := self.stem_type:
             rule_set_request_class = RULE_SET_REQUEST_CLASSES_BY_NAME[
@@ -93,7 +94,7 @@ class RuleState(State):
         """Refresh the edit or create page."""
         self.fields.clear()
         self.validation_messages.clear()
-
+        self.item_id = self.router.page.params.get("identifier")
         try:
             extracted_items = self._get_extracted_items()
         except HTTPError as exc:
@@ -101,6 +102,8 @@ class RuleState(State):
                 "backend", "error fetching extracted items", exc.response.text
             )
             return
+        if extracted_items:
+            self.stem_type = transform_models_to_stem_type(extracted_items)
         try:
             rule_set = self._get_rule_set()
         except HTTPError as exc:
@@ -108,9 +111,8 @@ class RuleState(State):
                 "backend", "error fetching rule items", exc.response.text
             )
             return
-
-        models = [*extracted_items, rule_set.additive]
-        self.stem_type = transform_models_to_stem_type(models)
+        if rule_set:
+            self.stem_type = transform_models_to_stem_type([rule_set.additive])
         self.fields = transform_models_to_fields(
             extracted_items,
             additive=rule_set.additive,
@@ -118,13 +120,12 @@ class RuleState(State):
             preventive=rule_set.preventive,
         )
 
-    def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> None:
+    def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:
         """Send the rule set to the backend."""
         connector = BackendApiConnector.get()
-        if stable_target_id := self.router.page.params.get("identifier"):
-            connector.update_rule_set(stable_target_id, rule_set)
-        else:
-            connector.create_rule_set(rule_set)
+        if self.item_id:
+            return connector.update_rule_set(self.item_id, rule_set)
+        return connector.create_rule_set(rule_set)
 
     @rx.event
     def submit_rule_set(self) -> Generator[EventSpec | None, None, None]:
@@ -133,12 +134,12 @@ class RuleState(State):
             self.reset()
             return
         try:
-            rule_set = transform_fields_to_rule_set(self.stem_type, self.fields)
+            rule_set_request = transform_fields_to_rule_set(self.stem_type, self.fields)
         except ValidationError as exc:
             self.validation_messages = transform_validation_error_to_messages(exc)
             return
         try:
-            self._send_rule_set_request(rule_set)
+            rule_set_response = self._send_rule_set_request(rule_set_request)
         except HTTPError as exc:
             self.reset()
             yield from escalate_error(
@@ -147,7 +148,17 @@ class RuleState(State):
             return
         # clear cache to show edits in the UI
         resolve_identifier.cache_clear()
-        yield rx.toast.success(
+        # trigger redirect to edit page or refresh state
+        if rule_set_response.stableTargetId != self.item_id:
+            yield rx.redirect(f"/item/{rule_set_response.stableTargetId}/?saved")
+        else:
+            yield from self.refresh()
+            yield self.show_submit_success_toast()
+
+    @rx.event
+    def show_submit_success_toast(self) -> EventSpec:
+        """Show a toast for a successfully submitted rule-set."""
+        return rx.toast.success(
             title="Saved",
             description=f"{self.stem_type} was saved successfully.",
             class_name="editor-toast",
@@ -155,7 +166,6 @@ class RuleState(State):
             dismissible=True,
             duration=5000,
         )
-        yield from self.refresh()
 
     @rx.event
     def clear_validation_messages(self) -> None:
@@ -206,6 +216,18 @@ class RuleState(State):
             for editor_value in primary_source.editor_values:
                 if editor_value == value:
                     editor_value.enabled = enabled
+
+    @rx.event
+    def toggle_field_value_editing(
+        self,
+        field_name: str,
+        index: int,
+    ) -> None:
+        """Toggle editing of a field value."""
+        primary_source = self._get_editable_primary_source_by_field_name(field_name)
+        primary_source.editor_values[
+            index
+        ].being_edited = not primary_source.editor_values[index].being_edited
 
     @rx.event
     def add_additive_value(self, field_name: str) -> None:

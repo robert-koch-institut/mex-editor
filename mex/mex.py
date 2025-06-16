@@ -35,6 +35,7 @@ app.add_page(
         State.load_nav,
         RuleState.refresh,
         EditState.load_item_title,
+        EditState.show_submit_success_toast_on_redirect,
         RuleState.resolve_identifiers,
     ],
 )

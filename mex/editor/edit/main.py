@@ -18,6 +18,7 @@ def edit_title() -> rx.Component:
             as_child=True,
         ),
         custom_attrs={"data-testid": "edit-heading"},
+        style={"userSelect": "none"},
     )
 
 

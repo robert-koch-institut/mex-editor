@@ -470,37 +470,33 @@ def validation_message(error: ValidationMessage) -> rx.Component:
             render_span(")"),
             style={"display": "inline"},
         ),
-        align="center",
     )
 
 
 def validation_errors() -> rx.Component:
     """Return an overlay showing validation errors."""
-    return rx.box(
-        rx.alert_dialog.root(
-            rx.alert_dialog.content(
-                rx.alert_dialog.title("Validation Errors"),
-                rx.alert_dialog.description(
-                    rx.card(
-                        rx.data_list.root(
-                            rx.foreach(
-                                RuleState.validation_messages, validation_message
-                            )
-                        ),
+    return rx.alert_dialog.root(
+        rx.alert_dialog.content(
+            rx.alert_dialog.title("Validation Errors"),
+            rx.alert_dialog.description(
+                rx.card(
+                    rx.data_list.root(
+                        rx.foreach(RuleState.validation_messages, validation_message),
+                        orientation="vertical",
                     ),
-                ),
-                rx.alert_dialog.action(
-                    rx.button(
-                        "Close",
-                        on_click=RuleState.clear_validation_messages,
-                        style={"margin": "var(--line-height-1) 0"},
-                        custom_attrs={"data-testid": "close-validation-errors-button"},
-                    ),
-                    style={"justify-content": "flex-end"},
                 ),
             ),
-            open=cast("rx.vars.ArrayVar", RuleState.validation_messages).bool(),
-        )
+            rx.alert_dialog.action(
+                rx.button(
+                    "Close",
+                    on_click=RuleState.clear_validation_messages,
+                    style={"margin": "var(--line-height-1) 0"},
+                    custom_attrs={"data-testid": "close-validation-errors-button"},
+                ),
+                style={"justifyContent": "flex-end"},
+            ),
+        ),
+        open=cast("rx.vars.ArrayVar", RuleState.validation_messages).bool(),
     )
 
 

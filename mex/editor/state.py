@@ -21,6 +21,11 @@ class State(rx.State):
             raw_path="/?page=1",
         ),
         NavItem(
+            title="Create",
+            path="/create",
+            raw_path="/create/",
+        ),
+        NavItem(
             title="Edit",
             path="/item/[identifier]",
             raw_path=f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}/",
@@ -29,11 +34,6 @@ class State(rx.State):
             title="Aux Search",
             path="/aux-search",
             raw_path="/aux-search/",
-        ),
-        NavItem(
-            title="Create",
-            path="/create",
-            raw_path="/create/",
         ),
     ]
 

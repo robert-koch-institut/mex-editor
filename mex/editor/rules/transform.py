@@ -317,7 +317,7 @@ def _transform_editor_value_to_model_value(
             if vocabulary_name := (value.badge or input_config.badge_default):
                 return cast("type[AnyVocabularyEnum]", vocabulary)[vocabulary_name]
     if field_name in TEMPORAL_FIELDS_BY_CLASS_NAME[class_name]:
-        precision = TemporalEntityPrecision(value.badge)
+        precision = TemporalEntityPrecision(value.badge or input_config.badge_default)
         temporal_class = TEMPORAL_ENTITY_CLASSES_BY_PRECISION[precision]
         return temporal_class(str(value.text), precision=precision)
     if field_name in REFERENCE_FIELDS_BY_CLASS_NAME[class_name]:
@@ -397,11 +397,15 @@ def transform_fields_to_title(
 ) -> list[EditorValue]:
     """Convert a list of editor fields into title values based on the title config."""
     config = MODEL_CONFIG_BY_STEM_TYPE[stem_type]
+    titles: list[EditorValue] = []
     for field in fields:
         if field.name == config.title:
-            return [
+            titles = [
                 value
                 for primary_source in field.primary_sources
                 for value in primary_source.editor_values
             ]
+            break
+    if titles:
+        return titles
     return transform_values(stem_type)

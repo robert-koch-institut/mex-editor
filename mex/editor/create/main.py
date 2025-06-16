@@ -43,7 +43,10 @@ def editor_field(
 def create_title() -> rx.Component:
     """Return the title for the create page."""
     return rx.hstack(
-        rx.heading("Create new"),
+        rx.heading(
+            "Create new",
+            style={"userSelect": "none"},
+        ),
         rx.select(
             CreateState.available_stem_types,
             value=RuleState.stem_type,

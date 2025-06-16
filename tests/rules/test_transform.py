@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.models import (
@@ -22,6 +23,7 @@ from mex.common.models import (
     SubtractivePerson,
 )
 from mex.common.types import (
+    EMAIL_PATTERN,
     ConsentStatus,
     ConsentType,
     Link,
@@ -36,7 +38,12 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 from mex.editor.models import EditorValue
-from mex.editor.rules.models import EditorField, EditorPrimarySource, InputConfig
+from mex.editor.rules.models import (
+    EditorField,
+    EditorPrimarySource,
+    InputConfig,
+    ValidationMessage,
+)
 from mex.editor.rules.transform import (
     _get_primary_source_id_from_model,
     _transform_editor_value_to_model_value,
@@ -48,6 +55,7 @@ from mex.editor.rules.transform import (
     _transform_model_values_to_editor_values,
     transform_fields_to_rule_set,
     transform_models_to_fields,
+    transform_validation_error_to_messages,
 )
 
 
@@ -836,3 +844,20 @@ def test_transform_fields_to_rule_set() -> None:
             "givenName": ["PrimarySource002"],
         },
     }
+
+
+def test_transform_validation_error_to_messages() -> None:
+    messages = []
+    try:
+        AdditivePerson(email="OOPS")
+    except ValidationError as error:
+        messages = transform_validation_error_to_messages(error)
+    else:
+        pytest.fail("Expected validation to fail.")
+    assert messages == [
+        ValidationMessage(
+            field_name="0",
+            message=f"String should match pattern '{EMAIL_PATTERN}'",
+            input="OOPS",
+        )
+    ]

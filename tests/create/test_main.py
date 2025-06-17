@@ -88,7 +88,7 @@ def test_create_page_submit_item(create_page: Page) -> None:
 
     submit_button = page.get_by_test_id("submit-button")
     submit_button.click()
-    expect(page.get_by_text("Resource was saved successfully")).to_be_visible()
+    expect(page.get_by_text("AccessPlatform was saved successfully")).to_be_visible()
     connector = BackendApiConnector.get()
     result = connector.fetch_merged_items("Test01234567", None, None, 0, 1)
     assert result.total == 1

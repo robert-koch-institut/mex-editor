@@ -26,6 +26,7 @@ from mex.common.types import (
     EMAIL_PATTERN,
     ConsentStatus,
     ConsentType,
+    Frequency,
     Link,
     LinkLanguage,
     MergedActivityIdentifier,
@@ -667,9 +668,9 @@ def test_transform_fields_to_preventive(
         ),
         (
             EditorValue(),
-            "hasConsentType",
-            "AdditiveConsent",
-            ConsentType["IMPLIED_CONSENT"],
+            "accrualPeriodicity",
+            "AdditiveResource",
+            Frequency["TRIENNIAL"],
         ),
         (
             EditorValue(text="2004", badge="year"),

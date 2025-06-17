@@ -1,6 +1,6 @@
 import pytest
 
-from mex.common.models import AnyExtractedModel
+from mex.common.models import AdditiveContactPoint, AnyExtractedModel
 from mex.common.types import APIType, Identifier, Link, LinkLanguage, Text, TextLanguage
 from mex.editor.models import EditorValue
 from mex.editor.transform import (
@@ -117,6 +117,12 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
             # resource renders title as text
             EditorValue(text="Bioinformatics Resource 1"),
         ],
+    ]
+
+
+def test_test_transform_models_to_title_fallback() -> None:
+    assert transform_models_to_title([AdditiveContactPoint()]) == [
+        EditorValue(text="ContactPoint"),
     ]
 
 

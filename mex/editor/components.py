@@ -2,7 +2,7 @@ from typing import cast
 
 import reflex as rx
 
-from mex.editor.edit.models import EditorValue
+from mex.editor.rules.models import EditorValue
 
 
 def render_identifier(value: EditorValue) -> rx.Component:

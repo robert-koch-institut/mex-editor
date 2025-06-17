@@ -17,6 +17,7 @@ class EditorValue(rx.Base):
     href: str | None = None
     external: bool = False
     enabled: bool = True
+    being_edited: bool = False
 
 
 class User(rx.Base):

@@ -33,7 +33,7 @@ def test_edit_page_updates_nav_bar(edit_page: Page) -> None:
     nav_bar = page.get_by_test_id("nav-bar")
     page.screenshot(path="tests_edit_test_main-test_edit_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
-    nav_item = nav_bar.locator(".nav-item").all()[1]
+    nav_item = nav_bar.locator(".nav-item").all()[2]
     expect(nav_item).to_contain_text("Edit")
     expect(nav_item).to_have_class(re.compile("rt-underline-always"))
 
@@ -311,6 +311,45 @@ def test_edit_page_renders_identifier_input(edit_page: Page) -> None:
 
 
 @pytest.mark.integration
+def test_edit_page_resolves_additive_identifier(
+    edit_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id(
+        "new-additive-involvedUnit-00000000000000"
+    )
+    new_additive_button.scroll_into_view_if_needed()
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+
+    organizational_unit = dummy_data_by_identifier_in_primary_source["ou-1"]
+    assert isinstance(organizational_unit, ExtractedOrganizationalUnit)
+    identifier_input = page.get_by_test_id("additive-rule-involvedUnit-0-identifier")
+    expect(identifier_input).to_be_visible()
+    identifier_input.fill(organizational_unit.stableTargetId)
+    edit_button = page.get_by_test_id("button-involvedUnit-00000000000000-0")
+    edit_button.click()
+    page.screenshot(path="wip.png")
+
+    # verify identifier is correctly rendered
+    identifier_card = page.get_by_test_id("additive-rule-involvedUnit-0")
+    rendered_identifier = identifier_card.get_by_role(
+        "link", name=organizational_unit.shortName[0].value
+    )
+    expect(rendered_identifier).to_have_count(1)
+    assert (
+        rendered_identifier.first.get_attribute("href")
+        == f"/item/{organizational_unit.stableTargetId}/"
+    )
+
+    # assert raw identifier value is retained
+    edit_button.click()
+    identifier_input = page.get_by_test_id("additive-rule-involvedUnit-0-identifier")
+    assert identifier_input.get_attribute("value") == organizational_unit.stableTargetId
+
+
+@pytest.mark.integration
 def test_edit_page_renders_link_input(edit_page: Page) -> None:
     page = edit_page
     new_additive_button = page.get_by_test_id("new-additive-website-00000000000000")
@@ -388,10 +427,22 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     page.reload()
 
     # verify the state after first saving: additive rule is present
-    additive_rule_input = page.get_by_test_id(input_id)
-    expect(additive_rule_input).to_have_count(1)
-    additive_rule_input.scroll_into_view_if_needed()
+    rendered_input_id = "additive-rule-fundingProgram-0"
+    additive_rule_rendered = page.get_by_test_id(rendered_input_id)
+    expect(additive_rule_rendered).to_have_count(1)
+    additive_rule_rendered.scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-reload_1.png")
+    expect(additive_rule_rendered).to_be_visible()
+
+    # click edit button
+    edit_button = page.get_by_test_id("button-fundingProgram-00000000000000-0")
+    edit_button.scroll_into_view_if_needed()
+    page.screenshot(path=f"{test_id}-on_load.png")
+    expect(edit_button).to_be_visible()
+    edit_button.click()
+
+    # verify content of additive rule
+    additive_rule_input = page.get_by_test_id(input_id)
     expect(additive_rule_input).to_be_visible()
     expect(additive_rule_input).to_have_attribute("value", rule_value)
 
@@ -403,8 +454,8 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     remove_additive_rule_button.click()
 
     # check the rule input is gone
-    additive_rule_input = page.get_by_test_id(input_id)
-    expect(additive_rule_input).to_have_count(0)
+    additive_rule_rendered = page.get_by_test_id(rendered_input_id)
+    expect(additive_rule_rendered).to_have_count(0)
 
     # click on the save button and force a page reload again
     submit_button = page.get_by_test_id("submit-button")
@@ -415,5 +466,5 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     # check the rule input is still gone
     page.get_by_test_id("field-fundingProgram").scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-reload_2.png")
-    additive_rule_input = page.get_by_test_id(input_id)
-    expect(additive_rule_input).to_have_count(0)
+    additive_rule_rendered = page.get_by_test_id(rendered_input_id)
+    expect(additive_rule_rendered).to_have_count(0)

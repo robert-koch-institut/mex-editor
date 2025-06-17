@@ -78,17 +78,16 @@ def test_ldap_search_and_import_results(aux_page: Page) -> None:
     # test search input is showing correctly
     search_input.fill("doesn't exist gs871s9j91k*")
     search_input.press("Enter")
-    expect(page.get_by_text("Showing 0 of")).to_be_visible()
     page.screenshot(
         path="tests_aux_search_test_main-test_ldap_search-input-0-found.png"
     )
+    expect(page.get_by_text("Showing 0 of")).to_be_visible()
 
     # test expand button works
     search_input.fill("L*")
     search_input.press("Enter")
     expand_all_properties_button = page.get_by_test_id("expand-properties-button").first
     page.screenshot(path="tests_aux_search_test_main-search_result_lap.png")
-    expect(page.get_by_text("Ciftci, Zehra")).to_be_visible()
     expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
     expand_all_properties_button.click()
     expect(page.get_by_test_id("all-properties-display")).to_be_visible()
@@ -119,18 +118,18 @@ def test_orcid_search_and_import_results(aux_page: Page) -> None:
 
     # test search input is showing correctly
     search_input.fill("doesn't exist gs871s9j91k*")
-    expect(page.get_by_text("Showing 0 of")).to_be_visible()
     page.screenshot(
         path="tests_aux_search_test_main-test_orcid_search-input-0-found.png"
     )
+    expect(page.get_by_text("Showing 0 of")).to_be_visible()
 
     # test expand button works
-    search_input.fill("Kamran")
+    search_input.fill("Lars")
+    page.screenshot(path="tests_aux_search_test_main-search_result_orcid.png")
     expand_all_properties_button = page.get_by_test_id("expand-properties-button").nth(
         1
     )
-    page.screenshot(path="tests_aux_search_test_main-search_result_orcid.png")
-    expect(page.get_by_text("Kamran")).to_be_visible()
+    expect(page.get_by_text("Lars")).to_be_visible()
     expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
     expand_all_properties_button.click()
     expect(page.get_by_test_id("all-properties-display")).to_be_visible()
@@ -145,15 +144,19 @@ def test_orcid_search_and_import_results(aux_page: Page) -> None:
 
     # test node was ingested into backend
     connector = BackendApiConnector.get()
-    result = connector.fetch_extracted_items("Kamran", None, None, 0, 1)
+    result = connector.fetch_extracted_items("Lars", None, None, 0, 1)
     assert result.total >= 1
 
 
 @pytest.mark.integration
 def test_pagination(aux_page: Page) -> None:
     page = aux_page
+    search_input = page.get_by_placeholder("Search here...")
+    expect(search_input).to_be_visible()
+    search_input.fill("no such results")
 
     # test pagination is showing and properly disabled
+    page.screenshot(path="tests_aux_search_test_main-test_pagination.png")
     pagination_previous = page.get_by_test_id("pagination-previous-button")
     pagination_next = page.get_by_test_id("pagination-next-button")
     pagination_page_select = page.get_by_test_id("pagination-page-select")

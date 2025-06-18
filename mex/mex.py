@@ -22,12 +22,7 @@ from mex.editor.state import State
 
 app = rx.App(
     html_lang="en",
-    theme=rx.theme(
-        color_mode="inherit",
-        accent_color="purple",
-        has_background=False,
-        radius="small",
-    ),
+    theme=rx.theme(accent_color="blue", has_background=False),
     style={">a": {"opacity": "0"}},
 )
 app.add_page(

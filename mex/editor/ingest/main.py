@@ -31,7 +31,7 @@ def ingest_button(result: IngestResult, index: int) -> rx.Component:
         rx.button(
             "Ingest",
             align="end",
-            color_scheme="mint",
+            color_scheme="jade",
             variant="surface",
             on_click=IngestState.ingest_result(index),
             width="calc(8em * var(--scaling))",
@@ -261,10 +261,10 @@ def tab_list() -> rx.Component:
         rx.tabs.list(
             rx.spacer(),
             rx.foreach(
-                IngestState.aux_provider_items,
-                lambda item: rx.tabs.trigger(
-                    item.title,
-                    value=item.value,
+                IngestState.aux_providers,
+                lambda provider: rx.tabs.trigger(
+                    provider,
+                    value=provider,
                     disabled=IngestState.is_loading,
                 ),
             ),
@@ -277,8 +277,8 @@ def tab_list() -> rx.Component:
 def tab_content() -> rx.Component:
     """Render the tab content with search components for each aux provider."""
     return rx.foreach(
-        IngestState.aux_provider_items,
-        lambda item: rx.tabs.content(
+        IngestState.aux_providers,
+        lambda provider: rx.tabs.content(
             rx.vstack(
                 search_input(),
                 search_results(),
@@ -286,7 +286,7 @@ def tab_content() -> rx.Component:
                 align="center",
                 spacing="5",
             ),
-            value=item.value,
+            value=provider,
         ),
     )
 
@@ -300,7 +300,7 @@ def index() -> rx.Component:
             tab_content(),
             default_value=IngestState.current_aux_provider,
             on_change=[
-                IngestState.change_extractor,
+                IngestState.set_current_aux_provider,
                 IngestState.go_to_first_page,
                 IngestState.refresh,
                 IngestState.resolve_identifiers,

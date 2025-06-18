@@ -11,7 +11,7 @@ from requests import HTTPError
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import AnyExtractedModel, PaginatedItemsContainer
 from mex.editor.exceptions import escalate_error
-from mex.editor.ingest.models import IngestNavItem, IngestResult
+from mex.editor.ingest.models import IngestResult
 from mex.editor.ingest.transform import transform_models_to_results
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
@@ -27,11 +27,7 @@ class IngestState(State):
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 50
     current_aux_provider: str = "ldap"
-    aux_provider_items: list[IngestNavItem] = [
-        IngestNavItem(title="LDAP", value="ldap"),
-        IngestNavItem(title="Orcid", value="orcid"),
-        IngestNavItem(title="Wikidata", value="wikidata"),
-    ]
+    aux_providers: list[str] = ["ldap", "orcid", "wikidata"]
     is_loading: bool = False
 
     @rx.var(cache=False)
@@ -63,8 +59,8 @@ class IngestState(State):
         ].show_properties
 
     @rx.event
-    def change_extractor(self, value: str) -> None:
-        """Change the current extractor."""
+    def set_current_aux_provider(self, value: str) -> None:
+        """Change the current aux provider."""
         self.current_aux_provider = value
 
     @rx.event

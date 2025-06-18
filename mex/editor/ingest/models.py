@@ -12,10 +12,3 @@ class IngestResult(rx.Base):
     show_properties: bool
     all_properties: list[EditorValue]
     show_ingest_button: bool
-
-
-class IngestNavItem(rx.Base):
-    """Model for one ingest navigation bar item."""
-
-    title: str = ""
-    value: str = "/"

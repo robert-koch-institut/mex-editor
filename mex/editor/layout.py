@@ -85,9 +85,6 @@ def nav_bar() -> rx.Component:
                 "height": "var(--space-6)",
                 "width": "100%",
                 "backdropFilter": " var(--backdrop-filter-panel)",
-                "backgroundColor": (
-                    "linear-gradient(90deg, var(--iris-11) 20%, var(--purple-4) 80%)"
-                ),
             },
         ),
         rx.card(

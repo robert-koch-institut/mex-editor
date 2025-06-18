@@ -2,6 +2,7 @@ import reflex as rx
 from fastapi.responses import PlainTextResponse
 from reflex.app import UnevaluatedPage
 from reflex.components.core.client_side_routing import Default404Page
+from reflex.components.radix import themes
 from reflex.constants import Page404
 from reflex.utils.console import info as log_info
 
@@ -22,7 +23,7 @@ from mex.editor.state import State
 
 app = rx.App(
     html_lang="en",
-    theme=rx.theme(accent_color="blue", has_background=False),
+    theme=themes.theme(accent_color="blue", has_background=False),
     style={">a": {"opacity": "0"}},
 )
 app.add_page(

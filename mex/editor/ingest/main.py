@@ -307,8 +307,8 @@ def index() -> rx.Component:
             ],
             custom_attrs={"data-testid": "aux-tab-section"},
             style={
-                "width": "75%",
-                "margin": "0 auto",
+                "width": "100%",
+                "padding": "0 calc(var(--space-8) * var(--scaling))",
             },
         )
     )

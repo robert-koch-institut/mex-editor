@@ -1,6 +1,6 @@
 [project]
 name = "mex-editor"
-version = "0.17.0"
+version = "0.18.0"
 description = "Metadata editor web application."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -10,7 +10,7 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "async-lru>=2",
     "fastapi>=0.115",
-    "mex-common @ git+https://github.com/robert-koch-institut/mex-common.git@0.61.0",
+    "mex-common>=0.62",
     "pydantic>=2",
     "pyyaml>=6",
     "reflex>=0.6,<0.7",
@@ -21,7 +21,7 @@ dependencies = [
 ]
 optional-dependencies.dev = [
     "ipdb>=0.13",
-    "mex-artificial @ git+https://github.com/robert-koch-institut/mex-artificial.git@0.4.1",
+    "mex-artificial>=0.5",
     "mypy>=1",
     "nest-asyncio>=1",
     "pytest-cov>=6",

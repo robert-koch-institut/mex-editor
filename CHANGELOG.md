@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.18.0] - 2025-06-17
+
+### Changes
+
+- install mex-common and mex-artificial from pypi
+
 ## [0.17.0] - 2025-06-16
 
 ### Added

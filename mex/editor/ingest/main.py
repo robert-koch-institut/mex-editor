@@ -2,21 +2,21 @@ from typing import cast
 
 import reflex as rx
 
-from mex.editor.aux_search.models import AuxResult
-from mex.editor.aux_search.state import AuxState
 from mex.editor.components import render_value
+from mex.editor.ingest.models import IngestResult
+from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
 
 
-def expand_properties_button(result: AuxResult, index: int) -> rx.Component:
-    """Render a button to expand all properties of an aux search result."""
+def expand_properties_button(result: IngestResult, index: int) -> rx.Component:
+    """Render a button to expand all properties of an ingest result."""
     return rx.button(
         rx.cond(
             result.show_properties,
             rx.icon("minimize-2", size=15),
             rx.icon("maximize-2", size=15),
         ),
-        on_click=AuxState.toggle_show_properties(index),
+        on_click=IngestState.toggle_show_properties(index),
         align="end",
         color_scheme="gray",
         variant="surface",
@@ -24,20 +24,20 @@ def expand_properties_button(result: AuxResult, index: int) -> rx.Component:
     )
 
 
-def import_button(result: AuxResult, index: int) -> rx.Component:
-    """Render a button to import the aux search result to the MEx backend."""
+def ingest_button(result: IngestResult, index: int) -> rx.Component:
+    """Render a button to ingest the ingest result to the MEx backend."""
     return rx.cond(
-        result.show_import_button,
+        result.show_ingest_button,
         rx.button(
-            "Import",
+            "Ingest",
             align="end",
-            color_scheme="jade",
+            color_scheme="mint",
             variant="surface",
-            on_click=AuxState.import_result(index),
+            on_click=IngestState.ingest_result(index),
             width="calc(8em * var(--scaling))",
         ),
         rx.button(
-            "Imported",
+            "Ingested",
             align="end",
             color_scheme="gray",
             variant="surface",
@@ -47,8 +47,8 @@ def import_button(result: AuxResult, index: int) -> rx.Component:
     )
 
 
-def render_preview(result: AuxResult) -> rx.Component:
-    """Render a preview of the aux search result."""
+def render_preview(result: IngestResult) -> rx.Component:
+    """Render a preview of the ingest result."""
     return rx.text(
         rx.hstack(
             rx.foreach(
@@ -66,8 +66,8 @@ def render_preview(result: AuxResult) -> rx.Component:
     )
 
 
-def render_all_properties(result: AuxResult) -> rx.Component:
-    """Render all properties of the aux search result."""
+def render_all_properties(result: IngestResult) -> rx.Component:
+    """Render all properties of the ingest result."""
     return rx.text(
         rx.hstack(
             rx.foreach(
@@ -84,8 +84,8 @@ def render_all_properties(result: AuxResult) -> rx.Component:
     )
 
 
-def result_title_and_buttons(result: AuxResult, index: int) -> rx.Component:
-    """Render the title and buttons for an aux search result."""
+def result_title_and_buttons(result: IngestResult, index: int) -> rx.Component:
+    """Render the title and buttons for an ingest result."""
     return rx.hstack(
         rx.text(
             rx.hstack(
@@ -102,13 +102,13 @@ def result_title_and_buttons(result: AuxResult, index: int) -> rx.Component:
             },
         ),
         expand_properties_button(result, index),
-        import_button(result, index),
+        ingest_button(result, index),
         style={"width": "100%"},
     )
 
 
-def aux_search_result(result: AuxResult, index: int) -> rx.Component:
-    """Render an aux search result with title, buttons and preview or all properties."""
+def ingest_result(result: IngestResult, index: int) -> rx.Component:
+    """Render an ingest result with title, buttons and preview or all properties."""
     return rx.box(
         rx.card(
             rx.vstack(
@@ -155,16 +155,16 @@ def search_input() -> rx.Component:
                     rx.icon("search"),
                     type="submit",
                     variant="surface",
-                    disabled=AuxState.is_loading,
+                    disabled=IngestState.is_loading,
                     custom_attrs={"data-testid": "search-button"},
                 ),
                 width="100%",
             ),
             on_submit=[
-                AuxState.handle_submit,
-                AuxState.go_to_first_page,
-                AuxState.refresh,
-                AuxState.resolve_identifiers,
+                IngestState.handle_submit,
+                IngestState.go_to_first_page,
+                IngestState.refresh,
+                IngestState.resolve_identifiers,
             ],
             style={"margin": "1em 0 1em"},
             justify="center",
@@ -176,7 +176,7 @@ def search_input() -> rx.Component:
 def search_results() -> rx.Component:
     """Render the search results with a heading, result list, and pagination."""
     return rx.cond(
-        AuxState.is_loading,
+        IngestState.is_loading,
         rx.center(
             rx.spinner(size="3"),
             style={
@@ -187,8 +187,8 @@ def search_results() -> rx.Component:
         rx.vstack(
             rx.center(
                 rx.text(
-                    f"Showing {AuxState.current_results_length} "
-                    f"of {AuxState.total} items",
+                    f"Showing {IngestState.current_results_length} "
+                    f"of {IngestState.total} items",
                     style={
                         "color": "var(--gray-12)",
                         "fontWeight": "var(--font-weight-bold)",
@@ -200,8 +200,8 @@ def search_results() -> rx.Component:
                 style={"width": "100%"},
             ),
             rx.foreach(
-                AuxState.results_transformed,
-                aux_search_result,
+                IngestState.results_transformed,
+                ingest_result,
             ),
             pagination(),
             custom_attrs={"data-testid": "search-results-section"},
@@ -216,36 +216,36 @@ def pagination() -> rx.Component:
         rx.button(
             rx.text("Previous"),
             on_click=[
-                AuxState.go_to_previous_page,
-                AuxState.scroll_to_top,
-                AuxState.refresh,
-                AuxState.resolve_identifiers,
+                IngestState.go_to_previous_page,
+                IngestState.scroll_to_top,
+                IngestState.refresh,
+                IngestState.resolve_identifiers,
             ],
-            disabled=AuxState.disable_previous_page,
+            disabled=IngestState.disable_previous_page,
             variant="surface",
             custom_attrs={"data-testid": "pagination-previous-button"},
             style={"minWidth": "10%"},
         ),
         rx.select(
-            AuxState.total_pages,
-            value=cast("rx.vars.NumberVar", AuxState.current_page).to_string(),
+            IngestState.total_pages,
+            value=cast("rx.vars.NumberVar", IngestState.current_page).to_string(),
             on_change=[
-                AuxState.set_page,
-                AuxState.scroll_to_top,
-                AuxState.refresh,
-                AuxState.resolve_identifiers,
+                IngestState.set_page,
+                IngestState.scroll_to_top,
+                IngestState.refresh,
+                IngestState.resolve_identifiers,
             ],
             custom_attrs={"data-testid": "pagination-page-select"},
         ),
         rx.button(
             rx.text("Next", weight="bold"),
             on_click=[
-                AuxState.go_to_next_page,
-                AuxState.scroll_to_top,
-                AuxState.refresh,
-                AuxState.resolve_identifiers,
+                IngestState.go_to_next_page,
+                IngestState.scroll_to_top,
+                IngestState.refresh,
+                IngestState.resolve_identifiers,
             ],
-            disabled=AuxState.disable_next_page,
+            disabled=IngestState.disable_next_page,
             variant="surface",
             custom_attrs={"data-testid": "pagination-next-button"},
             style={"minWidth": "10%"},
@@ -261,11 +261,11 @@ def tab_list() -> rx.Component:
         rx.tabs.list(
             rx.spacer(),
             rx.foreach(
-                AuxState.aux_provider_items,
+                IngestState.aux_provider_items,
                 lambda item: rx.tabs.trigger(
                     item.title,
                     value=item.value,
-                    disabled=AuxState.is_loading,
+                    disabled=IngestState.is_loading,
                 ),
             ),
             rx.spacer(),
@@ -277,7 +277,7 @@ def tab_list() -> rx.Component:
 def tab_content() -> rx.Component:
     """Render the tab content with search components for each aux provider."""
     return rx.foreach(
-        AuxState.aux_provider_items,
+        IngestState.aux_provider_items,
         lambda item: rx.tabs.content(
             rx.vstack(
                 search_input(),
@@ -298,12 +298,12 @@ def index() -> rx.Component:
             tab_list(),
             rx.spacer(),
             tab_content(),
-            default_value=AuxState.current_aux_provider,
+            default_value=IngestState.current_aux_provider,
             on_change=[
-                AuxState.change_extractor,
-                AuxState.go_to_first_page,
-                AuxState.refresh,
-                AuxState.resolve_identifiers,
+                IngestState.change_extractor,
+                IngestState.go_to_first_page,
+                IngestState.refresh,
+                IngestState.resolve_identifiers,
             ],
             custom_attrs={"data-testid": "aux-tab-section"},
             style={

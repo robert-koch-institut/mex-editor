@@ -31,9 +31,9 @@ class State(rx.State):
             raw_path=f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}/",
         ),
         NavItem(
-            title="Aux Search",
-            path="/aux-search",
-            raw_path="/aux-search/",
+            title="Ingest",
+            path="/ingest",
+            raw_path="/ingest/",
         ),
     ]
 

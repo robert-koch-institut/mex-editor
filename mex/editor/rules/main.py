@@ -26,7 +26,7 @@ def editor_value_switch(
         custom_attrs={
             "data-testid": f"switch-{field_name}-{primary_source.identifier}-{index}"
         },
-        color_scheme=rx.cond(primary_source.enabled, "jade", "gray"),
+        color_scheme=rx.cond(primary_source.enabled, "mint", "gray"),
     )
 
 
@@ -320,7 +320,7 @@ def primary_source_switch(
         custom_attrs={
             "data-testid": f"switch-{field_name}-{primary_source.identifier}"
         },
-        color_scheme="jade",
+        color_scheme="mint",
     )
 
 
@@ -365,7 +365,7 @@ def new_additive_button(
                 width="1rem",
             ),
             f"New {field_name}",
-            color_scheme="jade",
+            color_scheme="mint",
             variant="soft",
             size="1",
             on_click=RuleState.add_additive_value(field_name),
@@ -505,7 +505,7 @@ def submit_button() -> rx.Component:
     return rx.button(
         f"Save {RuleState.stem_type}",
         size="3",
-        color_scheme="jade",
+        color_scheme="mint",
         on_click=[
             RuleState.submit_rule_set,
             RuleState.resolve_identifiers,

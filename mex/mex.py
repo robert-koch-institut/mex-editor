@@ -8,13 +8,16 @@ from reflex.utils.console import info as log_info
 
 from mex.common.logging import logger
 from mex.editor.api.main import check_system_status, get_prometheus_metrics
-from mex.editor.aux_search.main import index as aux_search_index
-from mex.editor.aux_search.state import AuxState
+from mex.editor.create.main import index as create_index
+from mex.editor.create.state import CreateState
 from mex.editor.edit.main import index as edit_index
 from mex.editor.edit.state import EditState
+from mex.editor.ingest.main import index as ingest_index
+from mex.editor.ingest.state import IngestState
 from mex.editor.login.main import index as login_index
 from mex.editor.merge_items.main import index as merge_items_index
 from mex.editor.merge_items.state import MergeState
+from mex.editor.rules.state import RuleState
 from mex.editor.search.main import index as search_index
 from mex.editor.search.state import SearchState
 from mex.editor.settings import EditorSettings
@@ -24,17 +27,6 @@ app = rx.App(
     html_lang="en",
     theme=themes.theme(accent_color="blue", has_background=False),
     style={">a": {"opacity": "0"}},
-)
-app.add_page(
-    edit_index,
-    route="/item/[identifier]",
-    title="MEx Editor | Edit",
-    on_load=[
-        State.check_login,
-        State.load_nav,
-        EditState.refresh,
-        EditState.resolve_identifiers,
-    ],
 )
 app.add_page(
     search_index,
@@ -60,14 +52,49 @@ app.add_page(
     ],
 )
 app.add_page(
-    aux_search_index,
-    route="/aux-search",
-    title="MEx Editor | Aux Search",
+    merge_items_index,
+    route="/merge_items",
+    title="MEx Editor | Merge Items",
     on_load=[
         State.check_login,
         State.load_nav,
-        AuxState.refresh,
-        AuxState.resolve_identifiers,
+        MergeState.refresh,
+    ],
+)
+app.add_page(
+    create_index,
+    route="/create",
+    title="MEx Editor | Create",
+    on_load=[
+        State.check_login,
+        State.load_nav,
+        CreateState.reset_stem_type,
+        RuleState.refresh,
+        RuleState.resolve_identifiers,
+    ],
+)
+app.add_page(
+    edit_index,
+    route="/item/[identifier]",
+    title="MEx Editor | Edit",
+    on_load=[
+        State.check_login,
+        State.load_nav,
+        RuleState.refresh,
+        EditState.load_item_title,
+        EditState.show_submit_success_toast_on_redirect,
+        RuleState.resolve_identifiers,
+    ],
+)
+app.add_page(
+    ingest_index,
+    route="/ingest",
+    title="MEx Editor | Ingest",
+    on_load=[
+        State.check_login,
+        State.load_nav,
+        IngestState.refresh,
+        IngestState.resolve_identifiers,
     ],
 )
 app.add_page(

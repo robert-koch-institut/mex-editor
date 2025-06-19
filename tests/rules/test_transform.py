@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.models import (
@@ -22,8 +23,10 @@ from mex.common.models import (
     SubtractivePerson,
 )
 from mex.common.types import (
+    EMAIL_PATTERN,
     ConsentStatus,
     ConsentType,
+    Frequency,
     Link,
     LinkLanguage,
     MergedActivityIdentifier,
@@ -35,8 +38,14 @@ from mex.common.types import (
     Year,
     YearMonthDayTime,
 )
-from mex.editor.edit.models import EditorField, EditorPrimarySource, InputConfig
-from mex.editor.edit.transform import (
+from mex.editor.models import EditorValue
+from mex.editor.rules.models import (
+    EditorField,
+    EditorPrimarySource,
+    InputConfig,
+    ValidationMessage,
+)
+from mex.editor.rules.transform import (
     _get_primary_source_id_from_model,
     _transform_editor_value_to_model_value,
     _transform_fields_to_additive,
@@ -46,9 +55,10 @@ from mex.editor.edit.transform import (
     _transform_model_to_input_config,
     _transform_model_values_to_editor_values,
     transform_fields_to_rule_set,
+    transform_fields_to_title,
     transform_models_to_fields,
+    transform_validation_error_to_messages,
 )
-from mex.editor.models import EditorValue
 
 
 @pytest.mark.parametrize(
@@ -430,6 +440,7 @@ def test_transform_models_to_fields() -> None:
                     "text": None,
                     "identifier": "00000000000000",
                     "badge": None,
+                    "being_edited": False,
                     "href": "/item/00000000000000",
                     "external": False,
                     "enabled": True,
@@ -453,6 +464,7 @@ def test_transform_models_to_fields() -> None:
                     "text": None,
                     "identifier": "00000000000000",
                     "badge": None,
+                    "being_edited": False,
                     "href": "/item/00000000000000",
                     "external": False,
                     "enabled": True,
@@ -472,6 +484,7 @@ def test_transform_models_to_fields() -> None:
                     {
                         "text": "Good",
                         "badge": None,
+                        "being_edited": False,
                         "href": None,
                         "identifier": None,
                         "external": False,
@@ -490,6 +503,7 @@ def test_transform_models_to_fields() -> None:
                     "text": None,
                     "identifier": "00000000000000",
                     "badge": None,
+                    "being_edited": False,
                     "href": "/item/00000000000000",
                     "external": False,
                     "enabled": True,
@@ -513,6 +527,7 @@ def test_transform_models_to_fields() -> None:
                     "text": None,
                     "identifier": "00000000000000",
                     "badge": None,
+                    "being_edited": False,
                     "href": "/item/00000000000000",
                     "external": False,
                     "enabled": True,
@@ -654,9 +669,9 @@ def test_transform_fields_to_preventive(
         ),
         (
             EditorValue(),
-            "hasConsentType",
-            "AdditiveConsent",
-            ConsentType["IMPLIED_CONSENT"],
+            "accrualPeriodicity",
+            "AdditiveResource",
+            Frequency["TRIENNIAL"],
         ),
         (
             EditorValue(text="2004", badge="year"),
@@ -831,3 +846,62 @@ def test_transform_fields_to_rule_set() -> None:
             "givenName": ["PrimarySource002"],
         },
     }
+
+
+def test_transform_validation_error_to_messages() -> None:
+    messages = []
+    try:
+        AdditivePerson(email="OOPS")
+    except ValidationError as error:
+        messages = transform_validation_error_to_messages(error)
+    else:
+        pytest.fail("Expected validation to fail.")
+    assert messages == [
+        ValidationMessage(
+            field_name="0",
+            message=f"String should match pattern '{EMAIL_PATTERN}'",
+            input="OOPS",
+        )
+    ]
+
+
+def test_transform_fields_to_title() -> None:
+    contact_point_fields = [
+        EditorField(
+            name="email",
+            primary_sources=[
+                EditorPrimarySource(
+                    name=EditorValue(text="Primary Source"),
+                    identifier=MergedPrimarySourceIdentifier("PrimarySource001"),
+                    input_config=InputConfig(),
+                    enabled=True,
+                    editor_values=[
+                        EditorValue(text="this@that.other"),
+                    ],
+                )
+            ],
+        )
+    ]
+    assert transform_fields_to_title("ContactPoint", contact_point_fields) == [
+        EditorValue(
+            text="this@that.other",
+            identifier=None,
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
+            being_edited=False,
+        )
+    ]
+
+    assert transform_fields_to_title("Person", []) == [
+        EditorValue(
+            text="Person",
+            identifier=None,
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
+            being_edited=False,
+        )
+    ]

@@ -527,7 +527,6 @@ def rule_page_header(title: rx.Component) -> rx.Component:
         style={
             "alignItems": "baseline",
             "backdropFilter": " var(--backdrop-filter-panel)",
-            "backgroundColor": "var(--color-panel-translucent)",
             "marginTop": "calc(-1 * var(--space-1))",
             "maxHeight": "6rem",
             "maxWidth": "calc(var(--app-max-width) - var(--space-6) * 2)",

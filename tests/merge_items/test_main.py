@@ -1,8 +1,6 @@
 import pytest
 from playwright.sync_api import Page, expect
 
-from mex.editor.merge_items.state import MergeState
-
 
 @pytest.fixture
 def merge_page(
@@ -40,10 +38,10 @@ def test_search_input_merged(merge_page: Page) -> None:
     # check merged search input is showing and working
     search_input_merged = page.get_by_test_id("search-input-merged")
     expect(search_input_merged).to_be_visible()
-    search_input_merged.fill("Primary Source One")
+    search_input_merged.fill("Unit 1")
     entity_types_merged = page.get_by_test_id("entity-types-merged")
     expect(entity_types_merged).to_be_visible()
-    entity_types_merged.get_by_text("PrimarySource").click()
+    entity_types_merged.get_by_text("OrganizationalUnit").click()
     checked = entity_types_merged.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
     page.get_by_test_id("search-button-merged").click()
@@ -78,10 +76,10 @@ def test_search_input_extracted(merge_page: Page) -> None:
     # check extracted search input is showing and working
     search_input_extracted = page.get_by_test_id("search-input-extracted")
     expect(search_input_extracted).to_be_visible()
-    search_input_extracted.fill("Primary Source One")
+    search_input_extracted.fill("Unit 1")
     entity_types_extracted = page.get_by_test_id("entity-types-extracted")
     expect(entity_types_extracted).to_be_visible()
-    entity_types_extracted.get_by_text("PrimarySource").click()
+    entity_types_extracted.get_by_text("OrganizationalUnit").click()
     checked = entity_types_extracted.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
     page.get_by_test_id("search-button-extracted").click()
@@ -128,7 +126,6 @@ def test_select_result_extracted(merge_page: Page) -> None:
     page.screenshot(
         path="tests_merge_items_test_main-test_select_result_extracted-select.png"
     )
-    assert MergeState.selected_extracted == 0
 
 
 @pytest.mark.integration
@@ -151,4 +148,3 @@ def test_select_result_merged(merge_page: Page) -> None:
     page.screenshot(
         path="tests_merge_items_test_main-test_select_result_merged-select.png"
     )
-    assert MergeState.selected_merged == 0

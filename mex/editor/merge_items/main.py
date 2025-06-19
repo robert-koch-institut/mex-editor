@@ -357,7 +357,14 @@ def index() -> rx.Component:
                 extracted_search(),
                 style={"width": "100%", "align": "center", "justify": "center"},
             ),
-            submit_button(),
+            rx.box(
+                submit_button(),
+                style={
+                    "justifyContent": "center",
+                    "display": "flex",
+                    "width": "100%",
+                },
+            ),
             style={
                 "width": "100%",
                 "align": "center",

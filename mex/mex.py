@@ -8,13 +8,16 @@ from reflex.utils.console import info as log_info
 
 from mex.common.logging import logger
 from mex.editor.api.main import check_system_status, get_prometheus_metrics
+from mex.editor.consent.main import index as consent_index
+from mex.editor.consent.state import ConsentState
 from mex.editor.create.main import index as create_index
 from mex.editor.create.state import CreateState
 from mex.editor.edit.main import index as edit_index
 from mex.editor.edit.state import EditState
 from mex.editor.ingest.main import index as ingest_index
 from mex.editor.ingest.state import IngestState
-from mex.editor.login.main import index as login_index
+from mex.editor.login_ldap.main import index as login_ldap_index
+from mex.editor.login_mex.main import index as login_mex_index
 from mex.editor.rules.state import RuleState
 from mex.editor.search.main import index as search_index
 from mex.editor.search.state import SearchState
@@ -76,9 +79,23 @@ app.add_page(
     ],
 )
 app.add_page(
-    login_index,
+    login_mex_index,
     route="/login",
     title="MEx Editor | Login",
+)
+app.add_page(
+    login_ldap_index,
+    route="/login-ldap",
+    title="MEx Editor | Login",
+)
+app.add_page(
+    consent_index,
+    route="/consent",
+    title="MEx Consent",
+    on_load=[
+        State.check_ldap_login,
+        ConsentState.load_user,
+    ],
 )
 # side-step `add_page` to avoid `wait_for_client_redirect`,
 # because that breaks deployment behind a base path.

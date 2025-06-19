@@ -110,10 +110,3 @@ class State(rx.State):
         # TODO(ND): use proper connector method when available (stop-gap MX-1762)
         response = connector.request("GET", "_system/check")
         return str(response.get("version", "N/A"))
-
-
-class LoginState(State):
-    """State management for the login page."""
-
-    username: str
-    password: str

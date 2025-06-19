@@ -1,9 +1,9 @@
-from mex.editor.login_mex.state import LoginState
+from mex.editor.login_mex.state import LoginMexState
 from mex.editor.state import State
 
 
 def test_login_state_login_success() -> None:
-    state = LoginState(
+    state = LoginMexState(
         username="writer",
         password="writer_pass",  # noqa: S106
         parent_state=State(),
@@ -19,7 +19,7 @@ def test_login_state_login_success() -> None:
 
 
 def test_login_state_login_error() -> None:
-    state = LoginState(
+    state = LoginMexState(
         username="not_a_user",
         password="not_a_pass",  # noqa: S106
         parent_state=State(),
@@ -30,7 +30,7 @@ def test_login_state_login_error() -> None:
 
 
 def test_login_state_redirect_to_original_url() -> None:
-    state = LoginState(
+    state = LoginMexState(
         username="writer",
         password="writer_pass",  # noqa: S106
         parent_state=State(target_path_after_login="/some-url/"),

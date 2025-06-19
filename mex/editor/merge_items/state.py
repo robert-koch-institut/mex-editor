@@ -10,8 +10,8 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MERGED_MODEL_CLASSES
 from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
-from mex.editor.merge_items.transform import transform_models_to_results
 from mex.editor.search.models import SearchResult
+from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
 
 

@@ -43,7 +43,7 @@ def merged_search_result(result: SearchResult, index: int) -> rx.Component:
         ),
         style={"width": "100%"},
         class_name="search-result-card",
-        custom_attrs={"data-testid": f"result-{result.identifier}"},
+        custom_attrs={"data-testid": f"result-merged-{index}"},
     )
 
 
@@ -84,7 +84,7 @@ def extracted_search_result(result: SearchResult, index: int) -> rx.Component:
         ),
         style={"width": "100%"},
         class_name="search-result-card",
-        custom_attrs={"data-testid": f"result-{result.identifier}"},
+        custom_attrs={"data-testid": f"result-extracted-{index}"},
     )
 
 
@@ -100,7 +100,6 @@ def merged_results_summary() -> rx.Component:
                 "margin": "var(--space-4)",
                 "userSelect": "none",
             },
-            custom_attrs={"data-testid": "search-merged-results-summary"},
         ),
         style={"width": "100%"},
     )
@@ -118,7 +117,6 @@ def extracted_results_summary() -> rx.Component:
                 "margin": "var(--space-4)",
                 "userSelect": "none",
             },
-            custom_attrs={"data-testid": "search-extracted-results-summary"},
         ),
         style={"width": "100%"},
     )
@@ -209,6 +207,7 @@ def search_input_merged() -> rx.Component:
                     },
                     tab_index=1,
                     type="text",
+                    custom_attrs={"data-testid": "search-input-merged"},
                 ),
             ),
             rx.spacer(height="var(--space-2)"),
@@ -262,6 +261,7 @@ def search_input_extracted() -> rx.Component:
                     },
                     tab_index=1,
                     type="text",
+                    custom_attrs={"data-testid": "search-input-extracted"},
                 ),
             ),
             rx.spacer(height="var(--space-2)"),

@@ -43,17 +43,7 @@ app.add_page(
 )
 app.add_page(
     merge_items_index,
-    route="/merge_items",
-    title="MEx Editor | Merge Items",
-    on_load=[
-        State.check_login,
-        State.load_nav,
-        MergeState.refresh,
-    ],
-)
-app.add_page(
-    merge_items_index,
-    route="/merge_items",
+    route="/merge-items",
     title="MEx Editor | Merge Items",
     on_load=[
         State.check_login,

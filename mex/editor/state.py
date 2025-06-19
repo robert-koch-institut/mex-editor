@@ -32,13 +32,8 @@ class State(rx.State):
         ),
         NavItem(
             title="Merge Items",
-            path="/merge_items",
-            raw_path="/merge_items/",
-        ),
-        NavItem(
-            title="Merge Items",
-            path="/merge_items",
-            raw_path="/merge_items/",
+            path="/merge-items",
+            raw_path="/merge-items/",
         ),
         NavItem(
             title="Ingest",

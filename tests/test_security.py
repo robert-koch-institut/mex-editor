@@ -18,6 +18,7 @@ def test_has_read_access() -> None:
     assert has_read_access("writer", "writer_pass") is True
 
 
+@pytest.mark.external
 @pytest.mark.integration
 def test_has_write_access_ldap() -> None:
     settings = EditorSettings.get()

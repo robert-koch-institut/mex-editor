@@ -21,9 +21,9 @@ def test_index(merge_page: Page) -> None:
     page = merge_page
 
     # load page and establish both section headings are visible
-    section = page.get_by_test_id("create-heading-merged")
+    section = page.get_by_test_id("search-merged")
     expect(section).to_be_visible()
-    section = page.get_by_test_id("create-heading-extracted")
+    section = page.get_by_test_id("search-extracted")
     expect(section).to_be_visible()
 
     # check submit button is showing
@@ -54,7 +54,8 @@ def test_search_input_merged(merge_page: Page) -> None:
     page.get_by_test_id("clear-button-merged").click()
     checked = entity_types_merged.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(0)
-    expect(page.get_by_text("Showing 0 of 0 items")).to_be_visible()
+    search_merged = page.get_by_test_id("search-merged")
+    expect(search_merged.get_by_text("Showing 0 of 0 items")).to_be_visible()
     page.screenshot(
         path="tests_merge_items_test_main-test_merged_search_input-clear-input.png"
     )
@@ -92,7 +93,8 @@ def test_search_input_extracted(merge_page: Page) -> None:
     page.get_by_test_id("clear-button-extracted").click()
     checked = entity_types_extracted.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(0)
-    expect(page.get_by_text("Showing 0 of 0 items")).to_be_visible()
+    extracted_search = page.get_by_test_id("search-extracted")
+    expect(extracted_search.get_by_text("Showing 0 of 0 items")).to_be_visible()
     page.screenshot(
         path="tests_merge_items_test_main-test_extracted_search_input-clear-input.png"
     )

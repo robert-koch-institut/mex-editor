@@ -309,7 +309,6 @@ def extracted_search() -> rx.Component:
     return rx.vstack(
         rx.heading(
             "Search extracted items",
-            custom_attrs={"data-testid": "create-heading-extracted"},
             style={
                 "whiteSpace": "nowrap",
                 "overflow": "hidden",
@@ -323,6 +322,7 @@ def extracted_search() -> rx.Component:
             extracted_search_result,
         ),
         style={"width": "50%", "margin": "var(--space-4)", "align": "center"},
+        custom_attrs={"data-testid": "search-extracted"},
     )
 
 
@@ -331,7 +331,6 @@ def merged_search() -> rx.Component:
     return rx.vstack(
         rx.heading(
             "Search merged items",
-            custom_attrs={"data-testid": "create-heading-merged"},
             style={
                 "whiteSpace": "nowrap",
                 "overflow": "hidden",
@@ -345,6 +344,7 @@ def merged_search() -> rx.Component:
             merged_search_result,
         ),
         style={"width": "50%", "margin": "var(--space-4)", "align": "center"},
+        custom_attrs={"data-testid": "search-merged"},
     )
 
 

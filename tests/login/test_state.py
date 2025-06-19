@@ -1,4 +1,4 @@
-from mex.editor.login.state import LoginState
+from mex.editor.login_mex.state import LoginState
 from mex.editor.state import State
 
 

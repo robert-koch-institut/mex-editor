@@ -4,14 +4,11 @@ import reflex as rx
 from reflex.event import EventSpec
 
 from mex.editor.security import has_read_access, has_write_access
-from mex.editor.state import State, User
+from mex.editor.state import LoginState, User
 
 
-class LoginState(State):
+class LoginMexState(LoginState):
     """State management for the login page."""
-
-    username: str
-    password: str
 
     @rx.event
     def login(self) -> EventSpec:

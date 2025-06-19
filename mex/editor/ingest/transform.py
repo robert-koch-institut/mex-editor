@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 
 from mex.common.models import AnyExtractedModel
-from mex.editor.aux_search.models import AuxResult
+from mex.editor.ingest.models import IngestResult
 from mex.editor.models import EditorValue
 from mex.editor.transform import (
     transform_models_to_preview,
@@ -10,16 +10,18 @@ from mex.editor.transform import (
 )
 
 
-def transform_models_to_results(models: Iterable[AnyExtractedModel]) -> list[AuxResult]:
-    """Convert a list of extracted models into a list of aux search result models."""
+def transform_models_to_results(
+    models: Iterable[AnyExtractedModel],
+) -> list[IngestResult]:
+    """Convert a list of extracted models into a list of ingest result models."""
     return [
-        AuxResult(
+        IngestResult(
             identifier=model.identifier,
             title=transform_models_to_title([model]),
             preview=transform_models_to_preview([model]),
             all_properties=model_to_all_properties(model),
             show_properties=False,
-            show_import_button=True,
+            show_ingest_button=True,
         )
         for model in models
     ]

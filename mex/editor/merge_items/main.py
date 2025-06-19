@@ -102,6 +102,7 @@ def merged_results_summary() -> rx.Component:
             },
         ),
         style={"width": "100%"},
+        custom_attrs={"data-testid": "merged-results-summary"},
     )
 
 
@@ -119,6 +120,7 @@ def extracted_results_summary() -> rx.Component:
             },
         ),
         style={"width": "100%"},
+        custom_attrs={"data-testid": "extracted-results-summary"},
     )
 
 
@@ -314,6 +316,7 @@ def extracted_search() -> rx.Component:
                 "overflow": "hidden",
                 "width": "100%",
             },
+            custom_attrs={"data-testid": "create-heading-extracted"},
         ),
         search_input_extracted(),
         extracted_results_summary(),
@@ -322,7 +325,6 @@ def extracted_search() -> rx.Component:
             extracted_search_result,
         ),
         style={"width": "50%", "margin": "var(--space-4)", "align": "center"},
-        custom_attrs={"data-testid": "search-extracted"},
     )
 
 
@@ -336,6 +338,7 @@ def merged_search() -> rx.Component:
                 "overflow": "hidden",
                 "width": "100%",
             },
+            custom_attrs={"data-testid": "create-heading-merged"},
         ),
         search_input_merged(),
         merged_results_summary(),
@@ -344,7 +347,6 @@ def merged_search() -> rx.Component:
             merged_search_result,
         ),
         style={"width": "50%", "margin": "var(--space-4)", "align": "center"},
-        custom_attrs={"data-testid": "search-merged"},
     )
 
 

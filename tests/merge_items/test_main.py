@@ -54,8 +54,7 @@ def test_search_input_merged(merge_page: Page) -> None:
     page.get_by_test_id("clear-button-merged").click()
     checked = entity_types_merged.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(0)
-    merged_summary = page.get_by_test_id("merged-results-summary")
-    expect(merged_summary.get_by_text("Showing 0 of 0 items")).to_be_visible()
+    assert page.get_by_test_id("search-input-merged").input_value() == ""
     page.screenshot(
         path="tests_merge_items_test_main-test_merged_search_input-clear-input.png"
     )
@@ -93,8 +92,7 @@ def test_search_input_extracted(merge_page: Page) -> None:
     page.get_by_test_id("clear-button-extracted").click()
     checked = entity_types_extracted.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(0)
-    extracted_summary = page.get_by_test_id("extracted-results-summary")
-    expect(extracted_summary.get_by_text("Showing 0 of 0 items")).to_be_visible()
+    assert page.get_by_test_id("search-input-extracted").input_value() == ""
     page.screenshot(
         path="tests_merge_items_test_main-test_extracted_search_input-clear-input.png"
     )

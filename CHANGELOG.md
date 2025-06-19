@@ -13,17 +13,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- rename aux-search component to ingest, matching naming in backend
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
-- fix transparency of overlay containers
-
 ### Security
+
+## [0.18.1] - 2025-06-19
+
+### Changes
+
+- rename aux-search component to ingest, matching naming in backend
+
+### Fixed
+
+- fix transparency of overlay containers
 
 ## [0.18.0] - 2025-06-17
 

@@ -91,7 +91,7 @@ class MergeState(State):
 
     @rx.event
     def clear_input_merged(self) -> None:
-        """Clear the merged search input and reset the state."""
+        """Clear the merged search input and reset the results."""
         self.query_string_merged = ""
         self.entity_types_merged = dict.fromkeys(self.entity_types_merged, False)
         self.results_merged = []
@@ -100,7 +100,7 @@ class MergeState(State):
 
     @rx.event
     def clear_input_extracted(self) -> None:
-        """Clear the extracted search input and reset the state."""
+        """Clear the extracted search input and reset the results."""
         self.query_string_extracted = ""
         self.entity_types_extracted = dict.fromkeys(self.entity_types_extracted, False)
         self.results_extracted = []

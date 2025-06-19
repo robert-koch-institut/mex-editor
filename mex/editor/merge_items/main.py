@@ -7,7 +7,7 @@ from mex.editor.search.models import SearchResult
 
 
 def merged_search_result(result: SearchResult, index: int) -> rx.Component:
-    """Render a single merged item search result."""
+    """Render a single merged item search result with checkbox."""
     return rx.card(
         rx.hstack(
             rx.checkbox(
@@ -48,7 +48,7 @@ def merged_search_result(result: SearchResult, index: int) -> rx.Component:
 
 
 def extracted_search_result(result: SearchResult, index: int) -> rx.Component:
-    """Render a single extracted item search result."""
+    """Render a single extracted item search result with checkbox."""
     return rx.card(
         rx.hstack(
             rx.checkbox(
@@ -187,7 +187,7 @@ def entity_type_filter_extracted() -> rx.Component:
 
 
 def search_input_merged() -> rx.Component:
-    """Render a merged search input that will trigger the results to refresh."""
+    """Render a merged search input and buttons for the results to refresh."""
     return rx.vstack(
         rx.form.root(
             rx.card(
@@ -241,7 +241,7 @@ def search_input_merged() -> rx.Component:
 
 
 def search_input_extracted() -> rx.Component:
-    """Render a extracted search input that will trigger the results to refresh."""
+    """Render a extracted search input and buttons for the results to refresh."""
     return rx.vstack(
         rx.form.root(
             rx.card(
@@ -295,7 +295,7 @@ def search_input_extracted() -> rx.Component:
 
 
 def submit_button() -> rx.Component:
-    """Render a submit button to save the rule set."""
+    """Render a submit button to commit the merging."""
     return rx.button(
         "Submit Merge",
         color_scheme="jade",

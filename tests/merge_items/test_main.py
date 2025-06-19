@@ -16,7 +16,6 @@ def merge_page(
 
 
 @pytest.mark.integration
-@pytest.mark.usefixtures("load_dummy_data")
 def test_index(merge_page: Page) -> None:
     page = merge_page
 

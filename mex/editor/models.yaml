@@ -24,10 +24,10 @@ BibliographicResource:
     - accessRestriction
   icon: book-marked
 Consent:
-  title: hasDataSubject
+  title: isIndicatedAtTime
   preview:
     - hasConsentStatus
-    - isIndicatedAtTime
+    - hasConsentType
   icon: badge-check
 ContactPoint:
   title: email

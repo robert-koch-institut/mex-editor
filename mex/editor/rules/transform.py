@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import cast
 
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 
 from mex.common.fields import (
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
@@ -38,11 +38,7 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.common.utils import (
-    get_all_fields,
-    get_field_names_allowing_empty_list,
-    get_field_names_allowing_none,
-)
+from mex.editor.fields import REQUIRED_FIELDS_BY_CLASS_NAME
 from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, EditorValue
 from mex.editor.rules.models import (
     EditorField,
@@ -233,7 +229,7 @@ def transform_models_to_fields(
         }
     )
 
-    required_fields = get_required_field_names(type(extracted_items[0]))
+    required_fields = get_required_field_names(extracted_items[0])
 
     fields_by_name = {
         field_name: EditorField(
@@ -260,16 +256,18 @@ def transform_models_to_fields(
     return list(fields_by_name.values())
 
 
-@lru_cache(maxsize=4048)
-def get_required_field_names(model: type[BaseModel]) -> list[str]:
-    """Returns list of required fields."""
-    allow_none_fields = set(get_field_names_allowing_none(model))
-    allow_empty_list_fields = set(get_field_names_allowing_empty_list(model))
-    all_model_fields_names = set(get_all_fields(model).keys())
-    required_fields = (
-        all_model_fields_names - allow_none_fields - allow_empty_list_fields
-    )
-    return list(required_fields)
+def get_required_field_names(model: AnyExtractedModel) -> list[str]:
+    """Returns list of required fields.
+
+    Args:
+            model: Model to inspect
+
+    Returns:
+            A list of required fields from given model which are required
+    """
+    required_fields = set(REQUIRED_FIELDS_BY_CLASS_NAME.get(model.entityType, []))
+    mergeable_fields = set(MERGEABLE_FIELDS_BY_CLASS_NAME.get(model.entityType, []))
+    return sorted(required_fields & mergeable_fields)
 
 
 def _transform_fields_to_additive(

@@ -430,6 +430,10 @@ def field_name(
     """Return a card with a field name."""
     return rx.card(
         rx.text(field.name),
+        rx.cond(
+            field.is_required,
+            rx.text("*", color="red", padding_left="0.25rem"),
+        ),
         style={"width": "25%"},
         custom_attrs={"data-testid": f"field-{field.name}-name"},
     )

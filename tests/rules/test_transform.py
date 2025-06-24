@@ -15,6 +15,7 @@ from mex.common.models import (
     AnySubtractiveModel,
     ExtractedContactPoint,
     ExtractedPerson,
+    ExtractedResource,
     MergedConsent,
     MergedContactPoint,
     PreventivePerson,
@@ -24,8 +25,10 @@ from mex.common.models import (
 )
 from mex.common.types import (
     EMAIL_PATTERN,
+    AccessRestriction,
     ConsentStatus,
     ConsentType,
+    Identifier,
     Link,
     LinkLanguage,
     MergedActivityIdentifier,
@@ -34,6 +37,7 @@ from mex.common.types import (
     MergedPrimarySourceIdentifier,
     Text,
     TextLanguage,
+    Theme,
     Year,
     YearMonthDayTime,
 )
@@ -53,6 +57,7 @@ from mex.editor.rules.transform import (
     _transform_model_to_editor_primary_sources,
     _transform_model_to_input_config,
     _transform_model_values_to_editor_values,
+    get_required_field_names,
     transform_fields_to_rule_set,
     transform_models_to_fields,
     transform_validation_error_to_messages,
@@ -402,8 +407,8 @@ def test_transform_model_to_editor_primary_sources(
     expected_given_name: list[EditorPrimarySource],
     expected_family_name: list[EditorPrimarySource],
 ) -> None:
-    given_name = EditorField(name="givenName", primary_sources=[])
-    family_name = EditorField(name="familyName", primary_sources=[])
+    given_name = EditorField(name="givenName", primary_sources=[], is_required=False)
+    family_name = EditorField(name="familyName", primary_sources=[], is_required=False)
     fields_by_name = {"givenName": given_name, "familyName": family_name}
 
     _transform_model_to_editor_primary_sources(
@@ -431,6 +436,7 @@ def test_transform_models_to_fields() -> None:
     assert len(editor_fields) == len(MERGEABLE_FIELDS_BY_CLASS_NAME["MergedPerson"])
     fields_by_name = {f.name: f for f in editor_fields}
     assert fields_by_name["givenName"].dict() == {
+        "is_required": False,
         "name": "givenName",
         "primary_sources": [
             {
@@ -494,6 +500,7 @@ def test_transform_models_to_fields() -> None:
         ],
     }
     assert fields_by_name["memberOf"].dict() == {
+        "is_required": False,
         "name": "memberOf",
         "primary_sources": [
             {
@@ -554,6 +561,7 @@ def test_transform_models_to_fields() -> None:
         (
             EditorField(
                 name="unknownField",
+                is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
                         enabled=True,
@@ -568,6 +576,7 @@ def test_transform_models_to_fields() -> None:
         (
             EditorField(
                 name="familyName",
+                is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
                         enabled=True,
@@ -598,6 +607,7 @@ def test_transform_fields_to_additive(
         (
             EditorField(
                 name="unknownField",
+                is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
                         enabled=True,
@@ -614,6 +624,7 @@ def test_transform_fields_to_additive(
         (
             EditorField(
                 name="familyName",
+                is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
                         enabled=True,
@@ -728,6 +739,7 @@ def test_transform_editor_value_to_model_value(
         (
             EditorField(
                 name="unknownField",
+                is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
                         name=EditorValue(text="Primary Source 1"),
@@ -742,6 +754,7 @@ def test_transform_editor_value_to_model_value(
         (
             EditorField(
                 name="familyName",
+                is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
                         name=EditorValue(text="Primary Source 1"),
@@ -782,6 +795,7 @@ def test_transform_fields_to_rule_set() -> None:
         [
             EditorField(
                 name="givenName",
+                is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
                         name=EditorValue(text="Enabled Primary Source"),
@@ -799,6 +813,7 @@ def test_transform_fields_to_rule_set() -> None:
             ),
             EditorField(
                 name="familyName",
+                is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
                         name=EditorValue(text="Primary Source 1"),
@@ -861,3 +876,37 @@ def test_transform_validation_error_to_messages() -> None:
             input="OOPS",
         )
     ]
+
+
+@pytest.mark.parametrize(
+    ("model", "expected"),
+    [
+        (
+            ExtractedResource(
+                identifierInPrimarySource="r1",
+                hadPrimarySource=Identifier.generate(seed=42),
+                accessRestriction=AccessRestriction["OPEN"],
+                contact=[Identifier.generate(seed=999)],
+                unitInCharge=[Identifier.generate(seed=999)],
+                theme=[Theme["PUBLIC_HEALTH"]],
+                title=[Text(value="Dummy resource")],
+            ),
+            ["accessRestriction", "contact", "theme", "title", "unitInCharge"],
+        ),
+        (
+            ExtractedPerson(
+                email=["person000@rki.de"],
+                hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+                identifierInPrimarySource="person-000",
+            ),
+            [],
+        ),
+    ],
+)
+def test_get_required_field_names(
+    model: AnyExtractedModel,
+    expected: list[str],
+) -> None:
+    required = get_required_field_names(model)
+
+    assert expected == required

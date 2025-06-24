@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:2e12368fd0ba75fd9bb6036610e4ea44e72049ab2d9affd3cfa5e69d277bf0ef"
+content_hash = "sha256:63a830f962b4960899eab9a418f59624f364300153278097c00b76b9bdbe4669"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -2099,6 +2099,31 @@ dependencies = [
 files = [
     {file = "typer-0.16.0-py3-none-any.whl", hash = "sha256:1f79bed11d4d02d4310e3c1b7ba594183bcedb0ac73b27a9e5f28f6fb5b98855"},
     {file = "typer-0.16.0.tar.gz", hash = "sha256:af377ffaee1dbe37ae9440cb4e8f11686ea5ce4e9bae01b84ae7c63b87f1dd3b"},
+]
+
+[[package]]
+name = "types-ldap3"
+version = "2.9.13.20250516"
+requires_python = ">=3.9"
+summary = "Typing stubs for ldap3"
+groups = ["dev"]
+dependencies = [
+    "types-pyasn1",
+]
+files = [
+    {file = "types_ldap3-2.9.13.20250516-py3-none-any.whl", hash = "sha256:b70214af9c398feb5b105a9bc4614321d8763c4a1b40b5613cb2e400899fc5f8"},
+    {file = "types_ldap3-2.9.13.20250516.tar.gz", hash = "sha256:c39aaef8b3f0f228ea60553b829c70aea40cb29158afb35292a968d81252a2d0"},
+]
+
+[[package]]
+name = "types-pyasn1"
+version = "0.6.0.20250516"
+requires_python = ">=3.9"
+summary = "Typing stubs for pyasn1"
+groups = ["dev"]
+files = [
+    {file = "types_pyasn1-0.6.0.20250516-py3-none-any.whl", hash = "sha256:b9925e4e22e09eed758b93b6f2a7881b89d842c2373dd11c09b173567d170142"},
+    {file = "types_pyasn1-0.6.0.20250516.tar.gz", hash = "sha256:1a9b35a4f033cd70c384a5043a3407b2cc07afc95900732b66e0d38426c7541d"},
 ]
 
 [[package]]

@@ -12,7 +12,7 @@ def user_button() -> rx.Component:
     """Return a user button with an icon that indicates their access rights."""
     return rx.button(
         rx.cond(
-            cast("User", State.user).write_access,
+            cast("User", State.user_mex).write_access,
             rx.icon(tag="user_round_cog"),
             rx.icon(tag="user_round"),
         ),
@@ -29,7 +29,7 @@ def user_menu() -> rx.Component:
             custom_attrs={"data-testid": "user-menu"},
         ),
         rx.menu.content(
-            rx.menu.item(cast("User", State.user).name, disabled=True),
+            rx.menu.item(cast("User", State.user_mex).name, disabled=True),
             rx.menu.separator(),
             rx.menu.item(
                 "Logout",
@@ -125,7 +125,7 @@ def nav_bar() -> rx.Component:
 def page(*children: rx.Component) -> rx.Component:
     """Return a page fragment with navigation bar and given children."""
     return rx.cond(
-        State.user,
+        State.user_mex,
         rx.center(
             nav_bar(),
             rx.hstack(

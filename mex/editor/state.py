@@ -13,7 +13,7 @@ class State(rx.State):
     """The base state for the app."""
 
     user: User | None = None
-    ldap_user: User | None = None
+    user_ldap: User | None = None
     target_path_after_login: str | None = None
     nav_items: list[NavItem] = [
         NavItem(
@@ -55,7 +55,7 @@ class State(rx.State):
     @rx.event
     def check_ldap_login(self) -> EventSpec | None:
         """Check if a user is logged in to ldap."""
-        if self.ldap_user is None:
+        if self.user_ldap is None:
             self.target_path_after_login = self.router.page.raw_path
             return rx.redirect("/login-ldap")
         return None

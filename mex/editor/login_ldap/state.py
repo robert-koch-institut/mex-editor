@@ -19,7 +19,7 @@ class LoginLdapState(State):
         write_access = has_write_access_ldap(self.username, self.password)
         if write_access:
             encoded = b64encode(f"{self.username}:{self.password}".encode("ascii"))
-            self.ldap_user = User(
+            self.user_ldap = User(
                 name=self.username,
                 authorization=f"Basic {encoded.decode('ascii')}",
                 write_access=write_access,

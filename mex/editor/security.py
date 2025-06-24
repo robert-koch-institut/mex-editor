@@ -9,7 +9,7 @@ from mex.common.logging import logger
 from mex.editor.settings import EditorSettings
 
 
-def has_write_access(username: str, password: str) -> bool:
+def has_write_access_mex(username: str, password: str) -> bool:
     """Verify if provided credentials have write access."""
     settings = EditorSettings.get()
     write_user_db = settings.editor_user_database["write"]
@@ -48,7 +48,7 @@ def has_write_access_ldap(username: str, password: str) -> bool:
         return False
 
 
-def has_read_access(username: str, password: str) -> bool:
+def has_read_access_mex(username: str, password: str) -> bool:
     """Verify if provided credentials have read access."""
     settings = EditorSettings.get()
     read_user_db = settings.editor_user_database["read"]
@@ -56,4 +56,4 @@ def has_read_access(username: str, password: str) -> bool:
         return compare_digest(
             password.encode("ascii"), read_user.get_secret_value().encode("ascii")
         )
-    return has_write_access(username, password)
+    return has_write_access_mex(username, password)

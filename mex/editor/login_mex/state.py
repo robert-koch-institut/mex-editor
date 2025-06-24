@@ -3,7 +3,7 @@ from base64 import b64encode
 import reflex as rx
 from reflex.event import EventSpec
 
-from mex.editor.security import has_read_access, has_write_access
+from mex.editor.security import has_read_access_mex, has_write_access_mex
 from mex.editor.state import State, User
 
 
@@ -16,8 +16,8 @@ class LoginMexState(State):
     @rx.event
     def login(self) -> EventSpec:
         """Login a user."""
-        read_access = has_read_access(self.username, self.password)
-        write_access = has_write_access(self.username, self.password)
+        read_access = has_read_access_mex(self.username, self.password)
+        write_access = has_write_access_mex(self.username, self.password)
         if read_access:
             encoded = b64encode(f"{self.username}:{self.password}".encode("ascii"))
             self.user_mex = User(

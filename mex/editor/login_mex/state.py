@@ -20,7 +20,7 @@ class LoginMexState(State):
         write_access = has_write_access(self.username, self.password)
         if read_access:
             encoded = b64encode(f"{self.username}:{self.password}".encode("ascii"))
-            self.user = User(
+            self.user_mex = User(
                 name=self.username,
                 authorization=f"Basic {encoded.decode('ascii')}",
                 write_access=write_access,

@@ -34,7 +34,7 @@ app.add_page(
     route="/",
     title="MEx Editor | Search",
     on_load=[
-        State.check_login,
+        State.check_mex_login,
         State.load_nav,
         SearchState.get_available_primary_sources,
         SearchState.load_search_params,
@@ -47,7 +47,7 @@ app.add_page(
     route="/create",
     title="MEx Editor | Create",
     on_load=[
-        State.check_login,
+        State.check_mex_login,
         State.load_nav,
         CreateState.reset_stem_type,
         RuleState.refresh,
@@ -59,7 +59,7 @@ app.add_page(
     route="/item/[identifier]",
     title="MEx Editor | Edit",
     on_load=[
-        State.check_login,
+        State.check_mex_login,
         State.load_nav,
         RuleState.refresh,
         EditState.load_item_title,
@@ -72,7 +72,7 @@ app.add_page(
     route="/ingest",
     title="MEx Editor | Ingest",
     on_load=[
-        State.check_login,
+        State.check_mex_login,
         State.load_nav,
         IngestState.refresh,
         IngestState.resolve_identifiers,

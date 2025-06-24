@@ -12,7 +12,7 @@ from mex.editor.models import NavItem, User
 class State(rx.State):
     """The base state for the app."""
 
-    user: User | None = None
+    user_mex: User | None = None
     user_ldap: User | None = None
     target_path_after_login: str | None = None
     nav_items: list[NavItem] = [
@@ -45,9 +45,9 @@ class State(rx.State):
         return rx.redirect("/")
 
     @rx.event
-    def check_login(self) -> EventSpec | None:
+    def check_mex_login(self) -> EventSpec | None:
         """Check if a user is logged in."""
-        if self.user is None:
+        if self.user_mex is None:
             self.target_path_after_login = self.router.page.raw_path
             return rx.redirect("/login")
         return None

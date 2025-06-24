@@ -229,8 +229,11 @@ def transform_models_to_fields(
         }
     )
 
-    required_fields = get_required_field_names(extracted_items[0])
-
+    required_fields = (
+        get_required_field_names(extracted_items[0])
+        if extracted_items
+        else additive.entityType
+    )
     fields_by_name = {
         field_name: EditorField(
             name=field_name,
@@ -256,7 +259,7 @@ def transform_models_to_fields(
     return list(fields_by_name.values())
 
 
-def get_required_field_names(model: AnyExtractedModel) -> list[str]:
+def get_required_field_names(model: AnyExtractedModel | AnyAdditiveModel) -> list[str]:
     """Returns list of required fields.
 
     Args:

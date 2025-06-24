@@ -429,10 +429,12 @@ def field_name(
 ) -> rx.Component:
     """Return a card with a field name."""
     return rx.card(
-        rx.text(field.name),
-        rx.cond(
-            field.is_required,
-            rx.text("*", color="red", padding_left="0.25rem"),
+        rx.hstack(
+            rx.text(field.name),
+            rx.cond(
+                field.is_required,
+                rx.text("*", style={"color": "red"}),
+            ),
         ),
         style={"width": "25%"},
         custom_attrs={"data-testid": f"field-{field.name}-name"},
@@ -531,7 +533,6 @@ def rule_page_header(title: rx.Component) -> rx.Component:
         style={
             "alignItems": "baseline",
             "backdropFilter": " var(--backdrop-filter-panel)",
-            "backgroundColor": "var(--color-panel-translucent)",
             "marginTop": "calc(-1 * var(--space-1))",
             "maxHeight": "6rem",
             "maxWidth": "calc(var(--app-max-width) - var(--space-6) * 2)",

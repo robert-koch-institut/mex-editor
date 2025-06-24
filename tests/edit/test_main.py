@@ -330,7 +330,6 @@ def test_edit_page_resolves_additive_identifier(
     identifier_input.fill(organizational_unit.stableTargetId)
     edit_button = page.get_by_test_id("button-involvedUnit-00000000000000-0")
     edit_button.click()
-    page.screenshot(path="wip.png")
 
     # verify identifier is correctly rendered
     identifier_card = page.get_by_test_id("additive-rule-involvedUnit-0")

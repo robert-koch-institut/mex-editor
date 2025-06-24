@@ -7,6 +7,7 @@ from mex.common.models import (
     AdditiveActivity,
     AdditiveContactPoint,
     AdditivePerson,
+    AdditiveResource,
     AnyAdditiveModel,
     AnyExtractedModel,
     AnyMergedModel,
@@ -28,6 +29,7 @@ from mex.common.types import (
     AccessRestriction,
     ConsentStatus,
     ConsentType,
+    Frequency,
     Identifier,
     Link,
     LinkLanguage,
@@ -59,6 +61,7 @@ from mex.editor.rules.transform import (
     _transform_model_values_to_editor_values,
     get_required_field_names,
     transform_fields_to_rule_set,
+    transform_fields_to_title,
     transform_models_to_fields,
     transform_validation_error_to_messages,
 )
@@ -678,9 +681,9 @@ def test_transform_fields_to_preventive(
         ),
         (
             EditorValue(),
-            "hasConsentType",
-            "AdditiveConsent",
-            ConsentType["IMPLIED_CONSENT"],
+            "accrualPeriodicity",
+            "AdditiveResource",
+            Frequency["TRIENNIAL"],
         ),
         (
             EditorValue(text="2004", badge="year"),
@@ -882,6 +885,16 @@ def test_transform_validation_error_to_messages() -> None:
     ("model", "expected"),
     [
         (
+            AdditiveResource(
+                accessRestriction=AccessRestriction["OPEN"],
+                contact=[Identifier.generate(seed=999)],
+                unitInCharge=[Identifier.generate(seed=999)],
+                theme=[Theme["PUBLIC_HEALTH"]],
+                title=[Text(value="Dummy resource")],
+            ),
+            [],
+        ),
+        (
             ExtractedResource(
                 identifierInPrimarySource="r1",
                 hadPrimarySource=Identifier.generate(seed=42),
@@ -904,9 +917,52 @@ def test_transform_validation_error_to_messages() -> None:
     ],
 )
 def test_get_required_field_names(
-    model: AnyExtractedModel,
+    model: AnyExtractedModel | AnyAdditiveModel,
     expected: list[str],
 ) -> None:
     required = get_required_field_names(model)
 
     assert expected == required
+
+
+def test_transform_fields_to_title() -> None:
+    contact_point_fields = [
+        EditorField(
+            is_required=True,
+            name="email",
+            primary_sources=[
+                EditorPrimarySource(
+                    name=EditorValue(text="Primary Source"),
+                    identifier=MergedPrimarySourceIdentifier("PrimarySource001"),
+                    input_config=InputConfig(),
+                    enabled=True,
+                    editor_values=[
+                        EditorValue(text="this@that.other"),
+                    ],
+                )
+            ],
+        )
+    ]
+    assert transform_fields_to_title("ContactPoint", contact_point_fields) == [
+        EditorValue(
+            text="this@that.other",
+            identifier=None,
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
+            being_edited=False,
+        )
+    ]
+
+    assert transform_fields_to_title("Person", []) == [
+        EditorValue(
+            text="Person",
+            identifier=None,
+            badge=None,
+            href=None,
+            external=False,
+            enabled=True,
+            being_edited=False,
+        )
+    ]

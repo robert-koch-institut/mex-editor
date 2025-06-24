@@ -10,28 +10,24 @@ from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import AnyExtractedModel, PaginatedItemsContainer
-from mex.editor.aux_search.models import AuxNavItem, AuxResult
-from mex.editor.aux_search.transform import transform_models_to_results
 from mex.editor.exceptions import escalate_error
+from mex.editor.ingest.models import IngestResult
+from mex.editor.ingest.transform import transform_models_to_results
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 
 
-class AuxState(State):
-    """State management for the aux extractor search page."""
+class IngestState(State):
+    """State management for the ingest page."""
 
-    results_transformed: list[AuxResult] = []
+    results_transformed: list[IngestResult] = []
     results_extracted: list[AnyExtractedModel] = []
     total: Annotated[int, Field(ge=0)] = 0
     query_string: Annotated[str, Field(max_length=1000)] = ""
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 50
     current_aux_provider: str = "ldap"
-    aux_provider_items: list[AuxNavItem] = [
-        AuxNavItem(title="LDAP", value="ldap"),
-        AuxNavItem(title="Orcid", value="orcid"),
-        AuxNavItem(title="Wikidata", value="wikidata"),
-    ]
+    aux_providers: list[str] = ["ldap", "orcid", "wikidata"]
     is_loading: bool = False
 
     @rx.var(cache=False)
@@ -63,8 +59,8 @@ class AuxState(State):
         ].show_properties
 
     @rx.event
-    def change_extractor(self, value: str) -> None:
-        """Change the current extractor."""
+    def set_current_aux_provider(self, value: str) -> None:
+        """Change the current aux provider."""
         self.current_aux_provider = value
 
     @rx.event
@@ -93,8 +89,8 @@ class AuxState(State):
         self.set_page(self.current_page + 1)
 
     @rx.event
-    def import_result(self, index: int) -> Generator[EventSpec | None, None, None]:
-        """Import the selected result to MEx backend."""
+    def ingest_result(self, index: int) -> Generator[EventSpec | None, None, None]:
+        """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
         try:
             model: AnyExtractedModel = serialize_mutable_proxy(
@@ -103,13 +99,13 @@ class AuxState(State):
             connector.ingest([model])
         except HTTPError as exc:
             yield from escalate_error(
-                "backend", f"error importing {model.stemType}", exc.response.text
+                "backend", f"error ingesting {model.stemType}", exc.response.text
             )
         else:
-            self.results_transformed[index].show_import_button = False
+            self.results_transformed[index].show_ingest_button = False
             yield rx.toast.success(
-                title="Imported",
-                description=f"{model.stemType} was imported successfully.",
+                title="Ingested",
+                description=f"{model.stemType} was ingested successfully.",
                 class_name="editor-toast",
                 close_button=True,
                 dismissible=True,

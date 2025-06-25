@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add ldap authentication
-
 ### Changes
-
-- consent preview uses direct field isIndicatedAtTime as title
 
 ### Deprecated
 
@@ -22,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.19.0] - 2025-06-25
+
+### Added
+
+- add ldap authentication
+
+### Changes
+
+- consent preview uses direct field isIndicatedAtTime as title
 
 ## [0.18.1] - 2025-06-19
 

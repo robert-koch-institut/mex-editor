@@ -467,3 +467,27 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     page.screenshot(path=f"{test_id}-reload_2.png")
     additive_rule_rendered = page.get_by_test_id(rendered_input_id)
     expect(additive_rule_rendered).to_have_count(0)
+
+
+@pytest.mark.integration
+def test_required_fields_red_asterisk(
+    edit_page: Page,
+    required_fields_extracted_activity: list[str],
+) -> None:
+    for test_id in required_fields_extracted_activity:
+        field = edit_page.get_by_test_id(test_id)
+        expect(field).to_be_visible()
+        asterisk = field.get_by_text("*", exact=True)
+        expect(asterisk).to_be_visible()
+        expect(asterisk).to_have_css("color", "rgb(255, 0, 0)")
+
+
+@pytest.mark.integration
+def test_optional_fields_no_red_asterisk(
+    edit_page: Page,
+    optional_field_extracted_activity: list[str],
+) -> None:
+    for test_id in optional_field_extracted_activity:
+        field = edit_page.get_by_test_id(test_id)
+        expect(field).to_be_visible()
+        expect(field.locator("text=*")).to_have_count(0)

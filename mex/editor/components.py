@@ -126,6 +126,7 @@ def login_button(state: type[rx.State]) -> rx.Component:
             "marginTop": "var(--space-4)",
         },
         custom_attrs={"data-testid": "login-button"},
+        type="submit",
     )
 
 
@@ -141,11 +142,14 @@ def login_form(state: type[rx.State]) -> rx.Component:
                     style={"width": "100%"},
                 ),
                 rx.divider(size="4"),
-                rx.vstack(
-                    login_user(state),
-                    login_password(state),
-                    login_button(state),
-                    style={"width": "100%"},
+                rx.form(
+                    rx.vstack(
+                        login_user(state),
+                        login_password(state),
+                        login_button(state),
+                        style={"width": "100%"},
+                    ),
+                    on_submit=state.login,
                 ),
                 spacing="4",
             ),

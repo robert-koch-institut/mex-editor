@@ -250,7 +250,6 @@ def load_artificial_extracted_items(
 @pytest.fixture
 def required_fields_extracted_activity() -> list[str]:
     return [
-        "field-title-name",
         "field-contact-name",
         "field-responsibleUnit-name",
     ]

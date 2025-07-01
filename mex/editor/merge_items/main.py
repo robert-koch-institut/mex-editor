@@ -51,7 +51,7 @@ def search_result(
         ),
         style={"width": "100%"},
         class_name="search-result-card",
-        custom_attrs={"data-testid": f"result-merged-{index}"},
+        custom_attrs={"data-testid": f"result-{category}-{index}"},
     )
 
 

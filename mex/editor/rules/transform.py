@@ -229,11 +229,7 @@ def transform_models_to_fields(
         }
     )
 
-    required_fields = (
-        get_required_field_names(extracted_items[0])
-        if extracted_items
-        else additive.entityType
-    )
+    required_fields = get_required_mergeable_field_names(additive)
     fields_by_name = {
         field_name: EditorField(
             name=field_name,

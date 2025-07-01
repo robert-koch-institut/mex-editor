@@ -92,7 +92,7 @@ def merged_results_summary() -> rx.Component:
     """Render a summary of the merged results found."""
     return rx.center(
         rx.text(
-            f"Showing {MergeState.current_merged_results_length} "
+            f"Showing {MergeState.get_results_length_for_category('merged')} "
             f"of {MergeState.total_merged} items",
             style={
                 "color": "var(--gray-12)",

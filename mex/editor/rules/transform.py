@@ -259,17 +259,18 @@ def transform_models_to_fields(
     return list(fields_by_name.values())
 
 
-def get_required_field_names(model: AnyExtractedModel | AnyAdditiveModel) -> list[str]:
-    """Returns list of required fields.
+def get_required_mergeable_field_names(model: AnyExtractedModel | AnyAdditiveModel) -> list[str]:
+    """Returns list of required mergeable fields.
 
     Args:
             model: Model to inspect
 
     Returns:
-            A list of required fields from given model which are required
+            A list of required mergeable fields from given model
     """
-    required_fields = set(REQUIRED_FIELDS_BY_CLASS_NAME.get(model.entityType, []))
-    mergeable_fields = set(MERGEABLE_FIELDS_BY_CLASS_NAME.get(model.entityType, []))
+    merged_type = ensure_prefix(model.stemType, "Merged")
+    required_fields = REQUIRED_FIELDS_BY_CLASS_NAME[merged_type]
+    mergeable_fields = MERGEABLE_FIELDS_BY_CLASS_NAME[merged_type]
     return sorted(required_fields & mergeable_fields)
 
 

@@ -7,25 +7,25 @@ from mex.editor.state import State, User
 
 
 def test_state_logout() -> None:
-    state = State(user=User(name="Test", authorization="Auth", write_access=True))
-    assert state.user
+    state = State(user_mex=User(name="Test", authorization="Auth", write_access=True))
+    assert state.user_mex
 
     assert "/" in str(state.logout())
-    assert state.user is None
+    assert state.user_mex is None
 
 
 def test_state_check_login_pass() -> None:
-    state = State(user=User(name="Test", authorization="Auth", write_access=True))
-    assert state.user
+    state = State(user_mex=User(name="Test", authorization="Auth", write_access=True))
+    assert state.user_mex
 
-    assert state.check_login() is None
+    assert state.check_mex_login() is None
 
 
 def test_state_check_login_fail() -> None:
     state = State()
-    assert state.user is None
+    assert state.user_mex is None
 
-    assert "/login" in str(state.check_login())
+    assert "/login" in str(state.check_mex_login())
 
 
 @pytest.mark.parametrize(

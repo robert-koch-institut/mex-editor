@@ -16,10 +16,10 @@ from mex.editor.edit.main import index as edit_index
 from mex.editor.edit.state import EditState
 from mex.editor.ingest.main import index as ingest_index
 from mex.editor.ingest.state import IngestState
-from mex.editor.merge_items.main import index as merge_items_index
-from mex.editor.merge_items.state import MergeState
 from mex.editor.login_ldap.main import index as login_ldap_index
 from mex.editor.login_mex.main import index as login_mex_index
+from mex.editor.merge_items.main import index as merge_index
+from mex.editor.merge_items.state import MergeState
 from mex.editor.rules.state import RuleState
 from mex.editor.search.main import index as search_index
 from mex.editor.search.state import SearchState
@@ -45,11 +45,11 @@ app.add_page(
     ],
 )
 app.add_page(
-    merge_items_index,
-    route="/merge-items",
-    title="MEx Editor | Merge Items",
+    merge_index,
+    route="/merge",
+    title="MEx Editor | Merge",
     on_load=[
-        State.check_login,
+        State.check_mex_login,
         State.load_nav,
         MergeState.refresh,
     ],

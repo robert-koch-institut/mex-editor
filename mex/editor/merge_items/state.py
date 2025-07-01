@@ -1,5 +1,5 @@
 from collections.abc import Generator
-from typing import Annotated
+from typing import Annotated, Literal
 
 import reflex as rx
 from pydantic import Field
@@ -32,33 +32,31 @@ class MergeState(State):
     }
     limit: Annotated[int, Field(ge=1, le=100)] = 50
     is_loading: bool = False
-    selected_merged: int | None = None
-    selected_extracted: int | None = None
+    selected_merged_index: int | None = None
+    selected_extracted_index: int | None = None
 
     @rx.event
-    def select_merged_item(self, index: int) -> None:
-        """Select or deselect a merged item based on the index."""
-        if self.selected_merged == index:
-            self.selected_merged = None
-            return
-        self.selected_merged = index
+    def select_item(self, category: Literal["merged", "extracted"], index: int) -> None:
+        """Select or deselect a merged or extracted item based on the index."""
+        if category == "merged":
+            if self.selected_merged_index == index:
+                self.selected_merged_index = None
+                return
+            self.selected_merged_index = index
+        elif category == "extracted":
+            if self.selected_extracted_index == index:
+                self.selected_extracted_index = None
+                return
+            self.selected_extracted_index = index
 
-    @rx.event
-    def select_extracted_item(self, index: int) -> None:
-        """Select or deselect an extracted item based on the index."""
-        if self.selected_extracted == index:
-            self.selected_extracted = None
-            return
-        self.selected_extracted = index
-
-    @rx.var(cache=False)
-    def current_merged_results_length(self) -> int:
-        """Return the number of current merged search results."""
+    @rx.var
+    def results_merged_count(self) -> int:
+        """Return the count of merged results."""
         return len(self.results_merged)
 
-    @rx.var(cache=False)
-    def current_extracted_results_length(self) -> int:
-        """Return the number of current extracted search results."""
+    @rx.var
+    def results_extracted_count(self) -> int:
+        """Return the count of extracted results."""
         return len(self.results_extracted)
 
     @rx.event
@@ -95,7 +93,7 @@ class MergeState(State):
         self.query_string_merged = ""
         self.entity_types_merged = dict.fromkeys(self.entity_types_merged, False)
         self.results_merged = []
-        self.selected_merged = None
+        self.selected_merged_index = None
         self.total_merged = 0
 
     @rx.event
@@ -104,14 +102,14 @@ class MergeState(State):
         self.query_string_extracted = ""
         self.entity_types_extracted = dict.fromkeys(self.entity_types_extracted, False)
         self.results_extracted = []
-        self.selected_extracted = None
+        self.selected_extracted_index = None
         self.total_extracted = 0
 
     @rx.event
     def refresh_merged(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results for merged items."""
         connector = BackendApiConnector.get()
-        self.selected_merged = None
+        self.selected_merged_index = None
         entity_type = [
             ensure_prefix(k, "Merged") for k, v in self.entity_types_merged.items() if v
         ]
@@ -142,7 +140,7 @@ class MergeState(State):
     def refresh_extracted(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results for extracted items."""
         connector = BackendApiConnector.get()
-        self.selected_extracted = None
+        self.selected_extracted_index = None
         entity_type = [
             ensure_prefix(k, "Extracted")
             for k, v in self.entity_types_extracted.items()

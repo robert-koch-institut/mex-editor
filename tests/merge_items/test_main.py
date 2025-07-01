@@ -8,7 +8,7 @@ def merge_page(
     writer_user_page: Page,
 ) -> Page:
     page = writer_user_page
-    page.goto(f"{frontend_url}/merge-items")
+    page.goto(f"{frontend_url}/merge")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
     page.screenshot(path="tests_merge_items_test_main-test_index-on-load.png")

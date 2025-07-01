@@ -355,8 +355,8 @@ def index() -> rx.Component:
     return page(
         rx.vstack(
             rx.hstack(
-                merged_search(),
-                extracted_search(),
+                search_panel(category="merged"),
+                search_panel(category="extracted"),
                 style={"width": "100%", "align": "center", "justify": "center"},
             ),
             rx.box(

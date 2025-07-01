@@ -8,13 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Test for MEx-Editor Rules transform
-- fields.py as look-up for required fields for all models
+- highlight required fields in edit view with a red asterisk
 
 ### Changes
-- required field names for edit mode from 'REQUIRED_FIELDS_BY_CLASS_NAME' in fields.py
-- test_trasnform.py refactored because EditorField has now attribute 'is_required'
-- consent preview uses direct field isIndicatedAtTime as title
 
 ### Deprecated
 

@@ -59,7 +59,7 @@ from mex.editor.rules.transform import (
     _transform_model_to_editor_primary_sources,
     _transform_model_to_input_config,
     _transform_model_values_to_editor_values,
-    get_required_field_names,
+    get_required_mergeable_field_names,
     transform_fields_to_rule_set,
     transform_fields_to_title,
     transform_models_to_fields,
@@ -892,7 +892,7 @@ def test_transform_validation_error_to_messages() -> None:
                 theme=[Theme["PUBLIC_HEALTH"]],
                 title=[Text(value="Dummy resource")],
             ),
-            [],
+            ["accessRestriction", "contact", "theme", "title", "unitInCharge"],
         ),
         (
             ExtractedResource(
@@ -920,8 +920,7 @@ def test_get_required_field_names(
     model: AnyExtractedModel | AnyAdditiveModel,
     expected: list[str],
 ) -> None:
-    required = get_required_field_names(model)
-
+    required = get_required_mergeable_field_names(model)
     assert expected == required
 
 

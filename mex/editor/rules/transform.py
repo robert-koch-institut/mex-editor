@@ -267,8 +267,8 @@ def get_required_mergeable_field_names(
             A list of required mergeable fields from given model
     """
     merged_type = ensure_prefix(model.stemType, "Merged")
-    required_fields = set(REQUIRED_FIELDS_BY_CLASS_NAME.get(merged_type, []))
-    mergeable_fields = set(MERGEABLE_FIELDS_BY_CLASS_NAME.get(merged_type, []))
+    required_fields = set(REQUIRED_FIELDS_BY_CLASS_NAME[merged_type])
+    mergeable_fields = set(MERGEABLE_FIELDS_BY_CLASS_NAME[merged_type])
     return sorted(required_fields & mergeable_fields)
 
 

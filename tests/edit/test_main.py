@@ -481,27 +481,6 @@ def test_required_fields_red_asterisk(
         "responsibleUnit",
         "title",
     ]
-    required_mergeable_fields = get_required_mergeable_field_names(extracted_activity)
-
-    missing_fields = [
-        field
-        for field in required_mergeable_fields
-        if field not in expected_required_fields
-    ]
-    assert not missing_fields
-
-    for field_name in expected_required_fields:
-        field = edit_page.get_by_test_id(f"field-{field_name}-name")
-        expect(field).to_be_visible()
-        asterisk = field.get_by_text("*", exact=True)
-        expect(asterisk).to_be_visible()
-        expect(asterisk).to_have_css("color", "rgb(255, 0, 0)")
-
-
-@pytest.mark.integration
-def test_optional_fields_no_red_asterisk(
-    edit_page: Page, extracted_activity: ExtractedActivity
-) -> None:
     expected_optional_fields = [
         "abstract",
         "activityType",
@@ -521,20 +500,23 @@ def test_optional_fields_no_red_asterisk(
         "theme",
         "website",
     ]
+
+    required_mergeable_fields = get_required_mergeable_field_names(extracted_activity)
+    assert set(required_mergeable_fields) == set(expected_required_fields)
+
     merged_type = ensure_prefix(extracted_activity.stemType, "Merged")
     required_fields = set(REQUIRED_FIELDS_BY_CLASS_NAME[merged_type])
     mergeable_fields = set(MERGEABLE_FIELDS_BY_CLASS_NAME[merged_type])
     optional_mergeable_fields = sorted(mergeable_fields - required_fields)
+    assert set(optional_mergeable_fields) == set(expected_optional_fields)
 
-    missing_fields = [
-        field
-        for field in optional_mergeable_fields
-        if field not in expected_optional_fields
-    ]
-    assert not missing_fields
-
-    for field_name in expected_optional_fields:
+    for field_name in expected_required_fields + expected_optional_fields:
         field = edit_page.get_by_test_id(f"field-{field_name}-name")
         expect(field).to_be_visible()
+
         asterisk = field.get_by_text("*", exact=True)
-        expect(asterisk).to_have_count(0)
+        if field_name in expected_required_fields:
+            expect(asterisk).to_be_visible()
+            expect(asterisk).to_have_css("color", "rgb(255, 0, 0)")
+        else:
+            expect(asterisk).to_have_count(0)

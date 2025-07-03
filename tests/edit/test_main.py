@@ -472,8 +472,12 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
 @pytest.mark.integration
 def test_required_fields_red_asterisk(
     edit_page: Page,
-    required_fields_extracted_activity: list[str],
 ) -> None:
+    required_fields_extracted_activity = [
+        "field-contact-name",
+        "field-responsibleUnit-name",
+        "field-title-name",
+    ]
     for test_id in required_fields_extracted_activity:
         field = edit_page.get_by_test_id(test_id)
         expect(field).to_be_visible()
@@ -485,8 +489,26 @@ def test_required_fields_red_asterisk(
 @pytest.mark.integration
 def test_optional_fields_no_red_asterisk(
     edit_page: Page,
-    optional_field_extracted_activity: list[str],
 ) -> None:
+    optional_field_extracted_activity = [
+        "field-abstract-name",
+        "field-activityType-name",
+        "field-alternativeTitle-name",
+        "field-documentation-name",
+        "field-end-name",
+        "field-externalAssociate-name",
+        "field-funderOrCommissioner-name",
+        "field-fundingProgram-name",
+        "field-involvedPerson-name",
+        "field-involvedUnit-name",
+        "field-isPartOfActivity-name",
+        "field-publication-name",
+        "field-shortName-name",
+        "field-start-name",
+        "field-succeeds-name",
+        "field-theme-name",
+        "field-website-name",
+    ]
     for test_id in optional_field_extracted_activity:
         field = edit_page.get_by_test_id(test_id)
         expect(field).to_be_visible()

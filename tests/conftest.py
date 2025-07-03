@@ -245,34 +245,3 @@ def load_artificial_extracted_items(
     connector = BackendApiConnector.get()
     connector.ingest(artificial_extracted_items)
     return artificial_extracted_items
-
-
-@pytest.fixture
-def required_fields_extracted_activity() -> list[str]:
-    return [
-        "field-contact-name",
-        "field-responsibleUnit-name",
-    ]
-
-
-@pytest.fixture
-def optional_field_extracted_activity() -> list[str]:
-    return [
-        "field-abstract-name",
-        "field-activityType-name",
-        "field-alternativeTitle-name",
-        "field-documentation-name",
-        "field-end-name",
-        "field-externalAssociate-name",
-        "field-funderOrCommissioner-name",
-        "field-fundingProgram-name",
-        "field-involvedPerson-name",
-        "field-involvedUnit-name",
-        "field-isPartOfActivity-name",
-        "field-publication-name",
-        "field-shortName-name",
-        "field-start-name",
-        "field-succeeds-name",
-        "field-theme-name",
-        "field-website-name",
-    ]

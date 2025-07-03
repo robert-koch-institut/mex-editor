@@ -13,6 +13,7 @@ from mex.common.models import (
 from mex.common.transform import ensure_prefix
 from mex.common.types import Identifier
 from mex.editor.fields import REQUIRED_FIELDS_BY_CLASS_NAME
+from mex.editor.rules.transform import get_required_mergeable_field_names
 
 
 @pytest.fixture
@@ -473,15 +474,24 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
 
 @pytest.mark.integration
 def test_required_fields_red_asterisk(
-    edit_page: Page,
+    edit_page: Page, extracted_activity: ExtractedActivity
 ) -> None:
-    required_fields_extracted_activity = [
-        "field-contact-name",
-        "field-responsibleUnit-name",
-        "field-title-name",
+    expected_required_fields = [
+        "contact",
+        "responsibleUnit",
+        "title",
     ]
-    for test_id in required_fields_extracted_activity:
-        field = edit_page.get_by_test_id(test_id)
+    required_mergeable_fields = get_required_mergeable_field_names(extracted_activity)
+
+    missing_fields = [
+        field
+        for field in required_mergeable_fields
+        if field not in expected_required_fields
+    ]
+    assert not missing_fields
+
+    for field_name in expected_required_fields:
+        field = edit_page.get_by_test_id(f"field-{field_name}-name")
         expect(field).to_be_visible()
         asterisk = field.get_by_text("*", exact=True)
         expect(asterisk).to_be_visible()
@@ -492,7 +502,7 @@ def test_required_fields_red_asterisk(
 def test_optional_fields_no_red_asterisk(
     edit_page: Page, extracted_activity: ExtractedActivity
 ) -> None:
-    expected_fields = [
+    expected_optional_fields = [
         "abstract",
         "activityType",
         "alternativeTitle",
@@ -517,11 +527,13 @@ def test_optional_fields_no_red_asterisk(
     optional_mergeable_fields = sorted(mergeable_fields - required_fields)
 
     missing_fields = [
-        field for field in optional_mergeable_fields if field not in expected_fields
+        field
+        for field in optional_mergeable_fields
+        if field not in expected_optional_fields
     ]
     assert not missing_fields
 
-    for field_name in expected_fields:
+    for field_name in expected_optional_fields:
         field = edit_page.get_by_test_id(f"field-{field_name}-name")
         expect(field).to_be_visible()
         asterisk = field.get_by_text("*", exact=True)

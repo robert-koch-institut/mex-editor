@@ -10,7 +10,9 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
+from mex.common.transform import ensure_prefix
 from mex.common.types import Identifier
+from mex.editor.fields import REQUIRED_FIELDS_BY_CLASS_NAME
 
 
 @pytest.fixture
@@ -488,29 +490,39 @@ def test_required_fields_red_asterisk(
 
 @pytest.mark.integration
 def test_optional_fields_no_red_asterisk(
-    edit_page: Page,
+    edit_page: Page, extracted_activity: ExtractedActivity
 ) -> None:
-    optional_field_extracted_activity = [
-        "field-abstract-name",
-        "field-activityType-name",
-        "field-alternativeTitle-name",
-        "field-documentation-name",
-        "field-end-name",
-        "field-externalAssociate-name",
-        "field-funderOrCommissioner-name",
-        "field-fundingProgram-name",
-        "field-involvedPerson-name",
-        "field-involvedUnit-name",
-        "field-isPartOfActivity-name",
-        "field-publication-name",
-        "field-shortName-name",
-        "field-start-name",
-        "field-succeeds-name",
-        "field-theme-name",
-        "field-website-name",
+    expected_fields = [
+        "abstract",
+        "activityType",
+        "alternativeTitle",
+        "documentation",
+        "end",
+        "externalAssociate",
+        "funderOrCommissioner",
+        "fundingProgram",
+        "involvedPerson",
+        "involvedUnit",
+        "isPartOfActivity",
+        "publication",
+        "shortName",
+        "start",
+        "succeeds",
+        "theme",
+        "website",
     ]
-    for test_id in optional_field_extracted_activity:
-        field = edit_page.get_by_test_id(test_id)
+    merged_type = ensure_prefix(extracted_activity.stemType, "Merged")
+    required_fields = set(REQUIRED_FIELDS_BY_CLASS_NAME[merged_type])
+    mergeable_fields = set(MERGEABLE_FIELDS_BY_CLASS_NAME[merged_type])
+    optional_mergeable_fields = sorted(mergeable_fields - required_fields)
+
+    missing_fields = [
+        field for field in optional_mergeable_fields if field not in expected_fields
+    ]
+    assert not missing_fields
+
+    for field_name in expected_fields:
+        field = edit_page.get_by_test_id(f"field-{field_name}-name")
         expect(field).to_be_visible()
         asterisk = field.get_by_text("*", exact=True)
         expect(asterisk).to_have_count(0)

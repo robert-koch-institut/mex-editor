@@ -20,8 +20,6 @@ class MergeState(State):
 
     results_extracted: list[SearchResult] = []
     results_merged: list[SearchResult] = []
-    total_merged: Annotated[int, Field(ge=0)] = 0
-    total_extracted: Annotated[int, Field(ge=0)] = 0
     query_string_merged: Annotated[str, Field(max_length=1000)] = ""
     query_string_extracted: Annotated[str, Field(max_length=1000)] = ""
     entity_types_merged: dict[str, bool] = {
@@ -32,32 +30,26 @@ class MergeState(State):
     }
     limit: Annotated[int, Field(ge=1, le=100)] = 50
     is_loading: bool = False
-    selected_merged_index: int | None = None
-    selected_extracted_index: int | None = None
+    results_count: dict[str, int] = {
+        "merged": 0,
+        "extracted": 0,
+    }
+    total_count: dict[str, int] = {
+        "merged": 0,
+        "extracted": 0,
+    }
+    selected_items: dict[str, int | None] = {
+        "merged": None,
+        "extracted": None,
+    }
 
     @rx.event
     def select_item(self, category: Literal["merged", "extracted"], index: int) -> None:
         """Select or deselect a merged or extracted item based on the index."""
-        if category == "merged":
-            if self.selected_merged_index == index:
-                self.selected_merged_index = None
-                return
-            self.selected_merged_index = index
-        elif category == "extracted":
-            if self.selected_extracted_index == index:
-                self.selected_extracted_index = None
-                return
-            self.selected_extracted_index = index
-
-    @rx.var
-    def results_merged_count(self) -> int:
-        """Return the count of merged results."""
-        return len(self.results_merged)
-
-    @rx.var
-    def results_extracted_count(self) -> int:
-        """Return the count of extracted results."""
-        return len(self.results_extracted)
+        if self.selected_items[category] == index:
+            self.selected_items[category] = None
+            return
+        self.selected_items[category] = index
 
     @rx.event
     def handle_submit_extracted(self, form_data: str) -> None:
@@ -93,8 +85,9 @@ class MergeState(State):
         self.query_string_merged = ""
         self.entity_types_merged = dict.fromkeys(self.entity_types_merged, False)
         self.results_merged = []
-        self.selected_merged_index = None
-        self.total_merged = 0
+        self.selected_items["merged"] = None
+        self.results_count["merged"] = 0
+        self.total_count["merged"] = 0
 
     @rx.event
     def clear_input_extracted(self) -> None:
@@ -102,14 +95,15 @@ class MergeState(State):
         self.query_string_extracted = ""
         self.entity_types_extracted = dict.fromkeys(self.entity_types_extracted, False)
         self.results_extracted = []
-        self.selected_extracted_index = None
-        self.total_extracted = 0
+        self.selected_items["extracted"] = None
+        self.results_count["extracted"] = 0
+        self.total_count["extracted"] = 0
 
     @rx.event
     def refresh_merged(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results for merged items."""
         connector = BackendApiConnector.get()
-        self.selected_merged_index = None
+        self.selected_items["merged"] = None
         entity_type = [
             ensure_prefix(k, "Merged") for k, v in self.entity_types_merged.items() if v
         ]
@@ -134,13 +128,14 @@ class MergeState(State):
         else:
             self.is_loading = False
             self.results_merged = transform_models_to_results(response.items)
-            self.total_merged = response.total
+            self.results_count["merged"] = len(self.results_merged)
+            self.total_count["merged"] = response.total
 
     @rx.event
     def refresh_extracted(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results for extracted items."""
         connector = BackendApiConnector.get()
-        self.selected_extracted_index = None
+        self.selected_items["extracted"] = None
         entity_type = [
             ensure_prefix(k, "Extracted")
             for k, v in self.entity_types_extracted.items()
@@ -168,7 +163,8 @@ class MergeState(State):
         else:
             self.is_loading = False
             self.results_extracted = transform_models_to_results(response.items)
-            self.total_extracted = response.total
+            self.results_count["extracted"] = len(self.results_extracted)
+            self.total_count["extracted"] = response.total
 
     @rx.event
     def submit_merge_items(self) -> None:

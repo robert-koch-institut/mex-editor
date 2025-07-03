@@ -17,9 +17,7 @@ def search_result(
     return rx.card(
         rx.hstack(
             rx.checkbox(
-                checked=MergeState.selected_merged_index == index
-                if category == "merged"
-                else MergeState.selected_extracted_index == index,
+                checked=MergeState.selected_items[category] == index,
                 on_change=MergeState.select_item(category, index),
             ),
             rx.box(
@@ -55,12 +53,12 @@ def search_result(
     )
 
 
-def merged_results_summary() -> rx.Component:
-    """Render a summary of the merged results found."""
+def results_summary(category: Literal["merged", "extracted"]) -> rx.Component:
+    """Render a summary of the results found."""
     return rx.center(
         rx.text(
-            f"Showing {MergeState.results_merged_count} "
-            f"of {MergeState.total_merged} items",
+            f"Showing {MergeState.results_count[category]} "
+            f"of {MergeState.total_count[category]} items",
             style={
                 "color": "var(--gray-12)",
                 "fontWeight": "var(--font-weight-bold)",
@@ -69,25 +67,7 @@ def merged_results_summary() -> rx.Component:
             },
         ),
         style={"width": "100%"},
-        custom_attrs={"data-testid": "merged-results-summary"},
-    )
-
-
-def extracted_results_summary() -> rx.Component:
-    """Render a summary of the extracted results found."""
-    return rx.center(
-        rx.text(
-            f"Showing {MergeState.results_extracted_count} "
-            f"of {MergeState.total_extracted} items",
-            style={
-                "color": "var(--gray-12)",
-                "fontWeight": "var(--font-weight-bold)",
-                "margin": "var(--space-4)",
-                "userSelect": "none",
-            },
-        ),
-        style={"width": "100%"},
-        custom_attrs={"data-testid": "extracted-results-summary"},
+        custom_attrs={"data-testid": f"{category}-results-summary"},
     )
 
 
@@ -268,11 +248,7 @@ def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
             custom_attrs={"data-testid": f"create-heading-{category}"},
         ),
         search_input(category),
-        rx.cond(
-            category == "merged",
-            merged_results_summary(),
-            extracted_results_summary(),
-        ),
+        results_summary(category),
         rx.cond(
             category == "merged",
             rx.foreach(

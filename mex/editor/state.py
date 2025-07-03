@@ -32,6 +32,11 @@ class State(rx.State):
             raw_path=f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}/",
         ),
         NavItem(
+            title="Merge",
+            path="/merge",
+            raw_path="/merge/",
+        ),
+        NavItem(
             title="Ingest",
             path="/ingest",
             raw_path="/ingest/",

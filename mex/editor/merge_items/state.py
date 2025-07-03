@@ -20,8 +20,6 @@ class MergeState(State):
 
     results_extracted: list[SearchResult] = []
     results_merged: list[SearchResult] = []
-    query_string_merged: Annotated[str, Field(max_length=1000)] = ""
-    query_string_extracted: Annotated[str, Field(max_length=1000)] = ""
     entity_types_merged: dict[str, bool] = {
         k.stemType: False for k in MERGED_MODEL_CLASSES
     }
@@ -30,6 +28,10 @@ class MergeState(State):
     }
     limit: Annotated[int, Field(ge=1, le=100)] = 50
     is_loading: bool = False
+    query_strings: dict[Literal["merged", "extracted"], str] = {
+        "merged": "",
+        "extracted": "",
+    }
     results_count: dict[str, int] = {
         "merged": 0,
         "extracted": 0,
@@ -52,14 +54,11 @@ class MergeState(State):
         self.selected_items[category] = index
 
     @rx.event
-    def handle_submit_extracted(self, form_data: str) -> None:
-        """Handle the extracted form submit."""
-        self.query_string_extracted = form_data
-
-    @rx.event
-    def handle_submit_merged(self, form_data: str) -> None:
-        """Handle the merged form submit."""
-        self.query_string_merged = form_data
+    def handle_submit(
+        self, category: Literal["merged", "extracted"], form_data: str
+    ) -> None:
+        """Handle the extracted or merged form submit."""
+        self.query_strings[category] = form_data
 
     @rx.event
     def set_entity_type_merged(
@@ -80,30 +79,36 @@ class MergeState(State):
         self.entity_types_extracted[index] = value
 
     @rx.event
-    def clear_input_merged(self) -> None:
-        """Clear the merged search input and reset the results."""
-        self.query_string_merged = ""
-        self.entity_types_merged = dict.fromkeys(self.entity_types_merged, False)
-        self.results_merged = []
-        self.selected_items["merged"] = None
-        self.results_count["merged"] = 0
-        self.total_count["merged"] = 0
+    def clear_input(self, category: Literal["merged", "extracted"]) -> None:
+        """Clear the merged or extracted search input and reset the results."""
+        self.query_strings[category] = ""
+        self.selected_items[category] = None
+        self.results_count[category] = 0
+        self.total_count[category] = 0
+        if category == "merged":
+            self.entity_types_merged = dict.fromkeys(self.entity_types_merged, False)
+            self.results_merged = []
+        else:
+            self.entity_types_extracted = dict.fromkeys(
+                self.entity_types_extracted, False
+            )
+            self.results_extracted = []
 
     @rx.event
-    def clear_input_extracted(self) -> None:
-        """Clear the extracted search input and reset the results."""
-        self.query_string_extracted = ""
-        self.entity_types_extracted = dict.fromkeys(self.entity_types_extracted, False)
-        self.results_extracted = []
-        self.selected_items["extracted"] = None
-        self.results_count["extracted"] = 0
-        self.total_count["extracted"] = 0
+    def refresh_results(
+        self, category: Literal["merged", "extracted"]
+    ) -> Generator[EventSpec | None, None, None]:
+        """Refresh the search results for the specified category."""
+        self.selected_items[category] = None
+        if category == "merged":
+            yield from self._refresh_merged()
+        else:
+            yield from self._refresh_extracted()
 
     @rx.event
-    def refresh_merged(self) -> Generator[EventSpec | None, None, None]:
+    def _refresh_merged(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results for merged items."""
         connector = BackendApiConnector.get()
-        self.selected_items["merged"] = None
         entity_type = [
             ensure_prefix(k, "Merged") for k, v in self.entity_types_merged.items() if v
         ]
@@ -111,7 +116,7 @@ class MergeState(State):
         yield None
         try:
             response = connector.fetch_preview_items(
-                query_string=self.query_string_merged,
+                query_string=self.query_strings["merged"],
                 entity_type=entity_type,
                 had_primary_source=None,
                 skip=0,
@@ -120,7 +125,8 @@ class MergeState(State):
         except HTTPError as exc:
             self.is_loading = False
             self.results_merged = []
-            self.total = 0
+            self.results_count["merged"] = 0
+            self.total_count["merged"] = 0
             yield None
             yield from escalate_error(
                 "backend", "error fetching merged items", exc.response.text
@@ -132,10 +138,9 @@ class MergeState(State):
             self.total_count["merged"] = response.total
 
     @rx.event
-    def refresh_extracted(self) -> Generator[EventSpec | None, None, None]:
+    def _refresh_extracted(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results for extracted items."""
         connector = BackendApiConnector.get()
-        self.selected_items["extracted"] = None
         entity_type = [
             ensure_prefix(k, "Extracted")
             for k, v in self.entity_types_extracted.items()
@@ -146,7 +151,7 @@ class MergeState(State):
         yield None
         try:
             response = connector.fetch_extracted_items(
-                query_string=self.query_string_extracted,
+                query_string=self.query_strings["extracted"],
                 stable_target_id=None,
                 entity_type=entity_type,
                 skip=0,
@@ -155,7 +160,8 @@ class MergeState(State):
         except HTTPError as exc:
             self.is_loading = False
             self.results_extracted = []
-            self.total = 0
+            self.results_count["extracted"] = 0
+            self.total_count["extracted"] = 0
             yield None
             yield from escalate_error(
                 "backend", "error fetching extracted items", exc.response.text

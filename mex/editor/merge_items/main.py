@@ -127,96 +127,49 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
     return rx.vstack(
         rx.form.root(
             rx.card(
-                rx.cond(
-                    category == "merged",
-                    rx.input(
-                        autofocus=True,
-                        default_value=MergeState.query_string_merged,
-                        value=MergeState.query_string_merged,
-                        max_length=100,
-                        name="query_string_merged",
-                        on_change=MergeState.handle_submit_merged,
-                        placeholder="Search here...",
-                        style={
-                            "--text-field-selection-color": "",
-                            "--text-field-focus-color": "transparent",
-                            "--text-field-border-width": "calc(1px * var(--scaling))",
-                            "boxShadow": (
-                                "inset 0 0 0 var(--text-field-border-width) transparent"
-                            ),
-                        },
-                        tab_index=1,
-                        type="text",
-                        custom_attrs={"data-testid": "search-input-merged"},
-                    ),
-                    rx.input(
-                        autofocus=True,
-                        default_value=MergeState.query_string_extracted,
-                        value=MergeState.query_string_extracted,
-                        max_length=100,
-                        name="query_string_extracted",
-                        placeholder="Search here...",
-                        on_change=MergeState.handle_submit_extracted,
-                        style={
-                            "--text-field-selection-color": "",
-                            "--text-field-focus-color": "transparent",
-                            "--text-field-border-width": "calc(1px * var(--scaling))",
-                            "boxShadow": (
-                                "inset 0 0 0 var(--text-field-border-width) transparent"
-                            ),
-                        },
-                        tab_index=1,
-                        type="text",
-                        custom_attrs={"data-testid": "search-input-extracted"},
-                    ),
+                rx.input(
+                    autofocus=True,
+                    default_value=MergeState.query_strings[category],
+                    value=MergeState.query_strings[category],
+                    max_length=100,
+                    name=f"query_string_{category}",
+                    on_change=MergeState.handle_submit(category),
+                    placeholder="Search here...",
+                    style={
+                        "--text-field-selection-color": "",
+                        "--text-field-focus-color": "transparent",
+                        "--text-field-border-width": "calc(1px * var(--scaling))",
+                        "boxShadow": (
+                            "inset 0 0 0 var(--text-field-border-width) transparent"
+                        ),
+                    },
+                    tab_index=1,
+                    type="text",
+                    custom_attrs={"data-testid": f"search-input-{category}"},
                 ),
             ),
             rx.spacer(height="var(--space-2)"),
             entity_type_filter(category),
-            rx.cond(
-                category == "merged",
-                rx.hstack(
-                    rx.button(
-                        "Clear",
-                        variant="surface",
-                        disabled=MergeState.is_loading,
-                        on_click=MergeState.clear_input_merged,
-                        custom_attrs={"data-testid": "clear-button-merged"},
-                    ),
-                    rx.button(
-                        rx.icon("Search"),
-                        type="submit",
-                        variant="surface",
-                        disabled=MergeState.is_loading,
-                        on_click=MergeState.refresh_merged,
-                        custom_attrs={"data-testid": "search-button-merged"},
-                    ),
-                    justify="center",
-                    align="center",
-                    spacing="2",
-                    margin="var(--space-4)",
+            rx.hstack(
+                rx.button(
+                    "Clear",
+                    variant="surface",
+                    disabled=MergeState.is_loading,
+                    on_click=MergeState.clear_input(category),
+                    custom_attrs={"data-testid": f"clear-button-{category}"},
                 ),
-                rx.hstack(
-                    rx.button(
-                        "Clear",
-                        variant="surface",
-                        disabled=MergeState.is_loading,
-                        on_click=MergeState.clear_input_extracted,
-                        custom_attrs={"data-testid": "clear-button-extracted"},
-                    ),
-                    rx.button(
-                        rx.icon("Search"),
-                        type="submit",
-                        variant="surface",
-                        disabled=MergeState.is_loading,
-                        on_click=MergeState.refresh_extracted,
-                        custom_attrs={"data-testid": "search-button-extracted"},
-                    ),
-                    justify="center",
-                    align="center",
-                    spacing="2",
-                    margin="var(--space-4)",
+                rx.button(
+                    rx.icon("Search"),
+                    type="submit",
+                    variant="surface",
+                    disabled=MergeState.is_loading,
+                    on_click=MergeState.refresh_results(category),
+                    custom_attrs={"data-testid": f"search-button-{category}"},
                 ),
+                justify="center",
+                align="center",
+                spacing="2",
+                margin="var(--space-4)",
             ),
         ),
         style={"width": "100%", "margin-bottom": "var(--space-4)", "align": "center"},

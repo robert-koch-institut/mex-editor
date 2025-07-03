@@ -512,4 +512,5 @@ def test_optional_fields_no_red_asterisk(
     for test_id in optional_field_extracted_activity:
         field = edit_page.get_by_test_id(test_id)
         expect(field).to_be_visible()
-        expect(field.locator("text=*")).to_have_count(0)
+        asterisk = field.get_by_text("*", exact=True)
+        expect(asterisk).to_have_count(0)

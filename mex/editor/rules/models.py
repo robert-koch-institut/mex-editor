@@ -40,3 +40,4 @@ class EditorField(rx.Base):
 
     name: str
     primary_sources: list[EditorPrimarySource] = []
+    is_required: bool

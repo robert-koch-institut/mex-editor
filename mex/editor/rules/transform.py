@@ -38,6 +38,7 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
+from mex.editor.fields import REQUIRED_FIELDS_BY_CLASS_NAME
 from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, EditorValue
 from mex.editor.rules.models import (
     EditorField,
@@ -227,10 +228,17 @@ def transform_models_to_fields(
             for f in MERGEABLE_FIELDS_BY_CLASS_NAME[e.entityType]
         }
     )
+
+    required_fields = get_required_mergeable_field_names(additive)
     fields_by_name = {
-        field_name: EditorField(name=field_name, primary_sources=[])
+        field_name: EditorField(
+            name=field_name,
+            primary_sources=[],
+            is_required=field_name in required_fields,
+        )
         for field_name in mergeable_fields
     }
+
     for extracted in extracted_items:
         _transform_model_to_editor_primary_sources(
             fields_by_name,
@@ -245,6 +253,23 @@ def transform_models_to_fields(
         preventive,
     )
     return list(fields_by_name.values())
+
+
+def get_required_mergeable_field_names(
+    model: AnyExtractedModel | AnyAdditiveModel,
+) -> list[str]:
+    """Returns list of required mergeable fields.
+
+    Args:
+            model: Model to inspect
+
+    Returns:
+            A list of required mergeable fields from given model
+    """
+    merged_type = ensure_prefix(model.stemType, "Merged")
+    required_fields = set(REQUIRED_FIELDS_BY_CLASS_NAME[merged_type])
+    mergeable_fields = set(MERGEABLE_FIELDS_BY_CLASS_NAME[merged_type])
+    return sorted(required_fields & mergeable_fields)
 
 
 def _transform_fields_to_additive(

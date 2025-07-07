@@ -1,4 +1,4 @@
-from collections.abc import Generator
+from collections.abc import Generator, Iterable
 from typing import Annotated, Literal
 
 import reflex as rx
@@ -27,7 +27,7 @@ class MergeState(State):
         k.stemType: False for k in MERGED_MODEL_CLASSES
     }
     limit: Annotated[int, Field(ge=1, le=100)] = 50
-    is_loading: bool = False
+    is_loading: bool = True
     query_strings: dict[Literal["merged", "extracted"], str] = {
         "merged": "",
         "extracted": "",
@@ -95,14 +95,16 @@ class MergeState(State):
             self.results_extracted = []
 
     @rx.event
-    def refresh_results(
-        self, category: Literal["merged", "extracted"]
+    def refresh(
+        self,
+        categories: Iterable[Literal["merged", "extracted"]] = ("merged", "extracted"),
     ) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results for the specified category."""
-        self.selected_items[category] = None
-        if category == "merged":
+        if "merged" in categories:
+            self.selected_items["merged"] = None
             yield from self._refresh_merged()
-        else:
+        if "extracted" in categories:
+            self.selected_items["extracted"] = None
             yield from self._refresh_extracted()
 
     @rx.event
@@ -173,11 +175,13 @@ class MergeState(State):
             self.total_count["extracted"] = response.total
 
     @rx.event
-    def submit_merge_items(self) -> None:
+    def submit_merge_items(self) -> Generator[EventSpec | None, None, None]:
         """Submit merging of the items."""
-        BackendApiConnector.get()
-
-    @rx.event
-    def refresh(self) -> None:
-        """Reset the state."""
-        self.reset()
+        yield rx.toast.error(
+            title="Not Implemented",
+            description="Item merging is not yet implemented.",
+            class_name="editor-toast",
+            close_button=True,
+            dismissible=True,
+            duration=5000,
+        )

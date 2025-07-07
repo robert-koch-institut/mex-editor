@@ -4,7 +4,7 @@ import reflex as rx
 
 from mex.editor.components import render_value
 from mex.editor.layout import page
-from mex.editor.merge_items.state import MergeState
+from mex.editor.merge.state import MergeState
 from mex.editor.search.models import SearchResult
 
 
@@ -163,7 +163,7 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     type="submit",
                     variant="surface",
                     disabled=MergeState.is_loading,
-                    on_click=MergeState.refresh_results(category),
+                    on_click=MergeState.refresh([category]),
                     custom_attrs={"data-testid": f"search-button-{category}"},
                 ),
                 justify="center",

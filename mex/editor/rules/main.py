@@ -429,7 +429,13 @@ def field_name(
 ) -> rx.Component:
     """Return a card with a field name."""
     return rx.card(
-        rx.text(field.name),
+        rx.hstack(
+            rx.text(field.name),
+            rx.cond(
+                field.is_required,
+                rx.text("*", style={"color": "red"}),
+            ),
+        ),
         style={"width": "25%"},
         custom_attrs={"data-testid": f"field-{field.name}-name"},
     )

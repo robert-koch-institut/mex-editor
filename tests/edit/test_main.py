@@ -10,7 +10,10 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
 )
+from mex.common.transform import ensure_prefix
 from mex.common.types import Identifier
+from mex.editor.fields import REQUIRED_FIELDS_BY_CLASS_NAME
+from mex.editor.rules.transform import get_required_mergeable_field_names
 
 
 @pytest.fixture
@@ -467,3 +470,53 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     page.screenshot(path=f"{test_id}-reload_2.png")
     additive_rule_rendered = page.get_by_test_id(rendered_input_id)
     expect(additive_rule_rendered).to_have_count(0)
+
+
+@pytest.mark.integration
+def test_required_fields_red_asterisk(
+    edit_page: Page, extracted_activity: ExtractedActivity
+) -> None:
+    expected_required_fields = [
+        "contact",
+        "responsibleUnit",
+        "title",
+    ]
+    expected_optional_fields = [
+        "abstract",
+        "activityType",
+        "alternativeTitle",
+        "documentation",
+        "end",
+        "externalAssociate",
+        "funderOrCommissioner",
+        "fundingProgram",
+        "involvedPerson",
+        "involvedUnit",
+        "isPartOfActivity",
+        "publication",
+        "shortName",
+        "start",
+        "succeeds",
+        "theme",
+        "website",
+    ]
+
+    required_mergeable_fields = get_required_mergeable_field_names(extracted_activity)
+    assert set(required_mergeable_fields) == set(expected_required_fields)
+
+    merged_type = ensure_prefix(extracted_activity.stemType, "Merged")
+    required_fields = set(REQUIRED_FIELDS_BY_CLASS_NAME[merged_type])
+    mergeable_fields = set(MERGEABLE_FIELDS_BY_CLASS_NAME[merged_type])
+    optional_mergeable_fields = sorted(mergeable_fields - required_fields)
+    assert set(optional_mergeable_fields) == set(expected_optional_fields)
+
+    for field_name in expected_required_fields + expected_optional_fields:
+        field = edit_page.get_by_test_id(f"field-{field_name}-name")
+        expect(field).to_be_visible()
+
+        asterisk = field.get_by_text("*", exact=True)
+        if field_name in expected_required_fields:
+            expect(asterisk).to_be_visible()
+            expect(asterisk).to_have_css("color", "rgb(255, 0, 0)")
+        else:
+            expect(asterisk).to_have_count(0)

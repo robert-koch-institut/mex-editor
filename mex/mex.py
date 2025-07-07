@@ -18,6 +18,8 @@ from mex.editor.ingest.main import index as ingest_index
 from mex.editor.ingest.state import IngestState
 from mex.editor.login.main import ldap_login as login_ldap_index
 from mex.editor.login.main import mex_login as login_mex_index
+from mex.editor.merge.main import index as merge_index
+from mex.editor.merge.state import MergeState
 from mex.editor.rules.state import RuleState
 from mex.editor.search.main import index as search_index
 from mex.editor.search.state import SearchState
@@ -40,6 +42,16 @@ app.add_page(
         SearchState.load_search_params,
         SearchState.refresh,
         SearchState.resolve_identifiers,
+    ],
+)
+app.add_page(
+    merge_index,
+    route="/merge",
+    title="MEx Editor | Merge",
+    on_load=[
+        State.check_mex_login,
+        State.load_nav,
+        MergeState.refresh,
     ],
 )
 app.add_page(

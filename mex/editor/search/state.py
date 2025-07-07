@@ -31,7 +31,7 @@ class SearchState(State):
     had_primary_sources: dict[str, SearchPrimarySource] = {}
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 50
-    is_loading: bool = False
+    is_loading: bool = True
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:

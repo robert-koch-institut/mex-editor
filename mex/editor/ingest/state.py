@@ -28,7 +28,7 @@ class IngestState(State):
     limit: Annotated[int, Field(ge=1, le=100)] = 50
     current_aux_provider: str = "ldap"
     aux_providers: list[str] = ["ldap", "orcid", "wikidata"]
-    is_loading: bool = False
+    is_loading: bool = True
 
     @rx.var(cache=False)
     def total_pages(self) -> list[str]:

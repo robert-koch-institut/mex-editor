@@ -8,9 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - highlight required fields in edit view with a red asterisk
+- add support for logging-in with ENTER key
 
 ### Changes
+
+- set is_loading to True on_load for search and ingest states
 
 ### Deprecated
 

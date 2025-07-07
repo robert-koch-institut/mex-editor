@@ -16,8 +16,8 @@ from mex.editor.edit.main import index as edit_index
 from mex.editor.edit.state import EditState
 from mex.editor.ingest.main import index as ingest_index
 from mex.editor.ingest.state import IngestState
-from mex.editor.login_ldap.main import index as login_ldap_index
-from mex.editor.login_mex.main import index as login_mex_index
+from mex.editor.login.main import ldap_login as login_ldap_index
+from mex.editor.login.main import mex_login as login_mex_index
 from mex.editor.merge_items.main import index as merge_index
 from mex.editor.merge_items.state import MergeState
 from mex.editor.rules.state import RuleState

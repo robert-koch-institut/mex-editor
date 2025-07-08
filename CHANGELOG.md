@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- build a static zip file of the frontend on each release
+
 ### Changes
 
 ### Deprecated

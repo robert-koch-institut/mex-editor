@@ -9,13 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- new page to search and select merged and extracted items
-- highlight required fields in edit view with a red asterisk
-- add support for logging-in with ENTER key
-
 ### Changes
-
-- set is_loading to True on_load for search and ingest states
 
 ### Deprecated
 
@@ -24,6 +18,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [0.20.0] - 2025-07-08
+
+### Added
+
+- new page to search and select merged and extracted items
+- highlight required fields in edit view with a red asterisk
+- add support for logging-in with ENTER key
+
+### Changes
+
+- set is_loading to True on_load for search and ingest states
 
 ## [0.19.0] - 2025-06-25
 

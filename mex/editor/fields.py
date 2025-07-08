@@ -1,13 +1,11 @@
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 from mex.common.fields import (
     ALL_MODEL_CLASSES_BY_NAME,
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
     TEMPORAL_FIELDS_BY_CLASS_NAME,
 )
-
-if TYPE_CHECKING:
-    from mex.common.types import AnyTemporalEntity
+from mex.common.types import AnyTemporalEntity, TemporalEntityPrecision
 
 # TODO(ND): move these lookups to mex.common.fields
 
@@ -37,7 +35,7 @@ TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES = {
                     "type[AnyTemporalEntity]", temporal_type
                 ).ALLOWED_PRECISION_LEVELS
             },
-            key=lambda precision: precision.value,
+            key=lambda precision: list(TemporalEntityPrecision).index(precision),
         )
         for field_name in field_names
     }

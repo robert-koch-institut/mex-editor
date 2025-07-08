@@ -110,6 +110,9 @@ def test_select_result_extracted(merge_page: Page) -> None:
         path="tests_merge_items_test_main-test_select_result_extracted-select.png"
     )
 
+    # check identifiers are resolved
+    expect(page.get_by_test_id("result-merged-0").get_by_text("cp-1")).to_be_visible()
+
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
@@ -131,3 +134,6 @@ def test_select_result_merged(merge_page: Page) -> None:
     page.screenshot(
         path="tests_merge_items_test_main-test_select_result_merged-select.png"
     )
+
+    # check identifiers are resolved
+    expect(page.get_by_test_id("result-merged-1").get_by_text("cp-2")).to_be_visible()

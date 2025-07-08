@@ -165,7 +165,10 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     type="submit",
                     variant="surface",
                     disabled=MergeState.is_loading,
-                    on_click=MergeState.refresh([category]),
+                    on_click=[
+                        MergeState.refresh([category]),
+                        MergeState.resolve_identifiers,
+                    ],
                     custom_attrs={"data-testid": f"search-button-{category}"},
                 ),
                 justify="center",

@@ -40,6 +40,8 @@ COPY --chown=mex . .
 
 RUN --mount=type=cache,target=/root/.cache/pip pip install -r locked-requirements.txt --no-deps
 
+RUN export-frontend
+
 USER mex
 
 EXPOSE 8030

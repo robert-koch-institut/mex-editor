@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- build a static zip file of the frontend on each release
+- export a static zip file of the frontend on each release
+- export static files of the frontend during docker build
 
 ### Changes
+
+- use slim fastapi app to serve static files when calling `editor-frontend`
 
 ### Deprecated
 

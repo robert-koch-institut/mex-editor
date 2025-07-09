@@ -1,23 +1,85 @@
 version: "3.8"
 services:
-  mex-editor:
+  redis:
+    image: bitnami/redis:8.0.0
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    expose:
+      - 6379
+  neo4j:
+    image: neo4j:2025.05-community
+    environment:
+      - NEO4J_AUTH=neo4j/password
+    expose:
+      - 7687
+
+  mex-backend:
+    image: ghcr.io/robert-koch-institut/mex-backend:0.41.0
+    ports:
+      - 8080:8080
+    environment:
+      - MEX_BACKEND_API_KEY_DATABASE={"write":["mex"]}
+      - MEX_BACKEND_API_USER_DATABASE={"write":{"mex":"mex"}}
+      - MEX_BACKEND_HOST=0.0.0.0
+      - MEX_BACKEND_REDIS_URL=redis://redis:6379
+      - MEX_GRAPH_URL=neo4j://neo4j:7687
+      - MEX_IDENTITY_PROVIDER=graph
+    expose:
+      - 8080
+    depends_on:
+      - redis
+      - neo4j
+    healthcheck:
+      test: [ "CMD", "curl", "http://0.0.0.0:8080/v0/_system/check" ]
+      interval: 60s
+      timeout: 5s
+      retries: 5
+
+  mex-editor-base:
     build:
       context: .
+    profiles: ["build-only"]
+
+  mex-editor-api:
+    extends:
+      service: mex-editor-base
+    entrypoint: "editor-api"
     ports:
-      - 8030:8030
       - 8031:8031
     environment:
+      - MEX_BACKEND_API_KEY=mex
+      - MEX_BACKEND_API_URL=http://mex-backend:8080
+      - MEX_BACKEND_API_USER_DATABASE={"write":{"mex":"mex"}}
+      - MEX_EDITOR_API_DEPLOY_URL=http://localhost:8031
       - MEX_EDITOR_API_HOST=0.0.0.0
-      - MEX_EDITOR_USER_DATABASE={"mex":["mex"]}
+      - MEX_EDITOR_FRONTEND_DEPLOY_URL=http://localhost:8030
+      - MEX_IDENTITY_PROVIDER=backend
     expose:
-      - 8030
       - 8031
+    depends_on:
+      - mex-backend
     healthcheck:
       test: [ "CMD", "curl", "http://0.0.0.0:8031/_system/check" ]
       interval: 60s
       timeout: 5s
       retries: 5
-    volumes:
-      - data:/app/data
-volumes:
-  data:
+
+  mex-editor-frontend:
+    extends:
+      service: mex-editor-base
+    entrypoint: "editor-frontend"
+    ports:
+      - 8030:8030
+    environment:
+      - MEX_EDITOR_API_DEPLOY_URL=http://localhost:8031
+      - MEX_EDITOR_FRONTEND_DEPLOY_URL=http://localhost:8030
+      - MEX_EDITOR_FRONTEND_HOST=0.0.0.0
+    expose:
+      - 8030
+    depends_on:
+      - mex-editor-api
+    healthcheck:
+      test: [ "CMD", "curl", "http://0.0.0.0:8030/" ]
+      interval: 60s
+      timeout: 5s
+      retries: 5

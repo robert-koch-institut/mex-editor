@@ -9,17 +9,19 @@ from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from reflex import constants
 from reflex.config import environment, get_config
-from reflex.reflex import run
+from reflex.reflex import _init, run
 from reflex.state import reset_disk_state_manager
+from reflex.utils.build import setup_frontend_prod
 from reflex.utils.console import set_log_level
 from reflex.utils.exec import get_app_module
 from reflex.utils.export import export
+from reflex.utils.prerequisites import get_compiled_app
 
 from mex.editor.logging import UVICORN_LOGGING_CONFIG, logger
 from mex.editor.settings import EditorSettings
 
 API_DEPLOY_URL_PLACEHOLDER = "https://editor-api"
-WS_DEPLOY_URL_PLACEHOLDER = "ws://editor-api"
+WS_DEPLOY_URL_PLACEHOLDER = "wss://editor-api"
 FRONTEND_DEPLOY_URL_PLACEHOLDER = "https://editor-frontend"
 
 
@@ -32,6 +34,7 @@ def editor_api() -> None:  # pragma: no cover
 
     # Set env mode in the environment.
     environment.REFLEX_ENV_MODE.set(constants.Env.PROD)
+    environment.REFLEX_CHECK_LATEST_VERSION.set(False)
 
     # Skip the compile step.
     environment.REFLEX_SKIP_COMPILE.set(True)
@@ -55,13 +58,33 @@ def editor_api() -> None:  # pragma: no cover
 
 def export_frontend() -> None:  # pragma: no cover
     """Export the frontend with placeholder API and deploy URLs."""
+    # Set the log level.
+    set_log_level(constants.LogLevel.INFO)
+
+    # Configure the environment.
+    environment.REFLEX_ENV_MODE.set(constants.Env.PROD)
+    environment.REFLEX_CHECK_LATEST_VERSION.set(False)
+
+    # Initialize the app in the current directory.
+    _init(name="mex", loglevel=constants.LogLevel.INFO)
+
+    if 0:
+        # Get the app module.
+        get_compiled_app()
+        # Set up the frontend for prod mode.
+        setup_frontend_prod(
+            Path.cwd(),
+            disable_telemetry=True,
+        )
+
+    # Export frontend as static files.
     export(
         zipping=False,
         frontend=True,
         backend=False,
         api_url=API_DEPLOY_URL_PLACEHOLDER,
         deploy_url=FRONTEND_DEPLOY_URL_PLACEHOLDER,
-        loglevel=constants.LogLevel.DEBUG,
+        loglevel=constants.LogLevel.INFO,
     )
 
 
@@ -140,11 +163,10 @@ def create_frontend_app() -> FastAPI:
 def editor_frontend() -> None:  # pragma: no cover
     """Start the editor frontend."""
     settings = EditorSettings.get()
-    app = create_frontend_app()
 
     # Run the frontend server
     uvicorn.run(
-        app,
+        "mex.editor.main:create_frontend_app",
         host=settings.editor_frontend_host,
         port=settings.editor_frontend_port,
         log_config=UVICORN_LOGGING_CONFIG,

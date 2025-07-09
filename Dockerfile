@@ -25,24 +25,24 @@ ENV TELEMETRY_ENABLED=False
 ENV REFLEX_ENV_MODE=prod
 ENV REFLEX_DIR=/app/reflex
 
-WORKDIR /app
+ENV PATH="/app/.local/bin:$PATH"
 
 RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "10001" \
-    mex && \
-    chown mex .
+--disabled-password \
+--gecos "" \
+--shell "/sbin/nologin" \
+--home "/app" \
+--uid "10001" \
+mex
+
+WORKDIR /app
 
 COPY --chown=mex . .
 
-RUN --mount=type=cache,target=/root/.cache/pip pip install -r locked-requirements.txt --no-deps
-
-RUN export-frontend
-
 USER mex
+
+RUN --mount=type=cache,target=/app/.cache/pip pip install --no-deps --user --requirement locked-requirements.txt
+RUN export-frontend
 
 EXPOSE 8030
 EXPOSE 8031

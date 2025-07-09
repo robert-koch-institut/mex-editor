@@ -435,6 +435,7 @@ def field_name(
                 field.is_required,
                 rx.text("*", style={"color": "red"}),
             ),
+            spacing="1",
         ),
         style={"width": "25%"},
         custom_attrs={"data-testid": f"field-{field.name}-name"},

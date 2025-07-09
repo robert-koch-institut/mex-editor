@@ -155,12 +155,14 @@ jobs:
       - name: Install requirements
         run: make setup
 
-      - name: Build wheel and sdist distros and create a github release
+      - name: Build wheel, sdist and zip distributions and create a github release
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         run: |
           gh release create ${{ needs.release.outputs.tag }} --generate-notes --latest --verify-tag
           pdm build --dest dist
+          pdm run reflex export --frontend-only --zip-dest-dir=dist
+          mv dist/frontend.zip dist/mex_editor_frontend-${{ needs.release.outputs.tag }}.zip
           for filename in dist/*; do
             gh release upload ${{ needs.release.outputs.tag }} ${filename};
           done

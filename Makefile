@@ -40,6 +40,7 @@ image:
 	# build the docker image
 	@ echo building docker image mex-editor:${LATEST}; \
 	export DOCKER_BUILDKIT=1; \
+	pdm export --self --output locked-requirements.txt --no-hashes --without dev; \
 	docker build \
 		--tag rki/mex-editor:${LATEST} \
 		--tag rki/mex-editor:latest .; \
@@ -58,7 +59,7 @@ start: image
 	@ echo start mex-editor:${LATEST} with compose; \
 	export DOCKER_BUILDKIT=1; \
 	export COMPOSE_DOCKER_CLI_BUILD=1; \
-	docker compose up --remove-orphans; \
+	docker compose up mex-editor-frontend mex-editor-api mex-backend --remove-orphans; \
 
 docs:
 	# use sphinx to auto-generate html docs from code

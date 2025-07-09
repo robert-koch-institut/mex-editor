@@ -415,7 +415,7 @@ def test_edit_page_renders_temporal_input(edit_page: Page) -> None:
     )
     precision_options = page.get_by_role("group").get_by_role("option")
     expect(precision_options).to_have_count(3)
-    expect(precision_options).to_have_text(["day", "month", "year"])
+    expect(precision_options).to_have_text(["year", "month", "day"])
 
 
 @pytest.mark.integration

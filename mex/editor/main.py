@@ -11,11 +11,9 @@ from reflex import constants
 from reflex.config import environment, get_config
 from reflex.reflex import _init, run
 from reflex.state import reset_disk_state_manager
-from reflex.utils.build import setup_frontend_prod
 from reflex.utils.console import set_log_level
 from reflex.utils.exec import get_app_module
 from reflex.utils.export import export
-from reflex.utils.prerequisites import get_compiled_app
 
 from mex.editor.logging import UVICORN_LOGGING_CONFIG, logger
 from mex.editor.settings import EditorSettings
@@ -68,15 +66,6 @@ def export_frontend() -> None:  # pragma: no cover
     # Initialize the app in the current directory.
     _init(name="mex", loglevel=constants.LogLevel.INFO)
 
-    if 0:
-        # Get the app module.
-        get_compiled_app()
-        # Set up the frontend for prod mode.
-        setup_frontend_prod(
-            Path.cwd(),
-            disable_telemetry=True,
-        )
-
     # Export frontend as static files.
     export(
         zipping=False,
@@ -88,60 +77,61 @@ def export_frontend() -> None:  # pragma: no cover
     )
 
 
+@lru_cache(maxsize=1)
+def get_frontend_headers() -> dict[str, str]:
+    """Generate a dict of headers for this frontend server."""
+    settings = EditorSettings.get()
+    headers: dict[str, str] = {}
+    websocket_server = settings.editor_api_deploy_url.replace("http", "ws", 1)
+    headers["X-Content-Type-Options"] = "nosniff"
+    headers["X-Frame-Options"] = "DENY"
+    headers["X-XSS-Protection"] = "1; mode=block"
+    headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data:; "
+        "font-src 'self'; "
+        f"connect-src 'self' {websocket_server}"
+    )
+    headers["Cache-Control"] = "public, max-age=600"
+    return headers
+
+
+@asynccontextmanager
+async def frontend_lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
+    """Replace placeholder deploy urls with actual urls from settings."""
+    settings = EditorSettings.get()
+    static_dir = Path(settings.editor_frontend_static_directory)
+    for js_file in static_dir.glob("**/*.js"):
+        content = js_file.read_text(encoding="utf-8")
+        modified = False
+        if API_DEPLOY_URL_PLACEHOLDER in content:
+            content = content.replace(
+                API_DEPLOY_URL_PLACEHOLDER, settings.editor_api_deploy_url
+            )
+            modified = True
+        if WS_DEPLOY_URL_PLACEHOLDER in content:
+            content = content.replace(
+                WS_DEPLOY_URL_PLACEHOLDER,
+                settings.editor_api_deploy_url.replace("http", "ws", 1),
+            )
+            modified = True
+        if FRONTEND_DEPLOY_URL_PLACEHOLDER in content:
+            content = content.replace(
+                FRONTEND_DEPLOY_URL_PLACEHOLDER, settings.editor_frontend_deploy_url
+            )
+            modified = True
+        if modified:
+            js_file.write_text(content, encoding="utf-8")
+            logger.info("updating deploy urls in %s", js_file.name)
+    yield
+
+
 def create_frontend_app() -> FastAPI:
     """Create FastAPI app for frontend with middleware."""
-
-    @asynccontextmanager
-    async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
-        settings = EditorSettings.get()
-        # replace placeholder deploy urls with actual urls from settings
-        static_dir = Path(settings.editor_frontend_static_directory)
-        for js_file in static_dir.glob("**/*.js"):
-            content = js_file.read_text(encoding="utf-8")
-            modified = False
-            if API_DEPLOY_URL_PLACEHOLDER in content:
-                content = content.replace(
-                    API_DEPLOY_URL_PLACEHOLDER, settings.editor_api_deploy_url
-                )
-                modified = True
-            if WS_DEPLOY_URL_PLACEHOLDER in content:
-                content = content.replace(
-                    WS_DEPLOY_URL_PLACEHOLDER,
-                    settings.editor_api_deploy_url.replace("http", "ws", 1),
-                )
-                modified = True
-            if FRONTEND_DEPLOY_URL_PLACEHOLDER in content:
-                content = content.replace(
-                    FRONTEND_DEPLOY_URL_PLACEHOLDER, settings.editor_frontend_deploy_url
-                )
-                modified = True
-            if modified:
-                js_file.write_text(content, encoding="utf-8")
-                logger.info("updating deploy urls in %s", js_file.name)
-        yield
-
-    app = FastAPI(lifespan=lifespan)
-
-    @lru_cache(maxsize=1)
-    def get_headers() -> dict[str, str]:
-        """Generate a dict of headers for this frontend server."""
-        settings = EditorSettings.get()
-        headers: dict[str, str] = {}
-        websocket_server = settings.editor_api_deploy_url.replace("http", "ws", 1)
-        headers["X-Content-Type-Options"] = "nosniff"
-        headers["X-Frame-Options"] = "DENY"
-        headers["X-XSS-Protection"] = "1; mode=block"
-        headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        headers["Content-Security-Policy"] = (
-            "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
-            "style-src 'self' 'unsafe-inline'; "
-            "img-src 'self' data:; "
-            "font-src 'self'; "
-            f"connect-src 'self' {websocket_server}"
-        )
-        headers["Cache-Control"] = "public, max-age=600"
-        return headers
+    app = FastAPI(lifespan=frontend_lifespan)
 
     @app.middleware("http")
     async def attach_headers(
@@ -149,14 +139,17 @@ def create_frontend_app() -> FastAPI:
     ) -> Response:
         """Attach security and caching headers to all responses."""
         response = await call_next(request)
-        response.headers.update(get_headers())
+        response.headers.update(get_frontend_headers())
         return response
 
     settings = EditorSettings.get()
     app.mount(
-        "/", StaticFiles(directory=settings.editor_frontend_static_directory, html=True)
+        "/",
+        StaticFiles(
+            directory=settings.editor_frontend_static_directory,
+            html=True,
+        ),
     )
-
     return app
 
 

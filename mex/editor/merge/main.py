@@ -15,23 +15,25 @@ def search_result(
 ) -> rx.Component:
     """Render a single merged or extracted item search result with checkbox."""
     return rx.card(
-        rx.hstack(
-            rx.checkbox(
-                checked=MergeState.selected_items[category] == index,
-                on_change=MergeState.select_item(category, index),
-            ),
-            rx.box(
-                rx.hstack(
-                    rx.foreach(
-                        result.title,
-                        render_value,
-                    )
+        rx.vstack(
+            rx.hstack(
+                rx.checkbox(
+                    checked=MergeState.selected_items[category] == index,
+                    on_change=MergeState.select_item(category, index),
                 ),
-                style={
-                    "fontWeight": "var(--font-weight-bold)",
-                    "overflow": "hidden",
-                    "whiteSpace": "nowrap",
-                },
+                rx.box(
+                    rx.hstack(
+                        rx.foreach(
+                            result.title,
+                            render_value,
+                        )
+                    ),
+                    style={
+                        "fontWeight": "var(--font-weight-bold)",
+                        "overflow": "hidden",
+                        "whiteSpace": "nowrap",
+                    },
+                ),
             ),
             rx.box(
                 rx.hstack(
@@ -163,7 +165,10 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     type="submit",
                     variant="surface",
                     disabled=MergeState.is_loading,
-                    on_click=MergeState.refresh([category]),
+                    on_click=[
+                        MergeState.refresh([category]),
+                        MergeState.resolve_identifiers,
+                    ],
                     custom_attrs={"data-testid": f"search-button-{category}"},
                 ),
                 justify="center",

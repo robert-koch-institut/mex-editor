@@ -141,6 +141,7 @@ def test_select_result_merged(merge_page: Page) -> None:
 
 
 @pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
 def test_resolves_identifier(
     merge_page: Page,
     dummy_data_by_stable_target_id: dict[Identifier, AnyExtractedModel],
@@ -152,5 +153,15 @@ def test_resolves_identifier(
     ]
     assert type(extracted_organizational_unit) is ExtractedOrganizationalUnit
 
-    page.get_by_text(f"{extracted_activity.hadPrimarySource}")  # prob doesn't work
+    entity_types_extracted = page.get_by_test_id("entity-types-extracted")
+    expect(entity_types_extracted).to_be_visible()
+    entity_types_extracted.get_by_text("Activity").click()
+    page.get_by_test_id("search-button-extracted").click()
+    expect(
+        page.get_by_test_id("extracted-results-summary").get_by_text(
+            "Showing 1 of 1 items"
+        )
+    ).to_be_visible()
     page.screenshot(path="tests_merge_test_main-test_resolves_identifier.png")
+    had_primary_source = page.get_by_text(f"{extracted_activity.hadPrimarySource}")
+    expect(had_primary_source).to_be_visible()

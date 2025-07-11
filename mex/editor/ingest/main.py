@@ -3,7 +3,11 @@ from typing import cast
 import reflex as rx
 
 from mex.editor.components import render_value
-from mex.editor.ingest.models import IngestResult
+from mex.editor.ingest.models import (
+    AUX_PROVIDER_LDAP,
+    AUX_PROVIDER_WIKIDATA,
+    IngestResult,
+)
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
 
@@ -137,7 +141,18 @@ def search_input() -> rx.Component:
                     autofocus=True,
                     max_length=100,
                     name="query_string",
-                    placeholder="Search here...",
+                    placeholder=rx.match(
+                        IngestState.current_aux_provider,
+                        (
+                            AUX_PROVIDER_LDAP,
+                            'Please use "*" as placeholder e.g. "Muster*".',
+                        ),
+                        (
+                            AUX_PROVIDER_WIKIDATA,
+                            'Please paste "Concept URI" e.g. "http://www.wikidata.org/entity/Q918501"',
+                        ),
+                        "Search here...",
+                    ),
                     style={
                         "--text-field-selection-color": "",
                         "--text-field-focus-color": "transparent",
@@ -206,6 +221,25 @@ def search_results() -> rx.Component:
             pagination(),
             custom_attrs={"data-testid": "search-results-section"},
             style={"width": "100%"},
+        ),
+    )
+
+
+def search_infobox() -> rx.Component:
+    """Render some informations about the specific search provider query format."""
+    return rx.match(
+        IngestState.current_aux_provider,
+        (
+            AUX_PROVIDER_LDAP,
+            rx.callout(
+                'Search users by their fullname. Please use "*" as placeholder e.g. "Muster*".'  # noqa: E501
+            ),
+        ),
+        (
+            AUX_PROVIDER_WIKIDATA,
+            rx.callout(
+                'Search Wikidata by "Concept URI". Please paste URI e.g. "http://www.wikidata.org/entity/Q918501".'
+            ),
         ),
     )
 
@@ -281,6 +315,7 @@ def tab_content() -> rx.Component:
         lambda provider: rx.tabs.content(
             rx.vstack(
                 search_input(),
+                search_infobox(),
                 search_results(),
                 justify="center",
                 align="center",

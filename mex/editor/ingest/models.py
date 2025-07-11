@@ -1,6 +1,20 @@
+from typing import Final, Literal
+
 import reflex as rx
 
 from mex.editor.models import EditorValue
+
+AuxProvider = Literal["ldap", "orcid", "wikidata"]
+
+AUX_PROVIDER_LDAP: Final = "ldap"
+AUX_PROVIDER_ORDIC: Final = "orcid"
+AUX_PROVIDER_WIKIDATA: Final = "wikidata"
+
+AUX_PROVIDERS: list[AuxProvider] = [
+    AUX_PROVIDER_LDAP,
+    AUX_PROVIDER_ORDIC,
+    AUX_PROVIDER_WIKIDATA,
+]
 
 
 class IngestResult(rx.Base):

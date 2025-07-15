@@ -58,6 +58,10 @@ def test_search_input_merged(merge_page: Page) -> None:
         path="tests_merge_items_test_main-test_merged_search_input-clear-input.png"
     )
 
+    # check search trigger by entity type
+    entity_types_merged.get_by_text("ContactPoint").click()
+    expect(page.get_by_text("Showing 2 of 2 items")).to_be_visible()
+
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
@@ -87,6 +91,10 @@ def test_search_input_extracted(merge_page: Page) -> None:
     page.screenshot(
         path="tests_merge_items_test_main-test_extracted_search_input-clear-input.png"
     )
+
+    # check search trigger by entity type
+    entity_types_extracted.get_by_text("ContactPoint").click()
+    expect(page.get_by_text("Showing 2 of 2 items")).to_be_visible()
 
 
 @pytest.mark.integration

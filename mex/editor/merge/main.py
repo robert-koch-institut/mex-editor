@@ -76,7 +76,10 @@ def entity_type_choice_merged(choice: tuple[str, bool]) -> rx.Component:
     return rx.checkbox(
         choice[0],
         checked=choice[1],
-        on_change=MergeState.set_entity_type_merged(choice[0]),
+        on_change=[
+            MergeState.set_entity_type_merged(choice[0]),
+            MergeState.refresh(["merged"]),
+        ],
         disabled=MergeState.is_loading,
     )
 
@@ -86,7 +89,10 @@ def entity_type_choice_extracted(choice: tuple[str, bool]) -> rx.Component:
     return rx.checkbox(
         choice[0],
         checked=choice[1],
-        on_change=MergeState.set_entity_type_extracted(choice[0]),
+        on_change=[
+            MergeState.set_entity_type_extracted(choice[0]),
+            MergeState.refresh(["extracted"]),
+        ],
         disabled=MergeState.is_loading,
     )
 

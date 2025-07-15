@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- only show allowed precisions in temporal field drop-down
+
 ### Security
 
 ## [0.20.0] - 2025-07-08

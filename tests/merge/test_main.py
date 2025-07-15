@@ -3,10 +3,8 @@ from playwright.sync_api import Page, expect
 
 from mex.common.models import (
     AnyExtractedModel,
-    ExtractedActivity,
-    ExtractedOrganizationalUnit,
+    ExtractedContactPoint,
 )
-from mex.common.types import Identifier
 
 
 @pytest.fixture
@@ -144,14 +142,11 @@ def test_select_result_merged(merge_page: Page) -> None:
 @pytest.mark.usefixtures("load_dummy_data")
 def test_resolves_identifier(
     merge_page: Page,
-    dummy_data_by_stable_target_id: dict[Identifier, AnyExtractedModel],
-    extracted_activity: ExtractedActivity,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     page = merge_page
-    extracted_organizational_unit = dummy_data_by_stable_target_id[
-        extracted_activity.contact[2]
-    ]
-    assert type(extracted_organizational_unit) is ExtractedOrganizationalUnit
+    contact = dummy_data_by_identifier_in_primary_source["cp-1"]
+    assert type(contact) is ExtractedContactPoint
 
     entity_types_extracted = page.get_by_test_id("entity-types-extracted")
     expect(entity_types_extracted).to_be_visible()
@@ -163,5 +158,5 @@ def test_resolves_identifier(
         )
     ).to_be_visible()
     page.screenshot(path="tests_merge_test_main-test_resolves_identifier.png")
-    had_primary_source = page.get_by_text(f"{extracted_activity.contact[2]}")
-    expect(had_primary_source).to_be_visible()
+    email = page.get_by_test_id("result-extracted-0").get_by_text(f"{contact.email[0]}")
+    expect(email).to_be_visible()

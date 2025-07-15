@@ -163,5 +163,5 @@ def test_resolves_identifier(
         )
     ).to_be_visible()
     page.screenshot(path="tests_merge_test_main-test_resolves_identifier.png")
-    had_primary_source = page.get_by_text(f"{extracted_activity.hadPrimarySource}")
+    had_primary_source = page.get_by_text(f"{extracted_activity.contact[2]}")
     expect(had_primary_source).to_be_visible()

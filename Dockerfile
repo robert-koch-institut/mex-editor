@@ -8,24 +8,16 @@ LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.url="https://github.com/robert-koch-institut/mex-editor"
 LABEL org.opencontainers.image.vendor="robert-koch-institut"
 
+ENV PATH="$HOME/.local/bin:$PATH"
+
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONOPTIMIZE=1
+ENV PYTHONPATH="$HOME/.local/lib/python3.11/site-packages"
 
 ENV PIP_DISABLE_PIP_VERSION_CHECK=on
 ENV PIP_NO_INPUT=on
 ENV PIP_PREFER_BINARY=on
 ENV PIP_PROGRESS_BAR=off
-
-ENV FRONTEND_PORT=8030
-ENV DEPLOY_URL=http://0.0.0.0:8030
-ENV BACKEND_PORT=8031
-ENV API_URL=http://0.0.0.0:8031
-ENV REFLEX_CHECK_LATEST_VERSION=False
-ENV REFLEX_ENV_MODE=prod
-ENV REFLEX_DIR=/app/reflex
-ENV REFLEX_WEB_WORKDIR=/app/web
-
-ENV PATH="/app/.local/bin:$PATH"
 
 RUN adduser \
 --disabled-password \
@@ -41,8 +33,8 @@ COPY --chown=mex . .
 
 USER mex
 
-RUN --mount=type=cache,target=/app/.cache/pip pip install --no-deps --user --requirement locked-requirements.txt
-RUN --mount=type=cache,target=/root/.npm reflex init && reflex export --frontend-only --no-zip
+RUN --mount=type=cache,mode=0755,uid=10001,gid=10001,target=/app/.cache pip install --no-deps --user --requirement locked-requirements.txt
+RUN --mount=type=cache,mode=0755,uid=10001,gid=10001,target=/app/.npm python -m reflex init && python -m reflex export --frontend-only --no-zip
 
 EXPOSE 8030
 EXPOSE 8031

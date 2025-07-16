@@ -20,11 +20,12 @@ def configure_prod() -> None:
     set_log_level(constants.LogLevel.INFO)
 
     # Configure the environment.
+    settings = EditorSettings.get()
+    environment.REFLEX_SKIP_COMPILE.set(True)
     environment.REFLEX_ENV_MODE.set(constants.Env.PROD)
     environment.REFLEX_CHECK_LATEST_VERSION.set(False)
-
-    # Skip the compile step.
-    environment.REFLEX_SKIP_COMPILE.set(True)
+    environment.REFLEX_DIR.set(settings.work_dir / "reflex")
+    environment.REFLEX_WEB_WORKDIR.set(settings.work_dir / "web")
 
     # Reload the config to make sure the env vars are persistent.
     get_config(reload=True)

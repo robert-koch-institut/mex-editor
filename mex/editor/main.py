@@ -1,34 +1,12 @@
-from pathlib import Path
-
 import typer
 import uvicorn
-from reflex import constants
-from reflex.config import environment, get_config
+from reflex.config import environment
 from reflex.reflex import run
-from reflex.state import reset_disk_state_manager
 from reflex.utils.build import setup_frontend_prod
-from reflex.utils.console import set_log_level
 from reflex.utils.exec import get_app_module, run_frontend_prod
 
 from mex.editor.logging import UVICORN_LOGGING_CONFIG
 from mex.editor.settings import EditorSettings
-
-
-def configure_prod() -> None:
-    """Configure reflex for production."""
-    # Set the log level.
-    set_log_level(constants.LogLevel.INFO)
-
-    # Configure the environment.
-    settings = EditorSettings.get()
-    environment.REFLEX_SKIP_COMPILE.set(True)
-    environment.REFLEX_ENV_MODE.set(constants.Env.PROD)
-    environment.REFLEX_CHECK_LATEST_VERSION.set(False)
-    environment.REFLEX_DIR.set(settings.work_dir / "reflex")
-    environment.REFLEX_WEB_WORKDIR.set(settings.work_dir / "web")
-
-    # Reload the config to make sure the env vars are persistent.
-    get_config(reload=True)
 
 
 def editor_api() -> None:  # pragma: no cover
@@ -36,13 +14,6 @@ def editor_api() -> None:  # pragma: no cover
 
     This function is intended as a docker entrypoint for production.
     """
-    # Configure production settings
-    configure_prod()
-
-    # Delete the states folder if it exists.
-    reset_disk_state_manager()
-
-    # Run the api.
     settings = EditorSettings.get()
     uvicorn.run(
         get_app_module(),
@@ -59,19 +30,13 @@ def editor_frontend() -> None:  # pragma: no cover
 
     This function is intended as a docker entrypoint for production.
     """
-    # Configure production settings
-    configure_prod()
-
-    # Set up the frontend for prod mode.
+    settings = EditorSettings.get()
     setup_frontend_prod(
-        root=Path.cwd(),
+        root=settings.work_dir,
         disable_telemetry=True,
     )
-
-    # Run the frontend.
-    settings = EditorSettings.get()
     run_frontend_prod(
-        root=Path.cwd(),
+        root=settings.work_dir,
         port=str(settings.editor_frontend_port),
         backend_present=False,
     )

@@ -39,6 +39,7 @@ wheel:
 image:
 	# build the docker image
 	@ echo building docker image mex-editor:${LATEST}; \
+	export DOCKER_SCAN_SUGGEST=false; \
 	export DOCKER_BUILDKIT=1; \
 	docker build \
 		--tag rki/mex-editor:${LATEST} \
@@ -48,7 +49,6 @@ run: image
 	# run the service as a docker container
 	@ echo running docker container mex-editor:${LATEST}; \
 	docker run \
-		--env MEX_EDITOR_API_HOST=0.0.0.0 \
 		--publish 8030:8030 \
 		--publish 8031:8031 \
 		rki/mex-editor:${LATEST}; \

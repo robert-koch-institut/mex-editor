@@ -16,6 +16,11 @@ ENV PIP_NO_INPUT=on
 ENV PIP_PREFER_BINARY=on
 ENV PIP_PROGRESS_BAR=off
 
+ENV REFLEX_DIR="/app/reflex"
+ENV REFLEX_ENV_MODE="prod"
+ENV REFLEX_SKIP_COMPILE="True"
+ENV REFLEX_WEB_WORKDIR="web"
+
 RUN adduser \
 --disabled-password \
 --gecos "" \
@@ -26,14 +31,15 @@ mex
 
 WORKDIR /app
 
-COPY --chown=mex . .
+COPY . .
 
-RUN --mount=type=cache,mode=0755,uid=10001,gid=10001,target=/app/.cache pip install --no-deps . --requirement locked-requirements.txt
-RUN --mount=type=cache,mode=0755,uid=10001,gid=10001,target=/app/.npm reflex init && reflex export --frontend-only --no-zip
+RUN --mount=type=cache,target=/root/.cache pip install --no-deps --requirement locked-requirements.txt
+RUN --mount=type=cache,target=/root/.npm reflex init && reflex export --frontend-only --no-zip
+RUN chown -R 10001:10001 /app
 
 USER mex
 
 EXPOSE 8030
 EXPOSE 8031
 
-ENTRYPOINT [ "editor" ]
+ENTRYPOINT [ "editor-frontend" ]

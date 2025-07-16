@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import typer
 import uvicorn
 from reflex import constants
 from reflex.config import environment, get_config
@@ -79,4 +78,4 @@ def editor_frontend() -> None:  # pragma: no cover
 def main() -> None:  # pragma: no cover
     """Start the editor api together with frontend."""
     environment.REFLEX_USE_NPM.set(True)
-    typer.run(run)
+    run()

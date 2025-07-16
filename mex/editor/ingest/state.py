@@ -5,7 +5,6 @@ from typing import Annotated
 import reflex as rx
 from pydantic import Field
 from reflex.event import EventSpec
-from reflex.state import serialize_mutable_proxy
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector

@@ -16,31 +16,33 @@ ENV PIP_NO_INPUT=on
 ENV PIP_PREFER_BINARY=on
 ENV PIP_PROGRESS_BAR=off
 
-ENV APP_NAME=mex
 ENV FRONTEND_PORT=8030
 ENV DEPLOY_URL=http://0.0.0.0:8030
 ENV BACKEND_PORT=8031
 ENV API_URL=http://0.0.0.0:8031
-ENV TELEMETRY_ENABLED=False
+ENV REFLEX_CHECK_LATEST_VERSION=False
 ENV REFLEX_ENV_MODE=prod
 ENV REFLEX_DIR=/app/reflex
+ENV REFLEX_WEB_WORKDIR=/app/web
+
+ENV PATH="/app/.local/bin:$PATH"
+
+RUN adduser \
+--disabled-password \
+--gecos "" \
+--shell "/sbin/nologin" \
+--home "/app" \
+--uid "10001" \
+mex
 
 WORKDIR /app
 
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "10001" \
-    mex && \
-    chown mex .
-
 COPY --chown=mex . .
 
-RUN --mount=type=cache,target=/root/.cache/pip pip install -r locked-requirements.txt --no-deps
-
 USER mex
+
+RUN --mount=type=cache,target=/app/.cache/pip pip install --no-deps --user --requirement locked-requirements.txt
+RUN --mount=type=cache,target=/root/.npm reflex init && reflex export --frontend-only --no-zip
 
 EXPOSE 8030
 EXPOSE 8031

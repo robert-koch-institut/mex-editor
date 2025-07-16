@@ -8,11 +8,8 @@ LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.url="https://github.com/robert-koch-institut/mex-editor"
 LABEL org.opencontainers.image.vendor="robert-koch-institut"
 
-ENV PATH="$HOME/.local/bin:$PATH"
-
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONOPTIMIZE=1
-ENV PYTHONPATH="$HOME/.local/lib/python3.11/site-packages"
 
 ENV PIP_DISABLE_PIP_VERSION_CHECK=on
 ENV PIP_NO_INPUT=on
@@ -31,10 +28,10 @@ WORKDIR /app
 
 COPY --chown=mex . .
 
-USER mex
+RUN --mount=type=cache,mode=0755,uid=10001,gid=10001,target=/app/.cache pip install --no-deps . --requirement locked-requirements.txt
+RUN --mount=type=cache,mode=0755,uid=10001,gid=10001,target=/app/.npm reflex init && reflex export --frontend-only --no-zip
 
-RUN --mount=type=cache,mode=0755,uid=10001,gid=10001,target=/app/.cache pip install --no-deps --user --requirement locked-requirements.txt
-RUN --mount=type=cache,mode=0755,uid=10001,gid=10001,target=/app/.npm python -m reflex init && python -m reflex export --frontend-only --no-zip
+USER mex
 
 EXPOSE 8030
 EXPOSE 8031

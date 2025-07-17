@@ -98,12 +98,7 @@ class MergeState(State):
     @rx.event(background=True)
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
-        for result in self.results_merged:
-            for preview in result.preview:
-                if preview.identifier and not preview.text:
-                    async with self:
-                        await resolve_editor_value(preview)
-        for result in self.results_extracted:
+        for result in self.results_merged + self.results_extracted:
             for preview in result.preview:
                 if preview.identifier and not preview.text:
                     async with self:

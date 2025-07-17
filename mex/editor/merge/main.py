@@ -81,6 +81,7 @@ def entity_type_choice_merged(choice: tuple[str, bool]) -> rx.Component:
         on_change=[
             MergeState.set_entity_type_merged(choice[0]),
             MergeState.refresh(["merged"]),
+            MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
     )
@@ -94,6 +95,7 @@ def entity_type_choice_extracted(choice: tuple[str, bool]) -> rx.Component:
         on_change=[
             MergeState.set_entity_type_extracted(choice[0]),
             MergeState.refresh(["extracted"]),
+            MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
     )

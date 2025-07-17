@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- entity type selection triggers search in merged view
+
 ### Changes
 
 - resolve identifiers in merge view
@@ -18,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- only show allowed precisions in temporal field drop-down
 
 ### Security
 

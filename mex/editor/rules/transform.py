@@ -38,7 +38,10 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.editor.fields import REQUIRED_FIELDS_BY_CLASS_NAME
+from mex.editor.fields import (
+    REQUIRED_FIELDS_BY_CLASS_NAME,
+    TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES,
+)
 from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, EditorValue
 from mex.editor.rules.models import (
     EditorField,
@@ -112,7 +115,12 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             editable_text=editable,
             editable_badge=editable,
             badge_default=TemporalEntityPrecision.YEAR.value,
-            badge_options=[e.value for e in TemporalEntityPrecision],
+            badge_options=[
+                e.value
+                for e in TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES[entity_type][
+                    field_name
+                ]
+            ],
             badge_titles=[TemporalEntityPrecision.__name__],
             allow_additive=editable,
         )

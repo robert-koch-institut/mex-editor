@@ -1,6 +1,11 @@
 import pytest
 from playwright.sync_api import Page, expect
 
+from mex.common.models import (
+    AnyExtractedModel,
+    ExtractedContactPoint,
+)
+
 
 @pytest.fixture
 def merge_page(
@@ -58,6 +63,10 @@ def test_search_input_merged(merge_page: Page) -> None:
         path="tests_merge_items_test_main-test_merged_search_input-clear-input.png"
     )
 
+    # check search trigger by entity type
+    entity_types_merged.get_by_text("ContactPoint").click()
+    expect(page.get_by_text("Showing 2 of 2 items")).to_be_visible()
+
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
@@ -87,6 +96,10 @@ def test_search_input_extracted(merge_page: Page) -> None:
     page.screenshot(
         path="tests_merge_items_test_main-test_extracted_search_input-clear-input.png"
     )
+
+    # check search trigger by entity type
+    entity_types_extracted.get_by_text("ContactPoint").click()
+    expect(page.get_by_text("Showing 2 of 2 items")).to_be_visible()
 
 
 @pytest.mark.integration
@@ -131,3 +144,27 @@ def test_select_result_merged(merge_page: Page) -> None:
     page.screenshot(
         path="tests_merge_items_test_main-test_select_result_merged-select.png"
     )
+
+
+@pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
+def test_resolves_identifier(
+    merge_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+) -> None:
+    page = merge_page
+    contact = dummy_data_by_identifier_in_primary_source["cp-1"]
+    assert type(contact) is ExtractedContactPoint
+
+    entity_types_extracted = page.get_by_test_id("entity-types-extracted")
+    expect(entity_types_extracted).to_be_visible()
+    entity_types_extracted.get_by_text("Activity").click()
+    page.get_by_test_id("search-button-extracted").click()
+    expect(
+        page.get_by_test_id("extracted-results-summary").get_by_text(
+            "Showing 1 of 1 items"
+        )
+    ).to_be_visible()
+    page.screenshot(path="tests_merge_test_main-test_resolves_identifier.png")
+    email = page.get_by_test_id("result-extracted-0").get_by_text(f"{contact.email[0]}")
+    expect(email).to_be_visible()

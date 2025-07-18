@@ -386,7 +386,7 @@ def test_edit_page_renders_vocabulary_input(edit_page: Page) -> None:
     expect(new_additive_button).to_be_visible()
     new_additive_button.click()
     page.screenshot(
-        path="tests_edit_test_main-test_edit_page_renders_vocabulary_input.png"
+        path="tests_edit_test_main-test_edit_page_renders_vocabulary_input_closed.png"
     )
 
     badge_select = page.get_by_test_id("additive-rule-activityType-0-badge")
@@ -395,9 +395,35 @@ def test_edit_page_renders_vocabulary_input(edit_page: Page) -> None:
     badge_select.focus()
     page.keyboard.press("ArrowDown")
     page.keyboard.press("ArrowDown")
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_renders_vocabulary_input_open.png"
+    )
     page.keyboard.press("Enter")
     page.locator("body").focus()
     expect(page.get_by_text("INTERNAL_PROJECT_ENDEAVOR")).to_be_visible()
+
+
+@pytest.mark.integration
+def test_edit_page_renders_temporal_input(edit_page: Page) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id("new-additive-end-00000000000000")
+    new_additive_button.scroll_into_view_if_needed()
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_renders_temporal_input_closed.png"
+    )
+
+    badge_select = page.get_by_test_id("additive-rule-end-0-badge")
+    expect(badge_select).to_be_visible()
+    expect(page.get_by_text("year")).to_be_visible()
+    badge_select.click()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_renders_temporal_input_open.png"
+    )
+    precision_options = page.get_by_role("group").get_by_role("option")
+    expect(precision_options).to_have_count(3)
+    expect(precision_options).to_have_text(["year", "month", "day"])
 
 
 @pytest.mark.integration

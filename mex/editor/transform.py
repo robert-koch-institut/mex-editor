@@ -39,7 +39,7 @@ def transform_value(
         )
     if isinstance(value, Link):
         return EditorValue(
-            text=value.title or value.url,
+            text=value.title,
             href=value.url if allow_link else None,
             badge=value.language.name if value.language else None,
             external=True,

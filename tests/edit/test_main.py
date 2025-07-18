@@ -119,15 +119,24 @@ def test_edit_page_renders_link(
     edit_page: Page, extracted_activity: ExtractedActivity
 ) -> None:
     page = edit_page
-    website = page.get_by_test_id(
+    website_0 = page.get_by_test_id(
         f"value-website-{extracted_activity.hadPrimarySource}-0"
     )
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_link.png")
-    expect(website).to_be_visible()
-    link = website.get_by_role("link")
-    expect(link).to_contain_text("Activity Homepage")  # link title
-    expect(link).to_have_attribute("href", "https://activity-1")  # link href
-    expect(link).to_have_attribute("target", "_blank")  # external link
+    expect(website_0).to_be_visible()
+    link_0 = website_0.get_by_role("link")
+    expect(link_0).to_contain_text("Activity Homepage")  # link title
+    expect(link_0).to_have_attribute("href", "https://activity-1")  # link href
+    expect(link_0).to_have_attribute("target", "_blank")  # external link
+
+    website_1 = page.get_by_test_id(
+        f"value-website-{extracted_activity.hadPrimarySource}-1"
+    )
+    expect(website_1).to_be_visible()
+    link_1 = website_1.get_by_role("link")
+    expect(link_1).to_contain_text("https://activity-homepage-1")  # link title
+    expect(link_1).to_have_attribute("href", "https://activity-homepage-1")  # link href
+    expect(link_1).to_have_attribute("target", "_blank")  # external link
 
 
 @pytest.mark.integration
@@ -172,26 +181,25 @@ def test_edit_page_resolves_identifier(
 @pytest.mark.parametrize(
     ("switch_id"),
     [
-        (r"{prefix}"),
-        (r"{prefix}-1"),
+        (r"switch-abstract-{had_primary_source}"),
+        (r"switch-abstract-{had_primary_source}-1"),
+        (r"switch-website-{had_primary_source}-1"),
     ],
-    ids=["toggle primary source", "toggle value"],
+    ids=["toggle primary source", "toggle value", "toggle link without text"],
 )
 @pytest.mark.integration
 def test_edit_page_switch_roundtrip(
     edit_page: Page, extracted_activity: ExtractedActivity, switch_id: str
 ) -> None:
-    prefix = f"switch-abstract-{extracted_activity.hadPrimarySource}"
-    test_id = switch_id.format(
-        prefix="tests_edit_test_main-test_edit_page_switch_roundtrip"
-    )
-    switch_id = switch_id.format(prefix=prefix)
+    switch_id = switch_id.format(had_primary_source=extracted_activity.hadPrimarySource)
+    test_id = f"tests_edit_test_main-test_edit_page_switch_roundtrip_{switch_id}"
     page = edit_page
 
     # verify initial state: toggle is enabled
     switch = page.get_by_test_id(switch_id)
-    page.screenshot(path=f"{test_id}-onload.png")
     expect(switch).to_have_count(1)
+    switch.scroll_into_view_if_needed()
+    page.screenshot(path=f"{test_id}-onload.png")
     expect(switch).to_be_visible()
     expect(switch).to_have_attribute("data-state", "checked")
 

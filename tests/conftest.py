@@ -65,7 +65,7 @@ def set_identity_provider(
 @pytest.fixture
 def frontend_url() -> str:
     """Return the URL of the current local frontend server for testing."""
-    return "http://localhost:3000"
+    return "http://localhost:3001"
 
 
 @pytest.fixture(autouse=True)
@@ -171,7 +171,10 @@ def dummy_data() -> list[AnyExtractedModel]:
         end=[YearMonthDay(2023, 1, 1)],
         theme=[Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"]],
         title=[Text(value="Aktivität 1", language=TextLanguage.DE)],
-        website=[Link(title="Activity Homepage", url="https://activity-1")],
+        website=[
+            Link(title="Activity Homepage", url="https://activity-1"),
+            Link(url="https://activity-homepage-1"),
+        ],
     )
     resource_1 = ExtractedResource(
         hadPrimarySource=primary_source_1.stableTargetId,

@@ -21,7 +21,7 @@ def render_identifier(value: EditorValue) -> rx.Component:
 def render_external_link(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable external link that opens in a new tab."""
     return rx.link(
-        value.text,
+        rx.cond(value.text, value.text, value.href),
         href=value.href,
         high_contrast=True,
         is_external=True,

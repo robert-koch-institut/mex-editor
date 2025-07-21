@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - update reflex to 0.8
+- resolve identifiers in merge view
 
 ### Deprecated
 
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix editing for link fields without a title value
 - only show allowed precisions in temporal field drop-down
 
 ### Security

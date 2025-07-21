@@ -1,5 +1,3 @@
-from typing import cast
-
 import reflex as rx
 
 from mex.editor.components import render_value
@@ -16,7 +14,7 @@ def expand_properties_button(result: IngestResult, index: int) -> rx.Component:
             rx.icon("minimize-2", size=15),
             rx.icon("maximize-2", size=15),
         ),
-        on_click=IngestState.toggle_show_properties(index),
+        on_click=IngestState.toggle_show_properties(index),  # type: ignore[operator]
         align="end",
         color_scheme="gray",
         variant="surface",
@@ -33,7 +31,7 @@ def ingest_button(result: IngestResult, index: int) -> rx.Component:
             align="end",
             color_scheme="jade",
             variant="surface",
-            on_click=IngestState.ingest_result(index),
+            on_click=IngestState.ingest_result(index),  # type: ignore[operator]
             width="calc(8em * var(--scaling))",
         ),
         rx.button(
@@ -228,7 +226,7 @@ def pagination() -> rx.Component:
         ),
         rx.select(
             IngestState.total_pages,
-            value=cast("rx.vars.NumberVar", IngestState.current_page).to_string(),
+            value=f"{IngestState.current_page}",
             on_change=[
                 IngestState.set_page,
                 IngestState.scroll_to_top,

@@ -1,18 +1,14 @@
-from typing import TYPE_CHECKING, cast
-
 import reflex as rx
+from reflex.style import toggle_color_mode
 
 from mex.editor.state import NavItem, State
-
-if TYPE_CHECKING:
-    from mex.editor.models import User
 
 
 def user_button() -> rx.Component:
     """Return a user button with an icon that indicates their access rights."""
     return rx.button(
         rx.cond(
-            cast("User", State.user_mex).write_access,
+            State.user_mex.write_access,  # type: ignore[union-attr]
             rx.icon(tag="user_round_cog"),
             rx.icon(tag="user_round"),
         ),
@@ -29,7 +25,7 @@ def user_menu() -> rx.Component:
             custom_attrs={"data-testid": "user-menu"},
         ),
         rx.menu.content(
-            rx.menu.item(cast("User", State.user_mex).name, disabled=True),
+            rx.menu.item(State.user_mex.name, disabled=True),  # type: ignore[union-attr]
             rx.menu.separator(),
             rx.menu.item(
                 "Logout",
@@ -55,10 +51,7 @@ def app_logo() -> rx.Component:
     return rx.hover_card.root(
         rx.hover_card.trigger(
             rx.hstack(
-                rx.icon(
-                    "circuit-board",
-                    size=28,
-                ),
+                rx.icon(tag="circuit-board", size=28),
                 rx.heading(
                     "MEx Editor",
                     weight="medium",
@@ -99,7 +92,12 @@ def nav_bar() -> rx.Component:
                 rx.divider(orientation="vertical", size="2"),
                 user_menu(),
                 rx.spacer(),
-                rx.color_mode.button(),
+                rx.button(
+                    rx.icon(tag="sun_moon"),
+                    variant="ghost",
+                    style={"marginTop": "0"},
+                    on_click=toggle_color_mode,
+                ),
                 justify="between",
                 align_items="center",
             ),

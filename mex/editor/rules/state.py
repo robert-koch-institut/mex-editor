@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from urllib.parse import parse_qs
 
 import reflex as rx
 from pydantic import ValidationError
@@ -32,12 +33,14 @@ from mex.editor.utils import resolve_editor_value, resolve_identifier
 class RuleState(State):
     """Base state for the edit and create components."""
 
-    item_id: str | None = None
-    fields: list[EditorField] = []
-    stem_type: str | None = None
-    validation_messages: list[ValidationMessage] = []
+    item_id: rx.Field[str | None] = rx.field(None)
+    fields: rx.Field[list[EditorField]] = rx.field(default_factory=list)
+    stem_type: rx.Field[str | None] = rx.field(None)
+    validation_messages: rx.Field[list[ValidationMessage]] = rx.field(
+        default_factory=list
+    )
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for field in self.fields:
@@ -94,7 +97,7 @@ class RuleState(State):
         """Refresh the edit or create page."""
         self.fields.clear()
         self.validation_messages.clear()
-        self.item_id = self.router.page.params.get("identifier")
+        self.item_id = parse_qs(self.router.url.query).get("identifier", [None])[0]
         try:
             extracted_items = self._get_extracted_items()
         except HTTPError as exc:
@@ -152,8 +155,8 @@ class RuleState(State):
         if rule_set_response.stableTargetId != self.item_id:
             yield rx.redirect(f"/item/{rule_set_response.stableTargetId}/?saved")
         else:
-            yield from self.refresh()
-            yield self.show_submit_success_toast()
+            yield from self.refresh()  # type: ignore[operator]
+            yield self.show_submit_success_toast()  # type: ignore[operator]
 
     @rx.event
     def show_submit_success_toast(self) -> EventSpec:

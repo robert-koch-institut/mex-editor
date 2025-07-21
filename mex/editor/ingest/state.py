@@ -1,11 +1,8 @@
 import math
 from collections.abc import Generator
-from typing import Annotated
 
 import reflex as rx
-from pydantic import Field
 from reflex.event import EventSpec
-from reflex.state import serialize_mutable_proxy
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -20,15 +17,19 @@ from mex.editor.utils import resolve_editor_value
 class IngestState(State):
     """State management for the ingest page."""
 
-    results_transformed: list[IngestResult] = []
-    results_extracted: list[AnyExtractedModel] = []
-    total: Annotated[int, Field(ge=0)] = 0
-    query_string: Annotated[str, Field(max_length=1000)] = ""
-    current_page: Annotated[int, Field(ge=1)] = 1
-    limit: Annotated[int, Field(ge=1, le=100)] = 50
-    current_aux_provider: str = "ldap"
-    aux_providers: list[str] = ["ldap", "orcid", "wikidata"]
-    is_loading: bool = True
+    results_transformed: rx.Field[list[IngestResult]] = rx.field(default_factory=list)
+    results_extracted: rx.Field[list[AnyExtractedModel]] = rx.field(
+        default_factory=list
+    )
+    total: rx.Field[int] = rx.field(0)
+    query_string: rx.Field[str] = rx.field("")
+    current_page: rx.Field[int] = rx.field(1)
+    limit: rx.Field[int] = rx.field(50)
+    current_aux_provider: rx.Field[str] = rx.field("ldap")
+    aux_providers: rx.Field[list[str]] = rx.field(
+        default_factory=lambda: ["ldap", "orcid", "wikidata"]
+    )
+    is_loading: rx.Field[bool] = rx.field(default=True)
 
     @rx.var(cache=False)
     def total_pages(self) -> list[str]:
@@ -76,26 +77,24 @@ class IngestState(State):
     @rx.event
     def go_to_first_page(self) -> None:
         """Navigate to the first page."""
-        self.set_page(1)
+        self.current_page = 1
 
     @rx.event
     def go_to_previous_page(self) -> None:
         """Navigate to the previous page."""
-        self.set_page(self.current_page - 1)
+        self.current_page = self.current_page - 1
 
     @rx.event
     def go_to_next_page(self) -> None:
         """Navigate to the next page."""
-        self.set_page(self.current_page + 1)
+        self.current_page = self.current_page + 1
 
     @rx.event
     def ingest_result(self, index: int) -> Generator[EventSpec | None, None, None]:
         """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
         try:
-            model: AnyExtractedModel = serialize_mutable_proxy(
-                self.results_extracted[index]
-            )
+            model: AnyExtractedModel = self.results_extracted[index]
             connector.ingest([model])
         except HTTPError as exc:
             yield from escalate_error(
@@ -117,7 +116,7 @@ class IngestState(State):
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results_transformed:

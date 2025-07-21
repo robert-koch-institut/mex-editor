@@ -1,9 +1,10 @@
-import reflex as rx
+from dataclasses import dataclass
 
 from mex.editor.models import EditorValue
 
 
-class SearchResult(rx.Base):
+@dataclass
+class SearchResult:
     """Search result preview."""
 
     identifier: str
@@ -11,7 +12,8 @@ class SearchResult(rx.Base):
     preview: list[EditorValue]
 
 
-class SearchPrimarySource(rx.Base):
+@dataclass
+class SearchPrimarySource:
     """Primary source filter."""
 
     identifier: str

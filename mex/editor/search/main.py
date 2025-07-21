@@ -1,5 +1,3 @@
-from typing import cast
-
 import reflex as rx
 
 from mex.editor.components import render_value
@@ -96,7 +94,7 @@ def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            SearchState.set_entity_type(choice[0]),
+            SearchState.set_entity_type(choice[0]),  # type: ignore[operator]
             SearchState.go_to_first_page,
             SearchState.push_search_params,
             SearchState.refresh,
@@ -133,7 +131,7 @@ def primary_source_choice(choice: tuple[str, SearchPrimarySource]) -> rx.Compone
         choice[1].title,
         checked=choice[1].checked,
         on_change=[
-            SearchState.set_had_primary_source(choice[0]),
+            SearchState.set_had_primary_source(choice[0]),  # type: ignore[operator]
             SearchState.go_to_first_page,
             SearchState.push_search_params,
             SearchState.refresh,
@@ -195,7 +193,7 @@ def pagination() -> rx.Component:
         ),
         rx.select(
             SearchState.total_pages,
-            value=cast("rx.vars.NumberVar", SearchState.current_page).to_string(),
+            value=f"{SearchState.current_page}",
             on_change=[
                 SearchState.set_page,
                 SearchState.push_search_params,

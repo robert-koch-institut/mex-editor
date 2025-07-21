@@ -1,14 +1,13 @@
+from dataclasses import dataclass
 from importlib.resources import files
 from typing import Literal
 
-import reflex as rx
 import yaml
 from pydantic import TypeAdapter
 
-from mex.common.models import BaseModel
 
-
-class EditorValue(rx.Base):
+@dataclass
+class EditorValue:
     """Model for describing atomic values in the editor."""
 
     text: str | None = None
@@ -20,7 +19,8 @@ class EditorValue(rx.Base):
     being_edited: bool = False
 
 
-class User(rx.Base):
+@dataclass
+class User:
     """Info on the currently logged-in user."""
 
     name: str
@@ -28,7 +28,8 @@ class User(rx.Base):
     write_access: bool
 
 
-class NavItem(rx.Base):
+@dataclass
+class NavItem:
     """Model for one navigation bar item."""
 
     title: str = ""
@@ -37,11 +38,12 @@ class NavItem(rx.Base):
     underline: Literal["always", "none"] = "none"
 
 
-class ModelConfig(BaseModel):
+@dataclass
+class ModelConfig:
     """Configuration for how to display an entity type in the frontend."""
 
     title: str
-    preview: list[str] = []
+    preview: list[str]
     icon: str
 
 

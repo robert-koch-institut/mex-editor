@@ -75,26 +75,24 @@ class IngestState(State):
     @rx.event
     def go_to_first_page(self) -> None:
         """Navigate to the first page."""
-        self.set_page(1)
+        self.current_page = 1
 
     @rx.event
     def go_to_previous_page(self) -> None:
         """Navigate to the previous page."""
-        self.set_page(self.current_page - 1)
+        self.current_page = self.current_page - 1
 
     @rx.event
     def go_to_next_page(self) -> None:
         """Navigate to the next page."""
-        self.set_page(self.current_page + 1)
+        self.current_page = self.current_page + 1
 
     @rx.event
     def ingest_result(self, index: int) -> Generator[EventSpec | None, None, None]:
         """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
         try:
-            model: AnyExtractedModel = serialize_mutable_proxy(
-                self.results_extracted[index]
-            )
+            model: AnyExtractedModel = self.results_extracted[index]
             connector.ingest([model])
         except HTTPError as exc:
             yield from escalate_error(
@@ -116,7 +114,7 @@ class IngestState(State):
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results_transformed:

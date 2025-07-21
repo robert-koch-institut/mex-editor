@@ -83,7 +83,9 @@ class State(rx.State):
         nav_item.raw_path = raw_path
 
     @rx.event
-    def push_url_params(self, **params: int | str | list[str]) -> EventSpec | None:
+    def push_url_params(
+        self, params: dict[str, int | str | list[str]]
+    ) -> EventSpec | None:
         """Event handler to push updated url parameter to the browser history."""
         for nav_item in self.nav_items:
             if self.router.page.path == nav_item.path:

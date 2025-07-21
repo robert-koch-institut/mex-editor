@@ -53,7 +53,11 @@ def render_span(text: str | None) -> rx.Component:
 def render_text(value: EditorValue) -> rx.Component:
     """Render an editor value as a text span."""
     return rx.skeleton(
-        render_span(cast("rx.vars.StringVar", value.text) | "Loading ..."),
+        rx.cond(
+            value.text,
+            render_span(value.text),
+            render_span("Loading ..."),
+        ),
         loading=~cast("rx.vars.StringVar", value.text),
     )
 

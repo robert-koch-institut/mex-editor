@@ -1,10 +1,11 @@
 import reflex as rx
+from reflex.style import toggle_color_mode
 
 from mex.editor.layout import app_logo
 from mex.editor.login.state import LoginLdapState, LoginMExState
 
 
-def login_user(state: type[rx.State]) -> rx.Component:
+def login_user(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
     """Return a form field for the user name."""
     return rx.vstack(
         rx.text("Username"),
@@ -21,7 +22,7 @@ def login_user(state: type[rx.State]) -> rx.Component:
     )
 
 
-def login_password(state: type[rx.State]) -> rx.Component:
+def login_password(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
     """Return a form field for the password."""
     return rx.vstack(
         rx.text("Password"),
@@ -57,7 +58,7 @@ def login_button() -> rx.Component:
     )
 
 
-def login_form(state: type[rx.State]) -> rx.Component:
+def login_form(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
     """Return a login form."""
     return rx.center(
         rx.card(
@@ -65,7 +66,12 @@ def login_form(state: type[rx.State]) -> rx.Component:
                 rx.hstack(
                     app_logo(),
                     rx.spacer(spacing="4"),
-                    rx.color_mode.button(),
+                    rx.button(
+                        rx.icon(tag="sun_moon"),
+                        variant="ghost",
+                        style={"marginTop": "0"},
+                        on_click=toggle_color_mode,
+                    ),
                     style={"width": "100%"},
                 ),
                 rx.divider(size="4"),

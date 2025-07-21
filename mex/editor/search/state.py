@@ -78,12 +78,14 @@ class SearchState(State):
     def push_search_params(self) -> EventSpec | None:
         """Push a new browser history item with updated search parameters."""
         return self.push_url_params(
-            q=self.query_string,
-            page=self.current_page,
-            entityType=[k for k, v in self.entity_types.items() if v],
-            hadPrimarySource=[
-                k for k, v in self.had_primary_sources.items() if v.checked
-            ],
+            {
+                "q": self.query_string,
+                "page": self.current_page,
+                "entityType": [k for k, v in self.entity_types.items() if v],
+                "hadPrimarySource": [
+                    k for k, v in self.had_primary_sources.items() if v.checked
+                ],
+            }
         )
 
     @rx.event
@@ -212,7 +214,7 @@ class SearchState(State):
             search_primary_sources = [
                 SearchPrimarySource(
                     identifier=source.identifier,
-                    title=source.title[0].text,
+                    title=str(source.title[0].text),
                     checked=False,
                 )
                 for source in available_primary_sources

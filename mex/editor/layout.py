@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, cast
 
 import reflex as rx
+from reflex.style import toggle_color_mode
 
 from mex.editor.state import NavItem, State
 
@@ -55,10 +56,7 @@ def app_logo() -> rx.Component:
     return rx.hover_card.root(
         rx.hover_card.trigger(
             rx.hstack(
-                rx.icon(
-                    "circuit-board",
-                    size=28,
-                ),
+                rx.icon(tag="circuit-board", size=28),
                 rx.heading(
                     "MEx Editor",
                     weight="medium",
@@ -99,7 +97,12 @@ def nav_bar() -> rx.Component:
                 rx.divider(orientation="vertical", size="2"),
                 user_menu(),
                 rx.spacer(),
-                rx.color_mode.button(),
+                rx.button(
+                    rx.icon(tag="sun_moon"),
+                    variant="ghost",
+                    style={"marginTop": "0"},
+                    on_click=toggle_color_mode,
+                ),
                 justify="between",
                 align_items="center",
             ),

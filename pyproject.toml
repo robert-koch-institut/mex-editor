@@ -10,7 +10,6 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "async-lru>=2",
     "fastapi>=0.116",
-    "granian>=2",
     "mex-common>=0.63,<0.64",
     "pydantic>=2",
     "pyyaml>=6",
@@ -18,6 +17,7 @@ dependencies = [
     "requests>=2",
     "starlette>=0.46",
     "typer>=0.16",
+    "uvicorn>=0.35",
 ]
 optional-dependencies.dev = [
     "ipdb>=0.13",

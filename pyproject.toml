@@ -10,7 +10,7 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "async-lru>=2",
     "fastapi>=0.115",
-    "mex-common>=0.62.1,<0.63",
+    "mex-common>=0.63,<0.64",
     "pydantic>=2",
     "pyyaml>=6",
     "reflex>=0.6,<0.7",

@@ -52,10 +52,6 @@ python_version = "3.11"
 show_error_codes = true
 plugins = ["pydantic.mypy"]
 
-[[tool.mypy.overrides]]
-module = "reflex.*"
-ignore_missing_imports = true
-
 [tool.pdm]
 distribution = true
 

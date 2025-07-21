@@ -1,19 +1,14 @@
-from typing import TYPE_CHECKING, cast
-
 import reflex as rx
 from reflex.style import toggle_color_mode
 
 from mex.editor.state import NavItem, State
-
-if TYPE_CHECKING:
-    from mex.editor.models import User
 
 
 def user_button() -> rx.Component:
     """Return a user button with an icon that indicates their access rights."""
     return rx.button(
         rx.cond(
-            cast("User", State.user_mex).write_access,
+            State.user_mex.write_access,  # type: ignore[union-attr]
             rx.icon(tag="user_round_cog"),
             rx.icon(tag="user_round"),
         ),
@@ -30,7 +25,7 @@ def user_menu() -> rx.Component:
             custom_attrs={"data-testid": "user-menu"},
         ),
         rx.menu.content(
-            rx.menu.item(cast("User", State.user_mex).name, disabled=True),
+            rx.menu.item(State.user_mex.name, disabled=True),  # type: ignore[union-attr]
             rx.menu.separator(),
             rx.menu.item(
                 "Logout",

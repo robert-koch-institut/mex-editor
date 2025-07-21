@@ -1,5 +1,5 @@
 from importlib.metadata import version
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, urlencode
 
 import reflex as rx
 from reflex.event import EventSpec
@@ -53,7 +53,7 @@ class State(rx.State):
     def check_mex_login(self) -> EventSpec | None:
         """Check if a user is logged in."""
         if self.user_mex is None:
-            self.target_path_after_login = self.router.page.raw_path
+            self.target_path_after_login = str(self.router.url)
             return rx.redirect("/login")
         return None
 
@@ -61,7 +61,7 @@ class State(rx.State):
     def check_ldap_login(self) -> EventSpec | None:
         """Check if a user is logged in to ldap."""
         if self.user_ldap is None:
-            self.target_path_after_login = self.router.page.raw_path
+            self.target_path_after_login = str(self.router.url)
             return rx.redirect("/login-ldap")
         return None
 
@@ -88,7 +88,7 @@ class State(rx.State):
     ) -> EventSpec | None:
         """Event handler to push updated url parameter to the browser history."""
         for nav_item in self.nav_items:
-            if self.router.page.path == nav_item.path:
+            if self.router.url.path == nav_item.path:
                 self._update_raw_path(nav_item, **params)
                 return rx.call_script(
                     f"window.history.pushState(null, '', '{nav_item.raw_path}');"
@@ -99,8 +99,8 @@ class State(rx.State):
     def load_nav(self) -> None:
         """Event hook for updating the navigation on page loads."""
         for nav_item in self.nav_items:
-            if self.router.page.path == nav_item.path:
-                self._update_raw_path(nav_item, **self.router.page.params)
+            if self.router.url.path == nav_item.path:
+                self._update_raw_path(nav_item, **parse_qs(self.router.url.query))
                 nav_item.underline = "always"
             else:
                 nav_item.underline = "none"

@@ -19,8 +19,8 @@ from mex.editor.merge.state import MergeState
 from mex.editor.rules.state import RuleState
 from mex.editor.search.main import index as search_index
 from mex.editor.search.state import SearchState
-from mex.editor.settings import EditorSettings
 from mex.editor.state import State
+from mex.editor.utils import load_settings
 
 app = rx.App(
     html_lang="en",
@@ -108,7 +108,7 @@ app.add_page(
     ],
 )
 app.register_lifespan_task(
-    lambda: logger.info(EditorSettings.get().text()),
+    lambda: logger.info(load_settings().text()),
 )
 app.register_lifespan_task(
     log_info,

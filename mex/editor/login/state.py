@@ -14,8 +14,8 @@ from mex.editor.state import State, User
 class LoginLdapState(State):
     """State management for the login page."""
 
-    username: str
-    password: str
+    username: rx.Field[str] = rx.field("")
+    password: rx.Field[str] = rx.field("")
 
     @rx.event
     def set_username(self, username: str) -> None:
@@ -50,8 +50,8 @@ class LoginLdapState(State):
 class LoginMExState(State):
     """State management for the login page."""
 
-    username: str
-    password: str
+    username: rx.Field[str] = rx.field("")
+    password: rx.Field[str] = rx.field("")
 
     @rx.event
     def set_username(self, username: str) -> None:

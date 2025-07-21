@@ -1,9 +1,10 @@
-import reflex as rx
+from dataclasses import dataclass
 
 from mex.editor.models import EditorValue
 
 
-class IngestResult(rx.Base):
+@dataclass
+class IngestResult:
     """Ingest search result."""
 
     identifier: str

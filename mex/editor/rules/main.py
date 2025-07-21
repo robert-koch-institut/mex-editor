@@ -1,5 +1,3 @@
-from typing import cast
-
 import reflex as rx
 
 from mex.editor.components import render_span, render_value
@@ -22,7 +20,7 @@ def editor_value_switch(
     """Return a switch for toggling subtractive rules."""
     return rx.switch(
         checked=value.enabled,
-        on_change=RuleState.toggle_field_value(field_name, value),
+        on_change=RuleState.toggle_field_value(field_name, value),  # type: ignore[operator]
         custom_attrs={
             "data-testid": f"switch-{field_name}-{primary_source.identifier}-{index}"
         },
@@ -54,7 +52,7 @@ def editor_edit_button(
         variant="soft",
         size="1",
         on_click=[
-            RuleState.toggle_field_value_editing(field_name, index),
+            RuleState.toggle_field_value_editing(field_name, index),  # type: ignore[operator]
             RuleState.resolve_identifiers,
         ],
         custom_attrs={
@@ -123,7 +121,7 @@ def remove_additive_button(
         color_scheme="tomato",
         variant="soft",
         size="1",
-        on_click=RuleState.remove_additive_value(field_name, index),
+        on_click=RuleState.remove_additive_value(field_name, index),  # type: ignore[operator]
         custom_attrs={
             "data-testid": f"additive-rule-{field_name}-{index}-remove-button"
         },
@@ -139,7 +137,7 @@ def href_input(
     return rx.input(
         placeholder="URL",
         value=href,
-        on_change=RuleState.set_href_value(field_name, index),
+        on_change=RuleState.set_href_value(field_name, index),  # type: ignore[operator]
         style={
             "margin": "calc(-1 * var(--space-1))",
             "minWidth": "30%",
@@ -157,7 +155,7 @@ def text_input(
     return rx.input(
         placeholder="Text",
         value=text,
-        on_change=RuleState.set_text_value(field_name, index),
+        on_change=RuleState.set_text_value(field_name, index),  # type: ignore[operator]
         style={
             "margin": "calc(-1 * var(--space-1))",
             "minWidth": "30%",
@@ -181,13 +179,16 @@ def badge_input(
         rx.box(
             rx.select(
                 input_config.badge_options,
-                value=cast("rx.Var", badge)
-                | cast("rx.Var", input_config.badge_default),
+                value=rx.cond(
+                    badge,
+                    badge,
+                    input_config.badge_default,
+                ),
                 size="1",
                 variant="soft",
                 radius="large",
                 color_scheme="gray",
-                on_change=RuleState.set_badge_value(field_name, index),
+                on_change=RuleState.set_badge_value(field_name, index),  # type: ignore[operator]
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-badge"
                 },
@@ -209,7 +210,7 @@ def additive_rule_input(
             rx.input(
                 placeholder="URL",
                 value=value.href,
-                on_change=RuleState.set_href_value(field_name, index),
+                on_change=RuleState.set_href_value(field_name, index),  # type: ignore[operator]
                 style={
                     "margin": "calc(-1 * var(--space-1))",
                     "minWidth": "30%",
@@ -224,7 +225,7 @@ def additive_rule_input(
             rx.input(
                 placeholder="Text",
                 value=value.text,
-                on_change=RuleState.set_text_value(field_name, index),
+                on_change=RuleState.set_text_value(field_name, index),  # type: ignore[operator]
                 style={
                     "margin": "calc(-1 * var(--space-1))",
                     "minWidth": "30%",
@@ -239,7 +240,7 @@ def additive_rule_input(
             rx.input(
                 placeholder="Identifier",
                 value=value.identifier,
-                on_change=RuleState.set_identifier_value(field_name, index),
+                on_change=RuleState.set_identifier_value(field_name, index),  # type: ignore[operator]
                 style={
                     "margin": "calc(-1 * var(--space-1))",
                     "minWidth": "30%",
@@ -259,13 +260,16 @@ def additive_rule_input(
                 rx.box(
                     rx.select(
                         input_config.badge_options,
-                        value=cast("rx.Var", value.badge)
-                        | cast("rx.Var", input_config.badge_default),
+                        value=rx.cond(
+                            value.badge,
+                            value.badge,
+                            input_config.badge_default,
+                        ),
                         size="1",
                         variant="soft",
                         radius="large",
                         color_scheme="gray",
-                        on_change=RuleState.set_badge_value(field_name, index),
+                        on_change=RuleState.set_badge_value(field_name, index),  # type: ignore[operator]
                         custom_attrs={
                             "data-testid": f"additive-rule-{field_name}-{index}-badge"
                         },
@@ -316,7 +320,7 @@ def primary_source_switch(
     """Return a switch for toggling preventive rules."""
     return rx.switch(
         checked=primary_source.enabled,
-        on_change=RuleState.toggle_primary_source(field_name, primary_source.name.href),
+        on_change=RuleState.toggle_primary_source(field_name, primary_source.name.href),  # type: ignore[operator]
         custom_attrs={
             "data-testid": f"switch-{field_name}-{primary_source.identifier}"
         },
@@ -334,7 +338,7 @@ def primary_source_name(
             render_value(primary_source.name),
             rx.spacer(),
             rx.cond(
-                ~cast("rx.vars.BooleanVar", primary_source.input_config.allow_additive),
+                ~primary_source.input_config.allow_additive,
                 primary_source_switch(
                     field_name,
                     primary_source,
@@ -368,7 +372,7 @@ def new_additive_button(
             color_scheme="jade",
             variant="soft",
             size="1",
-            on_click=RuleState.add_additive_value(field_name),
+            on_click=RuleState.add_additive_value(field_name),  # type: ignore[operator]
             custom_attrs={
                 "data-testid": f"new-additive-{field_name}-{primary_source_identifier}"
             },
@@ -503,7 +507,7 @@ def validation_errors() -> rx.Component:
                 style={"justifyContent": "flex-end"},
             ),
         ),
-        open=cast("rx.vars.ArrayVar", RuleState.validation_messages).bool(),
+        open=RuleState.validation_messages.bool(),
     )
 
 

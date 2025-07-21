@@ -1,8 +1,7 @@
 from collections.abc import Generator, Iterable
-from typing import Annotated, Literal
+from typing import Literal
 
 import reflex as rx
-from pydantic import Field
 from reflex.event import EventSpec
 from requests import HTTPError
 
@@ -19,32 +18,28 @@ from mex.editor.utils import resolve_editor_value
 class MergeState(State):
     """State management for the merge items page."""
 
-    results_extracted: list[SearchResult] = []
-    results_merged: list[SearchResult] = []
-    entity_types_merged: dict[str, bool] = {
-        k.stemType: False for k in MERGED_MODEL_CLASSES
-    }
-    entity_types_extracted: dict[str, bool] = {
-        k.stemType: False for k in MERGED_MODEL_CLASSES
-    }
-    limit: Annotated[int, Field(ge=1, le=100)] = 50
-    is_loading: bool = True
-    query_strings: dict[Literal["merged", "extracted"], str] = {
-        "merged": "",
-        "extracted": "",
-    }
-    results_count: dict[str, int] = {
-        "merged": 0,
-        "extracted": 0,
-    }
-    total_count: dict[str, int] = {
-        "merged": 0,
-        "extracted": 0,
-    }
-    selected_items: dict[str, int | None] = {
-        "merged": None,
-        "extracted": None,
-    }
+    results_extracted: rx.Field[list[SearchResult]] = rx.field(default_factory=list)
+    results_merged: rx.Field[list[SearchResult]] = rx.field(default_factory=list)
+    entity_types_merged: rx.Field[dict[str, bool]] = rx.field(
+        default_factory=lambda: {k.stemType: False for k in MERGED_MODEL_CLASSES}
+    )
+    entity_types_extracted: rx.Field[dict[str, bool]] = rx.field(
+        default_factory=lambda: {k.stemType: False for k in MERGED_MODEL_CLASSES}
+    )
+    limit: rx.Field[int] = rx.field(50)
+    is_loading: rx.Field[bool] = rx.field(default=True)
+    query_strings: rx.Field[dict[Literal["merged", "extracted"], str]] = rx.field(
+        default_factory=lambda: {"merged": "", "extracted": ""}
+    )
+    results_count: rx.Field[dict[str, int]] = rx.field(
+        default_factory=lambda: {"merged": 0, "extracted": 0}
+    )
+    total_count: rx.Field[dict[str, int]] = rx.field(
+        default_factory=lambda: {"merged": 0, "extracted": 0}
+    )
+    selected_items: rx.Field[dict[str, int | None]] = rx.field(
+        default_factory=lambda: {"merged": None, "extracted": None}
+    )
 
     @rx.event
     def select_item(self, category: Literal["merged", "extracted"], index: int) -> None:
@@ -95,7 +90,7 @@ class MergeState(State):
             )
             self.results_extracted = []
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result_list in (self.results_merged, self.results_extracted):

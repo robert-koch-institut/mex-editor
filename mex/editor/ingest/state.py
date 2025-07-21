@@ -1,9 +1,7 @@
 import math
 from collections.abc import Generator
-from typing import Annotated
 
 import reflex as rx
-from pydantic import Field
 from reflex.event import EventSpec
 from requests import HTTPError
 
@@ -19,15 +17,19 @@ from mex.editor.utils import resolve_editor_value
 class IngestState(State):
     """State management for the ingest page."""
 
-    results_transformed: list[IngestResult] = []
-    results_extracted: list[AnyExtractedModel] = []
-    total: Annotated[int, Field(ge=0)] = 0
-    query_string: Annotated[str, Field(max_length=1000)] = ""
-    current_page: Annotated[int, Field(ge=1)] = 1
-    limit: Annotated[int, Field(ge=1, le=100)] = 50
-    current_aux_provider: str = "ldap"
-    aux_providers: list[str] = ["ldap", "orcid", "wikidata"]
-    is_loading: bool = True
+    results_transformed: rx.Field[list[IngestResult]] = rx.field(default_factory=list)
+    results_extracted: rx.Field[list[AnyExtractedModel]] = rx.field(
+        default_factory=list
+    )
+    total: rx.Field[int] = rx.field(0)
+    query_string: rx.Field[str] = rx.field("")
+    current_page: rx.Field[int] = rx.field(1)
+    limit: rx.Field[int] = rx.field(50)
+    current_aux_provider: rx.Field[str] = rx.field("ldap")
+    aux_providers: rx.Field[list[str]] = rx.field(
+        default_factory=lambda: ["ldap", "orcid", "wikidata"]
+    )
+    is_loading: rx.Field[bool] = rx.field(default=True)
 
     @rx.var(cache=False)
     def total_pages(self) -> list[str]:

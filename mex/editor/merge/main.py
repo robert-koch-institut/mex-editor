@@ -18,8 +18,8 @@ def search_result(
         rx.vstack(
             rx.hstack(
                 rx.checkbox(
-                    checked=MergeState.selected_items[category] == index,
-                    on_change=MergeState.select_item(category, index),
+                    checked=MergeState.selected_items[category] == index,  # type: ignore[call-overload]
+                    on_change=MergeState.select_item(category, index),  # type: ignore[operator]
                 ),
                 rx.box(
                     rx.hstack(
@@ -59,8 +59,8 @@ def results_summary(category: Literal["merged", "extracted"]) -> rx.Component:
     """Render a summary of the results found."""
     return rx.center(
         rx.text(
-            f"Showing {MergeState.results_count[category]} "
-            f"of {MergeState.total_count[category]} items",
+            f"Showing {MergeState.results_count[category]} "  # type: ignore[call-overload]
+            f"of {MergeState.total_count[category]} items",  # type: ignore[call-overload]
             style={
                 "color": "var(--gray-12)",
                 "fontWeight": "var(--font-weight-bold)",
@@ -79,8 +79,8 @@ def entity_type_choice_merged(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            MergeState.set_entity_type_merged(choice[0]),
-            MergeState.refresh(["merged"]),
+            MergeState.set_entity_type_merged(choice[0]),  # type: ignore[operator]
+            MergeState.refresh(["merged"]),  # type: ignore[operator]
             MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
@@ -93,8 +93,8 @@ def entity_type_choice_extracted(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            MergeState.set_entity_type_extracted(choice[0]),
-            MergeState.refresh(["extracted"]),
+            MergeState.set_entity_type_extracted(choice[0]),  # type: ignore[operator]
+            MergeState.refresh(["extracted"]),  # type: ignore[operator]
             MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
@@ -139,11 +139,11 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
             rx.card(
                 rx.input(
                     autofocus=True,
-                    default_value=MergeState.query_strings[category],
-                    value=MergeState.query_strings[category],
+                    default_value=MergeState.query_strings[category],  # type: ignore[call-overload]
+                    value=MergeState.query_strings[category],  # type: ignore[call-overload]
                     max_length=100,
                     name=f"query_string_{category}",
-                    on_change=MergeState.handle_submit(category),
+                    on_change=MergeState.handle_submit(category),  # type: ignore[operator]
                     placeholder="Search here...",
                     style={
                         "--text-field-selection-color": "",
@@ -165,7 +165,7 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     "Clear",
                     variant="surface",
                     disabled=MergeState.is_loading,
-                    on_click=MergeState.clear_input(category),
+                    on_click=MergeState.clear_input(category),  # type: ignore[operator]
                     custom_attrs={"data-testid": f"clear-button-{category}"},
                 ),
                 rx.button(
@@ -174,7 +174,7 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     variant="surface",
                     disabled=MergeState.is_loading,
                     on_click=[
-                        MergeState.refresh([category]),
+                        MergeState.refresh([category]),  # type: ignore[operator]
                         MergeState.resolve_identifiers,
                     ],
                     custom_attrs={"data-testid": f"search-button-{category}"},
@@ -195,7 +195,7 @@ def submit_button() -> rx.Component:
         "Submit Merge",
         color_scheme="jade",
         size="3",
-        on_click=MergeState.submit_merge_items,
+        on_click=MergeState.submit_merge_items,  # type: ignore[operator]
         style={"margin": "var(--line-height-1) 0"},
         custom_attrs={"data-testid": "submit-button"},
     )

@@ -7,7 +7,9 @@ from mex.editor.rules.state import RuleState
 class CreateState(RuleState):
     """State for the create component."""
 
-    available_stem_types: list[str] = [r.stemType for r in RULE_SET_REQUEST_CLASSES]
+    available_stem_types: rx.Field[list[str]] = rx.field(
+        default_factory=lambda: [r.stemType for r in RULE_SET_REQUEST_CLASSES]
+    )
 
     @rx.event
     def set_stem_type(self, stem_type: str) -> None:

@@ -1,5 +1,3 @@
-from typing import cast
-
 import reflex as rx
 
 from mex.editor.rules.models import EditorValue
@@ -14,11 +12,11 @@ def render_identifier(value: EditorValue) -> rx.Component:
                 value.text,
                 "Loading ...",
             ),
-            href=value.href,
+            href=f"{value.href}",
             high_contrast=True,
             role="link",
         ),
-        loading=~cast("rx.vars.StringVar", value.text),
+        loading=~value.text,  # type: ignore[operator]
     )
 
 
@@ -30,7 +28,7 @@ def render_external_link(value: EditorValue) -> rx.Component:
             value.text,
             value.href,
         ),
-        href=value.href,
+        href=f"{value.href}",
         high_contrast=True,
         is_external=True,
         role="link",
@@ -62,7 +60,7 @@ def render_text(value: EditorValue) -> rx.Component:
             render_span(value.text),
             render_span("Loading ..."),
         ),
-        loading=~cast("rx.vars.StringVar", value.text),
+        loading=~value.text,  # type: ignore[operator]
     )
 
 

@@ -1,9 +1,9 @@
 import math
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING
+from urllib.parse import parse_qs
 
 import reflex as rx
-from pydantic import Field
 from reflex.event import EventSpec
 from requests import HTTPError
 
@@ -24,14 +24,18 @@ if TYPE_CHECKING:
 class SearchState(State):
     """State management for the search page."""
 
-    results: list[SearchResult] = []
-    total: Annotated[int, Field(ge=0)] = 0
-    query_string: Annotated[str, Field(max_length=1000)] = ""
-    entity_types: dict[str, bool] = {k.stemType: False for k in MERGED_MODEL_CLASSES}
-    had_primary_sources: dict[str, SearchPrimarySource] = {}
-    current_page: Annotated[int, Field(ge=1)] = 1
-    limit: Annotated[int, Field(ge=1, le=100)] = 50
-    is_loading: bool = True
+    results: rx.Field[list[SearchResult]] = rx.field(default_factory=list)
+    total: rx.Field[int] = rx.field(0)
+    query_string: rx.Field[str] = rx.field("")
+    entity_types: rx.Field[dict[str, bool]] = rx.field(
+        default_factory=lambda: {k.stemType: False for k in MERGED_MODEL_CLASSES}
+    )
+    had_primary_sources: rx.Field[dict[str, SearchPrimarySource]] = rx.field(
+        default_factory=dict
+    )
+    current_page: rx.Field[int] = rx.field(1)
+    limit: rx.Field[int] = rx.field(50)
+    is_loading: rx.Field[bool] = rx.field(default=True)
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:
@@ -58,14 +62,15 @@ class SearchState(State):
     def load_search_params(self) -> None:
         """Load url params into the state."""
         router: RouterData = self.get_value("router")
-        self.set_page(router.page.params.get("page", 1))
-        self.query_string = router.page.params.get("q", "")
-        type_params = router.page.params.get("entityType", [])
+        params = parse_qs(router.url.query)
+        self.current_page = int(params.get("page", [1])[0])
+        self.query_string = params.get("q", [""])[0]
+        type_params = params.get("entityType", [])
         type_params = type_params if isinstance(type_params, list) else [type_params]
         self.entity_types = {
             k.stemType: k.stemType in type_params for k in MERGED_MODEL_CLASSES
         }
-        had_primary_source_params = router.page.params.get("hadPrimarySource", [])
+        had_primary_source_params = params.get("hadPrimarySource", [])
         had_primary_source_params = (
             had_primary_source_params
             if isinstance(had_primary_source_params, list)
@@ -77,7 +82,7 @@ class SearchState(State):
     @rx.event
     def push_search_params(self) -> EventSpec | None:
         """Push a new browser history item with updated search parameters."""
-        return self.push_url_params(
+        return self.push_url_params(  # type: ignore[operator]
             {
                 "q": self.query_string,
                 "page": self.current_page,
@@ -85,7 +90,7 @@ class SearchState(State):
                 "hadPrimarySource": [
                     k for k, v in self.had_primary_sources.items() if v.checked
                 ],
-            }
+            },
         )
 
     @rx.event
@@ -119,24 +124,24 @@ class SearchState(State):
     @rx.event
     def go_to_first_page(self) -> None:
         """Navigate to the first page."""
-        self.set_page(1)
+        self.current_page = 1
 
     @rx.event
     def go_to_previous_page(self) -> None:
         """Navigate to the previous page."""
-        self.set_page(self.current_page - 1)
+        self.current_page = self.current_page - 1
 
     @rx.event
     def go_to_next_page(self) -> None:
         """Navigate to the next page."""
-        self.set_page(self.current_page + 1)
+        self.current_page = self.current_page + 1
 
     @rx.event
     def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results:

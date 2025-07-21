@@ -9,7 +9,11 @@ def render_identifier(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable internal link that loads the edit page."""
     return rx.skeleton(
         rx.link(
-            cast("rx.vars.StringVar", value.text) | "Loading ...",
+            rx.cond(
+                value.text,
+                value.text,
+                "Loading ...",
+            ),
             href=value.href,
             high_contrast=True,
             role="link",

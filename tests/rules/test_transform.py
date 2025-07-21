@@ -182,7 +182,6 @@ def test_get_primary_source_id_from_model_error() -> None:
                     enabled=False,
                 ),
                 EditorValue(
-                    text="http://pavyzdys",
                     href="http://pavyzdys",
                     external=True,
                 ),

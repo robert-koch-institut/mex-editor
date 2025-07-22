@@ -88,8 +88,8 @@ jobs:
         run: |
           pdm run editor &
           echo `date -Iseconds` checking services readiness &&
-          curl --connect-timeout 1 --max-time 20 --retry 10 --retry-delay 10 http://localhost:8000/_system/check &&
-          curl --connect-timeout 1 --max-time 20 --retry 10 --retry-delay 10 http://localhost:8080/v0/_system/check &&
+          curl --connect-timeout 10 --retry 10 --retry-delay 10 --retry-connrefused http://localhost:8000/_system/check &&
+          curl --connect-timeout 10 --retry 10 --retry-delay 10 --retry-connrefused http://localhost:8080/v0/_system/check &&
           make pytest
 
       - name: Upload screenshots

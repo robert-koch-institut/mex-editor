@@ -149,6 +149,7 @@ def search_input() -> rx.Component:
                         ),
                         "color": "",
                     },
+                    disabled=IngestState.is_loading,
                     type="text",
                 ),
                 rx.button(
@@ -173,6 +174,24 @@ def search_input() -> rx.Component:
     )
 
 
+def results_summary() -> rx.Component:
+    """Render a summary of the results found."""
+    return rx.center(
+        rx.text(
+            f"Showing {IngestState.current_results_length} "
+            f"of {IngestState.total} items",
+            style={
+                "color": "var(--gray-12)",
+                "fontWeight": "var(--font-weight-bold)",
+                "margin": "var(--space-4)",
+                "userSelect": "none",
+            },
+            custom_attrs={"data-testid": "search-results-summary"},
+        ),
+        style={"width": "100%"},
+    )
+
+
 def search_results() -> rx.Component:
     """Render the search results with a heading, result list, and pagination."""
     return rx.cond(
@@ -185,27 +204,18 @@ def search_results() -> rx.Component:
             },
         ),
         rx.vstack(
-            rx.center(
-                rx.text(
-                    f"Showing {IngestState.current_results_length} "
-                    f"of {IngestState.total} items",
-                    style={
-                        "color": "var(--gray-12)",
-                        "fontWeight": "var(--font-weight-bold)",
-                        "margin": "var(--space-4)",
-                        "userSelect": "none",
-                    },
-                    custom_attrs={"data-testid": "search-results-heading"},
-                ),
-                style={"width": "100%"},
-            ),
+            results_summary(),
             rx.foreach(
                 IngestState.results_transformed,
                 ingest_result,
             ),
             pagination(IngestState),
+            spacing="4",
             custom_attrs={"data-testid": "search-results-section"},
-            style={"width": "100%"},
+            style={
+                "minWidth": "0",
+                "width": "100%",
+            },
         ),
     )
 

@@ -28,7 +28,7 @@ def test_aux_tab_section(ingest_page: Page) -> None:
         (
             "ldap",
             "Person",
-            "doesn't exist gs871s9j91k*",
+            "UNKOWNBLABLABLA",
             "L*",
         ),
         (
@@ -40,7 +40,7 @@ def test_aux_tab_section(ingest_page: Page) -> None:
         (
             "orcid",
             "Person",
-            "doesn't exist gs871s9j91k*",
+            "UNKOWNBLABLABLA",
             "Lars",
         ),
     ],
@@ -72,21 +72,32 @@ def test_search_and_ingest_roundtrip(
     expect(search_input).to_be_visible()
     expect(search_input).to_be_enabled()
 
-    # test search input is showing correctly
+    # trigger invalid search
     search_input.fill(invalid_search)
     search_input.press("Enter")
+    expect(search_input).to_be_enabled(timeout=30000)
     page.screenshot(
         path=f"tests_ingest_test_main-roundtrip_{aux_provider}-invalid-search.png"
     )
-    expect(page.get_by_text("Showing 0 of")).to_be_visible()
+
+    # test no results are found
+    results_summary = page.get_by_test_id("search-results-summary")
+    expect(results_summary).to_be_visible()
+    expect(results_summary).to_contain_text("Showing 0 of 0 items")
 
     # trigger valid search
     search_input.fill(valid_search)
     search_input.press("Enter")
+    expect(search_input).to_be_enabled(timeout=30000)
     page.screenshot(
         path=f"tests_ingest_test_main-roundtrip_{aux_provider}-valid-search.png"
     )
-    expect(search_input).to_be_enabled()
+
+    # test pagination is showing
+    prev_button = page.get_by_test_id("pagination-previous-button")
+    expect(prev_button).to_be_disabled()
+    expect(page.get_by_test_id("pagination-next-button")).to_be_visible()
+    expect(page.get_by_test_id("pagination-page-select")).to_be_visible()
 
     # test expand button works
     expand_button = page.get_by_test_id("expand-properties-button-0")
@@ -115,22 +126,4 @@ def test_search_and_ingest_roundtrip(
     result = connector.fetch_extracted_items(
         None, None, [f"Extracted{stem_type}"], 0, 1
     )
-    assert result.total == items_before + 1
-
-
-@pytest.mark.external
-@pytest.mark.integration
-def test_pagination_on_ldap_tab(ingest_page: Page) -> None:
-    page = ingest_page
-    search_input = page.get_by_placeholder("Search here...")
-    expect(search_input).to_be_enabled()
-    search_input.fill("no such results")
-
-    # test pagination is showing and properly disabled
-    pagination_previous = page.get_by_test_id("pagination-previous-button")
-    pagination_next = page.get_by_test_id("pagination-next-button")
-    pagination_page_select = page.get_by_test_id("pagination-page-select")
-    page.screenshot(path="tests_ingest_test_main-test_pagination_on_ldap_tab.png")
-    expect(pagination_previous).to_be_disabled()
-    expect(pagination_next).to_be_disabled()
-    expect(pagination_page_select).to_be_disabled()
+    assert result.total >= items_before

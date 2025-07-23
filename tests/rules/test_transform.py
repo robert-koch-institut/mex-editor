@@ -395,8 +395,8 @@ def test_transform_model_to_input_config(
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
                     editor_values=[EditorValue(text="Family")],
-                    enabled=False,
                     input_config=InputConfig(),
+                    enabled=False,
                 )
             ],
         ),

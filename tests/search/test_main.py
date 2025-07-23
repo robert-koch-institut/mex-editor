@@ -204,7 +204,7 @@ def test_push_search_params(
 
     # load page and verify url
     page.goto(frontend_url)
-    page.wait_for_url("**/", timeout=10)
+    page.wait_for_url("**/", timeout=10000)
 
     # select an entity type
     entity_types = page.get_by_test_id("entity-types")

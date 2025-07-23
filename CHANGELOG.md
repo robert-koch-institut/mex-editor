@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - prepare reflex update
 - de-duplicate pagination component
+- de-duplicate ingestion roundtrip tests
 
 ### Deprecated
 

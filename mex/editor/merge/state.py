@@ -118,7 +118,6 @@ class MergeState(State):
             self.selected_items["extracted"] = None
             yield from self._refresh_extracted()
 
-    @rx.event
     def _refresh_merged(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results for merged items."""
         connector = BackendApiConnector.get()
@@ -150,7 +149,6 @@ class MergeState(State):
             self.results_count["merged"] = len(self.results_merged)
             self.total_count["merged"] = response.total
 
-    @rx.event
     def _refresh_extracted(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results for extracted items."""
         connector = BackendApiConnector.get()

@@ -26,4 +26,4 @@ class EditState(RuleState):
             yield self.show_submit_success_toast()
             params = self.router.page.params.copy()
             params.pop("saved")
-            yield self.push_url_params(**params)
+            yield self.push_url_params(params)

@@ -4,7 +4,7 @@ from mex.editor.layout import app_logo
 from mex.editor.login.state import LoginLdapState, LoginMExState
 
 
-def login_user(state: type[rx.State]) -> rx.Component:
+def login_user(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
     """Return a form field for the user name."""
     return rx.vstack(
         rx.text("Username"),
@@ -21,7 +21,7 @@ def login_user(state: type[rx.State]) -> rx.Component:
     )
 
 
-def login_password(state: type[rx.State]) -> rx.Component:
+def login_password(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
     """Return a form field for the password."""
     return rx.vstack(
         rx.text("Password"),
@@ -57,7 +57,7 @@ def login_button() -> rx.Component:
     )
 
 
-def login_form(state: type[rx.State]) -> rx.Component:
+def login_form(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
     """Return a login form."""
     return rx.center(
         rx.card(

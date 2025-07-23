@@ -31,6 +31,8 @@ Consent:
   icon: badge-check
 ContactPoint:
   title: email
+  preview:
+    - email
   icon: inbox
 Distribution:
   title: title

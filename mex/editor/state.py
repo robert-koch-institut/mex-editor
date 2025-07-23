@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from importlib.metadata import version
 from urllib.parse import urlencode
 
@@ -66,7 +67,10 @@ class State(rx.State):
         return None
 
     @staticmethod
-    def _update_raw_path(nav_item: NavItem, **params: int | str | list[str]) -> None:
+    def _update_raw_path(
+        nav_item: NavItem,
+        params: Mapping[str, int | str | list[str]],
+    ) -> None:
         """Update the raw path of a nav item with the given parameters."""
         raw_path = nav_item.path
         param_tuples = list(params.items())
@@ -83,11 +87,14 @@ class State(rx.State):
         nav_item.raw_path = raw_path
 
     @rx.event
-    def push_url_params(self, **params: int | str | list[str]) -> EventSpec | None:
+    def push_url_params(
+        self,
+        params: Mapping[str, int | str | list[str]],
+    ) -> EventSpec | None:
         """Event handler to push updated url parameter to the browser history."""
         for nav_item in self.nav_items:
             if self.router.page.path == nav_item.path:
-                self._update_raw_path(nav_item, **params)
+                self._update_raw_path(nav_item, params)
                 return rx.call_script(
                     f"window.history.pushState(null, '', '{nav_item.raw_path}');"
                 )
@@ -98,7 +105,7 @@ class State(rx.State):
         """Event hook for updating the navigation on page loads."""
         for nav_item in self.nav_items:
             if self.router.page.path == nav_item.path:
-                self._update_raw_path(nav_item, **self.router.page.params)
+                self._update_raw_path(nav_item, self.router.page.params)
                 nav_item.underline = "always"
             else:
                 nav_item.underline = "none"

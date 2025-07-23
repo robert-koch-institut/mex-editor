@@ -22,11 +22,10 @@ def editor_api() -> None:  # pragma: no cover
     # Set the log level.
     set_log_level(constants.LogLevel.INFO)
 
-    # Set env mode in the environment.
+    # Set environment variables.
     environment.REFLEX_ENV_MODE.set(constants.Env.PROD)
-
-    # Skip the compile step.
     environment.REFLEX_SKIP_COMPILE.set(True)
+    environment.REFLEX_USE_GRANIAN.set(False)
 
     # Delete the states folder if it exists.
     reset_disk_state_manager()
@@ -57,7 +56,7 @@ def editor_frontend() -> None:  # pragma: no cover
     environment.REFLEX_CHECK_LATEST_VERSION.set(False)
 
     # Initialize the app in the current directory.
-    _init(name="mex", loglevel=constants.LogLevel.INFO)
+    _init(name="mex")
 
     # Get the app module.
     get_compiled_app()
@@ -78,5 +77,9 @@ def editor_frontend() -> None:  # pragma: no cover
 
 def main() -> None:  # pragma: no cover
     """Start the editor api together with frontend."""
+    # Set environment variables.
     environment.REFLEX_USE_NPM.set(True)
+    environment.REFLEX_USE_GRANIAN.set(False)
+
+    # Run the editor.
     typer.run(run)

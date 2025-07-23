@@ -39,6 +39,7 @@ def test_state_get_primary_sources_by_field_name() -> None:
             identifier="somePrimarySource",
             input_config=InputConfig(),
             editor_values=[EditorValue(text="test@foo.bar")],
+            enabled=True,
         ),
         EditorPrimarySource(
             name=EditorValue(
@@ -47,5 +48,7 @@ def test_state_get_primary_sources_by_field_name() -> None:
             ),
             identifier="00000000000000",
             input_config=InputConfig(editable_text=True, allow_additive=True),
+            editor_values=[],
+            enabled=True,
         ),
     ]

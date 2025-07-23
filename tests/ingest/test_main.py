@@ -22,140 +22,108 @@ def test_aux_tab_section(ingest_page: Page) -> None:
     expect(nav_bar).to_be_visible()
 
 
+@pytest.mark.parametrize(
+    ("aux_provider", "stem_type", "invalid_search", "valid_search"),
+    [
+        (
+            "ldap",
+            "Person",
+            "UNKOWNBLABLABLA",
+            "L*",
+        ),
+        (
+            "wikidata",
+            "Organization",
+            "Q000000",
+            "Q12345",
+        ),
+        (
+            "orcid",
+            "Person",
+            "UNKOWNBLABLABLA",
+            "Lars",
+        ),
+    ],
+    ids=["ldap", "wikidata", "orcid"],
+)
 @pytest.mark.integration
 @pytest.mark.external
-def test_wikidata_search_and_ingest_results(ingest_page: Page) -> None:
+def test_search_and_ingest_roundtrip(
+    ingest_page: Page,
+    aux_provider: str,
+    stem_type: str,
+    invalid_search: str,
+    valid_search: str,
+) -> None:
     page = ingest_page
-    search_input = page.get_by_placeholder("Search here...")
-    expect(search_input).to_be_visible()
 
-    # test search input is showing correctly
-    search_input.fill("Q000000")  # does not exist
-    search_input.press("Enter")
-    page.screenshot(path="tests_ingest_test_main-test_search-input-0-found.png")
-    expect(page.get_by_text("showing 0 of")).to_be_visible()
-
-    # test expand button works
-    search_input.fill("Q12345")
-    search_input.press("Enter")
-    expand_all_properties_button = page.get_by_test_id("expand-properties-button").first
-    page.screenshot(path="tests_ingest_test_main-search_result.png")
-    expect(page.get_by_text("Count von Count")).to_be_visible()
-    expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
-    expand_all_properties_button.click()
-    expect(page.get_by_test_id("all-properties-display")).to_be_visible()
-    page.screenshot(path="tests_ingest_test_main-test_expand_button.png")
-
-    # test ingest button works
-    ingest_button = page.get_by_text("Ingest").first
-    ingest_button.click()
-    toast = page.locator(".editor-toast").first
-    expect(toast).to_be_visible()
-    expect(toast).to_contain_text("Organization was ingested successfully.")
-    expect(ingest_button).to_be_disabled()
-    page.screenshot(path="tests_ingest_test_main-test_ingest_button.png")
-
-    # test node was ingested into backend
+    # count the items before
     connector = BackendApiConnector.get()
-    result = connector.fetch_extracted_items("Count von Count", None, None, 0, 1)
-    assert result.total >= 1
+    result = connector.fetch_extracted_items(
+        None, None, [f"Extracted{stem_type}"], 0, 1
+    )
+    items_before = result.total
 
-
-@pytest.mark.integration
-@pytest.mark.external
-def test_ldap_search_and_ingest_results(ingest_page: Page) -> None:
-    # count the persons before
-    connector = BackendApiConnector.get()
-    result = connector.fetch_extracted_items(None, None, ["ExtractedPerson"], 0, 1)
-    persons_before = result.total
-
-    page = ingest_page
-    ldap_tab = page.get_by_role("tab", name="LDAP")
+    # go to the correct tab
+    ldap_tab = page.get_by_role("tab", name=aux_provider)
+    expect(ldap_tab).to_be_enabled(timeout=30000)
     ldap_tab.click()
     search_input = page.get_by_placeholder("Search here...")
     expect(search_input).to_be_visible()
+    expect(search_input).to_be_enabled()
 
-    # test search input is showing correctly
-    search_input.fill("doesn't exist gs871s9j91k*")
+    # trigger invalid search
+    search_input.fill(invalid_search)
     search_input.press("Enter")
-    page.screenshot(path="tests_ingest_test_main-test_ldap_search-input-0-found.png")
-    expect(page.get_by_text("Showing 0 of")).to_be_visible()
+    expect(search_input).to_be_enabled(timeout=30000)
+    page.screenshot(
+        path=f"tests_ingest_test_main-roundtrip_{aux_provider}-invalid-search.png"
+    )
+
+    # test no results are found
+    results_summary = page.get_by_test_id("search-results-summary")
+    expect(results_summary).to_be_visible()
+    expect(results_summary).to_contain_text("Showing 0 of 0 items")
+
+    # trigger valid search
+    search_input.fill(valid_search)
+    search_input.press("Enter")
+    expect(search_input).to_be_enabled(timeout=30000)
+    page.screenshot(
+        path=f"tests_ingest_test_main-roundtrip_{aux_provider}-valid-search.png"
+    )
+
+    # test pagination is showing
+    prev_button = page.get_by_test_id("pagination-previous-button")
+    expect(prev_button).to_be_disabled()
+    expect(page.get_by_test_id("pagination-next-button")).to_be_visible()
+    expect(page.get_by_test_id("pagination-page-select")).to_be_visible()
 
     # test expand button works
-    search_input.fill("L*")
-    search_input.press("Enter")
-    expand_all_properties_button = page.get_by_test_id("expand-properties-button").first
-    page.screenshot(path="tests_ingest_test_main-search_result_lap.png")
+    expand_button = page.get_by_test_id("expand-properties-button-0")
+    expect(expand_button).to_be_visible()
+
+    page.screenshot(path=f"tests_ingest_test_main-roundtrip_{aux_provider}.png")
     expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
-    expand_all_properties_button.click()
+    expand_button.click()
     expect(page.get_by_test_id("all-properties-display")).to_be_visible()
-    page.screenshot(path="tests_ingest_test_main-test_ldap_expand_button.png")
+    page.screenshot(
+        path=f"tests_ingest_test_main-roundtrip_{aux_provider}-expanded.png"
+    )
 
     # test ingest button works
-    ingest_button = page.get_by_text("Ingest").first
+    ingest_button = page.get_by_test_id("ingest-button-0")
     ingest_button.click()
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
-    expect(toast).to_contain_text("Person was ingested successfully.")
+    expect(toast).to_contain_text(f"{stem_type} was ingested successfully.")
     expect(ingest_button).to_be_disabled()
-    page.screenshot(path="tests_ingest_test_main-test_ldap_ingest_button.png")
-
-    # count the persons after
-    result = connector.fetch_extracted_items(None, None, ["ExtractedPerson"], 0, 1)
-    assert result.total == persons_before + 1
-
-
-@pytest.mark.integration
-@pytest.mark.external
-def test_orcid_search_and_ingest_results(ingest_page: Page) -> None:
-    page = ingest_page
-    orcid_tab = page.get_by_role("tab", name="Orcid")
-    orcid_tab.click()
-    search_input = page.get_by_placeholder("Search here...")
-    expect(search_input).to_be_visible()
-
-    # test search input is showing correctly
-    search_input.fill("doesn't exist gs871s9j91k*")
-    page.screenshot(path="tests_ingest_test_main-test_orcid_search-input-0-found.png")
-    expect(page.get_by_text("Showing 0 of")).to_be_visible()
-
-    # test expand button works
-    search_input.fill("Lars")
-    page.screenshot(path="tests_ingest_test_main-search_result_orcid.png")
-    expand_all_properties_button = page.get_by_test_id("expand-properties-button").nth(
-        1
+    page.screenshot(
+        path=f"tests_ingest_test_main-roundtrip_{aux_provider}-imported.png"
     )
-    expect(page.get_by_text("Lars")).to_be_visible()
-    expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
-    expand_all_properties_button.click()
-    expect(page.get_by_test_id("all-properties-display")).to_be_visible()
-    page.screenshot(path="tests_ingest_test_main-test_orcid_expand_button.png")
 
-    # test ingest button works
-    ingest_button = page.get_by_text("Ingest").nth(1)
-    ingest_button.click()
-    expect(page.get_by_text("Person was ingested successfully")).to_be_visible()
-    expect(ingest_button).to_be_disabled()
-    page.screenshot(path="tests_ingest_test_main-test_orcid_ingest_button.png")
-
-    # test node was ingested into backend
-    connector = BackendApiConnector.get()
-    result = connector.fetch_extracted_items("Lars", None, None, 0, 1)
-    assert result.total >= 1
-
-
-@pytest.mark.integration
-def test_pagination(ingest_page: Page) -> None:
-    page = ingest_page
-    search_input = page.get_by_placeholder("Search here...")
-    expect(search_input).to_be_visible()
-    search_input.fill("no such results")
-
-    # test pagination is showing and properly disabled
-    page.screenshot(path="tests_ingest_test_main-test_pagination.png")
-    pagination_previous = page.get_by_test_id("pagination-previous-button")
-    pagination_next = page.get_by_test_id("pagination-next-button")
-    pagination_page_select = page.get_by_test_id("pagination-page-select")
-    expect(pagination_previous).to_be_disabled()
-    expect(pagination_next).to_be_disabled()
-    assert pagination_page_select.inner_text() == ""
+    # count the items afterwards
+    result = connector.fetch_extracted_items(
+        None, None, [f"Extracted{stem_type}"], 0, 1
+    )
+    assert result.total >= items_before

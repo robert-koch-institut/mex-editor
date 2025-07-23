@@ -55,7 +55,7 @@ def test_pagination(
     pagination_page_select = page.get_by_test_id("pagination-page-select")
     expect(pagination_previous).to_be_disabled()
     expect(pagination_next).to_be_disabled()
-    assert pagination_page_select.inner_text() == "1"
+    expect(pagination_page_select).to_be_disabled()
 
 
 @pytest.mark.integration
@@ -204,7 +204,7 @@ def test_push_search_params(
 
     # load page and verify url
     page.goto(frontend_url)
-    page.wait_for_url("**/", timeout=10)
+    page.wait_for_url("**/", timeout=10000)
 
     # select an entity type
     entity_types = page.get_by_test_id("entity-types")

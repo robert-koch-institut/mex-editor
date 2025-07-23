@@ -56,7 +56,7 @@ def app_logo() -> rx.Component:
         rx.hover_card.trigger(
             rx.hstack(
                 rx.icon(
-                    "circuit-board",
+                    tag="circuit-board",
                     size=28,
                 ),
                 rx.heading(

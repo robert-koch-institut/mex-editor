@@ -350,6 +350,7 @@ def test_transform_model_to_input_config(
                         href="/item/primarySourceId",
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
+                    editor_values=[],
                     input_config=InputConfig(),
                     enabled=True,
                 )

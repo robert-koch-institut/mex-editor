@@ -18,8 +18,8 @@ def render_identifier(value: EditorValue) -> rx.Component:
         ),
         loading=rx.cond(
             value.text,
-            c1=True,
-            c2=False,
+            c1=False,
+            c2=True,
         ),
     )
 
@@ -66,8 +66,8 @@ def render_text(value: EditorValue) -> rx.Component:
         ),
         loading=rx.cond(
             value.text,
-            c1=True,
-            c2=False,
+            c1=False,
+            c2=True,
         ),
     )
 

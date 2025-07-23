@@ -10,6 +10,11 @@ class CreateState(RuleState):
     available_stem_types: list[str] = [r.stemType for r in RULE_SET_REQUEST_CLASSES]
 
     @rx.event
+    def set_stem_type(self, stem_type: str) -> None:
+        """Set the stem type."""
+        self.stem_type = stem_type
+
+    @rx.event
     def reset_stem_type(self) -> None:
         """Set the stem type to its default."""
         self.stem_type = RULE_SET_REQUEST_CLASSES[0].stemType

@@ -1,6 +1,6 @@
 import reflex as rx
 
-from mex.editor.components import render_value
+from mex.editor.components import pagination, render_value
 from mex.editor.ingest.models import IngestResult
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
@@ -18,7 +18,7 @@ def expand_properties_button(result: IngestResult, index: int) -> rx.Component:
         align="end",
         color_scheme="gray",
         variant="surface",
-        custom_attrs={"data-testid": "expand-properties-button"},
+        custom_attrs={"data-testid": f"expand-properties-button-{index}"},
     )
 
 
@@ -33,6 +33,7 @@ def ingest_button(result: IngestResult, index: int) -> rx.Component:
             variant="surface",
             on_click=IngestState.ingest_result(index),
             width="calc(8em * var(--scaling))",
+            custom_attrs={"data-testid": f"ingest-button-{index}"},
         ),
         rx.button(
             "Ingested",
@@ -41,6 +42,7 @@ def ingest_button(result: IngestResult, index: int) -> rx.Component:
             variant="surface",
             disabled=True,
             width="calc(8em * var(--scaling))",
+            custom_attrs={"data-testid": f"ingest-button-{index}"},
         ),
     )
 
@@ -201,55 +203,10 @@ def search_results() -> rx.Component:
                 IngestState.results_transformed,
                 ingest_result,
             ),
-            pagination(),
+            pagination(IngestState),
             custom_attrs={"data-testid": "search-results-section"},
             style={"width": "100%"},
         ),
-    )
-
-
-def pagination() -> rx.Component:
-    """Render pagination for navigating search results."""
-    return rx.center(
-        rx.button(
-            rx.text("Previous"),
-            on_click=[
-                IngestState.go_to_previous_page,
-                IngestState.scroll_to_top,
-                IngestState.refresh,
-                IngestState.resolve_identifiers,
-            ],
-            disabled=IngestState.disable_previous_page,
-            variant="surface",
-            custom_attrs={"data-testid": "pagination-previous-button"},
-            style={"minWidth": "10%"},
-        ),
-        rx.select(
-            IngestState.total_pages,
-            value=f"{IngestState.current_page}",
-            on_change=[
-                IngestState.set_page,
-                IngestState.scroll_to_top,
-                IngestState.refresh,
-                IngestState.resolve_identifiers,
-            ],
-            custom_attrs={"data-testid": "pagination-page-select"},
-        ),
-        rx.button(
-            rx.text("Next", weight="bold"),
-            on_click=[
-                IngestState.go_to_next_page,
-                IngestState.scroll_to_top,
-                IngestState.refresh,
-                IngestState.resolve_identifiers,
-            ],
-            disabled=IngestState.disable_next_page,
-            variant="surface",
-            custom_attrs={"data-testid": "pagination-next-button"},
-            style={"minWidth": "10%"},
-        ),
-        spacing="4",
-        style={"width": "100%"},
     )
 
 

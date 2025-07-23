@@ -50,9 +50,14 @@ class SearchState(State):
         return len(self.results)
 
     @rx.var(cache=False)
-    def total_pages(self) -> list[str]:
+    def page_selection(self) -> list[str]:
         """Return a list of total pages based on the number of results."""
         return [f"{i + 1}" for i in range(math.ceil(self.total / self.limit))]
+
+    @rx.var(cache=False)
+    def disable_page_selection(self) -> bool:
+        """Whether the page selection in the pagination should be disabled."""
+        return math.ceil(self.total / self.limit) == 1
 
     @rx.event
     def load_search_params(self) -> None:

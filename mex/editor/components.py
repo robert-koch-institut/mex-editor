@@ -1,6 +1,8 @@
 import reflex as rx
 
+from mex.editor.ingest.state import IngestState
 from mex.editor.rules.models import EditorValue
+from mex.editor.search.state import SearchState
 
 
 def render_identifier(value: EditorValue) -> rx.Component:
@@ -96,4 +98,50 @@ def render_value(value: EditorValue) -> rx.Component:
             render_badge(value.badge),
         ),
         spacing="1",
+    )
+
+
+def pagination(state: type[IngestState | SearchState]) -> rx.Component:
+    """Render pagination for navigating search results."""
+    return rx.center(
+        rx.button(
+            rx.text("Previous"),
+            on_click=[
+                state.go_to_previous_page,
+                state.scroll_to_top,
+                state.refresh,
+                state.resolve_identifiers,
+            ],
+            disabled=state.disable_previous_page,
+            variant="surface",
+            custom_attrs={"data-testid": "pagination-previous-button"},
+            style={"minWidth": "10%"},
+        ),
+        rx.select(
+            state.page_selection,
+            value=f"{state.current_page}",
+            on_change=[
+                state.set_page,
+                state.scroll_to_top,
+                state.refresh,
+                state.resolve_identifiers,
+            ],
+            disabled=state.disable_page_selection,
+            custom_attrs={"data-testid": "pagination-page-select"},
+        ),
+        rx.button(
+            rx.text("Next", weight="bold"),
+            on_click=[
+                state.go_to_next_page,
+                state.scroll_to_top,
+                state.refresh,
+                state.resolve_identifiers,
+            ],
+            disabled=state.disable_next_page,
+            variant="surface",
+            custom_attrs={"data-testid": "pagination-next-button"},
+            style={"minWidth": "10%"},
+        ),
+        spacing="4",
+        style={"width": "100%"},
     )

@@ -1,5 +1,3 @@
-from typing import cast
-
 import reflex as rx
 
 from mex.editor.rules.models import EditorValue
@@ -9,12 +7,20 @@ def render_identifier(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable internal link that loads the edit page."""
     return rx.skeleton(
         rx.link(
-            cast("rx.vars.StringVar", value.text) | "Loading ...",
-            href=value.href,
+            rx.cond(
+                value.text,
+                value.text,
+                "Loading ...",
+            ),
+            href=f"{value.href}",
             high_contrast=True,
             role="link",
         ),
-        loading=~cast("rx.vars.StringVar", value.text),
+        loading=rx.cond(
+            value.text,
+            c1=True,
+            c2=False,
+        ),
     )
 
 
@@ -26,7 +32,7 @@ def render_external_link(value: EditorValue) -> rx.Component:
             value.text,
             value.href,
         ),
-        href=value.href,
+        href=f"{value.href}",
         high_contrast=True,
         is_external=True,
         role="link",
@@ -53,8 +59,16 @@ def render_span(text: str | None) -> rx.Component:
 def render_text(value: EditorValue) -> rx.Component:
     """Render an editor value as a text span."""
     return rx.skeleton(
-        render_span(cast("rx.vars.StringVar", value.text) | "Loading ..."),
-        loading=~cast("rx.vars.StringVar", value.text),
+        rx.cond(
+            value.text,
+            render_span(value.text),
+            render_span("Loading ..."),
+        ),
+        loading=rx.cond(
+            value.text,
+            c1=True,
+            c2=False,
+        ),
     )
 
 

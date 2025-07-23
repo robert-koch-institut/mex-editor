@@ -181,8 +181,11 @@ def badge_input(
         rx.box(
             rx.select(
                 input_config.badge_options,
-                value=cast("rx.Var", badge)
-                | cast("rx.Var", input_config.badge_default),
+                value=rx.cond(
+                    badge,
+                    badge,
+                    input_config.badge_default,
+                ),
                 size="1",
                 variant="soft",
                 radius="large",
@@ -259,8 +262,11 @@ def additive_rule_input(
                 rx.box(
                     rx.select(
                         input_config.badge_options,
-                        value=cast("rx.Var", value.badge)
-                        | cast("rx.Var", input_config.badge_default),
+                        value=rx.cond(
+                            value.badge,
+                            value.badge,
+                            input_config.badge_default,
+                        ),
                         size="1",
                         variant="soft",
                         radius="large",

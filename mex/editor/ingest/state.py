@@ -76,17 +76,17 @@ class IngestState(State):
     @rx.event
     def go_to_first_page(self) -> None:
         """Navigate to the first page."""
-        self.set_page(1)
+        self.current_page = 1
 
     @rx.event
     def go_to_previous_page(self) -> None:
         """Navigate to the previous page."""
-        self.set_page(self.current_page - 1)
+        self.current_page = self.current_page - 1
 
     @rx.event
     def go_to_next_page(self) -> None:
         """Navigate to the next page."""
-        self.set_page(self.current_page + 1)
+        self.current_page = self.current_page + 1
 
     @rx.event
     def ingest_result(self, index: int) -> Generator[EventSpec | None, None, None]:

@@ -1,5 +1,3 @@
-from typing import cast
-
 import reflex as rx
 
 from mex.editor.components import render_value
@@ -228,7 +226,7 @@ def pagination() -> rx.Component:
         ),
         rx.select(
             IngestState.total_pages,
-            value=cast("rx.vars.NumberVar", IngestState.current_page).to_string(),
+            value=f"{IngestState.current_page}",
             on_change=[
                 IngestState.set_page,
                 IngestState.scroll_to_top,

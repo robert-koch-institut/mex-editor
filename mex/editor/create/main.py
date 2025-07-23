@@ -51,7 +51,7 @@ def create_title() -> rx.Component:
             CreateState.available_stem_types,
             value=RuleState.stem_type,
             on_change=[
-                RuleState.set_stem_type,
+                CreateState.set_stem_type,
                 RuleState.refresh,
             ],
             custom_attrs={"data-testid": "entity-type-select"},

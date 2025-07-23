@@ -78,12 +78,14 @@ class SearchState(State):
     def push_search_params(self) -> EventSpec | None:
         """Push a new browser history item with updated search parameters."""
         return self.push_url_params(
-            q=self.query_string,
-            page=self.current_page,
-            entityType=[k for k, v in self.entity_types.items() if v],
-            hadPrimarySource=[
-                k for k, v in self.had_primary_sources.items() if v.checked
-            ],
+            {
+                "q": self.query_string,
+                "page": self.current_page,
+                "entityType": [k for k, v in self.entity_types.items() if v],
+                "hadPrimarySource": [
+                    k for k, v in self.had_primary_sources.items() if v.checked
+                ],
+            },
         )
 
     @rx.event
@@ -117,17 +119,17 @@ class SearchState(State):
     @rx.event
     def go_to_first_page(self) -> None:
         """Navigate to the first page."""
-        self.set_page(1)
+        self.current_page = 1
 
     @rx.event
     def go_to_previous_page(self) -> None:
         """Navigate to the previous page."""
-        self.set_page(self.current_page - 1)
+        self.current_page = self.current_page - 1
 
     @rx.event
     def go_to_next_page(self) -> None:
         """Navigate to the next page."""
-        self.set_page(self.current_page + 1)
+        self.current_page = self.current_page + 1
 
     @rx.event
     def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
@@ -212,7 +214,7 @@ class SearchState(State):
             search_primary_sources = [
                 SearchPrimarySource(
                     identifier=source.identifier,
-                    title=source.title[0].text,
+                    title=source.title[0].text or "",
                     checked=False,
                 )
                 for source in available_primary_sources

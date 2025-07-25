@@ -3,7 +3,7 @@ from typing import cast
 import reflex as rx
 
 from mex.editor.components import render_value
-from mex.editor.ingest.models import IngestResult
+from mex.editor.ingest.models import AuxProvider, IngestResult
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
 
@@ -210,6 +210,26 @@ def search_results() -> rx.Component:
     )
 
 
+def search_infobox() -> rx.Component:
+    """Render some informations about the specific search provider query format."""
+    return rx.match(
+        IngestState.current_aux_provider,
+        (
+            AuxProvider.LDAP,
+            rx.callout(
+                "Search users by their fullname. "
+                'Please use "*" as placeholder e.g. "Muster*".',
+            ),
+        ),
+        (
+            AuxProvider.WIKIDATA,
+            rx.callout(
+                'Search Wikidata by "Concept URI". Please paste URI e.g. "http://www.wikidata.org/entity/Q918501".'
+            ),
+        ),
+    )
+
+
 def pagination() -> rx.Component:
     """Render pagination for navigating search results."""
     return rx.center(
@@ -281,6 +301,7 @@ def tab_content() -> rx.Component:
         lambda provider: rx.tabs.content(
             rx.vstack(
                 search_input(),
+                search_infobox(),
                 search_results(),
                 justify="center",
                 align="center",

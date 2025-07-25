@@ -12,8 +12,7 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import AnyExtractedModel, PaginatedItemsContainer
 from mex.editor.exceptions import escalate_error
 from mex.editor.ingest.models import (
-    AUX_PROVIDER_LDAP,
-    AUX_PROVIDERS,
+    ALL_AUX_PROVIDERS,
     AuxProvider,
     IngestResult,
 )
@@ -31,8 +30,8 @@ class IngestState(State):
     query_string: Annotated[str, Field(max_length=1000)] = ""
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 50
-    current_aux_provider: AuxProvider = AUX_PROVIDER_LDAP
-    aux_providers: list[AuxProvider] = AUX_PROVIDERS
+    current_aux_provider: AuxProvider = AuxProvider.LDAP
+    aux_providers: list[AuxProvider] = ALL_AUX_PROVIDERS
     is_loading: bool = True
 
     @rx.var(cache=False)

@@ -3,11 +3,7 @@ from typing import cast
 import reflex as rx
 
 from mex.editor.components import render_value
-from mex.editor.ingest.models import (
-    AUX_PROVIDER_LDAP,
-    AUX_PROVIDER_WIKIDATA,
-    IngestResult,
-)
+from mex.editor.ingest.models import AuxProvider, IngestResult
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
 
@@ -141,18 +137,7 @@ def search_input() -> rx.Component:
                     autofocus=True,
                     max_length=100,
                     name="query_string",
-                    placeholder=rx.match(
-                        IngestState.current_aux_provider,
-                        (
-                            AUX_PROVIDER_LDAP,
-                            'Please use "*" as placeholder e.g. "Muster*".',
-                        ),
-                        (
-                            AUX_PROVIDER_WIKIDATA,
-                            'Please paste "Concept URI" e.g. "http://www.wikidata.org/entity/Q918501"',
-                        ),
-                        "Search here...",
-                    ),
+                    placeholder="Search here...",
                     style={
                         "--text-field-selection-color": "",
                         "--text-field-focus-color": "transparent",
@@ -230,13 +215,14 @@ def search_infobox() -> rx.Component:
     return rx.match(
         IngestState.current_aux_provider,
         (
-            AUX_PROVIDER_LDAP,
+            AuxProvider.LDAP,
             rx.callout(
-                'Search users by their fullname. Please use "*" as placeholder e.g. "Muster*".'  # noqa: E501
+                "Search users by their fullname. "
+                'Please use "*" as placeholder e.g. "Muster*".',
             ),
         ),
         (
-            AUX_PROVIDER_WIKIDATA,
+            AuxProvider.WIKIDATA,
             rx.callout(
                 'Search Wikidata by "Concept URI". Please paste URI e.g. "http://www.wikidata.org/entity/Q918501".'
             ),

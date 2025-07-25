@@ -1,19 +1,22 @@
-from typing import Final, Literal
+from enum import StrEnum
 
 import reflex as rx
 
 from mex.editor.models import EditorValue
 
-AuxProvider = Literal["ldap", "orcid", "wikidata"]
 
-AUX_PROVIDER_LDAP: Final = "ldap"
-AUX_PROVIDER_ORDIC: Final = "orcid"
-AUX_PROVIDER_WIKIDATA: Final = "wikidata"
+class AuxProvider(StrEnum):
+    """Allowed auxiliary providers."""
 
-AUX_PROVIDERS: list[AuxProvider] = [
-    AUX_PROVIDER_LDAP,
-    AUX_PROVIDER_ORDIC,
-    AUX_PROVIDER_WIKIDATA,
+    LDAP = "ldap"
+    ORCID = "orcid"
+    WIKIDATA = "wikidata"
+
+
+ALL_AUX_PROVIDERS: list[AuxProvider] = [
+    AuxProvider.LDAP,
+    AuxProvider.ORCID,
+    AuxProvider.WIKIDATA,
 ]
 
 

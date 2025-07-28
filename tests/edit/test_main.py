@@ -158,7 +158,7 @@ def test_edit_page_resolves_identifier(
 ) -> None:
     page = edit_page
     extracted_organizational_unit = dummy_data_by_stable_target_id[
-        extracted_activity.contact[2]
+        extracted_activity.contact[1]
     ]
     assert type(extracted_organizational_unit) is ExtractedOrganizationalUnit
 
@@ -173,7 +173,7 @@ def test_edit_page_resolves_identifier(
     )  # resolved short name of unit
     expect(link).to_have_attribute(
         "href",
-        f"/item/{extracted_activity.contact[2]}/",  # link href
+        f"/item/{extracted_activity.contact[1]}/",  # link href
     )
     expect(link).not_to_have_attribute("target", "_blank")  # internal link
 

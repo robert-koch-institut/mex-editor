@@ -427,24 +427,26 @@ def test_edit_page_renders_temporal_input(edit_page: Page) -> None:
 
 
 @pytest.mark.integration
-def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
+def test_edit_page_additive_rule_roundtrip(
+    edit_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+) -> None:
     page = edit_page
     test_id = "tests_edit_test_main-test_edit_page_additive_rule_roundtrip"
 
-    # click button for new additive rule on fundingProgram field
-    new_additive_button = page.get_by_test_id(
-        "new-additive-fundingProgram-00000000000000"
-    )
+    # click button for new additive rule on contact field
+    new_additive_button = page.get_by_test_id("new-additive-contact-00000000000000")
     new_additive_button.scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-on_load.png")
     expect(new_additive_button).to_be_visible()
     new_additive_button.click()
 
     # fill a string into the additive rule input
-    input_id = "additive-rule-fundingProgram-0-text"
+    input_id = "additive-rule-contact-0-identifier"
     additive_rule_input = page.get_by_test_id(input_id)
     expect(additive_rule_input).to_be_visible()
-    rule_value = "FundEverything e.V."
+    contact_point_2 = dummy_data_by_identifier_in_primary_source["cp-2"]
+    rule_value = contact_point_2.stableTargetId
     additive_rule_input.fill(rule_value)
     page.screenshot(path=f"{test_id}-input-filled.png")
 
@@ -463,7 +465,7 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     page.reload()
 
     # verify the state after first saving: additive rule is present
-    rendered_input_id = "additive-rule-fundingProgram-0"
+    rendered_input_id = "additive-rule-contact-0"
     additive_rule_rendered = page.get_by_test_id(rendered_input_id)
     expect(additive_rule_rendered).to_have_count(1)
     additive_rule_rendered.scroll_into_view_if_needed()
@@ -471,7 +473,7 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     expect(additive_rule_rendered).to_be_visible()
 
     # click edit button
-    edit_button = page.get_by_test_id("edit-toggle-fundingProgram-00000000000000-0")
+    edit_button = page.get_by_test_id("edit-toggle-contact-00000000000000-0")
     edit_button.scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-on_load.png")
     expect(edit_button).to_be_visible()
@@ -484,7 +486,7 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
 
     # now remove the additive rule for a full roundtrip
     remove_additive_rule_button = page.get_by_test_id(
-        "additive-rule-fundingProgram-0-remove-button"
+        "additive-rule-contact-0-remove-button"
     )
     expect(remove_additive_rule_button).to_be_visible()
     remove_additive_rule_button.click()
@@ -500,7 +502,7 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     page.reload()
 
     # check the rule input is still gone
-    page.get_by_test_id("field-fundingProgram").scroll_into_view_if_needed()
+    page.get_by_test_id("field-contact").scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-reload_2.png")
     additive_rule_rendered = page.get_by_test_id(rendered_input_id)
     expect(additive_rule_rendered).to_have_count(0)

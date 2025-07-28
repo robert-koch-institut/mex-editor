@@ -2,6 +2,7 @@ import pytest
 from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
+from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider
 
 
 @pytest.fixture
@@ -127,3 +128,35 @@ def test_search_and_ingest_roundtrip(
         None, None, [f"Extracted{stem_type}"], 0, 1
     )
     assert result.total >= items_before
+
+
+@pytest.mark.integration
+def test_infobox_visibility_and_content(ingest_page: Page) -> None:
+    expected_callout_content: dict[AuxProvider, str] = {
+        AuxProvider.LDAP: (
+            "Search users by their fullname. "
+            'Please use "*" as placeholder e.g. "Muster*".'
+        ),
+        AuxProvider.WIKIDATA: (
+            'Search Wikidata by "Concept URI". '
+            'Please paste URI e.g. "http://www.wikidata.org/entity/Q918501".'
+        ),
+    }
+
+    page = ingest_page
+
+    for provider in ALL_AUX_PROVIDERS:
+        tab = page.get_by_role("tab", name=provider)
+        tab.click()
+
+        tab_content = page.locator(f"[id*='{provider}'][role='tabpanel']")
+        callout = tab_content.locator(".rt-CalloutRoot")
+
+        expected_content = expected_callout_content.get(provider)
+        if expected_content:
+            expect(callout).to_have_count(1)
+            expect(callout).to_have_text(expected_content)
+        else:
+            expect(callout).to_have_count(0)
+
+        page.screenshot(path=f"tests_ingest_test_main-test_infobox_{provider}.png")

@@ -1,6 +1,23 @@
+from enum import StrEnum
+
 import reflex as rx
 
 from mex.editor.models import EditorValue
+
+
+class AuxProvider(StrEnum):
+    """Allowed auxiliary providers."""
+
+    LDAP = "ldap"
+    ORCID = "orcid"
+    WIKIDATA = "wikidata"
+
+
+ALL_AUX_PROVIDERS: list[AuxProvider] = [
+    AuxProvider.LDAP,
+    AuxProvider.ORCID,
+    AuxProvider.WIKIDATA,
+]
 
 
 class IngestResult(rx.Base):

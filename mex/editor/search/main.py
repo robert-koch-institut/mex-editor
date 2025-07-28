@@ -2,7 +2,7 @@ from typing import cast
 
 import reflex as rx
 
-from mex.editor.components import render_value
+from mex.editor.components import icon_by_stem_type, render_value
 from mex.editor.layout import page
 from mex.editor.search.models import SearchPrimarySource, SearchResult
 from mex.editor.search.state import SearchState
@@ -11,38 +11,47 @@ from mex.editor.search.state import SearchState
 def search_result(result: SearchResult) -> rx.Component:
     """Render a single merged item search result."""
     return rx.card(
-        rx.link(
-            rx.box(
-                rx.hstack(
-                    rx.foreach(
-                        result.title,
-                        render_value,
-                    )
-                ),
-                style={
-                    "fontWeight": "var(--font-weight-bold)",
-                    "overflow": "hidden",
-                    "whiteSpace": "nowrap",
-                },
+        rx.hstack(
+            icon_by_stem_type(
+                result.stem_type,
+                size=28,
+                margin="auto 0",
+                color=rx.color("accent", 11),
             ),
-            rx.box(
-                rx.hstack(
-                    rx.foreach(
-                        result.preview,
-                        render_value,
-                    )
+            rx.link(
+                rx.box(
+                    rx.hstack(
+                        rx.foreach(
+                            result.title,
+                            render_value,
+                        )
+                    ),
+                    style={
+                        "fontWeight": "var(--font-weight-bold)",
+                        "overflow": "hidden",
+                        "whiteSpace": "nowrap",
+                    },
                 ),
-                style={
-                    "color": "var(--gray-12)",
-                    "fontWeight": "var(--font-weight-light)",
-                    "textDecoration": "none",
-                },
+                rx.box(
+                    rx.hstack(
+                        rx.foreach(
+                            result.preview,
+                            render_value,
+                        )
+                    ),
+                    style={
+                        "color": "var(--gray-12)",
+                        "fontWeight": "var(--font-weight-light)",
+                        "textDecoration": "none",
+                    },
+                ),
+                href=f"/item/{result.identifier}",
             ),
-            href=f"/item/{result.identifier}",
+            style={"width": "100%"},
+            class_name="search-result-card",
+            custom_attrs={"data-testid": f"result-{result.identifier}"},
         ),
         style={"width": "100%"},
-        class_name="search-result-card",
-        custom_attrs={"data-testid": f"result-{result.identifier}"},
     )
 
 

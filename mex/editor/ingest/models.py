@@ -24,6 +24,7 @@ class IngestResult(rx.Base):
     """Ingest search result."""
 
     identifier: str
+    stem_type: str
     title: list[EditorValue]
     preview: list[EditorValue]
     show_properties: bool

@@ -182,8 +182,7 @@ def test_get_primary_source_id_from_model_error() -> None:
                     enabled=False,
                 ),
                 EditorValue(
-                    href="http://pavyzdys",
-                    external=True,
+                    href="http://pavyzdys", external=True, badge=LANGUAGE_VALUE_NONE
                 ),
             ],
         ),
@@ -270,7 +269,7 @@ def test_transform_model_values_to_editor_values(
             "AdditiveResource",
             "documentation",
             InputConfig(
-                badge_options=["DE", "EN"],
+                badge_options=["DE", "EN", LANGUAGE_VALUE_NONE],
                 badge_default="DE",
                 badge_titles=["LinkLanguage"],
                 editable_href=True,
@@ -284,7 +283,7 @@ def test_transform_model_values_to_editor_values(
             "AdditiveResource",
             "keyword",
             InputConfig(
-                badge_options=["DE", "EN"],
+                badge_options=["DE", "EN", LANGUAGE_VALUE_NONE],
                 badge_default="DE",
                 badge_titles=["TextLanguage"],
                 editable_badge=True,

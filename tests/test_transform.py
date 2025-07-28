@@ -2,7 +2,7 @@ import pytest
 
 from mex.common.models import AdditiveContactPoint, AnyExtractedModel
 from mex.common.types import APIType, Identifier, Link, LinkLanguage, Text, TextLanguage
-from mex.editor.models import EditorValue
+from mex.editor.models import LANGUAGE_VALUE_NONE, EditorValue
 from mex.editor.transform import (
     transform_models_to_preview,
     transform_models_to_stem_type,
@@ -20,6 +20,11 @@ from mex.editor.transform import (
             "foo",
             True,
             [EditorValue(text="foo")],
+        ),
+        (
+            Text(value="Text", language=None),
+            True,
+            [EditorValue(text="Text", badge=LANGUAGE_VALUE_NONE)],
         ),
         (
             [
@@ -107,7 +112,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
         ],
         [
             # unit renders shortName as text (no language badge)
-            EditorValue(text="OU1")
+            EditorValue(text="OU1", badge=LANGUAGE_VALUE_NONE)
         ],
         [
             # activity renders title as text (with language badge)
@@ -115,7 +120,7 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
         ],
         [
             # resource renders title as text
-            EditorValue(text="Bioinformatics Resource 1"),
+            EditorValue(text="Bioinformatics Resource 1", badge=LANGUAGE_VALUE_NONE),
         ],
     ]
 
@@ -139,7 +144,7 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
         [EditorValue(text="help@contact-point.two")],
         [EditorValue(text="Unit 1", badge="EN", enabled=True)],
         [
-            EditorValue(text="A1", enabled=True),
+            EditorValue(text="A1", enabled=True, badge=LANGUAGE_VALUE_NONE),
             EditorValue(identifier="wEvxYRPlmGVQCbZx9GAbn"),
             EditorValue(identifier="g32qzYNVH1Ez7JTEk3fvLF"),
             EditorValue(identifier="cWWm02l1c6cucKjIhkFqY4"),

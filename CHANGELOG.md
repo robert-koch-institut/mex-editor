@@ -22,9 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- remove edit toggle button for non-identifier fields
+
 ### Fixed
 
 - fix service readiness checks
+- use more of the available space for rule input fields
 
 ### Security
 

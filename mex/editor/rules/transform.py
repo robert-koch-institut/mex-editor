@@ -98,11 +98,6 @@ def _transform_model_to_input_config(  # noqa: PLR0911
     editable: bool,  # noqa: FBT001
 ) -> InputConfig:
     """Determine the input type for a given field of a given model."""
-    if field_name in (MUTABLE_FIELDS_BY_CLASS_NAME[entity_type]):
-        return InputConfig(
-            editable_text=editable,
-            allow_additive=editable,
-        )
     if field_name in REFERENCE_FIELDS_BY_CLASS_NAME[entity_type]:
         return InputConfig(
             editable_identifier=editable,
@@ -149,6 +144,11 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             badge_default=options[0].name,
             badge_options=[e.name for e in options],
             badge_titles=[v.__name__ for v in vocabularies],
+            allow_additive=editable,
+        )
+    if field_name in MUTABLE_FIELDS_BY_CLASS_NAME[entity_type]:
+        return InputConfig(
+            editable_text=editable,
             allow_additive=editable,
         )
     return InputConfig()

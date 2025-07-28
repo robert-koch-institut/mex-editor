@@ -339,7 +339,7 @@ def test_edit_page_resolves_additive_identifier(
     identifier_input = page.get_by_test_id("additive-rule-involvedUnit-0-identifier")
     expect(identifier_input).to_be_visible()
     identifier_input.fill(organizational_unit.stableTargetId)
-    edit_button = page.get_by_test_id("button-involvedUnit-00000000000000-0")
+    edit_button = page.get_by_test_id("edit-toggle-involvedUnit-00000000000000-0")
     edit_button.click()
 
     # verify identifier is correctly rendered
@@ -471,7 +471,7 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     expect(additive_rule_rendered).to_be_visible()
 
     # click edit button
-    edit_button = page.get_by_test_id("button-fundingProgram-00000000000000-0")
+    edit_button = page.get_by_test_id("edit-toggle-fundingProgram-00000000000000-0")
     edit_button.scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-on_load.png")
     expect(edit_button).to_be_visible()

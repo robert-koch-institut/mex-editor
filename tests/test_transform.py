@@ -2,7 +2,7 @@ import pytest
 
 from mex.common.models import AdditiveContactPoint, AnyExtractedModel
 from mex.common.types import APIType, Identifier, Link, LinkLanguage, Text, TextLanguage
-from mex.editor.models import EditorValue
+from mex.editor.models import LANGUAGE_VALUE_NONE, EditorValue
 from mex.editor.transform import (
     transform_models_to_preview,
     transform_models_to_stem_type,
@@ -20,6 +20,11 @@ from mex.editor.transform import (
             "foo",
             True,
             [EditorValue(text="foo")],
+        ),
+        (
+            Text(value="Text", language=None),
+            True,
+            [EditorValue(text="Text", badge=LANGUAGE_VALUE_NONE)],
         ),
         (
             [

@@ -42,7 +42,11 @@ from mex.editor.fields import (
     REQUIRED_FIELDS_BY_CLASS_NAME,
     TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES,
 )
-from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, EditorValue
+from mex.editor.models import (
+    LANGUAGE_VALUE_NONE,
+    MODEL_CONFIG_BY_STEM_TYPE,
+    EditorValue,
+)
 from mex.editor.rules.models import (
     EditorField,
     EditorPrimarySource,
@@ -129,7 +133,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             editable_text=editable,
             editable_badge=editable,
             badge_default=TextLanguage.DE.name,
-            badge_options=[e.name for e in TextLanguage],
+            badge_options=[e.name for e in TextLanguage] + [LANGUAGE_VALUE_NONE],
             badge_titles=[TextLanguage.__name__],
             allow_additive=editable,
         )
@@ -139,7 +143,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             editable_badge=editable,
             editable_href=editable,
             badge_default=LinkLanguage.DE.name,
-            badge_options=[e.name for e in LinkLanguage],
+            badge_options=[e.name for e in LinkLanguage] + [LANGUAGE_VALUE_NONE],
             badge_titles=[LinkLanguage.__name__],
             allow_additive=editable,
         )
@@ -337,12 +341,16 @@ def _transform_editor_value_to_model_value(
     if field_name in LINK_FIELDS_BY_CLASS_NAME[class_name]:
         return Link(
             url=value.href,
-            language=LinkLanguage[value.badge] if value.badge else None,
+            language=LinkLanguage[value.badge]
+            if value.badge and value.badge != LANGUAGE_VALUE_NONE
+            else None,
             title=value.text,
         )
     if field_name in TEXT_FIELDS_BY_CLASS_NAME[class_name]:
         return Text(
-            language=TextLanguage[value.badge] if value.badge else None,
+            language=TextLanguage[value.badge]
+            if value.badge and value.badge != LANGUAGE_VALUE_NONE
+            else None,
             value=value.text,
         )
     if field_name in VOCABULARY_FIELDS_BY_CLASS_NAME[class_name]:

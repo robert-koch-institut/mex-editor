@@ -43,7 +43,7 @@ from mex.common.types import (
     Year,
     YearMonthDayTime,
 )
-from mex.editor.models import EditorValue
+from mex.editor.models import LANGUAGE_VALUE_NONE, EditorValue
 from mex.editor.rules.models import (
     EditorField,
     EditorPrimarySource,
@@ -673,6 +673,12 @@ def test_transform_fields_to_preventive(
             Text(language=TextLanguage.DE, value="Beispiel Text"),
         ),
         (
+            EditorValue(text="Text", badge=LANGUAGE_VALUE_NONE),
+            "alternativeTitle",
+            "AdditivePrimarySource",
+            Text(language=None, value="Text"),
+        ),
+        (
             EditorValue(text="ConsentStatus", badge="EXPRESSED_CONSENT"),
             "hasConsentType",
             "AdditiveConsent",
@@ -712,6 +718,7 @@ def test_transform_fields_to_preventive(
     ids=[
         "link",
         "text",
+        "textNoneLang",
         "vocab",
         "default_vocab",
         "temporal",

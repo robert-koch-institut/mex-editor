@@ -8,12 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - infobox to ingest page for "ldap" and "wikidata"
 - new type for aux_provider instead of str
-
 - 'None' as language selection for `Link` and `Text`
+- add string input mask for `Resource.temporal` field
 
 ### Changes
+
 - type of aux provider from `str` to `AuxProvider`
 
 ### Deprecated

@@ -5,12 +5,10 @@ from pydantic import ValidationError
 
 from mex.common.fields import (
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
-    EMAIL_FIELDS_BY_CLASS_NAME,
-    INTEGER_FIELDS_BY_CLASS_NAME,
     LINK_FIELDS_BY_CLASS_NAME,
     MERGEABLE_FIELDS_BY_CLASS_NAME,
+    MUTABLE_FIELDS_BY_CLASS_NAME,
     REFERENCE_FIELDS_BY_CLASS_NAME,
-    STRING_FIELDS_BY_CLASS_NAME,
     TEMPORAL_FIELDS_BY_CLASS_NAME,
     TEXT_FIELDS_BY_CLASS_NAME,
     VOCABULARIES_BY_FIELDS_BY_CLASS_NAMES,
@@ -100,11 +98,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
     editable: bool,  # noqa: FBT001
 ) -> InputConfig:
     """Determine the input type for a given field of a given model."""
-    if field_name in (
-        STRING_FIELDS_BY_CLASS_NAME[entity_type]
-        + EMAIL_FIELDS_BY_CLASS_NAME[entity_type]  # stopgap: MX-1766
-        + INTEGER_FIELDS_BY_CLASS_NAME[entity_type]
-    ):
+    if field_name in (MUTABLE_FIELDS_BY_CLASS_NAME[entity_type]):
         return InputConfig(
             editable_text=editable,
             allow_additive=editable,

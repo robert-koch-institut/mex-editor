@@ -58,9 +58,8 @@ def test_edit_page_renders_fields(
     funding_program = page.get_by_test_id("field-fundingProgram-name")
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_fields.png")
     expect(funding_program).to_be_visible()
-    all_fields = page.get_by_role("row").all()
-    assert len(all_fields) == len(
-        MERGEABLE_FIELDS_BY_CLASS_NAME[extracted_activity.entityType]
+    expect(page.get_by_role("row")).to_have_count(
+        len(MERGEABLE_FIELDS_BY_CLASS_NAME[extracted_activity.entityType])
     )
 
 
@@ -356,7 +355,9 @@ def test_edit_page_resolves_additive_identifier(
     # assert raw identifier value is retained
     edit_button.click()
     identifier_input = page.get_by_test_id("additive-rule-involvedUnit-0-identifier")
-    assert identifier_input.get_attribute("value") == organizational_unit.stableTargetId
+    expect(identifier_input).to_have_attribute(
+        "value", organizational_unit.stableTargetId
+    )
 
 
 @pytest.mark.integration

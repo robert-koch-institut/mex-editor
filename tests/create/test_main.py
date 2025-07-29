@@ -46,8 +46,9 @@ def test_create_page_renders_fields(create_page: Page) -> None:
     page.screenshot(
         path="tests_create_test_main-test_create_page_renders_fields_select.png"
     )
-    all_fields = page.get_by_role("row").all()
-    assert len(all_fields) == len(MERGEABLE_FIELDS_BY_CLASS_NAME["ExtractedResource"])
+    expect(page.get_by_role("row")).to_have_count(
+        len(MERGEABLE_FIELDS_BY_CLASS_NAME["ExtractedResource"])
+    )
 
 
 @pytest.mark.integration

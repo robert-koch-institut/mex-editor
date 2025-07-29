@@ -163,7 +163,7 @@ def test_edit_page_resolves_identifier(
     assert type(extracted_organizational_unit) is ExtractedOrganizationalUnit
 
     contact = page.get_by_test_id(
-        f"value-contact-{extracted_activity.hadPrimarySource}-2"
+        f"value-contact-{extracted_activity.hadPrimarySource}-1"
     )
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_identifier.png")
     expect(contact).to_be_visible()

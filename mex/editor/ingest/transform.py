@@ -17,6 +17,7 @@ def transform_models_to_results(
     return [
         IngestResult(
             identifier=model.identifier,
+            stem_type=model.stemType,
             title=transform_models_to_title([model]),
             preview=transform_models_to_preview([model]),
             all_properties=model_to_all_properties(model),

@@ -83,3 +83,31 @@ def render_value(value: EditorValue) -> rx.Component:
         ),
         spacing="1",
     )
+
+
+def icon_by_stem_type(
+    stem_type: str | None,
+    **props: int | str | rx.Color,
+) -> rx.Component:
+    """Render an icon for the given stem type."""
+    # Sigh, https://reflex.dev/docs/library/data-display/icon#using-dynamic-icon-tags
+    return rx.box(
+        rx.match(
+            stem_type,
+            ("AccessPlatform", rx.icon("app_window", **props)),
+            ("Activity", rx.icon("circle_gauge", **props)),
+            ("BibliographicResource", rx.icon("book_marked", **props)),
+            ("Consent", rx.icon("badge_check", **props)),
+            ("ContactPoint", rx.icon("inbox", **props)),
+            ("Distribution", rx.icon("container", **props)),
+            ("Organization", rx.icon("building", **props)),
+            ("OrganizationalUnit", rx.icon("door_open", **props)),
+            ("Person", rx.icon("circle_user_round", **props)),
+            ("PrimarySource", rx.icon("hard_drive", **props)),
+            ("Resource", rx.icon("archive", **props)),
+            ("Variable", rx.icon("box", **props)),
+            ("VariableGroup", rx.icon("boxes", **props)),
+            rx.icon("file_question", **props),
+        ),
+        title=stem_type,
+    )

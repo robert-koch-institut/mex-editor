@@ -42,7 +42,6 @@ class ModelConfig(BaseModel):
 
     title: str
     preview: list[str] = []
-    icon: str
 
 
 MODEL_CONFIG_BY_STEM_TYPE = TypeAdapter(dict[str, ModelConfig]).validate_python(

@@ -5,7 +5,6 @@ AccessPlatform:
     - unitInCharge
     - endpointType
     - technicalAccessibility
-  icon: app-window
 Activity:
   title: title
   preview:
@@ -14,7 +13,6 @@ Activity:
     - responsibleUnit
     - start
     - end
-  icon: circle-gauge
 BibliographicResource:
   title: title
   preview:
@@ -22,35 +20,29 @@ BibliographicResource:
     - publicationYear
     - creator
     - accessRestriction
-  icon: book-marked
 Consent:
   title: isIndicatedAtTime
   preview:
     - hasConsentStatus
     - hasConsentType
-  icon: badge-check
 ContactPoint:
   title: email
-  icon: inbox
 Distribution:
   title: title
   preview:
     - mediaType
     - issued
     - accessRestriction
-  icon: container
 Organization:
   title: officialName
   preview:
     - shortName
     - alternativeName
     - wikidataId
-  icon: building
 OrganizationalUnit:
   title: shortName
   preview:
     - name
-  icon: door-open
 Person:
   title: fullName
   preview:
@@ -59,13 +51,11 @@ Person:
     - memberOf
     - email
     - orcidId
-  icon: circle-user-round
 PrimarySource:
   title: title
   preview:
     - contact
     - unitInCharge
-  icon: hard-drive
 Resource:
   title: title
   preview:
@@ -73,16 +63,13 @@ Resource:
     - theme
     - resourceCreationMethod
     - accessRestriction
-  icon: archive
 Variable:
   title: label
   preview:
     - dataType
     - belongsTo
     - usedIn
-  icon: box
 VariableGroup:
   title: label
   preview:
     - containedBy
-  icon: boxes

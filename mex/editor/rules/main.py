@@ -2,7 +2,7 @@ from typing import cast
 
 import reflex as rx
 
-from mex.editor.components import render_span, render_value
+from mex.editor.components import icon_by_stem_type, render_span, render_value
 from mex.editor.rules.models import (
     EditorField,
     EditorPrimarySource,
@@ -536,6 +536,11 @@ def submit_button() -> rx.Component:
 def rule_page_header(title: rx.Component) -> rx.Component:
     """Wrap the given title in a header component with a save button."""
     return rx.hstack(
+        icon_by_stem_type(
+            RuleState.stem_type,
+            size=28,
+            margin="auto 0",
+        ),
         title,
         rx.spacer(),
         rx.cond(

@@ -97,7 +97,6 @@ def icon_by_stem_type(
             ("AccessPlatform", rx.icon("app_window", **props)),
             ("Activity", rx.icon("circle_gauge", **props)),
             ("BibliographicResource", rx.icon("book_marked", **props)),
-            ("building", rx.icon("building", **props)),
             ("Consent", rx.icon("badge_check", **props)),
             ("ContactPoint", rx.icon("inbox", **props)),
             ("Distribution", rx.icon("container", **props)),

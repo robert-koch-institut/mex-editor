@@ -1,8 +1,6 @@
-from typing import cast
-
 import reflex as rx
 
-from mex.editor.components import icon_by_stem_type, render_value
+from mex.editor.components import icon_by_stem_type, pagination, render_value
 from mex.editor.ingest.models import AuxProvider, IngestResult
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
@@ -20,7 +18,7 @@ def expand_properties_button(result: IngestResult, index: int) -> rx.Component:
         align="end",
         color_scheme="gray",
         variant="surface",
-        custom_attrs={"data-testid": "expand-properties-button"},
+        custom_attrs={"data-testid": f"expand-properties-button-{index}"},
     )
 
 
@@ -35,6 +33,7 @@ def ingest_button(result: IngestResult, index: int) -> rx.Component:
             variant="surface",
             on_click=IngestState.ingest_result(index),
             width="calc(8em * var(--scaling))",
+            custom_attrs={"data-testid": f"ingest-button-{index}"},
         ),
         rx.button(
             "Ingested",
@@ -43,6 +42,7 @@ def ingest_button(result: IngestResult, index: int) -> rx.Component:
             variant="surface",
             disabled=True,
             width="calc(8em * var(--scaling))",
+            custom_attrs={"data-testid": f"ingest-button-{index}"},
         ),
     )
 
@@ -149,6 +149,7 @@ def search_input() -> rx.Component:
                         ),
                         "color": "",
                     },
+                    disabled=IngestState.is_loading,
                     type="text",
                 ),
                 rx.button(
@@ -173,6 +174,24 @@ def search_input() -> rx.Component:
     )
 
 
+def results_summary() -> rx.Component:
+    """Render a summary of the results found."""
+    return rx.center(
+        rx.text(
+            f"Showing {IngestState.current_results_length} "
+            f"of {IngestState.total} items",
+            style={
+                "color": "var(--gray-12)",
+                "fontWeight": "var(--font-weight-bold)",
+                "margin": "var(--space-4)",
+                "userSelect": "none",
+            },
+            custom_attrs={"data-testid": "search-results-summary"},
+        ),
+        style={"width": "100%"},
+    )
+
+
 def search_results() -> rx.Component:
     """Render the search results with a heading, result list, and pagination."""
     return rx.cond(
@@ -185,27 +204,18 @@ def search_results() -> rx.Component:
             },
         ),
         rx.vstack(
-            rx.center(
-                rx.text(
-                    f"Showing {IngestState.current_results_length} "
-                    f"of {IngestState.total} items",
-                    style={
-                        "color": "var(--gray-12)",
-                        "fontWeight": "var(--font-weight-bold)",
-                        "margin": "var(--space-4)",
-                        "userSelect": "none",
-                    },
-                    custom_attrs={"data-testid": "search-results-heading"},
-                ),
-                style={"width": "100%"},
-            ),
+            results_summary(),
             rx.foreach(
                 IngestState.results_transformed,
                 ingest_result,
             ),
-            pagination(),
+            pagination(IngestState),
+            spacing="4",
             custom_attrs={"data-testid": "search-results-section"},
-            style={"width": "100%"},
+            style={
+                "minWidth": "0",
+                "width": "100%",
+            },
         ),
     )
 
@@ -224,54 +234,10 @@ def search_infobox() -> rx.Component:
         (
             AuxProvider.WIKIDATA,
             rx.callout(
-                'Search Wikidata by "Concept URI". Please paste URI e.g. "http://www.wikidata.org/entity/Q918501".'
+                'Search Wikidata by "Concept URI". '
+                'Please paste URI e.g. "http://www.wikidata.org/entity/Q918501".'
             ),
         ),
-    )
-
-
-def pagination() -> rx.Component:
-    """Render pagination for navigating search results."""
-    return rx.center(
-        rx.button(
-            rx.text("Previous"),
-            on_click=[
-                IngestState.go_to_previous_page,
-                IngestState.scroll_to_top,
-                IngestState.refresh,
-                IngestState.resolve_identifiers,
-            ],
-            disabled=IngestState.disable_previous_page,
-            variant="surface",
-            custom_attrs={"data-testid": "pagination-previous-button"},
-            style={"minWidth": "10%"},
-        ),
-        rx.select(
-            IngestState.total_pages,
-            value=cast("rx.vars.NumberVar", IngestState.current_page).to_string(),
-            on_change=[
-                IngestState.set_page,
-                IngestState.scroll_to_top,
-                IngestState.refresh,
-                IngestState.resolve_identifiers,
-            ],
-            custom_attrs={"data-testid": "pagination-page-select"},
-        ),
-        rx.button(
-            rx.text("Next", weight="bold"),
-            on_click=[
-                IngestState.go_to_next_page,
-                IngestState.scroll_to_top,
-                IngestState.refresh,
-                IngestState.resolve_identifiers,
-            ],
-            disabled=IngestState.disable_next_page,
-            variant="surface",
-            custom_attrs={"data-testid": "pagination-next-button"},
-            style={"minWidth": "10%"},
-        ),
-        spacing="4",
-        style={"width": "100%"},
     )
 
 

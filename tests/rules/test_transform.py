@@ -358,6 +358,7 @@ def test_transform_model_to_input_config(
                         href="/item/primarySourceId",
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
+                    editor_values=[],
                     input_config=InputConfig(),
                     enabled=True,
                 )
@@ -402,8 +403,8 @@ def test_transform_model_to_input_config(
                     ),
                     identifier=MergedPrimarySourceIdentifier("primarySourceId"),
                     editor_values=[EditorValue(text="Family")],
-                    enabled=False,
                     input_config=InputConfig(),
+                    enabled=False,
                 )
             ],
         ),
@@ -576,6 +577,7 @@ def test_transform_models_to_fields() -> None:
                     EditorPrimarySource(
                         enabled=True,
                         input_config=InputConfig(),
+                        editor_values=[],
                         name=EditorValue(text="No Input Config"),
                         identifier=MergedPrimarySourceIdentifier("PrimarySource000000"),
                     )
@@ -622,6 +624,7 @@ def test_transform_fields_to_additive(
                     EditorPrimarySource(
                         enabled=True,
                         input_config=InputConfig(),
+                        editor_values=[],
                         name=EditorValue(text="Enabled Primary Source"),
                         identifier=MergedPrimarySourceIdentifier(
                             "enabledPrimarySourceId"
@@ -639,6 +642,7 @@ def test_transform_fields_to_additive(
                     EditorPrimarySource(
                         enabled=True,
                         input_config=InputConfig(),
+                        editor_values=[],
                         name=EditorValue(text="Enabled Primary Source"),
                         identifier=MergedPrimarySourceIdentifier(
                             "enabledPrimarySourceId"
@@ -647,6 +651,7 @@ def test_transform_fields_to_additive(
                     EditorPrimarySource(
                         enabled=False,
                         input_config=InputConfig(),
+                        editor_values=[],
                         name=EditorValue(text="Prevented Primary Source"),
                         identifier=MergedPrimarySourceIdentifier(
                             "preventedPrimarySourceId"
@@ -761,6 +766,7 @@ def test_transform_editor_value_to_model_value(
                     EditorPrimarySource(
                         name=EditorValue(text="Primary Source 1"),
                         identifier=MergedPrimarySourceIdentifier("PrimarySource001"),
+                        editor_values=[],
                         input_config=InputConfig(),
                         enabled=True,
                     )
@@ -817,12 +823,14 @@ def test_transform_fields_to_rule_set() -> None:
                     EditorPrimarySource(
                         name=EditorValue(text="Enabled Primary Source"),
                         identifier=MergedPrimarySourceIdentifier("PrimarySource001"),
+                        editor_values=[],
                         input_config=InputConfig(),
                         enabled=True,
                     ),
                     EditorPrimarySource(
                         name=EditorValue(text="Prevented Primary Source"),
                         identifier=MergedPrimarySourceIdentifier("PrimarySource002"),
+                        editor_values=[],
                         enabled=False,
                         input_config=InputConfig(),
                     ),

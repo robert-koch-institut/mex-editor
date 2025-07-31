@@ -140,8 +140,8 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
     assert dummy_previews == [
         [EditorValue(text="PrimarySource")],
         [EditorValue(text="PrimarySource")],
-        [EditorValue(text="ContactPoint")],
-        [EditorValue(text="ContactPoint")],
+        [EditorValue(text="info@contact-point.one")],
+        [EditorValue(text="help@contact-point.two")],
         [EditorValue(text="Unit 1", badge="EN", enabled=True)],
         [
             EditorValue(text="A1", enabled=True, badge=LANGUAGE_VALUE_NONE),

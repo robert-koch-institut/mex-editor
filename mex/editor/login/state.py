@@ -18,6 +18,16 @@ class LoginLdapState(State):
     password: str
 
     @rx.event
+    def set_username(self, username: str) -> None:
+        """Set the username."""
+        self.username = username
+
+    @rx.event
+    def set_password(self, password: str) -> None:
+        """Set the password."""
+        self.password = password
+
+    @rx.event
     def login(self) -> EventSpec:
         """Login a user."""
         write_access = has_write_access_ldap(self.username, self.password)
@@ -42,6 +52,16 @@ class LoginMExState(State):
 
     username: str
     password: str
+
+    @rx.event
+    def set_username(self, username: str) -> None:
+        """Set the username."""
+        self.username = username
+
+    @rx.event
+    def set_password(self, password: str) -> None:
+        """Set the password."""
+        self.password = password
 
     @rx.event
     def login(self) -> EventSpec:

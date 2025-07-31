@@ -1,20 +1,28 @@
-from typing import cast
-
 import reflex as rx
 
+from mex.editor.ingest.state import IngestState
 from mex.editor.rules.models import EditorValue
+from mex.editor.search.state import SearchState
 
 
 def render_identifier(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable internal link that loads the edit page."""
     return rx.skeleton(
         rx.link(
-            cast("rx.vars.StringVar", value.text) | "Loading ...",
-            href=value.href,
+            rx.cond(
+                value.text,
+                value.text,
+                "Loading ...",
+            ),
+            href=f"{value.href}",
             high_contrast=True,
             role="link",
         ),
-        loading=~cast("rx.vars.StringVar", value.text),
+        loading=rx.cond(
+            value.text,
+            c1=False,
+            c2=True,
+        ),
     )
 
 
@@ -26,7 +34,7 @@ def render_external_link(value: EditorValue) -> rx.Component:
             value.text,
             value.href,
         ),
-        href=value.href,
+        href=f"{value.href}",
         high_contrast=True,
         is_external=True,
         role="link",
@@ -53,8 +61,16 @@ def render_span(text: str | None) -> rx.Component:
 def render_text(value: EditorValue) -> rx.Component:
     """Render an editor value as a text span."""
     return rx.skeleton(
-        render_span(cast("rx.vars.StringVar", value.text) | "Loading ..."),
-        loading=~cast("rx.vars.StringVar", value.text),
+        rx.cond(
+            value.text,
+            render_span(value.text),
+            render_span("Loading ..."),
+        ),
+        loading=rx.cond(
+            value.text,
+            c1=False,
+            c2=True,
+        ),
     )
 
 
@@ -82,6 +98,52 @@ def render_value(value: EditorValue) -> rx.Component:
             render_badge(value.badge),
         ),
         spacing="1",
+    )
+
+
+def pagination(state: type[IngestState | SearchState]) -> rx.Component:
+    """Render pagination for navigating search results."""
+    return rx.center(
+        rx.button(
+            rx.text("Previous"),
+            on_click=[
+                state.go_to_previous_page,
+                state.scroll_to_top,
+                state.refresh,
+                state.resolve_identifiers,
+            ],
+            disabled=state.disable_previous_page,
+            variant="surface",
+            custom_attrs={"data-testid": "pagination-previous-button"},
+            style={"minWidth": "10%"},
+        ),
+        rx.select(
+            state.page_selection,
+            value=f"{state.current_page}",
+            on_change=[
+                state.set_page,
+                state.scroll_to_top,
+                state.refresh,
+                state.resolve_identifiers,
+            ],
+            disabled=state.disable_page_selection,
+            custom_attrs={"data-testid": "pagination-page-select"},
+        ),
+        rx.button(
+            rx.text("Next", weight="bold"),
+            on_click=[
+                state.go_to_next_page,
+                state.scroll_to_top,
+                state.refresh,
+                state.resolve_identifiers,
+            ],
+            disabled=state.disable_next_page,
+            variant="surface",
+            custom_attrs={"data-testid": "pagination-next-button"},
+            style={"minWidth": "10%"},
+        ),
+        spacing="4",
+        style={"width": "100%"},
     )
 
 

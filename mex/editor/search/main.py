@@ -1,8 +1,6 @@
-from typing import cast
-
 import reflex as rx
 
-from mex.editor.components import icon_by_stem_type, render_value
+from mex.editor.components import icon_by_stem_type, pagination, render_value
 from mex.editor.layout import page
 from mex.editor.search.models import SearchPrimarySource, SearchResult
 from mex.editor.search.state import SearchState
@@ -185,54 +183,6 @@ def sidebar() -> rx.Component:
     )
 
 
-def pagination() -> rx.Component:
-    """Render pagination for navigating search results."""
-    return rx.center(
-        rx.button(
-            rx.text("Previous"),
-            on_click=[
-                SearchState.go_to_previous_page,
-                SearchState.push_search_params,
-                SearchState.scroll_to_top,
-                SearchState.refresh,
-                SearchState.resolve_identifiers,
-            ],
-            disabled=SearchState.disable_previous_page,
-            variant="surface",
-            custom_attrs={"data-testid": "pagination-previous-button"},
-            style={"minWidth": "10%"},
-        ),
-        rx.select(
-            SearchState.total_pages,
-            value=cast("rx.vars.NumberVar", SearchState.current_page).to_string(),
-            on_change=[
-                SearchState.set_page,
-                SearchState.push_search_params,
-                SearchState.scroll_to_top,
-                SearchState.refresh,
-                SearchState.resolve_identifiers,
-            ],
-            custom_attrs={"data-testid": "pagination-page-select"},
-        ),
-        rx.button(
-            rx.text("Next"),
-            on_click=[
-                SearchState.go_to_next_page,
-                SearchState.push_search_params,
-                SearchState.scroll_to_top,
-                SearchState.refresh,
-                SearchState.resolve_identifiers,
-            ],
-            disabled=SearchState.disable_next_page,
-            variant="surface",
-            custom_attrs={"data-testid": "pagination-next-button"},
-            style={"minWidth": "10%"},
-        ),
-        spacing="4",
-        style={"width": "100%"},
-    )
-
-
 def results_summary() -> rx.Component:
     """Render a summary of the results found."""
     return rx.center(
@@ -268,7 +218,7 @@ def search_results() -> rx.Component:
                 SearchState.results,
                 search_result,
             ),
-            pagination(),
+            pagination(SearchState),
             spacing="4",
             custom_attrs={"data-testid": "search-results-section"},
             style={

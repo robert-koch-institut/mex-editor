@@ -35,9 +35,14 @@ class IngestState(State):
     is_loading: bool = True
 
     @rx.var(cache=False)
-    def total_pages(self) -> list[str]:
+    def page_selection(self) -> list[str]:
         """Return a list of total pages based on the number of results."""
         return [f"{i + 1}" for i in range(math.ceil(self.total / self.limit))]
+
+    @rx.var(cache=False)
+    def disable_page_selection(self) -> bool:
+        """Whether the page selection in the pagination should be disabled."""
+        return math.ceil(self.total / self.limit) == 1
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:
@@ -80,17 +85,17 @@ class IngestState(State):
     @rx.event
     def go_to_first_page(self) -> None:
         """Navigate to the first page."""
-        self.set_page(1)
+        self.current_page = 1
 
     @rx.event
     def go_to_previous_page(self) -> None:
         """Navigate to the previous page."""
-        self.set_page(self.current_page - 1)
+        self.current_page = self.current_page - 1
 
     @rx.event
     def go_to_next_page(self) -> None:
         """Navigate to the next page."""
-        self.set_page(self.current_page + 1)
+        self.current_page = self.current_page + 1
 
     @rx.event
     def ingest_result(self, index: int) -> Generator[EventSpec | None, None, None]:

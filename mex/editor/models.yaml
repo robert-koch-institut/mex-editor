@@ -27,6 +27,8 @@ Consent:
     - hasConsentType
 ContactPoint:
   title: email
+  preview:
+    - email
 Distribution:
   title: title
   preview:

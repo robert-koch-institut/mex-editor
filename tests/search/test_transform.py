@@ -18,6 +18,7 @@ def test_transform_models_to_results() -> None:
     assert len(search_result) == 1
     assert search_result[0].dict() == {
         "identifier": "000000000012345",
+        "stem_type": "OrganizationalUnit",
         "title": [
             {
                 "text": "OU1",

@@ -1,6 +1,6 @@
 import reflex as rx
 
-from mex.editor.components import pagination, render_value
+from mex.editor.components import icon_by_stem_type, pagination, render_value
 from mex.editor.ingest.models import AuxProvider, IngestResult
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
@@ -84,45 +84,45 @@ def render_all_properties(result: IngestResult) -> rx.Component:
     )
 
 
-def result_title_and_buttons(result: IngestResult, index: int) -> rx.Component:
-    """Render the title and buttons for an ingest result."""
-    return rx.hstack(
-        rx.text(
-            rx.hstack(
-                rx.foreach(
-                    result.title,
-                    render_value,
-                )
-            ),
-            style={
-                "fontWeight": "var(--font-weight-bold)",
-                "whiteSpace": "nowrap",
-                "overflow": "hidden",
-                "width": "95%",
-            },
+def result_title(result: IngestResult) -> rx.Component:
+    """Render the title an ingest result."""
+    return rx.box(
+        rx.hstack(
+            rx.foreach(
+                result.title,
+                render_value,
+            )
         ),
-        expand_properties_button(result, index),
-        ingest_button(result, index),
-        style={"width": "100%"},
+        style={
+            "fontWeight": "bold",
+            "width": "100%",
+        },
     )
 
 
 def ingest_result(result: IngestResult, index: int) -> rx.Component:
     """Render an ingest result with title, buttons and preview or all properties."""
-    return rx.box(
-        rx.card(
-            rx.vstack(
-                result_title_and_buttons(result, index),
-                rx.cond(
-                    result.show_properties,
-                    render_all_properties(result),
-                    render_preview(result),
+    return rx.card(
+        rx.vstack(
+            rx.hstack(
+                icon_by_stem_type(
+                    result.stem_type,
+                    size=28,
+                    margin="auto 0",
+                    width="28px",
                 ),
+                result_title(result),
+                rx.spacer(),
+                expand_properties_button(result, index),
+                ingest_button(result, index),
+                style={"width": "100%"},
             ),
-            style={
-                "width": "100%",
-                "flexWrap": "wrap",
-            },
+            rx.cond(
+                result.show_properties,
+                render_all_properties(result),
+                render_preview(result),
+            ),
+            style={"width": "100%"},
         ),
         style={"width": "100%"},
     )

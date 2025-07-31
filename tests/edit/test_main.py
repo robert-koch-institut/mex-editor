@@ -58,9 +58,8 @@ def test_edit_page_renders_fields(
     funding_program = page.get_by_test_id("field-fundingProgram-name")
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_fields.png")
     expect(funding_program).to_be_visible()
-    all_fields = page.get_by_role("row").all()
-    assert len(all_fields) == len(
-        MERGEABLE_FIELDS_BY_CLASS_NAME[extracted_activity.entityType]
+    expect(page.get_by_role("row")).to_have_count(
+        len(MERGEABLE_FIELDS_BY_CLASS_NAME[extracted_activity.entityType])
     )
 
 
@@ -158,12 +157,12 @@ def test_edit_page_resolves_identifier(
 ) -> None:
     page = edit_page
     extracted_organizational_unit = dummy_data_by_stable_target_id[
-        extracted_activity.contact[2]
+        extracted_activity.contact[1]
     ]
     assert type(extracted_organizational_unit) is ExtractedOrganizationalUnit
 
     contact = page.get_by_test_id(
-        f"value-contact-{extracted_activity.hadPrimarySource}-2"
+        f"value-contact-{extracted_activity.hadPrimarySource}-1"
     )
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_identifier.png")
     expect(contact).to_be_visible()
@@ -173,7 +172,7 @@ def test_edit_page_resolves_identifier(
     )  # resolved short name of unit
     expect(link).to_have_attribute(
         "href",
-        f"/item/{extracted_activity.contact[2]}/",  # link href
+        f"/item/{extracted_activity.contact[1]}/",  # link href
     )
     expect(link).not_to_have_attribute("target", "_blank")  # internal link
 
@@ -339,7 +338,7 @@ def test_edit_page_resolves_additive_identifier(
     identifier_input = page.get_by_test_id("additive-rule-involvedUnit-0-identifier")
     expect(identifier_input).to_be_visible()
     identifier_input.fill(organizational_unit.stableTargetId)
-    edit_button = page.get_by_test_id("button-involvedUnit-00000000000000-0")
+    edit_button = page.get_by_test_id("edit-toggle-involvedUnit-00000000000000-0")
     edit_button.click()
 
     # verify identifier is correctly rendered
@@ -356,7 +355,9 @@ def test_edit_page_resolves_additive_identifier(
     # assert raw identifier value is retained
     edit_button.click()
     identifier_input = page.get_by_test_id("additive-rule-involvedUnit-0-identifier")
-    assert identifier_input.get_attribute("value") == organizational_unit.stableTargetId
+    expect(identifier_input).to_have_attribute(
+        "value", organizational_unit.stableTargetId
+    )
 
 
 @pytest.mark.integration
@@ -427,24 +428,26 @@ def test_edit_page_renders_temporal_input(edit_page: Page) -> None:
 
 
 @pytest.mark.integration
-def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
+def test_edit_page_additive_rule_roundtrip(
+    edit_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+) -> None:
     page = edit_page
     test_id = "tests_edit_test_main-test_edit_page_additive_rule_roundtrip"
 
-    # click button for new additive rule on fundingProgram field
-    new_additive_button = page.get_by_test_id(
-        "new-additive-fundingProgram-00000000000000"
-    )
+    # click button for new additive rule on contact field
+    new_additive_button = page.get_by_test_id("new-additive-contact-00000000000000")
     new_additive_button.scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-on_load.png")
     expect(new_additive_button).to_be_visible()
     new_additive_button.click()
 
     # fill a string into the additive rule input
-    input_id = "additive-rule-fundingProgram-0-text"
+    input_id = "additive-rule-contact-0-identifier"
     additive_rule_input = page.get_by_test_id(input_id)
     expect(additive_rule_input).to_be_visible()
-    rule_value = "FundEverything e.V."
+    contact_point_2 = dummy_data_by_identifier_in_primary_source["cp-2"]
+    rule_value = contact_point_2.stableTargetId
     additive_rule_input.fill(rule_value)
     page.screenshot(path=f"{test_id}-input-filled.png")
 
@@ -463,7 +466,7 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     page.reload()
 
     # verify the state after first saving: additive rule is present
-    rendered_input_id = "additive-rule-fundingProgram-0"
+    rendered_input_id = "additive-rule-contact-0"
     additive_rule_rendered = page.get_by_test_id(rendered_input_id)
     expect(additive_rule_rendered).to_have_count(1)
     additive_rule_rendered.scroll_into_view_if_needed()
@@ -471,7 +474,7 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     expect(additive_rule_rendered).to_be_visible()
 
     # click edit button
-    edit_button = page.get_by_test_id("button-fundingProgram-00000000000000-0")
+    edit_button = page.get_by_test_id("edit-toggle-contact-00000000000000-0")
     edit_button.scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-on_load.png")
     expect(edit_button).to_be_visible()
@@ -484,7 +487,7 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
 
     # now remove the additive rule for a full roundtrip
     remove_additive_rule_button = page.get_by_test_id(
-        "additive-rule-fundingProgram-0-remove-button"
+        "additive-rule-contact-0-remove-button"
     )
     expect(remove_additive_rule_button).to_be_visible()
     remove_additive_rule_button.click()
@@ -500,7 +503,7 @@ def test_edit_page_additive_rule_roundtrip(edit_page: Page) -> None:
     page.reload()
 
     # check the rule input is still gone
-    page.get_by_test_id("field-fundingProgram").scroll_into_view_if_needed()
+    page.get_by_test_id("field-contact").scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-reload_2.png")
     additive_rule_rendered = page.get_by_test_id(rendered_input_id)
     expect(additive_rule_rendered).to_have_count(0)

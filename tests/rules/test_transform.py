@@ -236,7 +236,16 @@ def test_transform_model_values_to_editor_values(
                 editable_text=True,
                 allow_additive=True,
             ),
-            id="temporal field",
+            id="temporal entity field",
+        ),
+        pytest.param(
+            "AdditiveResource",
+            "temporal",
+            InputConfig(
+                editable_text=True,
+                allow_additive=True,
+            ),
+            id="temporal or string field",
         ),
         pytest.param(
             "AdditiveContactPoint",

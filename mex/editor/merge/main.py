@@ -2,7 +2,7 @@ from typing import Literal
 
 import reflex as rx
 
-from mex.editor.components import render_value
+from mex.editor.components import icon_by_stem_type, render_value
 from mex.editor.layout import page
 from mex.editor.merge.state import MergeState
 from mex.editor.search.models import SearchResult
@@ -20,6 +20,11 @@ def search_result(
                 rx.checkbox(
                     checked=MergeState.selected_items[category] == index,
                     on_change=MergeState.select_item(category, index),
+                ),
+                icon_by_stem_type(
+                    result.stem_type,
+                    size=22,
+                    width="22px",
                 ),
                 rx.box(
                     rx.hstack(

@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.22.0] - 2025-07-31
+
+### Added
+
 - infobox to ingest page for "ldap" and "wikidata"
 - new type for aux_provider instead of str
 - 'None' as language selection for `Link` and `Text`
@@ -21,8 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - de-duplicate pagination component
 - de-duplicate ingestion roundtrip tests
 
-### Deprecated
-
 ### Removed
 
 - remove edit toggle button for non-identifier fields
@@ -31,8 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix service readiness checks
 - use more of the available space for rule input fields
-
-### Security
 
 ## [0.21.0] - 2025-07-22
 

@@ -55,7 +55,7 @@ def test_pagination(
     pagination_page_select = page.get_by_test_id("pagination-page-select")
     expect(pagination_previous).to_be_disabled()
     expect(pagination_next).to_be_disabled()
-    assert pagination_page_select.inner_text() == "1"
+    expect(pagination_page_select).to_have_text("1")
 
 
 @pytest.mark.integration

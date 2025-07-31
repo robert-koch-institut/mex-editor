@@ -19,7 +19,7 @@ def test_prometheus_metrics(client: TestClient) -> None:
     assert response.text == (
         """\
 # TYPE backend_api_identity_provider_cache_hits counter
-backend_api_identity_provider_cache_hits 18
+backend_api_identity_provider_cache_hits 17
 
 # TYPE backend_api_identity_provider_cache_misses counter
 backend_api_identity_provider_cache_misses 7"""

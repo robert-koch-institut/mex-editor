@@ -63,12 +63,13 @@ def test_search_and_ingest_roundtrip(
     result = connector.fetch_extracted_items(
         None, None, [f"Extracted{stem_type}"], 0, 1
     )
+    assert result.total == 0
     items_before = result.total
 
     # go to the correct tab
-    ldap_tab = page.get_by_role("tab", name=aux_provider)
-    expect(ldap_tab).to_be_enabled(timeout=30000)
-    ldap_tab.click()
+    aux_provider_tab = page.get_by_role("tab", name=aux_provider)
+    expect(aux_provider_tab).to_be_enabled(timeout=30000)
+    aux_provider_tab.click()
     search_input = page.get_by_placeholder("Search here...")
     expect(search_input).to_be_visible()
     expect(search_input).to_be_enabled()
@@ -96,7 +97,7 @@ def test_search_and_ingest_roundtrip(
 
     # test pagination is showing
     prev_button = page.get_by_test_id("pagination-previous-button")
-    expect(prev_button).to_be_disabled()
+    expect(prev_button).to_be_disabled(timeout=30000)
     expect(page.get_by_test_id("pagination-next-button")).to_be_visible()
     expect(page.get_by_test_id("pagination-page-select")).to_be_visible()
 
@@ -127,7 +128,7 @@ def test_search_and_ingest_roundtrip(
     result = connector.fetch_extracted_items(
         None, None, [f"Extracted{stem_type}"], 0, 1
     )
-    assert result.total >= items_before
+    assert result.total > items_before
 
 
 @pytest.mark.integration

@@ -108,9 +108,7 @@ app.add_page(
     on_load=[
         State.check_ldap_login,
         ConsentState.load_user,
-        ConsentState.get_projects,
-        ConsentState.get_resources,
-        ConsentState.get_bibliography,
+        ConsentState.get_all_data,
         ConsentState.resolve_identifiers,
     ],
 )

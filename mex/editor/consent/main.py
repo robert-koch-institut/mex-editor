@@ -1,3 +1,5 @@
+from typing import cast
+
 import reflex as rx
 
 from mex.editor.consent.layout import page
@@ -11,7 +13,7 @@ def resources() -> rx.Component:
         rx.text(
             "DATENBESTÄNDE & DATENSÄTZE",
         ),
-        rx.hstack(
+        rx.vstack(
             rx.foreach(
                 ConsentState.user_resources,
                 search_result,
@@ -30,7 +32,7 @@ def bib_resources() -> rx.Component:
         rx.text(
             "PUBLIKATIONEN",
         ),
-        rx.hstack(
+        rx.vstack(
             rx.foreach(
                 ConsentState.user_bib_resources,
                 search_result,
@@ -49,7 +51,7 @@ def projects() -> rx.Component:
         rx.text(
             "PROJEKTE",
         ),
-        rx.hstack(
+        rx.vstack(
             rx.foreach(
                 ConsentState.user_projects,
                 search_result,
@@ -69,7 +71,7 @@ def user_data() -> rx.Component:
             f"{ConsentState.display_name}",
             style={
                 "fontWeight": "var(--font-weight-bold)",
-                "fontSize": "var(--font-size-3)",
+                "fontSize": "var(--font-size-5)",
             },
         ),
         rx.text(
@@ -107,9 +109,9 @@ def consent_box() -> rx.Component:
                 size="1",
             ),
             rx.hstack(
-                rx.button("Einwilligen"),
+                rx.button("Einwilligen", on_click=ConsentState.submit_rule_set),
                 rx.spacer(),
-                rx.button("Ablehnen"),
+                rx.button("Ablehnen", on_click=ConsentState.submit_rule_set),
             ),
             style={
                 "justifyContent": "center",
@@ -122,6 +124,54 @@ def consent_box() -> rx.Component:
     )
 
 
+def pagination() -> rx.Component:
+    """Render pagination for navigating results."""
+    return rx.center(
+        rx.button(
+            rx.text("Previous"),
+            on_click=[
+                ConsentState.go_to_previous_page,
+                # ConsentState.push_search_params,
+                ConsentState.scroll_to_top,
+                ConsentState.get_all_data,
+                ConsentState.resolve_identifiers,
+            ],
+            disabled=ConsentState.disable_previous_page,
+            variant="surface",
+            custom_attrs={"data-testid": "pagination-previous-button"},
+            style={"minWidth": "10%"},
+        ),
+        rx.select(
+            ConsentState.total_pages,
+            value=cast("rx.vars.NumberVar", ConsentState.current_page).to_string(),
+            on_change=[
+                ConsentState.set_page,
+                # ConsentState.push_search_params,
+                ConsentState.scroll_to_top,
+                ConsentState.get_all_data,
+                ConsentState.resolve_identifiers,
+            ],
+            custom_attrs={"data-testid": "pagination-page-select"},
+        ),
+        rx.button(
+            rx.text("Next"),
+            on_click=[
+                ConsentState.go_to_next_page,
+                # ConsentState.push_search_params,
+                ConsentState.scroll_to_top,
+                ConsentState.get_all_data,
+                ConsentState.resolve_identifiers,
+            ],
+            disabled=ConsentState.disable_next_page,
+            variant="surface",
+            custom_attrs={"data-testid": "pagination-next-button"},
+            style={"minWidth": "10%"},
+        ),
+        spacing="4",
+        style={"width": "100%"},
+    )
+
+
 def index() -> rx.Component:
     """Return the index for the merge and extracted search component."""
     return page(
@@ -130,6 +180,7 @@ def index() -> rx.Component:
             projects(),
             resources(),
             bib_resources(),
+            pagination(),
             rx.box(
                 consent_box(),
                 style={

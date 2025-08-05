@@ -2,7 +2,7 @@ from typing import cast
 
 import reflex as rx
 
-from mex.editor.components import render_span, render_value
+from mex.editor.components import icon_by_stem_type, render_span, render_value
 from mex.editor.rules.models import (
     EditorField,
     EditorPrimarySource,
@@ -58,7 +58,9 @@ def editor_edit_button(
             RuleState.resolve_identifiers,
         ],
         custom_attrs={
-            "data-testid": f"button-{field_name}-{primary_source.identifier}-{index}"
+            "data-testid": (
+                f"edit-toggle-{field_name}-{primary_source.identifier}-{index}"
+            )
         },
     )
 
@@ -89,22 +91,30 @@ def editor_additive_value(
 ) -> rx.Component:
     """Render an additive value with buttons for editing and removal."""
     return rx.hstack(
-        rx.cond(
-            value.being_edited,
-            additive_rule_input(
-                field_name,
-                primary_source.input_config,
-                index,
-                value,
+        rx.hstack(
+            rx.cond(
+                value.being_edited,
+                additive_rule_input(
+                    field_name,
+                    primary_source.input_config,
+                    index,
+                    value,
+                ),
+                render_value(value),
             ),
-            render_value(value),
+            rx.cond(
+                primary_source.input_config.editable_identifier,
+                editor_edit_button(field_name, primary_source, value, index),
+            ),
+            width="100%",
         ),
-        editor_edit_button(field_name, primary_source, value, index),
         remove_additive_button(
             field_name,
             index,
         ),
         custom_attrs={"data-testid": f"additive-rule-{field_name}-{index}"},
+        spacing="8",
+        width="100%",
     )
 
 
@@ -142,7 +152,7 @@ def href_input(
         on_change=RuleState.set_href_value(field_name, index),
         style={
             "margin": "calc(-1 * var(--space-1))",
-            "minWidth": "30%",
+            "width": "100%",
         },
         custom_attrs={"data-testid": f"additive-rule-{field_name}-{index}-href"},
     )
@@ -160,7 +170,7 @@ def text_input(
         on_change=RuleState.set_text_value(field_name, index),
         style={
             "margin": "calc(-1 * var(--space-1))",
-            "minWidth": "30%",
+            "width": "100%",
         },
         custom_attrs={"data-testid": f"additive-rule-{field_name}-{index}-text"},
     )
@@ -181,8 +191,11 @@ def badge_input(
         rx.box(
             rx.select(
                 input_config.badge_options,
-                value=cast("rx.Var", badge)
-                | cast("rx.Var", input_config.badge_default),
+                value=rx.cond(
+                    badge,
+                    badge,
+                    input_config.badge_default,
+                ),
                 size="1",
                 variant="soft",
                 radius="large",
@@ -212,7 +225,7 @@ def additive_rule_input(
                 on_change=RuleState.set_href_value(field_name, index),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
-                    "minWidth": "30%",
+                    "width": "100%",
                 },
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-href"
@@ -227,7 +240,7 @@ def additive_rule_input(
                 on_change=RuleState.set_text_value(field_name, index),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
-                    "minWidth": "30%",
+                    "width": "100%",
                 },
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-text"
@@ -242,7 +255,7 @@ def additive_rule_input(
                 on_change=RuleState.set_identifier_value(field_name, index),
                 style={
                     "margin": "calc(-1 * var(--space-1))",
-                    "minWidth": "30%",
+                    "width": "100%",
                 },
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-identifier"
@@ -259,8 +272,11 @@ def additive_rule_input(
                 rx.box(
                     rx.select(
                         input_config.badge_options,
-                        value=cast("rx.Var", value.badge)
-                        | cast("rx.Var", input_config.badge_default),
+                        value=rx.cond(
+                            value.badge,
+                            value.badge,
+                            input_config.badge_default,
+                        ),
                         size="1",
                         variant="soft",
                         radius="large",
@@ -273,6 +289,7 @@ def additive_rule_input(
                 ),
             ),
         ),
+        width="100%",
     )
 
 
@@ -525,6 +542,11 @@ def submit_button() -> rx.Component:
 def rule_page_header(title: rx.Component) -> rx.Component:
     """Wrap the given title in a header component with a save button."""
     return rx.hstack(
+        icon_by_stem_type(
+            RuleState.stem_type,
+            size=28,
+            margin="auto 0",
+        ),
         title,
         rx.spacer(),
         rx.cond(

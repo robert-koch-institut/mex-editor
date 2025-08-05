@@ -7,7 +7,11 @@ from mex.common.models import (
     AnyRuleModel,
 )
 from mex.common.types import Identifier, Link, TemporalEntity, Text, VocabularyEnum
-from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, EditorValue
+from mex.editor.models import (
+    LANGUAGE_VALUE_NONE,
+    MODEL_CONFIG_BY_STEM_TYPE,
+    EditorValue,
+)
 
 
 def ensure_list(values: object) -> list[object]:
@@ -35,13 +39,13 @@ def transform_value(
     if isinstance(value, Text):
         return EditorValue(
             text=value.value,
-            badge=value.language.name if value.language else None,
+            badge=value.language.name if value.language else LANGUAGE_VALUE_NONE,
         )
     if isinstance(value, Link):
         return EditorValue(
             text=value.title,
             href=value.url if allow_link else None,
-            badge=value.language.name if value.language else None,
+            badge=value.language.name if value.language else LANGUAGE_VALUE_NONE,
             external=True,
         )
     if isinstance(value, Identifier):

@@ -7,6 +7,7 @@ class SearchResult(rx.Base):
     """Search result preview."""
 
     identifier: str
+    stem_type: str
     title: list[EditorValue]
     preview: list[EditorValue]
 

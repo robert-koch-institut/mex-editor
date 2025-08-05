@@ -77,5 +77,5 @@ def test_state_check_login_fail() -> None:
 def test_update_raw_path(
     nav_item: NavItem, params: dict[str, Any], expected: str
 ) -> None:
-    State._update_raw_path(nav_item, **params)
+    State._update_raw_path(nav_item, params)
     assert nav_item.raw_path == expected

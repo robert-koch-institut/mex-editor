@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- entity type selection triggers search in merged view
-
 ### Changes
-
-- resolve identifiers in merge view
 
 ### Deprecated
 
@@ -21,10 +17,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [0.22.0] - 2025-07-31
+
+### Added
+
+- infobox to ingest page for "ldap" and "wikidata"
+- new type for aux_provider instead of str
+- 'None' as language selection for `Link` and `Text`
+- add string input mask for `Resource.temporal` field
+
+### Changes
+
+- type of aux provider from `str` to `AuxProvider`
+- prepare reflex update
+- de-duplicate pagination component
+- de-duplicate ingestion roundtrip tests
+
+### Removed
+
+- remove edit toggle button for non-identifier fields
+
+### Fixed
+
+- fix service readiness checks
+- use more of the available space for rule input fields
+
+## [0.21.0] - 2025-07-22
+
+### Added
+
+- entity type selection triggers search in merged view
+
+### Changes
+
+- resolve identifiers in merge view
+
+### Fixed
+
 - fix editing for link fields without a title value
 - only show allowed precisions in temporal field drop-down
-
-### Security
 
 ## [0.20.0] - 2025-07-08
 

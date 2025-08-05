@@ -5,12 +5,10 @@ from pydantic import ValidationError
 
 from mex.common.fields import (
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
-    EMAIL_FIELDS_BY_CLASS_NAME,
-    INTEGER_FIELDS_BY_CLASS_NAME,
     LINK_FIELDS_BY_CLASS_NAME,
     MERGEABLE_FIELDS_BY_CLASS_NAME,
+    MUTABLE_FIELDS_BY_CLASS_NAME,
     REFERENCE_FIELDS_BY_CLASS_NAME,
-    STRING_FIELDS_BY_CLASS_NAME,
     TEMPORAL_FIELDS_BY_CLASS_NAME,
     TEXT_FIELDS_BY_CLASS_NAME,
     VOCABULARIES_BY_FIELDS_BY_CLASS_NAMES,
@@ -42,7 +40,11 @@ from mex.editor.fields import (
     REQUIRED_FIELDS_BY_CLASS_NAME,
     TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES,
 )
-from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, EditorValue
+from mex.editor.models import (
+    LANGUAGE_VALUE_NONE,
+    MODEL_CONFIG_BY_STEM_TYPE,
+    EditorValue,
+)
 from mex.editor.rules.models import (
     EditorField,
     EditorPrimarySource,
@@ -96,15 +98,6 @@ def _transform_model_to_input_config(  # noqa: PLR0911
     editable: bool,  # noqa: FBT001
 ) -> InputConfig:
     """Determine the input type for a given field of a given model."""
-    if field_name in (
-        STRING_FIELDS_BY_CLASS_NAME[entity_type]
-        + EMAIL_FIELDS_BY_CLASS_NAME[entity_type]  # stopgap: MX-1766
-        + INTEGER_FIELDS_BY_CLASS_NAME[entity_type]
-    ):
-        return InputConfig(
-            editable_text=editable,
-            allow_additive=editable,
-        )
     if field_name in REFERENCE_FIELDS_BY_CLASS_NAME[entity_type]:
         return InputConfig(
             editable_identifier=editable,
@@ -129,7 +122,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             editable_text=editable,
             editable_badge=editable,
             badge_default=TextLanguage.DE.name,
-            badge_options=[e.name for e in TextLanguage],
+            badge_options=[e.name for e in TextLanguage] + [LANGUAGE_VALUE_NONE],
             badge_titles=[TextLanguage.__name__],
             allow_additive=editable,
         )
@@ -139,7 +132,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             editable_badge=editable,
             editable_href=editable,
             badge_default=LinkLanguage.DE.name,
-            badge_options=[e.name for e in LinkLanguage],
+            badge_options=[e.name for e in LinkLanguage] + [LANGUAGE_VALUE_NONE],
             badge_titles=[LinkLanguage.__name__],
             allow_additive=editable,
         )
@@ -151,6 +144,11 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             badge_default=options[0].name,
             badge_options=[e.name for e in options],
             badge_titles=[v.__name__ for v in vocabularies],
+            allow_additive=editable,
+        )
+    if field_name in MUTABLE_FIELDS_BY_CLASS_NAME[entity_type]:
+        return InputConfig(
+            editable_text=editable,
             allow_additive=editable,
         )
     return InputConfig()
@@ -337,12 +335,16 @@ def _transform_editor_value_to_model_value(
     if field_name in LINK_FIELDS_BY_CLASS_NAME[class_name]:
         return Link(
             url=value.href,
-            language=LinkLanguage[value.badge] if value.badge else None,
+            language=LinkLanguage[value.badge]
+            if value.badge and value.badge != LANGUAGE_VALUE_NONE
+            else None,
             title=value.text,
         )
     if field_name in TEXT_FIELDS_BY_CLASS_NAME[class_name]:
         return Text(
-            language=TextLanguage[value.badge] if value.badge else None,
+            language=TextLanguage[value.badge]
+            if value.badge and value.badge != LANGUAGE_VALUE_NONE
+            else None,
             value=value.text,
         )
     if field_name in VOCABULARY_FIELDS_BY_CLASS_NAME[class_name]:

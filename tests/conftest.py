@@ -160,7 +160,6 @@ def dummy_data() -> list[AnyExtractedModel]:
         ],
         contact=[
             contact_point_1.stableTargetId,
-            contact_point_2.stableTargetId,
             organizational_unit_1.stableTargetId,
         ],
         hadPrimarySource=primary_source_1.stableTargetId,

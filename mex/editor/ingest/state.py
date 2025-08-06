@@ -1,11 +1,8 @@
 import math
-from collections.abc import Generator
 from typing import Annotated
 
 import reflex as rx
 from pydantic import Field
-from reflex.event import EventSpec
-from reflex.state import serialize_mutable_proxy
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -18,6 +15,7 @@ from mex.editor.ingest.models import (
 )
 from mex.editor.ingest.transform import transform_models_to_results
 from mex.editor.state import State
+from mex.editor.types import EventGenerator
 from mex.editor.utils import resolve_editor_value
 
 
@@ -68,9 +66,9 @@ class IngestState(State):
         ].show_properties
 
     @rx.event
-    def set_current_aux_provider(self, value: AuxProvider) -> None:
+    def set_current_aux_provider(self, value: str) -> None:
         """Change the current aux provider."""
-        self.current_aux_provider = value
+        self.current_aux_provider = AuxProvider(value)
 
     @rx.event
     def set_page(self, page_number: str | int) -> None:
@@ -98,13 +96,11 @@ class IngestState(State):
         self.current_page = self.current_page + 1
 
     @rx.event
-    def ingest_result(self, index: int) -> Generator[EventSpec | None, None, None]:
+    def ingest_result(self, index: int) -> EventGenerator:
         """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
         try:
-            model: AnyExtractedModel = serialize_mutable_proxy(
-                self.results_extracted[index]
-            )
+            model = self.results_extracted[index]
             connector.ingest([model])
         except HTTPError as exc:
             yield from escalate_error(
@@ -122,7 +118,7 @@ class IngestState(State):
             )
 
     @rx.event
-    def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
+    def scroll_to_top(self) -> EventGenerator:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
@@ -136,7 +132,7 @@ class IngestState(State):
                         await resolve_editor_value(value)
 
     @rx.event
-    def refresh(self) -> Generator[EventSpec | None, None, None]:
+    def refresh(self) -> EventGenerator:
         """Refresh the search results."""
         connector = BackendApiConnector.get()
         offset = self.limit * (self.current_page - 1)

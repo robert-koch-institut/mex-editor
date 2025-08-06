@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import typer
 import uvicorn
 from reflex import constants
 from reflex.config import environment, get_config
@@ -62,10 +61,7 @@ def editor_frontend() -> None:  # pragma: no cover
     get_compiled_app()
 
     # Set up the frontend for prod mode.
-    setup_frontend_prod(
-        Path.cwd(),
-        disable_telemetry=True,
-    )
+    setup_frontend_prod(Path.cwd())
 
     # Run the frontend.
     run_frontend_prod(
@@ -82,4 +78,4 @@ def main() -> None:  # pragma: no cover
     environment.REFLEX_USE_GRANIAN.set(False)
 
     # Run the editor.
-    typer.run(run)
+    run()

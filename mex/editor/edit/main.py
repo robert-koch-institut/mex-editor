@@ -18,7 +18,7 @@ def edit_title() -> rx.Component:
             as_child=True,
         ),
         custom_attrs={"data-testid": "edit-heading"},
-        style={"userSelect": "none"},
+        style=rx.Style(userSelect="none"),
     )
 
 
@@ -34,9 +34,9 @@ def index() -> rx.Component:
                 editor_field,
             ),
             validation_errors(),
-            style={
-                "width": "100%",
-                "marginTop": "calc(2 * var(--space-6))",
-            },
+            style=rx.Style(
+                width="100%",
+                marginTop="calc(2 * var(--space-6))",
+            ),
         ),
     )

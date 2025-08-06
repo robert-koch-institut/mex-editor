@@ -1,5 +1,4 @@
 import pytest
-from reflex.state import serialize_mutable_proxy
 
 from mex.common.models import ContactPointRuleSetResponse, ExtractedContactPoint
 from mex.editor.models import EditorValue
@@ -26,9 +25,7 @@ def test_state_get_primary_sources_by_field_name() -> None:
     with pytest.raises(ValueError, match="field not found: someField"):
         state._get_primary_sources_by_field_name("someField")
 
-    primary_sources = serialize_mutable_proxy(
-        state._get_primary_sources_by_field_name("email")
-    )
+    primary_sources = state._get_primary_sources_by_field_name("email")
 
     assert primary_sources == [
         EditorPrimarySource(

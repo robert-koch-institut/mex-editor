@@ -13,11 +13,11 @@ def user_button() -> rx.Component:
     return rx.button(
         rx.cond(
             cast("User", State.user_mex).write_access,
-            rx.icon(tag="user_round_cog"),
-            rx.icon(tag="user_round"),
+            rx.icon("user_round_cog"),
+            rx.icon("user_round"),
         ),
         variant="ghost",
-        style={"marginTop": "0"},
+        style=rx.Style(marginTop="0"),
     )
 
 
@@ -55,14 +55,11 @@ def app_logo() -> rx.Component:
     return rx.hover_card.root(
         rx.hover_card.trigger(
             rx.hstack(
-                rx.icon(
-                    tag="circuit-board",
-                    size=28,
-                ),
+                rx.icon(tag="circuit-board", size=28),
                 rx.heading(
                     "MEx Editor",
                     weight="medium",
-                    style={"userSelect": "none"},
+                    style=rx.Style(userSelect="none"),
                 ),
                 custom_attrs={"data-testid": "app-logo"},
             )
@@ -81,11 +78,11 @@ def nav_bar() -> rx.Component:
     """Return a navigation bar component."""
     return rx.vstack(
         rx.box(
-            style={
-                "height": "var(--space-6)",
-                "width": "100%",
-                "backdropFilter": " var(--backdrop-filter-panel)",
-            },
+            style=rx.Style(
+                height="var(--space-6)",
+                width="100%",
+                backdropFilter=" var(--backdrop-filter-panel)",
+            ),
         ),
         rx.card(
             rx.hstack(
@@ -99,26 +96,31 @@ def nav_bar() -> rx.Component:
                 rx.divider(orientation="vertical", size="2"),
                 user_menu(),
                 rx.spacer(),
-                rx.color_mode.button(),
+                rx.button(
+                    rx.icon(tag="sun_moon"),
+                    variant="ghost",
+                    style=rx.Style(marginTop="0"),
+                    on_click=rx.toggle_color_mode,
+                ),
                 justify="between",
                 align_items="center",
             ),
             size="2",
             custom_attrs={"data-testid": "nav-bar"},
-            style={
-                "width": "100%",
-                "marginTop": "calc(-1 * var(--base-card-border-width))",
-            },
+            style=rx.Style(
+                width="100%",
+                marginTop="calc(-1 * var(--base-card-border-width))",
+            ),
         ),
         spacing="0",
-        style={
-            "maxWidth": "var(--app-max-width)",
-            "minWidth": "var(--app-min-width)",
-            "position": "fixed",
-            "top": "0",
-            "width": "100%",
-            "zIndex": "1000",
-        },
+        style=rx.Style(
+            maxWidth="var(--app-max-width)",
+            minWidth="var(--app-min-width)",
+            position="fixed",
+            top="0",
+            width="100%",
+            zIndex="1000",
+        ),
     )
 
 
@@ -130,21 +132,23 @@ def page(*children: rx.Component) -> rx.Component:
             nav_bar(),
             rx.hstack(
                 *children,
-                style={
-                    "maxWidth": "var(--app-max-width)",
-                    "minWidth": "var(--app-min-width)",
-                    "padding": "calc(var(--space-6) * 4) var(--space-6) var(--space-6)",
-                    "width": "100%",
-                },
+                style=rx.Style(
+                    maxWidth="var(--app-max-width)",
+                    minWidth="var(--app-min-width)",
+                    padding="calc(var(--space-6) * 4) var(--space-6) var(--space-6)",
+                    width="100%",
+                ),
                 custom_attrs={"data-testid": "page-body"},
             ),
-            style={
-                "--app-max-width": "calc(1480px * var(--scaling))",
-                "--app-min-width": "calc(800px * var(--scaling))",
-            },
+            style=rx.Style(
+                {
+                    "--app-max-width": "calc(1480px * var(--scaling))",
+                    "--app-min-width": "calc(800px * var(--scaling))",
+                }
+            ),
         ),
         rx.center(
             rx.spinner(size="3"),
-            style={"marginTop": "40vh"},
+            style=rx.Style(marginTop="40vh"),
         ),
     )

@@ -1,3 +1,5 @@
+from typing import Any
+
 import reflex as rx
 
 from mex.editor.components import icon_by_stem_type, pagination, render_value
@@ -56,13 +58,13 @@ def render_preview(result: IngestResult) -> rx.Component:
                 render_value,
             )
         ),
-        style={
-            "fontWeight": "var(--font-weight-light)",
-            "whiteSpace": "nowrap",
-            "overflow": "hidden",
-            "textOverflow": "ellipsis",
-            "maxWidth": "100%",
-        },
+        style=rx.Style(
+            fontWeight="var(--font-weight-light)",
+            whiteSpace="nowrap",
+            overflow="hidden",
+            textOverflow="ellipsis",
+            maxWidth="100%",
+        ),
     )
 
 
@@ -74,11 +76,11 @@ def render_all_properties(result: IngestResult) -> rx.Component:
                 result.all_properties,
                 render_value,
             ),
-            style={
-                "fontWeight": "var(--font-weight-light)",
-                "flexWrap": "wrap",
-                "alignItems": "start",
-            },
+            style=rx.Style(
+                fontWeight="var(--font-weight-light)",
+                flexWrap="wrap",
+                alignItems="start",
+            ),
         ),
         custom_attrs={"data-testid": "all-properties-display"},
     )
@@ -93,10 +95,10 @@ def result_title(result: IngestResult) -> rx.Component:
                 render_value,
             )
         ),
-        style={
-            "fontWeight": "bold",
-            "width": "100%",
-        },
+        style=rx.Style(
+            fontWeight="bold",
+            width="100%",
+        ),
     )
 
 
@@ -108,23 +110,22 @@ def ingest_result(result: IngestResult, index: int) -> rx.Component:
                 icon_by_stem_type(
                     result.stem_type,
                     size=28,
-                    margin="auto 0",
-                    width="28px",
+                    style=rx.Style(width="1em", margin="auto 0"),
                 ),
                 result_title(result),
                 rx.spacer(),
                 expand_properties_button(result, index),
                 ingest_button(result, index),
-                style={"width": "100%"},
+                style=rx.Style(width="100%"),
             ),
             rx.cond(
                 result.show_properties,
                 render_all_properties(result),
                 render_preview(result),
             ),
-            style={"width": "100%"},
+            style=rx.Style(width="100%"),
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -138,17 +139,19 @@ def search_input() -> rx.Component:
                     max_length=100,
                     name="query_string",
                     placeholder="Search here...",
-                    style={
-                        "--text-field-selection-color": "",
-                        "--text-field-focus-color": "transparent",
-                        "--text-field-border-width": "1px",
-                        "backgroundClip": "content-box",
-                        "backgroundColor": "transparent",
-                        "boxShadow": (
-                            "inset 0 0 0 var(--text-field-border-width) transparent"
-                        ),
-                        "color": "",
-                    },
+                    style=rx.Style(
+                        {
+                            "--text-field-selection-color": "",
+                            "--text-field-focus-color": "transparent",
+                            "--text-field-border-width": "1px",
+                            "backgroundClip": "content-box",
+                            "backgroundColor": "transparent",
+                            "boxShadow": (
+                                "inset 0 0 0 var(--text-field-border-width) transparent"
+                            ),
+                            "color": "",
+                        }
+                    ),
                     disabled=IngestState.is_loading,
                     type="text",
                 ),
@@ -167,7 +170,7 @@ def search_input() -> rx.Component:
                 IngestState.refresh,
                 IngestState.resolve_identifiers,
             ],
-            style={"margin": "1em 0 1em"},
+            style=rx.Style(margin="1em 0 1em"),
             justify="center",
             align="center",
         )
@@ -180,15 +183,15 @@ def results_summary() -> rx.Component:
         rx.text(
             f"Showing {IngestState.current_results_length} "
             f"of {IngestState.total} items",
-            style={
-                "color": "var(--gray-12)",
-                "fontWeight": "var(--font-weight-bold)",
-                "margin": "var(--space-4)",
-                "userSelect": "none",
-            },
+            style=rx.Style(
+                color="var(--gray-12)",
+                fontWeight="var(--font-weight-bold)",
+                margin="var(--space-4)",
+                userSelect="none",
+            ),
             custom_attrs={"data-testid": "search-results-summary"},
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -198,10 +201,10 @@ def search_results() -> rx.Component:
         IngestState.is_loading,
         rx.center(
             rx.spinner(size="3"),
-            style={
-                "marginTop": "var(--space-6)",
-                "width": "100%",
-            },
+            style=rx.Style(
+                marginTop="var(--space-6)",
+                width="100%",
+            ),
         ),
         rx.vstack(
             results_summary(),
@@ -212,16 +215,16 @@ def search_results() -> rx.Component:
             pagination(IngestState),
             spacing="4",
             custom_attrs={"data-testid": "search-results-section"},
-            style={
-                "minWidth": "0",
-                "width": "100%",
-            },
+            style=rx.Style(
+                minWidth="0",
+                width="100%",
+            ),
         ),
     )
 
 
-def search_infobox() -> rx.Component:
-    """Render some informations about the specific search provider query format."""
+def search_infobox() -> rx.Component | rx.Var[Any]:
+    """Render information about the specific search provider query format."""
     return rx.match(
         IngestState.current_aux_provider,
         (
@@ -255,7 +258,7 @@ def tab_list() -> rx.Component:
                 ),
             ),
             rx.spacer(),
-            style={"width": "calc(24em * var(--scaling))"},
+            style=rx.Style(width="calc(24em * var(--scaling))"),
         )
     )
 
@@ -293,9 +296,9 @@ def index() -> rx.Component:
                 IngestState.resolve_identifiers,
             ],
             custom_attrs={"data-testid": "aux-tab-section"},
-            style={
-                "width": "100%",
-                "padding": "0 calc(var(--space-8) * var(--scaling))",
-            },
+            style=rx.Style(
+                width="100%",
+                padding="0 calc(var(--space-8) * var(--scaling))",
+            ),
         )
     )

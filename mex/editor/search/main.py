@@ -13,8 +13,7 @@ def search_result(result: SearchResult) -> rx.Component:
             icon_by_stem_type(
                 result.stem_type,
                 size=28,
-                margin="auto 0",
-                color=rx.color("accent", 11),
+                style=rx.Style(margin="auto 0", color=rx.color("accent", 11)),
             ),
             rx.link(
                 rx.box(
@@ -24,11 +23,11 @@ def search_result(result: SearchResult) -> rx.Component:
                             render_value,
                         )
                     ),
-                    style={
-                        "fontWeight": "var(--font-weight-bold)",
-                        "overflow": "hidden",
-                        "whiteSpace": "nowrap",
-                    },
+                    style=rx.Style(
+                        fontWeight="var(--font-weight-bold)",
+                        overflow="hidden",
+                        whiteSpace="nowrap",
+                    ),
                 ),
                 rx.box(
                     rx.hstack(
@@ -37,19 +36,19 @@ def search_result(result: SearchResult) -> rx.Component:
                             render_value,
                         )
                     ),
-                    style={
-                        "color": "var(--gray-12)",
-                        "fontWeight": "var(--font-weight-light)",
-                        "textDecoration": "none",
-                    },
+                    style=rx.Style(
+                        color="var(--gray-12)",
+                        fontWeight="var(--font-weight-light)",
+                        textDecoration="none",
+                    ),
                 ),
                 href=f"/item/{result.identifier}",
             ),
-            style={"width": "100%"},
+            style=rx.Style(width="100%"),
             class_name="search-result-card",
             custom_attrs={"data-testid": f"result-{result.identifier}"},
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -64,14 +63,16 @@ def search_input() -> rx.Component:
                     max_length=100,
                     name="query_string",
                     placeholder="Search here...",
-                    style={
-                        "--text-field-selection-color": "",
-                        "--text-field-focus-color": "transparent",
-                        "--text-field-border-width": "calc(1px * var(--scaling))",
-                        "boxShadow": (
-                            "inset 0 0 0 var(--text-field-border-width) transparent"
-                        ),
-                    },
+                    style=rx.Style(
+                        {
+                            "--text-field-selection-color": "",
+                            "--text-field-focus-color": "transparent",
+                            "--text-field-border-width": "calc(1px * var(--scaling))",
+                            "boxShadow": (
+                                "inset 0 0 0 var(--text-field-border-width) transparent"
+                            ),
+                        }
+                    ),
                     tab_index=1,
                     type="text",
                 ),
@@ -93,7 +94,7 @@ def search_input() -> rx.Component:
                 SearchState.resolve_identifiers,
             ],
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -118,10 +119,10 @@ def entity_type_filter() -> rx.Component:
     return rx.card(
         rx.text(
             "entityType",
-            style={
-                "marginBottom": "var(--space-4)",
-                "userSelect": "none",
-            },
+            style=rx.Style(
+                marginBottom="var(--space-4)",
+                userSelect="none",
+            ),
         ),
         rx.vstack(
             rx.foreach(
@@ -130,7 +131,7 @@ def entity_type_filter() -> rx.Component:
             ),
             custom_attrs={"data-testid": "entity-types"},
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -155,10 +156,10 @@ def primary_source_filter() -> rx.Component:
     return rx.card(
         rx.text(
             "hadPrimarySource",
-            style={
-                "marginBottom": "var(--space-4)",
-                "userSelect": "none",
-            },
+            style=rx.Style(
+                marginBottom="var(--space-4)",
+                userSelect="none",
+            ),
         ),
         rx.vstack(
             rx.foreach(
@@ -167,7 +168,7 @@ def primary_source_filter() -> rx.Component:
             ),
             custom_attrs={"data-testid": "had-primary-sources"},
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -179,7 +180,7 @@ def sidebar() -> rx.Component:
         primary_source_filter(),
         spacing="4",
         custom_attrs={"data-testid": "search-sidebar"},
-        style={"width": "25%"},
+        style=rx.Style(width="25%"),
     )
 
 
@@ -189,15 +190,15 @@ def results_summary() -> rx.Component:
         rx.text(
             f"Showing {SearchState.current_results_length} "
             f"of {SearchState.total} items",
-            style={
-                "color": "var(--gray-12)",
-                "fontWeight": "var(--font-weight-bold)",
-                "margin": "var(--space-4)",
-                "userSelect": "none",
-            },
+            style=rx.Style(
+                color="var(--gray-12)",
+                fontWeight="var(--font-weight-bold)",
+                margin="var(--space-4)",
+                userSelect="none",
+            ),
             custom_attrs={"data-testid": "search-results-summary"},
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -207,10 +208,10 @@ def search_results() -> rx.Component:
         SearchState.is_loading,
         rx.center(
             rx.spinner(size="3"),
-            style={
-                "marginTop": "var(--space-6)",
-                "width": "100%",
-            },
+            style=rx.Style(
+                marginTop="var(--space-6)",
+                width="100%",
+            ),
         ),
         rx.vstack(
             results_summary(),
@@ -221,10 +222,10 @@ def search_results() -> rx.Component:
             pagination(SearchState),
             spacing="4",
             custom_attrs={"data-testid": "search-results-section"},
-            style={
-                "minWidth": "0",
-                "width": "100%",
-            },
+            style=rx.Style(
+                minWidth="0",
+                width="100%",
+            ),
         ),
     )
 
@@ -236,6 +237,6 @@ def index() -> rx.Component:
             sidebar(),
             search_results(),
             spacing="4",
-            style={"width": "100%"},
+            style=rx.Style(width="100%"),
         )
     )

@@ -1,8 +1,14 @@
+from collections.abc import Mapping
+from typing import Any
+
 import reflex as rx
 
 from mex.editor.ingest.state import IngestState
 from mex.editor.rules.models import EditorValue
 from mex.editor.search.state import SearchState
+
+COMPLETED_LOADING = False
+CURRENTLY_LOADING = True
 
 
 def render_identifier(value: EditorValue) -> rx.Component:
@@ -20,8 +26,8 @@ def render_identifier(value: EditorValue) -> rx.Component:
         ),
         loading=rx.cond(
             value.text,
-            c1=False,
-            c2=True,
+            COMPLETED_LOADING,
+            CURRENTLY_LOADING,
         ),
     )
 
@@ -68,8 +74,8 @@ def render_text(value: EditorValue) -> rx.Component:
         ),
         loading=rx.cond(
             value.text,
-            c1=False,
-            c2=True,
+            COMPLETED_LOADING,
+            CURRENTLY_LOADING,
         ),
     )
 
@@ -81,7 +87,7 @@ def render_badge(text: str | None) -> rx.Component:
         radius="large",
         variant="soft",
         color_scheme="gray",
-        style={"margin": "auto 0"},
+        style=rx.Style(margin="auto 0"),
     )
 
 
@@ -115,7 +121,7 @@ def pagination(state: type[IngestState | SearchState]) -> rx.Component:
             disabled=state.disable_previous_page,
             variant="surface",
             custom_attrs={"data-testid": "pagination-previous-button"},
-            style={"minWidth": "10%"},
+            style=rx.Style(minWidth="10%"),
         ),
         rx.select(
             state.page_selection,
@@ -140,36 +146,37 @@ def pagination(state: type[IngestState | SearchState]) -> rx.Component:
             disabled=state.disable_next_page,
             variant="surface",
             custom_attrs={"data-testid": "pagination-next-button"},
-            style={"minWidth": "10%"},
+            style=rx.Style(minWidth="10%"),
         ),
         spacing="4",
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
 def icon_by_stem_type(
     stem_type: str | None,
-    **props: int | str | rx.Color,
+    size: int = 28,
+    style: Mapping[str, Any] | rx.Var[Mapping[str, Any]] | None = None,
 ) -> rx.Component:
     """Render an icon for the given stem type."""
     # Sigh, https://reflex.dev/docs/library/data-display/icon#using-dynamic-icon-tags
     return rx.box(
         rx.match(
             stem_type,
-            ("AccessPlatform", rx.icon("app_window", **props)),
-            ("Activity", rx.icon("circle_gauge", **props)),
-            ("BibliographicResource", rx.icon("book_marked", **props)),
-            ("Consent", rx.icon("badge_check", **props)),
-            ("ContactPoint", rx.icon("inbox", **props)),
-            ("Distribution", rx.icon("container", **props)),
-            ("Organization", rx.icon("building", **props)),
-            ("OrganizationalUnit", rx.icon("door_open", **props)),
-            ("Person", rx.icon("circle_user_round", **props)),
-            ("PrimarySource", rx.icon("hard_drive", **props)),
-            ("Resource", rx.icon("archive", **props)),
-            ("Variable", rx.icon("box", **props)),
-            ("VariableGroup", rx.icon("boxes", **props)),
-            rx.icon("file_question", **props),
+            ("AccessPlatform", rx.icon("app_window", size=size, style=style)),
+            ("Activity", rx.icon("circle_gauge", size=size, style=style)),
+            ("BibliographicResource", rx.icon("book_marked", size=size, style=style)),
+            ("Consent", rx.icon("badge_check", size=size, style=style)),
+            ("ContactPoint", rx.icon("inbox", size=size, style=style)),
+            ("Distribution", rx.icon("container", size=size, style=style)),
+            ("Organization", rx.icon("building", size=size, style=style)),
+            ("OrganizationalUnit", rx.icon("door_open", size=size, style=style)),
+            ("Person", rx.icon("circle_user_round", size=size, style=style)),
+            ("PrimarySource", rx.icon("hard_drive", size=size, style=style)),
+            ("Resource", rx.icon("archive", size=size, style=style)),
+            ("Variable", rx.icon("box", size=size, style=style)),
+            ("VariableGroup", rx.icon("boxes", size=size, style=style)),
+            rx.icon("file_question", size=size, style=style),
         ),
         title=stem_type,
     )

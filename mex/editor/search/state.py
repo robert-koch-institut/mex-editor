@@ -1,10 +1,8 @@
 import math
-from collections.abc import Generator
 from typing import TYPE_CHECKING, Annotated
 
 import reflex as rx
 from pydantic import Field
-from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -15,6 +13,7 @@ from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchPrimarySource, SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
+from mex.editor.types import EventGenerator
 from mex.editor.utils import resolve_editor_value
 
 if TYPE_CHECKING:
@@ -80,9 +79,9 @@ class SearchState(State):
             self.had_primary_sources[primary_source_identifier].checked = True
 
     @rx.event
-    def push_search_params(self) -> EventSpec | None:
+    def push_search_params(self) -> EventGenerator:
         """Push a new browser history item with updated search parameters."""
-        return self.push_url_params(
+        yield self.push_url_params(
             {
                 "q": self.query_string,
                 "page": self.current_page,
@@ -137,7 +136,7 @@ class SearchState(State):
         self.current_page = self.current_page + 1
 
     @rx.event
-    def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
+    def scroll_to_top(self) -> EventGenerator:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
@@ -151,7 +150,7 @@ class SearchState(State):
                         await resolve_editor_value(preview)
 
     @rx.event
-    def refresh(self) -> Generator[EventSpec | None, None, None]:
+    def refresh(self) -> EventGenerator:
         """Refresh the search results."""
         # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
@@ -190,7 +189,7 @@ class SearchState(State):
             self.total = response.total
 
     @rx.event
-    def get_available_primary_sources(self) -> Generator[EventSpec, None, None]:
+    def get_available_primary_sources(self) -> EventGenerator:
         """Get all available primary sources."""
         # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()

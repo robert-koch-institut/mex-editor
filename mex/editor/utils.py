@@ -2,7 +2,6 @@ from async_lru import alru_cache
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import EmptySearchResultError, MExError
-from mex.common.models import AnyPreviewModel, PaginatedItemsContainer
 from mex.editor.models import EditorValue
 from mex.editor.transform import transform_models_to_title
 
@@ -12,21 +11,11 @@ async def resolve_identifier(identifier: str) -> str:
     """Resolve identifiers to human readable display values."""
     # TODO(HS): use the user auth for backend requests (stop-gap MX-1616)
     connector = BackendApiConnector.get()
-    # TODO(HS): use proper connector method when available (stop-gap MX-1762)
-    response = connector.request(
-        method="GET",
-        endpoint="preview-item",
-        params={
-            "identifier": identifier,
-            "skip": "0",
-            "limit": "1",
-        },
-    )
-    container = PaginatedItemsContainer[AnyPreviewModel].model_validate(response)
-    if len(container.items) != 1:
+    response = connector.fetch_preview_items(identifier=identifier, limit=1)
+    if len(response.items) != 1:
         msg = f"No item found for identifier '{identifier}'"
         raise EmptySearchResultError(msg)
-    title = transform_models_to_title(container.items)[0]
+    title = transform_models_to_title(response.items)[0]
     return f"{title.text}"
 
 

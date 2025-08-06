@@ -27,9 +27,9 @@ from mex.common.types import (
     Theme,
     YearMonthDay,
 )
+from mex.editor.api.main import api
 from mex.editor.settings import EditorSettings
 from mex.editor.types import EditorUserDatabase, EditorUserPassword
-from mex.mex import app
 
 pytest_plugins = ("mex.common.testing.plugin",)
 
@@ -37,7 +37,7 @@ pytest_plugins = ("mex.common.testing.plugin",)
 @pytest.fixture
 def client() -> TestClient:
     """Return a fastAPI test client initialized with our app."""
-    with TestClient(app.api, raise_server_exceptions=False) as test_client:
+    with TestClient(api, raise_server_exceptions=False) as test_client:
         return test_client
 
 

@@ -332,7 +332,7 @@ def _transform_editor_value_to_model_value(
     input_config: InputConfig,
 ) -> AnyModelValue:
     """Transform an editor value back to a value to be used in mex.common.models."""
-    if field_name in LINK_FIELDS_BY_CLASS_NAME[class_name]:
+    if field_name in LINK_FIELDS_BY_CLASS_NAME[class_name] and value.href:
         return Link(
             url=value.href,
             language=LinkLanguage[value.badge]
@@ -340,7 +340,7 @@ def _transform_editor_value_to_model_value(
             else None,
             title=value.text,
         )
-    if field_name in TEXT_FIELDS_BY_CLASS_NAME[class_name]:
+    if field_name in TEXT_FIELDS_BY_CLASS_NAME[class_name] and value.text:
         return Text(
             language=TextLanguage[value.badge]
             if value.badge and value.badge != LANGUAGE_VALUE_NONE

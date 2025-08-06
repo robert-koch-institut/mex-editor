@@ -37,8 +37,8 @@ def render_external_link(value: EditorValue) -> rx.Component:
     return rx.link(
         rx.cond(
             value.text,
-            value.text,
-            value.href,
+            f"{value.text}",
+            f"{value.href}",
         ),
         href=f"{value.href}",
         high_contrast=True,

@@ -527,7 +527,7 @@ def rule_page_header(title: rx.Component) -> rx.Component:
     """Wrap the given title in a header component with a save button."""
     return rx.hstack(
         icon_by_stem_type(
-            RuleState.stem_type,
+            f"{RuleState.stem_type}",
             size=28,
             style=rx.Style(margin="auto 0"),
         ),

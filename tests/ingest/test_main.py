@@ -123,9 +123,7 @@ def test_search_and_ingest_roundtrip(
     )
 
     # count the items afterwards
-    result = connector.fetch_extracted_items(
-        None, None, [f"Extracted{stem_type}"], 0, 1
-    )
+    result = connector.fetch_extracted_items(entity_type=[f"Extracted{stem_type}"])
     assert result.total > items_before
 
 

@@ -170,7 +170,7 @@ class SearchState(State):
             response = connector.fetch_preview_items(
                 query_string=self.query_string,
                 entity_type=entity_type,
-                reference_field="hadPrimarySource",
+                reference_field="hadPrimarySource" if had_primary_source else None,
                 referenced_identifier=had_primary_source,
                 skip=skip,
                 limit=self.limit,

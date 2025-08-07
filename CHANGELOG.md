@@ -11,11 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update reflex to 0.7
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- fix title of edit page
 
 ### Security
 

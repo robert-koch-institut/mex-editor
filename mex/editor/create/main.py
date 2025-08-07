@@ -26,15 +26,15 @@ def editor_field(
                         field.name,
                         primary_source,
                     ),
-                    style={"width": "100%"},
+                    style=rx.Style(width="100%"),
                 ),
             ),
-            style={"width": "100%"},
+            style=rx.Style(width="100%"),
         ),
-        style={
-            "width": "100%",
-            "margin": "var(--space-3) 0",
-        },
+        style=rx.Style(
+            width="100%",
+            margin="var(--space-3) 0",
+        ),
         custom_attrs={"data-testid": f"field-{field.name}"},
         role="row",
     )
@@ -45,16 +45,19 @@ def create_title() -> rx.Component:
     return rx.hstack(
         rx.heading(
             "Create new",
-            style={"userSelect": "none"},
+            style=rx.Style(userSelect="none"),
         ),
-        rx.select(
-            CreateState.available_stem_types,
-            value=RuleState.stem_type,
-            on_change=[
-                CreateState.set_stem_type,
-                RuleState.refresh,
-            ],
-            custom_attrs={"data-testid": "entity-type-select"},
+        rx.cond(
+            RuleState.stem_type,
+            rx.select(
+                CreateState.available_stem_types,
+                value=f"{RuleState.stem_type}",
+                on_change=[
+                    CreateState.set_stem_type,
+                    RuleState.refresh,
+                ],
+                custom_attrs={"data-testid": "entity-type-select"},
+            ),
         ),
         custom_attrs={"data-testid": "create-heading"},
     )
@@ -72,9 +75,9 @@ def index() -> rx.Component:
                 editor_field,
             ),
             validation_errors(),
-            style={
-                "width": "100%",
-                "marginTop": "calc(2 * var(--space-6))",
-            },
+            style=rx.Style(
+                width="100%",
+                marginTop="calc(2 * var(--space-6))",
+            ),
         ),
     )

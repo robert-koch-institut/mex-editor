@@ -1,8 +1,8 @@
 import reflex as rx
-from reflex.event import EventSpec
 
 from mex.common.ldap.connector import LDAPConnector
 from mex.editor.state import State
+from mex.editor.types import EventGenerator
 
 
 class ConsentState(State):
@@ -11,12 +11,12 @@ class ConsentState(State):
     display_name: str | None = None
 
     @rx.event
-    def load_user(self) -> EventSpec | None:
+    def load_user(self) -> EventGenerator:
         """Set the stem type to a default."""
         connector = LDAPConnector.get()
-        if not self.user_ldap:
+        if self.user_ldap:
+            person = connector.get_person(sAMAccountName=self.user_ldap.name)
+            self.display_name = person.displayName
+        else:
             self.target_path_after_login = self.router.page.raw_path
-            return rx.redirect("/login-ldap")
-        person = connector.get_person(sAMAccountName=self.user_ldap.name)
-        self.display_name = person.displayName
-        return None
+            yield rx.redirect("/login-ldap")

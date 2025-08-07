@@ -1,8 +1,5 @@
-from collections.abc import Generator
-
 import reflex as rx
 from pydantic import ValidationError
-from reflex.event import EventSpec
 from requests import HTTPError
 from starlette import status
 
@@ -26,6 +23,7 @@ from mex.editor.rules.transform import (
 )
 from mex.editor.state import State
 from mex.editor.transform import transform_models_to_stem_type
+from mex.editor.types import EventGenerator
 from mex.editor.utils import resolve_editor_value, resolve_identifier
 
 
@@ -86,7 +84,7 @@ class RuleState(State):
         return rule_set_request_class()
 
     @rx.event
-    def refresh(self) -> Generator[EventSpec | None, None, None]:
+    def refresh(self) -> EventGenerator:
         """Refresh the edit or create page."""
         self.fields.clear()
         self.validation_messages.clear()
@@ -119,12 +117,13 @@ class RuleState(State):
     def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:
         """Send the rule set to the backend."""
         connector = BackendApiConnector.get()
+        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         if self.item_id:
             return connector.update_rule_set(self.item_id, rule_set)
         return connector.create_rule_set(rule_set)
 
     @rx.event
-    def submit_rule_set(self) -> Generator[EventSpec | None, None, None]:
+    def submit_rule_set(self) -> EventGenerator:
         """Convert the fields to a rule set and submit it to the backend."""
         if self.stem_type is None:
             self.reset()
@@ -148,13 +147,14 @@ class RuleState(State):
         if rule_set_response.stableTargetId != self.item_id:
             yield rx.redirect(f"/item/{rule_set_response.stableTargetId}/?saved")
         else:
-            yield from self.refresh()
-            yield self.show_submit_success_toast()
+            yield RuleState.refresh
+            yield RuleState.show_submit_success_toast
+            yield RuleState.resolve_identifiers
 
     @rx.event
-    def show_submit_success_toast(self) -> EventSpec:
+    def show_submit_success_toast(self) -> EventGenerator:
         """Show a toast for a successfully submitted rule-set."""
-        return rx.toast.success(
+        yield rx.toast.success(
             title="Saved",
             description=f"{self.stem_type} was saved successfully.",
             class_name="editor-toast",

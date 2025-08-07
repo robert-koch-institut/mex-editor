@@ -42,7 +42,6 @@ from mex.editor.fields import (
 )
 from mex.editor.models import (
     LANGUAGE_VALUE_NONE,
-    MODEL_CONFIG_BY_STEM_TYPE,
     EditorValue,
 )
 from mex.editor.rules.models import (
@@ -51,7 +50,7 @@ from mex.editor.rules.models import (
     InputConfig,
     ValidationMessage,
 )
-from mex.editor.transform import ensure_list, transform_value, transform_values
+from mex.editor.transform import ensure_list, transform_value
 from mex.editor.types import AnyModelValue
 
 
@@ -332,7 +331,7 @@ def _transform_editor_value_to_model_value(
     input_config: InputConfig,
 ) -> AnyModelValue:
     """Transform an editor value back to a value to be used in mex.common.models."""
-    if field_name in LINK_FIELDS_BY_CLASS_NAME[class_name]:
+    if field_name in LINK_FIELDS_BY_CLASS_NAME[class_name] and value.href:
         return Link(
             url=value.href,
             language=LinkLanguage[value.badge]
@@ -340,7 +339,7 @@ def _transform_editor_value_to_model_value(
             else None,
             title=value.text,
         )
-    if field_name in TEXT_FIELDS_BY_CLASS_NAME[class_name]:
+    if field_name in TEXT_FIELDS_BY_CLASS_NAME[class_name] and value.text:
         return Text(
             language=TextLanguage[value.badge]
             if value.badge and value.badge != LANGUAGE_VALUE_NONE
@@ -424,23 +423,3 @@ def transform_validation_error_to_messages(
         )
         for error in error.errors()
     ]
-
-
-def transform_fields_to_title(
-    stem_type: str,
-    fields: list[EditorField],
-) -> list[EditorValue]:
-    """Convert a list of editor fields into title values based on the title config."""
-    config = MODEL_CONFIG_BY_STEM_TYPE[stem_type]
-    titles: list[EditorValue] = []
-    for field in fields:
-        if field.name == config.title:
-            titles = [
-                value
-                for primary_source in field.primary_sources
-                for value in primary_source.editor_values
-            ]
-            break
-    if titles:
-        return titles
-    return transform_values(stem_type)

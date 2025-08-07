@@ -8,6 +8,7 @@ from reflex.event import EventSpec
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
 from mex.editor.models import NavItem, User
+from mex.editor.types import EventGenerator
 
 
 class State(rx.State):
@@ -45,26 +46,24 @@ class State(rx.State):
     ]
 
     @rx.event
-    def logout(self) -> EventSpec:
+    def logout(self) -> EventGenerator:
         """Log out a user."""
         self.reset()
-        return rx.redirect("/")
+        yield rx.redirect("/")
 
     @rx.event
-    def check_mex_login(self) -> EventSpec | None:
+    def check_mex_login(self) -> EventGenerator:
         """Check if a user is logged in."""
         if self.user_mex is None:
             self.target_path_after_login = self.router.page.raw_path
-            return rx.redirect("/login")
-        return None
+            yield rx.redirect("/login")
 
     @rx.event
-    def check_ldap_login(self) -> EventSpec | None:
+    def check_ldap_login(self) -> EventGenerator:
         """Check if a user is logged in to ldap."""
         if self.user_ldap is None:
             self.target_path_after_login = self.router.page.raw_path
-            return rx.redirect("/login-ldap")
-        return None
+            yield rx.redirect("/login-ldap")
 
     @staticmethod
     def _update_raw_path(
@@ -86,7 +85,6 @@ class State(rx.State):
             raw_path = f"{raw_path}?{query_str}"
         nav_item.raw_path = raw_path
 
-    @rx.event
     def push_url_params(
         self,
         params: Mapping[str, int | str | list[str]],
@@ -119,6 +117,6 @@ class State(rx.State):
     def backend_version(self) -> str:
         """Return the version of mex-backend."""
         connector = BackendApiConnector.get()
-        # TODO(ND): use proper connector method when available (stop-gap MX-1762)
+        # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         response = connector.request("GET", "_system/check")
         return str(response.get("version", "N/A"))

@@ -514,10 +514,7 @@ def submit_button() -> rx.Component:
         f"Save {RuleState.stem_type}",
         size="3",
         color_scheme="jade",
-        on_click=[
-            RuleState.submit_rule_set,
-            RuleState.resolve_identifiers,
-        ],
+        on_click=RuleState.submit_rule_set,
         style=rx.Style(margin="var(--line-height-1) 0"),
         custom_attrs={"data-testid": "submit-button"},
     )
@@ -527,9 +524,7 @@ def rule_page_header(title: rx.Component) -> rx.Component:
     """Wrap the given title in a header component with a save button."""
     return rx.hstack(
         icon_by_stem_type(
-            f"{RuleState.stem_type}",
-            size=28,
-            style=rx.Style(margin="auto 0"),
+            RuleState.stem_type, size=32, style=rx.Style(margin="auto 0")
         ),
         title,
         rx.spacer(),

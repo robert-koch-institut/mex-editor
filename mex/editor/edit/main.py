@@ -15,7 +15,6 @@ def edit_title() -> rx.Component:
                 EditState.item_title,
                 render_value,
             ),
-            as_child=True,
         ),
         custom_attrs={"data-testid": "edit-heading"},
         style=rx.Style(userSelect="none"),

@@ -61,7 +61,6 @@ from mex.editor.rules.transform import (
     _transform_model_values_to_editor_values,
     get_required_mergeable_field_names,
     transform_fields_to_rule_set,
-    transform_fields_to_title,
     transform_models_to_fields,
     transform_validation_error_to_messages,
 )
@@ -944,46 +943,3 @@ def test_get_required_field_names(
 ) -> None:
     required = get_required_mergeable_field_names(model)
     assert expected == required
-
-
-def test_transform_fields_to_title() -> None:
-    contact_point_fields = [
-        EditorField(
-            is_required=True,
-            name="email",
-            primary_sources=[
-                EditorPrimarySource(
-                    name=EditorValue(text="Primary Source"),
-                    identifier=MergedPrimarySourceIdentifier("PrimarySource001"),
-                    input_config=InputConfig(),
-                    enabled=True,
-                    editor_values=[
-                        EditorValue(text="this@that.other"),
-                    ],
-                )
-            ],
-        )
-    ]
-    assert transform_fields_to_title("ContactPoint", contact_point_fields) == [
-        EditorValue(
-            text="this@that.other",
-            identifier=None,
-            badge=None,
-            href=None,
-            external=False,
-            enabled=True,
-            being_edited=False,
-        )
-    ]
-
-    assert transform_fields_to_title("Person", []) == [
-        EditorValue(
-            text="Person",
-            identifier=None,
-            badge=None,
-            href=None,
-            external=False,
-            enabled=True,
-            being_edited=False,
-        )
-    ]

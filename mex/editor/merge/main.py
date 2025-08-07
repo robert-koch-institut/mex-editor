@@ -21,11 +21,7 @@ def search_result(
                     checked=MergeState.selected_items[category] == index,
                     on_change=MergeState.select_item(category, index),
                 ),
-                icon_by_stem_type(
-                    result.stem_type,
-                    size=22,
-                    style=rx.Style(width="22px"),
-                ),
+                icon_by_stem_type(result.stem_type, size=24),
                 rx.box(
                     rx.hstack(
                         rx.foreach(

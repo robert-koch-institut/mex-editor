@@ -152,7 +152,6 @@ class SearchState(State):
     @rx.event
     def refresh(self) -> EventGenerator:
         """Refresh the search results."""
-        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
         entity_type = [
             ensure_prefix(k, "Merged") for k, v in self.entity_types.items() if v
@@ -191,7 +190,6 @@ class SearchState(State):
     @rx.event
     def get_available_primary_sources(self) -> EventGenerator:
         """Get all available primary sources."""
-        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         connector = BackendApiConnector.get()
         maximum_number_of_primary_sources = 100
         try:

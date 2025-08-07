@@ -117,6 +117,7 @@ class RuleState(State):
     def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:
         """Send the rule set to the backend."""
         connector = BackendApiConnector.get()
+        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         if self.item_id:
             return connector.update_rule_set(self.item_id, rule_set)
         return connector.create_rule_set(rule_set)
@@ -146,8 +147,9 @@ class RuleState(State):
         if rule_set_response.stableTargetId != self.item_id:
             yield rx.redirect(f"/item/{rule_set_response.stableTargetId}/?saved")
         else:
-            yield self.refresh
-            yield self.show_submit_success_toast
+            yield RuleState.refresh
+            yield RuleState.show_submit_success_toast
+            yield RuleState.resolve_identifiers
 
     @rx.event
     def show_submit_success_toast(self) -> EventGenerator:

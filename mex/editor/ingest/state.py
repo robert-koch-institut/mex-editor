@@ -99,8 +99,9 @@ class IngestState(State):
     def ingest_result(self, index: int) -> EventGenerator:
         """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
+        model = self.results_extracted[index]
         try:
-            model = self.results_extracted[index]
+            # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
             connector.ingest([model])
         except HTTPError as exc:
             yield from escalate_error(

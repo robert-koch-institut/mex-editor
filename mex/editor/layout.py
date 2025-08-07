@@ -36,6 +36,7 @@ def user_menu() -> rx.Component:
                 on_select=State.logout,
                 custom_attrs={"data-testid": "logout-button"},
             ),
+            align="end",
         ),
     )
 
@@ -93,14 +94,14 @@ def nav_bar() -> rx.Component:
                     justify="start",
                     spacing="4",
                 ),
-                rx.divider(orientation="vertical", size="2"),
-                user_menu(),
                 rx.spacer(),
+                user_menu(),
                 rx.button(
                     rx.icon(tag="sun_moon"),
                     variant="ghost",
                     style=rx.Style(marginTop="0"),
                     on_click=rx.toggle_color_mode,
+                    title="toggle theme",
                 ),
                 justify="between",
                 align_items="center",

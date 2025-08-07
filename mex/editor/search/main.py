@@ -10,10 +10,14 @@ def search_result(result: SearchResult) -> rx.Component:
     """Render a single merged item search result."""
     return rx.card(
         rx.hstack(
-            icon_by_stem_type(
-                result.stem_type,
-                size=28,
-                style=rx.Style(margin="auto 0", color=rx.color("accent", 11)),
+            rx.box(
+                icon_by_stem_type(
+                    result.stem_type,
+                    size=32,
+                    style=rx.Style(color=rx.color("accent", 11)),
+                ),
+                title=result.stem_type,
+                style=rx.Style(margin="auto 0"),
             ),
             rx.link(
                 rx.box(

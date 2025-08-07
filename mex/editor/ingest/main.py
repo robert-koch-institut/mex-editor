@@ -107,11 +107,7 @@ def ingest_result(result: IngestResult, index: int) -> rx.Component:
     return rx.card(
         rx.vstack(
             rx.hstack(
-                icon_by_stem_type(
-                    result.stem_type,
-                    size=28,
-                    style=rx.Style(width="1em", margin="auto 0"),
-                ),
+                icon_by_stem_type(result.stem_type, size=24),
                 result_title(result),
                 rx.spacer(),
                 expand_properties_button(result, index),

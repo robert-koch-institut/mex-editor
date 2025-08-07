@@ -154,29 +154,26 @@ def pagination(state: type[IngestState | SearchState]) -> rx.Component:
 
 
 def icon_by_stem_type(
-    stem_type: str | None,
-    size: int = 28,
+    stem_type: str | None = None,
+    size: int | None = None,
     style: Mapping[str, Any] | rx.Var[Mapping[str, Any]] | None = None,
-) -> rx.Component:
+) -> rx.Component | rx.Var[Any]:
     """Render an icon for the given stem type."""
     # Sigh, https://reflex.dev/docs/library/data-display/icon#using-dynamic-icon-tags
-    return rx.box(
-        rx.match(
-            stem_type,
-            ("AccessPlatform", rx.icon("app_window", size=size, style=style)),
-            ("Activity", rx.icon("circle_gauge", size=size, style=style)),
-            ("BibliographicResource", rx.icon("book_marked", size=size, style=style)),
-            ("Consent", rx.icon("badge_check", size=size, style=style)),
-            ("ContactPoint", rx.icon("inbox", size=size, style=style)),
-            ("Distribution", rx.icon("container", size=size, style=style)),
-            ("Organization", rx.icon("building", size=size, style=style)),
-            ("OrganizationalUnit", rx.icon("door_open", size=size, style=style)),
-            ("Person", rx.icon("circle_user_round", size=size, style=style)),
-            ("PrimarySource", rx.icon("hard_drive", size=size, style=style)),
-            ("Resource", rx.icon("archive", size=size, style=style)),
-            ("Variable", rx.icon("box", size=size, style=style)),
-            ("VariableGroup", rx.icon("boxes", size=size, style=style)),
-            rx.icon("file_question", size=size, style=style),
-        ),
-        title=stem_type,
+    return rx.match(
+        stem_type,
+        ("AccessPlatform", rx.icon("app_window", size=size, style=style)),
+        ("Activity", rx.icon("circle_gauge", size=size, style=style)),
+        ("BibliographicResource", rx.icon("book_marked", size=size, style=style)),
+        ("Consent", rx.icon("badge_check", size=size, style=style)),
+        ("ContactPoint", rx.icon("inbox", size=size, style=style)),
+        ("Distribution", rx.icon("container", size=size, style=style)),
+        ("Organization", rx.icon("building", size=size, style=style)),
+        ("OrganizationalUnit", rx.icon("door_open", size=size, style=style)),
+        ("Person", rx.icon("circle_user_round", size=size, style=style)),
+        ("PrimarySource", rx.icon("hard_drive", size=size, style=style)),
+        ("Resource", rx.icon("archive", size=size, style=style)),
+        ("Variable", rx.icon("box", size=size, style=style)),
+        ("VariableGroup", rx.icon("boxes", size=size, style=style)),
+        rx.icon("file_question", size=size, style=style),
     )

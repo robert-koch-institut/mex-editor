@@ -56,11 +56,7 @@ class RuleState(State):
         if self.item_id:
             connector = BackendApiConnector.get()
             extracted_items_response = connector.fetch_extracted_items(
-                query_string=None,
-                stable_target_id=self.item_id,
-                entity_type=None,
-                skip=0,
-                limit=100,
+                stable_target_id=self.item_id
             )
             return extracted_items_response.items
         return []

@@ -170,7 +170,8 @@ class SearchState(State):
             response = connector.fetch_preview_items(
                 query_string=self.query_string,
                 entity_type=entity_type,
-                had_primary_source=had_primary_source,
+                reference_field="hadPrimarySource" if had_primary_source else None,
+                referenced_identifier=had_primary_source,
                 skip=skip,
                 limit=self.limit,
             )
@@ -196,11 +197,7 @@ class SearchState(State):
         maximum_number_of_primary_sources = 100
         try:
             primary_sources_response = connector.fetch_preview_items(
-                query_string=None,
-                entity_type=[ensure_prefix(MergedPrimarySource.stemType, "Merged")],
-                had_primary_source=None,
-                skip=0,
-                limit=100,
+                entity_type=[MergedPrimarySource.__name__],
             )
         except HTTPError as exc:
             yield from escalate_error(

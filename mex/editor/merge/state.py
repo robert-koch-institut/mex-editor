@@ -130,8 +130,6 @@ class MergeState(State):
             response = connector.fetch_preview_items(
                 query_string=self.query_strings["merged"],
                 entity_type=entity_type,
-                had_primary_source=None,
-                skip=0,
                 limit=self.limit,
             )
         except HTTPError as exc:
@@ -163,9 +161,7 @@ class MergeState(State):
         try:
             response = connector.fetch_extracted_items(
                 query_string=self.query_strings["extracted"],
-                stable_target_id=None,
                 entity_type=entity_type,
-                skip=0,
                 limit=self.limit,
             )
         except HTTPError as exc:

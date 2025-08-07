@@ -266,6 +266,7 @@ def test_edit_page_renders_new_additive_button(edit_page: Page) -> None:
     new_additive_button.click()
 
     additive_rule_input = page.get_by_test_id("additive-rule-fundingProgram-0-text")
+    additive_rule_input.scroll_into_view_if_needed()
     expect(additive_rule_input).to_be_visible()
 
 

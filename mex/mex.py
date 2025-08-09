@@ -108,6 +108,8 @@ app.add_page(
     on_load=[
         State.check_ldap_login,
         ConsentState.load_user,
+        ConsentState.get_all_data,
+        ConsentState.resolve_identifiers,
     ],
 )
 # side-step `add_page` to avoid `wait_for_client_redirect`,

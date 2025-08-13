@@ -30,6 +30,7 @@ app = rx.App(
     html_lang="en",
     theme=themes.theme(accent_color="blue", has_background=False),
     style={">a": {"opacity": "0"}},
+    stylesheets=["/style.scss"],
 )
 app.add_page(
     search_index,

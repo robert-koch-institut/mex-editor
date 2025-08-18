@@ -573,7 +573,10 @@ def test_edit_page_warn_tab_close(edit_page: Page) -> None:
 
     # back to edit site
     page.go_back()
-    page.wait_for_url("**/item/**", wait_until="domcontentloaded")
+    page.wait_for_url("**/item/**")
+    page.wait_for_selector(
+        "[data-testid='new-additive-alternativeTitle-00000000000000']"
+    )
     page.screenshot(
         path="tests_edit_test_main-test_edit_page_warn_tab_close-back_on_edit.png"
     )

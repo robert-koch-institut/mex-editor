@@ -2,6 +2,7 @@ from typing import cast
 
 import reflex as rx
 
+from mex.editor.components import render_value
 from mex.editor.consent.layout import page
 from mex.editor.consent.state import ConsentState
 from mex.editor.search.main import search_result
@@ -21,26 +22,7 @@ def resources() -> rx.Component:
         ),
         style={
             "textAlign": "center",
-            "marginBottom": "var(--space-4)",
-        },
-    )
-
-
-def bib_resources() -> rx.Component:
-    """Render a list of the users bibliography."""
-    return rx.vstack(
-        rx.text(
-            "PUBLIKATIONEN",
-        ),
-        rx.vstack(
-            rx.foreach(
-                ConsentState.user_bib_resources,
-                search_result,
-            ),
-        ),
-        style={
-            "textAlign": "center",
-            "marginBottom": "var(--space-4)",
+            "marginBottom": "var(--space-8)",
         },
     )
 
@@ -71,7 +53,7 @@ def user_data() -> rx.Component:
             f"{ConsentState.display_name}",
             style={
                 "fontWeight": "var(--font-weight-bold)",
-                "fontSize": "var(--font-size-5)",
+                "fontSize": "var(--font-size-6)",
             },
         ),
         rx.text(
@@ -103,15 +85,18 @@ def consent_box() -> rx.Component:
                 "personenbezogenen Daten einwilligen möchten, klicken Sie bitte auf "
                 "„Einwilligen”. Die Einwilligung kann jederzeit widerrufen werden. "
                 "Weitere Informationen finden Sie in unseren "
-                "[Datenschutzhinweisen](https://confluence.rki.local/x/lx4NAw). Sofern "
-                "Sie unsicher sind oder Fragen zu der Einwilligung haben, können Sie "
-                "uns auch gerne kontaktieren: [mex@rki.de](mailto:mex@rki.de)",
-                size="1",
+                "[Datenschutzhinweisen](https://confluence.rki.local/x/lx4NAw). <br>Sof"
+                "ern Sie unsicher sind oder Fragen zu der Einwilligung haben, können "
+                "Sie uns auch gerne kontaktieren: [mex@rki.de](mailto:mex@rki.de). <br>"
+                "Hinweis: Die Namen der Autor*innen von Publikationen werden im "
+                "Metadatenkatalog standardmäßig erfasst, da diese bereits "
+                "veröffentlicht sind.",
+                style={"fontSize": "13px"},
             ),
             rx.hstack(
-                rx.button("Einwilligen", on_click=ConsentState.submit_rule_set),
+                rx.button("Einwilligen", on_click=ConsentState.submit_rule_set(True)),  # noqa: FBT003
                 rx.spacer(),
-                rx.button("Ablehnen", on_click=ConsentState.submit_rule_set),
+                rx.button("Ablehnen", on_click=ConsentState.submit_rule_set(False)),  # noqa: FBT003
             ),
             style={
                 "justifyContent": "center",
@@ -121,6 +106,40 @@ def consent_box() -> rx.Component:
                 "justify": "center",
             },
         ),
+        style={
+            "backgroundColor": "rgba(173, 216, 230, 0.2)",
+            "padding": "16px",
+        },
+    )
+
+
+def consent_status() -> rx.Component:
+    """Render the current consent status for the user."""
+    return rx.vstack(
+        rx.text(ConsentState.display_name, weight="bold"),
+        rx.cond(
+            ConsentState.consent_status,
+            rx.hstack(
+                rx.foreach(
+                    ConsentState.consent_status.preview,  # type: ignore [union-attr]
+                    render_value,
+                )
+            ),
+            rx.hstack(
+                rx.text(
+                    "ConsentStatus: ",
+                ),
+                rx.spacer(direction="row"),
+                rx.text(
+                    "ConsentType: ",
+                ),
+            ),
+        ),
+        style={
+            "width": "100%",
+            "align": "center",
+            "justify": "center",
+        },
     )
 
 
@@ -131,7 +150,6 @@ def pagination() -> rx.Component:
             rx.text("Previous"),
             on_click=[
                 ConsentState.go_to_previous_page,
-                # ConsentState.push_search_params,
                 ConsentState.scroll_to_top,
                 ConsentState.get_all_data,
                 ConsentState.resolve_identifiers,
@@ -146,7 +164,6 @@ def pagination() -> rx.Component:
             value=cast("rx.vars.NumberVar", ConsentState.current_page).to_string(),
             on_change=[
                 ConsentState.set_page,
-                # ConsentState.push_search_params,
                 ConsentState.scroll_to_top,
                 ConsentState.get_all_data,
                 ConsentState.resolve_identifiers,
@@ -157,7 +174,6 @@ def pagination() -> rx.Component:
             rx.text("Next"),
             on_click=[
                 ConsentState.go_to_next_page,
-                # ConsentState.push_search_params,
                 ConsentState.scroll_to_top,
                 ConsentState.get_all_data,
                 ConsentState.resolve_identifiers,
@@ -179,8 +195,8 @@ def index() -> rx.Component:
             user_data(),
             projects(),
             resources(),
-            bib_resources(),
             pagination(),
+            rx.spacer(direction="column"),
             rx.box(
                 consent_box(),
                 style={
@@ -189,6 +205,7 @@ def index() -> rx.Component:
                     "width": "100%",
                 },
             ),
+            consent_status(),
             style={
                 "width": "100%",
                 "align": "center",

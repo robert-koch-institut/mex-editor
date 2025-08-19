@@ -23,6 +23,9 @@ def nav_bar() -> rx.Component:
                         "Informed Consent",
                         size="1",
                     ),
+                    style={
+                        "backgroundColor": "rgba(173, 216, 230, 0.2)",
+                    },
                 ),
                 rx.spacer(),
                 rx.color_mode.button(),

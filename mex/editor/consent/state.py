@@ -3,7 +3,7 @@ from collections.abc import Generator
 from typing import Annotated
 
 import reflex as rx
-from pydantic import Field, ValidationError
+from pydantic import Field
 from reflex.event import EventSpec
 from requests import HTTPError
 
@@ -12,18 +12,14 @@ from mex.common.identity import get_provider
 from mex.common.ldap.connector import LDAPConnector
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    AdditiveConsent,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
+    ConsentRuleSetRequest,
 )
 from mex.common.models.person import FullNameStr, OrcidIdStr
-from mex.common.types import Email
+from mex.common.types import ConsentStatus, ConsentType, Email, MergedPersonIdentifier
 from mex.editor.exceptions import escalate_error
-from mex.editor.models import NavItem
-from mex.editor.rules.models import EditorField
-from mex.editor.rules.transform import (
-    transform_fields_to_rule_set,
-    transform_validation_error_to_messages,
-)
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
@@ -35,21 +31,15 @@ class ConsentState(State):
 
     display_name: str | list[FullNameStr] | None = None
     user_mail: list[Email] = []
+    user_id: MergedPersonIdentifier | None = None
     user_orcidID: list[OrcidIdStr] = []
     user_projects: list[SearchResult] = []
     user_resources: list[SearchResult] = []
-    user_bib_resources: list[SearchResult] = []
+    consent_status: SearchResult | None = None
     total: Annotated[int, Field(ge=0)] = 0
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 10
     is_loading: bool = True
-    consent_nav_items: list[NavItem] = [
-        NavItem(
-            title="Consent",
-            path="/consent",
-            raw_path="/consent/",
-        )
-    ]
 
     @rx.event
     def load_user(self) -> EventSpec | Generator[EventSpec | None, None, None]:
@@ -82,11 +72,10 @@ class ConsentState(State):
             if len(identities) > 0:
                 person = connector.get_merged_item(identities[0].stableTargetId)
                 self.display_name = person.fullName  # type: ignore [union-attr]
+                self.user_id = person.identifier  # type: ignore [assignment]
                 self.user_mail = person.email  # type: ignore [union-attr]
                 self.user_orcidID = person.orcidId  # type: ignore [union-attr]
-                self._update_raw_path(
-                    self.consent_nav_items[0], identifier=str(person.identifier)
-                )
+                self.get_consent()
             self.is_loading = False
         return None
 
@@ -121,12 +110,6 @@ class ConsentState(State):
         """Fetch all data for the user."""
         yield from self.get_projects()
         yield from self.get_resources()
-        yield from self.get_bibliography()
-
-    @rx.event
-    def get_bibliography(self) -> Generator[EventSpec | None, None, None]:
-        """Fetch the user's bibliography."""
-        yield from self.fetch_data("MergedBibliographicResource")
 
     @rx.event
     def get_resources(self) -> Generator[EventSpec | None, None, None]:
@@ -159,13 +142,15 @@ class ConsentState(State):
             response = connector.fetch_preview_items(
                 query_string=None,
                 entity_type=[entity_type],
-                had_primary_source=None,
                 skip=skip,
                 limit=self.limit,
             )
         except HTTPError as exc:
             self.is_loading = False
             self.current_page = 1
+            self.total = 0
+            self.user_projects = []
+            self.user_resources = []
             yield None
             yield from escalate_error(
                 "backend", "error fetching merged items", exc.response.text
@@ -176,22 +161,54 @@ class ConsentState(State):
                 self.user_projects = transform_models_to_results(response.items)
             elif entity_type == "MergedResource":
                 self.user_resources = transform_models_to_results(response.items)
-            elif entity_type == "MergedBibliographicResource":
-                self.user_bib_resources = transform_models_to_results(response.items)
-            self.total += response.total
+            self.total = response.total
 
     @rx.event
-    def submit_rule_set(self) -> Generator[EventSpec | None, None, None]:
-        """Convert the fields to a rule set and submit it to the backend."""
-        fields = [
-            EditorField(name="hasConsentStatus", is_required=True),
-            EditorField(name="hasDataSubject", is_required=True),
-        ]
+    def get_consent(self) -> Generator[EventSpec | None, None, None]:
+        """Fetch the user's consent status."""
+        connector = BackendApiConnector.get()
         try:
-            rule_set_request = transform_fields_to_rule_set("Consent", fields)
-        except ValidationError as exc:
-            self.validation_messages = transform_validation_error_to_messages(exc)
-            return
+            response = connector.fetch_preview_items(
+                query_string=None,
+                entity_type=["MergedConsent"],
+                referenced_identifier=[str(self.user_id)],
+                reference_field="hasDataSubject",
+            )
+        except HTTPError as exc:
+            self.is_loading = False
+            yield None
+            yield from escalate_error(
+                "backend", "error fetching consent status", exc.response.text
+            )
+        else:
+            if response.total > 0:
+                self.consent_status = transform_models_to_results([response.items[0]])[
+                    0
+                ]
+            else:
+                self.consent_status = None
+
+    @rx.event
+    def submit_rule_set(
+        self,
+        consented: bool,  # noqa: FBT001
+    ) -> Generator[EventSpec | None, None, None]:
+        """Convert the fields to a rule set and submit it to the backend."""
+        if consented:
+            rule_set_request = ConsentRuleSetRequest(
+                additive=AdditiveConsent(
+                    hasConsentStatus=ConsentStatus["VALID_FOR_PROCESSING"],
+                    hasDataSubject=self.user_id,
+                    hasConsentType=ConsentType["EXPRESSED_CONSENT"],
+                )
+            )
+        else:
+            rule_set_request = ConsentRuleSetRequest(
+                additive=AdditiveConsent(
+                    hasConsentStatus=ConsentStatus["INVALID_FOR_PROCESSING"],
+                    hasDataSubject=self.user_id,
+                )
+            )
         try:
             self._send_rule_set_request(rule_set_request)
         except HTTPError as exc:
@@ -201,17 +218,14 @@ class ConsentState(State):
             )
             return
         else:
+            self.get_consent()
             yield self.show_submit_success_toast()
-
-    @rx.event
-    def set_text_value(self, field_name: str, index: int, value: str) -> None:
-        """Set the text attribute on an additive editor value."""
-        primary_source = self._get_editable_primary_source_by_field_name(field_name)
-        primary_source.editor_values[index].text = value
 
     def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:
         """Send the rule set to the backend."""
         connector = BackendApiConnector.get()
+        if self.consent_status:
+            return connector.update_rule_set(self.consent_status.identifier, rule_set)
         return connector.create_rule_set(rule_set)
 
     @rx.event
@@ -228,10 +242,13 @@ class ConsentState(State):
 
     @rx.event(background=True)
     async def resolve_identifiers(self) -> None:
-        """Resolve identifiers to human readable display values."""
-        self.get_all_data()
-        for result in self.user_projects:
-            for preview in result.preview:
-                if preview.identifier and not preview.text:
-                    async with self:
-                        await resolve_editor_value(preview)
+        """Resolve identifiers to human-readable display values."""
+        for result_list in (
+            self.user_projects,
+            self.user_resources,
+        ):
+            for result in result_list:
+                for preview in result.preview:
+                    if preview.identifier and not preview.text:
+                        async with self:
+                            await resolve_editor_value(preview)

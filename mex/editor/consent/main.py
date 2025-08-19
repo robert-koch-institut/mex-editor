@@ -24,6 +24,7 @@ def resources() -> rx.Component:
             "textAlign": "center",
             "marginBottom": "var(--space-8)",
         },
+        custom_attrs={"data-testid": "user-resources"},
     )
 
 
@@ -43,6 +44,7 @@ def projects() -> rx.Component:
             "textAlign": "center",
             "marginBottom": "var(--space-4)",
         },
+        custom_attrs={"data-testid": "user-projects"},
     )
 
 
@@ -68,6 +70,7 @@ def user_data() -> rx.Component:
             "textAlign": "center",
             "marginBottom": "var(--space-4)",
         },
+        custom_attrs={"data-testid": "user-data"},
     )
 
 
@@ -81,10 +84,10 @@ def consent_box() -> rx.Component:
                 "werden die mit Ihnen aktuell und zukünftigen assoziierten Projekte, "
                 "Datenbestände und Publikationen in dem extern einsehbaren Katalog mit "
                 "Ihrem Namen, Ihrer E-Mailadresse und ggf. Ihrer ORCID-ID "
-                "veröffentlicht. Wenn Sie in die Veröffentlichung Ihrer "
+                "veröffentlicht. <br>Wenn Sie in die Veröffentlichung Ihrer "
                 "personenbezogenen Daten einwilligen möchten, klicken Sie bitte auf "
                 "„Einwilligen”. Die Einwilligung kann jederzeit widerrufen werden. "
-                "Weitere Informationen finden Sie in unseren "
+                "<br>Weitere Informationen finden Sie in unseren "
                 "[Datenschutzhinweisen](https://confluence.rki.local/x/lx4NAw). <br>Sof"
                 "ern Sie unsicher sind oder Fragen zu der Einwilligung haben, können "
                 "Sie uns auch gerne kontaktieren: [mex@rki.de](mailto:mex@rki.de). <br>"
@@ -110,6 +113,7 @@ def consent_box() -> rx.Component:
             "backgroundColor": "rgba(173, 216, 230, 0.2)",
             "padding": "16px",
         },
+        custom_attrs={"data-testid": "consent-box"},
     )
 
 
@@ -140,6 +144,7 @@ def consent_status() -> rx.Component:
             "align": "center",
             "justify": "center",
         },
+        custom_attrs={"data-testid": "consent-status"},
     )
 
 
@@ -212,5 +217,6 @@ def index() -> rx.Component:
                 "justify": "center",
                 "flex-grow": "1",
             },
+            custom_attrs={"data-testid": "consent-index"},
         ),
     )

@@ -303,6 +303,20 @@ def test_transform_model_values_to_editor_values(
         ),
         pytest.param(
             "AdditiveResource",
+            "alternativeTitle",
+            InputConfig(
+                badge_options=["DE", "EN", LANGUAGE_VALUE_NONE],
+                badge_default="DE",
+                badge_titles=["TextLanguage"],
+                editable_badge=True,
+                editable_text=True,
+                allow_additive=True,
+                render_textarea=True,
+            ),
+            id="text area field",
+        ),
+        pytest.param(
+            "AdditiveResource",
             "minTypicalAge",
             InputConfig(
                 editable_text=True,
@@ -470,6 +484,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_identifier": False,
                     "editable_text": False,
                     "allow_additive": False,
+                    "render_textarea": False,
                 },
                 "editor_values": [],
                 "enabled": True,
@@ -494,6 +509,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_identifier": False,
                     "editable_text": True,
                     "allow_additive": True,
+                    "render_textarea": False,
                 },
                 "editor_values": [
                     {
@@ -534,6 +550,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_identifier": False,
                     "editable_text": False,
                     "allow_additive": False,
+                    "render_textarea": False,
                 },
                 "editor_values": [],
                 "enabled": False,
@@ -558,6 +575,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_identifier": True,
                     "editable_text": False,
                     "allow_additive": True,
+                    "render_textarea": False,
                 },
                 "editor_values": [],
                 "enabled": False,

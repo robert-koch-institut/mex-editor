@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import cast
+from typing import Any, cast
 
 from pydantic import ValidationError
 
@@ -37,6 +37,7 @@ from mex.common.types import (
     TextLanguage,
 )
 from mex.editor.fields import (
+    ALL_MODEL_CLASSES_BY_NAME,
     REQUIRED_FIELDS_BY_CLASS_NAME,
     TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES,
 )
@@ -118,6 +119,8 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             allow_additive=editable,
         )
     if field_name in TEXT_FIELDS_BY_CLASS_NAME[entity_type]:
+        stem_type = cast("Any", ALL_MODEL_CLASSES_BY_NAME[entity_type]).stemType
+        model_config = MODEL_CONFIG_BY_STEM_TYPE[stem_type]
         return InputConfig(
             editable_text=editable,
             editable_badge=editable,
@@ -125,6 +128,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             badge_options=[e.name for e in TextLanguage] + [LANGUAGE_VALUE_NONE],
             badge_titles=[TextLanguage.__name__],
             allow_additive=editable,
+            render_textarea=field_name in model_config.textarea,
         )
     if field_name in LINK_FIELDS_BY_CLASS_NAME[entity_type]:
         return InputConfig(

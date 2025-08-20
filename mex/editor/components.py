@@ -1,4 +1,3 @@
-from collections.abc import Mapping
 from typing import Any
 
 import reflex as rx
@@ -156,7 +155,7 @@ def pagination(state: type[IngestState | SearchState]) -> rx.Component:
 def icon_by_stem_type(
     stem_type: str | None = None,
     size: int | None = None,
-    style: Mapping[str, Any] | rx.Var[Mapping[str, Any]] | None = None,
+    style: rx.Style | None = None,
 ) -> rx.Component | rx.Var[Any]:
     """Render an icon for the given stem type."""
     # Sigh, https://reflex.dev/docs/library/data-display/icon#using-dynamic-icon-tags

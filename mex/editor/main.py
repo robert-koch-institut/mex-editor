@@ -7,7 +7,7 @@ from reflex.reflex import _init, run
 from reflex.state import reset_disk_state_manager
 from reflex.utils.build import setup_frontend_prod
 from reflex.utils.console import set_log_level
-from reflex.utils.exec import get_app_instance, run_frontend_prod
+from reflex.utils.exec import get_app_module, run_frontend_prod
 from reflex.utils.prerequisites import get_compiled_app
 
 from mex.editor.logging import UVICORN_LOGGING_CONFIG
@@ -34,7 +34,7 @@ def editor_api() -> None:  # pragma: no cover
 
     # Run the api.
     uvicorn.run(
-        get_app_instance(),
+        get_app_module(),
         host=settings.editor_api_host,
         port=settings.editor_api_port,
         root_path=settings.editor_api_root_path,

@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update reflex to 0.7
+- update reflex to 0.7.3
 
 ### Deprecated
 
@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fix title of edit page
+- fix title of edit page to be equal to search snippet title
 
 ### Security
 

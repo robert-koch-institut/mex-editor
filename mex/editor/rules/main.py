@@ -210,7 +210,7 @@ def additive_rule_input(
             rx.input(
                 placeholder="URL",
                 value=f"{value.href}",
-                on_change=RuleState.set_href_value(field_name, index),
+                on_change=lambda: RuleState.set_href_value(field_name, index),
                 style=rx.Style(
                     margin="calc(-1 * var(--space-1))",
                     width="100%",
@@ -269,7 +269,7 @@ def additive_rule_input(
                         variant="soft",
                         radius="large",
                         color_scheme="gray",
-                        on_change=RuleState.set_badge_value(field_name, index),
+                        on_change=lambda: RuleState.set_badge_value(field_name, index),
                         custom_attrs={
                             "data-testid": f"additive-rule-{field_name}-{index}-badge"
                         },

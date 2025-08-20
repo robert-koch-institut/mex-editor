@@ -1,8 +1,10 @@
 import math
+from collections.abc import Generator
 from typing import Annotated
 
 import reflex as rx
 from pydantic import Field
+from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -15,7 +17,6 @@ from mex.editor.ingest.models import (
 )
 from mex.editor.ingest.transform import transform_models_to_results
 from mex.editor.state import State
-from mex.editor.types import EventGenerator
 from mex.editor.utils import resolve_editor_value
 
 
@@ -96,7 +97,7 @@ class IngestState(State):
         self.current_page = self.current_page + 1
 
     @rx.event
-    def ingest_result(self, index: int) -> EventGenerator:
+    def ingest_result(self, index: int) -> Generator[EventSpec, None, None]:
         """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
         model = self.results_extracted[index]
@@ -119,7 +120,7 @@ class IngestState(State):
             )
 
     @rx.event
-    def scroll_to_top(self) -> EventGenerator:
+    def scroll_to_top(self) -> Generator[EventSpec, None, None]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
@@ -133,7 +134,7 @@ class IngestState(State):
                         await resolve_editor_value(value)
 
     @rx.event
-    def refresh(self) -> EventGenerator:
+    def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results."""
         connector = BackendApiConnector.get()
         offset = self.limit * (self.current_page - 1)

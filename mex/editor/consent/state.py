@@ -1,8 +1,10 @@
+from collections.abc import Generator
+
 import reflex as rx
+from reflex.event import EventSpec
 
 from mex.common.ldap.connector import LDAPConnector
 from mex.editor.state import State
-from mex.editor.types import EventGenerator
 
 
 class ConsentState(State):
@@ -11,7 +13,7 @@ class ConsentState(State):
     display_name: str | None = None
 
     @rx.event
-    def load_user(self) -> EventGenerator:
+    def load_user(self) -> Generator[EventSpec, None, None]:
         """Set the stem type to a default."""
         connector = LDAPConnector.get()
         if self.user_ldap:

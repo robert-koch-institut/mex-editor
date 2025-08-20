@@ -1,8 +1,6 @@
-from collections.abc import Generator
 from typing import cast
 
 from pydantic import SecretStr
-from reflex.event import EventNamespace, EventSpec
 
 from mex.common.models import BaseModel
 from mex.common.types import (
@@ -15,7 +13,6 @@ from mex.common.types import (
 AnyModelValue = (
     AnyNestedModel | AnyPrimitiveType | AnyTemporalEntity | AnyVocabularyEnum
 )
-EventGenerator = Generator[EventSpec | EventNamespace | None, None, None]
 
 
 class EditorUserPassword(SecretStr):

@@ -1,8 +1,9 @@
-from collections.abc import Iterable
+from collections.abc import Generator, Iterable
 from typing import Annotated, Literal
 
 import reflex as rx
 from pydantic import Field
+from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -12,7 +13,6 @@ from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
-from mex.editor.types import EventGenerator
 from mex.editor.utils import resolve_editor_value
 
 
@@ -109,7 +109,7 @@ class MergeState(State):
     def refresh(
         self,
         categories: Iterable[Literal["merged", "extracted"]] = ("merged", "extracted"),
-    ) -> EventGenerator:
+    ) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results for the specified category."""
         if "merged" in categories:
             self.selected_items["merged"] = None
@@ -118,7 +118,7 @@ class MergeState(State):
             self.selected_items["extracted"] = None
             yield from self._refresh_extracted()
 
-    def _refresh_merged(self) -> EventGenerator:
+    def _refresh_merged(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results for merged items."""
         connector = BackendApiConnector.get()
         entity_type = [
@@ -147,7 +147,7 @@ class MergeState(State):
             self.results_count["merged"] = len(self.results_merged)
             self.total_count["merged"] = response.total
 
-    def _refresh_extracted(self) -> EventGenerator:
+    def _refresh_extracted(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results for extracted items."""
         connector = BackendApiConnector.get()
         entity_type = [
@@ -180,7 +180,7 @@ class MergeState(State):
             self.total_count["extracted"] = response.total
 
     @rx.event
-    def submit_merge_items(self) -> EventGenerator:
+    def submit_merge_items(self) -> Generator[EventSpec, None, None]:
         """Submit merging of the items."""
         yield rx.toast.error(
             title="Not Implemented",

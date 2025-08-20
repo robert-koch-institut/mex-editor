@@ -1,5 +1,8 @@
+from collections.abc import Generator
+
 import reflex as rx
 from pydantic import ValidationError
+from reflex.event import EventSpec
 from requests import HTTPError
 from starlette import status
 
@@ -23,7 +26,6 @@ from mex.editor.rules.transform import (
 )
 from mex.editor.state import State
 from mex.editor.transform import transform_models_to_stem_type
-from mex.editor.types import EventGenerator
 from mex.editor.utils import resolve_editor_value, resolve_identifier
 
 
@@ -84,7 +86,7 @@ class RuleState(State):
         return rule_set_request_class()
 
     @rx.event
-    def refresh(self) -> EventGenerator:
+    def refresh(self) -> Generator[EventSpec, None, None]:
         """Refresh the edit or create page."""
         self.fields.clear()
         self.validation_messages.clear()
@@ -123,7 +125,7 @@ class RuleState(State):
         return connector.create_rule_set(rule_set)
 
     @rx.event
-    def submit_rule_set(self) -> EventGenerator:
+    def submit_rule_set(self) -> Generator[EventSpec, None, None]:
         """Convert the fields to a rule set and submit it to the backend."""
         if self.stem_type is None:
             self.reset()
@@ -152,7 +154,7 @@ class RuleState(State):
             yield RuleState.resolve_identifiers
 
     @rx.event
-    def show_submit_success_toast(self) -> EventGenerator:
+    def show_submit_success_toast(self) -> Generator[EventSpec, None, None]:
         """Show a toast for a successfully submitted rule-set."""
         yield rx.toast.success(
             title="Saved",

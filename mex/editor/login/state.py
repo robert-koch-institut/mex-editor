@@ -1,6 +1,8 @@
 from base64 import b64encode
+from collections.abc import Generator
 
 import reflex as rx
+from reflex.event import EventSpec
 
 from mex.editor.security import (
     has_read_access_mex,
@@ -8,7 +10,6 @@ from mex.editor.security import (
     has_write_access_mex,
 )
 from mex.editor.state import State, User
-from mex.editor.types import EventGenerator
 
 
 class LoginLdapState(State):
@@ -28,7 +29,7 @@ class LoginLdapState(State):
         self.password = password
 
     @rx.event
-    def login(self) -> EventGenerator:
+    def login(self) -> Generator[EventSpec, None, None]:
         """Login a user."""
         write_access = has_write_access_ldap(self.username, self.password)
         if write_access:
@@ -65,7 +66,7 @@ class LoginMExState(State):
         self.password = password
 
     @rx.event
-    def login(self) -> EventGenerator:
+    def login(self) -> Generator[EventSpec, None, None]:
         """Login a user."""
         read_access = has_read_access_mex(self.username, self.password)
         write_access = has_write_access_mex(self.username, self.password)

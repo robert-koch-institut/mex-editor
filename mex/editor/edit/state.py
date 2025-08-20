@@ -1,10 +1,12 @@
+from collections.abc import Generator
+
 import reflex as rx
+from reflex.event import EventSpec
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.models import EditorValue
 from mex.editor.rules.state import RuleState
 from mex.editor.transform import transform_models_to_title
-from mex.editor.types import EventGenerator
 
 
 class EditState(RuleState):
@@ -22,7 +24,7 @@ class EditState(RuleState):
             self.item_title = transform_models_to_title(container.items)
 
     @rx.event
-    def show_submit_success_toast_on_redirect(self) -> EventGenerator:
+    def show_submit_success_toast_on_redirect(self) -> Generator[EventSpec, None, None]:
         """Show a success toast when the saved param is set."""
         if "saved" in self.router.page.params:
             yield EditState.show_submit_success_toast

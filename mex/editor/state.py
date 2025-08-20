@@ -1,4 +1,4 @@
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
 from importlib.metadata import version
 from urllib.parse import urlencode
 
@@ -8,7 +8,6 @@ from reflex.event import EventSpec
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
 from mex.editor.models import NavItem, User
-from mex.editor.types import EventGenerator
 
 
 class State(rx.State):
@@ -46,20 +45,20 @@ class State(rx.State):
     ]
 
     @rx.event
-    def logout(self) -> EventGenerator:
+    def logout(self) -> Generator[EventSpec, None, None]:
         """Log out a user."""
         self.reset()
         yield rx.redirect("/")
 
     @rx.event
-    def check_mex_login(self) -> EventGenerator:
+    def check_mex_login(self) -> Generator[EventSpec, None, None]:
         """Check if a user is logged in."""
         if self.user_mex is None:
             self.target_path_after_login = self.router.page.raw_path
             yield rx.redirect("/login")
 
     @rx.event
-    def check_ldap_login(self) -> EventGenerator:
+    def check_ldap_login(self) -> Generator[EventSpec, None, None]:
         """Check if a user is logged in to ldap."""
         if self.user_ldap is None:
             self.target_path_after_login = self.router.page.raw_path

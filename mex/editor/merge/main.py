@@ -19,7 +19,7 @@ def search_result(
             rx.hstack(
                 rx.checkbox(
                     checked=MergeState.selected_items[category] == index,
-                    on_change=MergeState.select_item(category, index),
+                    on_change=lambda: MergeState.select_item(category, index),
                 ),
                 icon_by_stem_type(result.stem_type, size=24),
                 rx.box(
@@ -80,8 +80,8 @@ def entity_type_choice_merged(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            MergeState.set_entity_type_merged(choice[0]),
-            MergeState.refresh(["merged"]),
+            lambda: MergeState.set_entity_type_merged(choice[0]),
+            lambda: MergeState.refresh(["merged"]),
             MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
@@ -94,8 +94,8 @@ def entity_type_choice_extracted(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            MergeState.set_entity_type_extracted(choice[0]),
-            MergeState.refresh(["extracted"]),
+            lambda: MergeState.set_entity_type_extracted(choice[0]),
+            lambda: MergeState.refresh(["extracted"]),
             MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,

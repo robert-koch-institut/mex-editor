@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import typer
 import uvicorn
 from reflex import constants
 from reflex.config import environment, get_config
@@ -78,4 +79,4 @@ def main() -> None:  # pragma: no cover
     environment.REFLEX_USE_GRANIAN.set(False)
 
     # Run the editor.
-    run()
+    typer.run(run)

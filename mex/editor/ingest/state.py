@@ -1,9 +1,7 @@
 import math
 from collections.abc import Generator
-from typing import Annotated
 
 import reflex as rx
-from pydantic import Field
 from reflex.event import EventSpec
 from requests import HTTPError
 
@@ -25,10 +23,10 @@ class IngestState(State):
 
     results_transformed: list[IngestResult] = []
     results_extracted: list[AnyExtractedModel] = []
-    total: Annotated[int, Field(ge=0)] = 0
-    query_string: Annotated[str, Field(max_length=1000)] = ""
-    current_page: Annotated[int, Field(ge=1)] = 1
-    limit: Annotated[int, Field(ge=1, le=100)] = 50
+    total: int = 0
+    query_string: str = ""
+    current_page: int = 1
+    limit: int = 50
     current_aux_provider: AuxProvider = AuxProvider.LDAP
     aux_providers: list[AuxProvider] = ALL_AUX_PROVIDERS
     is_loading: bool = True

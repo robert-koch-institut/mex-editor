@@ -1,9 +1,8 @@
 import math
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING
 
 import reflex as rx
-from pydantic import Field
 from reflex.event import EventSpec
 from requests import HTTPError
 
@@ -25,12 +24,12 @@ class SearchState(State):
     """State management for the search page."""
 
     results: list[SearchResult] = []
-    total: Annotated[int, Field(ge=0)] = 0
-    query_string: Annotated[str, Field(max_length=1000)] = ""
+    total: int = 0
+    query_string: str = ""
     entity_types: dict[str, bool] = {k.stemType: False for k in MERGED_MODEL_CLASSES}
     had_primary_sources: dict[str, SearchPrimarySource] = {}
-    current_page: Annotated[int, Field(ge=1)] = 1
-    limit: Annotated[int, Field(ge=1, le=100)] = 50
+    current_page: int = 1
+    limit: int = 50
     is_loading: bool = True
 
     @rx.var(cache=False)

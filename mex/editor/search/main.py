@@ -63,7 +63,7 @@ def search_input() -> rx.Component:
             rx.hstack(
                 rx.input(
                     autofocus=True,
-                    default_value=SearchState.query_string,
+                    value=SearchState.query_string,
                     max_length=100,
                     name="query_string",
                     placeholder="Search here...",

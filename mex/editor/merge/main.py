@@ -140,7 +140,6 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
             rx.card(
                 rx.input(
                     autofocus=True,
-                    default_value=MergeState.query_strings[category],
                     value=MergeState.query_strings[category],
                     max_length=100,
                     name=f"query_string_{category}",

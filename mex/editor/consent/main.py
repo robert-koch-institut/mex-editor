@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import cast
 
 import reflex as rx
@@ -6,6 +7,8 @@ from mex.editor.components import render_value
 from mex.editor.consent.layout import page
 from mex.editor.consent.state import ConsentState
 from mex.editor.search.main import search_result
+
+CONSENT_MD = Path("assets/consent_de.md").read_text(encoding="utf-8")
 
 
 def resources() -> rx.Component:
@@ -79,22 +82,8 @@ def consent_box() -> rx.Component:
     return rx.card(
         rx.vstack(
             rx.markdown(
-                "Der Metadatenkatalog Metadata Exchange (MEx) verbessert das Auffinden "
-                "von Forschungsdaten und -projekten des RKI. Mit Ihrer Einwilligung "
-                "werden die mit Ihnen aktuell und zukünftigen assoziierten Projekte, "
-                "Datenbestände und Publikationen in dem extern einsehbaren Katalog mit "
-                "Ihrem Namen, Ihrer E-Mailadresse und ggf. Ihrer ORCID-ID "
-                "veröffentlicht. <br>Wenn Sie in die Veröffentlichung Ihrer "
-                "personenbezogenen Daten einwilligen möchten, klicken Sie bitte auf "
-                "„Einwilligen”. Die Einwilligung kann jederzeit widerrufen werden. "
-                "<br>Weitere Informationen finden Sie in unseren "
-                "[Datenschutzhinweisen](https://confluence.rki.local/x/lx4NAw). <br>Sof"
-                "ern Sie unsicher sind oder Fragen zu der Einwilligung haben, können "
-                "Sie uns auch gerne kontaktieren: [mex@rki.de](mailto:mex@rki.de). <br>"
-                "Hinweis: Die Namen der Autor*innen von Publikationen werden im "
-                "Metadatenkatalog standardmäßig erfasst, da diese bereits "
-                "veröffentlicht sind.",
-                style={"fontSize": "13px"},
+                CONSENT_MD,
+                style={"fontSize": "13px", "lineHeight": "1.5"},
             ),
             rx.hstack(
                 rx.button("Einwilligen", on_click=ConsentState.submit_rule_set(True)),  # noqa: FBT003

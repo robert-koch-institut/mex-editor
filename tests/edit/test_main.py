@@ -305,6 +305,27 @@ def test_edit_page_renders_text_input(edit_page: Page) -> None:
 
 
 @pytest.mark.integration
+def test_edit_page_renders_textarea_input(edit_page: Page) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id(
+        "new-additive-alternativeTitle-00000000000000"
+    )
+    new_additive_button.scroll_into_view_if_needed()
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_renders_textarea_input.png"
+    )
+
+    textarea_input = page.get_by_test_id("additive-rule-alternativeTitle-0-text")
+    expect(textarea_input).to_be_visible()
+    assert textarea_input.evaluate("el => el.tagName.toLowerCase()") == "textarea"
+
+    badge_select = page.get_by_test_id("additive-rule-alternativeTitle-0-badge")
+    expect(badge_select).to_be_visible()
+
+
+@pytest.mark.integration
 def test_edit_page_renders_identifier_input(edit_page: Page) -> None:
     page = edit_page
     new_additive_button = page.get_by_test_id(

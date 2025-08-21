@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Any, cast
+from typing import cast
 
 from pydantic import ValidationError
 
@@ -37,7 +37,6 @@ from mex.common.types import (
     TextLanguage,
 )
 from mex.editor.fields import (
-    ALL_MODEL_CLASSES_BY_NAME,
     REQUIRED_FIELDS_BY_CLASS_NAME,
     TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES,
 )
@@ -96,6 +95,7 @@ def _transform_model_values_to_editor_values(
 def _transform_model_to_input_config(  # noqa: PLR0911
     field_name: str,
     entity_type: str,
+    stem_type: str,
     editable: bool,  # noqa: FBT001
 ) -> InputConfig:
     """Determine the input type for a given field of a given model."""
@@ -119,7 +119,6 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             allow_additive=editable,
         )
     if field_name in TEXT_FIELDS_BY_CLASS_NAME[entity_type]:
-        stem_type = cast("Any", ALL_MODEL_CLASSES_BY_NAME[entity_type]).stemType
         model_config = MODEL_CONFIG_BY_STEM_TYPE[stem_type]
         return InputConfig(
             editable_text=editable,
@@ -201,6 +200,7 @@ def _transform_model_to_editor_primary_sources(
             input_config = _transform_model_to_input_config(
                 field_name,
                 model.entityType,
+                model.stemType,
                 editable=isinstance(model, AnyAdditiveModel),
             )
             primary_source = _create_editor_primary_source(

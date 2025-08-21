@@ -20,20 +20,25 @@ install: setup hooks
 	@ echo installing package; \
 	pdm install-all; \
 
-linter:
+lint:
 	# run the linter hooks from pre-commit on all files
 	@ echo linting all files; \
-	pdm lint; \
+	pre-commit run --all-files; \
 
-pytest:
-	# run the pytest test suite with unit and integration tests
+unit:
+	# run the test suite with all unit tests
+	@ echo running unit tests; \
+	pdm run pytest -m 'not integration'; \
+
+test:
+	# run the unit and integration test suites
 	@ echo running all tests; \
-	pdm test; \
+	pdm run pytest -m 'not external'; \
 
 wheel:
 	# build the python package
 	@ echo building wheel; \
-	pdm wheel; \
+	pdm build --no-sdist; \
 
 image:
 	# build the docker image

@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 from fastapi.testclient import TestClient
 from playwright.sync_api import Page, expect
@@ -39,6 +41,17 @@ def client() -> TestClient:
     """Return a fastAPI test client initialized with our app."""
     with TestClient(api, raise_server_exceptions=False) as test_client:
         return test_client
+
+
+@pytest.fixture(scope="session")
+def browser_context_args(browser_context_args: dict[str, Any]) -> dict[str, Any]:
+    return {
+        **browser_context_args,
+        "viewport": {
+            "width": 1280,
+            "height": 800,
+        },
+    }
 
 
 @pytest.fixture(autouse=True)

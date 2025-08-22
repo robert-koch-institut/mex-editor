@@ -1,4 +1,4 @@
-import nest_asyncio
+import nest_asyncio  # type: ignore[import-untyped]
 import pytest
 
 from mex.common.exceptions import EmptySearchResultError, MExError

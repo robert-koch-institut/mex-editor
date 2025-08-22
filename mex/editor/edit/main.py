@@ -42,7 +42,7 @@ def deactivate_all_switch() -> rx.Component:
             color_scheme="jade",
             custom_attrs={"data-testid": "deactivate-all-switch"},
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 

@@ -3,7 +3,12 @@ import reflex as rx
 from mex.editor.components import render_value
 from mex.editor.edit.state import EditState
 from mex.editor.layout import page
-from mex.editor.rules.main import editor_field, rule_page_header, validation_errors
+from mex.editor.rules.main import (
+    editor_field,
+    page_leave_js,
+    rule_page_header,
+    validation_errors,
+)
 from mex.editor.rules.state import RuleState
 
 
@@ -33,6 +38,7 @@ def index() -> rx.Component:
                 editor_field,
             ),
             validation_errors(),
+            page_leave_js(),
             style=rx.Style(
                 width="100%",
                 marginTop="calc(2 * var(--space-6))",

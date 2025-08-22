@@ -145,7 +145,7 @@ class RuleState(State):
             )
             return
 
-        yield self.set_has_changes(False)
+        yield self.set_has_changes(False)  # type: ignore[misc]
         # clear cache to show edits in the UI
         resolve_identifier.cache_clear()
         # trigger redirect to edit page or refresh state
@@ -251,21 +251,21 @@ class RuleState(State):
         """Add an additive rule to the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.append(EditorValue(being_edited=True))
-        return self.set_has_changes(True)
+        return self.set_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def remove_additive_value(self, field_name: str, index: int) -> EventSpec:
         """Remove an additive rule from the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.pop(index)
-        return self.set_has_changes(True)
+        return self.set_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def set_text_value(self, field_name: str, index: int, value: str) -> EventSpec:
         """Set the text attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].text = value
-        return self.set_has_changes(True)
+        return self.set_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def set_identifier_value(
@@ -275,14 +275,14 @@ class RuleState(State):
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].identifier = value
         primary_source.editor_values[index].href = f"/item/{value}"
-        return self.set_has_changes(True)
+        return self.set_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def set_badge_value(self, field_name: str, index: int, value: str) -> EventSpec:
         """Set the badge attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].badge = value
-        return self.set_has_changes(True)
+        return self.set_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def set_href_value(self, field_name: str, index: int, value: str) -> EventSpec:
@@ -290,4 +290,4 @@ class RuleState(State):
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].href = value
         primary_source.editor_values[index].external = True
-        return self.set_has_changes(True)
+        return self.set_has_changes(True)  # type: ignore[misc]

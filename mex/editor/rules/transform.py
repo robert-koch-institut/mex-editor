@@ -95,6 +95,7 @@ def _transform_model_values_to_editor_values(
 def _transform_model_to_input_config(  # noqa: PLR0911
     field_name: str,
     entity_type: str,
+    stem_type: str,
     editable: bool,  # noqa: FBT001
 ) -> InputConfig:
     """Determine the input type for a given field of a given model."""
@@ -118,6 +119,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             allow_additive=editable,
         )
     if field_name in TEXT_FIELDS_BY_CLASS_NAME[entity_type]:
+        model_config = MODEL_CONFIG_BY_STEM_TYPE[stem_type]
         return InputConfig(
             editable_text=editable,
             editable_badge=editable,
@@ -125,6 +127,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             badge_options=[e.name for e in TextLanguage] + [LANGUAGE_VALUE_NONE],
             badge_titles=[TextLanguage.__name__],
             allow_additive=editable,
+            render_textarea=field_name in model_config.textarea,
         )
     if field_name in LINK_FIELDS_BY_CLASS_NAME[entity_type]:
         return InputConfig(
@@ -197,6 +200,7 @@ def _transform_model_to_editor_primary_sources(
             input_config = _transform_model_to_input_config(
                 field_name,
                 model.entityType,
+                model.stemType,
                 editable=isinstance(model, AnyAdditiveModel),
             )
             primary_source = _create_editor_primary_source(

@@ -13,6 +13,10 @@ Activity:
     - responsibleUnit
     - start
     - end
+  textarea:
+    - abstract
+    - alternativeTitle
+    - title
 BibliographicResource:
   title: title
   preview:
@@ -20,6 +24,13 @@ BibliographicResource:
     - publicationYear
     - creator
     - accessRestriction
+  textarea:
+    - abstract
+    - alternativeTitle
+    - subtitle
+    - title
+    - titleOfBook
+    - titleOfSeries
 Consent:
   title: isIndicatedAtTime
   preview:
@@ -35,12 +46,17 @@ Distribution:
     - mediaType
     - issued
     - accessRestriction
+  textarea:
+    - title
 Organization:
   title: officialName
   preview:
     - shortName
     - alternativeName
     - wikidataId
+  textarea:
+    - alternativeName
+    - officialName
 OrganizationalUnit:
   title: shortName
   preview:
@@ -58,6 +74,10 @@ PrimarySource:
   preview:
     - contact
     - unitInCharge
+  textarea:
+    - alternativeTitle
+    - description
+    - title
 Resource:
   title: title
   preview:
@@ -65,13 +85,31 @@ Resource:
     - theme
     - resourceCreationMethod
     - accessRestriction
+  textarea:
+    - alternativeTitle
+    - description
+    - hasLegalBasis
+    - hasPurpose
+    - instrumentToolOrApparatus
+    - methodDescription
+    - publicationCoverage
+    - provenance
+    - qualityInformation
+    - rights
+    - title
 Variable:
   title: label
   preview:
     - dataType
     - belongsTo
     - usedIn
+  textarea:
+    - description
+    - label
+    - valueSet
 VariableGroup:
   title: label
   preview:
     - containedBy
+  textarea:
+    - label

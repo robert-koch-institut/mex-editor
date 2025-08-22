@@ -204,12 +204,14 @@ def test_transform_model_values_to_editor_values(
 @pytest.mark.parametrize(
     (
         "entity_type",
+        "stem_type",
         "field_name",
         "expected",
     ),
     [
         pytest.param(
             "AdditiveActivity",
+            "Activity",
             "fundingProgram",
             InputConfig(
                 editable_text=True,
@@ -219,6 +221,7 @@ def test_transform_model_values_to_editor_values(
         ),
         pytest.param(
             "AdditiveResource",
+            "Resource",
             "created",
             InputConfig(
                 badge_default="year",
@@ -240,6 +243,7 @@ def test_transform_model_values_to_editor_values(
         ),
         pytest.param(
             "AdditiveResource",
+            "Resource",
             "temporal",
             InputConfig(
                 editable_text=True,
@@ -249,12 +253,14 @@ def test_transform_model_values_to_editor_values(
         ),
         pytest.param(
             "AdditiveContactPoint",
+            "ContactPoint",
             "email",
             InputConfig(editable_text=True, allow_additive=True),
             id="email field",
         ),  # stopgap: MX-1766
         pytest.param(
             "AdditivePerson",
+            "Person",
             "affiliation",
             InputConfig(
                 editable_identifier=True,
@@ -264,6 +270,7 @@ def test_transform_model_values_to_editor_values(
         ),
         pytest.param(
             "AdditiveResource",
+            "Resource",
             "license",
             InputConfig(
                 badge_default="CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL",
@@ -276,6 +283,7 @@ def test_transform_model_values_to_editor_values(
         ),
         pytest.param(
             "AdditiveResource",
+            "Resource",
             "documentation",
             InputConfig(
                 badge_options=["DE", "EN", LANGUAGE_VALUE_NONE],
@@ -290,6 +298,7 @@ def test_transform_model_values_to_editor_values(
         ),
         pytest.param(
             "AdditiveResource",
+            "Resource",
             "keyword",
             InputConfig(
                 badge_options=["DE", "EN", LANGUAGE_VALUE_NONE],
@@ -303,6 +312,22 @@ def test_transform_model_values_to_editor_values(
         ),
         pytest.param(
             "AdditiveResource",
+            "Resource",
+            "alternativeTitle",
+            InputConfig(
+                badge_options=["DE", "EN", LANGUAGE_VALUE_NONE],
+                badge_default="DE",
+                badge_titles=["TextLanguage"],
+                editable_badge=True,
+                editable_text=True,
+                allow_additive=True,
+                render_textarea=True,
+            ),
+            id="text area field",
+        ),
+        pytest.param(
+            "AdditiveResource",
+            "Resource",
             "minTypicalAge",
             InputConfig(
                 editable_text=True,
@@ -310,15 +335,23 @@ def test_transform_model_values_to_editor_values(
             ),
             id="integer field",
         ),
-        pytest.param("AdditiveResource", "unknown", InputConfig(), id="unknown field"),
+        pytest.param(
+            "AdditiveResource", "Resource", "unknown", InputConfig(), id="unknown field"
+        ),
     ],
 )
 def test_transform_model_to_input_config(
     entity_type: str,
+    stem_type: str,
     field_name: str,
     expected: InputConfig,
 ) -> None:
-    input_config = _transform_model_to_input_config(field_name, entity_type, True)  # noqa: FBT003
+    input_config = _transform_model_to_input_config(
+        field_name,
+        entity_type,
+        stem_type,
+        True,  # noqa: FBT003
+    )
     assert input_config == expected
 
 
@@ -470,6 +503,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_identifier": False,
                     "editable_text": False,
                     "allow_additive": False,
+                    "render_textarea": False,
                 },
                 "editor_values": [],
                 "enabled": True,
@@ -494,6 +528,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_identifier": False,
                     "editable_text": True,
                     "allow_additive": True,
+                    "render_textarea": False,
                 },
                 "editor_values": [
                     {
@@ -534,6 +569,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_identifier": False,
                     "editable_text": False,
                     "allow_additive": False,
+                    "render_textarea": False,
                 },
                 "editor_values": [],
                 "enabled": False,
@@ -558,6 +594,7 @@ def test_transform_models_to_fields() -> None:
                     "editable_identifier": True,
                     "editable_text": False,
                     "allow_additive": True,
+                    "render_textarea": False,
                 },
                 "editor_values": [],
                 "enabled": False,
@@ -671,60 +708,69 @@ def test_transform_fields_to_preventive(
 
 
 @pytest.mark.parametrize(
-    ("editor_value", "field_name", "class_name", "expected"),
+    ("editor_value", "field_name", "class_name", "stem_type", "expected"),
     [
         (
             EditorValue(text="Titel", badge="DE", href="https://beispiel"),
             "documentation",
             "AdditiveResource",
+            "Resource",
             Link(url="https://beispiel", language=LinkLanguage.DE, title="Titel"),
         ),
         (
             EditorValue(text="Beispiel Text", badge="DE"),
             "alternativeName",
             "AdditiveOrganization",
+            "Organization",
             Text(language=TextLanguage.DE, value="Beispiel Text"),
         ),
         (
             EditorValue(text="Text", badge=LANGUAGE_VALUE_NONE),
             "alternativeTitle",
             "AdditivePrimarySource",
+            "PrimarySource",
             Text(language=None, value="Text"),
         ),
         (
             EditorValue(text="ConsentStatus", badge="EXPRESSED_CONSENT"),
             "hasConsentType",
             "AdditiveConsent",
+            "Consent",
             ConsentType["EXPRESSED_CONSENT"],
         ),
         (
             EditorValue(),
             "accrualPeriodicity",
             "AdditiveResource",
+            "Resource",
             Frequency["TRIENNIAL"],
         ),
         (
             EditorValue(text="2004", badge="year"),
             "start",
             "AdditiveActivity",
+            "Activity",
             Year(2004),
         ),
         (
             EditorValue(text="Funds for Funding e.V."),
             "fundingProgram",
             "AdditiveActivity",
+            "Activity",
             "Funds for Funding e.V.",
         ),
         (
             EditorValue(identifier="abcdefhijkglmno"),
             "hadPrimarySource",
             "ExtractedActivity",
+            "Activity",
             "abcdefhijkglmno",
         ),
         (
             EditorValue(identifier="abcdefhijkglmno", text="foo"),
             "hadPrimarySource",
             "ExtractedActivity",
+            "Activity",
             "abcdefhijkglmno",
         ),
     ],
@@ -741,9 +787,18 @@ def test_transform_fields_to_preventive(
     ],
 )
 def test_transform_editor_value_to_model_value(
-    editor_value: EditorValue, field_name: str, class_name: str, expected: object
+    editor_value: EditorValue,
+    field_name: str,
+    class_name: str,
+    stem_type: str,
+    expected: object,
 ) -> None:
-    input_config = _transform_model_to_input_config(field_name, class_name, True)  # noqa: FBT003
+    input_config = _transform_model_to_input_config(
+        field_name,
+        class_name,
+        stem_type,
+        True,  # noqa: FBT003
+    )
     assert input_config
 
     model_value = _transform_editor_value_to_model_value(

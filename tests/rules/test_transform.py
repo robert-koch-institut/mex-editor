@@ -105,7 +105,7 @@ def test_get_primary_source_id_from_model(
 
 def test_get_primary_source_id_from_model_error() -> None:
     with pytest.raises(RuntimeError, match="Cannot get primary source ID for model"):
-        _get_primary_source_id_from_model(Text(value="won't work"))
+        _get_primary_source_id_from_model(Text(value="won't work"))  # type: ignore[arg-type]
 
 
 @pytest.mark.parametrize(

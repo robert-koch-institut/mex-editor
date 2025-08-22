@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - added a switch to toggle all primary sources and values in the edit page
+- Warning when the create or edit browser window/tab is closed or navigated away
 
 ### Changes
 

@@ -587,6 +587,7 @@ def test_deactivate_all_switch(edit_page: Page) -> None:
 
     expect(page.get_by_test_id("deactivate-all-switch")).to_be_checked()
 
+
 @pytest.mark.integration
 def test_edit_page_warn_tab_close(edit_page: Page) -> None:
     page = edit_page

@@ -42,6 +42,7 @@ class ModelConfig(BaseModel):
 
     title: str
     preview: list[str] = []
+    textarea: list[str] = []
 
 
 MODEL_CONFIG_BY_STEM_TYPE = TypeAdapter(dict[str, ModelConfig]).validate_python(

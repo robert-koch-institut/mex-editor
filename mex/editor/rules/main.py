@@ -584,3 +584,13 @@ def rule_page_header(title: rx.Component) -> rx.Component:
             "zIndex": "999",
         },
     )
+
+
+def page_leave_js() -> rx.Component:
+    """Render page leave java script import.
+
+    Returns:
+        rx.Component: The script component refrencing the
+        '/page-leave-warn-unsaved-changes.js'
+    """
+    return rx.script(src="/page-leave-warn-unsaved-changes.js")

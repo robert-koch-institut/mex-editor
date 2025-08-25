@@ -7,6 +7,7 @@ from requests import HTTPError
 from starlette import status
 
 from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.merged.main import create_merged_item
 from mex.common.models import (
     RULE_SET_REQUEST_CLASSES,
     RULE_SET_REQUEST_CLASSES_BY_NAME,
@@ -16,6 +17,7 @@ from mex.common.models import (
     AnyRuleSetResponse,
 )
 from mex.common.transform import ensure_postfix
+from mex.common.types import Identifier
 from mex.editor.exceptions import escalate_error
 from mex.editor.models import EditorValue
 from mex.editor.rules.models import EditorField, EditorPrimarySource, ValidationMessage
@@ -25,7 +27,10 @@ from mex.editor.rules.transform import (
     transform_validation_error_to_messages,
 )
 from mex.editor.state import State
-from mex.editor.transform import transform_models_to_stem_type
+from mex.editor.transform import (
+    transform_models_to_stem_type,
+    transform_models_to_title,
+)
 from mex.editor.utils import resolve_editor_value, resolve_identifier
 
 
@@ -33,6 +38,7 @@ class RuleState(State):
     """Base state for the edit and create components."""
 
     item_id: str | None = None
+    item_title: list[EditorValue] = []
     fields: list[EditorField] = []
     stem_type: str | None = None
     validation_messages: list[ValidationMessage] = []
@@ -110,6 +116,14 @@ class RuleState(State):
             return
         if rule_set:
             self.stem_type = transform_models_to_stem_type([rule_set.additive])
+        if self.item_id:
+            preview = create_merged_item(
+                identifier=Identifier(self.item_id),
+                extracted_items=extracted_items,
+                rule_set=rule_set,
+                validate_cardinality=False,
+            )
+            self.item_title = transform_models_to_title([preview])
         self.fields = transform_models_to_fields(
             extracted_items,
             additive=rule_set.additive,

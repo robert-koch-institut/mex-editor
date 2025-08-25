@@ -10,7 +10,7 @@ def test_state_logout() -> None:
     state = State(user_mex=User(name="Test", authorization="Auth", write_access=True))
     assert state.user_mex
 
-    assert "/" in str(state.logout())
+    assert "/" in str(list(state.logout()))  # type: ignore[misc]
     assert state.user_mex is None
 
 
@@ -18,14 +18,14 @@ def test_state_check_login_pass() -> None:
     state = State(user_mex=User(name="Test", authorization="Auth", write_access=True))
     assert state.user_mex
 
-    assert state.check_mex_login() is None
+    assert list(state.check_mex_login()) == []  # type: ignore[misc]
 
 
 def test_state_check_login_fail() -> None:
     state = State()
     assert state.user_mex is None
 
-    assert "/login" in str(state.check_mex_login())
+    assert "/login" in str(list(state.check_mex_login()))  # type: ignore[misc]
 
 
 @pytest.mark.parametrize(

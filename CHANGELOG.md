@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update reflex to 0.7.3
 - bump cookiecutter template to b18156
 
 ### Deprecated
@@ -22,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- fix title of edit page to be equal to search snippet title
 
 ### Security
 

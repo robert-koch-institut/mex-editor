@@ -1,11 +1,8 @@
 import math
 from collections.abc import Generator
-from typing import Annotated
 
 import reflex as rx
-from pydantic import Field
 from reflex.event import EventSpec
-from reflex.state import serialize_mutable_proxy
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -26,10 +23,10 @@ class IngestState(State):
 
     results_transformed: list[IngestResult] = []
     results_extracted: list[AnyExtractedModel] = []
-    total: Annotated[int, Field(ge=0)] = 0
-    query_string: Annotated[str, Field(max_length=1000)] = ""
-    current_page: Annotated[int, Field(ge=1)] = 1
-    limit: Annotated[int, Field(ge=1, le=100)] = 50
+    total: int = 0
+    query_string: str = ""
+    current_page: int = 1
+    limit: int = 50
     current_aux_provider: AuxProvider = AuxProvider.LDAP
     aux_providers: list[AuxProvider] = ALL_AUX_PROVIDERS
     is_loading: bool = True
@@ -68,9 +65,9 @@ class IngestState(State):
         ].show_properties
 
     @rx.event
-    def set_current_aux_provider(self, value: AuxProvider) -> None:
+    def set_current_aux_provider(self, value: str) -> None:
         """Change the current aux provider."""
-        self.current_aux_provider = value
+        self.current_aux_provider = AuxProvider(value)
 
     @rx.event
     def set_page(self, page_number: str | int) -> None:
@@ -98,13 +95,12 @@ class IngestState(State):
         self.current_page = self.current_page + 1
 
     @rx.event
-    def ingest_result(self, index: int) -> Generator[EventSpec | None, None, None]:
+    def ingest_result(self, index: int) -> Generator[EventSpec, None, None]:
         """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
+        model = self.results_extracted[index]
         try:
-            model: AnyExtractedModel = serialize_mutable_proxy(
-                self.results_extracted[index]
-            )
+            # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
             connector.ingest([model])
         except HTTPError as exc:
             yield from escalate_error(
@@ -122,7 +118,7 @@ class IngestState(State):
             )
 
     @rx.event
-    def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
+    def scroll_to_top(self) -> Generator[EventSpec, None, None]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 

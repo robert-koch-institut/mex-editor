@@ -24,6 +24,9 @@ def edit_page(
     load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
     page = writer_user_page
+    page.set_default_navigation_timeout(50000)
+    page.set_default_timeout(10000)
+
     page.goto(f"{frontend_url}/item/{extracted_activity.stableTargetId}")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
@@ -579,6 +582,31 @@ def test_required_fields_red_asterisk(
             expect(asterisk).to_have_css("color", "rgb(255, 0, 0)")
         else:
             expect(asterisk).to_have_count(0)
+
+
+@pytest.mark.integration
+def test_deactivate_all_switch(edit_page: Page) -> None:
+    page = edit_page
+
+    expect(page.get_by_test_id("deactivate-all-switch")).to_be_checked()
+    page.get_by_test_id("deactivate-all-switch").click()
+    expect(page.get_by_test_id("deactivate-all-switch")).not_to_be_checked()
+    page.screenshot(path="tests_edit_test_main-test_deactivate_all_switch-clicked.png")
+
+    last_switch = None
+    all_swtiches = page.get_by_role("switch").all()
+
+    for switch in all_swtiches:
+        expect(switch).not_to_be_checked()
+        last_switch = switch
+
+    assert last_switch
+    last_switch.click()
+    last_switch.screenshot(
+        path="tests_edit_test_main-test_deactivate_all_last-switch-click.png"
+    )
+
+    expect(page.get_by_test_id("deactivate-all-switch")).to_be_checked()
 
 
 @pytest.mark.integration

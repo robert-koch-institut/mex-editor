@@ -13,6 +13,7 @@ from mex.common.models import (
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedOrganizationalUnit,
+    ExtractedPerson,
     ExtractedPrimarySource,
     ExtractedResource,
 )
@@ -153,6 +154,12 @@ def dummy_data() -> list[AnyExtractedModel]:
         name=[Text(value="Unit 1", language=TextLanguage.EN)],
         shortName=["OU1"],
     )
+    person_1 = ExtractedPerson(
+        hadPrimarySource=primary_source_1.stableTargetId,
+        identifierInPrimarySource="p-1",
+        fullName=["Bernd, Brot"],
+        email=[Email("person_1@example.com")],
+    )
     activity_1 = ExtractedActivity(
         abstract=[
             Text(value="An active activity.", language=TextLanguage.EN),
@@ -190,6 +197,7 @@ def dummy_data() -> list[AnyExtractedModel]:
         contact_point_1,
         contact_point_2,
         organizational_unit_1,
+        person_1,
         activity_1,
         resource_1,
     ]

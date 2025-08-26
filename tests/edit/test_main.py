@@ -49,7 +49,9 @@ def test_edit_page_updates_nav_bar(edit_page: Page) -> None:
 
 
 @pytest.mark.integration
-def test_edit_page_renders_heading(edit_page: Page) -> None:
+def test_edit_page_renders_heading(
+    edit_page: Page, extracted_activity: ExtractedActivity
+) -> None:
     page = edit_page
     heading = page.get_by_test_id("edit-heading")
     expect(heading).to_be_visible()
@@ -58,7 +60,7 @@ def test_edit_page_renders_heading(edit_page: Page) -> None:
 
     connector = BackendApiConnector.get()
     connector.update_rule_set(
-        "bFQoRhcVH5DHUH",
+        extracted_activity.stableTargetId,
         ActivityRuleSetRequest(
             additive=AdditiveActivity(
                 title=[Text(value="New title who dis?", language=None)]

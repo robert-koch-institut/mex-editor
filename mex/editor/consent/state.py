@@ -1,5 +1,6 @@
 import math
 from collections.abc import Generator
+from datetime import UTC, datetime
 from typing import Annotated
 
 import reflex as rx
@@ -18,7 +19,13 @@ from mex.common.models import (
     ConsentRuleSetRequest,
 )
 from mex.common.models.person import FullNameStr, OrcidIdStr
-from mex.common.types import ConsentStatus, ConsentType, Email, MergedPersonIdentifier
+from mex.common.types import (
+    ConsentStatus,
+    ConsentType,
+    Email,
+    MergedPersonIdentifier,
+    YearMonthDayTime,
+)
 from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
@@ -43,7 +50,7 @@ class ConsentState(State):
 
     @rx.event
     def load_user(self) -> EventSpec | Generator[EventSpec | None, None, None]:
-        """Set the stem type to a default."""
+        """Check the login and get user information."""
         ldap_connector = LDAPConnector.get()
         if not self.user_ldap:
             self.target_path_after_login = self.router.page.raw_path
@@ -178,7 +185,7 @@ class ConsentState(State):
             self.is_loading = False
             yield None
             yield from escalate_error(
-                "backend", "error fetching consent status", exc.response.text
+                "backend", "No Consent could be fetched.", exc.response.text
             )
         else:
             if response.total > 0:
@@ -200,6 +207,9 @@ class ConsentState(State):
                     hasConsentStatus=ConsentStatus["VALID_FOR_PROCESSING"],
                     hasDataSubject=self.user_id,
                     hasConsentType=ConsentType["EXPRESSED_CONSENT"],
+                    isIndicatedAtTime=YearMonthDayTime(
+                        datetime.now(tz=UTC).isoformat()
+                    ),
                 )
             )
         else:
@@ -207,6 +217,9 @@ class ConsentState(State):
                 additive=AdditiveConsent(
                     hasConsentStatus=ConsentStatus["INVALID_FOR_PROCESSING"],
                     hasDataSubject=self.user_id,
+                    isIndicatedAtTime=YearMonthDayTime(
+                        datetime.now(tz=UTC).isoformat()
+                    ),
                 )
             )
         try:
@@ -218,7 +231,7 @@ class ConsentState(State):
             )
             return
         else:
-            self.get_consent()
+            yield from self.get_consent()
             yield self.show_submit_success_toast()
 
     def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:

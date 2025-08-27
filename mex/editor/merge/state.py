@@ -1,14 +1,14 @@
 from collections.abc import Generator, Iterable
-from typing import Annotated, Literal
+from typing import Literal
 
 import reflex as rx
-from pydantic import Field
 from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MERGED_MODEL_CLASSES
 from mex.common.transform import ensure_prefix
+from mex.editor.constants import DEFAULT_FETCH_LIMIT
 from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
@@ -27,7 +27,6 @@ class MergeState(State):
     entity_types_extracted: dict[str, bool] = {
         k.stemType: False for k in MERGED_MODEL_CLASSES
     }
-    limit: Annotated[int, Field(ge=1, le=100)] = 50
     is_loading: bool = True
     query_strings: dict[Literal["merged", "extracted"], str] = {
         "merged": "",
@@ -130,7 +129,7 @@ class MergeState(State):
             response = connector.fetch_preview_items(
                 query_string=self.query_strings["merged"],
                 entity_type=entity_type,
-                limit=self.limit,
+                limit=DEFAULT_FETCH_LIMIT,
             )
         except HTTPError as exc:
             self.is_loading = False
@@ -162,7 +161,7 @@ class MergeState(State):
             response = connector.fetch_extracted_items(
                 query_string=self.query_strings["extracted"],
                 entity_type=entity_type,
-                limit=self.limit,
+                limit=DEFAULT_FETCH_LIMIT,
             )
         except HTTPError as exc:
             self.is_loading = False
@@ -180,7 +179,7 @@ class MergeState(State):
             self.total_count["extracted"] = response.total
 
     @rx.event
-    def submit_merge_items(self) -> Generator[EventSpec | None, None, None]:
+    def submit_merge_items(self) -> Generator[EventSpec, None, None]:
         """Submit merging of the items."""
         yield rx.toast.error(
             title="Not Implemented",

@@ -20,10 +20,9 @@ def edit_title() -> rx.Component:
                 EditState.item_title,
                 render_value,
             ),
-            as_child=True,
         ),
         custom_attrs={"data-testid": "edit-heading"},
-        style={"userSelect": "none"},
+        style=rx.Style(userSelect="none"),
     )
 
 
@@ -31,7 +30,7 @@ def deactivate_all_switch() -> rx.Component:
     """Render a switch to deactivate all primary source and values."""
     return rx.hstack(
         rx.spacer(),
-        "deactive all",
+        "deactivate all",
         rx.switch(
             checked=EditState.any_primary_source_or_editor_value_enabled,
             on_change=EditState.disable_all_primary_source_and_editor_values,
@@ -43,7 +42,7 @@ def deactivate_all_switch() -> rx.Component:
             color_scheme="jade",
             custom_attrs={"data-testid": "deactivate-all-switch"},
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -61,9 +60,9 @@ def index() -> rx.Component:
             ),
             validation_errors(),
             page_leave_js(),
-            style={
-                "width": "100%",
-                "marginTop": "calc(2 * var(--space-6))",
-            },
+            style=rx.Style(
+                width="100%",
+                marginTop="calc(2 * var(--space-6))",
+            ),
         ),
     )

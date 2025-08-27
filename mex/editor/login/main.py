@@ -15,9 +15,9 @@ def login_user(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
             placeholder="Username",
             size="3",
             tab_index=1,
-            style={"width": "100%"},
+            style=rx.Style(width="100%"),
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -32,9 +32,9 @@ def login_password(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
             size="3",
             tab_index=2,
             type="password",
-            style={"width": "100%"},
+            style=rx.Style(width="100%"),
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -46,14 +46,14 @@ def login_button() -> rx.Component:
             "Login",
             size="3",
             tab_index=3,
-            style={
-                "padding": "0 var(--space-6)",
-                "marginTop": "var(--space-4)",
-            },
+            style=rx.Style(
+                padding="0 var(--space-6)",
+                marginTop="var(--space-4)",
+            ),
             custom_attrs={"data-testid": "login-button"},
             type="submit",
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -65,8 +65,13 @@ def login_form(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
                 rx.hstack(
                     app_logo(),
                     rx.spacer(spacing="4"),
-                    rx.color_mode.button(),
-                    style={"width": "100%"},
+                    rx.button(
+                        rx.icon(tag="sun_moon"),
+                        variant="ghost",
+                        style=rx.Style(marginTop="0"),
+                        on_click=rx.toggle_color_mode,
+                    ),
+                    style=rx.Style(width="100%"),
                 ),
                 rx.divider(size="4"),
                 rx.form(
@@ -74,17 +79,17 @@ def login_form(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
                         login_user(state),
                         login_password(state),
                         login_button(),
-                        style={"width": "100%"},
+                        style=rx.Style(width="100%"),
                     ),
                     on_submit=state.login,
                     spacing="4",
                 ),
             ),
-            style={
-                "width": "calc(340px * var(--scaling))",
-                "padding": "var(--space-4)",
-                "top": "20vh",
-            },
+            style=rx.Style(
+                width="calc(340px * var(--scaling))",
+                padding="var(--space-4)",
+                top="20vh",
+            ),
             custom_attrs={"data-testid": "login-card"},
         )
     )

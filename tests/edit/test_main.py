@@ -684,7 +684,10 @@ def test_edit_page_warn_tab_close(edit_page: Page) -> None:
 
     # after save we should navigate again without dialog
     page.get_by_test_id("submit-button").click()
-    page.wait_for_selector(".editor-toast")
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_warn_tab_close-click_submit.png"
+    )
+    page.wait_for_selector(".editor-toast", timeout=30000)
     page.screenshot(
         path="tests_edit_test_main-test_edit_page_warn_tab_close-save_toast.png"
     )

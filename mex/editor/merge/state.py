@@ -14,6 +14,8 @@ from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 
+DEFAULT_FETCH_LIMIT = 50
+
 
 class MergeState(State):
     """State management for the merge items page."""
@@ -128,7 +130,7 @@ class MergeState(State):
             response = connector.fetch_preview_items(
                 query_string=self.query_strings["merged"],
                 entity_type=entity_type,
-                limit=50,
+                limit=DEFAULT_FETCH_LIMIT,
             )
         except HTTPError as exc:
             self.is_loading = False
@@ -160,7 +162,7 @@ class MergeState(State):
             response = connector.fetch_extracted_items(
                 query_string=self.query_strings["extracted"],
                 entity_type=entity_type,
-                limit=50,
+                limit=DEFAULT_FETCH_LIMIT,
             )
         except HTTPError as exc:
             self.is_loading = False

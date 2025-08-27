@@ -40,8 +40,16 @@ def editor_edit_button(
     return rx.icon_button(
         rx.cond(
             value.being_edited,
-            rx.icon("pencil-off", height="1rem", width="1rem"),
-            rx.icon("pencil", height="1rem", width="1rem"),
+            rx.icon(
+                "pencil-off",
+                height="1rem",
+                width="1rem",
+            ),
+            rx.icon(
+                "pencil",
+                height="1rem",
+                width="1rem",
+            ),
         ),
         variant="soft",
         size="1",
@@ -116,7 +124,11 @@ def remove_additive_button(
 ) -> rx.Component:
     """Render a button to remove an additive value."""
     return rx.button(
-        rx.icon("circle-minus", height="1rem", width="1rem"),
+        rx.icon(
+            "circle-minus",
+            height="1rem",
+            width="1rem",
+        ),
         f"Remove {field_name}",
         color_scheme="tomato",
         variant="soft",
@@ -222,17 +234,34 @@ def additive_rule_input(
         ),
         rx.cond(
             input_config.editable_text,
-            rx.input(
-                placeholder="Text",
-                value=f"{value.text}",
-                on_change=RuleState.set_text_value(field_name, index),  # type: ignore[misc]
-                style=rx.Style(
-                    margin="calc(-1 * var(--space-1))",
-                    width="100%",
+            rx.cond(
+                input_config.render_textarea,
+                rx.text_area(
+                    placeholder="Text",
+                    value=value.text,
+                    on_change=RuleState.set_text_value(field_name, index),  # type: ignore[misc]
+                    style=rx.Style(
+                        margin="calc(-1 * var(--space-1))",
+                        width="100%",
+                    ),
+                    custom_attrs={
+                        "data-testid": f"additive-rule-{field_name}-{index}-text"
+                    },
+                    rows="5",
+                    resize="vertical",
                 ),
-                custom_attrs={
-                    "data-testid": f"additive-rule-{field_name}-{index}-text"
-                },
+                rx.input(
+                    placeholder="Text",
+                    value=value.text,
+                    on_change=RuleState.set_text_value(field_name, index),  # type: ignore[misc]
+                    style=rx.Style(
+                        margin="calc(-1 * var(--space-1))",
+                        width="100%",
+                    ),
+                    custom_attrs={
+                        "data-testid": f"additive-rule-{field_name}-{index}-text"
+                    },
+                ),
             ),
         ),
         rx.cond(
@@ -364,7 +393,11 @@ def new_additive_button(
     """Render a button for adding new additive rules to a given field."""
     return rx.card(
         rx.button(
-            rx.icon("circle-plus", height="1rem", width="1rem"),
+            rx.icon(
+                "circle-plus",
+                height="1rem",
+                width="1rem",
+            ),
             f"New {field_name}",
             color_scheme="jade",
             variant="soft",

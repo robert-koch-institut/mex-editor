@@ -10,6 +10,7 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import MExError
 from mex.common.models import MERGED_MODEL_CLASSES, MergedPrimarySource
 from mex.common.transform import ensure_prefix
+from mex.editor.constants import DEFAULT_FETCH_LIMIT
 from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchPrimarySource, SearchResult
 from mex.editor.search.transform import transform_models_to_results
@@ -29,7 +30,6 @@ class SearchState(State):
     entity_types: dict[str, bool] = {k.stemType: False for k in MERGED_MODEL_CLASSES}
     had_primary_sources: dict[str, SearchPrimarySource] = {}
     current_page: int = 1
-    limit: int = 50
     is_loading: bool = True
 
     @rx.var(cache=False)
@@ -40,7 +40,7 @@ class SearchState(State):
     @rx.var(cache=False)
     def disable_next_page(self) -> bool:
         """Disable the 'Next' button if on the last page."""
-        max_page = math.ceil(self.total / self.limit)
+        max_page = math.ceil(self.total / DEFAULT_FETCH_LIMIT)
         return self.current_page >= max_page
 
     @rx.var(cache=False)
@@ -51,12 +51,12 @@ class SearchState(State):
     @rx.var(cache=False)
     def page_selection(self) -> list[str]:
         """Return a list of total pages based on the number of results."""
-        return [f"{i + 1}" for i in range(math.ceil(self.total / self.limit))]
+        return [f"{i + 1}" for i in range(math.ceil(self.total / DEFAULT_FETCH_LIMIT))]
 
     @rx.var(cache=False)
     def disable_page_selection(self) -> bool:
         """Whether the page selection in the pagination should be disabled."""
-        return math.ceil(self.total / self.limit) == 1
+        return math.ceil(self.total / DEFAULT_FETCH_LIMIT) == 1
 
     @rx.event
     def load_search_params(self) -> None:
@@ -161,7 +161,7 @@ class SearchState(State):
             for identifier, primary_source in self.had_primary_sources.items()
             if primary_source.checked
         ]
-        skip = self.limit * (self.current_page - 1)
+        skip = DEFAULT_FETCH_LIMIT * (self.current_page - 1)
         self.is_loading = True
         yield None
         try:
@@ -171,7 +171,7 @@ class SearchState(State):
                 reference_field="hadPrimarySource" if had_primary_source else None,
                 referenced_identifier=had_primary_source,
                 skip=skip,
-                limit=self.limit,
+                limit=DEFAULT_FETCH_LIMIT,
             )
         except HTTPError as exc:
             self.is_loading = False

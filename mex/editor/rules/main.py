@@ -3,6 +3,7 @@ from typing import cast
 import reflex as rx
 
 from mex.editor.components import icon_by_stem_type, render_span, render_value
+from mex.editor.locale_service import LocaleService
 from mex.editor.rules.models import (
     EditorField,
     EditorPrimarySource,
@@ -11,6 +12,8 @@ from mex.editor.rules.models import (
     ValidationMessage,
 )
 from mex.editor.rules.state import RuleState
+
+locale = LocaleService.get()
 
 
 def editor_value_switch(
@@ -464,7 +467,7 @@ def field_name(
     """Return a card with a field name."""
     return rx.card(
         rx.hstack(
-            rx.text(field.name),
+            rx.text(field.label, title=field.description),
             rx.cond(
                 field.is_required,
                 rx.text("*", style={"color": "red"}),

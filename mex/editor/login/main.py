@@ -11,7 +11,6 @@ def login_user(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
         rx.input(
             autofocus=True,
             name="username",
-            value=state.username,
             on_change=state.set_username,
             placeholder="Username",
             size="3",
@@ -29,7 +28,6 @@ def login_password(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
         rx.input(
             on_change=state.set_password,
             name="password",
-            value=state.password,
             placeholder="Password",
             size="3",
             tab_index=2,

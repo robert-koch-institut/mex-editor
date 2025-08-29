@@ -89,14 +89,7 @@ def search_input() -> rx.Component:
                 ),
                 width="100%",
             ),
-            on_submit=[
-                SearchState.handle_submit,
-                *full_refresh,
-                # SearchState.go_to_first_page,
-                # # SearchState.push_search_params,
-                # SearchState.refresh,
-                # SearchState.resolve_identifiers,
-            ],
+            on_submit=[SearchState.handle_submit, *full_refresh],
         ),
         style={"width": "100%"},
     )
@@ -190,7 +183,8 @@ def reference_field_filter_identifier(
                 custom_attrs={"data-testid": f"reference-field-filter-id-{index}"},
             ),
             rx.button(
-                rx.icon("list-minus"),
+                rx.icon("circle-minus"),
+                variant="soft",
                 on_click=[
                     lambda: SearchState.remove_reference_field_filter_identifier(index),
                     *full_refresh,
@@ -241,10 +235,10 @@ def reference_field_filter() -> rx.Component:
             rx.hstack(
                 rx.text("Values"),
                 rx.button(
-                    "add",
+                    rx.icon("circle-plus"),
+                    variant="soft",
                     on_click=[
                         SearchState.add_reference_field_filter_identifier,
-                        *full_refresh,
                     ],
                     custom_attrs={"data-testid": "reference-field-filter-add-id"},
                 ),

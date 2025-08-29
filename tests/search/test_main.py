@@ -205,7 +205,7 @@ def test_reference_filter_fields_for_entity_type(
 
     hps_tab = page.locator("#reference_filter_strategy_had_primary_source_tab")
     hps_tab.click()
-    assert page.get_by_test_id("had-primary-sources").is_visible()
+    expect(page.get_by_test_id("had-primary-sources")).to_be_visible()
 
     dyn_tab = page.locator("#reference_filter_strategy_dynamic_tab")
     dyn_tab.click()

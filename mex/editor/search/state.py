@@ -1,6 +1,4 @@
-import functools
 import math
-import operator
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Annotated, Literal
 
@@ -28,6 +26,32 @@ from mex.editor.utils import resolve_editor_value
 
 if TYPE_CHECKING:
     from reflex.istate.data import RouterData
+
+
+def _build_dynamic_refresh_params(reference_field_filter: ReferenceFieldFilter) -> dict:
+    identifiers = [
+        x for x in reference_field_filter.identifiers if not x.validation_msg
+    ]
+    if not reference_field_filter.field or not identifiers:
+        return {"reference_field": None, "referenced_identifier": None}
+    return {
+        "reference_field": reference_field_filter.field,
+        "referenced_identifier": [x.value for x in identifiers],
+    }
+
+
+def _build_had_primary_source_refresh_params(
+    had_primary_sources: dict[str, SearchPrimarySource],
+) -> dict:
+    had_primary_source = [
+        identifier
+        for identifier, primary_source in had_primary_sources.items()
+        if primary_source.checked
+    ]
+    return {
+        "reference_field": "hadPrimarySource" if had_primary_source else None,
+        "referenced_identifier": had_primary_source,
+    }
 
 
 class SearchState(State):
@@ -63,8 +87,8 @@ class SearchState(State):
         """Set the reference filter strategy to define the filter mechanism.
 
         Args:
-            value (Literal[&quot;had_primary_source&quot;, &quot;dynamic&quot;]): The strategy used for filtering.
-        """  # noqa: E501
+            value: The strategy used for filtering.
+        """
         self.reference_filter_strategy = value
 
     @rx.event
@@ -76,8 +100,8 @@ class SearchState(State):
             value (str): Value of the identifier
         """
         self.reference_field_filter.identifiers[index].validation_msg = None
+        self.reference_field_filter.identifiers[index].value = value
         try:
-            self.reference_field_filter.identifiers[index].value = value
             TypeAdapter(Identifier).validate_python(value)
         except ValidationError as ve:
             self.reference_field_filter.identifiers[index].validation_msg = "\n".join(
@@ -105,7 +129,7 @@ class SearchState(State):
 
     @rx.var(cache=False)
     def all_fields_for_entity_types(self) -> list[str]:
-        """Get all fields/properites for the currently selected entity types filter.
+        """Get all fields for the currently selected entity types filter.
 
         Returns:
             list[str]: The fields for the selected entity types.
@@ -122,8 +146,7 @@ class SearchState(State):
             REFERENCE_FIELDS_BY_CLASS_NAME[ensure_prefix(entity_type, "Extracted")]
             for entity_type in selected_entity_types
         ]
-        flat_list: list[str] = functools.reduce(operator.iadd, fields_by_type, [])
-        return sorted(set(flat_list))
+        return sorted({f for fields in fields_by_type for f in fields})
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:
@@ -277,34 +300,10 @@ class SearchState(State):
             ensure_prefix(k, "Merged") for k, v in self.entity_types.items() if v
         ]
 
-        def dynamic_params() -> dict:
-            identifiers = [
-                x
-                for x in self.reference_field_filter.identifiers
-                if not x.validation_msg
-            ]
-            if not self.reference_field_filter.field or not identifiers:
-                return {"reference_field": None, "referenced_identifier": None}
-            return {
-                "reference_field": self.reference_field_filter.field,
-                "referenced_identifier": [x.value for x in identifiers],
-            }
-
-        def had_primary_source_params() -> dict:
-            had_primary_source = [
-                identifier
-                for identifier, primary_source in self.had_primary_sources.items()
-                if primary_source.checked
-            ]
-            return {
-                "reference_field": "hadPrimarySource" if had_primary_source else None,
-                "referenced_identifier": had_primary_source,
-            }
-
-        strat_params = (
-            dynamic_params()
+        filter_strategy_params = (
+            _build_dynamic_refresh_params(self.reference_field_filter)
             if self.reference_filter_strategy == "dynamic"
-            else had_primary_source_params()
+            else _build_had_primary_source_refresh_params(self.had_primary_sources)
         )
 
         skip = self.limit * (self.current_page - 1)
@@ -316,7 +315,7 @@ class SearchState(State):
                 entity_type=entity_type,
                 skip=skip,
                 limit=self.limit,
-                **strat_params,
+                **filter_strategy_params,
             )
         except HTTPError as exc:
             self.is_loading = False

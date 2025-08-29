@@ -1,7 +1,7 @@
 import re
 
 import pytest
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Dialog, Page, expect
 
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.models import (
@@ -24,6 +24,9 @@ def edit_page(
     load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
     page = writer_user_page
+    page.set_default_navigation_timeout(50000)
+    page.set_default_timeout(10000)
+
     page.goto(f"{frontend_url}/item/{extracted_activity.stableTargetId}")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
@@ -305,6 +308,27 @@ def test_edit_page_renders_text_input(edit_page: Page) -> None:
 
 
 @pytest.mark.integration
+def test_edit_page_renders_textarea_input(edit_page: Page) -> None:
+    page = edit_page
+    new_additive_button = page.get_by_test_id(
+        "new-additive-alternativeTitle-00000000000000"
+    )
+    new_additive_button.scroll_into_view_if_needed()
+    expect(new_additive_button).to_be_visible()
+    new_additive_button.click()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_renders_textarea_input.png"
+    )
+
+    textarea_input = page.get_by_test_id("additive-rule-alternativeTitle-0-text")
+    expect(textarea_input).to_be_visible()
+    assert textarea_input.evaluate("el => el.tagName.toLowerCase()") == "textarea"
+
+    badge_select = page.get_by_test_id("additive-rule-alternativeTitle-0-badge")
+    expect(badge_select).to_be_visible()
+
+
+@pytest.mark.integration
 def test_edit_page_renders_identifier_input(edit_page: Page) -> None:
     page = edit_page
     new_additive_button = page.get_by_test_id(
@@ -558,3 +582,89 @@ def test_required_fields_red_asterisk(
             expect(asterisk).to_have_css("color", "rgb(255, 0, 0)")
         else:
             expect(asterisk).to_have_count(0)
+
+
+@pytest.mark.integration
+def test_deactivate_all_switch(edit_page: Page) -> None:
+    page = edit_page
+
+    expect(page.get_by_test_id("deactivate-all-switch")).to_be_checked()
+    page.get_by_test_id("deactivate-all-switch").click()
+    expect(page.get_by_test_id("deactivate-all-switch")).not_to_be_checked()
+    page.screenshot(path="tests_edit_test_main-test_deactivate_all_switch-clicked.png")
+
+    last_switch = None
+    all_swtiches = page.get_by_role("switch").all()
+
+    for switch in all_swtiches:
+        expect(switch).not_to_be_checked()
+        last_switch = switch
+
+    assert last_switch
+    last_switch.click()
+    last_switch.screenshot(
+        path="tests_edit_test_main-test_deactivate_all_last-switch-click.png"
+    )
+
+    expect(page.get_by_test_id("deactivate-all-switch")).to_be_checked()
+
+
+@pytest.mark.integration
+def test_edit_page_warn_tab_close(edit_page: Page) -> None:
+    page = edit_page
+
+    # ensure navigation without changes is working
+    page.goto("https://www.rki.de")
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_warn_tab_close-rki_website.png"
+    )
+    assert "https://www.rki.de" in page.url
+
+    # back to edit site
+    page.go_back()
+    page.wait_for_url("**/item/**")
+    page.wait_for_selector(
+        "[data-testid='new-additive-alternativeTitle-00000000000000']"
+    )
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_warn_tab_close-back_on_edit.png"
+    )
+
+    # change a value
+    page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
+        "new alternative title"
+    )
+
+    handle_dialog_called: list[bool] = []
+
+    def _handle_dialog(dialog: Dialog) -> None:
+        # damn i love python
+        nonlocal handle_dialog_called
+
+        assert dialog.type == "beforeunload"
+        handle_dialog_called.append(True)
+        # stay on the side
+        dialog.dismiss()
+
+    page.on("dialog", _handle_dialog)
+
+    # won't work cuz we dismiss the dialog
+    with pytest.raises(Exception, match="Timeout"):
+        page.goto("https://www.rki.de", timeout=3000)
+
+    # ensure still on edit site and dialog was called
+    assert "/item/" in page.url
+    assert len(handle_dialog_called) == 1
+    assert handle_dialog_called[0]
+
+    # after save we should navigate again without dialog
+    page.get_by_test_id("submit-button").click()
+    page.wait_for_selector(".editor-toast")
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_warn_tab_close-save_toast.png"
+    )
+
+    page.goto("https://www.rki.de")
+    assert "https://www.rki.de" in page.url
+    assert len(handle_dialog_called) == 1

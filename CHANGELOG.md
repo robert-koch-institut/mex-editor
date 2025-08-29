@@ -9,11 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- added a switch to toggle all primary sources and values in the edit page
+- added textareas for fields listed in mex/editor/models.yaml
+- Warning when the create or edit browser window/tab is closed or navigated away
+
 - new filter for reference field filtering
 - tab to switch between new reference field filter and the old had primary source filter
 - style.scss to assets (i dont use it anymore, but when i remove it the app won't compile :/)
 
 ### Changes
+
+- bump cookiecutter template to b18156
 
 ### Deprecated
 

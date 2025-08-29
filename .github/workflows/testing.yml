@@ -29,13 +29,13 @@ jobs:
 
     services:
       neo4j:
-        image: neo4j:2025.06-community
+        image: neo4j:2025.07-community
         env:
           NEO4J_AUTH: neo4j/password
         ports:
           - 7687:7687
       backend:
-        image: ghcr.io/robert-koch-institut/mex-backend:0.41.3
+        image: ghcr.io/robert-koch-institut/mex-backend:1.0.0
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
           MEX_BACKEND_API_KEY_DATABASE: ${{ secrets.MEX_BACKEND_API_KEY_DATABASE }}
@@ -47,7 +47,7 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
@@ -89,7 +89,7 @@ jobs:
           echo `date -Iseconds` INFO checking service readiness &&
           curl --connect-timeout 10 --retry 10 --retry-delay 10 --retry-all-errors http://localhost:8000/_system/check &&
           curl --connect-timeout 10 --retry 10 --retry-delay 10 --retry-all-errors http://localhost:8080/v0/_system/check &&
-          make pytest
+          make test
 
       - name: Upload screenshots
         if: always()

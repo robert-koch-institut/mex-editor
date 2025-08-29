@@ -134,7 +134,7 @@ def test_had_primary_sources(
     expect(sidebar).to_be_visible()
 
     # activate tab for had primary source filtering
-    tab = page.locator("#reference_filter_strategy_had_primary_source_tab")
+    tab = page.get_by_role(role="tab", name="PrimarySource")
     tab.click()
 
     # check primary sources are showing and functioning
@@ -202,12 +202,13 @@ def test_reference_filter_fields_for_entity_type(
 ) -> None:
     page = writer_user_page
     page.goto(frontend_url)
+    page.wait_for_selector("[data-testid='page-body']")
 
-    hps_tab = page.locator("#reference_filter_strategy_had_primary_source_tab")
+    hps_tab = page.get_by_role("tab", name="PrimarySource")
     hps_tab.click()
     expect(page.get_by_test_id("had-primary-sources")).to_be_visible()
 
-    dyn_tab = page.locator("#reference_filter_strategy_dynamic_tab")
+    dyn_tab = page.get_by_role("tab", name="Dynamisch")
     dyn_tab.click()
     assert page.get_by_test_id("reference-field-filter").is_visible()
 
@@ -314,7 +315,7 @@ def test_push_search_params(
     )
 
     # activate tab for had primary source filtering
-    tab = page.locator("#reference_filter_strategy_had_primary_source_tab")
+    tab = page.get_by_role("tab", name="PrimarySource")
     tab.click()
 
     # select a primary source

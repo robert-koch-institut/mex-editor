@@ -262,14 +262,8 @@ def reference_filter_tab() -> rx.Component:
     """
     return rx.tabs.root(
         rx.tabs.list(
-            rx.tabs.trigger(
-                "Dynamisch", value="dynamic", id="reference_filter_strategy_dynamic_tab"
-            ),
-            rx.tabs.trigger(
-                "PrimarySource",
-                value="had_primary_source",
-                id="reference_filter_strategy_had_primary_source_tab",
-            ),
+            rx.tabs.trigger("Dynamisch", value="dynamic"),
+            rx.tabs.trigger("PrimarySource", value="had_primary_source"),
         ),
         rx.tabs.content(
             reference_field_filter(),
@@ -279,7 +273,9 @@ def reference_filter_tab() -> rx.Component:
             primary_source_filter(),
             value="had_primary_source",
         ),
-        id="reference_filter_strategy_tab_list",
+        custom_attrs={
+            "data-testid": "reference-filter-strategy-had-primary-source-tab"
+        },
         default_value="dynamic",
         value=SearchState.reference_filter_strategy,
         on_change=[
@@ -287,6 +283,7 @@ def reference_filter_tab() -> rx.Component:
             *full_refresh,
         ],
         disabled=SearchState.is_loading,
+        style={"width": "100%"},
     )
 
 

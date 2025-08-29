@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, cast
 
 import reflex as rx
 
+from mex.editor.locale_service import LOCALES_AVAILABLE, get_locale_label
 from mex.editor.state import NavItem, State
 
 if TYPE_CHECKING:
@@ -77,6 +78,40 @@ def app_logo() -> rx.Component:
     )
 
 
+def locale_image(locale: str) -> rx.Component:
+    """Render a flag as image for the given locale.
+
+    Args:
+        locale: The locale to render a flag image for.
+    """
+    return rx.image(src=f"/locales/{locale}.png", style={"width": "48px"})
+
+
+def language_switcher() -> rx.Component:
+    """Render a language switcher."""
+    return rx.menu.root(
+        rx.menu.trigger(
+            locale_image(State.current_locale),
+            custom_attrs={"data-testid": "language-switcher"},
+        ),
+        rx.menu.content(
+            *[
+                rx.menu.item(
+                    rx.hstack(
+                        locale_image(locale),
+                        rx.text(get_locale_label(locale)),
+                    ),
+                    on_click=State.change_locale(locale),
+                    custom_attrs={
+                        "data-testid": f"language-switcher-menu-item-{locale}"
+                    },
+                )
+                for locale in LOCALES_AVAILABLE
+            ]
+        ),
+    )
+
+
 def nav_bar() -> rx.Component:
     """Return a navigation bar component."""
     return rx.vstack(
@@ -99,6 +134,7 @@ def nav_bar() -> rx.Component:
                 rx.divider(orientation="vertical", size="2"),
                 user_menu(),
                 rx.spacer(),
+                language_switcher(),
                 rx.color_mode.button(),
                 justify="between",
                 align_items="center",

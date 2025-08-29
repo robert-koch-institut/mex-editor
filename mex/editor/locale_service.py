@@ -1,0 +1,168 @@
+import gettext
+import re
+from pathlib import Path
+from typing import Self, cast
+
+from mex.common.context import SingleSingletonStore
+
+LOCALE_FOLDER_PATH = Path("D:/code/git/mex-editor/locales")
+LOCALES_AVAILABLE = ["de-DE", "en-US"]
+LOCALES_LABEL_MAPPING = {"de-DE": "deutsch", "en-US": "english"}
+
+LOCALE_SERVICE_STORE = SingleSingletonStore["LocaleService"]()
+
+
+def camelcase_to_title(value: str) -> str:
+    """Convert a camelcase string into titlecased words splitted by space.
+
+    Args:
+        value: The camelcase string to convert.
+
+    Returns:
+        str: The converted string containing titlecased words splitted by space.
+    """
+    return re.sub(r"(?<!^)(?=[A-Z])", " ", value).title()
+
+
+def get_locale_label(locale: str) -> str:
+    """Convert the locale into a label.
+
+    Args:
+        locale: The locale to convert to a label.
+
+    Returns:
+        str: The label for the given locale.
+    """
+    return LOCALES_LABEL_MAPPING[locale]
+
+
+# IDEA: Propably cleaner to split this into LocalService(str -> translation + ensure
+# fallback translation if str is no valid language or doesnt exist) and
+# FieldHelper(label and description for fields)
+class LocaleService:
+    """A service singleton to control the current locale used by the app."""
+
+    _current_locale: str = LOCALES_AVAILABLE[0]
+    _translation: gettext.GNUTranslations | None = None
+
+    @classmethod
+    def get(cls) -> Self:
+        """Get singleton instance of the LocaleService.
+
+        Returns:
+            Self: The LocaleService singleton.
+        """
+        return cast("Self", LOCALE_SERVICE_STORE.load(cls))
+
+    def __init__(self, locale: str = LOCALES_AVAILABLE[0]) -> None:
+        """Init with locale to use. Use first available locale if not specified.
+
+        Args:
+            locale (str, optional): The locale to use for the app.
+            Defaults to LOCALES_AVAILABLE[0].
+        """
+        self.set_locale(locale=locale)
+
+    def set_locale(self, locale: str) -> None:
+        """Set the locale to use within the app.
+
+        Args:
+            locale: The locale to use within the app.
+        """
+        mo_path = LOCALE_FOLDER_PATH / f"{locale}.mo"
+        with Path.open(mo_path, "rb") as mo_file:
+            self._translation = gettext.GNUTranslations(mo_file)
+
+    def get_locale(self) -> str:
+        """Get the current locale of the app.
+
+        Returns:
+            str: Current locale of the app.
+        """
+        return self._current_locale
+
+    def field_label(self, stem_type: str, field_name: str, n: int = 1) -> str:
+        """Get the human readable form the given field.
+
+        Args:
+            stem_type: The type the field belongs to.
+            field_name: The name of the field.
+            n (optional): Number to pass to ngettext to determine if plural form is
+            used. Defaults to 1.
+
+        Returns:
+            str: The human readable name of the field.
+        """
+        if not self._translation:
+            return camelcase_to_title(field_name)
+
+        translation = self._translation
+        msg_id1 = f"{field_name}.singular"
+        msg_id2 = f"{field_name}.plural"
+
+        trans_finders = [
+            (
+                lambda: translation.npgettext(stem_type, msg_id1, msg_id2, n),
+                lambda x: x not in (msg_id1, msg_id2),
+            ),
+            (
+                lambda: translation.pgettext(stem_type, field_name),
+                lambda x: x != field_name,
+            ),
+            (
+                lambda: translation.ngettext(msg_id1, msg_id2, n),
+                lambda x: x not in (msg_id1, msg_id2),
+            ),
+            (
+                lambda: translation.pgettext(stem_type, msg_id1),
+                lambda x: x != msg_id1,
+            ),
+            (
+                lambda: translation.gettext(msg_id1),
+                lambda x: x != msg_id1,
+            ),
+            (
+                lambda: translation.gettext(field_name),
+                lambda x: x != field_name,
+            ),
+        ]
+
+        for finder in trans_finders:
+            trans = finder[0]()
+            if found_trans := finder[1](trans):
+                break
+
+        return trans if found_trans else camelcase_to_title(field_name)
+
+    def field_description(self, stem_type: str, field_name: str) -> str:
+        """Get the description for a field.
+
+        Args:
+            stem_type: The type the field belongs to.
+            field_name: The name of the field.
+
+        Returns:
+            str: The description of the field.
+        """
+        if not self._translation:
+            return ""
+
+        translation = self._translation
+        desc_key = f"{field_name}.description"
+        trans_finders = [
+            (
+                lambda: translation.pgettext(stem_type, desc_key),
+                lambda x: x != desc_key,
+            ),
+            (
+                lambda: translation.gettext(desc_key),
+                lambda x: x != desc_key,
+            ),
+        ]
+
+        for finder in trans_finders:
+            trans = finder[0]()
+            if found_trans := finder[1](trans):
+                break
+
+        return trans if found_trans else ""

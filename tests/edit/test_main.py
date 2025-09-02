@@ -74,7 +74,7 @@ def test_edit_page_renders_heading(
     heading = page.get_by_test_id("edit-heading")
     expect(heading).to_be_visible()
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_new_heading.png")
-    assert re.match(r"New title*", heading.inner_text())
+    expect(heading).to_have_text(re.compile(r"New title*"))
 
 
 @pytest.mark.integration

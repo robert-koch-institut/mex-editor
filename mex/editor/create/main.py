@@ -5,7 +5,6 @@ from mex.editor.layout import page
 from mex.editor.rules.main import (
     editor_primary_source_stack,
     field_name,
-    page_leave_js,
     rule_page_header,
     validation_errors,
 )
@@ -73,7 +72,6 @@ def index() -> rx.Component:
                 editor_field,
             ),
             validation_errors(),
-            page_leave_js(),
             style={
                 "width": "100%",
                 "marginTop": "calc(2 * var(--space-6))",

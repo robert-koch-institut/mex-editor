@@ -13,6 +13,10 @@ from mex.editor.models import NavItem, User
 class State(rx.State):
     """The base state for the app."""
 
+    current_page_has_changes: bool = False
+    navigate_dialog_open: bool = False
+    navigate_target: str | None = None
+
     user_mex: User | None = None
     user_ldap: User | None = None
     target_path_after_login: str | None = None
@@ -43,6 +47,44 @@ class State(rx.State):
             raw_path="/ingest/",
         ),
     ]
+
+    @rx.event
+    def set_current_page_has_changes(self, value: bool) -> EventSpec:  # noqa: FBT001
+        """Set the current_page_has_changes attribute to the given value.
+
+        Sets the value of the current_page_has_changes attribute and updates the state
+        on client side.
+
+        Args:
+            value : The value of the current_page_has_changes attribute.
+        """
+        self.current_page_has_changes = value
+        return rx.call_script(
+            f"window.updateMexEditorChanges({str(value).lower()})",
+        )
+
+    @rx.event
+    def close_navigate_dialog(self) -> None:
+        """Close the navigate dialog."""
+        self.navigate_dialog_open = False
+
+    @rx.event
+    def navigate(self, raw_path: str) -> EventSpec | None:
+        """Navigate to a given path and warn the user about unsaved changes on the current page.
+
+        If changes on the current page are present, a  dialog will appear and warn the
+        user about unsaved changes. The user can decide to stay on the current page or
+        discard the changes and navigate away.
+
+        Args:
+            raw_path : The path to navigate to.
+        """  # noqa: E501
+        self.navigate_target = raw_path
+        if self.current_page_has_changes:
+            self.navigate_dialog_open = True
+            return None
+
+        return rx.redirect(self.navigate_target)
 
     @rx.event
     def logout(self) -> EventSpec:

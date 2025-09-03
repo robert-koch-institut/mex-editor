@@ -3,6 +3,7 @@ import reflex as rx
 from mex.editor.ingest.state import IngestState
 from mex.editor.rules.models import EditorValue
 from mex.editor.search.state import SearchState
+from mex.editor.state import State
 
 
 def render_identifier(value: EditorValue) -> rx.Component:
@@ -14,9 +15,10 @@ def render_identifier(value: EditorValue) -> rx.Component:
                 value.text,
                 "Loading ...",
             ),
-            href=f"{value.href}",
+            on_click=State.navigate(value.href),
             high_contrast=True,
             role="link",
+            custom_attrs={"data-href": value.href},
         ),
         loading=rx.cond(
             value.text,

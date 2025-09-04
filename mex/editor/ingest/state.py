@@ -1,15 +1,13 @@
 import math
 from collections.abc import Generator
-from typing import Annotated
 
 import reflex as rx
-from pydantic import Field
 from reflex.event import EventSpec
-from reflex.state import serialize_mutable_proxy
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import AnyExtractedModel, PaginatedItemsContainer
+from mex.editor.constants import DEFAULT_FETCH_LIMIT
 from mex.editor.exceptions import escalate_error
 from mex.editor.ingest.models import (
     ALL_AUX_PROVIDERS,
@@ -26,10 +24,9 @@ class IngestState(State):
 
     results_transformed: list[IngestResult] = []
     results_extracted: list[AnyExtractedModel] = []
-    total: Annotated[int, Field(ge=0)] = 0
-    query_string: Annotated[str, Field(max_length=1000)] = ""
-    current_page: Annotated[int, Field(ge=1)] = 1
-    limit: Annotated[int, Field(ge=1, le=100)] = 50
+    total: int = 0
+    query_string: str = ""
+    current_page: int = 1
     current_aux_provider: AuxProvider = AuxProvider.LDAP
     aux_providers: list[AuxProvider] = ALL_AUX_PROVIDERS
     is_loading: bool = True
@@ -37,12 +34,12 @@ class IngestState(State):
     @rx.var(cache=False)
     def page_selection(self) -> list[str]:
         """Return a list of total pages based on the number of results."""
-        return [f"{i + 1}" for i in range(math.ceil(self.total / self.limit))]
+        return [f"{i + 1}" for i in range(math.ceil(self.total / DEFAULT_FETCH_LIMIT))]
 
     @rx.var(cache=False)
     def disable_page_selection(self) -> bool:
         """Whether the page selection in the pagination should be disabled."""
-        return math.ceil(self.total / self.limit) == 1
+        return math.ceil(self.total / DEFAULT_FETCH_LIMIT) == 1
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:
@@ -52,7 +49,7 @@ class IngestState(State):
     @rx.var(cache=False)
     def disable_next_page(self) -> bool:
         """Disable the 'Next' button if on the last page."""
-        max_page = math.ceil(self.total / self.limit)
+        max_page = math.ceil(self.total / DEFAULT_FETCH_LIMIT)
         return self.current_page >= max_page
 
     @rx.var(cache=False)
@@ -68,9 +65,9 @@ class IngestState(State):
         ].show_properties
 
     @rx.event
-    def set_current_aux_provider(self, value: AuxProvider) -> None:
+    def set_current_aux_provider(self, value: str) -> None:
         """Change the current aux provider."""
-        self.current_aux_provider = value
+        self.current_aux_provider = AuxProvider(value)
 
     @rx.event
     def set_page(self, page_number: str | int) -> None:
@@ -98,13 +95,12 @@ class IngestState(State):
         self.current_page = self.current_page + 1
 
     @rx.event
-    def ingest_result(self, index: int) -> Generator[EventSpec | None, None, None]:
+    def ingest_result(self, index: int) -> Generator[EventSpec, None, None]:
         """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
+        model = self.results_extracted[index]
         try:
-            model: AnyExtractedModel = serialize_mutable_proxy(
-                self.results_extracted[index]
-            )
+            # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
             connector.ingest([model])
         except HTTPError as exc:
             yield from escalate_error(
@@ -122,7 +118,7 @@ class IngestState(State):
             )
 
     @rx.event
-    def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
+    def scroll_to_top(self) -> Generator[EventSpec, None, None]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
@@ -139,7 +135,7 @@ class IngestState(State):
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results."""
         connector = BackendApiConnector.get()
-        offset = self.limit * (self.current_page - 1)
+        offset = DEFAULT_FETCH_LIMIT * (self.current_page - 1)
         self.is_loading = True
         yield None
         try:
@@ -149,7 +145,7 @@ class IngestState(State):
                 params={
                     "q": self.query_string or None,
                     "offset": str(offset),
-                    "limit": str(self.limit),
+                    "limit": str(DEFAULT_FETCH_LIMIT),
                 },
             )
         except HTTPError as exc:

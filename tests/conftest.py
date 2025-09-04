@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 from fastapi.testclient import TestClient
 from playwright.sync_api import Page, expect
@@ -27,9 +29,9 @@ from mex.common.types import (
     Theme,
     YearMonthDay,
 )
+from mex.editor.api.main import api
 from mex.editor.settings import EditorSettings
 from mex.editor.types import EditorUserDatabase, EditorUserPassword
-from mex.mex import app
 
 pytest_plugins = ("mex.common.testing.plugin",)
 
@@ -37,8 +39,19 @@ pytest_plugins = ("mex.common.testing.plugin",)
 @pytest.fixture
 def client() -> TestClient:
     """Return a fastAPI test client initialized with our app."""
-    with TestClient(app.api, raise_server_exceptions=False) as test_client:
+    with TestClient(api, raise_server_exceptions=False) as test_client:
         return test_client
+
+
+@pytest.fixture(scope="session")
+def browser_context_args(browser_context_args: dict[str, Any]) -> dict[str, Any]:
+    return {
+        **browser_context_args,
+        "viewport": {
+            "width": 1280,
+            "height": 800,
+        },
+    }
 
 
 @pytest.fixture(autouse=True)
@@ -121,7 +134,7 @@ def flush_graph_database(is_integration_test: bool) -> None:  # noqa: FBT001
     """Flush the graph database before every integration test."""
     if is_integration_test:
         connector = BackendApiConnector.get()
-        # TODO(ND): use proper connector method when available (stopgap mx-1762)
+        # TODO(ND): use proper connector method when available (stopgap mx-1984)
         connector.request(method="DELETE", endpoint="/_system/graph")
 
 

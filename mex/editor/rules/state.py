@@ -7,6 +7,7 @@ from requests import HTTPError
 from starlette import status
 
 from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.merged.main import create_merged_item
 from mex.common.models import (
     RULE_SET_REQUEST_CLASSES,
     RULE_SET_REQUEST_CLASSES_BY_NAME,
@@ -16,6 +17,7 @@ from mex.common.models import (
     AnyRuleSetResponse,
 )
 from mex.common.transform import ensure_postfix
+from mex.common.types import Identifier
 from mex.editor.exceptions import escalate_error
 from mex.editor.models import EditorValue
 from mex.editor.rules.models import EditorField, EditorPrimarySource, ValidationMessage
@@ -25,7 +27,10 @@ from mex.editor.rules.transform import (
     transform_validation_error_to_messages,
 )
 from mex.editor.state import State
-from mex.editor.transform import transform_models_to_stem_type
+from mex.editor.transform import (
+    transform_models_to_stem_type,
+    transform_models_to_title,
+)
 from mex.editor.utils import resolve_editor_value, resolve_identifier
 
 
@@ -33,6 +38,7 @@ class RuleState(State):
     """Base state for the edit and create components."""
 
     item_id: str | None = None
+    item_title: list[EditorValue] = []
     fields: list[EditorField] = []
     stem_type: str | None = None
     validation_messages: list[ValidationMessage] = []
@@ -87,7 +93,7 @@ class RuleState(State):
         return rule_set_request_class()
 
     @rx.event
-    def refresh(self) -> Generator[EventSpec | None, None, None]:
+    def refresh(self) -> Generator[EventSpec, None, None]:
         """Refresh the edit or create page."""
         self.fields.clear()
         self.validation_messages.clear()
@@ -110,6 +116,14 @@ class RuleState(State):
             return
         if rule_set:
             self.stem_type = transform_models_to_stem_type([rule_set.additive])
+        if self.item_id:
+            preview = create_merged_item(
+                identifier=Identifier(self.item_id),
+                extracted_items=extracted_items,
+                rule_set=rule_set,
+                validate_cardinality=False,
+            )
+            self.item_title = transform_models_to_title([preview])
         self.fields = transform_models_to_fields(
             extracted_items,
             additive=rule_set.additive,
@@ -120,12 +134,13 @@ class RuleState(State):
     def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:
         """Send the rule set to the backend."""
         connector = BackendApiConnector.get()
+        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         if self.item_id:
             return connector.update_rule_set(self.item_id, rule_set)
         return connector.create_rule_set(rule_set)
 
     @rx.event
-    def submit_rule_set(self) -> Generator[EventSpec | None, None, None]:
+    def submit_rule_set(self) -> Generator[EventSpec, None, None]:
         """Convert the fields to a rule set and submit it to the backend."""
         if self.stem_type is None:
             self.reset()
@@ -144,20 +159,21 @@ class RuleState(State):
             )
             return
 
-        yield self.set_has_changes(False)
+        yield self.set_has_changes(False)  # type: ignore[misc]
         # clear cache to show edits in the UI
         resolve_identifier.cache_clear()
         # trigger redirect to edit page or refresh state
         if rule_set_response.stableTargetId != self.item_id:
             yield rx.redirect(f"/item/{rule_set_response.stableTargetId}/?saved")
         else:
-            yield from self.refresh()
-            yield self.show_submit_success_toast()
+            yield RuleState.refresh
+            yield RuleState.show_submit_success_toast
+            yield RuleState.resolve_identifiers
 
     @rx.event
-    def show_submit_success_toast(self) -> EventSpec:
+    def show_submit_success_toast(self) -> Generator[EventSpec, None, None]:
         """Show a toast for a successfully submitted rule-set."""
-        return rx.toast.success(
+        yield rx.toast.success(
             title="Saved",
             description=f"{self.stem_type} was saved successfully.",
             class_name="editor-toast",
@@ -249,21 +265,21 @@ class RuleState(State):
         """Add an additive rule to the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.append(EditorValue(being_edited=True))
-        return self.set_has_changes(True)
+        return self.set_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def remove_additive_value(self, field_name: str, index: int) -> EventSpec:
         """Remove an additive rule from the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.pop(index)
-        return self.set_has_changes(True)
+        return self.set_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def set_text_value(self, field_name: str, index: int, value: str) -> EventSpec:
         """Set the text attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].text = value
-        return self.set_has_changes(True)
+        return self.set_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def set_identifier_value(
@@ -273,14 +289,14 @@ class RuleState(State):
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].identifier = value
         primary_source.editor_values[index].href = f"/item/{value}"
-        return self.set_has_changes(True)
+        return self.set_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def set_badge_value(self, field_name: str, index: int, value: str) -> EventSpec:
         """Set the badge attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].badge = value
-        return self.set_has_changes(True)
+        return self.set_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def set_href_value(self, field_name: str, index: int, value: str) -> EventSpec:
@@ -288,4 +304,4 @@ class RuleState(State):
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].href = value
         primary_source.editor_values[index].external = True
-        return self.set_has_changes(True)
+        return self.set_has_changes(True)  # type: ignore[misc]

@@ -93,3 +93,39 @@ def test_create_page_submit_item(create_page: Page) -> None:
     connector = BackendApiConnector.get()
     result = connector.fetch_merged_items(query_string="Test01234567")
     assert result.total == 1
+
+
+@pytest.mark.parametrize(
+    (
+        "locale",
+        "expected_accessplatform_field_label",
+    ),
+    [
+        (
+            "de-DE",
+            "Zugriffsplattform",
+        ),
+        ("en-US", "Access platform"),
+    ],
+    ids=["locale de-De", "locale en-US"],
+)
+@pytest.mark.integration
+def test_language_switcher(
+    create_page: Page, locale: str, expected_accessplatform_field_label: str
+) -> None:
+    # language switcher should be there
+    lang_switcher = create_page.get_by_test_id("language-switcher")
+    expect(lang_switcher).to_be_visible()
+
+    # change language and wait for reload
+    lang_switcher.click()
+    create_page.get_by_test_id(f"language-switcher-menu-item-{locale}").click()
+
+    # select entitytype resource
+    create_page.get_by_test_id("entity-type-select").click(timeout=20000)
+    create_page.get_by_role("option", name="Resource", exact=True).click()
+    create_page.wait_for_timeout(20000)
+
+    # find the accessPlatform field label and check the text
+    field_accessplatform = create_page.get_by_test_id("field-accessPlatform-name")
+    expect(field_accessplatform).to_have_text(expected_accessplatform_field_label)

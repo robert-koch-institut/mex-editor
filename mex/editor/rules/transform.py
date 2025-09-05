@@ -40,6 +40,7 @@ from mex.editor.fields import (
     REQUIRED_FIELDS_BY_CLASS_NAME,
     TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES,
 )
+from mex.editor.locale_service import LocaleService
 from mex.editor.models import (
     LANGUAGE_VALUE_NONE,
     MODEL_CONFIG_BY_STEM_TYPE,
@@ -231,22 +232,24 @@ def transform_models_to_fields(
     Returns:
         A list of editor field instances
     """
-    mergeable_fields = sorted(
+    mergeable_fields_with_stemtype = sorted(
         {
-            f
+            (f, e.stemType)
             for e in [*extracted_items, additive]
             for f in MERGEABLE_FIELDS_BY_CLASS_NAME[e.entityType]
         }
     )
-
+    locale = LocaleService.get()
     required_fields = get_required_mergeable_field_names(additive)
     fields_by_name = {
         field_name: EditorField(
             name=field_name,
+            label=locale.get_field_label(str(stem_type), field_name),
+            description=locale.get_field_description(str(stem_type), field_name),
             primary_sources=[],
             is_required=field_name in required_fields,
         )
-        for field_name in mergeable_fields
+        for field_name, stem_type in mergeable_fields_with_stemtype
     }
 
     for extracted in extracted_items:

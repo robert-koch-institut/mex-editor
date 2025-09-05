@@ -478,7 +478,7 @@ def test_transform_model_to_editor_primary_sources(
 
 def test_transform_models_to_fields() -> None:
     locale = LocaleService.get()
-    locale.set_locale("de-De")
+    locale.set_locale("de-DE")
     editor_fields = transform_models_to_fields(
         [
             ExtractedPerson(

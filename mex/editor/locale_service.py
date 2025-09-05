@@ -7,9 +7,12 @@ from mex.common.context import SingleSingletonStore
 
 # TODO(FE): Change to mex-model when fork is approved
 here = Path(__file__).resolve().parent
+
 LOCALE_FOLDER_PATH = here / "../../locales"
-LOCALES_AVAILABLE = ["de-DE", "en-US"]
-LOCALES_LABEL_MAPPING = {"de-DE": "deutsch", "en-US": "english"}
+LOCALE_DE = "de-DE"
+LOCALE_EN = "en-US"
+LOCALES_AVAILABLE = [LOCALE_DE, LOCALE_EN]
+LOCALES_LABEL_MAPPING = {LOCALE_DE: "deutsch", LOCALE_EN: "english"}
 
 LOCALE_SERVICE_STORE = SingleSingletonStore["LocaleService"]()
 

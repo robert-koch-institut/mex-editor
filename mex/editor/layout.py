@@ -84,7 +84,7 @@ def locale_image(locale: str) -> rx.Component:
     Args:
         locale: The locale to render a flag image for.
     """
-    return rx.image(src=f"/locales/{locale}.png", style={"width": "48px"})
+    return rx.image(src=f"/locales/{locale}.png", style={"height": "24px"})
 
 
 def language_switcher() -> rx.Component:

@@ -44,8 +44,8 @@ def get_locale_label(locale: str) -> str:
 class LocaleService:
     """A service singleton to control the current locale used by the app."""
 
-    _current_locale: str = LOCALES_AVAILABLE[0]
-    _translation: gettext.GNUTranslations | None = None
+    _current_locale: str = ""
+    _translation: gettext.GNUTranslations
 
     @classmethod
     def get(cls) -> Self:
@@ -71,23 +71,26 @@ class LocaleService:
         Args:
             locale: The locale to use within the app.
         """
-        mo_path = LOCALE_FOLDER_PATH / f"{locale}.mo"
-        with Path.open(mo_path, "rb") as mo_file:
-            self._translation = gettext.GNUTranslations(mo_file)
+        if self._current_locale != locale:
+            self._current_locale = locale
+
+            mo_path = LOCALE_FOLDER_PATH / f"{locale}.mo"
+            with Path.open(mo_path, "rb") as mo_file:
+                self._translation = gettext.GNUTranslations(mo_file)
 
     def get_locale(self) -> str:
         """Get the current locale of the app.
 
         Returns:
-            str: Current locale of the app.
+            str: The current locale of the app.
         """
         return self._current_locale
 
-    def field_label(self, stem_type: str, field_name: str, n: int = 1) -> str:
+    def get_field_label(self, stem_type: str, field_name: str, n: int = 1) -> str:
         """Get the human readable form the given field.
 
         Args:
-            stem_type: The type the field belongs to.
+            stem_type: The entity type the field belongs to.
             field_name: The name of the field.
             n (optional): Number to pass to ngettext to determine if plural form is
             used. Defaults to 1.
@@ -95,40 +98,48 @@ class LocaleService:
         Returns:
             str: The human readable name of the field.
         """
-        if not self._translation:
-            return camelcase_to_title(field_name)
-
         translation = self._translation
         msg_id1 = f"{field_name}.singular"
         msg_id2 = f"{field_name}.plural"
 
+        # each finder consists of a func to find a translation and a func that verifies
+        # if the found translation is a real translation or just a key (which gets
+        # returned if nothing is found)
         trans_finders = [
+            # find plural or singular field for stem_type (most specific)
             (
                 lambda: translation.npgettext(stem_type, msg_id1, msg_id2, n),
                 lambda x: x not in (msg_id1, msg_id2),
             ),
+            # find field for stem_type
             (
                 lambda: translation.pgettext(stem_type, field_name),
                 lambda x: x != field_name,
             ),
+            # find plural or singular field WITHOUT stem_type
             (
                 lambda: translation.ngettext(msg_id1, msg_id2, n),
                 lambda x: x not in (msg_id1, msg_id2),
             ),
+            # find singular field for stem_type
             (
                 lambda: translation.pgettext(stem_type, msg_id1),
                 lambda x: x != msg_id1,
             ),
+            # find singular field WITHOUT stem_type
             (
                 lambda: translation.gettext(msg_id1),
                 lambda x: x != msg_id1,
             ),
+            # find field WITHOUT stem_type
             (
                 lambda: translation.gettext(field_name),
                 lambda x: x != field_name,
             ),
         ]
 
+        trans: str = ""
+        found_trans = False
         for finder in trans_finders:
             trans = finder[0]()
             if found_trans := finder[1](trans):
@@ -136,7 +147,7 @@ class LocaleService:
 
         return trans if found_trans else camelcase_to_title(field_name)
 
-    def field_description(self, stem_type: str, field_name: str) -> str:
+    def get_field_description(self, stem_type: str, field_name: str) -> str:
         """Get the description for a field.
 
         Args:
@@ -152,16 +163,20 @@ class LocaleService:
         translation = self._translation
         desc_key = f"{field_name}.description"
         trans_finders = [
+            # find description by field_name and stem_type
             (
                 lambda: translation.pgettext(stem_type, desc_key),
                 lambda x: x != desc_key,
             ),
+            # find description by field_name
             (
                 lambda: translation.gettext(desc_key),
                 lambda x: x != desc_key,
             ),
         ]
 
+        trans: str = ""
+        found_trans = False
         for finder in trans_finders:
             trans = finder[0]()
             if found_trans := finder[1](trans):

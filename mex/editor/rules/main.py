@@ -467,13 +467,14 @@ def field_name(
     """Return a card with a field name."""
     return rx.card(
         rx.hstack(
-            rx.text(field.label, title=field.description),
+            rx.text(field.label),
             rx.cond(
                 field.is_required,
                 rx.text("*", style={"color": "red"}),
             ),
             spacing="1",
         ),
+        title=field.description,
         style={"width": "25%"},
         custom_attrs={"data-testid": f"field-{field.name}-name"},
     )

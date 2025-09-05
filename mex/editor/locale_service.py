@@ -6,7 +6,7 @@ from typing import Self, cast
 from mex.common.context import SingleSingletonStore
 
 # TODO(FE): Change to mex-model when fork is approved
-here = Path(__file__).parent.absolute()
+here = Path(__file__).resolve().parent
 LOCALE_FOLDER_PATH = here / "../../locales"
 LOCALES_AVAILABLE = ["de-DE", "en-US"]
 LOCALES_LABEL_MAPPING = {"de-DE": "deutsch", "en-US": "english"}

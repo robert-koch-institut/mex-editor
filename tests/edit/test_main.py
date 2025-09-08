@@ -3,15 +3,19 @@ import re
 import pytest
 from playwright.sync_api import Dialog, Page, expect
 
+from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.models import (
+    ActivityRuleSetRequest,
+    AdditiveActivity,
     AnyExtractedModel,
     ExtractedActivity,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
+    SubtractiveActivity,
 )
 from mex.common.transform import ensure_prefix
-from mex.common.types import Identifier
+from mex.common.types import Identifier, Text, TextLanguage
 from mex.editor.fields import REQUIRED_FIELDS_BY_CLASS_NAME
 from mex.editor.rules.transform import get_required_mergeable_field_names
 
@@ -45,12 +49,32 @@ def test_edit_page_updates_nav_bar(edit_page: Page) -> None:
 
 
 @pytest.mark.integration
-def test_edit_page_renders_heading(edit_page: Page) -> None:
+def test_edit_page_renders_heading(
+    edit_page: Page, extracted_activity: ExtractedActivity
+) -> None:
     page = edit_page
     heading = page.get_by_test_id("edit-heading")
-    page.screenshot(path="tests_edit_test_main-test_edit_page_renders_heading.png")
     expect(heading).to_be_visible()
-    assert re.match(r"Aktivität 1\s*DE", heading.inner_text())
+    page.screenshot(path="tests_edit_test_main-test_edit_page_renders_heading.png")
+    expect(heading).to_have_text(re.compile(r"Aktivität 1\s*DE"))
+
+    connector = BackendApiConnector.get()
+    connector.update_rule_set(
+        extracted_activity.stableTargetId,
+        ActivityRuleSetRequest(
+            additive=AdditiveActivity(
+                title=[Text(value="New title who dis?", language=None)]
+            ),
+            subtractive=SubtractiveActivity(
+                title=[Text(value="Aktivität 1", language=TextLanguage.DE)],
+            ),
+        ),
+    )
+    page.reload()
+    heading = page.get_by_test_id("edit-heading")
+    expect(heading).to_be_visible()
+    page.screenshot(path="tests_edit_test_main-test_edit_page_renders_new_heading.png")
+    expect(heading).to_have_text(re.compile(r"New title*"))
 
 
 @pytest.mark.integration

@@ -31,7 +31,7 @@ def deactivate_all_switch() -> rx.Component:
     """Render a switch to deactivate all primary source and values."""
     return rx.hstack(
         rx.spacer(),
-        "deactive all",
+        "deactivate all",
         rx.switch(
             checked=EditState.any_primary_source_or_editor_value_enabled,
             on_change=EditState.disable_all_primary_source_and_editor_values,

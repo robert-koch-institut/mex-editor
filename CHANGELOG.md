@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix title of edit page to be equal to search snippet
+
 ### Security
 
 ## [0.22.0] - 2025-07-31

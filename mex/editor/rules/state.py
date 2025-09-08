@@ -17,7 +17,7 @@ from mex.common.models import (
     AnyRuleSetResponse,
 )
 from mex.common.transform import ensure_postfix
-from mex.common.types import Identifier
+from mex.common.types import Identifier, Validation
 from mex.editor.exceptions import escalate_error
 from mex.editor.models import EditorValue
 from mex.editor.rules.models import EditorField, EditorPrimarySource, ValidationMessage
@@ -121,7 +121,7 @@ class RuleState(State):
                 identifier=Identifier(self.item_id),
                 extracted_items=extracted_items,
                 rule_set=rule_set,
-                validate_cardinality=False,
+                validation=Validation.LENIENT,
             )
             self.item_title = transform_models_to_title([preview])
         self.fields = transform_models_to_fields(

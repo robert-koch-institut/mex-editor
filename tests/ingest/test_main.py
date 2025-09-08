@@ -144,7 +144,9 @@ def test_infobox_visibility_and_content(ingest_page: Page) -> None:
 
     for provider in ALL_AUX_PROVIDERS:
         tab = page.get_by_role("tab", name=provider)
-        tab.click()
+        tab.click(
+            timeout=50000
+        )  # high timeout cuz tab might be disabled due to loading
 
         tab_content = page.locator(f"[id*='{provider}'][role='tabpanel']")
         callout = tab_content.locator(".rt-CalloutRoot")

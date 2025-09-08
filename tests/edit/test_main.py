@@ -56,7 +56,25 @@ def test_edit_page_renders_heading(
     heading = page.get_by_test_id("edit-heading")
     expect(heading).to_be_visible()
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_heading.png")
-    assert re.match(r"Aktivität 1\s*DE", heading.inner_text())
+    expect(heading).to_have_text(re.compile(r"Aktivität 1\s*DE"))
+
+    connector = BackendApiConnector.get()
+    connector.update_rule_set(
+        extracted_activity.stableTargetId,
+        ActivityRuleSetRequest(
+            additive=AdditiveActivity(
+                title=[Text(value="New title who dis?", language=None)]
+            ),
+            subtractive=SubtractiveActivity(
+                title=[Text(value="Aktivität 1", language=TextLanguage.DE)],
+            ),
+        ),
+    )
+    page.reload()
+    heading = page.get_by_test_id("edit-heading")
+    expect(heading).to_be_visible()
+    page.screenshot(path="tests_edit_test_main-test_edit_page_renders_new_heading.png")
+    expect(heading).to_have_text(re.compile(r"New title*"))
 
     connector = BackendApiConnector.get()
     connector.update_rule_set(

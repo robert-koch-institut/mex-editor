@@ -659,6 +659,9 @@ def test_edit_page_warn_tab_close(edit_page: Page) -> None:
     page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
         "new alternative title"
     )
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_warn_tab_close-page_with_changes.png"
+    )
 
     handle_dialog_called: list[bool] = []
 
@@ -668,6 +671,7 @@ def test_edit_page_warn_tab_close(edit_page: Page) -> None:
 
         assert dialog.type == "beforeunload"
         handle_dialog_called.append(True)
+
         # stay on the side
         dialog.dismiss()
 

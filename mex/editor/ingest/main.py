@@ -284,7 +284,7 @@ def index() -> rx.Component:
             tab_list(),
             rx.spacer(),
             tab_content(),
-            default_value=IngestState.current_aux_provider,
+            default_value=f"{IngestState.current_aux_provider}",
             on_change=[
                 IngestState.set_current_aux_provider,
                 IngestState.go_to_first_page,

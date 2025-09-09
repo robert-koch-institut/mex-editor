@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added textareas for fields listed in mex/editor/models.yaml
 - Warning when the create or edit browser window/tab is closed or navigated away
 
+- new filter for reference field filtering
+- tab to switch between new reference field filter and the old had primary source filter
+
 ### Changes
 
 - bump cookiecutter template to b18156
@@ -23,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+- fix title of edit page to be equal to search snippet
 
 ### Security
 

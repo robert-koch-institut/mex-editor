@@ -210,11 +210,13 @@ class RuleState(State):
         field_name: str,
         href: str | None,
         enabled: bool,  # noqa: FBT001
-    ) -> None:
+    ) -> EventSpec | None:
         """Toggle the `enabled` flag of a primary source."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             if primary_source.name.href == href:
                 primary_source.enabled = enabled
+                return State.set_current_page_has_changes(True)
+        return None
 
     @rx.event
     def toggle_field_value(
@@ -222,12 +224,15 @@ class RuleState(State):
         field_name: str,
         value: EditorValue,
         enabled: bool,  # noqa: FBT001
-    ) -> None:
+    ) -> EventSpec | None:
         """Toggle the `enabled` flag of a field value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             for editor_value in primary_source.editor_values:
                 if editor_value == value:
                     editor_value.enabled = enabled
+                    return State.set_current_page_has_changes(True)
+
+        return None
 
     @rx.event
     def toggle_field_value_editing(

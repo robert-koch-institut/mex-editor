@@ -135,6 +135,15 @@ class IngestState(State):
                     async with self:
                         await resolve_editor_value(value)
 
+    @rx.event(background=True)
+    async def flag_imported_organizations(self) -> None:
+        """Check and flag, if any result is already imported in backend."""
+        connector = BackendApiConnector.get()
+        for result in self.results_transformed:
+            response = connector.fetch_preview_items(identifier=result.identifier)
+            if response.total > 0:
+                result.show_ingest_button = False
+
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results."""

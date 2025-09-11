@@ -234,17 +234,34 @@ def additive_rule_input(
         ),
         rx.cond(
             input_config.editable_text,
-            rx.input(
-                placeholder="Text",
-                value=value.text,
-                on_change=RuleState.set_text_value(field_name, index),
-                style={
-                    "margin": "calc(-1 * var(--space-1))",
-                    "width": "100%",
-                },
-                custom_attrs={
-                    "data-testid": f"additive-rule-{field_name}-{index}-text"
-                },
+            rx.cond(
+                input_config.render_textarea,
+                rx.text_area(
+                    placeholder="Text",
+                    value=value.text,
+                    on_change=RuleState.set_text_value(field_name, index),
+                    style={
+                        "margin": "calc(-1 * var(--space-1))",
+                        "width": "100%",
+                    },
+                    custom_attrs={
+                        "data-testid": f"additive-rule-{field_name}-{index}-text"
+                    },
+                    rows="5",
+                    resize="vertical",
+                ),
+                rx.input(
+                    placeholder="Text",
+                    value=value.text,
+                    on_change=RuleState.set_text_value(field_name, index),
+                    style={
+                        "margin": "calc(-1 * var(--space-1))",
+                        "width": "100%",
+                    },
+                    custom_attrs={
+                        "data-testid": f"additive-rule-{field_name}-{index}-text"
+                    },
+                ),
             ),
         ),
         rx.cond(
@@ -567,3 +584,13 @@ def rule_page_header(title: rx.Component) -> rx.Component:
             "zIndex": "999",
         },
     )
+
+
+def page_leave_js() -> rx.Component:
+    """Render page leave java script import.
+
+    Returns:
+        rx.Component: The script component refrencing the
+        '/page-leave-warn-unsaved-changes.js'
+    """
+    return rx.script(src="/page-leave-warn-unsaved-changes.js")

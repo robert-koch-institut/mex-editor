@@ -130,7 +130,7 @@ def test_edit_page_renders_primary_sources(
     expect(primary_source).to_contain_text(had_primary_source.title[0].value)
     link = primary_source.get_by_role("link")
     expect(link).to_have_attribute(
-        "href", f"/item/{extracted_activity.hadPrimarySource}/"
+        "data-href", f"/item/{extracted_activity.hadPrimarySource}"
     )
 
 
@@ -216,8 +216,8 @@ def test_edit_page_resolves_identifier(
         extracted_organizational_unit.shortName[0].value
     )  # resolved short name of unit
     expect(link).to_have_attribute(
-        "href",
-        f"/item/{extracted_activity.contact[1]}/",  # link href
+        "data-href",
+        f"/item/{extracted_activity.contact[1]}",  # link href
     )
     expect(link).not_to_have_attribute("target", "_blank")  # internal link
 
@@ -415,8 +415,8 @@ def test_edit_page_resolves_additive_identifier(
     )
     expect(rendered_identifier).to_have_count(1)
     assert (
-        rendered_identifier.first.get_attribute("href")
-        == f"/item/{organizational_unit.stableTargetId}/"
+        rendered_identifier.first.get_attribute("data-href")
+        == f"/item/{organizational_unit.stableTargetId}"
     )
 
     # assert raw identifier value is retained
@@ -717,3 +717,64 @@ def test_edit_page_warn_tab_close(edit_page: Page) -> None:
     page.goto("https://www.rki.de")
     assert "https://www.rki.de" in page.url
     assert len(handle_dialog_called) == 1
+
+
+@pytest.mark.integration
+def test_edit_page_navigation_unsaved_changes_warning_cancel_save_and_navigate(
+    edit_page: Page,
+) -> None:
+    page = edit_page
+
+    # do some changes
+    page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
+        "new alternative title"
+    )
+
+    # try to navigate to search page (via navbar)
+    nav_bar = page.get_by_test_id("nav-bar")
+    search_nav = nav_bar.get_by_text("search")
+    search_nav.click()
+
+    # now dialog should appear
+    dialog = page.get_by_role("alertdialog", name="Unsaved changes")
+    expect(dialog).to_be_visible()
+
+    # cancel the navigation and check if url is still edit page
+    dialog.get_by_role("button", name="Cancel").click()
+    expect(page).to_have_url(re.compile("/item/.*"))
+
+    # click save changes
+    page.get_by_test_id("submit-button").click()
+    page.wait_for_selector(".editor-toast")
+
+    # navigate to search page (should work)
+    search_nav.click()
+    expect(dialog).to_be_hidden()
+    page.wait_for_url(re.compile("/"))
+
+
+@pytest.mark.integration
+def test_edit_page_navigation_unsaved_changes_warning_discard_changes_and_navigate(
+    edit_page: Page,
+) -> None:
+    page = edit_page
+
+    # do some changes
+    page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
+        "new alternative title"
+    )
+
+    # try to navigate to search page (via navbar)
+    nav_bar = page.get_by_test_id("nav-bar")
+    search_nav = nav_bar.get_by_text("search")
+    search_nav.click()
+
+    # now dialog should appear
+    dialog = page.get_by_role("alertdialog", name="Unsaved changes")
+    expect(dialog).to_be_visible()
+
+    # discard changes and expect navigation (url is search page url)
+    dialog.get_by_role("button", name="Discard changes").click()
+    expect(page).to_have_url(re.compile("/"))

@@ -24,7 +24,6 @@ class User(rx.Base):
     """Info on the currently logged-in user."""
 
     name: str
-    authorization: str
     write_access: bool
 
 

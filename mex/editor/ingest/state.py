@@ -139,10 +139,13 @@ class IngestState(State):
     async def flag_imported_organizations(self) -> None:
         """Check and flag, if any result is already imported in backend."""
         connector = BackendApiConnector.get()
-        for result in self.results_transformed:
-            response = connector.fetch_preview_items(identifier=result.identifier)
-            if response.total > 0:
-                result.show_ingest_button = False
+        for index, result in enumerate(self.results_transformed):
+            response = connector.fetch_identities(
+                identifier_in_primary_source=f"{self.results_extracted[index].identifierInPrimarySource}"
+            )
+            if len(response.items) > 0:
+                async with self:
+                    result.show_ingest_button = False
 
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:

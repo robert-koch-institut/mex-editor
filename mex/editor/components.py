@@ -105,6 +105,9 @@ def render_value(value: EditorValue) -> rx.Component:
 
 def pagination(state: type[IngestState | SearchState]) -> rx.Component:
     """Render pagination for navigating search results."""
+    flag_imported = (
+        [state.flag_imported_organizations] if issubclass(state, IngestState) else []
+    )
     return rx.center(
         rx.button(
             rx.text("Previous"),
@@ -113,6 +116,7 @@ def pagination(state: type[IngestState | SearchState]) -> rx.Component:
                 state.scroll_to_top,
                 state.refresh,
                 state.resolve_identifiers,
+                *flag_imported,
             ],
             disabled=state.disable_previous_page,
             variant="surface",
@@ -127,6 +131,7 @@ def pagination(state: type[IngestState | SearchState]) -> rx.Component:
                 state.scroll_to_top,
                 state.refresh,
                 state.resolve_identifiers,
+                *flag_imported,
             ],
             disabled=state.disable_page_selection,
             custom_attrs={"data-testid": "pagination-page-select"},
@@ -138,6 +143,7 @@ def pagination(state: type[IngestState | SearchState]) -> rx.Component:
                 state.scroll_to_top,
                 state.refresh,
                 state.resolve_identifiers,
+                *flag_imported,
             ],
             disabled=state.disable_next_page,
             variant="surface",

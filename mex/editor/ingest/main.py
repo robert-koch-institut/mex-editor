@@ -166,6 +166,7 @@ def search_input() -> rx.Component:
                 IngestState.go_to_first_page,
                 IngestState.refresh,
                 IngestState.resolve_identifiers,
+                IngestState.flag_imported_organizations,
             ],
             style={"margin": "1em 0 1em"},
             justify="center",
@@ -291,6 +292,7 @@ def index() -> rx.Component:
                 IngestState.go_to_first_page,
                 IngestState.refresh,
                 IngestState.resolve_identifiers,
+                IngestState.flag_imported_organizations,
             ],
             custom_attrs={"data-testid": "aux-tab-section"},
             style={

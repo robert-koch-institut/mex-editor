@@ -121,6 +121,11 @@ def test_search_and_ingest_roundtrip(
     page.screenshot(
         path=f"tests_ingest_test_main-roundtrip_{aux_provider}-imported.png"
     )
+    page.reload()
+    expect(ingest_button).to_be_disabled()
+    page.screenshot(
+        path=f"tests_ingest_test_main-roundtrip_{aux_provider}-imported-reload.png"
+    )
 
     # count the items afterwards
     result = connector.fetch_extracted_items(entity_type=[f"Extracted{stem_type}"])

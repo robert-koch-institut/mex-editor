@@ -55,18 +55,18 @@ def user_data() -> rx.Component:
     """Render the user data section with name and email."""
     return rx.vstack(
         rx.text(
-            f"{ConsentState.display_name}",
+            f"{ConsentState.merged_login_person.fullName}",  # type:ignore [union-attr]
             style={
                 "fontWeight": "var(--font-weight-bold)",
                 "fontSize": "var(--font-size-6)",
             },
         ),
         rx.text(
-            f"{ConsentState.user_mail}",
+            f"{ConsentState.merged_login_person.email}",  # type:ignore [union-attr]
             style={"color": "var(--gray-12)"},
         ),
         rx.text(
-            f"{ConsentState.user_orcidID}",
+            f"{ConsentState.merged_login_person.orcidId}",  # type:ignore [union-attr]
             style={"color": "var(--gray-12)"},
         ),
         style={
@@ -109,7 +109,7 @@ def consent_box() -> rx.Component:
 def consent_status() -> rx.Component:
     """Render the current consent status for the user."""
     return rx.vstack(
-        rx.text(ConsentState.display_name, weight="bold"),
+        rx.text(ConsentState.merged_login_person.fullName, weight="bold"),  # type:ignore [union-attr]
         rx.cond(
             ConsentState.consent_status,
             rx.hstack(

@@ -9,21 +9,15 @@ from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.identity import get_provider
-from mex.common.ldap.connector import LDAPConnector
 from mex.common.models import (
-    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AdditiveConsent,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
     ConsentRuleSetRequest,
 )
-from mex.common.models.person import FullNameStr, OrcidIdStr
 from mex.common.types import (
     ConsentStatus,
     ConsentType,
-    Email,
-    MergedPersonIdentifier,
     YearMonthDayTime,
 )
 from mex.editor.exceptions import escalate_error
@@ -36,10 +30,6 @@ from mex.editor.utils import resolve_editor_value
 class ConsentState(State):
     """State for the consent component."""
 
-    display_name: str | list[FullNameStr] | None = None
-    user_mail: list[Email] = []
-    user_id: MergedPersonIdentifier | None = None
-    user_orcidID: list[OrcidIdStr] = []
     user_projects: list[SearchResult] = []
     user_resources: list[SearchResult] = []
     consent_status: SearchResult | None = None
@@ -49,41 +39,14 @@ class ConsentState(State):
     is_loading: bool = True
 
     @rx.event
-    def load_user(self) -> EventSpec | Generator[EventSpec | None, None, None]:
+    def load_user(self) -> EventSpec | None:
         """Check the login and get user information."""
-        ldap_connector = LDAPConnector.get()
         if not self.user_ldap:
             self.target_path_after_login = self.router.page.raw_path
             return rx.redirect("/login-ldap")
-        self.is_loading = True
-        ldap_person = ldap_connector.get_person(sAMAccountName=self.user_ldap.name)
-        self.display_name = ldap_person.displayName
-        provider = get_provider()
-        primary_source_identities = provider.fetch(
-            had_primary_source=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-            identifier_in_primary_source="ldap",
-        )
-        try:
-            identities = provider.fetch(
-                identifier_in_primary_source=str(ldap_person.objectGUID),
-                had_primary_source=primary_source_identities[0].stableTargetId,  # type: ignore  [arg-type]
-            )
-        except HTTPError as exc:
-            self.is_loading = False
-            yield None
-            yield from escalate_error(
-                "backend", "error fetching identity", exc.response.text
-            )
-        else:
-            connector = BackendApiConnector.get()
-            if len(identities) > 0:
-                person = connector.get_merged_item(identities[0].stableTargetId)
-                self.display_name = person.fullName  # type: ignore [union-attr]
-                self.user_id = person.identifier  # type: ignore [assignment]
-                self.user_mail = person.email  # type: ignore [union-attr]
-                self.user_orcidID = person.orcidId  # type: ignore [union-attr]
-                self.get_consent()
-            self.is_loading = False
+        if self.merged_login_person:
+            self.get_consent()
+        self.is_loading = False
         return None
 
     @rx.var(cache=False)
@@ -178,7 +141,7 @@ class ConsentState(State):
             response = connector.fetch_preview_items(
                 query_string=None,
                 entity_type=["MergedConsent"],
-                referenced_identifier=[str(self.user_id)],
+                referenced_identifier=[str(self.merged_login_person.identifier)],  # type:ignore [union-attr]
                 reference_field="hasDataSubject",
             )
         except HTTPError as exc:

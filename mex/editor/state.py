@@ -6,7 +6,7 @@ import reflex as rx
 from reflex.event import EventSpec
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
+from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID, MergedPerson
 from mex.editor.models import NavItem, User
 
 
@@ -15,6 +15,7 @@ class State(rx.State):
 
     user_mex: User | None = None
     user_ldap: User | None = None
+    merged_login_person: MergedPerson | None = None
     target_path_after_login: str | None = None
     nav_items: list[NavItem] = [
         NavItem(

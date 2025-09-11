@@ -110,7 +110,7 @@ class SearchState(State):
 
     @rx.event
     def remove_reference_field_filter_identifier(self, index: int) -> None:
-        """Remove the reference valueto filter for at a specific index.
+        """Remove the reference value to filter for at a specific index.
 
         Args:
             index (int): Index of the identifier to remove.
@@ -123,7 +123,7 @@ class SearchState(State):
         self.reference_field_filter.identifiers.append(
             ReferenceFieldIdentifierFilter(value="", validation_msg=None)
         )
-        self.set_reference_field_filter_identifier(
+        SearchState.set_reference_field_filter_identifier(  # type: ignore[misc]
             len(self.reference_field_filter.identifiers) - 1, ""
         )
 
@@ -295,11 +295,11 @@ class SearchState(State):
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results."""
+        # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         connector = BackendApiConnector.get()
         entity_type = [
             ensure_prefix(k, "Merged") for k, v in self.entity_types.items() if v
         ]
-
         filter_strategy_params = (
             _build_dynamic_refresh_params(self.reference_field_filter)
             if self.reference_filter_strategy == "dynamic"
@@ -334,6 +334,7 @@ class SearchState(State):
     @rx.event
     def get_available_primary_sources(self) -> Generator[EventSpec, None, None]:
         """Get all available primary sources."""
+        # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         connector = BackendApiConnector.get()
         try:
             primary_sources_response = connector.fetch_preview_items(

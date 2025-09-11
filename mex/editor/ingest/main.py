@@ -226,7 +226,7 @@ def search_infobox() -> rx.Component | rx.Var[Any]:
         (
             AuxProvider.LDAP,
             rx.callout(
-                "Search users by their fullname. "
+                "Search users by display name and contact points by email. "
                 'Please use "*" as placeholder e.g. "Muster*".',
             ),
         ),
@@ -287,6 +287,7 @@ def index() -> rx.Component:
             default_value=f"{IngestState.current_aux_provider}",
             on_change=[
                 IngestState.set_current_aux_provider,
+                IngestState.reset_query_string,
                 IngestState.go_to_first_page,
                 IngestState.refresh,
                 IngestState.resolve_identifiers,

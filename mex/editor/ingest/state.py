@@ -1,5 +1,7 @@
 import math
 from collections.abc import Generator
+from inspect import unwrap
+from typing import Any
 
 import reflex as rx
 from reflex.event import EventSpec
@@ -9,11 +11,7 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import AnyExtractedModel, PaginatedItemsContainer
 from mex.editor.constants import DEFAULT_FETCH_LIMIT
 from mex.editor.exceptions import escalate_error
-from mex.editor.ingest.models import (
-    ALL_AUX_PROVIDERS,
-    AuxProvider,
-    IngestResult,
-)
+from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider, IngestResult
 from mex.editor.ingest.transform import transform_models_to_results
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
@@ -75,9 +73,14 @@ class IngestState(State):
         self.current_page = int(page_number)
 
     @rx.event
-    def handle_submit(self, form_data: dict) -> None:
+    def handle_submit(self, form_data: dict[str, Any]) -> None:
         """Handle the form submit."""
         self.query_string = form_data["query_string"]
+
+    @rx.event
+    def reset_query_string(self) -> None:
+        """Reset the query string."""
+        self.query_string = ""
 
     @rx.event
     def go_to_first_page(self) -> None:
@@ -98,7 +101,7 @@ class IngestState(State):
     def ingest_result(self, index: int) -> Generator[EventSpec, None, None]:
         """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
-        model = self.results_extracted[index]
+        model = unwrap(self.results_extracted[index])  # type: ignore[arg-type]
         try:
             # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
             connector.ingest([model])

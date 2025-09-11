@@ -17,7 +17,7 @@ class ConsentState(State):
         """Set the stem type to a default."""
         connector = LDAPConnector.get()
         if self.user_ldap:
-            person = connector.get_person(sAMAccountName=self.user_ldap.name)
+            person = connector.get_person(sam_account_name=self.user_ldap.name)
             self.display_name = person.displayName
         else:
             self.target_path_after_login = self.router.page.raw_path

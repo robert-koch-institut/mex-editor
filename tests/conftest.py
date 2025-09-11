@@ -1,3 +1,4 @@
+import os
 from typing import Any
 
 import pytest
@@ -44,13 +45,25 @@ def client() -> TestClient:
 
 
 @pytest.fixture(scope="session")
-def browser_context_args(browser_context_args: dict[str, Any]) -> dict[str, Any]:
+def browser_context_args(
+    browser_context_args: dict[str, Any],
+) -> dict[str, Any]:
     return {
         **browser_context_args,
         "viewport": {
-            "width": 1280,
-            "height": 800,
+            "width": 1920,
+            "height": 1080,
         },
+    }
+
+
+@pytest.fixture(scope="session")
+def browser_type_launch_args(
+    browser_type_launch_args: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        **browser_type_launch_args,
+        "headless": os.getenv("CI") is not None,
     }
 
 

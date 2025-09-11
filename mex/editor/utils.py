@@ -11,8 +11,8 @@ from mex.editor.transform import transform_models_to_title
 @alru_cache(maxsize=5000)
 async def resolve_identifier(identifier: str) -> str:
     """Resolve identifiers to human readable display values."""
-    connector = BackendApiConnector.get()
     # TODO(ND): use proper connector method when available (stop-gap MX-1984)
+    connector = BackendApiConnector.get()
     response = connector.fetch_preview_items(identifier=identifier, limit=1)
     if len(response.items) != 1:
         msg = f"No item found for identifier '{identifier}'"

@@ -17,6 +17,7 @@ from mex.common.models import (
 )
 from mex.common.transform import ensure_postfix
 from mex.editor.exceptions import escalate_error
+from mex.editor.locale_service import LocaleService
 from mex.editor.models import EditorValue
 from mex.editor.rules.models import EditorField, EditorPrimarySource, ValidationMessage
 from mex.editor.rules.transform import (
@@ -27,6 +28,14 @@ from mex.editor.rules.transform import (
 from mex.editor.state import State
 from mex.editor.transform import transform_models_to_stem_type
 from mex.editor.utils import resolve_editor_value, resolve_identifier
+
+locale_service = LocaleService.get()
+
+
+# class FieldTranslation(rx.Base):
+#     field: EditorField
+#     label: str
+#     description: str
 
 
 class RuleState(State):
@@ -110,12 +119,29 @@ class RuleState(State):
             return
         if rule_set:
             self.stem_type = transform_models_to_stem_type([rule_set.additive])
+
         self.fields = transform_models_to_fields(
             extracted_items,
             additive=rule_set.additive,
             subtractive=rule_set.subtractive,
             preventive=rule_set.preventive,
         )
+
+    # @rx.var
+    # def translated_fields(self) -> list[tuple]:
+    #     print("?!?!!?!? translated_fields", "" + AppState.current_locale)
+    #     return [
+    #         (
+    #             field,
+    #             locale_service.get_field_label(
+    #                 AppState.current_locale, field.stem_type, field.name
+    #             ),
+    #             # description=locale_service.get_field_description(
+    #             #     self.current_locale, field.stem_type, field.name
+    #             # ),
+    #         )
+    #         for field in self.fields
+    #     ]
 
     def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:
         """Send the rule set to the backend."""

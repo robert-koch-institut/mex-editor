@@ -1,19 +1,30 @@
 import gettext
 import re
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Self, cast
+from typing import Self, TypedDict, cast
 
 from mex.common.context import SingleSingletonStore
 
 # TODO(FE): Change to mex-model when fork is approved
 here = Path(__file__).resolve().parent
 
-LOCALE_FOLDER_PATH = here / "../../locales"
-LOCALE_DE = "de-DE"
-LOCALE_EN = "en-US"
-LOCALES_AVAILABLE = [LOCALE_DE, LOCALE_EN]
-LOCALES_LABEL_MAPPING = {LOCALE_DE: "deutsch", LOCALE_EN: "english"}
 
+# class MexLocale(StrEnum):
+#     """Allowed locales for MeX."""
+
+#     DE = "de-DE"
+#     EN = "en-US"
+
+
+class MexLocale(TypedDict):
+    filepath: str
+    id: str
+    label: str
+
+
+LOCALE_FOLDER_PATH = here / "../../locales"
+LOCALES_LABEL_MAPPING = {"de-DE": "deutsch", "en-US": "english"}
 LOCALE_SERVICE_STORE = SingleSingletonStore["LocaleService"]()
 
 
@@ -29,7 +40,7 @@ def camelcase_to_title(value: str) -> str:
     return re.sub(r"(?<!^)(?=[A-Z])", " ", value).title()
 
 
-def get_locale_label(locale: str) -> str:
+def get_locale_label(locale_id: str) -> str:
     """Convert the locale into a label.
 
     Args:
@@ -38,7 +49,8 @@ def get_locale_label(locale: str) -> str:
     Returns:
         str: The label for the given locale.
     """
-    return LOCALES_LABEL_MAPPING[locale]
+    print("LABEL FOR ", locale_id)
+    return LOCALES_LABEL_MAPPING[locale_id]
 
 
 # IDEA: Propably cleaner to split this into LocalService(str -> translation + ensure
@@ -46,9 +58,6 @@ def get_locale_label(locale: str) -> str:
 # FieldHelper(label and description for fields)
 class LocaleService:
     """A service singleton to control the current locale used by the app."""
-
-    _current_locale: str = ""
-    _translation: gettext.GNUTranslations
 
     @classmethod
     def get(cls) -> Self:
@@ -59,37 +68,43 @@ class LocaleService:
         """
         return cast("Self", LOCALE_SERVICE_STORE.load(cls))
 
-    def __init__(self, locale: str = LOCALES_AVAILABLE[0]) -> None:
+    @classmethod
+    def __init__(self) -> None:
         """Init with locale to use. Use first available locale if not specified.
 
         Args:
             locale (str, optional): The locale to use for the app.
             Defaults to LOCALES_AVAILABLE[0].
         """
-        self.set_locale(locale=locale)
+        files = list(LOCALE_FOLDER_PATH.glob("*.mo"))
+        print("FOUND FILES", files)
+        self._available_locales = {
+            mo_file.stem: MexLocale(
+                id=mo_file.stem,
+                filepath=str(mo_file),
+                label=LOCALES_LABEL_MAPPING[mo_file.stem],
+            )
+            for mo_file in files
+        }
 
-    def set_locale(self, locale: str) -> None:
-        """Set the locale to use within the app.
+    _available_locales: dict[str, MexLocale] = {}
+    _translations: dict[str, gettext.GNUTranslations] = {}
 
-        Args:
-            locale: The locale to use within the app.
-        """
-        if self._current_locale != locale:
-            self._current_locale = locale
+    def get_available_locales(self) -> Sequence[MexLocale]:
+        return list(self._available_locales.values())
 
-            mo_path = LOCALE_FOLDER_PATH / f"{locale}.mo"
-            with Path.open(mo_path, "rb") as mo_file:
-                self._translation = gettext.GNUTranslations(mo_file)
+    def _ensure_translation(self, locale_id: str):
+        print("LocaleService::_ensure_translation", locale_id)
+        if locale_id not in self._translations:
+            with Path(self._available_locales[locale_id]["filepath"]).open(
+                "rb"
+            ) as mo_file:
+                self._translations[locale_id] = gettext.GNUTranslations(mo_file)
+        return self._translations[locale_id]
 
-    def get_locale(self) -> str:
-        """Get the current locale of the app.
-
-        Returns:
-            str: The current locale of the app.
-        """
-        return self._current_locale
-
-    def get_field_label(self, stem_type: str, field_name: str, n: int = 1) -> str:
+    def get_field_label(
+        self, locale_id: str, stem_type: str, field_name: str, n: int = 1
+    ) -> str:
         """Get the human readable form the given field.
 
         Args:
@@ -101,56 +116,51 @@ class LocaleService:
         Returns:
             str: The human readable name of the field.
         """
-        translation = self._translation
+        print("LocaleService::get_field_label", locale_id, stem_type, field_name, n)
+        translation = self._ensure_translation(locale_id)
         msg_id1 = f"{field_name}.singular"
         msg_id2 = f"{field_name}.plural"
 
-        # each finder consists of a func to find a translation and a func that verifies
-        # if the found translation is a real translation or just a key (which gets
-        # returned if nothing is found)
-        trans_finders = [
-            # find plural or singular field for stem_type (most specific)
-            (
-                lambda: translation.npgettext(stem_type, msg_id1, msg_id2, n),
-                lambda x: x not in (msg_id1, msg_id2),
-            ),
-            # find field for stem_type
-            (
-                lambda: translation.pgettext(stem_type, field_name),
-                lambda x: x != field_name,
-            ),
-            # find plural or singular field WITHOUT stem_type
-            (
-                lambda: translation.ngettext(msg_id1, msg_id2, n),
-                lambda x: x not in (msg_id1, msg_id2),
-            ),
-            # find singular field for stem_type
-            (
-                lambda: translation.pgettext(stem_type, msg_id1),
-                lambda x: x != msg_id1,
-            ),
-            # find singular field WITHOUT stem_type
-            (
-                lambda: translation.gettext(msg_id1),
-                lambda x: x != msg_id1,
-            ),
-            # find field WITHOUT stem_type
-            (
-                lambda: translation.gettext(field_name),
-                lambda x: x != field_name,
-            ),
-        ]
+        # find plural or singular field for stem_type (most specific)
+        if (
+            translated_fieldname := translation.npgettext(
+                stem_type, msg_id1, msg_id2, n
+            )
+        ) not in (msg_id1, msg_id2):
+            return translated_fieldname
 
-        trans: str = ""
-        found_trans = False
-        for finder in trans_finders:
-            trans = finder[0]()
-            if found_trans := finder[1](trans):
-                break
+        # find plural or singular field WITHOUT stem_type
+        if (translated_fieldname := translation.ngettext(msg_id1, msg_id2, n)) not in (
+            msg_id1,
+            msg_id2,
+        ):
+            return translated_fieldname
 
-        return trans if found_trans else camelcase_to_title(field_name)
+        # find field for stem_type
+        if (
+            translated_fieldname := translation.pgettext(stem_type, field_name)
+        ) != field_name:
+            return translated_fieldname
 
-    def get_field_description(self, stem_type: str, field_name: str) -> str:
+        # find singular field for stem_type
+        if (
+            translated_fieldname := translation.pgettext(stem_type, msg_id1)
+        ) != msg_id1:
+            return translated_fieldname
+
+        # find singular field WITHOUT stem_type
+        if (translated_fieldname := translation.gettext(msg_id1)) != msg_id1:
+            return translated_fieldname
+
+        # find field WITHOUT stem_type
+        if (translated_fieldname := translation.gettext(field_name)) != field_name:
+            return translated_fieldname
+
+        return camelcase_to_title(field_name)
+
+    def get_field_description(
+        self, locale_id: str, stem_type: str, field_name: str
+    ) -> str:
         """Get the description for a field.
 
         Args:
@@ -160,29 +170,17 @@ class LocaleService:
         Returns:
             str: The description of the field.
         """
-        if not self._translation:
-            return ""
+        print("LocaleService::get_field_description", locale_id, stem_type, field_name)
+        translation = self._ensure_translation(locale_id)
+        msg_id_description = f"{field_name}.description"
+        if (
+            description := translation.pgettext(stem_type, msg_id_description)
+        ) != msg_id_description:
+            return description
 
-        translation = self._translation
-        desc_key = f"{field_name}.description"
-        trans_finders = [
-            # find description by field_name and stem_type
-            (
-                lambda: translation.pgettext(stem_type, desc_key),
-                lambda x: x != desc_key,
-            ),
-            # find description by field_name
-            (
-                lambda: translation.gettext(desc_key),
-                lambda x: x != desc_key,
-            ),
-        ]
+        if (
+            description := translation.gettext(msg_id_description)
+        ) != msg_id_description:
+            return description
 
-        trans: str = ""
-        found_trans = False
-        for finder in trans_finders:
-            trans = finder[0]()
-            if found_trans := finder[1](trans):
-                break
-
-        return trans if found_trans else ""
+        return ""

@@ -2,6 +2,7 @@ from typing import cast
 
 import reflex as rx
 
+from mex.editor.app_state import AppState
 from mex.editor.components import icon_by_stem_type, render_span, render_value
 from mex.editor.locale_service import LocaleService
 from mex.editor.rules.models import (
@@ -13,7 +14,7 @@ from mex.editor.rules.models import (
 )
 from mex.editor.rules.state import RuleState
 
-locale = LocaleService.get()
+locale_service = LocaleService.get()
 
 
 def editor_value_switch(
@@ -461,20 +462,31 @@ def editor_primary_source(
     )
 
 
+# def i18n_component(component_fn, message_id: str, **props):
+#     def render():
+#         return component_fn(local_service.(message_id), **props)
+
+#     return rx.cond(State.current_language, render)
+
+
 def field_name(
     field: EditorField,
 ) -> rx.Component:
     """Return a card with a field name."""
+    # print("RENDERING", str(State.current_locale))
+    # locale_service.get_field_label()
+    # field = field_translation.field
     return rx.card(
         rx.hstack(
-            rx.text(field.label),
+            rx.foreach([AppState.current_locale, field.stem_type, field.name], rx.text),
+            # rx.text(field_translation.label),
             rx.cond(
                 field.is_required,
                 rx.text("*", style={"color": "red"}),
             ),
             spacing="1",
         ),
-        title=field.description,
+        title="FIELD.DESCRIPTION",
         style={"width": "25%"},
         custom_attrs={"data-testid": f"field-{field.name}-name"},
     )
@@ -484,6 +496,7 @@ def editor_field(
     field: EditorField,
 ) -> rx.Component:
     """Return a horizontal grid of cards for editing one field."""
+    # field = field_translation.field
     return rx.hstack(
         field_name(field),
         rx.vstack(

@@ -43,7 +43,7 @@ from mex.common.types import (
     Year,
     YearMonthDayTime,
 )
-from mex.editor.locale_service import LOCALE_DE, LocaleService
+from mex.editor.locale_service import MexLocale
 from mex.editor.models import LANGUAGE_VALUE_NONE, EditorValue
 from mex.editor.rules.models import (
     EditorField,
@@ -66,6 +66,7 @@ from mex.editor.rules.transform import (
     transform_models_to_fields,
     transform_validation_error_to_messages,
 )
+from mex.editor.state import LocaleService
 
 
 @pytest.mark.parametrize(
@@ -477,8 +478,7 @@ def test_transform_model_to_editor_primary_sources(
 
 
 def test_transform_models_to_fields() -> None:
-    locale = LocaleService.get()
-    locale.set_locale(LOCALE_DE)
+    LocaleService.get().set_locale(MexLocale.DE)
     editor_fields = transform_models_to_fields(
         [
             ExtractedPerson(

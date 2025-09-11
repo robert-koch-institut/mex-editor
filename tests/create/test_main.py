@@ -5,6 +5,7 @@ from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
+from mex.editor.locale_service import MexLocale
 
 
 @pytest.fixture
@@ -101,17 +102,13 @@ def test_create_page_submit_item(create_page: Page) -> None:
         "expected_accessplatform_field_label",
     ),
     [
-        (
-            "de-DE",
-            "Zugriffsplattform",
-        ),
-        ("en-US", "Access platform"),
+        pytest.param(MexLocale.DE, "Zugriffsplattform", id="locale de-De"),
+        pytest.param(MexLocale.EN, "Access platform", id="locale en-US"),
     ],
-    ids=["locale de-De", "locale en-US"],
 )
 @pytest.mark.integration
 def test_language_switcher(
-    create_page: Page, locale: str, expected_accessplatform_field_label: str
+    create_page: Page, locale: MexLocale, expected_accessplatform_field_label: str
 ) -> None:
     # language switcher should be there
     lang_switcher = create_page.get_by_test_id("language-switcher")
@@ -119,7 +116,7 @@ def test_language_switcher(
 
     # change language and wait for reload
     lang_switcher.click()
-    create_page.get_by_test_id(f"language-switcher-menu-item-{locale}").click()
+    create_page.get_by_test_id(f"language-switcher-menu-item-{locale.value}").click()
 
     # select entitytype resource
     create_page.get_by_test_id("entity-type-select").click(timeout=20000)

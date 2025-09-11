@@ -7,14 +7,12 @@ from reflex.event import EventSpec
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
-from mex.editor.locale_service import LocaleService
 from mex.editor.models import NavItem, User
 
 
 class State(rx.State):
     """The base state for the app."""
 
-    current_locale: str = LocaleService.get().get_locale()
     user_mex: User | None = None
     user_ldap: User | None = None
     target_path_after_login: str | None = None
@@ -87,17 +85,6 @@ class State(rx.State):
         if query_str := urlencode(query_tuples):
             raw_path = f"{raw_path}?{query_str}"
         nav_item.raw_path = raw_path
-
-    @rx.event
-    def change_locale(self, locale: str) -> EventSpec:
-        """Change the current locale to the given one and reload the page.
-
-        Args:
-            locale: The locale to change to.
-        """
-        LocaleService.get().set_locale(locale)
-        self.current_locale = locale
-        return rx.call_script("window.location.reload()")
 
     @rx.event
     def push_url_params(

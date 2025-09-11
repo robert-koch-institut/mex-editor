@@ -2,11 +2,15 @@ from typing import TYPE_CHECKING, cast
 
 import reflex as rx
 
-from mex.editor.locale_service import LOCALES_AVAILABLE, get_locale_label
+# from mex.editor.locale_service import , MexLocale, get_locale_label
+from mex.editor.app_state import AppState
+from mex.editor.locale_service import LocaleService
 from mex.editor.state import NavItem, State
 
 if TYPE_CHECKING:
     from mex.editor.models import User
+
+locale_service = LocaleService.get()
 
 
 def user_button() -> rx.Component:
@@ -78,35 +82,32 @@ def app_logo() -> rx.Component:
     )
 
 
-def locale_image(locale: str) -> rx.Component:
-    """Render a flag as image for the given locale.
+# def locale_image(locale: str) -> rx.Component:
+#     """Render a flag as image for the given locale.
 
-    Args:
-        locale: The locale to render a flag image for.
-    """
-    return rx.image(src=f"/locales/{locale}.png", style={"height": "24px"})
+#     Args:
+#         locale: The locale to render a flag image for.
+#     """
+#     return rx.image(src=f"/locales/{locale}.png", style={"height": "24px"})
 
 
 def language_switcher() -> rx.Component:
     """Render a language switcher."""
     return rx.menu.root(
         rx.menu.trigger(
-            locale_image(State.current_locale),
+            rx.text(AppState.current_locale),
             custom_attrs={"data-testid": "language-switcher"},
         ),
         rx.menu.content(
             *[
                 rx.menu.item(
-                    rx.hstack(
-                        locale_image(locale),
-                        rx.text(get_locale_label(locale)),
-                    ),
-                    on_click=State.change_locale(locale),
+                    rx.text(locale["label"]),
+                    on_click=AppState.change_locale(locale["id"]),
                     custom_attrs={
-                        "data-testid": f"language-switcher-menu-item-{locale}"
+                        "data-testid": f"language-switcher-menu-item-{locale['id']}"
                     },
                 )
-                for locale in LOCALES_AVAILABLE
+                for locale in locale_service.get_available_locales()
             ]
         ),
     )

@@ -1,5 +1,4 @@
 from importlib.resources import files
-from typing import Literal
 
 import reflex as rx
 import yaml
@@ -34,7 +33,7 @@ class NavItem(rx.Base):
     title: str = ""
     path: str = "/"
     raw_path: str = "/"
-    underline: Literal["always", "none"] = "none"
+    underline: str = "none"
 
 
 class ModelConfig(BaseModel):

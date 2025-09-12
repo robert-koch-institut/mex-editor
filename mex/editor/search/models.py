@@ -21,7 +21,7 @@ class SearchPrimarySource(rx.Base):
 
 
 class ReferenceFieldIdentifierFilter(rx.Base):
-    """Reference field identifer for value and validation msg."""
+    """Reference field identifier for value and validation msg."""
 
     value: str
     validation_msg: str | None

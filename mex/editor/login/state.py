@@ -1,4 +1,5 @@
 from base64 import b64encode
+from collections.abc import Generator
 
 import reflex as rx
 from reflex.event import EventSpec
@@ -28,7 +29,7 @@ class LoginLdapState(State):
         self.password = password
 
     @rx.event
-    def login(self) -> EventSpec:
+    def login(self) -> Generator[EventSpec, None, None]:
         """Login a user."""
         write_access = has_write_access_ldap(self.username, self.password)
         if write_access:
@@ -43,8 +44,9 @@ class LoginLdapState(State):
             else:
                 target_path_after_login = "/"
             self.reset()  # reset username/password
-            return rx.redirect(target_path_after_login)
-        return rx.window_alert("Invalid credentials.")
+            yield rx.redirect(target_path_after_login)
+        else:
+            yield rx.window_alert("Invalid credentials.")
 
 
 class LoginMExState(State):
@@ -64,7 +66,7 @@ class LoginMExState(State):
         self.password = password
 
     @rx.event
-    def login(self) -> EventSpec:
+    def login(self) -> Generator[EventSpec, None, None]:
         """Login a user."""
         read_access = has_read_access_mex(self.username, self.password)
         write_access = has_write_access_mex(self.username, self.password)
@@ -80,5 +82,6 @@ class LoginMExState(State):
             else:
                 target_path_after_login = "/"
             self.reset()  # reset username/password
-            return rx.redirect(target_path_after_login)
-        return rx.window_alert("Invalid credentials.")
+            yield rx.redirect(target_path_after_login)
+        else:
+            yield rx.window_alert("Invalid credentials.")

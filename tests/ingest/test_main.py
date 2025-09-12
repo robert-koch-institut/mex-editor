@@ -131,7 +131,7 @@ def test_search_and_ingest_roundtrip(
 def test_infobox_visibility_and_content(ingest_page: Page) -> None:
     expected_callout_content: dict[AuxProvider, str] = {
         AuxProvider.LDAP: (
-            "Search users by their fullname. "
+            "Search users by display name and contact points by email. "
             'Please use "*" as placeholder e.g. "Muster*".'
         ),
         AuxProvider.WIKIDATA: (

@@ -2,10 +2,13 @@ from typing import TYPE_CHECKING, cast
 
 import reflex as rx
 
+from mex.editor.locale_service import LocaleService
 from mex.editor.state import NavItem, State
 
 if TYPE_CHECKING:
     from mex.editor.models import User
+
+locale_service = LocaleService.get()
 
 
 def user_button() -> rx.Component:
@@ -78,6 +81,28 @@ def app_logo() -> rx.Component:
     )
 
 
+def language_switcher() -> rx.Component:
+    """Render a language switcher."""
+    return rx.menu.root(
+        rx.menu.trigger(
+            rx.text(State.current_locale),
+            custom_attrs={"data-testid": "language-switcher"},
+        ),
+        rx.menu.content(
+            *[
+                rx.menu.item(
+                    rx.text(locale["label"]),
+                    on_click=State.change_locale(locale["id"]),
+                    custom_attrs={
+                        "data-testid": f"language-switcher-menu-item-{locale['id']}"
+                    },
+                )
+                for locale in locale_service.get_available_locales()
+            ]
+        ),
+    )
+
+
 def nav_bar() -> rx.Component:
     """Return a navigation bar component."""
     return rx.vstack(
@@ -100,6 +125,7 @@ def nav_bar() -> rx.Component:
                 rx.divider(orientation="vertical", size="2"),
                 user_menu(),
                 rx.spacer(),
+                language_switcher(),
                 rx.color_mode.button(),
                 justify="between",
                 align_items="center",

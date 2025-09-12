@@ -57,6 +57,7 @@ class State(rx.State):
         """
         self.current_locale = locale
 
+    @rx.event
     def set_current_page_has_changes(self, value: bool) -> EventSpec:  # noqa: FBT001
         """Set the current_page_has_changes attribute to the given value.
 

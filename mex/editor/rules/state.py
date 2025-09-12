@@ -50,7 +50,6 @@ class RuleState(State):
     item_title: list[EditorValue] = []
     fields: list[EditorField] = []
     stem_type: str | None = None
-    fields: list[EditorField] = []
     validation_messages: list[ValidationMessage] = []
 
     @rx.var

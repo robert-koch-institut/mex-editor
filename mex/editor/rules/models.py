@@ -40,7 +40,6 @@ class EditorField(rx.Base):
     """Model for describing the editor state for a single field."""
 
     name: str
-    stem_type: str
     primary_sources: list[EditorPrimarySource]
     is_required: bool
 

@@ -242,7 +242,6 @@ def transform_models_to_fields(
     fields_by_name = {
         field_name: EditorField(
             name=field_name,
-            stem_type=stem_type,
             primary_sources=[],
             is_required=field_name in required_fields,
         )

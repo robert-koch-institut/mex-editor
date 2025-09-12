@@ -1,4 +1,5 @@
 from collections.abc import Generator, Sequence
+from typing import cast
 
 import reflex as rx
 from pydantic import ValidationError
@@ -54,19 +55,21 @@ class RuleState(State):
             Sequence[FieldTranslation]: Translated fields containing label and
             description translation.
         """
-        fields = self.get_value("fields")
-        return [
-            FieldTranslation(
-                field=field,
-                label=locale_service.get_field_label(
-                    self.current_locale, field.stem_type, field.name
-                ),
-                description=locale_service.get_field_description(
-                    self.current_locale, field.stem_type, field.name
-                ),
-            )
-            for field in fields
-        ]
+        if self.stem_type:
+            fields = cast("list[EditorField]", self.get_value("fields"))
+            return [
+                FieldTranslation(
+                    field=field,
+                    label=locale_service.get_field_label(
+                        self.current_locale, self.stem_type, field.name
+                    ),
+                    description=locale_service.get_field_description(
+                        self.current_locale, self.stem_type, field.name
+                    ),
+                )
+                for field in fields
+            ]
+        return []
 
     @rx.event(background=True)
     async def resolve_identifiers(self) -> None:

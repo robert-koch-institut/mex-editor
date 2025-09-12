@@ -238,15 +238,11 @@ def transform_models_to_fields(
             for f in MERGEABLE_FIELDS_BY_CLASS_NAME[e.entityType]
         }
     )
-    # locale = LocaleService.get()
-    # print("Generating fields using", locale.get_locale())
     required_fields = get_required_mergeable_field_names(additive)
     fields_by_name = {
         field_name: EditorField(
             name=field_name,
             stem_type=stem_type,
-            # label=locale.get_field_label(str(stem_type), field_name),
-            # description=locale.get_field_description(str(stem_type), field_name),
             primary_sources=[],
             is_required=field_name in required_fields,
         )

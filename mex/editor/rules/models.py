@@ -41,7 +41,13 @@ class EditorField(rx.Base):
 
     name: str
     stem_type: str
-    # label: str
-    # description: str
     primary_sources: list[EditorPrimarySource]
     is_required: bool
+
+
+class FieldTranslation(rx.Base):
+    """Wraps an editor field to add translated label and description."""
+
+    field: EditorField
+    label: str
+    description: str

@@ -9,16 +9,16 @@ from mex.editor.rules.main import (
     rule_page_header,
     validation_errors,
 )
-from mex.editor.rules.models import EditorField
-from mex.editor.rules.state import RuleState
+from mex.editor.rules.state import FieldTranslation, RuleState
 
 
 def editor_field(
-    field: EditorField,
+    field_translation: FieldTranslation,
 ) -> rx.Component:
     """Return a horizontal grid of cards for editing one field."""
+    field = field_translation.field
     return rx.hstack(
-        field_name(field),
+        field_name(field_translation),
         rx.vstack(
             rx.foreach(
                 field.primary_sources,
@@ -69,7 +69,7 @@ def index() -> rx.Component:
                 create_title(),
             ),
             rx.foreach(
-                RuleState.fields,
+                RuleState.translated_fields,
                 editor_field,
             ),
             validation_errors(),

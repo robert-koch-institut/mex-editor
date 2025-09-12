@@ -43,7 +43,6 @@ from mex.common.types import (
     Year,
     YearMonthDayTime,
 )
-from mex.editor.locale_service import MexLocale
 from mex.editor.models import LANGUAGE_VALUE_NONE, EditorValue
 from mex.editor.rules.models import (
     EditorField,
@@ -66,7 +65,6 @@ from mex.editor.rules.transform import (
     transform_models_to_fields,
     transform_validation_error_to_messages,
 )
-from mex.editor.state import LocaleService
 
 
 @pytest.mark.parametrize(
@@ -455,15 +453,13 @@ def test_transform_model_to_editor_primary_sources(
 ) -> None:
     given_name = EditorField(
         name="givenName",
-        label="",
-        description="",
+        stem_type="Person",
         primary_sources=[],
         is_required=False,
     )
     family_name = EditorField(
         name="familyName",
-        label="",
-        description="",
+        stem_type="Person",
         primary_sources=[],
         is_required=False,
     )
@@ -478,7 +474,6 @@ def test_transform_model_to_editor_primary_sources(
 
 
 def test_transform_models_to_fields() -> None:
-    LocaleService.get().set_locale(MexLocale.DE)
     editor_fields = transform_models_to_fields(
         [
             ExtractedPerson(
@@ -496,8 +491,7 @@ def test_transform_models_to_fields() -> None:
     fields_by_name = {f.name: f for f in editor_fields}
     assert fields_by_name["givenName"].dict() == {
         "is_required": False,
-        "label": "Vorname",
-        "description": "",
+        "stem_type": "Person",
         "name": "givenName",
         "primary_sources": [
             {
@@ -565,8 +559,7 @@ def test_transform_models_to_fields() -> None:
     assert fields_by_name["memberOf"].dict() == {
         "is_required": False,
         "name": "memberOf",
-        "label": "Fachgebiet",
-        "description": "Fachgebiet, dem die Person zugehörig ist",
+        "stem_type": "Person",
         "primary_sources": [
             {
                 "name": {
@@ -628,8 +621,7 @@ def test_transform_models_to_fields() -> None:
         (
             EditorField(
                 name="unknownField",
-                label="Unknown field",
-                description="No one knows me",
+                stem_type="UnknownType",
                 is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
@@ -646,8 +638,7 @@ def test_transform_models_to_fields() -> None:
         (
             EditorField(
                 name="familyName",
-                label="Family name",
-                description="Name of the family",
+                stem_type="Person",
                 is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
@@ -679,8 +670,7 @@ def test_transform_fields_to_additive(
         (
             EditorField(
                 name="unknownField",
-                label="Unknown field",
-                description="No one knows me",
+                stem_type="UnknownType",
                 is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
@@ -699,8 +689,7 @@ def test_transform_fields_to_additive(
         (
             EditorField(
                 name="familyName",
-                label="Family name",
-                description="Name of the family",
+                stem_type="Person",
                 is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
@@ -843,8 +832,7 @@ def test_transform_editor_value_to_model_value(
         (
             EditorField(
                 name="unknownField",
-                label="Unknown field",
-                description="No one knows me",
+                stem_type="UnknownType",
                 is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
@@ -861,8 +849,7 @@ def test_transform_editor_value_to_model_value(
         (
             EditorField(
                 name="familyName",
-                label="Family name",
-                description="Name of the family",
+                stem_type="Person",
                 is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
@@ -904,8 +891,7 @@ def test_transform_fields_to_rule_set() -> None:
         [
             EditorField(
                 name="givenName",
-                label="Vorname",
-                description="",
+                stem_type="Person",
                 is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
@@ -926,8 +912,7 @@ def test_transform_fields_to_rule_set() -> None:
             ),
             EditorField(
                 name="familyName",
-                label="Nachname",
-                description="",
+                stem_type="Person",
                 is_required=False,
                 primary_sources=[
                     EditorPrimarySource(
@@ -1041,8 +1026,7 @@ def test_transform_fields_to_title() -> None:
         EditorField(
             is_required=True,
             name="email",
-            label="Email",
-            description="Email Beschreibung",
+            stem_type="ContactPoint",
             primary_sources=[
                 EditorPrimarySource(
                     name=EditorValue(text="Primary Source"),

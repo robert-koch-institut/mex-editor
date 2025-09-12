@@ -1,6 +1,6 @@
 import pytest
 
-from mex.editor.locale_service import LocaleService, MexLocale, camelcase_to_title
+from mex.editor.locale_service import LocaleService, camelcase_to_title
 
 
 @pytest.mark.parametrize(
@@ -21,10 +21,10 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
 
 
 @pytest.mark.parametrize(
-    ("locale", "stem_type", "field_name", "pluralize", "expected_label"),
+    ("locale_id", "stem_type", "field_name", "pluralize", "expected_label"),
     [
         pytest.param(
-            MexLocale.DE,
+            "de",
             "Resource",
             "conformsTo",
             False,
@@ -32,7 +32,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:Resource.conformsTo(singular)",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "Resource",
             "conformsTo",
             True,
@@ -40,7 +40,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:Resource.conformsTo(plural)",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "Resource",
             "conformsTo",
             False,
@@ -48,7 +48,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:Resource.conformsTo(singular)",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "Resource",
             "conformsTo",
             True,
@@ -56,7 +56,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:Resource.conformsTo(plural)",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "Resource",
             "contributor",
             False,
@@ -64,7 +64,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:Resource.contributor(singular)",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "Resource",
             "contributor",
             True,
@@ -72,7 +72,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:Resource.contributor(plural)",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "Resource",
             "contributor",
             False,
@@ -80,7 +80,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:Resource.contributor(singular)",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "Resource",
             "contributor",
             True,
@@ -88,7 +88,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:Resource.contributor(plural)",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "Variable",
             "dataType",
             False,
@@ -96,7 +96,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:Variable.dataType(singular)",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "Variable",
             "dataType",
             True,
@@ -104,7 +104,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:Variable.dataType(plural)",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "Variable",
             "dataType",
             False,
@@ -112,7 +112,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:Variable.dataType(singular)",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "Variable",
             "dataType",
             True,
@@ -120,7 +120,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:Variable.dataType(plural)",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "AnyStemType",
             "abstract",
             False,
@@ -128,7 +128,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:AnyStemType.abstract(singular)",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "AnyStemType",
             "abstract",
             True,
@@ -136,7 +136,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:AnyStemType.abstract(plural)",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "AnyStemType",
             "abstract",
             False,
@@ -144,7 +144,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:AnyStemType.abstract(singular)",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "AnyStemType",
             "abstract",
             True,
@@ -152,7 +152,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:AnyStemType.abstract(plural)",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "AnyStemType",
             "alternativeTitle",
             False,
@@ -160,7 +160,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:AnyStemType.alternativeTitle(singular)",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "AnyStemType",
             "alternativeTitle",
             True,
@@ -168,7 +168,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:AnyStemType.alternativeTitle(plural)",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "AnyStemType",
             "alternativeTitle",
             False,
@@ -176,7 +176,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:AnyStemType.alternativeTitle(singular)",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "AnyStemType",
             "alternativeTitle",
             True,
@@ -184,7 +184,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:AnyStemType.alternativeTitle(plural)",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "UnknownStemType",
             "unknownField",
             False,
@@ -192,7 +192,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:UnknownStemType.unknownField(singular)",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "UnknownStemType",
             "unknownField",
             True,
@@ -200,7 +200,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:UnknownStemType.unknownField(plural)",
         ),
         pytest.param(
-            MexLocale.EN,
+            "de",
             "UnknownStemType",
             "unknownField",
             False,
@@ -208,7 +208,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:UnknownStemType.unknownField(singular)",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "UnknownStemType",
             "unknownField",
             True,
@@ -218,102 +218,103 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
     ],
 )
 def test_get_field_label(
-    locale: MexLocale,
+    locale_id: str,
     stem_type: str,
     field_name: str,
     pluralize: bool,  # noqa: FBT001
     expected_label: str,
 ) -> None:
     locale_service = LocaleService.get()
-    locale_service.set_locale(locale)
     assert (
-        locale_service.get_field_label(stem_type, field_name, 2 if pluralize else 1)
+        locale_service.get_field_label(
+            locale_id, stem_type, field_name, 2 if pluralize else 1
+        )
         == expected_label
     )
 
 
 @pytest.mark.parametrize(
-    ("locale", "stem_type", "field_name", "expected_description"),
+    ("locale_id", "stem_type", "field_name", "expected_description"),
     [
         pytest.param(
-            MexLocale.DE,
+            "de",
             "Activity",
             "abstract",
             "Kurze Beschreibung des Kontexts, in dem die Daten verarbeitet wurden",
             id="de:Activity.abstract",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "Activity",
             "abstract",
             "Brief description of the context in which the data was processed",
             id="en:Activity.abstract",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "Resource",
             "accessPlatform",
             "Zugriffsplattform für die Daten",
             id="de:Resource.accessPlatform",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "Resource",
             "accessPlatform",
             "Access platform for the data",
             id="en:Resource.accessPlatform",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "Person",
             "affiliation",
             "Institution, zu der die Person zugehörig ist",
             id="de:Person.affiliation",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "Person",
             "affiliation",
             "Institution to which the person belongs",
             id="en:Person.affiliation",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "AnyStemType",
             "alternativeTitle",
             "Andere(r) Titel",
             id="de:AnyStemType.alternativeTitle",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "AnyStemType",
             "alternativeTitle",
             "Other title(s)",
             id="en:AnyStemType.alternativeTitle",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "AnyStemType",
             "identifier",
             "Alle extrahierten Metadatenobjekte werden mit einem Identifikator versehen",
             id="de:AnyStemType.identifier",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "AnyStemType",
             "identifier",
             "All extracted metadata objects are provided with an identifier",
             id="en:AnyStemType.identifier",
         ),
         pytest.param(
-            MexLocale.DE,
+            "de",
             "AnyStemType",
             "unknownField",
             "",
             id="de:AnyStemType.unknownField",
         ),
         pytest.param(
-            MexLocale.EN,
+            "en",
             "AnyStemType",
             "unknownField",
             "",
@@ -322,14 +323,13 @@ def test_get_field_label(
     ],
 )
 def test_get_field_description(
-    locale: MexLocale,
+    locale_id: str,
     stem_type: str,
     field_name: str,
     expected_description: str,
 ) -> None:
     locale_service = LocaleService.get()
-    locale_service.set_locale(locale)
     assert (
-        locale_service.get_field_description(stem_type, field_name)
+        locale_service.get_field_description(locale_id, stem_type, field_name)
         == expected_description
     )

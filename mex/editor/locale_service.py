@@ -6,25 +6,19 @@ from typing import Self, TypedDict, cast
 
 from mex.common.context import SingleSingletonStore
 
-# TODO(FE): Change to mex-model when fork is approved
-here = Path(__file__).resolve().parent
-
-
-# class MexLocale(StrEnum):
-#     """Allowed locales for MeX."""
-
-#     DE = "de-DE"
-#     EN = "en-US"
-
 
 class MexLocale(TypedDict):
-    filepath: str
+    """Represents a locale with id and label."""
+
     id: str
     label: str
+    filepath: str
 
 
+# TODO(FE): Change to mex-model when fork is approved
+here = Path(__file__).resolve().parent
 LOCALE_FOLDER_PATH = here / "../../locales"
-LOCALES_LABEL_MAPPING = {"de-DE": "deutsch", "en-US": "english"}
+LOCALES_LABEL_MAPPING = {"de": "deutsch", "en": "english"}
 LOCALE_SERVICE_STORE = SingleSingletonStore["LocaleService"]()
 
 
@@ -44,18 +38,14 @@ def get_locale_label(locale_id: str) -> str:
     """Convert the locale into a label.
 
     Args:
-        locale: The locale to convert to a label.
+        locale_id: The locale to convert to a label.
 
     Returns:
         str: The label for the given locale.
     """
-    print("LABEL FOR ", locale_id)
-    return LOCALES_LABEL_MAPPING[locale_id]
+    return LOCALES_LABEL_MAPPING.get(locale_id, locale_id.split("-")[0])
 
 
-# IDEA: Propably cleaner to split this into LocalService(str -> translation + ensure
-# fallback translation if str is no valid language or doesnt exist) and
-# FieldHelper(label and description for fields)
 class LocaleService:
     """A service singleton to control the current locale used by the app."""
 
@@ -68,33 +58,34 @@ class LocaleService:
         """
         return cast("Self", LOCALE_SERVICE_STORE.load(cls))
 
-    @classmethod
+    _available_locales: dict[str, MexLocale] = {}
+    _translations: dict[str, gettext.GNUTranslations] = {}
+
     def __init__(self) -> None:
-        """Init with locale to use. Use first available locale if not specified.
+        """Initalize with all found locales in `LOCALE_FOLDER_PATH`.
 
         Args:
-            locale (str, optional): The locale to use for the app.
-            Defaults to LOCALES_AVAILABLE[0].
+            self (Self): Self
         """
         files = list(LOCALE_FOLDER_PATH.glob("*.mo"))
-        print("FOUND FILES", files)
         self._available_locales = {
             mo_file.stem: MexLocale(
                 id=mo_file.stem,
-                filepath=str(mo_file),
                 label=LOCALES_LABEL_MAPPING[mo_file.stem],
+                filepath=str(mo_file),
             )
             for mo_file in files
         }
 
-    _available_locales: dict[str, MexLocale] = {}
-    _translations: dict[str, gettext.GNUTranslations] = {}
-
     def get_available_locales(self) -> Sequence[MexLocale]:
+        """Get all available locales.
+
+        Returns:
+            Sequence[MexLocale]: All availble locales.
+        """
         return list(self._available_locales.values())
 
-    def _ensure_translation(self, locale_id: str):
-        print("LocaleService::_ensure_translation", locale_id)
+    def _ensure_translation(self, locale_id: str) -> gettext.GNUTranslations:
         if locale_id not in self._translations:
             with Path(self._available_locales[locale_id]["filepath"]).open(
                 "rb"
@@ -102,12 +93,13 @@ class LocaleService:
                 self._translations[locale_id] = gettext.GNUTranslations(mo_file)
         return self._translations[locale_id]
 
-    def get_field_label(
+    def get_field_label(  # noqa: PLR0911
         self, locale_id: str, stem_type: str, field_name: str, n: int = 1
     ) -> str:
-        """Get the human readable form the given field.
+        """Get the human readable form of the given field in a given language.
 
         Args:
+            locale_id: The locale id of the language to use.
             stem_type: The entity type the field belongs to.
             field_name: The name of the field.
             n (optional): Number to pass to ngettext to determine if plural form is
@@ -116,7 +108,6 @@ class LocaleService:
         Returns:
             str: The human readable name of the field.
         """
-        print("LocaleService::get_field_label", locale_id, stem_type, field_name, n)
         translation = self._ensure_translation(locale_id)
         msg_id1 = f"{field_name}.singular"
         msg_id2 = f"{field_name}.plural"
@@ -161,16 +152,16 @@ class LocaleService:
     def get_field_description(
         self, locale_id: str, stem_type: str, field_name: str
     ) -> str:
-        """Get the description for a field.
+        """Get the description for a field in a given language.
 
         Args:
+            locale_id: The locale id of the language to use.
             stem_type: The type the field belongs to.
             field_name: The name of the field.
 
         Returns:
             str: The description of the field.
         """
-        print("LocaleService::get_field_description", locale_id, stem_type, field_name)
         translation = self._ensure_translation(locale_id)
         msg_id_description = f"{field_name}.description"
         if (

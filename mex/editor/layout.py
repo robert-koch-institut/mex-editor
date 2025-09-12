@@ -2,8 +2,6 @@ from typing import TYPE_CHECKING, cast
 
 import reflex as rx
 
-# from mex.editor.locale_service import , MexLocale, get_locale_label
-from mex.editor.app_state import AppState
 from mex.editor.locale_service import LocaleService
 from mex.editor.state import NavItem, State
 
@@ -82,27 +80,18 @@ def app_logo() -> rx.Component:
     )
 
 
-# def locale_image(locale: str) -> rx.Component:
-#     """Render a flag as image for the given locale.
-
-#     Args:
-#         locale: The locale to render a flag image for.
-#     """
-#     return rx.image(src=f"/locales/{locale}.png", style={"height": "24px"})
-
-
 def language_switcher() -> rx.Component:
     """Render a language switcher."""
     return rx.menu.root(
         rx.menu.trigger(
-            rx.text(AppState.current_locale),
+            rx.text(State.current_locale),
             custom_attrs={"data-testid": "language-switcher"},
         ),
         rx.menu.content(
             *[
                 rx.menu.item(
                     rx.text(locale["label"]),
-                    on_click=AppState.change_locale(locale["id"]),
+                    on_click=State.change_locale(locale["id"]),
                     custom_attrs={
                         "data-testid": f"language-switcher-menu-item-{locale['id']}"
                     },

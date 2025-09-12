@@ -8,6 +8,7 @@ from requests import HTTPError
 from starlette import status
 
 from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.merged.main import create_merged_item
 from mex.common.models import (
     RULE_SET_REQUEST_CLASSES,
     RULE_SET_REQUEST_CLASSES_BY_NAME,
@@ -17,6 +18,7 @@ from mex.common.models import (
     AnyRuleSetResponse,
 )
 from mex.common.transform import ensure_postfix
+from mex.common.types import Identifier, Validation
 from mex.editor.exceptions import escalate_error
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import EditorValue
@@ -32,7 +34,10 @@ from mex.editor.rules.transform import (
     transform_validation_error_to_messages,
 )
 from mex.editor.state import State
-from mex.editor.transform import transform_models_to_stem_type
+from mex.editor.transform import (
+    transform_models_to_stem_type,
+    transform_models_to_title,
+)
 from mex.editor.utils import resolve_editor_value, resolve_identifier
 
 locale_service = LocaleService.get()
@@ -42,10 +47,11 @@ class RuleState(State):
     """Base state for the edit and create components."""
 
     item_id: str | None = None
+    item_title: list[EditorValue] = []
+    fields: list[EditorField] = []
     stem_type: str | None = None
     fields: list[EditorField] = []
     validation_messages: list[ValidationMessage] = []
-    has_changes: bool = False
 
     @rx.var
     def translated_fields(self) -> Sequence[FieldTranslation]:
@@ -144,6 +150,15 @@ class RuleState(State):
         if rule_set:
             self.stem_type = transform_models_to_stem_type([rule_set.additive])
 
+        if self.item_id:
+            preview = create_merged_item(
+                identifier=Identifier(self.item_id),
+                extracted_items=extracted_items,
+                rule_set=rule_set,
+                validation=Validation.LENIENT,
+            )
+            self.item_title = transform_models_to_title([preview])
+
         self.fields = transform_models_to_fields(
             extracted_items,
             additive=rule_set.additive,
@@ -178,7 +193,7 @@ class RuleState(State):
             )
             return
 
-        yield self.set_has_changes(False)
+        yield State.set_current_page_has_changes(False)
         # clear cache to show edits in the UI
         resolve_identifier.cache_clear()
         # trigger redirect to edit page or refresh state
@@ -231,11 +246,13 @@ class RuleState(State):
         field_name: str,
         href: str | None,
         enabled: bool,  # noqa: FBT001
-    ) -> None:
+    ) -> EventSpec | None:
         """Toggle the `enabled` flag of a primary source."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             if primary_source.name.href == href:
                 primary_source.enabled = enabled
+                return State.set_current_page_has_changes(True)
+        return None
 
     @rx.event
     def toggle_field_value(
@@ -243,12 +260,15 @@ class RuleState(State):
         field_name: str,
         value: EditorValue,
         enabled: bool,  # noqa: FBT001
-    ) -> None:
+    ) -> EventSpec | None:
         """Toggle the `enabled` flag of a field value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             for editor_value in primary_source.editor_values:
                 if editor_value == value:
                     editor_value.enabled = enabled
+                    return State.set_current_page_has_changes(True)
+
+        return None
 
     @rx.event
     def toggle_field_value_editing(
@@ -262,42 +282,26 @@ class RuleState(State):
             index
         ].being_edited = not primary_source.editor_values[index].being_edited
 
-    def update_has_changes(self) -> EventSpec:
-        """Update the has changes value on client side."""
-        return rx.call_script(
-            f"window.updateMexEditorChanges({str(self.has_changes).lower()})",
-        )
-
-    @rx.event
-    def set_has_changes(self, value: bool) -> EventSpec:  # noqa: FBT001
-        """Set the has changes attribute to the given value.
-
-        Args:
-            value (bool): The value of the has changes attribute.
-        """
-        self.has_changes = value
-        return self.update_has_changes()
-
     @rx.event
     def add_additive_value(self, field_name: str) -> EventSpec:
         """Add an additive rule to the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.append(EditorValue(being_edited=True))
-        return self.set_has_changes(True)
+        return State.set_current_page_has_changes(True)
 
     @rx.event
     def remove_additive_value(self, field_name: str, index: int) -> EventSpec:
         """Remove an additive rule from the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.pop(index)
-        return self.set_has_changes(True)
+        return State.set_current_page_has_changes(True)
 
     @rx.event
     def set_text_value(self, field_name: str, index: int, value: str) -> EventSpec:
         """Set the text attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].text = value
-        return self.set_has_changes(True)
+        return State.set_current_page_has_changes(True)
 
     @rx.event
     def set_identifier_value(
@@ -307,14 +311,14 @@ class RuleState(State):
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].identifier = value
         primary_source.editor_values[index].href = f"/item/{value}"
-        return self.set_has_changes(True)
+        return State.set_current_page_has_changes(True)
 
     @rx.event
     def set_badge_value(self, field_name: str, index: int, value: str) -> EventSpec:
         """Set the badge attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].badge = value
-        return self.set_has_changes(True)
+        return State.set_current_page_has_changes(True)
 
     @rx.event
     def set_href_value(self, field_name: str, index: int, value: str) -> EventSpec:
@@ -322,4 +326,4 @@ class RuleState(State):
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].href = value
         primary_source.editor_values[index].external = True
-        return self.set_has_changes(True)
+        return State.set_current_page_has_changes(True)

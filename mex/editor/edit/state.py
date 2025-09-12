@@ -3,21 +3,12 @@ from collections.abc import Generator
 import reflex as rx
 from reflex.event import EventSpec
 
-from mex.editor.models import EditorValue
 from mex.editor.rules.state import RuleState
-from mex.editor.rules.transform import transform_fields_to_title
+from mex.editor.state import State
 
 
 class EditState(RuleState):
     """State for the edit component."""
-
-    item_title: list[EditorValue] = []
-
-    @rx.event
-    def load_item_title(self) -> None:
-        """Set the item title based on field values."""
-        if self.stem_type and self.fields:
-            self.item_title = transform_fields_to_title(self.stem_type, self.fields)
 
     @rx.event
     def show_submit_success_toast_on_redirect(self) -> Generator[EventSpec, None, None]:
@@ -42,10 +33,11 @@ class EditState(RuleState):
             for ps in field.primary_sources
         )
 
-    def disable_all_primary_source_and_editor_values(self) -> None:
+    def disable_all_primary_source_and_editor_values(self) -> EventSpec:
         """Disable all primary source and editor values."""
         for field in self.fields:
             for ps in field.primary_sources:
                 ps.enabled = False
                 for value in ps.editor_values:
                     value.enabled = False
+        return State.set_current_page_has_changes(True)

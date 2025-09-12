@@ -621,7 +621,7 @@ def test_required_fields_red_asterisk(
         asterisk = field.get_by_text("*", exact=True)
         if field_name in expected_required_fields:
             expect(asterisk).to_be_visible()
-            expect(asterisk).to_have_css("color", "rgb(255, 0, 0)")
+            expect(asterisk).to_have_css("color", "rgb(255, 99, 71)")
         else:
             expect(asterisk).to_have_count(0)
 

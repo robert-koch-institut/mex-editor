@@ -91,7 +91,7 @@ def set_identity_provider(
 @pytest.fixture
 def frontend_url() -> str:
     """Return the URL of the current local frontend server for testing."""
-    return "http://localhost:3000"
+    return "http://localhost:3001"
 
 
 @pytest.fixture(autouse=True)

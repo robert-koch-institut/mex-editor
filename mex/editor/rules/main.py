@@ -176,6 +176,44 @@ def text_input(
     )
 
 
+def textarea_input(
+    field_name: str,
+    index: int,
+    text: str | None,
+) -> rx.Component:
+    """Render a textarea component for editing a textarea attribute."""
+    return rx.text_area(
+        placeholder="Text",
+        value=text,
+        on_change=RuleState.set_text_value(field_name, index),  # type: ignore[misc]
+        style=rx.Style(
+            margin="calc(-1 * var(--space-1))",
+            width="100%",
+        ),
+        custom_attrs={"data-testid": f"additive-rule-{field_name}-{index}-text"},
+        rows="5",
+        resize="vertical",
+    )
+
+
+def identifier_input(
+    field_name: str,
+    index: int,
+    identifier: str | None,
+) -> rx.Component:
+    """Render an input component for editing identifiers."""
+    return rx.input(
+        placeholder="Identifier",
+        value=identifier,
+        on_change=RuleState.set_identifier_value(field_name, index),  # type: ignore[misc]
+        style=rx.Style(
+            margin="calc(-1 * var(--space-1))",
+            width="100%",
+        ),
+        custom_attrs={"data-testid": f"additive-rule-{field_name}-{index}-identifier"},
+    )
+
+
 def badge_input(
     field_name: str,
     index: int,
@@ -193,8 +231,8 @@ def badge_input(
                 input_config.badge_options,
                 value=rx.cond(
                     badge,
-                    f"{badge}",
-                    f"{input_config.badge_default}",
+                    badge,
+                    input_config.badge_default,
                 ),
                 size="1",
                 variant="soft",
@@ -219,92 +257,23 @@ def additive_rule_input(
     return rx.hstack(
         rx.cond(
             input_config.editable_href,
-            rx.input(
-                placeholder="URL",
-                value=f"{value.href}",
-                on_change=RuleState.set_href_value(field_name, index),  # type: ignore[misc]
-                style=rx.Style(
-                    margin="calc(-1 * var(--space-1))",
-                    width="100%",
-                ),
-                custom_attrs={
-                    "data-testid": f"additive-rule-{field_name}-{index}-href"
-                },
-            ),
+            href_input(field_name, index, value.href),
         ),
         rx.cond(
             input_config.editable_text,
             rx.cond(
                 input_config.render_textarea,
-                rx.text_area(
-                    placeholder="Text",
-                    value=value.text,
-                    on_change=RuleState.set_text_value(field_name, index),  # type: ignore[misc]
-                    style=rx.Style(
-                        margin="calc(-1 * var(--space-1))",
-                        width="100%",
-                    ),
-                    custom_attrs={
-                        "data-testid": f"additive-rule-{field_name}-{index}-text"
-                    },
-                    rows="5",
-                    resize="vertical",
-                ),
-                rx.input(
-                    placeholder="Text",
-                    value=value.text,
-                    on_change=RuleState.set_text_value(field_name, index),  # type: ignore[misc]
-                    style=rx.Style(
-                        margin="calc(-1 * var(--space-1))",
-                        width="100%",
-                    ),
-                    custom_attrs={
-                        "data-testid": f"additive-rule-{field_name}-{index}-text"
-                    },
-                ),
+                textarea_input(field_name, index, value.text),
+                text_input(field_name, index, value.text),
             ),
         ),
         rx.cond(
             input_config.editable_identifier,
-            rx.input(
-                placeholder="Identifier",
-                value=f"{value.identifier}",
-                on_change=RuleState.set_identifier_value(field_name, index),  # type: ignore[misc]
-                style=rx.Style(
-                    margin="calc(-1 * var(--space-1))",
-                    width="100%",
-                ),
-                custom_attrs={
-                    "data-testid": f"additive-rule-{field_name}-{index}-identifier"
-                },
-            ),
+            identifier_input(field_name, index, value.identifier),
         ),
         rx.cond(
             input_config.editable_badge,
-            rx.fragment(
-                rx.foreach(
-                    input_config.badge_titles,
-                    render_span,
-                ),
-                rx.box(
-                    rx.select(
-                        input_config.badge_options,
-                        value=rx.cond(
-                            value.badge,
-                            f"{value.badge}",
-                            f"{input_config.badge_default}",
-                        ),
-                        size="1",
-                        variant="soft",
-                        radius="large",
-                        color_scheme="gray",
-                        on_change=RuleState.set_badge_value(field_name, index),  # type: ignore[misc]
-                        custom_attrs={
-                            "data-testid": f"additive-rule-{field_name}-{index}-badge"
-                        },
-                    ),
-                ),
-            ),
+            badge_input(field_name, index, input_config, value.badge),
         ),
         width="100%",
     )

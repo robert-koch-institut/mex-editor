@@ -41,4 +41,4 @@ class EditState(RuleState):
                 ps.enabled = False
                 for value in ps.editor_values:
                     value.enabled = False
-        return State.set_current_page_has_changes(True)
+        return State.set_current_page_has_changes(True)  # type: ignore[misc]

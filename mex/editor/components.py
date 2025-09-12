@@ -20,7 +20,7 @@ def render_identifier(value: EditorValue) -> rx.Component:
                 value.text,
                 "Loading ...",
             ),
-            on_click=State.navigate(value.href),
+            on_click=State.navigate(value.href),  # type: ignore[misc]
             high_contrast=True,
             role="link",
             custom_attrs={"data-href": value.href},
@@ -38,10 +38,10 @@ def render_external_link(value: EditorValue) -> rx.Component:
     return rx.link(
         rx.cond(
             value.text,
-            f"{value.text}",
-            f"{value.href}",
+            value.text,
+            value.href,
         ),
-        href=f"{value.href}",
+        href=value.href,
         high_contrast=True,
         is_external=True,
         role="link",

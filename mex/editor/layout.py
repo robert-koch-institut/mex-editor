@@ -45,7 +45,7 @@ def nav_link(item: NavItem) -> rx.Component:
     """Return a link component for the given navigation item."""
     return rx.link(
         rx.text(item.title, size="4", weight="medium"),
-        on_click=State.navigate(item.raw_path),
+        on_click=State.navigate(item.raw_path),  # type: ignore[misc]
         underline=item.underline,  # type: ignore[arg-type]
         class_name="nav-item",
         custom_attrs={"data-href": item.raw_path},
@@ -136,26 +136,32 @@ def navigate_away_dialog() -> rx.Component:
         rx.alert_dialog.content(
             rx.alert_dialog.title("Unsaved changes"),
             rx.alert_dialog.description(
-                "There are unsaved changes on the page. If u navigate away "
+                "There are unsaved changes on the page. If you navigate away "
                 "these changes will be lost. Do you want to navigate anyway?",
             ),
             rx.flex(
-                rx.alert_dialog.cancel(
-                    rx.button("Cancel", on_click=State.close_navigate_dialog)
-                ),
                 rx.alert_dialog.action(
                     rx.button(
-                        "Discard changes",
-                        color_scheme="red",
+                        "Navigate away",
                         on_click=[
                             State.close_navigate_dialog,
-                            State.set_current_page_has_changes(False),
-                            State.navigate(State.navigate_target),
+                            State.set_current_page_has_changes(False),  # type: ignore[misc]
+                            State.navigate(State.navigate_target),  # type: ignore[misc]
                         ],
                     )
                 ),
+                rx.alert_dialog.cancel(
+                    rx.button(
+                        "Stay here",
+                        color_scheme="gray",
+                        on_click=State.close_navigate_dialog,
+                    )
+                ),
                 spacing="3",
+                style=rx.Style(marginTop="1rem"),
+                justify="end",
             ),
+            style=rx.Style(width="calc(340px * var(--scaling))"),
         ),
         open=State.navigate_dialog_open,
     )
@@ -165,7 +171,7 @@ def page_leave_js() -> rx.Component:
     """Render page leave java script import.
 
     Returns:
-        rx.Component: The script component refrencing the
+        rx.Component: The script component referencing the
         '/page-leave-warn-unsaved-changes.js'
     """
     return rx.script(src="/page-leave-warn-unsaved-changes.js")

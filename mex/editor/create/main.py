@@ -51,7 +51,7 @@ def create_title() -> rx.Component:
             RuleState.stem_type,
             rx.select(
                 CreateState.available_stem_types,
-                value=f"{RuleState.stem_type}",
+                value=RuleState.stem_type,
                 on_change=[
                     CreateState.set_stem_type,
                     RuleState.refresh,

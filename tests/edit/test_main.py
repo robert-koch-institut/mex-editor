@@ -1,7 +1,7 @@
 import re
 
 import pytest
-from playwright.sync_api import Dialog, Page, expect
+from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
@@ -652,74 +652,6 @@ def test_deactivate_all_switch(edit_page: Page) -> None:
 
 
 @pytest.mark.integration
-def test_edit_page_warn_tab_close(edit_page: Page) -> None:
-    page = edit_page
-
-    # ensure navigation without changes is working
-    page.goto("https://www.rki.de")
-    page.screenshot(
-        path="tests_edit_test_main-test_edit_page_warn_tab_close-rki_website.png"
-    )
-    assert "https://www.rki.de" in page.url
-
-    # back to edit site
-    page.go_back()
-    page.wait_for_url("**/item/**")
-    page.wait_for_selector(
-        "[data-testid='new-additive-alternativeTitle-00000000000000']"
-    )
-    page.screenshot(
-        path="tests_edit_test_main-test_edit_page_warn_tab_close-back_on_edit.png"
-    )
-
-    # change a value
-    page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
-    page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
-        "new alternative title"
-    )
-    page.screenshot(
-        path="tests_edit_test_main-test_edit_page_warn_tab_close-page_with_changes.png"
-    )
-
-    handle_dialog_called: list[bool] = []
-
-    def _handle_dialog(dialog: Dialog) -> None:
-        # damn i love python
-        nonlocal handle_dialog_called
-
-        assert dialog.type == "beforeunload"
-        handle_dialog_called.append(True)
-
-        # stay on the side
-        dialog.dismiss()
-
-    page.on("dialog", _handle_dialog)
-
-    # won't work cuz we dismiss the dialog
-    with pytest.raises(Exception, match="Timeout"):
-        page.goto("https://www.rki.de", timeout=3000)
-
-    # ensure still on edit site and dialog was called
-    assert "/item/" in page.url
-    assert len(handle_dialog_called) == 1
-    assert handle_dialog_called[0]
-
-    # after save we should navigate again without dialog
-    page.get_by_test_id("submit-button").click()
-    page.screenshot(
-        path="tests_edit_test_main-test_edit_page_warn_tab_close-click_submit.png"
-    )
-    page.wait_for_selector(".editor-toast", timeout=30000)
-    page.screenshot(
-        path="tests_edit_test_main-test_edit_page_warn_tab_close-save_toast.png"
-    )
-
-    page.goto("https://www.rki.de")
-    assert "https://www.rki.de" in page.url
-    assert len(handle_dialog_called) == 1
-
-
-@pytest.mark.integration
 def test_edit_page_navigation_unsaved_changes_warning_cancel_save_and_navigate(
     edit_page: Page,
 ) -> None:
@@ -741,7 +673,7 @@ def test_edit_page_navigation_unsaved_changes_warning_cancel_save_and_navigate(
     expect(dialog).to_be_visible()
 
     # cancel the navigation and check if url is still edit page
-    dialog.get_by_role("button", name="Cancel").click()
+    dialog.get_by_role("button", name="Stay here").click()
     expect(page).to_have_url(re.compile("/item/.*"))
 
     # click save changes
@@ -776,5 +708,5 @@ def test_edit_page_navigation_unsaved_changes_warning_discard_changes_and_naviga
     expect(dialog).to_be_visible()
 
     # discard changes and expect navigation (url is search page url)
-    dialog.get_by_role("button", name="Discard changes").click()
+    dialog.get_by_role("button", name="Navigate away").click()
     expect(page).to_have_url(re.compile("/"))

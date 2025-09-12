@@ -16,9 +16,9 @@ class ConsentState(State):
     def load_user(self) -> Generator[EventSpec, None, None]:
         """Set the stem type to a default."""
         connector = LDAPConnector.get()
-        if self.user_ldap:
-            person = connector.get_person(sam_account_name=self.user_ldap.name)
-            self.display_name = person.displayName
-        else:
+        if not self.user_ldap:
             self.target_path_after_login = self.router.page.raw_path
             yield rx.redirect("/login-ldap")
+        else:
+            person = connector.get_person(sam_account_name=self.user_ldap.name)
+            self.display_name = person.displayName

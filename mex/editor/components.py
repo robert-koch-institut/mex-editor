@@ -2,13 +2,11 @@ from typing import Any
 
 import reflex as rx
 
+from mex.editor.constants import COMPLETED_LOADING, CURRENTLY_LOADING
 from mex.editor.ingest.state import IngestState
 from mex.editor.rules.models import EditorValue
 from mex.editor.search.state import SearchState
 from mex.editor.state import State
-
-COMPLETED_LOADING = False
-CURRENTLY_LOADING = True
 
 
 def render_identifier(value: EditorValue) -> rx.Component:

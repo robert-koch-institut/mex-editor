@@ -66,7 +66,7 @@ def login_form(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
                     app_logo(),
                     rx.spacer(spacing="4"),
                     rx.button(
-                        rx.icon(tag="sun_moon"),
+                        rx.icon("sun_moon"),
                         variant="ghost",
                         style=rx.Style(marginTop="0"),
                         on_click=rx.toggle_color_mode,

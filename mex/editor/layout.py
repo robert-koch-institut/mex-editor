@@ -57,7 +57,7 @@ def app_logo() -> rx.Component:
     return rx.hover_card.root(
         rx.hover_card.trigger(
             rx.hstack(
-                rx.icon(tag="circuit-board", size=28),
+                rx.icon("circuit-board", size=28),
                 rx.heading(
                     "MEx Editor",
                     weight="medium",
@@ -98,7 +98,7 @@ def nav_bar() -> rx.Component:
                 rx.spacer(),
                 user_menu(),
                 rx.button(
-                    rx.icon(tag="sun_moon"),
+                    rx.icon("sun_moon"),
                     variant="ghost",
                     style=rx.Style(marginTop="0"),
                     on_click=rx.toggle_color_mode,
@@ -140,21 +140,22 @@ def navigate_away_dialog() -> rx.Component:
                 "these changes will be lost. Do you want to navigate anyway?",
             ),
             rx.flex(
-                rx.alert_dialog.action(
-                    rx.button(
-                        "Navigate away",
-                        on_click=[
-                            State.close_navigate_dialog,
-                            State.set_current_page_has_changes(False),  # type: ignore[misc]
-                            State.navigate(State.navigate_target),  # type: ignore[misc]
-                        ],
-                    )
-                ),
                 rx.alert_dialog.cancel(
                     rx.button(
                         "Stay here",
                         color_scheme="gray",
                         on_click=State.close_navigate_dialog,
+                    )
+                ),
+                rx.alert_dialog.action(
+                    rx.button(
+                        "Navigate away",
+                        color_scheme="tomato",
+                        on_click=[
+                            State.close_navigate_dialog,
+                            State.set_current_page_has_changes(False),  # type: ignore[misc]
+                            State.navigate(State.navigate_target),  # type: ignore[misc]
+                        ],
                     )
                 ),
                 spacing="3",

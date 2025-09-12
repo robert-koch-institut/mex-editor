@@ -175,7 +175,7 @@ def reference_field_filter_identifier(
                 ],
                 required=True,
                 pattern=IDENTIFIER_PATTERN,
-                class_name=rx.cond(identifier.validation_msg, "bg-red-500", ""),
+                class_name=rx.cond(identifier.validation_msg, "bg-tomato-500", ""),
                 custom_attrs={"data-testid": f"reference-field-filter-id-{index}"},
                 width="80%",
             ),
@@ -195,7 +195,7 @@ def reference_field_filter_identifier(
         ),
         rx.text(
             identifier.validation_msg,
-            class_name="text-red-500",
+            class_name="text-tomato-500",
         ),
         style=rx.Style(width="100%"),
     )

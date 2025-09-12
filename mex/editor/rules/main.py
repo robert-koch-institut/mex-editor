@@ -436,7 +436,7 @@ def field_name(
             rx.text(field.name),
             rx.cond(
                 field.is_required,
-                rx.text("*", style=rx.Style(color="red")),
+                rx.text("*", style=rx.Style(color="tomato")),
             ),
             spacing="1",
         ),

@@ -1,6 +1,5 @@
 import math
 from collections.abc import Generator
-from inspect import unwrap
 from typing import Any
 
 import reflex as rx
@@ -11,7 +10,11 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import AnyExtractedModel, PaginatedItemsContainer
 from mex.editor.constants import DEFAULT_FETCH_LIMIT
 from mex.editor.exceptions import escalate_error
-from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider, IngestResult
+from mex.editor.ingest.models import (
+    ALL_AUX_PROVIDERS,
+    AuxProvider,
+    IngestResult,
+)
 from mex.editor.ingest.transform import transform_models_to_results
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
@@ -101,7 +104,7 @@ class IngestState(State):
     def ingest_result(self, index: int) -> Generator[EventSpec, None, None]:
         """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
-        model = unwrap(self.results_extracted[index])  # type: ignore[arg-type]
+        model = self.get_value(self.results_extracted[index])  # type: ignore[arg-type]
         try:
             # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
             connector.ingest([model])

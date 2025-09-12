@@ -188,11 +188,7 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                 margin="var(--space-4)",
             ),
         ),
-        style=rx.Style(
-            width="100%",
-            marginBottom="var(--space-4)",
-            align="center",
-        ),
+        style=rx.Style(width="100%", marginBottom="var(--space-4)", align="center"),
     )
 
 
@@ -235,11 +231,7 @@ def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
                 ),
             ),
         ),
-        style=rx.Style(
-            width="50%",
-            margin="var(--space-4)",
-            align="center",
-        ),
+        style=rx.Style(width="50%", margin="var(--space-4)", align="center"),
     )
 
 
@@ -250,11 +242,7 @@ def index() -> rx.Component:
             rx.hstack(
                 search_panel(category="merged"),
                 search_panel(category="extracted"),
-                style=rx.Style(
-                    width="100%",
-                    align="center",
-                    justify="center",
-                ),
+                style=rx.Style(width="100%", align="center", justify="center"),
             ),
             rx.box(
                 submit_button(),

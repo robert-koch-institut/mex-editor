@@ -47,17 +47,14 @@ def create_title() -> rx.Component:
             "Create new",
             style=rx.Style(userSelect="none"),
         ),
-        rx.cond(
-            RuleState.stem_type,
-            rx.select(
-                CreateState.available_stem_types,
-                value=RuleState.stem_type,
-                on_change=[
-                    CreateState.set_stem_type,
-                    RuleState.refresh,
-                ],
-                custom_attrs={"data-testid": "entity-type-select"},
-            ),
+        rx.select(
+            CreateState.available_stem_types,
+            value=RuleState.stem_type,
+            on_change=[
+                CreateState.set_stem_type,
+                RuleState.refresh,
+            ],
+            custom_attrs={"data-testid": "entity-type-select"},
         ),
         custom_attrs={"data-testid": "create-heading"},
     )

@@ -210,7 +210,7 @@ def test_reference_filter_fields_for_entity_type(
 
     dyn_tab = page.get_by_role("tab", name="Dynamic")
     dyn_tab.click()
-    assert page.get_by_test_id("reference-field-filter").is_visible()
+    expect(page.get_by_test_id("reference-field-filter")).to_be_visible()
 
     # select person entity
     entity_types = page.get_by_test_id("entity-types")

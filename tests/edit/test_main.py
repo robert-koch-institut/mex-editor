@@ -549,6 +549,7 @@ def test_edit_page_additive_rule_roundtrip(
     submit_button = page.get_by_test_id("submit-button")
     submit_button.scroll_into_view_if_needed()
     submit_button.click()
+    page.wait_for_timeout(30000)  # wait for save operation
     page.reload()
 
     # check the rule input is still gone

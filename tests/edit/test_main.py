@@ -549,6 +549,7 @@ def test_edit_page_additive_rule_roundtrip(
     submit_button = page.get_by_test_id("submit-button")
     submit_button.scroll_into_view_if_needed()
     submit_button.click()
+    page.wait_for_timeout(30000)  # wait for save operation
     page.reload()
 
     # check the rule input is still gone
@@ -696,6 +697,28 @@ def test_edit_page_warn_tab_close(edit_page: Page) -> None:
     page.goto("https://www.rki.de")
     assert "https://www.rki.de" in page.url
     assert len(handle_dialog_called) == 1
+
+
+@pytest.mark.integration
+def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> None:
+    edit_page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    edit_page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
+        "new alternative title"
+    )
+    # check default state
+    submit_button = edit_page.get_by_test_id("submit-button")
+    expect(submit_button).to_have_text(re.compile(r"Save .*"))
+    expect(submit_button).not_to_be_disabled()
+
+    # submit item
+    submit_button.click()
+    expect(submit_button).to_have_text(re.compile(r"Saving .*"))
+    expect(submit_button).to_be_disabled()
+
+    # check if back in default state after saving
+    edit_page.wait_for_timeout(30000)
+    expect(submit_button).to_have_text(re.compile(r"Save .*"))
+    expect(submit_button).not_to_be_disabled()
 
 
 @pytest.mark.integration

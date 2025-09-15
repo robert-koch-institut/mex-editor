@@ -544,13 +544,20 @@ def validation_errors() -> rx.Component:
 def submit_button() -> rx.Component:
     """Render a submit button to save the rule set."""
     return rx.button(
-        f"Save {RuleState.stem_type}",
+        rx.cond(
+            RuleState.is_submitting,
+            rx.spinner(f"Saving {RuleState.stem_type}"),
+            rx.text(f"Save {RuleState.stem_type}"),
+        ),
         size="3",
         color_scheme="jade",
         on_click=[
+            RuleState.set_is_submitting(True),
             RuleState.submit_rule_set,
             RuleState.resolve_identifiers,
+            RuleState.set_is_submitting(False),
         ],
+        disabled=RuleState.is_submitting,
         style={"margin": "var(--line-height-1) 0"},
         custom_attrs={"data-testid": "submit-button"},
     )

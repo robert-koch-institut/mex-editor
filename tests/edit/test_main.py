@@ -699,6 +699,22 @@ def test_edit_page_warn_tab_close(edit_page: Page) -> None:
 
 
 @pytest.mark.integration
+def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> None:
+    edit_page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    edit_page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
+        "new alternative title"
+    )
+    submit_button = edit_page.get_by_test_id("submit-button")
+    submit_button.click()
+    expect(submit_button).to_have_text(re.compile(r"Saving .*"))
+    expect(submit_button).to_be_disabled()
+
+    edit_page.wait_for_timeout(30000)
+    expect(submit_button).to_have_text(re.compile(r"Saving .*"))
+    expect(submit_button).not_to_be_disabled()
+
+
+@pytest.mark.integration
 def test_edit_page_navigation_unsaved_changes_warning_cancel_save_and_navigate(
     edit_page: Page,
 ) -> None:

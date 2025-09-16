@@ -1,7 +1,12 @@
 import reflex as rx
 
 from mex.common.types import IDENTIFIER_PATTERN
-from mex.editor.components import icon_by_stem_type, pagination, render_value
+from mex.editor.components import (
+    icon_by_stem_type,
+    pagination,
+    render_title,
+    render_value,
+)
 from mex.editor.layout import page
 from mex.editor.search.models import (
     ReferenceFieldIdentifierFilter,
@@ -23,12 +28,7 @@ def search_result(result: SearchResult) -> rx.Component:
             ),
             rx.link(
                 rx.box(
-                    rx.hstack(
-                        rx.foreach(
-                            result.title,
-                            render_value,
-                        )
-                    ),
+                    render_title(result.title),
                     style={
                         "fontWeight": "var(--font-weight-bold)",
                         "overflow": "hidden",

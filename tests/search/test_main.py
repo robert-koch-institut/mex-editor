@@ -6,6 +6,7 @@ from mex.common.models import (
     AnyExtractedModel,
     ExtractedActivity,
     ExtractedPrimarySource,
+    ExtractedResource,
 )
 
 
@@ -273,7 +274,7 @@ def test_reference_filter(
     page.screenshot(
         path="tests_search_test_main-test_reference_filter-reference_filter_valid_search.png"
     )
-    expect(page.get_by_text("Showing 2 of 2 items")).to_be_visible()
+    expect(page.get_by_text("Showing 3 of 3 items")).to_be_visible()
 
 
 @pytest.mark.integration
@@ -334,3 +335,41 @@ def test_push_search_params(
         "**/?q=Can+I+search+here%3F&page=1&entityType=Activity"
         f"&referenceFilterStrategy=had_primary_source&hadPrimarySource={primary_source.stableTargetId}"
     )
+
+
+@pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
+def test_additional_titles_badge(
+    frontend_url: str, writer_user_page: Page, dummy_data: list[AnyExtractedModel]
+) -> None:
+    # search for resources
+    page = writer_user_page
+    page.goto(f"{frontend_url}/?entityType=Resource")
+
+    resource_r2: ExtractedResource = next(
+        x
+        for x in dummy_data
+        if isinstance(x, ExtractedResource) and x.identifierInPrimarySource == "r-2"
+    )
+    resource_r2_result = page.get_by_test_id(f"result-{resource_r2.stableTargetId}")
+    first_title = resource_r2.title[0]
+
+    # expect title is visible and there are addional titles for 'r2'
+    expect(resource_r2_result).to_contain_text(first_title.value)
+    expect(resource_r2_result).to_contain_text("+ additional titles")
+
+    # hover additional titles
+    trigger = resource_r2_result.get_by_test_id("tooltip-additional-titles-trigger")
+    trigger.highlight()
+    # Can't make hover work in tests :(
+    # It is working in tests/merge/test_main.py::test_additional_titles_badge
+    # so i guess it is something with the link
+    trigger.hover()
+    page.screenshot(path="tests_search_test_additional_titles_badge_hover.png")
+
+    # check tooltip content
+    tooltip = page.get_by_test_id("tooltip-additional-titles")
+    expect(tooltip).to_be_visible()
+    expect(tooltip).not_to_contain_text(first_title.value)
+    for title in resource_r2.title[1:]:
+        expect(tooltip).to_contain_text(title.value)

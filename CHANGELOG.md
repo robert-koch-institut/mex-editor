@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- badge with '+ additional titles' if there is more than one title present (hover badge to see all titles)
+
 - Warning when a page reflex navigates and there are still changes on the current page
 - added a switch to toggle all primary sources and values in the edit page
 - added textareas for fields listed in mex/editor/models.yaml

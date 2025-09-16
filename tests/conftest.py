@@ -186,6 +186,20 @@ def dummy_data() -> list[AnyExtractedModel]:
         title=[Text(value="Bioinformatics Resource 1", language=None)],
         unitInCharge=[organizational_unit_1.stableTargetId],
     )
+    resource_2 = ExtractedResource(
+        hadPrimarySource=primary_source_2.stableTargetId,
+        identifierInPrimarySource="r-2",
+        accessRestriction=AccessRestriction["OPEN"],
+        contact=[contact_point_1.stableTargetId, contact_point_2.stableTargetId],
+        theme=[Theme["PUBLIC_HEALTH"]],
+        title=[
+            Text(value="Some Resource with many titles 1", language=None),
+            Text(value="Some Resource with many titles 2", language=TextLanguage.EN),
+            Text(value="Eine Resource mit vielen Titeln 3", language=TextLanguage.DE),
+            Text(value="Some Resource with many titles 4", language=None),
+        ],
+        unitInCharge=[organizational_unit_1.stableTargetId],
+    )
     return [
         primary_source_1,
         primary_source_2,
@@ -194,6 +208,7 @@ def dummy_data() -> list[AnyExtractedModel]:
         organizational_unit_1,
         activity_1,
         resource_1,
+        resource_2,
     ]
 
 

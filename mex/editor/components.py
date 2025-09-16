@@ -6,6 +6,27 @@ from mex.editor.search.state import SearchState
 from mex.editor.state import State
 
 
+def render_title(title: list[EditorValue]) -> rx.Component:
+    """Render one title and if necessary a badge with tooltip and additional titles."""
+    more_title = title[1:]
+    return rx.hstack(
+        render_value(title[0]),
+        rx.cond(
+            more_title,
+            rx.hover_card.root(
+                rx.hover_card.trigger(
+                    rx.badge("+ additional titles"),
+                    custom_attrs={"data-testid": "tooltip-additional-titles-trigger"},
+                ),
+                rx.hover_card.content(
+                    rx.foreach(more_title, render_value),
+                    custom_attrs={"data-testid": "tooltip-additional-titles"},
+                ),
+            ),
+        ),
+    )
+
+
 def render_identifier(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable internal link that loads the edit page."""
     return rx.skeleton(
@@ -18,6 +39,8 @@ def render_identifier(value: EditorValue) -> rx.Component:
             on_click=State.navigate(value.href),
             high_contrast=True,
             role="link",
+            class_name="truncate",
+            title=value.text,
             custom_attrs={"data-href": value.href},
         ),
         loading=rx.cond(
@@ -39,6 +62,8 @@ def render_external_link(value: EditorValue) -> rx.Component:
         href=f"{value.href}",
         high_contrast=True,
         is_external=True,
+        title=value.text,
+        class_name="truncate",
         role="link",
     )
 
@@ -57,6 +82,8 @@ def render_span(text: str | None) -> rx.Component:
     return rx.text(
         text,
         as_="span",
+        class_name="truncate",
+        title=text,
     )
 
 

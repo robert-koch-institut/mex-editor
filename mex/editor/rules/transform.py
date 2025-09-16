@@ -123,7 +123,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
         return InputConfig(
             editable_text=editable,
             editable_badge=editable,
-            badge_default=TextLanguage.DE.name,
+            badge_default=LANGUAGE_VALUE_NONE,
             badge_options=[e.name for e in TextLanguage] + [LANGUAGE_VALUE_NONE],
             badge_titles=[TextLanguage.__name__],
             allow_additive=editable,
@@ -134,7 +134,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             editable_text=editable,
             editable_badge=editable,
             editable_href=editable,
-            badge_default=LinkLanguage.DE.name,
+            badge_default=LANGUAGE_VALUE_NONE,
             badge_options=[e.name for e in LinkLanguage] + [LANGUAGE_VALUE_NONE],
             badge_titles=[LinkLanguage.__name__],
             allow_additive=editable,

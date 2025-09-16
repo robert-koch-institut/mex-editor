@@ -122,6 +122,24 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
             # resource renders title as text
             EditorValue(text="Bioinformatics Resource 1", badge=LANGUAGE_VALUE_NONE),
         ],
+        [
+            EditorValue(
+                text="Some Resource with many titles 1",
+                badge=LANGUAGE_VALUE_NONE,
+            ),
+            EditorValue(
+                text="Some Resource with many titles 2",
+                badge="EN",
+            ),
+            EditorValue(
+                text="Eine Resource mit vielen Titeln 3",
+                badge="DE",
+            ),
+            EditorValue(
+                text="Some Resource with many titles 4",
+                badge=LANGUAGE_VALUE_NONE,
+            ),
+        ],
     ]
 
 
@@ -154,6 +172,11 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
         [
             EditorValue(identifier="cWWm02l1c6cucKjIhkFqY4"),
             EditorValue(text="Theme", badge="BIOINFORMATICS_AND_SYSTEMS_BIOLOGY"),
+            EditorValue(text="AccessRestriction", badge="OPEN"),
+        ],
+        [
+            EditorValue(identifier="cWWm02l1c6cucKjIhkFqY4"),
+            EditorValue(text="Theme", badge="PUBLIC_HEALTH"),
             EditorValue(text="AccessRestriction", badge="OPEN"),
         ],
     ]

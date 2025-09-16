@@ -4,6 +4,7 @@ from playwright.sync_api import Page, expect
 from mex.common.models import (
     AnyExtractedModel,
     ExtractedContactPoint,
+    ExtractedResource,
 )
 
 
@@ -168,3 +169,38 @@ def test_resolves_identifier(
     page.screenshot(path="tests_merge_test_main-test_resolves_identifier.png")
     email = page.get_by_test_id("result-extracted-0").get_by_text(f"{contact.email[0]}")
     expect(email).to_be_visible()
+
+
+@pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
+def test_additional_titles_badge(
+    merge_page: Page, dummy_data: list[AnyExtractedModel]
+) -> None:
+    # search for resources
+    page = merge_page
+    a = page.get_by_test_id("entity-types-extracted")
+    a.get_by_role("checkbox", name="Resource", exact=True).click()
+
+    resource_r2: ExtractedResource = next(
+        x
+        for x in dummy_data
+        if isinstance(x, ExtractedResource) and x.identifierInPrimarySource == "r-2"
+    )
+    resource_r2_result = page.get_by_test_id(f"result-{resource_r2.stableTargetId}")
+    first_title = resource_r2.title[0]
+
+    # expect title is visible and there are addional titles for 'r2'
+    expect(resource_r2_result).to_contain_text(first_title.value)
+    expect(resource_r2_result).to_contain_text("+ additional titles")
+
+    # hover additional titles
+    trigger = resource_r2_result.get_by_test_id("tooltip-additional-titles-trigger")
+    trigger.hover()
+    page.screenshot(path="tests_merge_test_additional_titles_badge_hover.png")
+
+    # check tooltip content
+    tooltip = page.get_by_test_id("tooltip-additional-titles")
+    expect(tooltip).to_be_visible()
+    expect(tooltip).not_to_contain_text(first_title.value)
+    for title in resource_r2.title[1:]:
+        expect(tooltip).to_contain_text(title.value)

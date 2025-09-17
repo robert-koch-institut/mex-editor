@@ -2,17 +2,18 @@ import gettext
 import re
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Self, TypedDict, cast
+from typing import Self, cast
 
 from mex.common.context import SingleSingletonStore
+from mex.common.models import BaseModel
 
 
-class MexLocale(TypedDict):
+class MexLocale(BaseModel):
     """Represents a locale with id and label."""
 
     id: str
     label: str
-    filepath: str
+    filepath: Path
 
 
 # TODO(FE): Change to mex-model when fork is approved
@@ -62,17 +63,13 @@ class LocaleService:
     _translations: dict[str, gettext.GNUTranslations] = {}
 
     def __init__(self) -> None:
-        """Initalize with all found locales in `LOCALE_FOLDER_PATH`.
-
-        Args:
-            self (Self): Self
-        """
+        """Initalize with all found locales in `LOCALE_FOLDER_PATH`."""
         files = list(LOCALE_FOLDER_PATH.glob("*.mo"))
         self._available_locales = {
             mo_file.stem: MexLocale(
                 id=mo_file.stem,
-                label=LOCALES_LABEL_MAPPING[mo_file.stem],
-                filepath=str(mo_file),
+                label=get_locale_label(mo_file.stem),
+                filepath=mo_file,
             )
             for mo_file in files
         }
@@ -87,9 +84,7 @@ class LocaleService:
 
     def _ensure_translation(self, locale_id: str) -> gettext.GNUTranslations:
         if locale_id not in self._translations:
-            with Path(self._available_locales[locale_id]["filepath"]).open(
-                "rb"
-            ) as mo_file:
+            with self._available_locales[locale_id].filepath.open("rb") as mo_file:
                 self._translations[locale_id] = gettext.GNUTranslations(mo_file)
         return self._translations[locale_id]
 
@@ -109,43 +104,45 @@ class LocaleService:
             str: The human readable name of the field.
         """
         translation = self._ensure_translation(locale_id)
-        msg_id1 = f"{field_name}.singular"
-        msg_id2 = f"{field_name}.plural"
+        msg_id_singular = f"{field_name}.singular"
+        msg_id_plural = f"{field_name}.plural"
 
-        # find plural or singular field for stem_type (most specific)
         if (
-            translated_fieldname := translation.npgettext(
-                stem_type, msg_id1, msg_id2, n
+            stem_plural_singluar_translation := translation.npgettext(
+                stem_type, msg_id_singular, msg_id_plural, n
             )
-        ) not in (msg_id1, msg_id2):
-            return translated_fieldname
+        ) not in (msg_id_singular, msg_id_plural):
+            return stem_plural_singluar_translation
 
-        # find plural or singular field WITHOUT stem_type
-        if (translated_fieldname := translation.ngettext(msg_id1, msg_id2, n)) not in (
-            msg_id1,
-            msg_id2,
+        if (
+            plural_singluar_translation := translation.ngettext(
+                msg_id_singular, msg_id_plural, n
+            )
+        ) not in (
+            msg_id_singular,
+            msg_id_plural,
         ):
-            return translated_fieldname
+            return plural_singluar_translation
 
-        # find field for stem_type
         if (
-            translated_fieldname := translation.pgettext(stem_type, field_name)
+            stem_fieldname_translation := translation.pgettext(stem_type, field_name)
         ) != field_name:
-            return translated_fieldname
+            return stem_fieldname_translation
 
-        # find singular field for stem_type
         if (
-            translated_fieldname := translation.pgettext(stem_type, msg_id1)
-        ) != msg_id1:
-            return translated_fieldname
+            stem_singluar_translation := translation.pgettext(
+                stem_type, msg_id_singular
+            )
+        ) != msg_id_singular:
+            return stem_singluar_translation
 
-        # find singular field WITHOUT stem_type
-        if (translated_fieldname := translation.gettext(msg_id1)) != msg_id1:
-            return translated_fieldname
+        if (
+            singluar_translation := translation.gettext(msg_id_singular)
+        ) != msg_id_singular:
+            return singluar_translation
 
-        # find field WITHOUT stem_type
-        if (translated_fieldname := translation.gettext(field_name)) != field_name:
-            return translated_fieldname
+        if (fieldname_translation := translation.gettext(field_name)) != field_name:
+            return fieldname_translation
 
         return camelcase_to_title(field_name)
 

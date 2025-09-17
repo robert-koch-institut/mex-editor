@@ -91,10 +91,10 @@ def language_switcher() -> rx.Component:
         rx.menu.content(
             *[
                 rx.menu.item(
-                    rx.text(locale["label"]),
-                    on_click=State.change_locale(locale["id"]),
+                    rx.text(locale.label),
+                    on_click=State.change_locale(locale.id),
                     custom_attrs={
-                        "data-testid": f"language-switcher-menu-item-{locale['id']}"
+                        "data-testid": f"language-switcher-menu-item-{locale.id}"
                     },
                 )
                 for locale in locale_service.get_available_locales()

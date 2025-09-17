@@ -233,7 +233,7 @@ def transform_models_to_fields(
     """
     mergeable_fields_with_stemtype = sorted(
         {
-            (f, e.stemType)
+            f
             for e in [*extracted_items, additive]
             for f in MERGEABLE_FIELDS_BY_CLASS_NAME[e.entityType]
         }
@@ -245,7 +245,7 @@ def transform_models_to_fields(
             primary_sources=[],
             is_required=field_name in required_fields,
         )
-        for field_name, stem_type in mergeable_fields_with_stemtype
+        for field_name in mergeable_fields_with_stemtype
     }
 
     for extracted in extracted_items:

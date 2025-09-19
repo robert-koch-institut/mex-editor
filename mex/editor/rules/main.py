@@ -3,14 +3,16 @@ from typing import cast
 import reflex as rx
 
 from mex.editor.components import icon_by_stem_type, render_span, render_value
+from mex.editor.locale_service import LocaleService
 from mex.editor.rules.models import (
-    EditorField,
     EditorPrimarySource,
     EditorValue,
     InputConfig,
     ValidationMessage,
 )
-from mex.editor.rules.state import RuleState
+from mex.editor.rules.state import FieldTranslation, RuleState
+
+locale_service = LocaleService.get()
 
 
 def editor_value_switch(
@@ -459,29 +461,32 @@ def editor_primary_source(
 
 
 def field_name(
-    field: EditorField,
+    field_translation: FieldTranslation,
 ) -> rx.Component:
     """Return a card with a field name."""
+    field = field_translation.field
     return rx.card(
         rx.hstack(
-            rx.text(field.name),
+            rx.text(field_translation.label),
             rx.cond(
                 field.is_required,
                 rx.text("*", style={"color": "red"}),
             ),
             spacing="1",
         ),
+        title=field_translation.description,
         style={"width": "25%"},
         custom_attrs={"data-testid": f"field-{field.name}-name"},
     )
 
 
 def editor_field(
-    field: EditorField,
+    field_translation: FieldTranslation,
 ) -> rx.Component:
     """Return a horizontal grid of cards for editing one field."""
+    field = field_translation.field
     return rx.hstack(
-        field_name(field),
+        field_name(field_translation),
         rx.vstack(
             rx.foreach(
                 field.primary_sources,

@@ -63,16 +63,17 @@ class LocaleService:
     _translations: dict[str, gettext.GNUTranslations] = {}
 
     def __init__(self) -> None:
-        """Initalize with all found locales in `LOCALE_FOLDER_PATH`."""
-        files = list(LOCALE_FOLDER_PATH.glob("*.mo"))
-        self._available_locales = {
-            mo_file.stem: MexLocale(
-                id=mo_file.stem,
-                label=get_locale_label(mo_file.stem),
+        """Initialize with all locales in `LOCALES_LABEL_MAPPING`."""
+        for locale, label in LOCALES_LABEL_MAPPING.items():
+            mo_file = LOCALE_FOLDER_PATH / f"{locale}.mo"
+            if not mo_file.is_file():
+                msg = f"Localization file not found: {mo_file}"
+                raise FileNotFoundError(msg)
+            self._available_locales[locale] = MexLocale(
+                id=locale,
+                label=label,
                 filepath=mo_file,
             )
-            for mo_file in files
-        }
 
     def get_available_locales(self) -> Sequence[MexLocale]:
         """Get all available locales.

@@ -231,7 +231,7 @@ def transform_models_to_fields(
     Returns:
         A list of editor field instances
     """
-    mergeable_fields_with_stemtype = sorted(
+    mergeable_fields = sorted(
         {
             f
             for e in [*extracted_items, additive]
@@ -245,7 +245,7 @@ def transform_models_to_fields(
             primary_sources=[],
             is_required=field_name in required_fields,
         )
-        for field_name in mergeable_fields_with_stemtype
+        for field_name in mergeable_fields
     }
 
     for extracted in extracted_items:

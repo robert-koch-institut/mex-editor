@@ -5,7 +5,6 @@ from mex.editor.edit.state import EditState
 from mex.editor.layout import page
 from mex.editor.rules.main import (
     editor_field,
-    page_leave_js,
     rule_page_header,
     validation_errors,
 )
@@ -56,11 +55,10 @@ def index() -> rx.Component:
             ),
             deactivate_all_switch(),
             rx.foreach(
-                RuleState.fields,
+                RuleState.translated_fields,
                 editor_field,
             ),
             validation_errors(),
-            page_leave_js(),
             style={
                 "width": "100%",
                 "marginTop": "calc(2 * var(--space-6))",

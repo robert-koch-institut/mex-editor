@@ -2,10 +2,13 @@ from typing import TYPE_CHECKING, cast
 
 import reflex as rx
 
+from mex.editor.locale_service import LocaleService
 from mex.editor.state import NavItem, State
 
 if TYPE_CHECKING:
     from mex.editor.models import User
+
+locale_service = LocaleService.get()
 
 
 def user_button() -> rx.Component:
@@ -44,9 +47,10 @@ def nav_link(item: NavItem) -> rx.Component:
     """Return a link component for the given navigation item."""
     return rx.link(
         rx.text(item.title, size="4", weight="medium"),
-        href=item.raw_path,
+        on_click=State.navigate(item.raw_path),
         underline=item.underline,
         class_name="nav-item",
+        custom_attrs={"data-href": item.raw_path},
     )
 
 
@@ -77,6 +81,36 @@ def app_logo() -> rx.Component:
     )
 
 
+def language_switcher() -> rx.Component:
+    """Render a language switcher."""
+    return rx.menu.root(
+        rx.menu.trigger(
+            rx.button(
+                State.current_locale,
+                style={
+                    "background": "transparent",
+                    "color": "inherit",
+                    "z_index": "20",
+                    ":hover": {"cursor": "pointer"},
+                },
+            ),
+            custom_attrs={"data-testid": "language-switcher"},
+        ),
+        rx.menu.content(
+            *[
+                rx.menu.item(
+                    rx.text(locale.label),
+                    on_click=State.change_locale(locale.id),
+                    custom_attrs={
+                        "data-testid": f"language-switcher-menu-item-{locale.id}"
+                    },
+                )
+                for locale in locale_service.get_available_locales()
+            ]
+        ),
+    )
+
+
 def nav_bar() -> rx.Component:
     """Return a navigation bar component."""
     return rx.vstack(
@@ -99,6 +133,7 @@ def nav_bar() -> rx.Component:
                 rx.divider(orientation="vertical", size="2"),
                 user_menu(),
                 rx.spacer(),
+                language_switcher(),
                 rx.color_mode.button(),
                 justify="between",
                 align_items="center",
@@ -122,6 +157,51 @@ def nav_bar() -> rx.Component:
     )
 
 
+def navigate_away_dialog() -> rx.Component:
+    """Render a dialog that informs the user about unsaved changes on the page.
+
+    If the dialog is dismissed navigatio is stopped and the user stays on the page
+    ; otherwise navigate away.
+    """
+    return rx.alert_dialog.root(
+        rx.alert_dialog.content(
+            rx.alert_dialog.title("Unsaved changes"),
+            rx.alert_dialog.description(
+                "There are unsaved changes on the page. If u navigate away "
+                "these changes will be lost. Do you want to navigate anyway?",
+            ),
+            rx.flex(
+                rx.alert_dialog.cancel(
+                    rx.button("Cancel", on_click=State.close_navigate_dialog)
+                ),
+                rx.alert_dialog.action(
+                    rx.button(
+                        "Discard changes",
+                        color_scheme="red",
+                        on_click=[
+                            State.close_navigate_dialog,
+                            State.set_current_page_has_changes(False),
+                            State.navigate(State.navigate_target),
+                        ],
+                    )
+                ),
+                spacing="3",
+            ),
+        ),
+        open=State.navigate_dialog_open,
+    )
+
+
+def page_leave_js() -> rx.Component:
+    """Render page leave java script import.
+
+    Returns:
+        rx.Component: The script component refrencing the
+        '/page-leave-warn-unsaved-changes.js'
+    """
+    return rx.script(src="/page-leave-warn-unsaved-changes.js")
+
+
 def page(*children: rx.Component) -> rx.Component:
     """Return a page fragment with navigation bar and given children."""
     return rx.cond(
@@ -138,6 +218,8 @@ def page(*children: rx.Component) -> rx.Component:
                 },
                 custom_attrs={"data-testid": "page-body"},
             ),
+            navigate_away_dialog(),
+            page_leave_js(),
             style={
                 "--app-max-width": "calc(1480px * var(--scaling))",
                 "--app-min-width": "calc(800px * var(--scaling))",

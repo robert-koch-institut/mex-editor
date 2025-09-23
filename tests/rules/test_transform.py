@@ -451,8 +451,16 @@ def test_transform_model_to_editor_primary_sources(
     expected_given_name: list[EditorPrimarySource],
     expected_family_name: list[EditorPrimarySource],
 ) -> None:
-    given_name = EditorField(name="givenName", primary_sources=[], is_required=False)
-    family_name = EditorField(name="familyName", primary_sources=[], is_required=False)
+    given_name = EditorField(
+        name="givenName",
+        primary_sources=[],
+        is_required=False,
+    )
+    family_name = EditorField(
+        name="familyName",
+        primary_sources=[],
+        is_required=False,
+    )
     fields_by_name = {"givenName": given_name, "familyName": family_name}
 
     _transform_model_to_editor_primary_sources(

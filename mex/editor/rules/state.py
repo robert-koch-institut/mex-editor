@@ -46,6 +46,7 @@ locale_service = LocaleService.get()
 class RuleState(State):
     """Base state for the edit and create components."""
 
+    is_submitting: bool = False
     item_id: str | None = None
     item_title: list[EditorValue] = []
     fields: list[EditorField] = []
@@ -201,6 +202,15 @@ class RuleState(State):
         else:
             yield from self.refresh()
             yield self.show_submit_success_toast()
+
+    @rx.event
+    def set_is_submitting(self, value: bool) -> None:  # noqa: FBT001
+        """Set the is_submitting attribute.
+
+        Args:
+            value: The value for is_submitting.
+        """
+        self.is_submitting = value
 
     @rx.event
     def show_submit_success_toast(self) -> EventSpec:

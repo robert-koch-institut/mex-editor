@@ -287,7 +287,7 @@ def test_transform_model_values_to_editor_values(
             "documentation",
             InputConfig(
                 badge_options=["DE", "EN", LANGUAGE_VALUE_NONE],
-                badge_default="DE",
+                badge_default=LANGUAGE_VALUE_NONE,
                 badge_titles=["LinkLanguage"],
                 editable_href=True,
                 editable_badge=True,
@@ -302,7 +302,7 @@ def test_transform_model_values_to_editor_values(
             "keyword",
             InputConfig(
                 badge_options=["DE", "EN", LANGUAGE_VALUE_NONE],
-                badge_default="DE",
+                badge_default=LANGUAGE_VALUE_NONE,
                 badge_titles=["TextLanguage"],
                 editable_badge=True,
                 editable_text=True,
@@ -316,7 +316,7 @@ def test_transform_model_values_to_editor_values(
             "alternativeTitle",
             InputConfig(
                 badge_options=["DE", "EN", LANGUAGE_VALUE_NONE],
-                badge_default="DE",
+                badge_default=LANGUAGE_VALUE_NONE,
                 badge_titles=["TextLanguage"],
                 editable_badge=True,
                 editable_text=True,

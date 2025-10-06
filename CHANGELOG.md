@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.0.0] - 2025-10-06
+
+### Added
+
 - submit button is disabled and contains a spinner while submitting
 - localization (label and description only) for "de" and "en"
 - warning when a page reflex navigates and there are still changes on the current page
@@ -22,16 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - bump cookiecutter template to b18156
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - fix badge default for link and text
 - fix title of edit page to be equal to search snippet
-
-### Security
 
 ## [0.22.0] - 2025-07-31
 

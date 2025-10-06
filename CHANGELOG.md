@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - submit button is disabled and contains a spinner while submitting
-
+- localization (label and description only) for "de" and "en"
 - warning when a page reflex navigates and there are still changes on the current page
 - added a switch to toggle all primary sources and values in the edit page
 - added textareas for fields listed in mex/editor/models.yaml
@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix badge default for link and text
 - fix title of edit page to be equal to search snippet
 
 ### Security

@@ -286,8 +286,8 @@ def test_transform_model_values_to_editor_values(
             "Resource",
             "documentation",
             InputConfig(
-                badge_options=["DE", "EN", LANGUAGE_VALUE_NONE],
-                badge_default="DE",
+                badge_options=["DE", "EN", "FR", "ES", "RU", LANGUAGE_VALUE_NONE],
+                badge_default=LANGUAGE_VALUE_NONE,
                 badge_titles=["LinkLanguage"],
                 editable_href=True,
                 editable_badge=True,
@@ -301,8 +301,8 @@ def test_transform_model_values_to_editor_values(
             "Resource",
             "keyword",
             InputConfig(
-                badge_options=["DE", "EN", LANGUAGE_VALUE_NONE],
-                badge_default="DE",
+                badge_options=["DE", "EN", "FR", "ES", "RU", LANGUAGE_VALUE_NONE],
+                badge_default=LANGUAGE_VALUE_NONE,
                 badge_titles=["TextLanguage"],
                 editable_badge=True,
                 editable_text=True,
@@ -315,8 +315,8 @@ def test_transform_model_values_to_editor_values(
             "Resource",
             "alternativeTitle",
             InputConfig(
-                badge_options=["DE", "EN", LANGUAGE_VALUE_NONE],
-                badge_default="DE",
+                badge_options=["DE", "EN", "FR", "ES", "RU", LANGUAGE_VALUE_NONE],
+                badge_default=LANGUAGE_VALUE_NONE,
                 badge_titles=["TextLanguage"],
                 editable_badge=True,
                 editable_text=True,
@@ -451,8 +451,16 @@ def test_transform_model_to_editor_primary_sources(
     expected_given_name: list[EditorPrimarySource],
     expected_family_name: list[EditorPrimarySource],
 ) -> None:
-    given_name = EditorField(name="givenName", primary_sources=[], is_required=False)
-    family_name = EditorField(name="familyName", primary_sources=[], is_required=False)
+    given_name = EditorField(
+        name="givenName",
+        primary_sources=[],
+        is_required=False,
+    )
+    family_name = EditorField(
+        name="familyName",
+        primary_sources=[],
+        is_required=False,
+    )
     fields_by_name = {"givenName": given_name, "familyName": family_name}
 
     _transform_model_to_editor_primary_sources(

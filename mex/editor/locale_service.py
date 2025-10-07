@@ -5,11 +5,11 @@ from importlib.resources import files
 from pathlib import Path
 from typing import Self, cast
 
+from babel import Locale as BabelLocale
+
 from mex.common.context import SingleSingletonStore
 from mex.common.models import BaseModel
 
-LOCALE_FILES_PATH = files("mex.model.i18n")
-LOCALES_LABEL_MAPPING = {"de": "deutsch", "en": "english"}
 LOCALE_SERVICE_STORE = SingleSingletonStore["LocaleService"]()
 
 
@@ -29,21 +29,9 @@ def camelcase_to_title(value: str) -> str:
         value: The camelcase string to convert.
 
     Returns:
-        str: The converted string containing title-cased words splitted by space.
+        The converted string containing title-cased words splitted by space.
     """
     return re.sub(r"(?<!^)(?=[A-Z])", " ", value).title()
-
-
-def get_locale_label(locale_id: str) -> str:
-    """Convert the locale into a label.
-
-    Args:
-        locale_id: The locale to convert to a label.
-
-    Returns:
-        str: The label for the given locale.
-    """
-    return LOCALES_LABEL_MAPPING.get(locale_id, locale_id.split("-")[0])
 
 
 class LocaleService:
@@ -54,7 +42,7 @@ class LocaleService:
         """Get singleton instance of the LocaleService.
 
         Returns:
-            Self: The LocaleService singleton.
+            The LocaleService singleton.
         """
         return cast("Self", LOCALE_SERVICE_STORE.load(cls))
 
@@ -62,16 +50,12 @@ class LocaleService:
     _translations: dict[str, GNUTranslations] = {}
 
     def __init__(self) -> None:
-        """Initialize with all locales in `LOCALES_LABEL_MAPPING`."""
-        for locale, label in LOCALES_LABEL_MAPPING.items():
-            mo_file = LOCALE_FILES_PATH / f"{locale}.mo"
-            if not mo_file.is_file():
-                msg = f"Localization file not found: {mo_file}"
-                raise FileNotFoundError(msg)
+        """Initialize with all available locales."""
+        for mo_file in cast("Path", (files("mex.model") / "i18n")).glob("*.mo"):
+            locale = mo_file.name.removesuffix(".mo")
+            label = BabelLocale.parse(locale).get_language_name()
             self._available_locales[locale] = MExLocale(
-                id=locale,
-                label=label,
-                filepath=mo_file,
+                id=locale, label=label, filepath=mo_file
             )
 
     def get_available_locales(self) -> Sequence[MExLocale]:

@@ -221,13 +221,13 @@ def search_results() -> rx.Component:
 
 
 def search_infobox() -> rx.Component:
-    """Render some informations about the specific search provider query format."""
+    """Render information about the specific search provider query format."""
     return rx.match(
         IngestState.current_aux_provider,
         (
             AuxProvider.LDAP,
             rx.callout(
-                "Search users by their fullname. "
+                "Search users by display name and contact points by email. "
                 'Please use "*" as placeholder e.g. "Muster*".',
             ),
         ),

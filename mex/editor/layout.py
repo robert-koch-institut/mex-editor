@@ -39,6 +39,7 @@ def user_menu() -> rx.Component:
                 on_select=State.logout,
                 custom_attrs={"data-testid": "logout-button"},
             ),
+            align="end",
         ),
     )
 
@@ -160,14 +161,14 @@ def nav_bar() -> rx.Component:
 def navigate_away_dialog() -> rx.Component:
     """Render a dialog that informs the user about unsaved changes on the page.
 
-    If the dialog is dismissed navigatio is stopped and the user stays on the page
-    ; otherwise navigate away.
+    If the dialog is dismissed navigation is stopped and the user stays on the page;
+    otherwise navigate away.
     """
     return rx.alert_dialog.root(
         rx.alert_dialog.content(
             rx.alert_dialog.title("Unsaved changes"),
             rx.alert_dialog.description(
-                "There are unsaved changes on the page. If u navigate away "
+                "There are unsaved changes on the page. If you navigate away "
                 "these changes will be lost. Do you want to navigate anyway?",
             ),
             rx.flex(
@@ -196,7 +197,7 @@ def page_leave_js() -> rx.Component:
     """Render page leave java script import.
 
     Returns:
-        rx.Component: The script component refrencing the
+        rx.Component: The script component referencing the
         '/page-leave-warn-unsaved-changes.js'
     """
     return rx.script(src="/page-leave-warn-unsaved-changes.js")

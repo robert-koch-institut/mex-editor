@@ -110,10 +110,10 @@ class SearchState(State):
 
     @rx.event
     def remove_reference_field_filter_identifier(self, index: int) -> None:
-        """Remove the reference valueto filter for at a specific index.
+        """Remove the reference value to filter for at a specific index.
 
         Args:
-            index (int): Index of the identifier to remove.
+            index: Index of the identifier to remove.
         """
         self.reference_field_filter.identifiers.pop(index)
 
@@ -294,7 +294,7 @@ class SearchState(State):
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results."""
-        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
+        # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         connector = BackendApiConnector.get()
         entity_type = [
             ensure_prefix(k, "Merged") for k, v in self.entity_types.items() if v
@@ -305,7 +305,6 @@ class SearchState(State):
             if self.reference_filter_strategy == "dynamic"
             else _build_had_primary_source_refresh_params(self.had_primary_sources)
         )
-
         skip = self.limit * (self.current_page - 1)
         self.is_loading = True
         yield None
@@ -334,7 +333,7 @@ class SearchState(State):
     @rx.event
     def get_available_primary_sources(self) -> Generator[EventSpec, None, None]:
         """Get all available primary sources."""
-        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
+        # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         connector = BackendApiConnector.get()
         maximum_number_of_primary_sources = 100
         try:

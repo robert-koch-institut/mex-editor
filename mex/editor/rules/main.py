@@ -573,7 +573,7 @@ def rule_page_header(title: rx.Component) -> rx.Component:
     return rx.hstack(
         icon_by_stem_type(
             RuleState.stem_type,
-            size=28,
+            size=32,
             margin="auto 0",
         ),
         title,

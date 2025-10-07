@@ -170,6 +170,6 @@ class State(rx.State):
     def backend_version(self) -> str:
         """Return the version of mex-backend."""
         connector = BackendApiConnector.get()
-        # TODO(ND): use proper connector method when available (stop-gap MX-1762)
+        # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         response = connector.request("GET", "_system/check")
         return str(response.get("version", "N/A"))

@@ -39,6 +39,7 @@ def user_menu() -> rx.Component:
                 on_select=State.logout,
                 custom_attrs={"data-testid": "logout-button"},
             ),
+            align="end",
         ),
     )
 

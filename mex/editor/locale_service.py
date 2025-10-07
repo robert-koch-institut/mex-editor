@@ -1,14 +1,19 @@
-import gettext
 import re
 from collections.abc import Sequence
+from gettext import GNUTranslations
+from importlib.resources import files
 from pathlib import Path
 from typing import Self, cast
 
 from mex.common.context import SingleSingletonStore
 from mex.common.models import BaseModel
 
+LOCALE_FILES_PATH = files("mex.model.i18n")
+LOCALES_LABEL_MAPPING = {"de": "deutsch", "en": "english"}
+LOCALE_SERVICE_STORE = SingleSingletonStore["LocaleService"]()
 
-class MexLocale(BaseModel):
+
+class MExLocale(BaseModel):
     """Represents a locale with id and label."""
 
     id: str
@@ -16,21 +21,15 @@ class MexLocale(BaseModel):
     filepath: Path
 
 
-# TODO(FE): Change to mex-model when fork is approved
-here = Path(__file__).resolve().parent
-LOCALE_FOLDER_PATH = here / "../../locales"
-LOCALES_LABEL_MAPPING = {"de": "deutsch", "en": "english"}
-LOCALE_SERVICE_STORE = SingleSingletonStore["LocaleService"]()
-
-
+# TODO(ND): Move this to mex-common
 def camelcase_to_title(value: str) -> str:
-    """Convert a camelcase string into titlecased words splitted by space.
+    """Convert a camelcase string into title-cased words splitted by space.
 
     Args:
         value: The camelcase string to convert.
 
     Returns:
-        str: The converted string containing titlecased words splitted by space.
+        str: The converted string containing title-cased words splitted by space.
     """
     return re.sub(r"(?<!^)(?=[A-Z])", " ", value).title()
 
@@ -59,34 +58,34 @@ class LocaleService:
         """
         return cast("Self", LOCALE_SERVICE_STORE.load(cls))
 
-    _available_locales: dict[str, MexLocale] = {}
-    _translations: dict[str, gettext.GNUTranslations] = {}
+    _available_locales: dict[str, MExLocale] = {}
+    _translations: dict[str, GNUTranslations] = {}
 
     def __init__(self) -> None:
         """Initialize with all locales in `LOCALES_LABEL_MAPPING`."""
         for locale, label in LOCALES_LABEL_MAPPING.items():
-            mo_file = LOCALE_FOLDER_PATH / f"{locale}.mo"
+            mo_file = LOCALE_FILES_PATH / f"{locale}.mo"
             if not mo_file.is_file():
                 msg = f"Localization file not found: {mo_file}"
                 raise FileNotFoundError(msg)
-            self._available_locales[locale] = MexLocale(
+            self._available_locales[locale] = MExLocale(
                 id=locale,
                 label=label,
                 filepath=mo_file,
             )
 
-    def get_available_locales(self) -> Sequence[MexLocale]:
+    def get_available_locales(self) -> Sequence[MExLocale]:
         """Get all available locales.
 
         Returns:
-            Sequence[MexLocale]: All availble locales.
+            All available locales.
         """
         return list(self._available_locales.values())
 
-    def _ensure_translation(self, locale_id: str) -> gettext.GNUTranslations:
+    def _ensure_translation(self, locale_id: str) -> GNUTranslations:
         if locale_id not in self._translations:
             with self._available_locales[locale_id].filepath.open("rb") as mo_file:
-                self._translations[locale_id] = gettext.GNUTranslations(mo_file)
+                self._translations[locale_id] = GNUTranslations(mo_file)
         return self._translations[locale_id]
 
     def get_field_label(  # noqa: PLR0911
@@ -109,21 +108,21 @@ class LocaleService:
         msg_id_plural = f"{field_name}.plural"
 
         if (
-            stem_plural_singluar_translation := translation.npgettext(
+            stem_plural_singular_translation := translation.npgettext(
                 stem_type, msg_id_singular, msg_id_plural, n
             )
         ) not in (msg_id_singular, msg_id_plural):
-            return stem_plural_singluar_translation
+            return stem_plural_singular_translation
 
         if (
-            plural_singluar_translation := translation.ngettext(
+            plural_singular_translation := translation.ngettext(
                 msg_id_singular, msg_id_plural, n
             )
         ) not in (
             msg_id_singular,
             msg_id_plural,
         ):
-            return plural_singluar_translation
+            return plural_singular_translation
 
         if (
             stem_fieldname_translation := translation.pgettext(stem_type, field_name)
@@ -131,16 +130,16 @@ class LocaleService:
             return stem_fieldname_translation
 
         if (
-            stem_singluar_translation := translation.pgettext(
+            stem_singular_translation := translation.pgettext(
                 stem_type, msg_id_singular
             )
         ) != msg_id_singular:
-            return stem_singluar_translation
+            return stem_singular_translation
 
         if (
-            singluar_translation := translation.gettext(msg_id_singular)
+            singular_translation := translation.gettext(msg_id_singular)
         ) != msg_id_singular:
-            return singluar_translation
+            return singular_translation
 
         if (fieldname_translation := translation.gettext(field_name)) != field_name:
             return fieldname_translation

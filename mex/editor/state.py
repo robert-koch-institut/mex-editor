@@ -13,7 +13,7 @@ from mex.editor.models import NavItem, User
 class State(rx.State):
     """The base state for the app."""
 
-    current_locale: str = "de"
+    current_locale: str = "de-DE"
     current_page_has_changes: bool = False
     navigate_dialog_open: bool = False
     navigate_target: str | None = None

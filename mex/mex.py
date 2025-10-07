@@ -27,7 +27,6 @@ from mex.editor.settings import EditorSettings
 from mex.editor.state import State
 
 app = rx.App(
-    html_lang="en",
     theme=themes.theme(accent_color="blue", has_background=False),
     style={">a": {"opacity": "0"}},
 )

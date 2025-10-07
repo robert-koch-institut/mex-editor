@@ -24,7 +24,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
     ("locale_id", "stem_type", "field_name", "pluralize", "expected_label"),
     [
         pytest.param(
-            "de",
+            "de-DE",
             "Resource",
             "conformsTo",
             False,
@@ -32,7 +32,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:Resource.conformsTo(singular)",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "Resource",
             "conformsTo",
             True,
@@ -40,7 +40,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:Resource.conformsTo(plural)",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "Resource",
             "conformsTo",
             False,
@@ -48,7 +48,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:Resource.conformsTo(singular)",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "Resource",
             "conformsTo",
             True,
@@ -56,7 +56,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:Resource.conformsTo(plural)",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "Resource",
             "contributor",
             False,
@@ -64,7 +64,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:Resource.contributor(singular)",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "Resource",
             "contributor",
             True,
@@ -72,7 +72,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:Resource.contributor(plural)",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "Resource",
             "contributor",
             False,
@@ -80,7 +80,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:Resource.contributor(singular)",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "Resource",
             "contributor",
             True,
@@ -88,7 +88,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:Resource.contributor(plural)",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "Variable",
             "dataType",
             False,
@@ -96,7 +96,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:Variable.dataType(singular)",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "Variable",
             "dataType",
             True,
@@ -104,7 +104,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:Variable.dataType(plural)",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "Variable",
             "dataType",
             False,
@@ -112,7 +112,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:Variable.dataType(singular)",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "Variable",
             "dataType",
             True,
@@ -120,7 +120,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:Variable.dataType(plural)",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "AnyStemType",
             "abstract",
             False,
@@ -128,7 +128,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:AnyStemType.abstract(singular)",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "AnyStemType",
             "abstract",
             True,
@@ -136,7 +136,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:AnyStemType.abstract(plural)",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "AnyStemType",
             "abstract",
             False,
@@ -144,7 +144,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:AnyStemType.abstract(singular)",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "AnyStemType",
             "abstract",
             True,
@@ -152,7 +152,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:AnyStemType.abstract(plural)",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "AnyStemType",
             "alternativeTitle",
             False,
@@ -160,7 +160,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:AnyStemType.alternativeTitle(singular)",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "AnyStemType",
             "alternativeTitle",
             True,
@@ -168,7 +168,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:AnyStemType.alternativeTitle(plural)",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "AnyStemType",
             "alternativeTitle",
             False,
@@ -176,7 +176,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:AnyStemType.alternativeTitle(singular)",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "AnyStemType",
             "alternativeTitle",
             True,
@@ -184,7 +184,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:AnyStemType.alternativeTitle(plural)",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "UnknownStemType",
             "unknownField",
             False,
@@ -192,7 +192,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:UnknownStemType.unknownField(singular)",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "UnknownStemType",
             "unknownField",
             True,
@@ -200,7 +200,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="de:UnknownStemType.unknownField(plural)",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "UnknownStemType",
             "unknownField",
             False,
@@ -208,7 +208,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             id="en:UnknownStemType.unknownField(singular)",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "UnknownStemType",
             "unknownField",
             True,
@@ -237,84 +237,84 @@ def test_get_field_label(
     ("locale_id", "stem_type", "field_name", "expected_description"),
     [
         pytest.param(
-            "de",
+            "de-DE",
             "Activity",
             "abstract",
             "Kurze Beschreibung des Kontexts, in dem die Daten verarbeitet wurden",
             id="de:Activity.abstract",
         ),
         pytest.param(
-            "en",
+            "en-EN",
             "Activity",
             "abstract",
             "Brief description of the context in which the data was processed",
             id="en:Activity.abstract",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "Resource",
             "accessPlatform",
             "Zugriffsplattform für die Daten",
             id="de:Resource.accessPlatform",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "Resource",
             "accessPlatform",
             "Access platform for the data",
             id="en:Resource.accessPlatform",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "Person",
             "affiliation",
             "Institution, zu der die Person zugehörig ist",
             id="de:Person.affiliation",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "Person",
             "affiliation",
             "Institution to which the person belongs",
             id="en:Person.affiliation",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "AnyStemType",
             "alternativeTitle",
             "Andere(r) Titel",
             id="de:AnyStemType.alternativeTitle",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "AnyStemType",
             "alternativeTitle",
             "Other title(s)",
             id="en:AnyStemType.alternativeTitle",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "AnyStemType",
             "identifier",
             "Alle extrahierten Metadatenobjekte werden mit einem Identifikator versehen",
             id="de:AnyStemType.identifier",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "AnyStemType",
             "identifier",
             "All extracted metadata objects are provided with an identifier",
             id="en:AnyStemType.identifier",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "AnyStemType",
             "unknownField",
             "",
             id="de:AnyStemType.unknownField",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "AnyStemType",
             "unknownField",
             "",

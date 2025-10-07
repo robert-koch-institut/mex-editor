@@ -58,8 +58,7 @@ class RuleState(State):
         """Compute the translated fields based on fields and current_locale.
 
         Returns:
-            Sequence[FieldTranslation]: Translated fields containing label and
-            description translation.
+            Translated fields containing label and description translation.
         """
         if self.stem_type:
             fields = cast("list[EditorField]", self.get_value("fields"))

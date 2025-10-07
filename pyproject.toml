@@ -9,6 +9,7 @@ urls = { Repository = "https://github.com/robert-koch-institut/mex-editor" }
 requires-python = ">=3.11,<3.12"
 dependencies = [
     "async-lru>=2",
+    "babel>=2",
     "fastapi>=0.117",
     "mex-common>=1.5.1,<1.6",
     "pydantic>=2",

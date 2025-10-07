@@ -113,7 +113,7 @@ class SearchState(State):
         """Remove the reference value to filter for at a specific index.
 
         Args:
-            index (int): Index of the identifier to remove.
+            index: Index of the identifier to remove.
         """
         self.reference_field_filter.identifiers.pop(index)
 

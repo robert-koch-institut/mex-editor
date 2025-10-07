@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:25c3651b6adfe7334d06792b3a99ef6ad9cd54c978c934993259e22e28b45690"
+content_hash = "sha256:3198ee13f216360c7d748b87a69352e95066434342af11e544891defca1f0a8e"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -112,7 +112,7 @@ name = "babel"
 version = "2.17.0"
 requires_python = ">=3.8"
 summary = "Internationalization utilities"
-groups = ["dev"]
+groups = ["default", "dev"]
 dependencies = [
     "pytz>=2015.7; python_version < \"3.9\"",
 ]

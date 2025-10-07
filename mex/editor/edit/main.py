@@ -54,7 +54,7 @@ def index() -> rx.Component:
             ),
             deactivate_all_switch(),
             rx.foreach(
-                RuleState.fields,
+                RuleState.translated_fields,
                 editor_field,
             ),
             validation_errors(),

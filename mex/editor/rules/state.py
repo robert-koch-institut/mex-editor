@@ -1,4 +1,5 @@
-from collections.abc import Generator
+from collections.abc import Generator, Sequence
+from typing import cast
 
 import reflex as rx
 from pydantic import ValidationError
@@ -19,8 +20,14 @@ from mex.common.models import (
 from mex.common.transform import ensure_postfix
 from mex.common.types import Identifier, Validation
 from mex.editor.exceptions import escalate_error
+from mex.editor.locale_service import LocaleService
 from mex.editor.models import EditorValue
-from mex.editor.rules.models import EditorField, EditorPrimarySource, ValidationMessage
+from mex.editor.rules.models import (
+    EditorField,
+    EditorPrimarySource,
+    FieldTranslation,
+    ValidationMessage,
+)
 from mex.editor.rules.transform import (
     transform_fields_to_rule_set,
     transform_models_to_fields,
@@ -33,15 +40,42 @@ from mex.editor.transform import (
 )
 from mex.editor.utils import resolve_editor_value, resolve_identifier
 
+locale_service = LocaleService.get()
+
 
 class RuleState(State):
     """Base state for the edit and create components."""
 
+    is_submitting: bool = False
     item_id: str | None = None
     item_title: list[EditorValue] = []
     fields: list[EditorField] = []
     stem_type: str | None = None
     validation_messages: list[ValidationMessage] = []
+
+    @rx.var
+    def translated_fields(self) -> Sequence[FieldTranslation]:
+        """Compute the translated fields based on fields and current_locale.
+
+        Returns:
+            Sequence[FieldTranslation]: Translated fields containing label and
+            description translation.
+        """
+        if self.stem_type:
+            fields = cast("list[EditorField]", self.get_value("fields"))
+            return [
+                FieldTranslation(
+                    field=field,
+                    label=locale_service.get_field_label(
+                        self.current_locale, self.stem_type, field.name
+                    ),
+                    description=locale_service.get_field_description(
+                        self.current_locale, self.stem_type, field.name
+                    ),
+                )
+                for field in fields
+            ]
+        return []
 
     @rx.event(background=True)
     async def resolve_identifiers(self) -> None:
@@ -115,6 +149,7 @@ class RuleState(State):
             return
         if rule_set:
             self.stem_type = transform_models_to_stem_type([rule_set.additive])
+
         if self.item_id:
             preview = create_merged_item(
                 identifier=Identifier(self.item_id),
@@ -123,6 +158,7 @@ class RuleState(State):
                 validation=Validation.LENIENT,
             )
             self.item_title = transform_models_to_title([preview])
+
         self.fields = transform_models_to_fields(
             extracted_items,
             additive=rule_set.additive,
@@ -168,6 +204,15 @@ class RuleState(State):
             yield RuleState.refresh
             yield RuleState.show_submit_success_toast
             yield RuleState.resolve_identifiers
+
+    @rx.event
+    def set_is_submitting(self, value: bool) -> None:  # noqa: FBT001
+        """Set the is_submitting attribute.
+
+        Args:
+            value: The value for is_submitting.
+        """
+        self.is_submitting = value
 
     @rx.event
     def show_submit_success_toast(self) -> Generator[EventSpec, None, None]:

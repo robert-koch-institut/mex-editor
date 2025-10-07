@@ -567,6 +567,7 @@ def test_edit_page_additive_rule_roundtrip(
     submit_button = page.get_by_test_id("submit-button")
     submit_button.scroll_into_view_if_needed()
     submit_button.click()
+    page.wait_for_timeout(30000)  # wait for save operation
     page.reload()
 
     # check the rule input is still gone
@@ -636,9 +637,9 @@ def test_deactivate_all_switch(edit_page: Page) -> None:
     page.screenshot(path="tests_edit_test_main-test_deactivate_all_switch-clicked.png")
 
     last_switch = None
-    all_swtiches = page.get_by_role("switch").all()
+    all_switches = page.get_by_role("switch").all()
 
-    for switch in all_swtiches:
+    for switch in all_switches:
         expect(switch).not_to_be_checked()
         last_switch = switch
 
@@ -649,6 +650,28 @@ def test_deactivate_all_switch(edit_page: Page) -> None:
     )
 
     expect(page.get_by_test_id("deactivate-all-switch")).to_be_checked()
+
+
+@pytest.mark.integration
+def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> None:
+    edit_page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    edit_page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
+        "new alternative title"
+    )
+    # check default state
+    submit_button = edit_page.get_by_test_id("submit-button")
+    expect(submit_button).to_have_text(re.compile(r"Save .*"))
+    expect(submit_button).not_to_be_disabled()
+
+    # submit item
+    submit_button.click()
+    expect(submit_button).to_have_text(re.compile(r"Saving .*"))
+    expect(submit_button).to_be_disabled()
+
+    # check if back in default state after saving
+    edit_page.wait_for_timeout(30000)
+    expect(submit_button).to_have_text(re.compile(r"Save .*"))
+    expect(submit_button).not_to_be_disabled()
 
 
 @pytest.mark.integration

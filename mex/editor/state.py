@@ -13,10 +13,10 @@ from mex.editor.models import NavItem, User
 class State(rx.State):
     """The base state for the app."""
 
+    current_locale: str = "de"
     current_page_has_changes: bool = False
     navigate_dialog_open: bool = False
     navigate_target: str | None = None
-
     user_mex: User | None = None
     user_ldap: User | None = None
     target_path_after_login: str | None = None
@@ -47,6 +47,15 @@ class State(rx.State):
             raw_path="/ingest/",
         ),
     ]
+
+    @rx.event
+    def change_locale(self, locale: str) -> None:
+        """Change the current locale to the given one and reload the page.
+
+        Args:
+            locale: The locale to change to.
+        """
+        self.current_locale = locale
 
     @rx.event
     def set_current_page_has_changes(self, value: bool) -> EventSpec:  # noqa: FBT001

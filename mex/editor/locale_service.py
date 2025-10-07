@@ -53,7 +53,8 @@ class LocaleService:
         """Initialize with all available locales."""
         for mo_file in cast("Path", (files("mex.model") / "i18n")).glob("*.mo"):
             locale = mo_file.name.removesuffix(".mo")
-            label = BabelLocale.parse(locale).get_language_name()
+            language = re.split("[-_]", locale)[0]
+            label = BabelLocale(language).get_language_name()
             self._available_locales[locale] = MExLocale(
                 id=locale, label=label, filepath=mo_file
             )

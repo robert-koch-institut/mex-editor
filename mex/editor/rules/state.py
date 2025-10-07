@@ -58,8 +58,7 @@ class RuleState(State):
         """Compute the translated fields based on fields and current_locale.
 
         Returns:
-            Sequence[FieldTranslation]: Translated fields containing label and
-            description translation.
+            Translated fields containing label and description translation.
         """
         if self.stem_type:
             fields = cast("list[EditorField]", self.get_value("fields"))
@@ -169,6 +168,7 @@ class RuleState(State):
     def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:
         """Send the rule set to the backend."""
         connector = BackendApiConnector.get()
+        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
         if self.item_id:
             return connector.update_rule_set(self.item_id, rule_set)
         return connector.create_rule_set(rule_set)

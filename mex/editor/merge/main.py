@@ -2,7 +2,12 @@ from typing import Literal
 
 import reflex as rx
 
-from mex.editor.components import icon_by_stem_type, render_title, render_value
+from mex.editor.components import (
+    icon_by_stem_type,
+    render_additional_titles,
+    render_search_preview,
+    render_title,
+)
 from mex.editor.layout import page
 from mex.editor.merge.state import MergeState
 from mex.editor.search.models import SearchResult
@@ -15,46 +20,24 @@ def search_result(
 ) -> rx.Component:
     """Render a single merged or extracted item search result with checkbox."""
     return rx.card(
-        rx.el.div(
-            rx.vstack(
-                rx.hstack(
-                    rx.checkbox(
-                        checked=MergeState.selected_items[category] == index,
-                        on_change=MergeState.select_item(category, index),
-                    ),
-                    icon_by_stem_type(
-                        result.stem_type,
-                        size=22,
-                        width="22px",
-                    ),
-                    rx.box(
-                        render_title(result.title),
-                        style={
-                            "fontWeight": "var(--font-weight-bold)",
-                            "overflow": "hidden",
-                            "whiteSpace": "nowrap",
-                        },
-                    ),
+        rx.vstack(
+            rx.hstack(
+                rx.checkbox(
+                    checked=MergeState.selected_items[category] == index,
+                    on_change=MergeState.select_item(category, index),
                 ),
-                rx.box(
-                    rx.hstack(
-                        rx.foreach(
-                            result.preview,
-                            render_value,
-                        )
-                    ),
-                    style={
-                        "color": "var(--gray-12)",
-                        "fontWeight": "var(--font-weight-light)",
-                        "textDecoration": "none",
-                    },
+                icon_by_stem_type(
+                    result.stem_type,
+                    size=22,
                 ),
+                render_title(result.title[0]),
+                render_additional_titles(result.title[1:]),
             ),
-            custom_attrs={"data-testid": f"result-{result.identifier}"},
+            render_search_preview(result.preview),
         ),
-        style={"width": "100%"},
         class_name="search-result-card",
-        custom_attrs={"data-testid": f"result-{category}-{index}"},
+        custom_attrs={"data-testid": f"result-{category}-{result.identifier}"},
+        style={"width": "100%"},
     )
 
 

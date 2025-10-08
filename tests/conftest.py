@@ -1,3 +1,6 @@
+import os
+from typing import Any
+
 import pytest
 from fastapi.testclient import TestClient
 from playwright.sync_api import Page, expect
@@ -32,6 +35,31 @@ from mex.editor.types import EditorUserDatabase, EditorUserPassword
 from mex.mex import app
 
 pytest_plugins = ("mex.common.testing.plugin",)
+
+
+@pytest.fixture(scope="session")
+def browser_context_args(
+    browser_context_args: dict[str, Any],
+) -> dict[str, Any]:
+    """Run the playwright test browser in a larger resolution than its default."""
+    return {
+        **browser_context_args,
+        "viewport": {
+            "width": 1600,
+            "height": 900,
+        },
+    }
+
+
+@pytest.fixture(scope="session")
+def browser_type_launch_args(
+    browser_type_launch_args: dict[str, Any],
+) -> dict[str, Any]:
+    """Run the playwright browser in headed mode locally and in headless mode in CI."""
+    return {
+        **browser_type_launch_args,
+        "headless": os.getenv("CI") is not None,
+    }
 
 
 @pytest.fixture

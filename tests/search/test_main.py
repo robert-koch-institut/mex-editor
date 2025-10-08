@@ -213,7 +213,7 @@ def test_reference_filter_fields_for_entity_type(
     dyn_tab.click()
     assert page.get_by_test_id("reference-field-filter").is_visible()
 
-    # select person entityasdas
+    # select person entity
     entity_types = page.get_by_test_id("entity-types")
     entity_types.get_by_text("Person").click()
 
@@ -256,7 +256,7 @@ def test_reference_filter(
     page.get_by_role("option", name="contact").click()
     # add invalid field
     page.get_by_test_id("reference-field-filter-add-id").click()
-    page.get_by_test_id("reference-field-filter-id-0").fill("invalidIdentifer!")
+    page.get_by_test_id("reference-field-filter-id-0").fill("invalidIdentifier!")
     # check for validation error msg
     expect(
         page.get_by_test_id("reference-field-filter").get_by_text("pattern")
@@ -333,37 +333,36 @@ def test_push_search_params(
     # expect parameter change to be reflected in url
     page.wait_for_url(
         "**/?q=Can+I+search+here%3F&page=1&entityType=Activity"
-        f"&referenceFilterStrategy=had_primary_source&hadPrimarySource={primary_source.stableTargetId}"
+        "&referenceFilterStrategy=had_primary_source"
+        f"&hadPrimarySource={primary_source.stableTargetId}"
     )
 
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_additional_titles_badge(
-    frontend_url: str, writer_user_page: Page, dummy_data: list[AnyExtractedModel]
+    frontend_url: str,
+    writer_user_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     # search for resources
     page = writer_user_page
     page.goto(f"{frontend_url}/?entityType=Resource")
 
-    resource_r2: ExtractedResource = next(
-        x
-        for x in dummy_data
-        if isinstance(x, ExtractedResource) and x.identifierInPrimarySource == "r-2"
-    )
+    resource_r2 = dummy_data_by_identifier_in_primary_source["r-2"]
+    assert isinstance(resource_r2, ExtractedResource)
     resource_r2_result = page.get_by_test_id(f"result-{resource_r2.stableTargetId}")
     first_title = resource_r2.title[0]
 
-    # expect title is visible and there are addional titles for 'r2'
+    # expect title is visible and there are additional titles for 'r2'
     expect(resource_r2_result).to_contain_text(first_title.value)
     expect(resource_r2_result).to_contain_text("+ additional titles")
 
     # hover additional titles
     trigger = resource_r2_result.get_by_test_id("tooltip-additional-titles-trigger")
-    trigger.highlight()
-    # Can't make hover work in tests :(
-    # It is working in tests/merge/test_main.py::test_additional_titles_badge
-    # so i guess it is something with the link
+    box = trigger.bounding_box()
+    assert box
+    page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
     trigger.hover()
     page.screenshot(path="tests_search_test_additional_titles_badge_hover.png")
 

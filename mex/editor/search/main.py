@@ -4,8 +4,9 @@ from mex.common.types import IDENTIFIER_PATTERN
 from mex.editor.components import (
     icon_by_stem_type,
     pagination,
+    render_additional_titles,
+    render_search_preview,
     render_title,
-    render_value,
 )
 from mex.editor.layout import page
 from mex.editor.search.models import (
@@ -19,41 +20,24 @@ from mex.editor.search.state import SearchState, full_refresh
 def search_result(result: SearchResult) -> rx.Component:
     """Render a single merged item search result."""
     return rx.card(
-        rx.hstack(
-            icon_by_stem_type(
-                result.stem_type,
-                size=28,
-                margin="auto 0",
-                color=rx.color("accent", 11),
-            ),
-            rx.link(
-                rx.box(
-                    render_title(result.title),
-                    style={
-                        "fontWeight": "var(--font-weight-bold)",
-                        "overflow": "hidden",
-                        "whiteSpace": "nowrap",
-                    },
+        rx.vstack(
+            rx.hstack(
+                icon_by_stem_type(
+                    result.stem_type,
+                    size=22,
+                    color=rx.color("accent", 11),
                 ),
-                rx.box(
-                    rx.hstack(
-                        rx.foreach(
-                            result.preview,
-                            render_value,
-                        )
-                    ),
-                    style={
-                        "color": "var(--gray-12)",
-                        "fontWeight": "var(--font-weight-light)",
-                        "textDecoration": "none",
-                    },
+                rx.link(
+                    render_title(result.title[0]),
+                    href=f"/item/{result.identifier}",
                 ),
-                href=f"/item/{result.identifier}",
+                render_additional_titles(result.title[1:]),
             ),
+            render_search_preview(result.preview),
             style={"width": "100%"},
-            class_name="search-result-card",
-            custom_attrs={"data-testid": f"result-{result.identifier}"},
         ),
+        class_name="search-result-card",
+        custom_attrs={"data-testid": f"result-{result.identifier}"},
         style={"width": "100%"},
     )
 

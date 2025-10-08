@@ -17,6 +17,6 @@ class ConsentState(State):
         if not self.user_ldap:
             self.target_path_after_login = self.router.page.raw_path
             return rx.redirect("/login-ldap")
-        person = connector.get_person(sAMAccountName=self.user_ldap.name)
+        person = connector.get_person(sam_account_name=self.user_ldap.name)
         self.display_name = person.displayName
         return None

@@ -51,7 +51,7 @@ from mex.editor.rules.models import (
     InputConfig,
     ValidationMessage,
 )
-from mex.editor.transform import ensure_list, transform_value, transform_values
+from mex.editor.transform import ensure_list, transform_value
 from mex.editor.types import AnyModelValue
 
 
@@ -238,7 +238,6 @@ def transform_models_to_fields(
             for f in MERGEABLE_FIELDS_BY_CLASS_NAME[e.entityType]
         }
     )
-
     required_fields = get_required_mergeable_field_names(additive)
     fields_by_name = {
         field_name: EditorField(
@@ -428,23 +427,3 @@ def transform_validation_error_to_messages(
         )
         for error in error.errors()
     ]
-
-
-def transform_fields_to_title(
-    stem_type: str,
-    fields: list[EditorField],
-) -> list[EditorValue]:
-    """Convert a list of editor fields into title values based on the title config."""
-    config = MODEL_CONFIG_BY_STEM_TYPE[stem_type]
-    titles: list[EditorValue] = []
-    for field in fields:
-        if field.name == config.title:
-            titles = [
-                value
-                for primary_source in field.primary_sources
-                for value in primary_source.editor_values
-            ]
-            break
-    if titles:
-        return titles
-    return transform_values(stem_type)

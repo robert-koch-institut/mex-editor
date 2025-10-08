@@ -6,6 +6,53 @@ from mex.editor.search.state import SearchState
 from mex.editor.state import State
 
 
+def render_title(title: EditorValue) -> rx.Component:
+    """Render one title in a container with hidden overflow."""
+    return rx.box(
+        render_value(title),
+        style={
+            "fontWeight": "var(--font-weight-bold)",
+            "overflow": "hidden",
+            "whiteSpace": "nowrap",
+        },
+    )
+
+
+def render_additional_titles(titles: list[EditorValue]) -> rx.Component:
+    """Render one title and if necessary a badge with tooltip and additional titles."""
+    return rx.cond(
+        titles,
+        rx.hover_card.root(
+            rx.hover_card.trigger(
+                rx.badge("+ additional titles", style=rx.Style(margin="auto 0")),
+                custom_attrs={"data-testid": "tooltip-additional-titles-trigger"},
+            ),
+            rx.hover_card.content(
+                rx.foreach(titles, render_value),
+                custom_attrs={"data-testid": "tooltip-additional-titles"},
+            ),
+        ),
+    )
+
+
+def render_search_preview(values: list[EditorValue]) -> rx.Component:
+    """Render a horizontal stack of editor values for a search preview."""
+    return rx.hstack(
+        rx.foreach(
+            values,
+            render_value,
+        ),
+        style={
+            "color": "var(--gray-12)",
+            "fontWeight": "var(--font-weight-light)",
+            "whiteSpace": "nowrap",
+            "overflow": "hidden",
+            "textOverflow": "ellipsis",
+            "maxWidth": "100%",
+        },
+    )
+
+
 def render_identifier(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable internal link that loads the edit page."""
     return rx.skeleton(
@@ -18,6 +65,8 @@ def render_identifier(value: EditorValue) -> rx.Component:
             on_click=State.navigate(value.href),
             high_contrast=True,
             role="link",
+            class_name="truncate",
+            title=value.text,
             custom_attrs={"data-href": value.href},
         ),
         loading=rx.cond(
@@ -39,6 +88,8 @@ def render_external_link(value: EditorValue) -> rx.Component:
         href=f"{value.href}",
         high_contrast=True,
         is_external=True,
+        title=value.text,
+        class_name="truncate",
         role="link",
     )
 
@@ -57,6 +108,8 @@ def render_span(text: str | None) -> rx.Component:
     return rx.text(
         text,
         as_="span",
+        class_name="truncate",
+        title=text,
     )
 
 

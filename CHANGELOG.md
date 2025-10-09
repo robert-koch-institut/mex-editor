@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - badge with '+ additional titles' if there is more than one title present
+- allow to toggle all primary sources back on within the edit page
 
 ### Changes
 

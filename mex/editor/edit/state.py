@@ -20,7 +20,7 @@ class EditState(RuleState):
             if event := self.push_url_params(params):
                 yield event
 
-    @rx.var
+    @rx.var(cache=False)
     def any_primary_source_or_editor_value_enabled(self) -> bool:
         """Determine if any primary source or editor value is enabled.
 
@@ -34,11 +34,13 @@ class EditState(RuleState):
             for ps in field.primary_sources
         )
 
-    def disable_all_primary_source_and_editor_values(self) -> EventSpec:
-        """Disable all primary source and editor values."""
+    def toggle_all_primary_source_and_editor_values(self) -> EventSpec:
+        """Toggle all primary source and editor values."""
+        any_enabled = self.any_primary_source_or_editor_value_enabled
+        new_state = not any_enabled
         for field in self.fields:
             for ps in field.primary_sources:
-                ps.enabled = False
+                ps.enabled = new_state
                 for value in ps.editor_values:
-                    value.enabled = False
+                    value.enabled = new_state
         return State.set_current_page_has_changes(True)  # type: ignore[misc]

@@ -610,13 +610,13 @@ def test_required_fields_red_asterisk(
 
 
 @pytest.mark.integration
-def test_deactivate_all_switch(edit_page: Page) -> None:
+def test_toggle_all_switch(edit_page: Page) -> None:
     page = edit_page
 
-    expect(page.get_by_test_id("deactivate-all-switch")).to_be_checked()
-    page.get_by_test_id("deactivate-all-switch").click()
-    expect(page.get_by_test_id("deactivate-all-switch")).not_to_be_checked()
-    page.screenshot(path="tests_edit_test_main-test_deactivate_all_switch-clicked.png")
+    expect(page.get_by_test_id("toggle-all-switch")).to_be_checked()
+    page.get_by_test_id("toggle-all-switch").click()
+    expect(page.get_by_test_id("toggle-all-switch")).not_to_be_checked()
+    page.screenshot(path="tests_edit_test_main-test_toggle_all_switch-clicked.png")
 
     last_switch = None
     all_switches = page.get_by_role("switch").all()
@@ -628,10 +628,10 @@ def test_deactivate_all_switch(edit_page: Page) -> None:
     assert last_switch
     last_switch.click()
     last_switch.screenshot(
-        path="tests_edit_test_main-test_deactivate_all_last-switch-click.png"
+        path="tests_edit_test_main-test_toggle_all_last-switch-click.png"
     )
 
-    expect(page.get_by_test_id("deactivate-all-switch")).to_be_checked()
+    expect(page.get_by_test_id("toggle-all-switch")).to_be_checked()
 
 
 @pytest.mark.integration

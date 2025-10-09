@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- badge with '+ additional titles' if there is more than one title present
+
 ### Changes
 
 - update reflex to 0.7.3
+- run local test browser in headed mode with higher resolution
 
 ### Deprecated
 
@@ -21,9 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- use locale files from mex-model
-
 ### Security
+
+## [1.0.2] - 2025-10-07
+
+### Fixed
+
+- use locale files from mex-model
 
 ## [1.0.1] - 2025-10-07
 

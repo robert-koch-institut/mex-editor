@@ -2,7 +2,14 @@ from typing import Any
 
 import reflex as rx
 
-from mex.editor.components import icon_by_stem_type, pagination, render_value
+from mex.editor.components import (
+    icon_by_stem_type,
+    pagination,
+    render_additional_titles,
+    render_search_preview,
+    render_title,
+    render_value,
+)
 from mex.editor.ingest.models import AuxProvider, IngestResult
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
@@ -49,28 +56,9 @@ def ingest_button(result: IngestResult, index: int) -> rx.Component:
     )
 
 
-def render_preview(result: IngestResult) -> rx.Component:
-    """Render a preview of the ingest result."""
-    return rx.text(
-        rx.hstack(
-            rx.foreach(
-                result.preview,
-                render_value,
-            )
-        ),
-        style=rx.Style(
-            fontWeight="var(--font-weight-light)",
-            whiteSpace="nowrap",
-            overflow="hidden",
-            textOverflow="ellipsis",
-            maxWidth="100%",
-        ),
-    )
-
-
 def render_all_properties(result: IngestResult) -> rx.Component:
     """Render all properties of the ingest result."""
-    return rx.text(
+    return rx.box(
         rx.hstack(
             rx.foreach(
                 result.all_properties,
@@ -86,29 +74,17 @@ def render_all_properties(result: IngestResult) -> rx.Component:
     )
 
 
-def result_title(result: IngestResult) -> rx.Component:
-    """Render the title an ingest result."""
-    return rx.box(
-        rx.hstack(
-            rx.foreach(
-                result.title,
-                render_value,
-            )
-        ),
-        style=rx.Style(
-            fontWeight="bold",
-            width="100%",
-        ),
-    )
-
-
 def ingest_result(result: IngestResult, index: int) -> rx.Component:
     """Render an ingest result with title, buttons and preview or all properties."""
     return rx.card(
         rx.vstack(
             rx.hstack(
-                icon_by_stem_type(result.stem_type, size=24),
-                result_title(result),
+                icon_by_stem_type(
+                    result.stem_type,
+                    size=22,
+                ),
+                render_title(result.title[0]),
+                render_additional_titles(result.title[1:]),
                 rx.spacer(),
                 expand_properties_button(result, index),
                 ingest_button(result, index),
@@ -117,10 +93,12 @@ def ingest_result(result: IngestResult, index: int) -> rx.Component:
             rx.cond(
                 result.show_properties,
                 render_all_properties(result),
-                render_preview(result),
+                render_search_preview(result.preview),
             ),
             style=rx.Style(width="100%"),
         ),
+        class_name="search-result-card",
+        custom_attrs={"data-testid": f"result-{result.identifier}"},
         style=rx.Style(width="100%"),
     )
 

@@ -209,9 +209,9 @@ def test_reference_filter_fields_for_entity_type(
     hps_tab.click()
     expect(page.get_by_test_id("had-primary-sources")).to_be_visible()
 
-    dyn_tab = page.get_by_role("tab", name="Dynamisch")
+    dyn_tab = page.get_by_role("tab", name="Dynamic")
     dyn_tab.click()
-    assert page.get_by_test_id("reference-field-filter").is_visible()
+    expect(page.get_by_test_id("reference-field-filter")).to_be_visible()
 
     # select person entity
     entity_types = page.get_by_test_id("entity-types")
@@ -235,7 +235,7 @@ def test_reference_filter_fields_for_entity_type(
     ]
     for field in expected_person_fields:
         select_item = page.get_by_role("option", name=field)
-        select_item.is_visible()
+        expect(select_item).to_be_visible()
 
 
 @pytest.mark.integration

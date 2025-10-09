@@ -125,7 +125,7 @@ class RuleState(State):
         return rule_set_request_class()
 
     @rx.event
-    def refresh(self) -> Generator[EventSpec | None, None, None]:
+    def refresh(self) -> Generator[EventSpec, None, None]:
         """Refresh the edit or create page."""
         self.fields.clear()
         self.validation_messages.clear()
@@ -174,7 +174,7 @@ class RuleState(State):
         return connector.create_rule_set(rule_set)
 
     @rx.event
-    def submit_rule_set(self) -> Generator[EventSpec | None, None, None]:
+    def submit_rule_set(self) -> Generator[EventSpec, None, None]:
         """Convert the fields to a rule set and submit it to the backend."""
         if self.stem_type is None:
             self.reset()
@@ -193,15 +193,16 @@ class RuleState(State):
             )
             return
 
-        yield State.set_current_page_has_changes(False)
+        yield State.set_current_page_has_changes(False)  # type: ignore[misc]
         # clear cache to show edits in the UI
         resolve_identifier.cache_clear()
         # trigger redirect to edit page or refresh state
         if rule_set_response.stableTargetId != self.item_id:
             yield rx.redirect(f"/item/{rule_set_response.stableTargetId}/?saved")
         else:
-            yield from self.refresh()
-            yield self.show_submit_success_toast()
+            yield RuleState.refresh
+            yield RuleState.show_submit_success_toast
+            yield RuleState.resolve_identifiers
 
     @rx.event
     def set_is_submitting(self, value: bool) -> None:  # noqa: FBT001
@@ -213,9 +214,9 @@ class RuleState(State):
         self.is_submitting = value
 
     @rx.event
-    def show_submit_success_toast(self) -> EventSpec:
+    def show_submit_success_toast(self) -> Generator[EventSpec, None, None]:
         """Show a toast for a successfully submitted rule-set."""
-        return rx.toast.success(
+        yield rx.toast.success(
             title="Saved",
             description=f"{self.stem_type} was saved successfully.",
             class_name="editor-toast",
@@ -260,7 +261,7 @@ class RuleState(State):
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             if primary_source.name.href == href:
                 primary_source.enabled = enabled
-                return State.set_current_page_has_changes(True)
+                return State.set_current_page_has_changes(True)  # type: ignore[misc]
         return None
 
     @rx.event
@@ -275,7 +276,7 @@ class RuleState(State):
             for editor_value in primary_source.editor_values:
                 if editor_value == value:
                     editor_value.enabled = enabled
-                    return State.set_current_page_has_changes(True)
+                    return State.set_current_page_has_changes(True)  # type: ignore[misc]
 
         return None
 
@@ -296,21 +297,21 @@ class RuleState(State):
         """Add an additive rule to the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.append(EditorValue(being_edited=True))
-        return State.set_current_page_has_changes(True)
+        return State.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def remove_additive_value(self, field_name: str, index: int) -> EventSpec:
         """Remove an additive rule from the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.pop(index)
-        return State.set_current_page_has_changes(True)
+        return State.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def set_text_value(self, field_name: str, index: int, value: str) -> EventSpec:
         """Set the text attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].text = value
-        return State.set_current_page_has_changes(True)
+        return State.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def set_identifier_value(
@@ -320,14 +321,14 @@ class RuleState(State):
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].identifier = value
         primary_source.editor_values[index].href = f"/item/{value}"
-        return State.set_current_page_has_changes(True)
+        return State.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def set_badge_value(self, field_name: str, index: int, value: str) -> EventSpec:
         """Set the badge attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].badge = value
-        return State.set_current_page_has_changes(True)
+        return State.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def set_href_value(self, field_name: str, index: int, value: str) -> EventSpec:
@@ -335,4 +336,4 @@ class RuleState(State):
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].href = value
         primary_source.editor_values[index].external = True
-        return State.set_current_page_has_changes(True)
+        return State.set_current_page_has_changes(True)  # type: ignore[misc]

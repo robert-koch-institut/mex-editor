@@ -1,4 +1,4 @@
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
 from importlib.metadata import version
 from urllib.parse import urlencode
 
@@ -96,26 +96,24 @@ class State(rx.State):
         return rx.redirect(self.navigate_target)
 
     @rx.event
-    def logout(self) -> EventSpec:
+    def logout(self) -> Generator[EventSpec, None, None]:
         """Log out a user."""
         self.reset()
-        return rx.redirect("/")
+        yield rx.redirect("/")
 
     @rx.event
-    def check_mex_login(self) -> EventSpec | None:
+    def check_mex_login(self) -> Generator[EventSpec, None, None]:
         """Check if a user is logged in."""
         if self.user_mex is None:
             self.target_path_after_login = self.router.page.raw_path
-            return rx.redirect("/login")
-        return None
+            yield rx.redirect("/login")
 
     @rx.event
-    def check_ldap_login(self) -> EventSpec | None:
+    def check_ldap_login(self) -> Generator[EventSpec, None, None]:
         """Check if a user is logged in to ldap."""
         if self.user_ldap is None:
             self.target_path_after_login = self.router.page.raw_path
-            return rx.redirect("/login-ldap")
-        return None
+            yield rx.redirect("/login-ldap")
 
     @staticmethod
     def _update_raw_path(
@@ -137,7 +135,6 @@ class State(rx.State):
             raw_path = f"{raw_path}?{query_str}"
         nav_item.raw_path = raw_path
 
-    @rx.event
     def push_url_params(
         self,
         params: Mapping[str, int | str | list[str]],

@@ -2,7 +2,9 @@ from async_lru import alru_cache
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import EmptySearchResultError, MExError
+from mex.common.settings import SETTINGS_STORE
 from mex.editor.models import EditorValue
+from mex.editor.settings import EditorSettings
 from mex.editor.transform import transform_models_to_title
 
 
@@ -26,3 +28,9 @@ async def resolve_editor_value(editor_value: EditorValue) -> None:
     else:
         msg = f"Cannot resolve editor value: {editor_value}"
         raise MExError(msg)
+
+
+def load_settings() -> EditorSettings:
+    """Reset the settings store and fetch the editor settings."""
+    SETTINGS_STORE.reset()
+    return EditorSettings.get()

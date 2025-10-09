@@ -14,10 +14,11 @@ class EditState(RuleState):
     def show_submit_success_toast_on_redirect(self) -> Generator[EventSpec, None, None]:
         """Show a success toast when the saved param is set."""
         if "saved" in self.router.page.params:
-            yield self.show_submit_success_toast()
+            yield EditState.show_submit_success_toast
             params = self.router.page.params.copy()
             params.pop("saved")
-            yield self.push_url_params(params)
+            if event := self.push_url_params(params):
+                yield event
 
     @rx.var
     def any_primary_source_or_editor_value_enabled(self) -> bool:
@@ -40,4 +41,4 @@ class EditState(RuleState):
                 ps.enabled = False
                 for value in ps.editor_values:
                     value.enabled = False
-        return State.set_current_page_has_changes(True)
+        return State.set_current_page_has_changes(True)  # type: ignore[misc]

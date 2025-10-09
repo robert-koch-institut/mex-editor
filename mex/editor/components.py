@@ -2,7 +2,6 @@ from typing import Any
 
 import reflex as rx
 
-from mex.editor.constants import COMPLETED_LOADING, CURRENTLY_LOADING
 from mex.editor.ingest.state import IngestState
 from mex.editor.rules.models import EditorValue
 from mex.editor.search.state import SearchState
@@ -13,11 +12,11 @@ def render_title(title: EditorValue) -> rx.Component:
     """Render one title in a container with hidden overflow."""
     return rx.box(
         render_value(title),
-        style={
-            "fontWeight": "var(--font-weight-bold)",
-            "overflow": "hidden",
-            "whiteSpace": "nowrap",
-        },
+        style=rx.Style(
+            fontWeight="var(--font-weight-bold)",
+            overflow="hidden",
+            whiteSpace="nowrap",
+        ),
     )
 
 
@@ -45,14 +44,14 @@ def render_search_preview(values: list[EditorValue]) -> rx.Component:
             values,
             render_value,
         ),
-        style={
-            "color": "var(--gray-12)",
-            "fontWeight": "var(--font-weight-light)",
-            "whiteSpace": "nowrap",
-            "overflow": "hidden",
-            "textOverflow": "ellipsis",
-            "maxWidth": "100%",
-        },
+        style=rx.Style(
+            color="var(--gray-12)",
+            fontWeight="var(--font-weight-light)",
+            whiteSpace="nowrap",
+            overflow="hidden",
+            textOverflow="ellipsis",
+            maxWidth="100%",
+        ),
     )
 
 
@@ -74,8 +73,8 @@ def render_identifier(value: EditorValue) -> rx.Component:
         ),
         loading=rx.cond(
             value.text,
-            COMPLETED_LOADING,
-            CURRENTLY_LOADING,
+            c1=False,
+            c2=True,
         ),
     )
 
@@ -126,8 +125,8 @@ def render_text(value: EditorValue) -> rx.Component:
         ),
         loading=rx.cond(
             value.text,
-            COMPLETED_LOADING,
-            CURRENTLY_LOADING,
+            c1=False,
+            c2=True,
         ),
     )
 

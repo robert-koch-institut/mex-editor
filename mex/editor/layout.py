@@ -85,12 +85,14 @@ def language_switcher() -> rx.Component:
         rx.menu.trigger(
             rx.button(
                 State.current_locale,
-                style={
-                    "background": "transparent",
-                    "color": "inherit",
-                    "z_index": "20",
-                    ":hover": {"cursor": "pointer"},
-                },
+                style=rx.Style(
+                    {
+                        "background": "transparent",
+                        "color": "inherit",
+                        "z_index": "20",
+                        ":hover": {"cursor": "pointer"},
+                    }
+                ),
             ),
             custom_attrs={"data-testid": "language-switcher"},
         ),
@@ -98,7 +100,7 @@ def language_switcher() -> rx.Component:
             *[
                 rx.menu.item(
                     rx.text(locale.label),
-                    on_click=State.change_locale(locale.id),
+                    on_click=State.change_locale(locale.id),  # type: ignore[misc]
                     custom_attrs={
                         "data-testid": f"language-switcher-menu-item-{locale.id}"
                     },

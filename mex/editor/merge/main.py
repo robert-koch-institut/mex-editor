@@ -24,7 +24,7 @@ def search_result(
             rx.hstack(
                 rx.checkbox(
                     checked=MergeState.selected_items[category] == index,
-                    on_change=MergeState.select_item(category, index),
+                    on_change=MergeState.select_item(category, index),  # type:ignore[misc]
                 ),
                 icon_by_stem_type(
                     result.stem_type,
@@ -37,7 +37,7 @@ def search_result(
         ),
         class_name="search-result-card",
         custom_attrs={"data-testid": f"result-{category}-{result.identifier}"},
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 

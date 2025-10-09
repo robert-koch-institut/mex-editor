@@ -526,10 +526,10 @@ def submit_button() -> rx.Component:
         size="3",
         color_scheme="jade",
         on_click=[
-            RuleState.set_is_submitting(True),
+            RuleState.set_is_submitting(True),  # type: ignore[misc]
             RuleState.submit_rule_set,
             RuleState.resolve_identifiers,
-            RuleState.set_is_submitting(False),
+            RuleState.set_is_submitting(False),  # type: ignore[misc]
         ],
         disabled=RuleState.is_submitting,
         style=rx.Style(margin="var(--line-height-1) 0"),
@@ -553,7 +553,7 @@ def rule_page_header(title: rx.Component) -> rx.Component:
         ),
         style=rx.Style(
             alignItems="baseline",
-            backdropFilter=" var(--backdrop-filter-panel)",
+            backdropFilter="var(--backdrop-filter-panel)",
             marginTop="calc(-1 * var(--space-1))",
             maxHeight="6rem",
             maxWidth="calc(var(--app-max-width) - var(--space-6) * 2)",

@@ -25,7 +25,7 @@ def search_result(result: SearchResult) -> rx.Component:
                 icon_by_stem_type(
                     result.stem_type,
                     size=22,
-                    color=rx.color("accent", 11),
+                    style=rx.Style(color=rx.color("accent", 11)),
                 ),
                 rx.link(
                     render_title(result.title[0]),

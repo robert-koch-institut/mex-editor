@@ -58,19 +58,13 @@ class State(rx.State):
         self.current_locale = locale
 
     @rx.event
-    def set_current_page_has_changes(self, value: bool) -> EventSpec:  # noqa: FBT001
+    def set_current_page_has_changes(self, value: bool) -> None:  # noqa: FBT001
         """Set the current_page_has_changes attribute to the given value.
 
-        Sets the value of the current_page_has_changes attribute and updates the state
-        on client side.
-
         Args:
-            value : The value of the current_page_has_changes attribute.
+            value: The value of the current_page_has_changes attribute.
         """
         self.current_page_has_changes = value
-        return rx.call_script(
-            f"window.updateMexEditorChanges({str(value).lower()})",
-        )
 
     @rx.event
     def close_navigate_dialog(self) -> None:
@@ -79,15 +73,15 @@ class State(rx.State):
 
     @rx.event
     def navigate(self, raw_path: str) -> EventSpec | None:
-        """Navigate to a given path and warn the user about unsaved changes on the current page.
+        """Navigate to a given path and warn if there are unsaved changes.
 
-        If changes on the current page are present, a  dialog will appear and warn the
+        If changes on the current page are present, a dialog will appear and warn the
         user about unsaved changes. The user can decide to stay on the current page or
         discard the changes and navigate away.
 
         Args:
-            raw_path : The path to navigate to.
-        """  # noqa: E501
+            raw_path: The path to navigate to.
+        """
         self.navigate_target = raw_path
         if self.current_page_has_changes:
             self.navigate_dialog_open = True

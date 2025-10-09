@@ -62,11 +62,7 @@ def render_identifier(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable internal link that loads the edit page."""
     return rx.skeleton(
         rx.link(
-            rx.cond(
-                value.text,
-                value.text,
-                "Loading ...",
-            ),
+            value.text,
             on_click=State.navigate(value.href),  # type: ignore[misc]
             high_contrast=True,
             role="link",
@@ -74,11 +70,9 @@ def render_identifier(value: EditorValue) -> rx.Component:
             title=value.text,
             custom_attrs={"data-href": value.href},
         ),
-        loading=rx.cond(
-            value.text,
-            c1=False,
-            c2=True,
-        ),
+        min_width="16ch",
+        min_height="1lh",
+        loading=rx.cond(value.text, c1=False, c2=True),
     )
 
 
@@ -121,16 +115,11 @@ def render_span(text: str | None) -> rx.Component:
 def render_text(value: EditorValue) -> rx.Component:
     """Render an editor value as a text span."""
     return rx.skeleton(
-        rx.cond(
-            value.text,
-            render_span(value.text),
-            render_span("Loading ..."),
-        ),
-        loading=rx.cond(
-            value.text,
-            c1=False,
-            c2=True,
-        ),
+        render_span(value.text),
+        render_span(value.text),
+        min_width="16ch",
+        min_height="1lh",
+        loading=rx.cond(value.text, c1=False, c2=True),
     )
 
 

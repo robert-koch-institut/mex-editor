@@ -8,7 +8,6 @@ from requests import HTTPError
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MERGED_MODEL_CLASSES
 from mex.common.transform import ensure_prefix
-from mex.editor.constants import DEFAULT_FETCH_LIMIT
 from mex.editor.exceptions import escalate_error
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
@@ -28,6 +27,7 @@ class MergeState(State):
         k.stemType: False for k in MERGED_MODEL_CLASSES
     }
     is_loading: bool = True
+    limit: int = 50
     query_strings: dict[Literal["merged", "extracted"], str] = {
         "merged": "",
         "extracted": "",
@@ -129,7 +129,7 @@ class MergeState(State):
             response = connector.fetch_preview_items(
                 query_string=self.query_strings["merged"],
                 entity_type=entity_type,
-                limit=DEFAULT_FETCH_LIMIT,
+                limit=self.limit,
             )
         except HTTPError as exc:
             self.is_loading = False
@@ -161,7 +161,7 @@ class MergeState(State):
             response = connector.fetch_extracted_items(
                 query_string=self.query_strings["extracted"],
                 entity_type=entity_type,
-                limit=DEFAULT_FETCH_LIMIT,
+                limit=self.limit,
             )
         except HTTPError as exc:
             self.is_loading = False

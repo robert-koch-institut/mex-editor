@@ -44,6 +44,32 @@ def user_menu() -> rx.Component:
     )
 
 
+def language_switcher() -> rx.Component:
+    """Render a language switcher."""
+    return rx.menu.root(
+        rx.menu.trigger(
+            rx.button(
+                State.current_locale,
+                style=rx.Style(fontWeight="var(--font-weight-medium)"),
+                variant="ghost",
+            ),
+            custom_attrs={"data-testid": "language-switcher"},
+        ),
+        rx.menu.content(
+            rx.foreach(
+                locale_service.get_available_locales(),
+                lambda locale: rx.menu.item(
+                    rx.text(locale.label),
+                    on_click=State.change_locale(locale.id),  # type: ignore[misc]
+                    custom_attrs={
+                        "data-testid": f"language-switcher-menu-item-{locale.id}"
+                    },
+                ),
+            )
+        ),
+    )
+
+
 def nav_link(item: NavItem) -> rx.Component:
     """Return a link component for the given navigation item."""
     return rx.link(
@@ -79,38 +105,6 @@ def app_logo() -> rx.Component:
     )
 
 
-def language_switcher() -> rx.Component:
-    """Render a language switcher."""
-    return rx.menu.root(
-        rx.menu.trigger(
-            rx.button(
-                State.current_locale,
-                style=rx.Style(
-                    {
-                        "background": "transparent",
-                        "color": "inherit",
-                        "z_index": "20",
-                        ":hover": {"cursor": "pointer"},
-                    }
-                ),
-            ),
-            custom_attrs={"data-testid": "language-switcher"},
-        ),
-        rx.menu.content(
-            *[
-                rx.menu.item(
-                    rx.text(locale.label),
-                    on_click=State.change_locale(locale.id),  # type: ignore[misc]
-                    custom_attrs={
-                        "data-testid": f"language-switcher-menu-item-{locale.id}"
-                    },
-                )
-                for locale in locale_service.get_available_locales()
-            ]
-        ),
-    )
-
-
 def nav_bar() -> rx.Component:
     """Return a navigation bar component."""
     return rx.vstack(
@@ -118,7 +112,7 @@ def nav_bar() -> rx.Component:
             style=rx.Style(
                 height="var(--space-6)",
                 width="100%",
-                backdropFilter=" var(--backdrop-filter-panel)",
+                backdropFilter="var(--backdrop-filter-panel)",
             ),
         ),
         rx.card(
@@ -131,14 +125,18 @@ def nav_bar() -> rx.Component:
                     spacing="4",
                 ),
                 rx.spacer(),
-                user_menu(),
-                language_switcher(),
-                rx.button(
-                    rx.icon("sun_moon"),
-                    variant="ghost",
-                    style=rx.Style(marginTop="0"),
-                    on_click=rx.toggle_color_mode,
-                    title="toggle theme",
+                rx.hstack(
+                    language_switcher(),
+                    user_menu(),
+                    rx.button(
+                        rx.icon("sun_moon"),
+                        variant="ghost",
+                        style=rx.Style(marginTop="0"),
+                        on_click=rx.toggle_color_mode,
+                        title="toggle theme",
+                    ),
+                    style=rx.Style(alignItems="center"),
+                    spacing="4",
                 ),
                 justify="between",
                 align_items="center",
@@ -198,7 +196,7 @@ def navigate_away_dialog() -> rx.Component:
                 style=rx.Style(marginTop="1rem"),
                 justify="end",
             ),
-            style=rx.Style(width="calc(340px * var(--scaling))"),
+            #  style=rx.Style(width="calc(340px * var(--scaling))"),
         ),
         open=State.navigate_dialog_open,
     )

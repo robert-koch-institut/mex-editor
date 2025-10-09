@@ -144,7 +144,7 @@ def search_input() -> rx.Component:
                 IngestState.refresh,
                 IngestState.resolve_identifiers,
             ],
-            style=rx.Style(margin="1em 0 1em"),
+            style=rx.Style(margin="1em 0"),
             justify="center",
             align="center",
         )

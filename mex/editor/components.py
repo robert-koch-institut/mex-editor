@@ -26,7 +26,10 @@ def render_additional_titles(titles: list[EditorValue]) -> rx.Component:
         titles,
         rx.hover_card.root(
             rx.hover_card.trigger(
-                rx.badge("+ additional titles", style=rx.Style(margin="auto 0")),
+                rx.badge(
+                    "+ additional titles",
+                    style=rx.Style(margin="auto 0"),
+                ),
                 custom_attrs={"data-testid": "tooltip-additional-titles-trigger"},
             ),
             rx.hover_card.content(

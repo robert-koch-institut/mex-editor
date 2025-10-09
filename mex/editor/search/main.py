@@ -238,8 +238,22 @@ def reference_filter_tab() -> rx.Component:
     return rx.card(
         rx.tabs.root(
             rx.tabs.list(
-                rx.tabs.trigger("Dynamic", value="dynamic"),
-                rx.tabs.trigger("PrimarySource", value="had_primary_source"),
+                rx.tabs.trigger(
+                    "Dynamic",
+                    value="dynamic",
+                    custom_attrs={
+                        "data-testid": "reference-filter-strategy-dynamic-tab"
+                    },
+                ),
+                rx.tabs.trigger(
+                    "PrimarySource",
+                    value="had_primary_source",
+                    custom_attrs={
+                        "data-testid": (
+                            "reference-filter-strategy-had-primary-source-tab"
+                        )
+                    },
+                ),
                 style=rx.Style(marginBottom="1rem"),
             ),
             rx.tabs.content(

@@ -24,7 +24,7 @@ def search_result(
             rx.hstack(
                 rx.checkbox(
                     checked=MergeState.selected_items[category] == index,
-                    on_change=MergeState.select_item(category, index),
+                    on_change=MergeState.select_item(category, index),  # type:ignore[misc]
                 ),
                 icon_by_stem_type(
                     result.stem_type,
@@ -37,7 +37,7 @@ def search_result(
         ),
         class_name="search-result-card",
         custom_attrs={"data-testid": f"result-{category}-{result.identifier}"},
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -47,14 +47,14 @@ def results_summary(category: Literal["merged", "extracted"]) -> rx.Component:
         rx.text(
             f"Showing {MergeState.results_count[category]} "
             f"of {MergeState.total_count[category]} items",
-            style={
-                "color": "var(--gray-12)",
-                "fontWeight": "var(--font-weight-bold)",
-                "margin": "var(--space-4)",
-                "userSelect": "none",
-            },
+            style=rx.Style(
+                color="var(--gray-12)",
+                fontWeight="var(--font-weight-bold)",
+                margin="var(--space-4)",
+                userSelect="none",
+            ),
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
         custom_attrs={"data-testid": f"{category}-results-summary"},
     )
 
@@ -65,8 +65,8 @@ def entity_type_choice_merged(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            MergeState.set_entity_type_merged(choice[0]),
-            MergeState.refresh(["merged"]),
+            MergeState.set_entity_type_merged(choice[0]),  # type: ignore[misc]
+            MergeState.refresh(["merged"]),  # type: ignore[misc]
             MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
@@ -79,8 +79,8 @@ def entity_type_choice_extracted(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            MergeState.set_entity_type_extracted(choice[0]),
-            MergeState.refresh(["extracted"]),
+            MergeState.set_entity_type_extracted(choice[0]),  # type: ignore[misc]
+            MergeState.refresh(["extracted"]),  # type: ignore[misc]
             MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
@@ -113,7 +113,7 @@ def entity_type_filter(category: Literal["merged", "extracted"]) -> rx.Component
             ),
             type="always",
             scrollbars="vertical",
-            style={"height": 90},
+            style=rx.Style(height=90),
         ),
     )
 
@@ -125,20 +125,22 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
             rx.card(
                 rx.input(
                     autofocus=True,
-                    default_value=MergeState.query_strings[category],
                     value=MergeState.query_strings[category],
+                    default_value=MergeState.query_strings[category],
                     max_length=100,
                     name=f"query_string_{category}",
-                    on_change=MergeState.handle_submit(category),
+                    on_change=MergeState.handle_submit(category),  # type: ignore[misc]
                     placeholder="Search here...",
-                    style={
-                        "--text-field-selection-color": "",
-                        "--text-field-focus-color": "transparent",
-                        "--text-field-border-width": "calc(1px * var(--scaling))",
-                        "boxShadow": (
-                            "inset 0 0 0 var(--text-field-border-width) transparent"
-                        ),
-                    },
+                    style=rx.Style(
+                        {
+                            "--text-field-selection-color": "",
+                            "--text-field-focus-color": "transparent",
+                            "--text-field-border-width": "calc(1px * var(--scaling))",
+                            "boxShadow": (
+                                "inset 0 0 0 var(--text-field-border-width) transparent"
+                            ),
+                        }
+                    ),
                     tab_index=1,
                     type="text",
                     custom_attrs={"data-testid": f"search-input-{category}"},
@@ -151,7 +153,7 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     "Clear",
                     variant="surface",
                     disabled=MergeState.is_loading,
-                    on_click=MergeState.clear_input(category),
+                    on_click=MergeState.clear_input(category),  # type: ignore[misc]
                     custom_attrs={"data-testid": f"clear-button-{category}"},
                 ),
                 rx.button(
@@ -160,8 +162,8 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     variant="surface",
                     disabled=MergeState.is_loading,
                     on_click=[
-                        MergeState.refresh([category]),
-                        MergeState.resolve_identifiers,
+                        MergeState.refresh([category]),  # type: ignore[misc]
+                        MergeState.resolve_identifiers,  # type: ignore[misc]
                     ],
                     custom_attrs={"data-testid": f"search-button-{category}"},
                 ),
@@ -171,7 +173,11 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                 margin="var(--space-4)",
             ),
         ),
-        style={"width": "100%", "margin-bottom": "var(--space-4)", "align": "center"},
+        style=rx.Style(
+            width="100%",
+            marginBottom="var(--space-4)",
+            align="center",
+        ),
     )
 
 
@@ -182,7 +188,7 @@ def submit_button() -> rx.Component:
         color_scheme="jade",
         size="3",
         on_click=MergeState.submit_merge_items,
-        style={"margin": "var(--line-height-1) 0"},
+        style=rx.Style(margin="var(--line-height-1) 0"),
         custom_attrs={"data-testid": "submit-button"},
     )
 
@@ -192,11 +198,11 @@ def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
     return rx.vstack(
         rx.heading(
             f"Search {category} items",
-            style={
-                "whiteSpace": "nowrap",
-                "overflow": "hidden",
-                "width": "100%",
-            },
+            style=rx.Style(
+                whiteSpace="nowrap",
+                overflow="hidden",
+                width="100%",
+            ),
             custom_attrs={"data-testid": f"create-heading-{category}"},
         ),
         search_input(category),
@@ -214,7 +220,11 @@ def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
                 ),
             ),
         ),
-        style={"width": "50%", "margin": "var(--space-4)", "align": "center"},
+        style=rx.Style(
+            width="50%",
+            margin="var(--space-4)",
+            align="center",
+        ),
     )
 
 
@@ -225,21 +235,25 @@ def index() -> rx.Component:
             rx.hstack(
                 search_panel(category="merged"),
                 search_panel(category="extracted"),
-                style={"width": "100%", "align": "center", "justify": "center"},
+                style=rx.Style(
+                    width="100%",
+                    align="center",
+                    justify="center",
+                ),
             ),
             rx.box(
                 submit_button(),
-                style={
-                    "justifyContent": "center",
-                    "display": "flex",
-                    "width": "100%",
-                },
+                style=rx.Style(
+                    justifyContent="center",
+                    display="flex",
+                    width="100%",
+                ),
             ),
-            style={
-                "width": "100%",
-                "align": "center",
-                "justify": "center",
-                "flex-grow": "1",
-            },
+            style=rx.Style(
+                width="100%",
+                align="center",
+                justify="center",
+                flexGrow="1",
+            ),
         ),
     )

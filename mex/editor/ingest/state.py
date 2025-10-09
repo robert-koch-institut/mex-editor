@@ -1,21 +1,15 @@
 import math
 from collections.abc import Generator
-from typing import Annotated
+from typing import Any
 
 import reflex as rx
-from pydantic import Field
 from reflex.event import EventSpec
-from reflex.state import serialize_mutable_proxy
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import AnyExtractedModel, PaginatedItemsContainer
 from mex.editor.exceptions import escalate_error
-from mex.editor.ingest.models import (
-    ALL_AUX_PROVIDERS,
-    AuxProvider,
-    IngestResult,
-)
+from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider, IngestResult
 from mex.editor.ingest.transform import transform_models_to_results
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
@@ -26,10 +20,10 @@ class IngestState(State):
 
     results_transformed: list[IngestResult] = []
     results_extracted: list[AnyExtractedModel] = []
-    total: Annotated[int, Field(ge=0)] = 0
-    query_string: Annotated[str, Field(max_length=1000)] = ""
-    current_page: Annotated[int, Field(ge=1)] = 1
-    limit: Annotated[int, Field(ge=1, le=100)] = 50
+    total: int = 0
+    limit: int = 50
+    query_string: str = ""
+    current_page: int = 1
     current_aux_provider: AuxProvider = AuxProvider.LDAP
     aux_providers: list[AuxProvider] = ALL_AUX_PROVIDERS
     is_loading: bool = True
@@ -68,9 +62,9 @@ class IngestState(State):
         ].show_properties
 
     @rx.event
-    def set_current_aux_provider(self, value: AuxProvider) -> None:
+    def set_current_aux_provider(self, value: str) -> None:
         """Change the current aux provider."""
-        self.current_aux_provider = value
+        self.current_aux_provider = AuxProvider(value)
 
     @rx.event
     def set_page(self, page_number: str | int) -> None:
@@ -78,9 +72,14 @@ class IngestState(State):
         self.current_page = int(page_number)
 
     @rx.event
-    def handle_submit(self, form_data: dict) -> None:
+    def handle_submit(self, form_data: dict[str, Any]) -> None:
         """Handle the form submit."""
         self.query_string = form_data["query_string"]
+
+    @rx.event
+    def reset_query_string(self) -> None:
+        """Reset the query string."""
+        self.query_string = ""
 
     @rx.event
     def go_to_first_page(self) -> None:
@@ -98,13 +97,12 @@ class IngestState(State):
         self.current_page = self.current_page + 1
 
     @rx.event
-    def ingest_result(self, index: int) -> Generator[EventSpec | None, None, None]:
+    def ingest_result(self, index: int) -> Generator[EventSpec, None, None]:
         """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
+        model = self.get_value(self.results_extracted[index])  # type: ignore[arg-type]
         try:
-            model: AnyExtractedModel = serialize_mutable_proxy(
-                self.results_extracted[index]
-            )
+            # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
             connector.ingest([model])
         except HTTPError as exc:
             yield from escalate_error(
@@ -122,7 +120,7 @@ class IngestState(State):
             )
 
     @rx.event
-    def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
+    def scroll_to_top(self) -> Generator[EventSpec, None, None]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 

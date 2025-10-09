@@ -604,7 +604,7 @@ def test_required_fields_red_asterisk(
         asterisk = field.get_by_text("*", exact=True)
         if field_name in expected_required_fields:
             expect(asterisk).to_be_visible()
-            expect(asterisk).to_have_css("color", "rgb(255, 0, 0)")
+            expect(asterisk).to_have_css("color", "rgb(255, 99, 71)")
         else:
             expect(asterisk).to_have_count(0)
 
@@ -619,9 +619,9 @@ def test_deactivate_all_switch(edit_page: Page) -> None:
     page.screenshot(path="tests_edit_test_main-test_deactivate_all_switch-clicked.png")
 
     last_switch = None
-    all_swtiches = page.get_by_role("switch").all()
+    all_switches = page.get_by_role("switch").all()
 
-    for switch in all_swtiches:
+    for switch in all_switches:
         expect(switch).not_to_be_checked()
         last_switch = switch
 
@@ -743,7 +743,7 @@ def test_edit_page_navigation_unsaved_changes_warning_cancel_save_and_navigate(
     expect(dialog).to_be_visible()
 
     # cancel the navigation and check if url is still edit page
-    dialog.get_by_role("button", name="Cancel").click()
+    dialog.get_by_role("button", name="Stay here").click()
     expect(page).to_have_url(re.compile("/item/.*"))
 
     # click save changes
@@ -778,5 +778,5 @@ def test_edit_page_navigation_unsaved_changes_warning_discard_changes_and_naviga
     expect(dialog).to_be_visible()
 
     # discard changes and expect navigation (url is search page url)
-    dialog.get_by_role("button", name="Discard changes").click()
+    dialog.get_by_role("button", name="Navigate away").click()
     expect(page).to_have_url(re.compile("/"))

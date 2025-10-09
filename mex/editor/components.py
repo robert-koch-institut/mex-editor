@@ -116,7 +116,6 @@ def render_text(value: EditorValue) -> rx.Component:
     """Render an editor value as a text span."""
     return rx.skeleton(
         render_span(value.text),
-        render_span(value.text),
         min_width="16ch",
         min_height="1lh",
         loading=rx.cond(value.text, c1=False, c2=True),

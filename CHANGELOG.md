@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - update reflex to 0.7.3
 - run local test browser in headed mode with higher resolution
+- prepare reflex upgrade to 0.7.3
 
 ### Deprecated
 

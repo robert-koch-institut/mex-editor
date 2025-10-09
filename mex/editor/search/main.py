@@ -162,7 +162,8 @@ def reference_field_filter_identifier(
             ),
             rx.button(
                 rx.icon("circle-minus"),
-                variant="soft",
+                variant="surface",
+                color_scheme="gray",
                 on_click=[
                     lambda: SearchState.remove_reference_field_filter_identifier(index),  # type: ignore[misc]
                     *full_refresh,
@@ -199,7 +200,8 @@ def reference_field_filter() -> rx.Component:
             ),
             rx.button(
                 rx.icon("x"),
-                variant="soft",
+                variant="surface",
+                color_scheme="gray",
                 on_click=[
                     SearchState.set_reference_filter_field(""),  # type: ignore[misc]
                     *full_refresh,
@@ -216,7 +218,8 @@ def reference_field_filter() -> rx.Component:
             rx.button(
                 rx.icon("circle-plus"),
                 rx.text("Add Filter"),
-                variant="soft",
+                variant="surface",
+                color_scheme="gray",
                 on_click=[
                     SearchState.add_reference_field_filter_identifier,
                 ],

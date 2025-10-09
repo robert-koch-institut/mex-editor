@@ -196,7 +196,6 @@ def navigate_away_dialog() -> rx.Component:
                 style=rx.Style(marginTop="1rem"),
                 justify="end",
             ),
-            #  style=rx.Style(width="calc(340px * var(--scaling))"),
         ),
         open=State.navigate_dialog_open,
     )

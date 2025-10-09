@@ -53,18 +53,6 @@ python_version = "3.11"
 show_error_codes = true
 plugins = ["pydantic.mypy"]
 
-[[tool.mypy.overrides]]
-module = "mex.*"
-disable_error_code = ["operator"]
-
-[[tool.mypy.overrides]]
-module = "tests.*"
-disable_error_code = ["operator"]
-
-[[tool.mypy.overrides]]
-module = "nest_asyncio"
-ignore_missing_imports = true
-
 [tool.pdm]
 distribution = true
 

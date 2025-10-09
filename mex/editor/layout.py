@@ -133,7 +133,6 @@ def nav_bar() -> rx.Component:
                         variant="ghost",
                         style=rx.Style(marginTop="0"),
                         on_click=rx.toggle_color_mode,
-                        title="toggle theme",
                     ),
                     style=rx.Style(alignItems="center"),
                     spacing="4",

@@ -213,18 +213,57 @@ def icon_by_stem_type(
     # Sigh, https://reflex.dev/docs/library/data-display/icon#using-dynamic-icon-tags
     return rx.match(
         stem_type,
-        ("AccessPlatform", rx.icon("app_window", size=size, style=style)),
-        ("Activity", rx.icon("circle_gauge", size=size, style=style)),
-        ("BibliographicResource", rx.icon("book_marked", size=size, style=style)),
-        ("Consent", rx.icon("badge_check", size=size, style=style)),
-        ("ContactPoint", rx.icon("inbox", size=size, style=style)),
-        ("Distribution", rx.icon("container", size=size, style=style)),
-        ("Organization", rx.icon("building", size=size, style=style)),
-        ("OrganizationalUnit", rx.icon("door_open", size=size, style=style)),
-        ("Person", rx.icon("circle_user_round", size=size, style=style)),
-        ("PrimarySource", rx.icon("hard_drive", size=size, style=style)),
-        ("Resource", rx.icon("archive", size=size, style=style)),
-        ("Variable", rx.icon("box", size=size, style=style)),
-        ("VariableGroup", rx.icon("boxes", size=size, style=style)),
+        (
+            "AccessPlatform",
+            rx.icon("app_window", size=size, style=style, title=stem_type),
+        ),
+        (
+            "Activity",
+            rx.icon("circle_gauge", size=size, style=style, title=stem_type),
+        ),
+        (
+            "BibliographicResource",
+            rx.icon("book_marked", size=size, style=style, title=stem_type),
+        ),
+        (
+            "Consent",
+            rx.icon("badge_check", size=size, style=style, title=stem_type),
+        ),
+        (
+            "ContactPoint",
+            rx.icon("inbox", size=size, style=style, title=stem_type),
+        ),
+        (
+            "Distribution",
+            rx.icon("container", size=size, style=style, title=stem_type),
+        ),
+        (
+            "Organization",
+            rx.icon("building", size=size, style=style, title=stem_type),
+        ),
+        (
+            "OrganizationalUnit",
+            rx.icon("door_open", size=size, style=style, title=stem_type),
+        ),
+        (
+            "Person",
+            rx.icon("circle_user_round", size=size, style=style, title=stem_type),
+        ),
+        (
+            "PrimarySource",
+            rx.icon("hard_drive", size=size, style=style, title=stem_type),
+        ),
+        (
+            "Resource",
+            rx.icon("archive", size=size, style=style, title=stem_type),
+        ),
+        (
+            "Variable",
+            rx.icon("box", size=size, style=style, title=stem_type),
+        ),
+        (
+            "VariableGroup",
+            rx.icon("boxes", size=size, style=style, title=stem_type),
+        ),
         rx.icon("file_question", size=size, style=style),
     )

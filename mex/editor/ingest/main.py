@@ -187,7 +187,7 @@ def search_results() -> rx.Component:
                 IngestState.results_transformed,
                 ingest_result,
             ),
-            pagination(IngestState),
+            pagination(IngestState, IngestState.flag_imported_organizations),
             spacing="4",
             custom_attrs={"data-testid": "search-results-section"},
             style=rx.Style(

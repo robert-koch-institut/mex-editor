@@ -235,7 +235,7 @@ def test_reference_filter_fields_for_entity_type(
     ]
     for field in expected_person_fields:
         select_item = page.get_by_role("option", name=field)
-        select_item.is_visible()
+        expect(select_item).to_be_visible()
 
 
 @pytest.mark.integration

@@ -112,7 +112,7 @@ def test_edit_page_renders_primary_sources(
     expect(primary_source).to_contain_text(had_primary_source.title[0].value)
     link = primary_source.get_by_role("link")
     expect(link).to_have_attribute(
-        "href", f"/item/{extracted_activity.hadPrimarySource}/"
+        "data-href", f"/item/{extracted_activity.hadPrimarySource}"
     )
 
 
@@ -198,8 +198,8 @@ def test_edit_page_resolves_identifier(
         extracted_organizational_unit.shortName[0].value
     )  # resolved short name of unit
     expect(link).to_have_attribute(
-        "href",
-        f"/item/{extracted_activity.contact[1]}/",  # link href
+        "data-href",
+        f"/item/{extracted_activity.contact[1]}",  # link href
     )
     expect(link).not_to_have_attribute("target", "_blank")  # internal link
 
@@ -397,8 +397,8 @@ def test_edit_page_resolves_additive_identifier(
     )
     expect(rendered_identifier).to_have_count(1)
     assert (
-        rendered_identifier.first.get_attribute("href")
-        == f"/item/{organizational_unit.stableTargetId}/"
+        rendered_identifier.first.get_attribute("data-href")
+        == f"/item/{organizational_unit.stableTargetId}"
     )
 
     # assert raw identifier value is retained
@@ -549,6 +549,7 @@ def test_edit_page_additive_rule_roundtrip(
     submit_button = page.get_by_test_id("submit-button")
     submit_button.scroll_into_view_if_needed()
     submit_button.click()
+    page.wait_for_timeout(30000)  # wait for save operation
     page.reload()
 
     # check the rule input is still gone
@@ -603,7 +604,7 @@ def test_required_fields_red_asterisk(
         asterisk = field.get_by_text("*", exact=True)
         if field_name in expected_required_fields:
             expect(asterisk).to_be_visible()
-            expect(asterisk).to_have_css("color", "rgb(255, 0, 0)")
+            expect(asterisk).to_have_css("color", "rgb(255, 99, 71)")
         else:
             expect(asterisk).to_have_count(0)
 
@@ -618,9 +619,9 @@ def test_deactivate_all_switch(edit_page: Page) -> None:
     page.screenshot(path="tests_edit_test_main-test_deactivate_all_switch-clicked.png")
 
     last_switch = None
-    all_swtiches = page.get_by_role("switch").all()
+    all_switches = page.get_by_role("switch").all()
 
-    for switch in all_swtiches:
+    for switch in all_switches:
         expect(switch).not_to_be_checked()
         last_switch = switch
 
@@ -696,3 +697,86 @@ def test_edit_page_warn_tab_close(edit_page: Page) -> None:
     page.goto("https://www.rki.de")
     assert "https://www.rki.de" in page.url
     assert len(handle_dialog_called) == 1
+
+
+@pytest.mark.integration
+def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> None:
+    edit_page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    edit_page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
+        "new alternative title"
+    )
+    # check default state
+    submit_button = edit_page.get_by_test_id("submit-button")
+    expect(submit_button).to_have_text(re.compile(r"Save .*"))
+    expect(submit_button).not_to_be_disabled()
+
+    # submit item
+    submit_button.click()
+    expect(submit_button).to_have_text(re.compile(r"Saving .*"))
+    expect(submit_button).to_be_disabled()
+
+    # check if back in default state after saving
+    edit_page.wait_for_timeout(30000)
+    expect(submit_button).to_have_text(re.compile(r"Save .*"))
+    expect(submit_button).not_to_be_disabled()
+
+
+@pytest.mark.integration
+def test_edit_page_navigation_unsaved_changes_warning_cancel_save_and_navigate(
+    edit_page: Page,
+) -> None:
+    page = edit_page
+
+    # do some changes
+    page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
+        "new alternative title"
+    )
+
+    # try to navigate to search page (via navbar)
+    nav_bar = page.get_by_test_id("nav-bar")
+    search_nav = nav_bar.get_by_text("search")
+    search_nav.click()
+
+    # now dialog should appear
+    dialog = page.get_by_role("alertdialog", name="Unsaved changes")
+    expect(dialog).to_be_visible()
+
+    # cancel the navigation and check if url is still edit page
+    dialog.get_by_role("button", name="Stay here").click()
+    expect(page).to_have_url(re.compile("/item/.*"))
+
+    # click save changes
+    page.get_by_test_id("submit-button").click()
+    page.wait_for_selector(".editor-toast")
+
+    # navigate to search page (should work)
+    search_nav.click()
+    expect(dialog).to_be_hidden()
+    page.wait_for_url(re.compile("/"))
+
+
+@pytest.mark.integration
+def test_edit_page_navigation_unsaved_changes_warning_discard_changes_and_navigate(
+    edit_page: Page,
+) -> None:
+    page = edit_page
+
+    # do some changes
+    page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
+        "new alternative title"
+    )
+
+    # try to navigate to search page (via navbar)
+    nav_bar = page.get_by_test_id("nav-bar")
+    search_nav = nav_bar.get_by_text("search")
+    search_nav.click()
+
+    # now dialog should appear
+    dialog = page.get_by_role("alertdialog", name="Unsaved changes")
+    expect(dialog).to_be_visible()
+
+    # discard changes and expect navigation (url is search page url)
+    dialog.get_by_role("button", name="Navigate away").click()
+    expect(page).to_have_url(re.compile("/"))

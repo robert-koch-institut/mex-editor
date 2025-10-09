@@ -2,10 +2,13 @@ from typing import TYPE_CHECKING, cast
 
 import reflex as rx
 
+from mex.editor.locale_service import LocaleService
 from mex.editor.state import NavItem, State
 
 if TYPE_CHECKING:
     from mex.editor.models import User
+
+locale_service = LocaleService.get()
 
 
 def user_button() -> rx.Component:
@@ -13,11 +16,11 @@ def user_button() -> rx.Component:
     return rx.button(
         rx.cond(
             cast("User", State.user_mex).write_access,
-            rx.icon(tag="user_round_cog"),
-            rx.icon(tag="user_round"),
+            rx.icon("user_round_cog"),
+            rx.icon("user_round"),
         ),
         variant="ghost",
-        style={"marginTop": "0"},
+        style=rx.Style(marginTop="0"),
     )
 
 
@@ -36,6 +39,33 @@ def user_menu() -> rx.Component:
                 on_select=State.logout,
                 custom_attrs={"data-testid": "logout-button"},
             ),
+            align="end",
+        ),
+    )
+
+
+def language_switcher() -> rx.Component:
+    """Render a language switcher."""
+    return rx.menu.root(
+        rx.menu.trigger(
+            rx.button(
+                State.current_locale,
+                style=rx.Style(fontWeight="var(--font-weight-medium)"),
+                variant="ghost",
+            ),
+            custom_attrs={"data-testid": "language-switcher"},
+        ),
+        rx.menu.content(
+            rx.foreach(
+                locale_service.get_available_locales(),
+                lambda locale: rx.menu.item(
+                    rx.text(locale.label),
+                    on_click=State.change_locale(locale.id),  # type: ignore[misc]
+                    custom_attrs={
+                        "data-testid": f"language-switcher-menu-item-{locale.id}"
+                    },
+                ),
+            )
         ),
     )
 
@@ -44,9 +74,10 @@ def nav_link(item: NavItem) -> rx.Component:
     """Return a link component for the given navigation item."""
     return rx.link(
         rx.text(item.title, size="4", weight="medium"),
-        href=item.raw_path,
-        underline=item.underline,
+        on_click=State.navigate(item.raw_path),  # type: ignore[misc]
+        underline=item.underline,  # type: ignore[arg-type]
         class_name="nav-item",
+        custom_attrs={"data-href": item.raw_path},
     )
 
 
@@ -55,14 +86,11 @@ def app_logo() -> rx.Component:
     return rx.hover_card.root(
         rx.hover_card.trigger(
             rx.hstack(
-                rx.icon(
-                    tag="circuit-board",
-                    size=28,
-                ),
+                rx.icon("circuit-board", size=28),
                 rx.heading(
                     "MEx Editor",
                     weight="medium",
-                    style={"userSelect": "none"},
+                    style=rx.Style(userSelect="none"),
                 ),
                 custom_attrs={"data-testid": "app-logo"},
             )
@@ -81,11 +109,11 @@ def nav_bar() -> rx.Component:
     """Return a navigation bar component."""
     return rx.vstack(
         rx.box(
-            style={
-                "height": "var(--space-6)",
-                "width": "100%",
-                "backdropFilter": " var(--backdrop-filter-panel)",
-            },
+            style=rx.Style(
+                height="var(--space-6)",
+                width="100%",
+                backdropFilter="var(--backdrop-filter-panel)",
+            ),
         ),
         rx.card(
             rx.hstack(
@@ -99,27 +127,79 @@ def nav_bar() -> rx.Component:
                 rx.divider(orientation="vertical", size="2"),
                 user_menu(),
                 rx.spacer(),
+                language_switcher(),
                 rx.color_mode.button(),
                 justify="between",
                 align_items="center",
             ),
             size="2",
             custom_attrs={"data-testid": "nav-bar"},
-            style={
-                "width": "100%",
-                "marginTop": "calc(-1 * var(--base-card-border-width))",
-            },
+            style=rx.Style(
+                width="100%",
+                marginTop="calc(-1 * var(--base-card-border-width))",
+            ),
         ),
         spacing="0",
-        style={
-            "maxWidth": "var(--app-max-width)",
-            "minWidth": "var(--app-min-width)",
-            "position": "fixed",
-            "top": "0",
-            "width": "100%",
-            "zIndex": "1000",
-        },
+        style=rx.Style(
+            maxWidth="var(--app-max-width)",
+            minWidth="var(--app-min-width)",
+            position="fixed",
+            top="0",
+            width="100%",
+            zIndex="1000",
+        ),
     )
+
+
+def navigate_away_dialog() -> rx.Component:
+    """Render a dialog that informs the user about unsaved changes on the page.
+
+    If the dialog is dismissed navigation is stopped and the user stays on the page;
+    otherwise navigate away.
+    """
+    return rx.alert_dialog.root(
+        rx.alert_dialog.content(
+            rx.alert_dialog.title("Unsaved changes"),
+            rx.alert_dialog.description(
+                "There are unsaved changes on the page. If you navigate away "
+                "these changes will be lost. Do you want to navigate anyway?",
+            ),
+            rx.flex(
+                rx.alert_dialog.cancel(
+                    rx.button(
+                        "Stay here",
+                        color_scheme="gray",
+                        on_click=State.close_navigate_dialog,
+                    )
+                ),
+                rx.alert_dialog.action(
+                    rx.button(
+                        "Navigate away",
+                        color_scheme="tomato",
+                        on_click=[
+                            State.close_navigate_dialog,
+                            State.set_current_page_has_changes(False),  # type: ignore[misc]
+                            State.navigate(State.navigate_target),  # type: ignore[misc]
+                        ],
+                    )
+                ),
+                spacing="3",
+                style=rx.Style(marginTop="1rem"),
+                justify="end",
+            ),
+        ),
+        open=State.navigate_dialog_open,
+    )
+
+
+def page_leave_js() -> rx.Component:
+    """Render page leave java script import.
+
+    Returns:
+        rx.Component: The script component referencing the
+        '/page-leave-warn-unsaved-changes.js'
+    """
+    return rx.script(src="/page-leave-warn-unsaved-changes.js")
 
 
 def page(*children: rx.Component) -> rx.Component:
@@ -130,21 +210,25 @@ def page(*children: rx.Component) -> rx.Component:
             nav_bar(),
             rx.hstack(
                 *children,
-                style={
-                    "maxWidth": "var(--app-max-width)",
-                    "minWidth": "var(--app-min-width)",
-                    "padding": "calc(var(--space-6) * 4) var(--space-6) var(--space-6)",
-                    "width": "100%",
-                },
+                style=rx.Style(
+                    maxWidth="var(--app-max-width)",
+                    minWidth="var(--app-min-width)",
+                    padding="calc(var(--space-6) * 4) var(--space-6) var(--space-6)",
+                    width="100%",
+                ),
                 custom_attrs={"data-testid": "page-body"},
             ),
-            style={
-                "--app-max-width": "calc(1480px * var(--scaling))",
-                "--app-min-width": "calc(800px * var(--scaling))",
-            },
+            navigate_away_dialog(),
+            page_leave_js(),
+            style=rx.Style(
+                {
+                    "--app-max-width": "calc(1480px * var(--scaling))",
+                    "--app-min-width": "calc(800px * var(--scaling))",
+                }
+            ),
         ),
         rx.center(
             rx.spinner(size="3"),
-            style={"marginTop": "40vh"},
+            style=rx.Style(marginTop="40vh"),
         ),
     )

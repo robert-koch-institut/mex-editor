@@ -1,7 +1,7 @@
 import pytest
-from reflex.state import serialize_mutable_proxy
 
 from mex.common.models import ContactPointRuleSetResponse, ExtractedContactPoint
+from mex.common.types import MergedPrimarySourceIdentifier
 from mex.editor.models import EditorValue
 from mex.editor.rules.models import EditorPrimarySource, InputConfig
 from mex.editor.rules.state import RuleState
@@ -26,9 +26,7 @@ def test_state_get_primary_sources_by_field_name() -> None:
     with pytest.raises(ValueError, match="field not found: someField"):
         state._get_primary_sources_by_field_name("someField")
 
-    primary_sources = serialize_mutable_proxy(
-        state._get_primary_sources_by_field_name("email")
-    )
+    primary_sources = state._get_primary_sources_by_field_name("email")
 
     assert primary_sources == [
         EditorPrimarySource(
@@ -36,7 +34,7 @@ def test_state_get_primary_sources_by_field_name() -> None:
                 identifier="somePrimarySource",
                 href="/item/somePrimarySource",
             ),
-            identifier="somePrimarySource",
+            identifier=MergedPrimarySourceIdentifier("somePrimarySource"),
             input_config=InputConfig(),
             editor_values=[EditorValue(text="test@foo.bar")],
             enabled=True,
@@ -46,7 +44,7 @@ def test_state_get_primary_sources_by_field_name() -> None:
                 identifier="00000000000000",
                 href="/item/00000000000000",
             ),
-            identifier="00000000000000",
+            identifier=MergedPrimarySourceIdentifier("00000000000000"),
             input_config=InputConfig(editable_text=True, allow_additive=True),
             editor_values=[],
             enabled=True,

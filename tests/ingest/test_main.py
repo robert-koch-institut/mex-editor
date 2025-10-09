@@ -136,7 +136,7 @@ def test_search_and_ingest_roundtrip(
 def test_infobox_visibility_and_content(ingest_page: Page) -> None:
     expected_callout_content: dict[AuxProvider, str] = {
         AuxProvider.LDAP: (
-            "Search users by their fullname. "
+            "Search users by display name and contact points by email. "
             'Please use "*" as placeholder e.g. "Muster*".'
         ),
         AuxProvider.WIKIDATA: (
@@ -149,7 +149,9 @@ def test_infobox_visibility_and_content(ingest_page: Page) -> None:
 
     for provider in ALL_AUX_PROVIDERS:
         tab = page.get_by_role("tab", name=provider)
-        tab.click(timeout=50000)
+        tab.click(
+            timeout=50000
+        )  # high timeout cuz tab might be disabled due to loading
 
         tab_content = page.locator(f"[id*='{provider}'][role='tabpanel']")
         callout = tab_content.locator(".rt-CalloutRoot")

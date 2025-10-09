@@ -5,7 +5,6 @@ from mex.editor.edit.state import EditState
 from mex.editor.layout import page
 from mex.editor.rules.main import (
     editor_field,
-    page_leave_js,
     rule_page_header,
     validation_errors,
 )
@@ -20,10 +19,9 @@ def edit_title() -> rx.Component:
                 EditState.item_title,
                 render_value,
             ),
-            as_child=True,
         ),
         custom_attrs={"data-testid": "edit-heading"},
-        style={"userSelect": "none"},
+        style=rx.Style(userSelect="none"),
     )
 
 
@@ -43,7 +41,7 @@ def deactivate_all_switch() -> rx.Component:
             color_scheme="jade",
             custom_attrs={"data-testid": "deactivate-all-switch"},
         ),
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -56,14 +54,13 @@ def index() -> rx.Component:
             ),
             deactivate_all_switch(),
             rx.foreach(
-                RuleState.fields,
+                RuleState.translated_fields,
                 editor_field,
             ),
             validation_errors(),
-            page_leave_js(),
-            style={
-                "width": "100%",
-                "marginTop": "calc(2 * var(--space-6))",
-            },
+            style=rx.Style(
+                width="100%",
+                marginTop="calc(2 * var(--space-6))",
+            ),
         ),
     )

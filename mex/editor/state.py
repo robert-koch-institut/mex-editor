@@ -1,4 +1,4 @@
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
 from importlib.metadata import version
 from urllib.parse import urlencode
 
@@ -13,6 +13,10 @@ from mex.editor.models import NavItem, User
 class State(rx.State):
     """The base state for the app."""
 
+    current_locale: str = "de-DE"
+    current_page_has_changes: bool = False
+    navigate_dialog_open: bool = False
+    navigate_target: str | None = None
     user_mex: User | None = None
     user_ldap: User | None = None
     target_path_after_login: str | None = None
@@ -45,26 +49,71 @@ class State(rx.State):
     ]
 
     @rx.event
-    def logout(self) -> EventSpec:
-        """Log out a user."""
-        self.reset()
-        return rx.redirect("/")
+    def change_locale(self, locale: str) -> None:
+        """Change the current locale to the given one and reload the page.
+
+        Args:
+            locale: The locale to change to.
+        """
+        self.current_locale = locale
 
     @rx.event
-    def check_mex_login(self) -> EventSpec | None:
+    def set_current_page_has_changes(self, value: bool) -> EventSpec:  # noqa: FBT001
+        """Set the current_page_has_changes attribute to the given value.
+
+        Sets the value of the current_page_has_changes attribute and updates the state
+        on client side.
+
+        Args:
+            value : The value of the current_page_has_changes attribute.
+        """
+        self.current_page_has_changes = value
+        return rx.call_script(
+            f"window.updateMexEditorChanges({str(value).lower()})",
+        )
+
+    @rx.event
+    def close_navigate_dialog(self) -> None:
+        """Close the navigate dialog."""
+        self.navigate_dialog_open = False
+
+    @rx.event
+    def navigate(self, raw_path: str) -> EventSpec | None:
+        """Navigate to a given path and warn the user about unsaved changes on the current page.
+
+        If changes on the current page are present, a  dialog will appear and warn the
+        user about unsaved changes. The user can decide to stay on the current page or
+        discard the changes and navigate away.
+
+        Args:
+            raw_path : The path to navigate to.
+        """  # noqa: E501
+        self.navigate_target = raw_path
+        if self.current_page_has_changes:
+            self.navigate_dialog_open = True
+            return None
+
+        return rx.redirect(self.navigate_target)
+
+    @rx.event
+    def logout(self) -> Generator[EventSpec, None, None]:
+        """Log out a user."""
+        self.reset()
+        yield rx.redirect("/")
+
+    @rx.event
+    def check_mex_login(self) -> Generator[EventSpec, None, None]:
         """Check if a user is logged in."""
         if self.user_mex is None:
             self.target_path_after_login = self.router.page.raw_path
-            return rx.redirect("/login")
-        return None
+            yield rx.redirect("/login")
 
     @rx.event
-    def check_ldap_login(self) -> EventSpec | None:
+    def check_ldap_login(self) -> Generator[EventSpec, None, None]:
         """Check if a user is logged in to ldap."""
         if self.user_ldap is None:
             self.target_path_after_login = self.router.page.raw_path
-            return rx.redirect("/login-ldap")
-        return None
+            yield rx.redirect("/login-ldap")
 
     @staticmethod
     def _update_raw_path(
@@ -86,7 +135,6 @@ class State(rx.State):
             raw_path = f"{raw_path}?{query_str}"
         nav_item.raw_path = raw_path
 
-    @rx.event
     def push_url_params(
         self,
         params: Mapping[str, int | str | list[str]],
@@ -119,6 +167,6 @@ class State(rx.State):
     def backend_version(self) -> str:
         """Return the version of mex-backend."""
         connector = BackendApiConnector.get()
-        # TODO(ND): use proper connector method when available (stop-gap MX-1762)
+        # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         response = connector.request("GET", "_system/check")
         return str(response.get("version", "N/A"))

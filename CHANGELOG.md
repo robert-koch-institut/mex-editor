@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - badge with '+ additional titles' if there is more than one title present
+- ingest button of already imported items are always deactivated
 
 ### Changes
 

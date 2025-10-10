@@ -133,6 +133,21 @@ class IngestState(State):
                     async with self:
                         await resolve_editor_value(value)
 
+    @rx.event(background=True)
+    async def flag_ingested_items(self) -> None:
+        """Check and flag, if any result is already ingested into backend."""
+        connector = BackendApiConnector.get()
+        for index, result in enumerate(self.results_transformed):
+            response = connector.fetch_identities(
+                identifier_in_primary_source=self.results_extracted[
+                    index
+                ].identifierInPrimarySource,
+                had_primary_source=self.results_extracted[index].hadPrimarySource,
+            )
+            if len(response.items) > 0:
+                async with self:
+                    result.show_ingest_button = False
+
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results."""

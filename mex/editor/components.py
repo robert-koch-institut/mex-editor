@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from typing import Any
 
 import reflex as rx
@@ -149,7 +150,9 @@ def render_value(value: EditorValue) -> rx.Component:
     )
 
 
-def pagination(state: type[IngestState | SearchState]) -> rx.Component:
+def pagination(
+    state: type[IngestState | SearchState], *page_load_hooks: Callable[[], Any]
+) -> rx.Component:
     """Render pagination for navigating search results."""
     return rx.center(
         rx.button(
@@ -159,6 +162,7 @@ def pagination(state: type[IngestState | SearchState]) -> rx.Component:
                 state.scroll_to_top,
                 state.refresh,
                 state.resolve_identifiers,
+                *page_load_hooks,
             ],
             disabled=state.disable_previous_page,
             variant="surface",
@@ -173,6 +177,7 @@ def pagination(state: type[IngestState | SearchState]) -> rx.Component:
                 state.scroll_to_top,
                 state.refresh,
                 state.resolve_identifiers,
+                *page_load_hooks,
             ],
             disabled=state.disable_page_selection,
             custom_attrs={"data-testid": "pagination-page-select"},
@@ -184,6 +189,7 @@ def pagination(state: type[IngestState | SearchState]) -> rx.Component:
                 state.scroll_to_top,
                 state.refresh,
                 state.resolve_identifiers,
+                *page_load_hooks,
             ],
             disabled=state.disable_next_page,
             variant="surface",

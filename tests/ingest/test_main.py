@@ -119,12 +119,12 @@ def test_search_and_ingest_roundtrip(
     expect(toast).to_contain_text(f"{stem_type} was ingested successfully.")
     expect(ingest_button).to_be_disabled()
     page.screenshot(
-        path=f"tests_ingest_test_main-roundtrip_{aux_provider}-imported.png"
+        path=f"tests_ingest_test_main-roundtrip_{aux_provider}-ingested.png"
     )
     page.reload()
     expect(ingest_button).to_be_disabled()
     page.screenshot(
-        path=f"tests_ingest_test_main-roundtrip_{aux_provider}-imported-reload.png"
+        path=f"tests_ingest_test_main-roundtrip_{aux_provider}-ingested-reload.png"
     )
 
     # count the items afterwards

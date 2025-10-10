@@ -134,12 +134,14 @@ class IngestState(State):
                         await resolve_editor_value(value)
 
     @rx.event(background=True)
-    async def flag_imported_organizations(self) -> None:
-        """Check and flag, if any result is already imported in backend."""
+    async def flag_ingested_items(self) -> None:
+        """Check and flag, if any result is already ingested into backend."""
         connector = BackendApiConnector.get()
         for index, result in enumerate(self.results_transformed):
             response = connector.fetch_identities(
-                identifier_in_primary_source=f"{self.results_extracted[index].identifierInPrimarySource}",
+                identifier_in_primary_source=self.results_extracted[
+                    index
+                ].identifierInPrimarySource,
                 had_primary_source=self.results_extracted[index].hadPrimarySource,
             )
             if len(response.items) > 0:

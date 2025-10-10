@@ -87,7 +87,7 @@ app.add_page(
         State.load_nav,
         IngestState.refresh,
         IngestState.resolve_identifiers,
-        IngestState.flag_imported_organizations,
+        IngestState.flag_ingested_items,
     ],
 )
 app.add_page(

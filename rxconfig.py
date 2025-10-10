@@ -1,3 +1,8 @@
 import reflex as rx
 
-config = rx.Config(app_name="mex", telemetry_enabled=False)
+config = rx.Config(
+    app_name="mex",
+    disable_plugins=["reflex.plugins.sitemap.SitemapPlugin"],
+    tailwind=None,
+    telemetry_enabled=False,
+)

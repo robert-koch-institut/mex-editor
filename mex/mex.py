@@ -1,12 +1,10 @@
 import reflex as rx
 from fastapi.responses import PlainTextResponse
-from reflex.app import UnevaluatedPage
-from reflex.components.core.client_side_routing import Default404Page
 from reflex.components.radix import themes
-from reflex.constants import Page404
 from reflex.utils.console import info as log_info
 
 from mex.common.logging import logger
+from mex.editor.api.main import api as editor_api
 from mex.editor.api.main import check_system_status, get_prometheus_metrics
 from mex.editor.consent.main import index as consent_index
 from mex.editor.consent.state import ConsentState
@@ -109,32 +107,22 @@ app.add_page(
         ConsentState.load_user,
     ],
 )
-# side-step `add_page` to avoid `wait_for_client_redirect`,
-# because that breaks deployment behind a base path.
-app.unevaluated_pages[Page404.SLUG] = UnevaluatedPage(
-    component=Default404Page.create(),
-    route=Page404.SLUG,
-    title=Page404.TITLE,
-    description=Page404.DESCRIPTION,
-    image=Page404.IMAGE,
-    on_load=None,
-    meta=[],
-)
-app.api.add_api_route(
-    "/_system/check",
-    check_system_status,
-    tags=["system"],
-)
-app.api.add_api_route(
-    "/_system/metrics",
-    get_prometheus_metrics,
-    response_class=PlainTextResponse,
-    tags=["system"],
-)
-app.api.title = "mex-editor"
-app.api.version = "v0"
-app.api.contact = {"name": "MEx Team", "email": "mex@rki.de"}
-app.api.description = "Metadata editor web application."
+if app.api:  # stopgap reflex 0.7.4
+    app.api.add_api_route(
+        "/_system/check",
+        check_system_status,
+        tags=["system"],
+    )
+    app.api.add_api_route(
+        "/_system/metrics",
+        get_prometheus_metrics,
+        response_class=PlainTextResponse,
+        tags=["system"],
+    )
+    app.api.title = editor_api.title
+    app.api.version = editor_api.version
+    app.api.contact = editor_api.contact
+    app.api.description = editor_api.description
 
 app.register_lifespan_task(
     lambda: logger.info(load_settings().text()),

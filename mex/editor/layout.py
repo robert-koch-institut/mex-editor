@@ -127,8 +127,13 @@ def nav_bar() -> rx.Component:
                 rx.spacer(),
                 rx.hstack(
                     language_switcher(),
-                    rx.color_mode.button(),
                     user_menu(),
+                    rx.button(
+                        rx.icon("sun_moon"),
+                        variant="ghost",
+                        style=rx.Style(marginTop="0"),
+                        on_click=rx.toggle_color_mode,
+                    ),
                     style=rx.Style(alignItems="center"),
                     spacing="4",
                 ),
@@ -195,16 +200,6 @@ def navigate_away_dialog() -> rx.Component:
     )
 
 
-def page_leave_js() -> rx.Component:
-    """Render page leave java script import.
-
-    Returns:
-        rx.Component: The script component referencing the
-        '/page-leave-warn-unsaved-changes.js'
-    """
-    return rx.script(src="/page-leave-warn-unsaved-changes.js")
-
-
 def page(*children: rx.Component) -> rx.Component:
     """Return a page fragment with navigation bar and given children."""
     return rx.cond(
@@ -222,7 +217,6 @@ def page(*children: rx.Component) -> rx.Component:
                 custom_attrs={"data-testid": "page-body"},
             ),
             navigate_away_dialog(),
-            page_leave_js(),
             style=rx.Style(
                 {
                     "--app-max-width": "calc(1480px * var(--scaling))",

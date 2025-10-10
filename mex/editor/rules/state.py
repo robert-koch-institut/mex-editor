@@ -53,7 +53,7 @@ class RuleState(State):
     stem_type: str | None = None
     validation_messages: list[ValidationMessage] = []
 
-    @rx.var
+    @rx.var(cache=False)
     def translated_fields(self) -> Sequence[FieldTranslation]:
         """Compute the translated fields based on fields and current_locale.
 

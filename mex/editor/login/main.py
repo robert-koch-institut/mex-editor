@@ -65,7 +65,12 @@ def login_form(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
                 rx.hstack(
                     app_logo(),
                     rx.spacer(spacing="4"),
-                    rx.color_mode.button(),
+                    rx.button(
+                        rx.icon("sun_moon"),
+                        variant="ghost",
+                        style=rx.Style(marginTop="0"),
+                        on_click=rx.toggle_color_mode,
+                    ),
                     style=rx.Style(width="100%"),
                 ),
                 rx.divider(size="4"),

@@ -15,11 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - run local test browser in headed mode with higher resolution
-- prepare reflex upgrade to 0.7.3
+- update reflex to 0.7.3
 
 ### Deprecated
 
 ### Removed
+
+- removed warning when the create or edit browser window/tab is closed or navigated away
 
 ### Fixed
 

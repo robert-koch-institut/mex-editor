@@ -143,6 +143,7 @@ def search_input() -> rx.Component:
                 IngestState.go_to_first_page,
                 IngestState.refresh,
                 IngestState.resolve_identifiers,
+                IngestState.flag_ingested_items,
             ],
             style=rx.Style(margin="1em 0"),
             justify="center",
@@ -186,7 +187,7 @@ def search_results() -> rx.Component:
                 IngestState.results_transformed,
                 ingest_result,
             ),
-            pagination(IngestState),
+            pagination(IngestState, IngestState.flag_ingested_items),
             spacing="4",
             custom_attrs={"data-testid": "search-results-section"},
             style=rx.Style(
@@ -269,6 +270,7 @@ def index() -> rx.Component:
                 IngestState.go_to_first_page,
                 IngestState.refresh,
                 IngestState.resolve_identifiers,
+                IngestState.flag_ingested_items,
             ],
             custom_attrs={"data-testid": "aux-tab-section"},
             style=rx.Style(

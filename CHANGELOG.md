@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.1.0] - 2025-10-10
+
+### Added
+
 - badge with '+ additional titles' if there is more than one title present
 - allow to toggle all primary sources back on within the edit page
 - ingest button of already imported items are always deactivated
@@ -18,15 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - run local test browser in headed mode with higher resolution
 - update reflex to 0.7.3
 
-### Deprecated
-
 ### Removed
 
 - removed warning when the create or edit browser window/tab is closed or navigated away
-
-### Fixed
-
-### Security
 
 ## [1.0.2] - 2025-10-07
 

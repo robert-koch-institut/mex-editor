@@ -715,3 +715,48 @@ def test_edit_page_navigation_unsaved_changes_warning_discard_changes_and_naviga
     # discard changes and expect navigation (url is search page url)
     dialog.get_by_role("button", name="Navigate away").click()
     expect(page).to_have_url(re.compile("/"))
+
+
+@pytest.mark.parametrize(
+    ("locale_id", "field_name", "expected_field_label"),
+    [
+        pytest.param(
+            "de-DE",
+            "alternativeTitle",
+            "Alternativtitel",
+            id="de-DE:alternativeTitle",
+        ),
+        pytest.param(
+            "en-US",
+            "alternativeTitle",
+            "Alternative title",
+            id="en-US:alternativeTitle",
+        ),
+        pytest.param(
+            "de-DE",
+            "abstract",
+            "Kurzbeschreibung",
+            id="de-DE:abstract",
+        ),
+        pytest.param(
+            "en-US",
+            "abstract",
+            "Abstract",
+            id="en-US:abstract",
+        ),
+    ],
+)
+@pytest.mark.integration
+def test_edit_page_additive_add_remove_button_text_translation(
+    edit_page: Page, locale_id: str, field_name: str, expected_field_label: str
+) -> None:
+    edit_page.get_by_test_id("language-switcher").click()
+    edit_page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()
+    add_alt_title_btn = edit_page.get_by_test_id(
+        f"new-additive-{field_name}-00000000000000"
+    )
+    expect(add_alt_title_btn).to_have_text(f"New {expected_field_label}")
+    add_alt_title_btn.click()
+    expect(
+        edit_page.get_by_test_id(f"additive-rule-{field_name}-0-remove-button")
+    ).to_have_text(f"Remove {expected_field_label}")

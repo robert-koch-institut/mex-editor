@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changes
+- Using the field label for new/remove additive value button
+- renaming the field_name function to field_name_card
 
 ### Deprecated
 

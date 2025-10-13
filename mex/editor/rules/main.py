@@ -86,12 +86,13 @@ def editor_static_value(
 
 
 def editor_additive_value(
-    field_name: str,
+    field_translation: FieldTranslation,
     primary_source: EditorPrimarySource,
     index: int,
     value: EditorValue,
 ) -> rx.Component:
     """Render an additive value with buttons for editing and removal."""
+    field_name = field_translation.field.name
     return rx.hstack(
         rx.hstack(
             rx.cond(
@@ -111,7 +112,7 @@ def editor_additive_value(
             width="100%",
         ),
         remove_additive_button(
-            field_name,
+            field_translation,
             index,
         ),
         custom_attrs={"data-testid": f"additive-rule-{field_name}-{index}"},
@@ -121,17 +122,18 @@ def editor_additive_value(
 
 
 def remove_additive_button(
-    field_name: str,
+    field_translation: FieldTranslation,
     index: int,
 ) -> rx.Component:
     """Render a button to remove an additive value."""
+    field_name = field_translation.field.name
     return rx.button(
         rx.icon(
             "circle-minus",
             height="1rem",
             width="1rem",
         ),
-        f"Remove {field_name}",
+        f"Remove {field_translation.label}",
         color_scheme="tomato",
         variant="soft",
         size="1",
@@ -282,17 +284,18 @@ def additive_rule_input(
 
 
 def editor_value_card(
-    field_name: str,
+    field_translation: FieldTranslation,
     primary_source: EditorPrimarySource,
     index: int,
     value: EditorValue,
 ) -> rx.Component:
     """Return a card containing a single editor value."""
+    field_name = field_translation.field.name
     return rx.card(
         rx.cond(
             primary_source.input_config.allow_additive,
             editor_additive_value(
-                field_name,
+                field_translation,
                 primary_source,
                 index,
                 value,
@@ -358,10 +361,11 @@ def primary_source_name(
 
 
 def new_additive_button(
-    field_name: str,
+    field_translation: FieldTranslation,
     primary_source_identifier: str,
 ) -> rx.Component:
     """Render a button for adding new additive rules to a given field."""
+    field_name = field_translation.field.name
     return rx.card(
         rx.button(
             rx.icon(
@@ -369,7 +373,7 @@ def new_additive_button(
                 height="1rem",
                 width="1rem",
             ),
-            f"New {field_name}",
+            f"New {field_translation.label}",
             color_scheme="jade",
             variant="soft",
             size="1",
@@ -383,7 +387,7 @@ def new_additive_button(
 
 
 def editor_primary_source_stack(
-    field_name: str,
+    field_translation: FieldTranslation,
     primary_source: EditorPrimarySource,
 ) -> rx.Component:
     """Render a stack of editor value cards and input elements for a primary source."""
@@ -391,7 +395,7 @@ def editor_primary_source_stack(
         rx.foreach(
             primary_source.editor_values,
             lambda value, index: editor_value_card(
-                field_name,
+                field_translation,
                 primary_source,
                 index,
                 value,
@@ -400,7 +404,7 @@ def editor_primary_source_stack(
         rx.cond(
             primary_source.input_config.allow_additive,
             new_additive_button(
-                field_name,
+                field_translation,
                 primary_source.identifier,
             ),
         ),
@@ -409,17 +413,18 @@ def editor_primary_source_stack(
 
 
 def editor_primary_source(
-    field_name: str,
+    field_translation: FieldTranslation,
     primary_source: EditorPrimarySource,
 ) -> rx.Component:
     """Return a horizontal grid of cards for editing one primary source."""
+    field_name = field_translation.field.name
     return rx.hstack(
         primary_source_name(
             field_name,
             primary_source,
         ),
         editor_primary_source_stack(
-            field_name,
+            field_translation,
             primary_source,
         ),
         style=rx.Style(width="100%"),
@@ -429,7 +434,7 @@ def editor_primary_source(
     )
 
 
-def field_name(
+def field_name_card(
     field_translation: FieldTranslation,
 ) -> rx.Component:
     """Return a card with a field name."""
@@ -455,12 +460,12 @@ def editor_field(
     """Return a horizontal grid of cards for editing one field."""
     field = field_translation.field
     return rx.hstack(
-        field_name(field_translation),
+        field_name_card(field_translation),
         rx.vstack(
             rx.foreach(
                 field.primary_sources,
                 lambda primary_source: editor_primary_source(
-                    field.name, primary_source
+                    field_translation, primary_source
                 ),
             ),
             style=rx.Style(width="100%"),

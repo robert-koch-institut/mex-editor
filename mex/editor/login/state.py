@@ -1,6 +1,5 @@
-from urllib.parse import urljoin
-from base64 import b64encode
 from collections.abc import Generator
+from urllib.parse import urljoin
 
 import reflex as rx
 import requests
@@ -46,7 +45,8 @@ class LoginLdapState(State):
                 url, auth=(self.username, self.password), timeout=10
             )
         except RequestException:
-            return rx.window_alert("Cannot reach backend. Please try again later.")
+            yield rx.window_alert("Cannot reach backend. Please try again later.")
+            return
         if response:
             self.user_ldap = User(
                 name=self.username,

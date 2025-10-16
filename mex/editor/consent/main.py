@@ -16,6 +16,7 @@ def resources() -> rx.Component:
     return rx.vstack(
         rx.text(
             "DATENBESTÄNDE & DATENSÄTZE",
+            weight="bold",
         ),
         rx.vstack(
             rx.foreach(
@@ -23,10 +24,10 @@ def resources() -> rx.Component:
                 search_result,
             ),
         ),
-        style={
-            "textAlign": "center",
-            "marginBottom": "var(--space-8)",
-        },
+        style=rx.Style(
+            textAlign="center",
+            marginBottom="var(--space-8)",
+        ),
         custom_attrs={"data-testid": "user-resources"},
     )
 
@@ -36,6 +37,7 @@ def projects() -> rx.Component:
     return rx.vstack(
         rx.text(
             "PROJEKTE",
+            weight="bold",
         ),
         rx.vstack(
             rx.foreach(
@@ -43,37 +45,45 @@ def projects() -> rx.Component:
                 search_result,
             ),
         ),
-        style={
-            "textAlign": "center",
-            "marginBottom": "var(--space-4)",
-        },
+        style=rx.Style(
+            textAlign="center",
+            marginBottom="var(--space-4)",
+        ),
         custom_attrs={"data-testid": "user-projects"},
     )
 
 
 def user_data() -> rx.Component:
     """Render the user data section with name and email."""
-    return rx.vstack(
-        rx.text(
-            f"{ConsentState.merged_login_person.fullName}",  # type:ignore [union-attr]
-            style={
-                "fontWeight": "var(--font-weight-bold)",
-                "fontSize": "var(--font-size-6)",
-            },
+    return rx.cond(
+        ConsentState.merged_login_person,
+        rx.vstack(
+            rx.text(
+                ConsentState.merged_login_person["fullName"],  # type: ignore[index]
+                style=rx.Style(
+                    fontWeight="var(--font-weight-bold)",
+                    fontSize="var(--font-size-6)",
+                ),
+            ),
+            rx.text(
+                ConsentState.merged_login_person["email"],  # type: ignore[index]
+                style=rx.Style(
+                    color="var(--gray-12)",
+                ),
+            ),
+            rx.text(
+                ConsentState.merged_login_person["orcidId"],  # type: ignore[index]
+                style=rx.Style(
+                    color="var(--gray-12)",
+                ),
+            ),
+            style=rx.Style(
+                textAlign="center",
+                marginBottom="var(--space-4)",
+            ),
+            custom_attrs={"data-testid": "user-data"},
         ),
-        rx.text(
-            f"{ConsentState.merged_login_person.email}",  # type:ignore [union-attr]
-            style={"color": "var(--gray-12)"},
-        ),
-        rx.text(
-            f"{ConsentState.merged_login_person.orcidId}",  # type:ignore [union-attr]
-            style={"color": "var(--gray-12)"},
-        ),
-        style={
-            "textAlign": "center",
-            "marginBottom": "var(--space-4)",
-        },
-        custom_attrs={"data-testid": "user-data"},
+        rx.text("Loading user data...", custom_attrs={"data-testid": "user-data"}),
     )
 
 
@@ -83,57 +93,69 @@ def consent_box() -> rx.Component:
         rx.vstack(
             rx.markdown(
                 CONSENT_MD,
-                style={"fontSize": "13px", "lineHeight": "1.5"},
+                style=rx.Style({"fontSize": "13px", "lineHeight": "1.5"}),
             ),
             rx.hstack(
-                rx.button("Einwilligen", on_click=ConsentState.submit_rule_set(True)),  # noqa: FBT003
+                rx.button(
+                    "Einwilligen",
+                    on_click=ConsentState.submit_rule_set(consented=True),  # type: ignore[misc]
+                ),
                 rx.spacer(),
-                rx.button("Ablehnen", on_click=ConsentState.submit_rule_set(False)),  # noqa: FBT003
+                rx.button(
+                    "Ablehnen",
+                    on_click=ConsentState.submit_rule_set(consented=False),  # type: ignore[misc]
+                ),
             ),
-            style={
-                "justifyContent": "center",
-                "display": "flex",
-                "width": "100%",
-                "align": "center",
-                "justify": "center",
-            },
+            style=rx.Style(
+                justifyContent="center",
+                display="flex",
+                width="100%",
+                align="center",
+                justify="center",
+            ),
         ),
-        style={
-            "backgroundColor": "rgba(173, 216, 230, 0.2)",
-            "padding": "16px",
-        },
+        style=rx.Style(
+            backgroundColor="rgba(173, 216, 230, 0.2)",
+            padding="16px",
+        ),
         custom_attrs={"data-testid": "consent-box"},
     )
 
 
 def consent_status() -> rx.Component:
     """Render the current consent status for the user."""
-    return rx.vstack(
-        rx.text(ConsentState.merged_login_person.fullName, weight="bold"),  # type:ignore [union-attr]
-        rx.cond(
-            ConsentState.consent_status,
-            rx.hstack(
-                rx.foreach(
-                    ConsentState.consent_status.preview,  # type: ignore [union-attr]
-                    render_value,
-                )
-            ),
-            rx.hstack(
-                rx.text(
-                    "ConsentStatus: ",
+    return rx.cond(
+        ConsentState.merged_login_person,
+        rx.vstack(
+            rx.text(ConsentState.merged_login_person["fullName"], weight="bold"),  # type: ignore[index]
+            rx.cond(
+                ConsentState.consent_status,
+                rx.hstack(
+                    rx.foreach(
+                        ConsentState.consent_status.preview,  # type: ignore [union-attr]
+                        render_value,
+                    )
                 ),
-                rx.spacer(direction="row"),
-                rx.text(
-                    "ConsentType: ",
+                rx.hstack(
+                    rx.text(
+                        "ConsentStatus: ",
+                    ),
+                    rx.spacer(direction="row"),
+                    rx.text(
+                        "ConsentType: ",
+                    ),
                 ),
             ),
+            style=rx.Style(
+                width="100%",
+                align="center",
+                justify="center",
+            ),
+            custom_attrs={"data-testid": "consent-status"},
         ),
-        style={
-            "width": "100%",
-            "align": "center",
-            "justify": "center",
-        },
-        custom_attrs={"data-testid": "consent-status"},
+        rx.text(
+            "Loading consent status...", custom_attrs={"data-testid": "consent-status"}
+        ),
     )
 
 
@@ -151,7 +173,7 @@ def pagination() -> rx.Component:
             disabled=ConsentState.disable_previous_page,
             variant="surface",
             custom_attrs={"data-testid": "pagination-previous-button"},
-            style={"minWidth": "10%"},
+            style=rx.Style(minWidth="10%"),
         ),
         rx.select(
             ConsentState.total_pages,
@@ -175,10 +197,10 @@ def pagination() -> rx.Component:
             disabled=ConsentState.disable_next_page,
             variant="surface",
             custom_attrs={"data-testid": "pagination-next-button"},
-            style={"minWidth": "10%"},
+            style=rx.Style(minWidth="10%"),
         ),
         spacing="4",
-        style={"width": "100%"},
+        style=rx.Style(width="100%"),
     )
 
 
@@ -193,19 +215,19 @@ def index() -> rx.Component:
             rx.spacer(direction="column"),
             rx.box(
                 consent_box(),
-                style={
-                    "justifyContent": "center",
-                    "display": "flex",
-                    "width": "100%",
-                },
+                style=rx.Style(
+                    justifyContent="center",
+                    display="flex",
+                    width="100%",
+                ),
             ),
             consent_status(),
-            style={
-                "width": "100%",
-                "align": "center",
-                "justify": "center",
-                "flex-grow": "1",
-            },
+            style=rx.Style(
+                width="100%",
+                align="center",
+                justify="center",
+                flexGrow="1",
+            ),
             custom_attrs={"data-testid": "consent-index"},
         ),
     )

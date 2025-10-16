@@ -1,4 +1,3 @@
-
 import math
 from collections.abc import Generator
 from datetime import UTC, datetime
@@ -40,15 +39,15 @@ class ConsentState(State):
     is_loading: bool = True
 
     @rx.event
-    def load_user(self) -> EventSpec | None:
+    def load_user(self) -> Generator[EventSpec | None, None, None]:
         """Check the login and get user information."""
         if not self.user_ldap:
             self.target_path_after_login = self.router.page.raw_path
-            return rx.redirect("/login-ldap")
+            yield rx.redirect("/login-ldap")
+            return
         if self.merged_login_person:
-            self.get_consent()
+            yield from self.get_consent()  # type: ignore[misc]
         self.is_loading = False
-        return None
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:
@@ -64,12 +63,12 @@ class ConsentState(State):
     @rx.event
     def go_to_previous_page(self) -> None:
         """Navigate to the previous page."""
-        self.set_page(self.current_page - 1)
+        self.current_page = self.current_page - 1
 
     @rx.event
     def go_to_next_page(self) -> None:
         """Navigate to the next page."""
-        self.set_page(self.current_page + 1)
+        self.current_page = self.current_page + 1
 
     @rx.event
     def set_page(self, page_number: str | int) -> None:
@@ -79,18 +78,18 @@ class ConsentState(State):
     @rx.event
     def get_all_data(self) -> Generator[EventSpec | None, None, None]:
         """Fetch all data for the user."""
-        yield from self.get_projects()
-        yield from self.get_resources()
+        yield from self.get_projects()  # type: ignore[misc]
+        yield from self.get_resources()  # type: ignore[misc]
 
     @rx.event
     def get_resources(self) -> Generator[EventSpec | None, None, None]:
         """Fetch the user's resources."""
-        yield from self.fetch_data("MergedResource")
+        yield from self.fetch_data("MergedResource")  # type: ignore[misc]
 
     @rx.event
     def get_projects(self) -> Generator[EventSpec | None, None, None]:
         """Fetch the user's activities."""
-        yield from self.fetch_data("MergedActivity")
+        yield from self.fetch_data("MergedActivity")  # type: ignore[misc]
 
     @rx.event
     def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
@@ -137,12 +136,16 @@ class ConsentState(State):
     @rx.event
     def get_consent(self) -> Generator[EventSpec | None, None, None]:
         """Fetch the user's consent status."""
+        if not self.merged_login_person:
+            yield None
+            return
+
         connector = BackendApiConnector.get()
         try:
             response = connector.fetch_preview_items(
                 query_string=None,
                 entity_type=["MergedConsent"],
-                referenced_identifier=[str(self.merged_login_person.identifier)],  # type:ignore [union-attr]
+                referenced_identifier=[str(self.merged_login_person["identifier"])],
                 reference_field="hasDataSubject",
             )
         except HTTPError as exc:
@@ -165,11 +168,15 @@ class ConsentState(State):
         consented: bool,  # noqa: FBT001
     ) -> Generator[EventSpec | None, None, None]:
         """Convert the fields to a rule set and submit it to the backend."""
+        if not self.merged_login_person:
+            yield None
+            return
+
         if consented:
             rule_set_request = ConsentRuleSetRequest(
                 additive=AdditiveConsent(
                     hasConsentStatus=ConsentStatus["VALID_FOR_PROCESSING"],
-                    hasDataSubject=self.user_id,
+                    hasDataSubject=self.merged_login_person["identifier"],
                     hasConsentType=ConsentType["EXPRESSED_CONSENT"],
                     isIndicatedAtTime=YearMonthDayTime(
                         datetime.now(tz=UTC).isoformat()
@@ -180,7 +187,7 @@ class ConsentState(State):
             rule_set_request = ConsentRuleSetRequest(
                 additive=AdditiveConsent(
                     hasConsentStatus=ConsentStatus["INVALID_FOR_PROCESSING"],
-                    hasDataSubject=self.user_id,
+                    hasDataSubject=self.merged_login_person["identifier"],
                     isIndicatedAtTime=YearMonthDayTime(
                         datetime.now(tz=UTC).isoformat()
                     ),
@@ -195,8 +202,8 @@ class ConsentState(State):
             )
             return
         else:
-            yield from self.get_consent()
-            yield self.show_submit_success_toast()
+            yield from self.get_consent()  # type: ignore[misc]
+            yield self.show_submit_success_toast()  # type: ignore[misc]
 
     def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:
         """Send the rule set to the backend."""
@@ -229,12 +236,3 @@ class ConsentState(State):
                     if preview.identifier and not preview.text:
                         async with self:
                             await resolve_editor_value(preview)
-    def load_user(self) -> Generator[EventSpec, None, None]:
-        """Set the stem type to a default."""
-        connector = LDAPConnector.get()
-        if not self.user_ldap:
-            self.target_path_after_login = self.router.page.raw_path
-            yield rx.redirect("/login-ldap")
-        else:
-            person = connector.get_person(sam_account_name=self.user_ldap.name)
-            self.display_name = person.displayName

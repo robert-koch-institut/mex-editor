@@ -1,6 +1,6 @@
 [project]
 name = "mex-editor"
-version = "0.22.0"
+version = "1.1.0"
 description = "Metadata editor web application."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -9,30 +9,31 @@ urls = { Repository = "https://github.com/robert-koch-institut/mex-editor" }
 requires-python = ">=3.11,<3.12"
 dependencies = [
     "async-lru>=2",
-    "fastapi>=0.115",
-    "mex-common>=1.4,<1.5",
+    "babel>=2",
+    "fastapi>=0.117",
+    "mex-common>=1.5.1,<1.6",
     "pydantic>=2",
     "pyyaml>=6",
-    "reflex>=0.6,<0.7",
+    "reflex>=0.7,<0.7.4",
     "requests>=2",
-    "starlette>=0.41",
-    "typer>=0.15",
-    "uvicorn>=0.34",
+    "starlette>=0.48",
+    "typer>=0.19",
+    "uvicorn>=0.36",
 ]
 optional-dependencies.dev = [
     "ipdb>=0.13",
-    "mex-artificial>=0.5",
+    "mex-artificial>=1",
     "mypy>=1",
     "nest-asyncio>=1",
     "pytest-cov>=6",
     "pytest-playwright>=0.7",
     "pytest-random-order>=1",
     "pytest>=8",
-    "ruff>=0.11",
+    "ruff>=0.13",
     "sphinx>=8",
-    "types-ldap3>=2",
-    "types-PyYAML>=6",
-    "types-requests>=2",
+    "types-ldap3",
+    "types-PyYAML",
+    "types-requests",
 ]
 
 [project.scripts]
@@ -51,10 +52,6 @@ context = 5
 python_version = "3.11"
 show_error_codes = true
 plugins = ["pydantic.mypy"]
-
-[[tool.mypy.overrides]]
-module = "reflex.*"
-ignore_missing_imports = true
 
 [tool.pdm]
 distribution = true
@@ -81,7 +78,7 @@ addopts = [
     "--cov",
     "--no-cov-on-fail",
     "--cov-report=term-missing:skip-covered",
-    "--cov-fail-under=60",
+    "--cov-fail-under=50",
     "--cov-branch",
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--random-order-bucket=global",

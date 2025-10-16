@@ -98,16 +98,16 @@ def test_create_page_submit_item(create_page: Page) -> None:
 @pytest.mark.parametrize(
     (
         "locale_id",
-        "expected_accessplatform_field_label",
+        "expected_access_platform_field_label",
     ),
     [
-        pytest.param("de", "Zugriffsplattform", id="locale de-De"),
-        pytest.param("en", "Access platform", id="locale en-US"),
+        pytest.param("de-DE", "Zugriffsplattform", id="locale de-DE"),
+        pytest.param("en-US", "Access platform", id="locale en-US"),
     ],
 )
 @pytest.mark.integration
 def test_language_switcher(
-    create_page: Page, locale_id: str, expected_accessplatform_field_label: str
+    create_page: Page, locale_id: str, expected_access_platform_field_label: str
 ) -> None:
     # language switcher should be there
     lang_switcher = create_page.get_by_test_id("language-switcher")
@@ -117,11 +117,11 @@ def test_language_switcher(
     lang_switcher.click()
     create_page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()
 
-    # select entitytype resource
+    # select entity_type resource
     create_page.get_by_test_id("entity-type-select").click(timeout=20000)
     create_page.get_by_role("option", name="Resource", exact=True).click()
     create_page.wait_for_timeout(20000)
 
     # find the accessPlatform field label and check the text
-    field_accessplatform = create_page.get_by_test_id("field-accessPlatform-name")
-    expect(field_accessplatform).to_have_text(expected_accessplatform_field_label)
+    field_access_platform = create_page.get_by_test_id("field-accessPlatform-name")
+    expect(field_access_platform).to_have_text(expected_access_platform_field_label)

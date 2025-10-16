@@ -1,4 +1,6 @@
 from urllib.parse import urljoin
+from base64 import b64encode
+from collections.abc import Generator
 
 import reflex as rx
 import requests
@@ -31,7 +33,7 @@ class LoginLdapState(State):
         self.password = password
 
     @rx.event
-    def login(self) -> EventSpec:
+    def login(self) -> Generator[EventSpec, None, None]:
         """Login a user."""
         settings = BaseSettings.get()
         url = urljoin(
@@ -53,8 +55,9 @@ class LoginLdapState(State):
             self.merged_login_person = response.json()
             target_path_after_login = self.target_path_after_login or "/"
             self.reset()  # reset username/password
-            return rx.redirect(target_path_after_login)
-        return rx.window_alert("Invalid credentials.")
+            yield rx.redirect(target_path_after_login)
+        else:
+            yield rx.window_alert("Invalid credentials.")
 
 
 class LoginMExState(State):
@@ -74,7 +77,7 @@ class LoginMExState(State):
         self.password = password
 
     @rx.event
-    def login(self) -> EventSpec:
+    def login(self) -> Generator[EventSpec, None, None]:
         """Login a user."""
         read_access = has_read_access_mex(self.username, self.password)
         write_access = has_write_access_mex(self.username, self.password)
@@ -88,5 +91,6 @@ class LoginMExState(State):
             else:
                 target_path_after_login = "/"
             self.reset()  # reset username/password
-            return rx.redirect(target_path_after_login)
-        return rx.window_alert("Invalid credentials.")
+            yield rx.redirect(target_path_after_login)
+        else:
+            yield rx.window_alert("Invalid credentials.")

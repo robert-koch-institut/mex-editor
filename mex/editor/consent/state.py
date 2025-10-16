@@ -1,3 +1,4 @@
+
 import math
 from collections.abc import Generator
 from datetime import UTC, datetime
@@ -228,3 +229,12 @@ class ConsentState(State):
                     if preview.identifier and not preview.text:
                         async with self:
                             await resolve_editor_value(preview)
+    def load_user(self) -> Generator[EventSpec, None, None]:
+        """Set the stem type to a default."""
+        connector = LDAPConnector.get()
+        if not self.user_ldap:
+            self.target_path_after_login = self.router.page.raw_path
+            yield rx.redirect("/login-ldap")
+        else:
+            person = connector.get_person(sam_account_name=self.user_ldap.name)
+            self.display_name = person.displayName

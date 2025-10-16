@@ -1,3 +1,6 @@
+import os
+from typing import Any
+
 import pytest
 from fastapi.testclient import TestClient
 from playwright.sync_api import Page, expect
@@ -28,17 +31,42 @@ from mex.common.types import (
     Theme,
     YearMonthDay,
 )
+from mex.editor.api.main import api
 from mex.editor.settings import EditorSettings
 from mex.editor.types import EditorUserDatabase, EditorUserPassword
-from mex.mex import app
 
 pytest_plugins = ("mex.common.testing.plugin",)
+
+
+@pytest.fixture(scope="session")
+def browser_context_args(
+    browser_context_args: dict[str, Any],
+) -> dict[str, Any]:
+    """Run the playwright test browser in a larger resolution than its default."""
+    return {
+        **browser_context_args,
+        "viewport": {
+            "width": 1600,
+            "height": 900,
+        },
+    }
+
+
+@pytest.fixture(scope="session")
+def browser_type_launch_args(
+    browser_type_launch_args: dict[str, Any],
+) -> dict[str, Any]:
+    """Run the playwright browser in headed mode locally and in headless mode in CI."""
+    return {
+        **browser_type_launch_args,
+        "headless": os.getenv("CI") is not None,
+    }
 
 
 @pytest.fixture
 def client() -> TestClient:
     """Return a fastAPI test client initialized with our app."""
-    with TestClient(app.api, raise_server_exceptions=False) as test_client:
+    with TestClient(api, raise_server_exceptions=False) as test_client:
         return test_client
 
 
@@ -122,7 +150,7 @@ def flush_graph_database(is_integration_test: bool) -> None:  # noqa: FBT001
     """Flush the graph database before every integration test."""
     if is_integration_test:
         connector = BackendApiConnector.get()
-        # TODO(ND): use proper connector method when available (stopgap mx-1762)
+        # TODO(ND): use proper connector method when available (stopgap mx-1984)
         connector.request(method="DELETE", endpoint="/_system/graph")
 
 
@@ -193,6 +221,20 @@ def dummy_data() -> list[AnyExtractedModel]:
         title=[Text(value="Bioinformatics Resource 1", language=None)],
         unitInCharge=[organizational_unit_1.stableTargetId],
     )
+    resource_2 = ExtractedResource(
+        hadPrimarySource=primary_source_2.stableTargetId,
+        identifierInPrimarySource="r-2",
+        accessRestriction=AccessRestriction["OPEN"],
+        contact=[contact_point_1.stableTargetId, contact_point_2.stableTargetId],
+        theme=[Theme["PUBLIC_HEALTH"]],
+        title=[
+            Text(value="Some Resource with many titles 1", language=None),
+            Text(value="Some Resource with many titles 2", language=TextLanguage.EN),
+            Text(value="Eine Resource mit vielen Titeln 3", language=TextLanguage.DE),
+            Text(value="Some Resource with many titles 4", language=None),
+        ],
+        unitInCharge=[organizational_unit_1.stableTargetId],
+    )
     return [
         primary_source_1,
         primary_source_2,
@@ -202,6 +244,7 @@ def dummy_data() -> list[AnyExtractedModel]:
         person_1,
         activity_1,
         resource_1,
+        resource_2,
     ]
 
 

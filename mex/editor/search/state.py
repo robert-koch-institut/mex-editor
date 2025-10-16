@@ -1,9 +1,9 @@
 import math
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Annotated, Literal
+from typing import TYPE_CHECKING, Literal
 
 import reflex as rx
-from pydantic import Field, TypeAdapter, ValidationError
+from pydantic import TypeAdapter, ValidationError
 from reflex.event import EventSpec
 from requests import HTTPError
 
@@ -58,17 +58,17 @@ class SearchState(State):
     """State management for the search page."""
 
     results: list[SearchResult] = []
-    total: Annotated[int, Field(ge=0)] = 0
-    query_string: Annotated[str, Field(max_length=1000)] = ""
+    total: int = 0
+    limit: int = 50
+    query_string: str = ""
     entity_types: dict[str, bool] = {k.stemType: False for k in MERGED_MODEL_CLASSES}
 
     reference_filter_strategy: Literal["had_primary_source", "dynamic"] = "dynamic"
     had_primary_sources: dict[str, SearchPrimarySource] = {}
+    current_page: int = 1
     reference_field_filter: ReferenceFieldFilter = ReferenceFieldFilter(
         field="", identifiers=[]
     )
-    current_page: Annotated[int, Field(ge=1)] = 1
-    limit: Annotated[int, Field(ge=1, le=100)] = 50
     is_loading: bool = True
 
     @rx.event
@@ -110,10 +110,10 @@ class SearchState(State):
 
     @rx.event
     def remove_reference_field_filter_identifier(self, index: int) -> None:
-        """Remove the reference valueto filter for at a specific index.
+        """Remove the reference value to filter for at a specific index.
 
         Args:
-            index (int): Index of the identifier to remove.
+            index: Index of the identifier to remove.
         """
         self.reference_field_filter.identifiers.pop(index)
 
@@ -121,9 +121,9 @@ class SearchState(State):
     def add_reference_field_filter_identifier(self) -> None:
         """Add a new empty identifier."""
         self.reference_field_filter.identifiers.append(
-            ReferenceFieldIdentifierFilter(value="")
+            ReferenceFieldIdentifierFilter(value="", validation_msg=None)
         )
-        self.set_reference_field_filter_identifier(
+        SearchState.set_reference_field_filter_identifier(  # type: ignore[misc]
             len(self.reference_field_filter.identifiers) - 1, ""
         )
 
@@ -178,7 +178,7 @@ class SearchState(State):
     def load_search_params(self) -> None:
         """Load url params into the state."""
         router: RouterData = self.get_value("router")
-        self.set_page(router.page.params.get("page", 1))
+        self.set_page(router.page.params.get("page", 1))  # type: ignore[misc]
         self.query_string = router.page.params.get("q", "")
         type_params = router.page.params.get("entityType", [])
         type_params = type_params if isinstance(type_params, list) else [type_params]
@@ -211,14 +211,15 @@ class SearchState(State):
         self.reference_field_filter = ReferenceFieldFilter(
             field=router.page.params.get("referenceField", ""),
             identifiers=[
-                ReferenceFieldIdentifierFilter(value=x) for x in ref_field_identifiers
+                ReferenceFieldIdentifierFilter(value=x, validation_msg=None)
+                for x in ref_field_identifiers
             ],
         )
 
     @rx.event
-    def push_search_params(self) -> EventSpec | None:
+    def push_search_params(self) -> Generator[EventSpec | None, None, None]:
         """Push a new browser history item with updated search parameters."""
-        return self.push_url_params(
+        yield self.push_url_params(
             {
                 "q": self.query_string,
                 "page": self.current_page,
@@ -278,7 +279,7 @@ class SearchState(State):
         self.current_page = self.current_page + 1
 
     @rx.event
-    def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
+    def scroll_to_top(self) -> Generator[EventSpec, None, None]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
@@ -294,12 +295,11 @@ class SearchState(State):
     @rx.event
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results."""
-        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
+        # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         connector = BackendApiConnector.get()
         entity_type = [
             ensure_prefix(k, "Merged") for k, v in self.entity_types.items() if v
         ]
-
         filter_strategy_params = (
             _build_dynamic_refresh_params(self.reference_field_filter)
             if self.reference_filter_strategy == "dynamic"
@@ -334,14 +334,14 @@ class SearchState(State):
     @rx.event
     def get_available_primary_sources(self) -> Generator[EventSpec, None, None]:
         """Get all available primary sources."""
-        # TODO(ND): use the user auth for backend requests (stop-gap MX-1616)
+        # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         connector = BackendApiConnector.get()
         maximum_number_of_primary_sources = 100
         try:
             primary_sources_response = connector.fetch_preview_items(
                 entity_type=[ensure_prefix(MergedPrimarySource.stemType, "Merged")],
                 skip=0,
-                limit=100,
+                limit=maximum_number_of_primary_sources,
             )
         except HTTPError as exc:
             yield from escalate_error(

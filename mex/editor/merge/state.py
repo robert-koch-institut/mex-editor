@@ -1,8 +1,7 @@
 from collections.abc import Generator, Iterable
-from typing import Annotated, Literal
+from typing import Literal
 
 import reflex as rx
-from pydantic import Field
 from reflex.event import EventSpec
 from requests import HTTPError
 
@@ -27,8 +26,8 @@ class MergeState(State):
     entity_types_extracted: dict[str, bool] = {
         k.stemType: False for k in MERGED_MODEL_CLASSES
     }
-    limit: Annotated[int, Field(ge=1, le=100)] = 50
     is_loading: bool = True
+    limit: int = 50
     query_strings: dict[Literal["merged", "extracted"], str] = {
         "merged": "",
         "extracted": "",
@@ -180,7 +179,7 @@ class MergeState(State):
             self.total_count["extracted"] = response.total
 
     @rx.event
-    def submit_merge_items(self) -> Generator[EventSpec | None, None, None]:
+    def submit_merge_items(self) -> Generator[EventSpec, None, None]:
         """Submit merging of the items."""
         yield rx.toast.error(
             title="Not Implemented",

@@ -14,6 +14,7 @@ from mex.common.models import MERGED_MODEL_CLASSES, MergedPrimarySource
 from mex.common.transform import ensure_prefix
 from mex.common.types import Identifier
 from mex.editor.exceptions import escalate_error
+from mex.editor.locale_service import LocaleService
 from mex.editor.search.models import (
     ReferenceFieldFilter,
     ReferenceFieldIdentifierFilter,
@@ -52,6 +53,9 @@ def _build_had_primary_source_refresh_params(
         "reference_field": "hadPrimarySource" if had_primary_source else None,
         "referenced_identifier": had_primary_source,
     }
+
+
+locale_service = LocaleService.get()
 
 
 class SearchState(State):
@@ -128,7 +132,7 @@ class SearchState(State):
         )
 
     @rx.var(cache=False)
-    def all_fields_for_entity_types(self) -> list[str]:
+    def all_fields_for_entity_types(self) -> list[dict[str, str]]:
         """Get all fields for the currently selected entity types filter.
 
         Returns:
@@ -142,11 +146,28 @@ class SearchState(State):
         if len(selected_entity_types) == 0:
             selected_entity_types = [item[0] for item in self.entity_types.items()]
 
-        fields_by_type = [
-            REFERENCE_FIELDS_BY_CLASS_NAME[ensure_prefix(entity_type, "Extracted")]
+        fields_with_type = [
+            [
+                {
+                    "value": field,
+                    "label": locale_service.get_field_label(
+                        self.current_locale, entity_type, field
+                    ),
+                }
+                for field in REFERENCE_FIELDS_BY_CLASS_NAME[
+                    ensure_prefix(entity_type, "Extracted")
+                ]
+            ]
             for entity_type in selected_entity_types
         ]
-        return sorted({f for fields in fields_by_type for f in fields})
+
+        return sorted(
+            {
+                item["value"]: item
+                for item in [f for fields in fields_with_type for f in fields]
+            }.values(),
+            key=lambda x: x["label"],
+        )
 
     @rx.var(cache=False)
     def disable_previous_page(self) -> bool:

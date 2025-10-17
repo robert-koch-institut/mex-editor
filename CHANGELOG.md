@@ -8,8 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- CustomSelect-Component that has items with value and label instead of simple strings
 
 ### Changes
+- Field of the ReferenceFilter is now translated
 
 ### Deprecated
 

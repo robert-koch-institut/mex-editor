@@ -1,4 +1,3 @@
-import os
 from typing import Any
 
 import pytest
@@ -55,10 +54,10 @@ def browser_context_args(
 def browser_type_launch_args(
     browser_type_launch_args: dict[str, Any],
 ) -> dict[str, Any]:
-    """Run the playwright browser in headed mode locally and in headless mode in CI."""
+    """Run the playwright browser always in headless mode."""
     return {
         **browser_type_launch_args,
-        "headless": os.getenv("CI") is not None,
+        "headless": True,
     }
 
 

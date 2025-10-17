@@ -326,7 +326,7 @@ def search_results() -> rx.Component:
                 SearchState.results,
                 search_result,
             ),
-            pagination(SearchState),
+            pagination(SearchState, SearchState.push_search_params),
             spacing="4",
             custom_attrs={"data-testid": "search-results-section"},
             style=rx.Style(

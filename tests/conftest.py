@@ -265,6 +265,31 @@ def load_dummy_data(
 
 
 @pytest.fixture
+def load_pagination_dummy_data(
+    dummy_data: list[AnyExtractedModel],
+    flush_graph_database: None,  # noqa: ARG001
+) -> None:
+    """Ingest dummy data into the backend."""
+    connector = BackendApiConnector.get()
+    primary_source_1 = next(
+        x for x in dummy_data if x.identifierInPrimarySource == "ps-1"
+    )
+
+    dummy_data.extend(
+        [
+            ExtractedContactPoint(
+                email=[Email(f"help-{i}@pagination.abc")],
+                hadPrimarySource=primary_source_1.stableTargetId,
+                identifierInPrimarySource=f"cp-pagination-test-{i}",
+            )
+            for i in range(100)
+        ]
+    )
+
+    connector.ingest(dummy_data)
+
+
+@pytest.fixture
 def extracted_activity(
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> ExtractedActivity:

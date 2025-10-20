@@ -1,4 +1,3 @@
-import os
 from typing import Any
 
 import pytest
@@ -58,7 +57,7 @@ def browser_type_launch_args(
     """Run the playwright browser in headed mode locally and in headless mode in CI."""
     return {
         **browser_type_launch_args,
-        "headless": os.getenv("CI") is not None,
+        "headless": True,
     }
 
 
@@ -275,7 +274,9 @@ def load_pagination_dummy_data(
         x for x in dummy_data if x.identifierInPrimarySource == "ps-1"
     )
 
-    dummy_data.extend(
+    pagination_dummy_data = []
+    pagination_dummy_data.extend(dummy_data)
+    pagination_dummy_data.extend(
         [
             ExtractedContactPoint(
                 email=[Email(f"help-{i}@pagination.abc")],
@@ -285,8 +286,7 @@ def load_pagination_dummy_data(
             for i in range(100)
         ]
     )
-
-    connector.ingest(dummy_data)
+    connector.ingest(pagination_dummy_data)
 
 
 @pytest.fixture

@@ -350,10 +350,10 @@ def test_push_search_params(
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load-2.png")
     primary_sources.get_by_text(primary_source.title[0].value).click()
     checked = primary_sources.get_by_role("checkbox", checked=True)
-    expect(checked).to_have_count(1)
     page.screenshot(
         path="tests_search_test_main-test_push_search_params-on-click-2.png"
     )
+    expect(checked).to_have_count(1)
 
     # expect parameter change to be reflected in url
     page.wait_for_url(

@@ -34,7 +34,6 @@ from mex.editor.settings import EditorSettings
 from mex.editor.types import EditorUserDatabase, EditorUserPassword
 
 pytest_plugins = ("mex.common.testing.plugin",)
-expect.set_options(timeout=10_000)
 
 
 @pytest.fixture(scope="session")
@@ -139,8 +138,9 @@ def writer_user_page(
 ) -> Page:
     login_user(frontend_url, page, *writer_user_credentials)
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
-    page.set_default_navigation_timeout(50000)
-    page.set_default_timeout(10000)
+    page.set_default_navigation_timeout(50_000)
+    page.set_default_timeout(10_000)
+    expect.set_options(timeout=10_000)
     return page
 
 

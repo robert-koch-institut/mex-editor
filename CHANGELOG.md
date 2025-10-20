@@ -10,13 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changes
+- Increased global expect timeout (to 10,000) for tests
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-- Page numbers in search and ingest page.
+- Page numbers on search and ingest page
 
 ### Security
 

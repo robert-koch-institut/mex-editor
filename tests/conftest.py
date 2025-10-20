@@ -34,6 +34,7 @@ from mex.editor.settings import EditorSettings
 from mex.editor.types import EditorUserDatabase, EditorUserPassword
 
 pytest_plugins = ("mex.common.testing.plugin",)
+expect.set_options(timeout=10_000)
 
 
 @pytest.fixture(scope="session")

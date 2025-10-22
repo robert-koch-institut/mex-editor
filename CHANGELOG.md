@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changes
+- Initial language now picking from available languages instead of hard coded value
 - Using the field label for new/remove additive value button
 - renaming the field_name function to field_name_card
 

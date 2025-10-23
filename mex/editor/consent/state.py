@@ -165,14 +165,14 @@ class ConsentState(State):
     @rx.event
     def submit_rule_set(
         self,
-        consented: bool,  # noqa: FBT001
+        consented: str,
     ) -> Generator[EventSpec | None, None, None]:
         """Convert the fields to a rule set and submit it to the backend."""
         if not self.merged_login_person:
             yield None
             return
 
-        if consented:
+        if consented == "consent":
             rule_set_request = ConsentRuleSetRequest(
                 additive=AdditiveConsent(
                     hasConsentStatus=ConsentStatus["VALID_FOR_PROCESSING"],

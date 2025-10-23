@@ -19,6 +19,7 @@ class State(rx.State):
     navigate_target: str | None = None
     user_mex: User | None = None
     user_ldap: User | None = None
+    merged_login_person: dict | None = None
     target_path_after_login: str | None = None
     nav_items: list[NavItem] = [
         NavItem(

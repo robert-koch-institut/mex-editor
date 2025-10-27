@@ -1,7 +1,6 @@
 import re
 from collections.abc import Sequence
 from gettext import GNUTranslations
-from importlib.resources import files
 from pathlib import Path
 from typing import Self, cast
 
@@ -51,7 +50,9 @@ class LocaleService:
 
     def __init__(self) -> None:
         """Initialize with all available locales."""
-        for mo_file in cast("Path", (files("mex.model") / "i18n")).glob("*.mo"):
+        # locale_dir = files("mex.model") / "i18n"
+        locale_dir = Path("D:/code/git/mex-editor/locales")
+        for mo_file in cast("Path", locale_dir).glob("*.mo"):
             locale = mo_file.name.removesuffix(".mo")
             language = re.split("[-_]", locale)[0]
             label = BabelLocale(language).get_language_name()
@@ -72,6 +73,10 @@ class LocaleService:
             with self._available_locales[locale_id].filepath.open("rb") as mo_file:
                 self._translations[locale_id] = GNUTranslations(mo_file)
         return self._translations[locale_id]
+
+    def get_text(self, locale_id: str, msg_id: str):
+        translation = self._ensure_translation(locale_id)
+        return translation.gettext(msg_id)
 
     def get_field_label(  # noqa: PLR0911
         self, locale_id: str, stem_type: str, field_name: str, n: int = 1

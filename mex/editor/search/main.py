@@ -14,7 +14,15 @@ from mex.editor.search.models import (
     SearchPrimarySource,
     SearchResult,
 )
-from mex.editor.search.state import SearchState, full_refresh
+from mex.editor.search.state import (
+    ENTITYTYPE_FILTER_TITLE_LABEL_ID,
+    REFERENCE_FILTER_DYNAMIC_TAB_LABEL_ID,
+    REFERENCE_FILTER_PRIMARYSOURCE_TAB_LABEL_ID,
+    REFERENCEFIELD_FILTER_FIELD_PLACHOLDER_LABEL_ID,
+    SEARCH_INPUT_PLACEHOLDER_LABEL_ID,
+    SearchState,
+    full_refresh,
+)
 
 
 def search_result(result: SearchResult) -> rx.Component:
@@ -51,7 +59,9 @@ def search_input() -> rx.Component:
                     default_value=SearchState.query_string,
                     max_length=100,
                     name="query_string",
-                    placeholder="Search here...",
+                    placeholder=SearchState.localized_labels[
+                        SEARCH_INPUT_PLACEHOLDER_LABEL_ID
+                    ],
                     style=rx.Style(
                         {
                             "--text-field-selection-color": "",
@@ -98,7 +108,7 @@ def entity_type_filter() -> rx.Component:
     """Render checkboxes for filtering the search results by entity type."""
     return rx.card(
         rx.text(
-            "entityType",
+            SearchState.localized_labels[ENTITYTYPE_FILTER_TITLE_LABEL_ID],
             style=rx.Style(
                 marginBottom="var(--space-4)",
                 userSelect="none",
@@ -190,7 +200,9 @@ def reference_field_filter() -> rx.Component:
             rx.select(
                 items=SearchState.all_fields_for_entity_types,
                 value=SearchState.reference_field_filter.field,
-                placeholder="Field to filter by",
+                placeholder=SearchState.localized_labels[
+                    REFERENCEFIELD_FILTER_FIELD_PLACHOLDER_LABEL_ID
+                ],
                 on_change=[
                     SearchState.set_reference_filter_field,
                     *full_refresh,
@@ -242,14 +254,16 @@ def reference_filter_tab() -> rx.Component:
         rx.tabs.root(
             rx.tabs.list(
                 rx.tabs.trigger(
-                    "Dynamic",
+                    SearchState.localized_labels[REFERENCE_FILTER_DYNAMIC_TAB_LABEL_ID],
                     value="dynamic",
                     custom_attrs={
                         "data-testid": "reference-filter-strategy-dynamic-tab"
                     },
                 ),
                 rx.tabs.trigger(
-                    "PrimarySource",
+                    SearchState.localized_labels[
+                        REFERENCE_FILTER_PRIMARYSOURCE_TAB_LABEL_ID
+                    ],
                     value="had_primary_source",
                     custom_attrs={
                         "data-testid": (
@@ -295,8 +309,7 @@ def results_summary() -> rx.Component:
     """Render a summary of the results found."""
     return rx.center(
         rx.text(
-            f"Showing {SearchState.current_results_length} "
-            f"of {SearchState.total} items",
+            f"{SearchState.RESULT_SUMMARY_FORMAT_label}",
             style=rx.Style(
                 color="var(--gray-12)",
                 fontWeight="var(--font-weight-bold)",
@@ -341,9 +354,6 @@ def index() -> rx.Component:
     """Return the index for the search component."""
     return page(
         rx.hstack(
-            sidebar(),
-            search_results(),
-            spacing="4",
-            style=rx.Style(width="100%"),
+            sidebar(), search_results(), spacing="4", style=rx.Style(width="100%")
         )
     )

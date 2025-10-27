@@ -21,7 +21,7 @@ from mex.editor.search.models import (
     SearchResult,
 )
 from mex.editor.search.transform import transform_models_to_results
-from mex.editor.state import State
+from mex.editor.state import PageStateMixing, State
 from mex.editor.utils import resolve_editor_value
 
 if TYPE_CHECKING:
@@ -54,9 +54,29 @@ def _build_had_primary_source_refresh_params(
     }
 
 
-class SearchState(State):
+SEARCH_INPUT_PLACEHOLDER_LABEL_ID = "search.search_input.placeholder"
+ENTITYTYPE_FILTER_TITLE_LABEL_ID = "search.entitytype_filter.title"
+REFERENCEFIELD_FILTER_FIELD_PLACHOLDER_LABEL_ID = (
+    "search.referencefield_filter.field.placholder"
+)
+REFERENCE_FILTER_DYNAMIC_TAB_LABEL_ID = "search.reference_filter.dynamic_tab"
+REFERENCE_FILTER_PRIMARYSOURCE_TAB_LABEL_ID = (
+    "search.reference_filter.primarysource_tab"
+)
+RESULT_SUMMARY_FORMAT_LABEL_ID = "search.result_summary.format"
+
+
+class SearchState(PageStateMixing, State):
     """State management for the search page."""
 
+    label_ids = [
+        SEARCH_INPUT_PLACEHOLDER_LABEL_ID,
+        ENTITYTYPE_FILTER_TITLE_LABEL_ID,
+        REFERENCEFIELD_FILTER_FIELD_PLACHOLDER_LABEL_ID,
+        REFERENCE_FILTER_DYNAMIC_TAB_LABEL_ID,
+        REFERENCE_FILTER_PRIMARYSOURCE_TAB_LABEL_ID,
+        RESULT_SUMMARY_FORMAT_LABEL_ID,
+    ]
     results: list[SearchResult] = []
     total: int = 0
     limit: int = 50
@@ -70,6 +90,12 @@ class SearchState(State):
         field="", identifiers=[]
     )
     is_loading: bool = True
+
+    @rx.var
+    async def RESULT_SUMMARY_FORMAT_label(self) -> str:
+        return (await self.localized_labels)[RESULT_SUMMARY_FORMAT_LABEL_ID].format(
+            self.current_results_length, self.total
+        )
 
     @rx.event
     def set_reference_filter_field(self, value: str) -> None:

@@ -13,7 +13,9 @@ from mex.common.fields import REFERENCE_FIELDS_BY_CLASS_NAME
 from mex.common.models import MERGED_MODEL_CLASSES, MergedPrimarySource
 from mex.common.transform import ensure_prefix
 from mex.common.types import Identifier
+from mex.editor.decorator_test import localized_label_var
 from mex.editor.exceptions import escalate_error
+from mex.editor.locale_service import LocaleService
 from mex.editor.search.models import (
     ReferenceFieldFilter,
     ReferenceFieldIdentifierFilter,
@@ -21,7 +23,7 @@ from mex.editor.search.models import (
     SearchResult,
 )
 from mex.editor.search.transform import transform_models_to_results
-from mex.editor.state import PageStateMixing, State
+from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 
 if TYPE_CHECKING:
@@ -54,32 +56,15 @@ def _build_had_primary_source_refresh_params(
     }
 
 
-SEARCH_INPUT_PLACEHOLDER_LABEL_ID = "search.search_input.placeholder"
-ENTITYTYPE_FILTER_TITLE_LABEL_ID = "search.entitytype_filter.title"
-REFERENCEFIELD_FILTER_FIELD_PLACHOLDER_LABEL_ID = (
-    "search.referencefield_filter.field.placholder"
-)
-REFERENCE_FILTER_DYNAMIC_TAB_LABEL_ID = "search.reference_filter.dynamic_tab"
-REFERENCE_FILTER_PRIMARYSOURCE_TAB_LABEL_ID = (
-    "search.reference_filter.primarysource_tab"
-)
-RESULT_SUMMARY_FORMAT_LABEL_ID = "search.result_summary.format"
+locale_service = LocaleService.get()
 
 
-class SearchState(PageStateMixing, State):
+class SearchState(State):
     """State management for the search page."""
 
-    label_ids = [
-        SEARCH_INPUT_PLACEHOLDER_LABEL_ID,
-        ENTITYTYPE_FILTER_TITLE_LABEL_ID,
-        REFERENCEFIELD_FILTER_FIELD_PLACHOLDER_LABEL_ID,
-        REFERENCE_FILTER_DYNAMIC_TAB_LABEL_ID,
-        REFERENCE_FILTER_PRIMARYSOURCE_TAB_LABEL_ID,
-        RESULT_SUMMARY_FORMAT_LABEL_ID,
-    ]
     results: list[SearchResult] = []
     total: int = 0
-    limit: int = 50
+    limit: int = 5
     query_string: str = ""
     entity_types: dict[str, bool] = {k.stemType: False for k in MERGED_MODEL_CLASSES}
 
@@ -92,10 +77,47 @@ class SearchState(PageStateMixing, State):
     is_loading: bool = True
 
     @rx.var
-    async def RESULT_SUMMARY_FORMAT_label(self) -> str:
-        return (await self.localized_labels)[RESULT_SUMMARY_FORMAT_LABEL_ID].format(
-            self.current_results_length, self.total
+    def label_search_input_placeholder(self) -> str:
+        return locale_service.get_text(
+            self.current_locale, "search.search_input.placeholder"
         )
+
+    @rx.var
+    def label_entitytype_filter_title(self) -> str:
+        return locale_service.get_text(
+            self.current_locale, "search.entitytype_filter.title"
+        )
+
+    @rx.var
+    def label_referencefield_filter_field_placholder(self) -> str:
+        return locale_service.get_text(
+            self.current_locale, "search.referencefield_filter.field.placholder"
+        )
+
+    @rx.var
+    def label_reference_filter_dynamic_tab(self) -> str:
+        return locale_service.get_text(
+            self.current_locale, "search.reference_filter.dynamic_tab"
+        )
+
+    @rx.var
+    def label_reference_filter_primarysource_tab(self) -> str:
+        return locale_service.get_text(
+            self.current_locale, "search.reference_filter.primarysource_tab"
+        )
+
+    @rx.var
+    def label_result_summary_format(self) -> str:
+        return locale_service.get_text(
+            self.current_locale, "search.result_summary.format"
+        ).format(self.current_results_length, self.total)
+
+    @localized_label_var(
+        label_id="search.result_summary.format",
+    )
+    def label_test(self) -> str:
+        return ""
+        # return [SearchState.current_results_length, SearchState.total]
 
     @rx.event
     def set_reference_filter_field(self, value: str) -> None:

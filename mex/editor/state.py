@@ -7,27 +7,7 @@ from reflex.event import EventSpec
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
-from mex.editor.locale_service import LocaleService
 from mex.editor.models import NavItem, User
-
-locale_service = LocaleService.get()
-
-
-class PageStateMixing(rx.State, mixin=True):
-    @property
-    def label_ids(self):
-        return []
-
-    # if TYPE_CHECKING:
-    #     localized_labels: dict[str, str]
-    # else:
-    @rx.var
-    async def localized_labels(self) -> dict[str, str]:
-        current_locale: str = await self.get_var_value(State.current_locale)
-        return {
-            label_id: locale_service.get_text(current_locale, label_id)
-            for label_id in self.label_ids
-        }
 
 
 class State(rx.State):

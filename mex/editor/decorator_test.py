@@ -3,6 +3,7 @@ import inspect
 from collections.abc import Callable
 from typing import Any
 
+import reflex as rx
 from reflex.utils import types
 from reflex.utils.exceptions import (
     ComputedVarSignatureError,
@@ -14,6 +15,27 @@ from mex.editor.locale_service import LocaleService
 from mex.editor.state import State
 
 locale_service = LocaleService.get()
+
+
+def translated_var(
+    label_id: str,
+) -> Callable[[Callable[[State], list[object]]], Callable[[State], str]]:
+    def wrapper(fn: Callable[[State], list[object]]) -> Callable[[State], str]:
+        def wrapped(self: State) -> str:
+            args = fn(self)
+            return locale_service.get_text(State.current_locale, label_id).format(*args)
+
+        return wrapped
+
+    return wrapper
+
+
+def xx_translated_var(label_id: str, *args: object) -> ComputedVar[str]:
+    @rx.var
+    def translated_var(self: State) -> str:
+        return locale_service.get_text(self.current_locale, label_id).format(*args)
+
+    return translated_var
 
 
 def localized_label_var(

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Literal
 import reflex as rx
 from pydantic import TypeAdapter, ValidationError
 from reflex.event import EventSpec
+from reflex.vars.base import ComputedVar
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -13,7 +14,6 @@ from mex.common.fields import REFERENCE_FIELDS_BY_CLASS_NAME
 from mex.common.models import MERGED_MODEL_CLASSES, MergedPrimarySource
 from mex.common.transform import ensure_prefix
 from mex.common.types import Identifier
-from mex.editor.decorator_test import localized_label_var
 from mex.editor.exceptions import escalate_error
 from mex.editor.locale_service import LocaleService
 from mex.editor.search.models import (
@@ -112,12 +112,12 @@ class SearchState(State):
             self.current_locale, "search.result_summary.format"
         ).format(self.current_results_length, self.total)
 
-    @localized_label_var(
-        label_id="search.result_summary.format",
-    )
-    def label_test(self) -> str:
-        return ""
-        # return [SearchState.current_results_length, SearchState.total]
+    # @localized_label_var(
+    #     label_id="search.result_summary.format",
+    # )
+    # def xx_label_test(self) -> str:
+    #     return ""
+    #     # return [SearchState.current_results_length, SearchState.total]
 
     @rx.event
     def set_reference_filter_field(self, value: str) -> None:
@@ -419,6 +419,24 @@ class SearchState(State):
                     search_primary_sources, key=lambda source: source.title.lower()
                 )
             }
+
+
+def get_result_summary(self: "SearchState") -> str:
+    foo = locale_service.get_text(
+        self.current_locale, "search.result_summary.format"
+    ).format(self.current_results_length, self.total)
+    print(foo)
+    return foo
+
+
+SearchState.label_test = ComputedVar[str](
+    get_result_summary, initial_value="init0000", return_type=str
+)
+
+# @rx.var
+# @translated_var("search.result_summary.format")
+# def label_test(self: State) -> list[object]:
+#     return [self.current_results_length, self.total]
 
 
 full_refresh = [

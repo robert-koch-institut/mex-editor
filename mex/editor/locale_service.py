@@ -1,5 +1,4 @@
 import re
-from collections.abc import Sequence
 from gettext import GNUTranslations
 from pathlib import Path
 from typing import Self, cast
@@ -51,7 +50,7 @@ class LocaleService:
     def __init__(self) -> None:
         """Initialize with all available locales."""
         # locale_dir = files("mex.model") / "i18n"
-        locale_dir = Path("D:/code/git/mex-editor/locales")
+        locale_dir = Path.cwd() / "locales"
         for mo_file in cast("Path", locale_dir).glob("*.mo"):
             locale = mo_file.name.removesuffix(".mo")
             language = re.split("[-_]", locale)[0]
@@ -60,7 +59,7 @@ class LocaleService:
                 id=locale, label=label, filepath=mo_file
             )
 
-    def get_available_locales(self) -> Sequence[MExLocale]:
+    def get_available_locales(self) -> list[MExLocale]:
         """Get all available locales.
 
         Returns:

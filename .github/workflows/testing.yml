@@ -36,7 +36,7 @@ jobs:
           - 7687:7687
       backend:
         image: ghcr.io/robert-koch-institut/mex-backend:1.2.0
-        entrypoint: ["pdm", "run", "python", "-c", "from mex.backend.testing.main import main; main()"]
+        entrypoint: testing-backend
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
           MEX_BACKEND_API_KEY_DATABASE: ${{ secrets.MEX_BACKEND_API_KEY_DATABASE }}

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changes
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - Increased global expect timeout (to 10,000) for tests
 - Using the field label for new/remove additive value button
 - renaming the field_name function to field_name_card

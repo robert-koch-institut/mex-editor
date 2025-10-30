@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from typing import Any
+from typing import Any, cast
 
 import reflex as rx
 
@@ -154,6 +154,7 @@ def pagination(
     state: type[IngestState | SearchState], *page_load_hooks: Callable[[], Any]
 ) -> rx.Component:
     """Render pagination for navigating search results."""
+    current_page = cast("rx.Var[int]", state.current_page)
     return rx.center(
         rx.button(
             rx.text("Previous"),
@@ -171,7 +172,7 @@ def pagination(
         ),
         rx.select(
             state.page_selection,
-            value=f"{state.current_page}",
+            value=rx.Var.to_string(current_page),
             on_change=[
                 state.set_page,
                 state.scroll_to_top,

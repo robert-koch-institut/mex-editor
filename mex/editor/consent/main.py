@@ -98,12 +98,12 @@ def consent_box() -> rx.Component:
             rx.hstack(
                 rx.button(
                     "Einwilligen",
-                    on_click=ConsentState.submit_rule_set(consented=True),  # type: ignore[misc]
+                    on_click=ConsentState.submit_rule_set(consented="consent"),  # type: ignore[misc]
                 ),
                 rx.spacer(),
                 rx.button(
                     "Ablehnen",
-                    on_click=ConsentState.submit_rule_set(consented=False),  # type: ignore[misc]
+                    on_click=ConsentState.submit_rule_set(consented="denial"),  # type: ignore[misc]
                 ),
             ),
             style=rx.Style(

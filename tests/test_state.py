@@ -7,7 +7,7 @@ from mex.editor.state import State, User
 
 
 def test_state_logout() -> None:
-    state = State(user_mex=User(name="Test", authorization="Auth", write_access=True))
+    state = State(user_mex=User(name="Test", write_access=True))
     assert state.user_mex
 
     assert "/" in str(list(state.logout()))  # type: ignore[misc]
@@ -15,7 +15,7 @@ def test_state_logout() -> None:
 
 
 def test_state_check_login_pass() -> None:
-    state = State(user_mex=User(name="Test", authorization="Auth", write_access=True))
+    state = State(user_mex=User(name="Test", write_access=True))
     assert state.user_mex
 
     assert list(state.check_mex_login()) == []  # type: ignore[misc]

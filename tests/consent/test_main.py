@@ -14,8 +14,8 @@ def login_ldap_user(
     settings = EditorSettings.get()
     url = urlsplit(settings.ldap_url.get_secret_value())
     page.goto(f"{frontend_url}/consent")
-    page.get_by_placeholder("Username").fill(url.username)  # type:ignore [arg-type]
-    page.get_by_placeholder("Password").fill(url.password)  # type:ignore [arg-type]
+    page.get_by_placeholder("Username").fill(str(url.username))
+    page.get_by_placeholder("Password").fill(str(url.password))
     page.get_by_test_id("login-button").click()
     page.wait_for_timeout(3000)
     page.screenshot(path="tests_ldap_login.png")
@@ -51,13 +51,15 @@ def test_projects_and_resources(consent_page: Page) -> None:
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_index(consent_page: Page) -> None:
+    settings = EditorSettings.get()
+    url = urlsplit(settings.ldap_url.get_secret_value())
     page = consent_page
 
     # load page and check user information is visible
     user_data = page.get_by_test_id("user-data")
     expect(user_data).to_be_visible()
-    expect(user_data).to_contain_text("Bernd")
-    expect(user_data).to_contain_text("person_1@example.com")
+    expect(user_data).to_contain_text(str(url.username))
+    expect(user_data).to_contain_text(f"{url.username}@rki.com")
 
     # check consent box and buttons are visible
     consent_box = page.get_by_test_id("consent-box")

@@ -11,11 +11,17 @@ from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import NavItem, User
 
+locale_service = LocaleService.get()
+available_locales = locale_service.get_available_locales()
+
 
 class State(rx.State):
     """The base state for the app."""
 
-    current_locale: str = "de-DE"
+    current_locale: str = next(
+        (x for x in available_locales if x.id.lower().startswith("de")),
+        available_locales[0],
+    ).id
     current_page_has_changes: bool = False
     navigate_dialog_open: bool = False
     navigate_target: str | None = None

@@ -42,7 +42,7 @@ def test_index(
 
 
 @pytest.mark.integration
-@pytest.mark.usefixtures("load_dummy_data")
+@pytest.mark.usefixtures("load_pagination_dummy_data")
 def test_pagination(
     frontend_url: str,
     writer_user_page: Page,
@@ -50,13 +50,38 @@ def test_pagination(
     page = writer_user_page
     page.goto(frontend_url)
 
-    # check sidebar is showing and disabled and selector is on page 1
     pagination_previous = page.get_by_test_id("pagination-previous-button")
     pagination_next = page.get_by_test_id("pagination-next-button")
     pagination_page_select = page.get_by_test_id("pagination-page-select")
+
+    pagination_page_select.scroll_into_view_if_needed()
+    page.screenshot(path="tests_search_test_main_test_pagination.png")
+
+    # check if:
+    # - previos is disabled
+    # - select shows all expected page numbers
+    # - next is enabled
     expect(pagination_previous).to_be_disabled()
+    expect(pagination_page_select).to_have_text("1")
+    pagination_page_select.click()
+    opt1 = page.get_by_role("option", name="1")
+    expect(opt1).to_be_visible()
+    expect(opt1).to_have_attribute("data-state", "checked")
+    expect(page.get_by_role("option", name="2")).to_be_visible()
+    expect(page.get_by_role("option", name="3")).to_be_visible()
+    expect(pagination_next).to_be_enabled()
+    # close the overlay, otherwise u cant click sth else
+    opt1.click()
+
+    pagination_next.click()
+    expect(pagination_previous).to_be_enabled()
+    expect(pagination_page_select).to_have_text("2")
+    expect(pagination_next).to_be_enabled()
+
+    pagination_next.click()
+    expect(pagination_previous).to_be_enabled()
+    expect(pagination_page_select).to_have_text("3")
     expect(pagination_next).to_be_disabled()
-    expect(pagination_page_select).to_be_disabled()
 
 
 @pytest.mark.integration
@@ -325,10 +350,10 @@ def test_push_search_params(
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load-2.png")
     primary_sources.get_by_text(primary_source.title[0].value).click()
     checked = primary_sources.get_by_role("checkbox", checked=True)
-    expect(checked).to_have_count(1)
     page.screenshot(
         path="tests_search_test_main-test_push_search_params-on-click-2.png"
     )
+    expect(checked).to_have_count(1)
 
     # expect parameter change to be reflected in url
     page.wait_for_url(

@@ -35,7 +35,7 @@ def user_menu() -> rx.Component:
             rx.menu.item(cast("User", State.user_mex).name, disabled=True),
             rx.menu.separator(),
             rx.menu.item(
-                "Logout",
+                State.label_nav_bar_logout_button,
                 on_select=State.logout,
                 custom_attrs={"data-testid": "logout-button"},
             ),

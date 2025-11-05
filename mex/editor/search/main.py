@@ -193,7 +193,7 @@ def reference_field_filter() -> rx.Component:
             rx.select(
                 items=SearchState.all_fields_for_entity_types,
                 value=SearchState.reference_field_filter.field,
-                placeholder="TODO",
+                placeholder=SearchState.label_reference_field_filter_placeholder,
                 on_change=[
                     SearchState.set_reference_filter_field,
                     *full_refresh,
@@ -220,7 +220,7 @@ def reference_field_filter() -> rx.Component:
         rx.hstack(
             rx.button(
                 rx.icon("circle-plus"),
-                rx.text("Add Filter"),
+                rx.text(SearchState.label_reference_field_filter_add),
                 variant="surface",
                 color_scheme="gray",
                 on_click=[
@@ -323,9 +323,6 @@ def search_results() -> rx.Component:
             ),
         ),
         rx.vstack(
-            rx.text("HIER KOMMT LABEL TEST"),
-            rx.text(SearchState.label_test),
-            rx.el.hr(style=rx.Style(width="100%")),
             results_summary(),
             rx.foreach(
                 SearchState.results,

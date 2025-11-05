@@ -7,12 +7,12 @@ from mex.editor.login.state import LoginLdapState, LoginMExState
 def login_user(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
     """Return a form field for the user name."""
     return rx.vstack(
-        rx.text("Username"),
+        rx.text(state.label_username),
         rx.input(
             autofocus=True,
             name="username",
             on_change=state.set_username,
-            placeholder="Username",
+            placeholder=state.label_username,
             size="3",
             tab_index=1,
             style=rx.Style(width="100%"),
@@ -24,11 +24,11 @@ def login_user(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
 def login_password(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
     """Return a form field for the password."""
     return rx.vstack(
-        rx.text("Password"),
+        rx.text(state.label_password),
         rx.input(
             on_change=state.set_password,
             name="password",
-            placeholder="Password",
+            placeholder=state.label_password,
             size="3",
             tab_index=2,
             type="password",
@@ -38,12 +38,12 @@ def login_password(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
     )
 
 
-def login_button() -> rx.Component:
+def login_button(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
     """Return a submit button for the login form."""
     return rx.hstack(
         rx.spacer(),
         rx.button(
-            "Login",
+            state.label_button_login,
             size="3",
             tab_index=3,
             style=rx.Style(
@@ -78,7 +78,7 @@ def login_form(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
                     rx.vstack(
                         login_user(state),
                         login_password(state),
-                        login_button(),
+                        login_button(state),
                         style=rx.Style(width="100%"),
                     ),
                     on_submit=state.login,

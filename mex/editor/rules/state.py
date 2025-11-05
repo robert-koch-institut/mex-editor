@@ -20,6 +20,7 @@ from mex.common.models import (
 from mex.common.transform import ensure_postfix
 from mex.common.types import Identifier, Validation
 from mex.editor.exceptions import escalate_error
+from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import EditorValue
 from mex.editor.rules.models import (
@@ -337,3 +338,29 @@ class RuleState(State):
         primary_source.editor_values[index].href = value
         primary_source.editor_values[index].external = True
         return State.set_current_page_has_changes(True)  # type: ignore[misc]
+
+    @label_var(label_id="rules.additive_rule.add_button_prefix")
+    def label_additive_rule_add_button_prefix(self) -> None:
+        """Label for additive_rule.add_button."""
+
+    @label_var(label_id="rules.additive_rule.remove_button_prefix")
+    def label_additive_rule_remove_button_prefix(self) -> None:
+        """Label for additive_rule.remove_button."""
+
+    @label_var(label_id="rules.validation_result_dialog.close_button")
+    def label_validation_result_dialog_close_button(self) -> None:
+        """Label for validation_result_dialog.close_button."""
+
+    @label_var(label_id="rules.validation_result_dialog.title")
+    def label_validation_result_dialog_title(self) -> None:
+        """Label for validation_result_dialog.title."""
+
+    @label_var(label_id="rules.save_button.format", deps=["stem_type"])
+    def label_save_button_format(self) -> list[str]:
+        """Label for save_button.format."""
+        return [self.stem_type if self.stem_type else ""]
+
+    @label_var(label_id="rules.save_button.saving_format", deps=["stem_type"])
+    def label_save_button_saving_format(self) -> list[str]:
+        """Label for save_button.saving_format."""
+        return [self.stem_type if self.stem_type else ""]

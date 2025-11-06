@@ -3,7 +3,7 @@ from collections.abc import Callable, Iterable
 from functools import wraps
 from typing import Any, TypeVar, overload
 
-from reflex.state import BaseState
+from reflex.state import State
 from reflex.utils import types
 from reflex.vars.base import ComputedVar, Var, computed_var
 
@@ -11,7 +11,7 @@ from mex.editor.locale_service import LocaleService
 
 locale_service = LocaleService.get()
 
-StateT = TypeVar("StateT", bound=BaseState)
+StateT = TypeVar("StateT", bound=State)
 ReturnT = TypeVar("ReturnT")
 
 
@@ -22,7 +22,6 @@ def label_var(
     initial_value: Any | types.Unset = types.Unset(),  # noqa: ANN401, B008
     cache: bool = True,  # noqa: FBT001, FBT002
     deps: list[str | Var] | None = None,
-    auto_deps: bool = True,  # noqa: FBT001, FBT002
     interval: datetime.timedelta | int | None = None,
     backend: bool | None = None,  # noqa: FBT001
     **kwargs,  # noqa: ANN003
@@ -36,7 +35,6 @@ def label_var(
     initial_value: ReturnT | types.Unset = types.Unset(),  # noqa: B008
     cache: bool = True,  # noqa: FBT001, FBT002
     deps: list[str | Var] | None = None,
-    auto_deps: bool = True,  # noqa: FBT001, FBT002
     interval: datetime.timedelta | int | None = None,
     backend: bool | None = None,  # noqa: FBT001
     **kwargs,  # noqa: ANN003
@@ -49,7 +47,6 @@ def label_var(  # noqa: PLR0913
     initial_value: Any | types.Unset = types.Unset(),  # noqa: B008
     cache: bool = True,  # noqa: FBT001, FBT002
     deps: list[str | Var] | None = None,
-    auto_deps: bool = True,  # noqa: FBT001, FBT002
     interval: datetime.timedelta | int | None = None,
     backend: bool | None = None,  # noqa: FBT001
     **kwargs,
@@ -92,12 +89,19 @@ def label_var(  # noqa: PLR0913
                 label = label.format(*result)
             return label
 
+        # we know current_locale is always a dependency if inner
+        inner_deps = deps if deps else []
+        inner_deps.append("current_locale")
+
+        # we never want auto_deps since we set current_locale as dep and there are no
+        # other deps inside inner. Auto discover deps inside fget would be awesome but
+        # i couldn't figure out how :(
         return computed_var(
             inner,
             initial_value=initial_value,
             cache=cache,
-            deps=deps,
-            auto_deps=auto_deps,
+            deps=inner_deps,
+            auto_deps=True,
             interval=interval,
             backend=backend,
             **kwargs,

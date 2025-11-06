@@ -8,8 +8,6 @@ from mex.editor.rules.models import EditorValue
 from mex.editor.search.state import SearchState
 from mex.editor.state import State
 
-a = "Sicherheitcheck"
-
 
 def render_title(title: EditorValue) -> rx.Component:
     """Render one title in a container with hidden overflow."""

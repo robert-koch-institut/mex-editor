@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Decorator for localized labels that creates a `ComputedVar[str]` that depends on `State.current_locale` and calls locale_service.get_text with a `label_id`
+- Localized labels for every page, component and layout
+
 ### Changes
 
 - Initial language now picking from available languages instead of hard coded value

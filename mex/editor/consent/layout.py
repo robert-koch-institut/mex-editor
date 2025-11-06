@@ -24,7 +24,7 @@ def nav_bar() -> rx.Component:
                         size="1",
                     ),
                     style=rx.Style(
-                        backgroundColor="rgba(173, 216, 230, 0.2)",
+                        backgroundColor="var(--accent-3)",
                     ),
                 ),
                 rx.spacer(),

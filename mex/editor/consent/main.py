@@ -17,6 +17,9 @@ def resources() -> rx.Component:
         rx.text(
             "Datenbestände & Datensätze",
             weight="bold",
+            style=rx.Style(
+                textTransform="uppercase",
+            ),
         ),
         rx.vstack(
             rx.foreach(
@@ -36,8 +39,11 @@ def projects() -> rx.Component:
     """Render a list of the users projects."""
     return rx.vstack(
         rx.text(
-            "PROJEKTE",
+            "Projekte",
             weight="bold",
+            style=rx.Style(
+                textTransform="uppercase",
+            ),
         ),
         rx.vstack(
             rx.foreach(

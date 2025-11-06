@@ -38,7 +38,7 @@ class LoginLdapState(State):
         url = urljoin(
             str(settings.backend_api_url),
             f"{BackendApiConnector.API_VERSION}/merged-person-from-login",
-        )  # uses endpoint without setting header
+        )  # stopgap: MX-2083
 
         try:
             response = requests.post(

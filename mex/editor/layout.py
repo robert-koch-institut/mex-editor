@@ -105,8 +105,11 @@ def app_logo() -> rx.Component:
     )
 
 
-def nav_bar() -> rx.Component:
+def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
     """Return a navigation bar component."""
+    nav_items_to_use = (
+        nav_items_source if nav_items_source is not None else State.nav_items
+    )
     return rx.vstack(
         rx.box(
             style=rx.Style(
@@ -120,7 +123,7 @@ def nav_bar() -> rx.Component:
                 app_logo(),
                 rx.divider(orientation="vertical", size="2"),
                 rx.hstack(
-                    rx.foreach(State.nav_items, nav_link),
+                    rx.foreach(nav_items_to_use, nav_link),
                     justify="start",
                     spacing="4",
                 ),

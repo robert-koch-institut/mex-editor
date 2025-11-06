@@ -21,6 +21,7 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 from mex.editor.exceptions import escalate_error
+from mex.editor.models import NavItem
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
@@ -37,6 +38,17 @@ class ConsentState(State):
     current_page: Annotated[int, Field(ge=1)] = 1
     limit: Annotated[int, Field(ge=1, le=100)] = 10
     is_loading: bool = True
+
+    @staticmethod
+    def get_consent_nav_items() -> list[NavItem]:
+        """Return navigation items for the consent interface."""
+        return [
+            NavItem(
+                title="Informed Consent",
+                path="/consent",
+                raw_path="/consent/",
+            ),
+        ]
 
     @rx.event
     def load_user(self) -> Generator[EventSpec | None, None, None]:

@@ -5,6 +5,7 @@ import yaml
 from pydantic import TypeAdapter
 
 from mex.common.models import BaseModel
+from mex.common.types import MergedPersonIdentifier
 
 
 class EditorValue(rx.Base):
@@ -24,6 +25,15 @@ class User(rx.Base):
 
     name: str
     write_access: bool
+
+
+class MergedLoginPerson(rx.Base):
+    """Info on the currently logged-in user from the merged login endpoint."""
+
+    identifier: MergedPersonIdentifier | None = None
+    full_name: list[str] | None = None
+    email: list[str] | None = None
+    orcid_id: list[str] | None = None
 
 
 class NavItem(rx.Base):

@@ -103,6 +103,7 @@ app.add_page(
     route="/consent",
     title="MEx Consent",
     on_load=[
+        State.check_ldap_login,
         ConsentState.load_user,
         ConsentState.get_all_data,
         ConsentState.resolve_identifiers,

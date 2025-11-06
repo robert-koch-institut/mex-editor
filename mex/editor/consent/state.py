@@ -145,7 +145,7 @@ class ConsentState(State):
             response = connector.fetch_preview_items(
                 query_string=None,
                 entity_type=["MergedConsent"],
-                referenced_identifier=[str(self.merged_login_person["identifier"])],
+                referenced_identifier=[str(self.merged_login_person.identifier)],
                 reference_field="hasDataSubject",
             )
         except HTTPError as exc:
@@ -176,7 +176,7 @@ class ConsentState(State):
             rule_set_request = ConsentRuleSetRequest(
                 additive=AdditiveConsent(
                     hasConsentStatus=ConsentStatus["VALID_FOR_PROCESSING"],
-                    hasDataSubject=self.merged_login_person["identifier"],
+                    hasDataSubject=self.merged_login_person.identifier,
                     hasConsentType=ConsentType["EXPRESSED_CONSENT"],
                     isIndicatedAtTime=YearMonthDayTime(
                         datetime.now(tz=UTC).isoformat()
@@ -187,7 +187,7 @@ class ConsentState(State):
             rule_set_request = ConsentRuleSetRequest(
                 additive=AdditiveConsent(
                     hasConsentStatus=ConsentStatus["INVALID_FOR_PROCESSING"],
-                    hasDataSubject=self.merged_login_person["identifier"],
+                    hasDataSubject=self.merged_login_person.identifier,
                     isIndicatedAtTime=YearMonthDayTime(
                         datetime.now(tz=UTC).isoformat()
                     ),

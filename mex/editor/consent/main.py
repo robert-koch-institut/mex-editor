@@ -65,20 +65,20 @@ def user_data() -> rx.Component:
         ConsentState.merged_login_person,
         rx.vstack(
             rx.text(
-                ConsentState.merged_login_person["fullName"],  # type: ignore[index]
+                ConsentState.merged_login_person.full_name,  # type: ignore  [union-attr]
                 style=rx.Style(
                     fontWeight="var(--font-weight-bold)",
                     fontSize="var(--font-size-6)",
                 ),
             ),
             rx.text(
-                ConsentState.merged_login_person["email"],  # type: ignore[index]
+                ConsentState.merged_login_person.email,  # type: ignore [union-attr]
                 style=rx.Style(
                     color="var(--gray-12)",
                 ),
             ),
             rx.text(
-                ConsentState.merged_login_person["orcidId"],  # type: ignore[index]
+                ConsentState.merged_login_person.orcid_id,  # type: ignore [union-attr]
                 style=rx.Style(
                     color="var(--gray-12)",
                 ),
@@ -133,7 +133,7 @@ def consent_status() -> rx.Component:
     return rx.cond(
         ConsentState.merged_login_person,
         rx.vstack(
-            rx.text(ConsentState.merged_login_person["fullName"], weight="bold"),  # type: ignore[index]
+            rx.text(ConsentState.merged_login_person.full_name, weight="bold"),  # type: ignore [union-attr]
             rx.cond(
                 ConsentState.consent_status,
                 rx.hstack(

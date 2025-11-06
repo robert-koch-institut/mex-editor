@@ -8,6 +8,7 @@ from requests import RequestException
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.settings import BaseSettings
+from mex.editor.models import MergedLoginPerson
 from mex.editor.security import (
     has_read_access_mex,
     has_write_access_mex,
@@ -52,7 +53,13 @@ class LoginLdapState(State):
                 name=self.username,
                 write_access=True,
             )
-            self.merged_login_person = response.json()
+            response_user = response.json()
+            self.merged_login_person = MergedLoginPerson(
+                identifier=response_user["identifier"],
+                full_name=response_user["fullName"],
+                email=response_user["email"],
+                orcid_id=response_user["orcidId"],
+            )
             target_path_after_login = self.target_path_after_login or "/"
             self.reset()  # reset username/password
             yield rx.redirect(target_path_after_login)

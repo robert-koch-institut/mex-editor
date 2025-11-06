@@ -15,7 +15,7 @@ def resources() -> rx.Component:
     """Render a list of the users resources."""
     return rx.vstack(
         rx.text(
-            "DATENBESTÄNDE & DATENSÄTZE",
+            "Datenbestände & Datensätze",
             weight="bold",
         ),
         rx.vstack(

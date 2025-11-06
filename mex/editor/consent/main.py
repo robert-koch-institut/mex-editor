@@ -115,7 +115,7 @@ def consent_box() -> rx.Component:
             ),
         ),
         style=rx.Style(
-            backgroundColor="rgba(173, 216, 230, 0.2)",
+            backgroundColor="var(--accent-3)",
             padding="16px",
         ),
         custom_attrs={"data-testid": "consent-box"},

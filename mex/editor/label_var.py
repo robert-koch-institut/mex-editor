@@ -73,7 +73,7 @@ def label_var(  # noqa: PLR0913
         ComputedVarSignatureError: If the getter function has more than one argument.
     """
 
-    def wrapper(fget: Callable[[StateT], ReturnT]) -> ComputedVar[str]:
+    def wrapper(fget: Callable[[StateT], Any]) -> ComputedVar[str]:
         @wraps(
             fget,
             assigned=(

@@ -184,27 +184,22 @@ class ConsentState(State):
             yield None
             return
 
-        if consented == "consent":
-            rule_set_request = ConsentRuleSetRequest(
-                additive=AdditiveConsent(
-                    hasConsentStatus=ConsentStatus["VALID_FOR_PROCESSING"],
-                    hasDataSubject=self.merged_login_person.identifier,
-                    hasConsentType=ConsentType["EXPRESSED_CONSENT"],
-                    isIndicatedAtTime=YearMonthDayTime(
-                        datetime.now(tz=UTC).isoformat()
-                    ),
-                )
-            )
-        else:
-            rule_set_request = ConsentRuleSetRequest(
-                additive=AdditiveConsent(
-                    hasConsentStatus=ConsentStatus["INVALID_FOR_PROCESSING"],
-                    hasDataSubject=self.merged_login_person.identifier,
-                    isIndicatedAtTime=YearMonthDayTime(
-                        datetime.now(tz=UTC).isoformat()
-                    ),
-                )
-            )
+        is_consenting = consented == "consent"
+
+        additive_consent = AdditiveConsent(
+            hasConsentStatus=(
+                ConsentStatus["VALID_FOR_PROCESSING"]
+                if is_consenting
+                else ConsentStatus["INVALID_FOR_PROCESSING"]
+            ),
+            hasDataSubject=self.merged_login_person.identifier,
+            isIndicatedAtTime=YearMonthDayTime(datetime.now(tz=UTC).isoformat()),
+            hasConsentType=(
+                ConsentType["EXPRESSED_CONSENT"] if is_consenting else None
+            ),
+        )
+
+        rule_set_request = ConsentRuleSetRequest(additive=additive_consent)
         try:
             self._send_rule_set_request(rule_set_request)
         except HTTPError as exc:

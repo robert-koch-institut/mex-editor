@@ -49,6 +49,45 @@ def test_projects_and_resources(consent_page: Page) -> None:
 
 
 @pytest.mark.integration
+@pytest.mark.usefixtures("load_pagination_dummy_data")
+def test_pagination(consent_page: Page) -> None:
+    page = consent_page
+
+    pagination_previous = page.get_by_test_id("pagination-previous-button")
+    pagination_next = page.get_by_test_id("pagination-next-button")
+    pagination_page_select = page.get_by_test_id("pagination-page-select")
+
+    pagination_page_select.scroll_into_view_if_needed()
+    page.screenshot(path="tests_consent_test_main_test_pagination.png")
+
+    # check if:
+    # - previos is disabled
+    # - select shows all expected page numbers
+    # - next is enabled
+    expect(pagination_previous).to_be_disabled()
+    expect(pagination_page_select).to_have_text("1")
+    pagination_page_select.click()
+    opt1 = page.get_by_role("option", name="1")
+    expect(opt1).to_be_visible()
+    expect(opt1).to_have_attribute("data-state", "checked")
+    expect(page.get_by_role("option", name="2")).to_be_visible()
+    expect(page.get_by_role("option", name="3")).to_be_visible()
+    expect(pagination_next).to_be_enabled()
+    # close the overlay, otherwise u cant click sth else
+    opt1.click()
+
+    pagination_next.click()
+    expect(pagination_previous).to_be_enabled()
+    expect(pagination_page_select).to_have_text("2")
+    expect(pagination_next).to_be_enabled()
+
+    pagination_next.click()
+    expect(pagination_previous).to_be_enabled()
+    expect(pagination_page_select).to_have_text("3")
+    expect(pagination_next).to_be_disabled()
+
+
+@pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_index(consent_page: Page) -> None:
     settings = EditorSettings.get()

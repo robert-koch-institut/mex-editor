@@ -9,8 +9,6 @@ from reflex.vars.base import ComputedVar, Var, computed_var
 
 from mex.editor.locale_service import LocaleService
 
-locale_service = LocaleService.get()
-
 StateT = TypeVar("StateT", bound=State)
 ReturnT = TypeVar("ReturnT")
 
@@ -72,6 +70,7 @@ def label_var(  # noqa: PLR0913
         VarDependencyError: If user supplies dependencies without caching.
         ComputedVarSignatureError: If the getter function has more than one argument.
     """
+    locale_service = LocaleService.get()
 
     def wrapper(fget: Callable[[StateT], Any]) -> ComputedVar[str]:
         @wraps(

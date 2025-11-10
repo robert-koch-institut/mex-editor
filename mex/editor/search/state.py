@@ -64,7 +64,7 @@ class SearchState(State):
 
     results: list[SearchResult] = []
     total: int = 0
-    limit: int = 5
+    limit: int = 50
     query_string: str = ""
     entity_types: dict[str, bool] = {k.stemType: False for k in MERGED_MODEL_CLASSES}
 

@@ -16,6 +16,7 @@ def login_user(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
             size="3",
             tab_index=1,
             style=rx.Style(width="100%"),
+            custom_attrs={"data-testid": "input-username"},
         ),
         style=rx.Style(width="100%"),
     )
@@ -33,6 +34,7 @@ def login_password(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
             tab_index=2,
             type="password",
             style=rx.Style(width="100%"),
+            custom_attrs={"data-testid": "input-password"},
         ),
         style=rx.Style(width="100%"),
     )

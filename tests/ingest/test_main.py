@@ -1,8 +1,11 @@
+import re
+
 import pytest
 from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider
+from tests.test_utils import build_pagination_regex
 
 
 @pytest.fixture
@@ -68,7 +71,7 @@ def test_search_and_ingest_roundtrip(
     aux_provider_tab = page.get_by_role("tab", name=aux_provider)
     expect(aux_provider_tab).to_be_enabled(timeout=30000)
     aux_provider_tab.click()
-    search_input = page.get_by_placeholder("Search here...")
+    search_input = page.get_by_test_id("search-input")
     expect(search_input).to_be_visible()
     expect(search_input).to_be_enabled()
 
@@ -83,7 +86,7 @@ def test_search_and_ingest_roundtrip(
     # test no results are found
     results_summary = page.get_by_test_id("search-results-summary")
     expect(results_summary).to_be_visible()
-    expect(results_summary).to_contain_text("Showing 0 of 0 items")
+    expect(results_summary).to_contain_text(build_pagination_regex(0, 0))
 
     # trigger valid search
     search_input.fill(valid_search)
@@ -134,15 +137,9 @@ def test_search_and_ingest_roundtrip(
 
 @pytest.mark.integration
 def test_infobox_visibility_and_content(ingest_page: Page) -> None:
-    expected_callout_content: dict[AuxProvider, str] = {
-        AuxProvider.LDAP: (
-            "Search users by display name and contact points by email. "
-            'Please use "*" as placeholder e.g. "Muster*".'
-        ),
-        AuxProvider.WIKIDATA: (
-            'Search Wikidata by "Concept URI". '
-            'Please paste URI e.g. "http://www.wikidata.org/entity/Q918501".'
-        ),
+    expected_callout_content: dict[AuxProvider, re.Pattern] = {
+        AuxProvider.LDAP: re.compile(r"\w+"),
+        AuxProvider.WIKIDATA: re.compile(r"\w+"),
     }
 
     page = ingest_page

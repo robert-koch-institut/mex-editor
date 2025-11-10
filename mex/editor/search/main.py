@@ -67,6 +67,7 @@ def search_input() -> rx.Component:
                     ),
                     tab_index=1,
                     type="text",
+                    custom_attrs={"data-testid": "search-input"},
                 ),
                 rx.spacer(),
                 rx.button(

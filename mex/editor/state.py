@@ -28,49 +28,48 @@ class State(rx.State):
     user_mex: User | None = None
     user_ldap: User | None = None
     target_path_after_login: str | None = None
-    # nav_items: list[NavItem] =
+    nav_items: list[NavItem] = [
+        NavItem(
+            title="layout.nav_bar.search_navitem",
+            path="/",
+            raw_path="/?page=1",
+        ),
+        NavItem(
+            title="layout.nav_bar.create_navitem",
+            path="/create",
+            raw_path="/create/",
+        ),
+        NavItem(
+            title="layout.nav_bar.edit_navitem",
+            path="/item/[identifier]",
+            raw_path=f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}/",
+        ),
+        NavItem(
+            title="layout.nav_bar.merge_navitem",
+            path="/merge",
+            raw_path="/merge/",
+        ),
+        NavItem(
+            title="layout.nav_bar.ingest_navitem",
+            path="/ingest",
+            raw_path="/ingest/",
+        ),
+    ]
 
     @rx.var
-    def nav_items(self) -> list[NavItem]:
+    def nav_items_translated(self) -> list[NavItem]:
         """The Navbar items with locale sensitive label."""
         locale_service = LocaleService.get()
-        return [
-            NavItem(
-                title=locale_service.get_text(
-                    self.current_locale, "layout.nav_bar.search_navitem"
-                ),
-                path="/",
-                raw_path="/?page=1",
-            ),
-            NavItem(
-                title=locale_service.get_text(
-                    self.current_locale, "layout.nav_bar.create_navitem"
-                ),
-                path="/create",
-                raw_path="/create/",
-            ),
-            NavItem(
-                title=locale_service.get_text(
-                    self.current_locale, "layout.nav_bar.edit_navitem"
-                ),
-                path="/item/[identifier]",
-                raw_path=f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}/",
-            ),
-            NavItem(
-                title=locale_service.get_text(
-                    self.current_locale, "layout.nav_bar.merge_navitem"
-                ),
-                path="/merge",
-                raw_path="/merge/",
-            ),
-            NavItem(
-                title=locale_service.get_text(
-                    self.current_locale, "layout.nav_bar.ingest_navitem"
-                ),
-                path="/ingest",
-                raw_path="/ingest/",
-            ),
-        ]
+
+        def _translate(item: NavItem) -> NavItem:
+            return NavItem(
+                title=locale_service.get_text(self.current_locale, item.title),
+                path=item.path,
+                raw_path=item.raw_path,
+                underline=item.underline,
+            )
+
+        return [_translate(item) for item in self.nav_items]
 
     @rx.event
     def change_locale(self, locale: str) -> None:

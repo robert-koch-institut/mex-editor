@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from playwright.sync_api import Page, expect
 
@@ -8,6 +10,7 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
 )
+from tests.test_utils import build_pagination_regex
 
 
 @pytest.mark.integration
@@ -58,7 +61,7 @@ def test_pagination(
     page.screenshot(path="tests_search_test_main_test_pagination.png")
 
     # check if:
-    # - previos is disabled
+    # - previous is disabled
     # - select shows all expected page numbers
     # - next is enabled
     expect(pagination_previous).to_be_disabled()
@@ -98,18 +101,18 @@ def test_search_input(
     expect(sidebar).to_be_visible()
 
     # test search input is showing and functioning
-    search_input = page.get_by_placeholder("Search here...")
+    search_input = page.get_by_test_id("search-input")
     expect(search_input).to_be_visible()
     search_input.fill("mex")
     search_input.press("Enter")
-    expect(page.get_by_text("Showing 1 of 1 items")).to_be_visible()
+    expect(page.get_by_text(build_pagination_regex(1, 1))).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-1-found.png"
     )
 
     search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
     page.get_by_test_id("search-button").click()
-    expect(page.get_by_text("Showing 0 of 0 items")).to_be_visible()
+    expect(page.get_by_text(build_pagination_regex(0, 0))).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-0-found.png"
     )
@@ -135,7 +138,7 @@ def test_entity_types(
     assert "PrimarySource" in entity_types.all_text_contents()[0]
 
     entity_types.get_by_text("Activity").click()
-    expect(page.get_by_text("Showing 1 of 1 items")).to_be_visible()
+    expect(page.get_by_text(build_pagination_regex(1, 1))).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_entity_types-on-select-entity-1-found.png"
     )
@@ -160,7 +163,7 @@ def test_had_primary_sources(
     expect(sidebar).to_be_visible()
 
     # activate tab for had primary source filtering
-    tab = page.get_by_role(role="tab", name="PrimarySource")
+    tab = page.get_by_test_id("reference-filter-strategy-had-primary-source-tab")
     tab.click()
 
     # check primary sources are showing and functioning
@@ -176,7 +179,7 @@ def test_had_primary_sources(
     primary_sources.get_by_text("Primary Source One").click()
     summary = page.get_by_test_id("search-results-summary")
     expect(summary).to_be_visible()
-    expect(summary).to_contain_text("Showing 4 of 4 items")
+    expect(summary).to_contain_text(build_pagination_regex(4, 4))
     page.screenshot(
         path="tests_search_test_main-test_had_primary_sources-on-select-primary-source-1-found.png"
     )
@@ -198,7 +201,7 @@ def test_load_search_params(
     )
 
     # check 1 item is showing
-    expect(page.get_by_text("Showing 1 of 1 items")).to_be_visible()
+    expect(page.get_by_text(build_pagination_regex(1, 1))).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_load_search_params-on-params-loaded.png"
     )
@@ -230,11 +233,11 @@ def test_reference_filter_fields_for_entity_type(
     page.goto(frontend_url)
     page.wait_for_selector("[data-testid='page-body']")
 
-    hps_tab = page.get_by_role("tab", name="PrimarySource")
+    hps_tab = page.get_by_test_id("reference-filter-strategy-had-primary-source-tab")
     hps_tab.click()
     expect(page.get_by_test_id("had-primary-sources")).to_be_visible()
 
-    dyn_tab = page.get_by_role("tab", name="Dynamic")
+    dyn_tab = page.get_by_test_id("reference-filter-strategy-dynamic-tab")
     dyn_tab.click()
     expect(page.get_by_test_id("reference-field-filter")).to_be_visible()
 
@@ -299,7 +302,7 @@ def test_reference_filter(
     page.screenshot(
         path="tests_search_test_main-test_reference_filter-reference_filter_valid_search.png"
     )
-    expect(page.get_by_text("Showing 3 of 3 items")).to_be_visible()
+    expect(page.get_by_text(build_pagination_regex(3, 3))).to_be_visible()
 
 
 @pytest.mark.integration
@@ -330,7 +333,7 @@ def test_push_search_params(
     page.wait_for_url("**/?page=1&entityType=Activity&referenceFilterStrategy=dynamic")
 
     # add a query string to the search constraints
-    search_input = page.get_by_placeholder("Search here...")
+    search_input = page.get_by_test_id("search-input")
     expect(search_input).to_be_visible()
     search_input.fill("Can I search here?")
     search_input.press("Enter")
@@ -341,7 +344,7 @@ def test_push_search_params(
     )
 
     # activate tab for had primary source filtering
-    tab = page.get_by_role("tab", name="PrimarySource")
+    tab = page.get_by_test_id("reference-filter-strategy-had-primary-source-tab")
     tab.click()
 
     # select a primary source
@@ -381,14 +384,14 @@ def test_additional_titles_badge(
 
     # expect title is visible and there are additional titles for 'r2'
     expect(resource_r2_result).to_contain_text(first_title.value)
-    expect(resource_r2_result).to_contain_text("+ additional titles")
+    addi_title_badge = resource_r2_result.get_by_test_id("additional-titles-badge")
+    expect(addi_title_badge).to_have_text(re.compile(r"\w+"))
 
     # hover additional titles
-    trigger = resource_r2_result.get_by_test_id("tooltip-additional-titles-trigger")
-    box = trigger.bounding_box()
+    box = addi_title_badge.bounding_box()
     assert box
     page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
-    trigger.hover()
+    addi_title_badge.hover()
     page.screenshot(path="tests_search_test_additional_titles_badge_hover.png")
 
     # check tooltip content

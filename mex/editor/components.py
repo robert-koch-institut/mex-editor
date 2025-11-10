@@ -30,6 +30,7 @@ def render_additional_titles(titles: list[EditorValue]) -> rx.Component:
                 rx.badge(
                     State.label_additional_titles,
                     style=rx.Style(margin="auto 0"),
+                    custom_attrs={"data-testid": "additional-titles-badge"},
                 ),
                 custom_attrs={"data-testid": "tooltip-additional-titles-trigger"},
             ),

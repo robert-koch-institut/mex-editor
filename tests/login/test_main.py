@@ -9,10 +9,10 @@ def test_login(
 ) -> None:
     page.goto(f"{frontend_url}/")
 
-    page.get_by_placeholder("Username").fill(
+    page.get_by_test_id("input-username").fill(
         writer_user_credentials[0],
     )
-    page.get_by_placeholder("Password").fill(
+    page.get_by_test_id("input-password").fill(
         writer_user_credentials[1].get_secret_value(),
     )
     page.screenshot(path="tests_login_test_main-test_login-on-load.png")
@@ -34,8 +34,8 @@ def test_login_with_enter_key(
 ) -> None:
     page.goto(f"{frontend_url}/")
 
-    page.get_by_placeholder("Username").fill(writer_user_credentials[0])
-    password_input = page.get_by_placeholder("Password")
+    page.get_by_test_id("input-username").fill(writer_user_credentials[0])
+    password_input = page.get_by_test_id("input-password")
     password_input.fill(writer_user_credentials[1].get_secret_value())
     page.screenshot(path="tests_login_test_main-test_login_with_enter_key-on-load.png")
 

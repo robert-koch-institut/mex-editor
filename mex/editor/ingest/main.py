@@ -128,6 +128,7 @@ def search_input() -> rx.Component:
                     ),
                     disabled=IngestState.is_loading,
                     type="text",
+                    custom_attrs={"data-testid": "search-input"},
                 ),
                 rx.button(
                     rx.icon("search"),

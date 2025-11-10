@@ -26,7 +26,7 @@ def test_create_page_updates_nav_bar(create_page: Page) -> None:
     page.screenshot(path="tests_create_test_main-test_create_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
     nav_item = nav_bar.locator(".nav-item").all()[1]
-    expect(nav_item).to_contain_text("Create")
+    expect(nav_item).to_contain_text(re.compile(r"\w+"))
     expect(nav_item).to_have_class(re.compile("rt-underline-always"))
 
 

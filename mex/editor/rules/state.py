@@ -353,12 +353,12 @@ class RuleState(State):
     @label_var(label_id="rules.save_button.format", deps=["stem_type"])
     def label_save_button_format(self) -> list[str]:
         """Label for save_button.format."""
-        return [self.stem_type if self.stem_type else ""]
+        return [self.stem_type or ""]
 
     @label_var(label_id="rules.save_button.saving_format", deps=["stem_type"])
     def label_save_button_saving_format(self) -> list[str]:
         """Label for save_button.saving_format."""
-        return [self.stem_type if self.stem_type else ""]
+        return [self.stem_type or ""]
 
     @label_var(label_id="rules.save_success_dialog.title")
     def label_save_success_dialog_title(self) -> None:

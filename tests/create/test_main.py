@@ -89,7 +89,11 @@ def test_create_page_submit_item(create_page: Page) -> None:
 
     submit_button = page.get_by_test_id("submit-button")
     submit_button.click()
-    expect(page.get_by_text("AccessPlatform was saved successfully")).to_be_visible()
+
+    toast = page.locator(".editor-toast").first
+    expect(toast).to_be_visible()
+    expect(toast).to_have_attribute("data-type", "success")
+
     connector = BackendApiConnector.get()
     result = connector.fetch_merged_items(query_string="Test01234567")
     assert result.total == 1

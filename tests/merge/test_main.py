@@ -210,6 +210,9 @@ def test_additional_titles_badge(
     expect(addi_title_badge).to_have_text(re.compile(r"\w+"))
 
     # hover additional titles
+    box = addi_title_badge.bounding_box()
+    assert box
+    page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
     addi_title_badge.hover()
     page.screenshot(path="tests_merge_test_additional_titles_badge_hover.png")
 

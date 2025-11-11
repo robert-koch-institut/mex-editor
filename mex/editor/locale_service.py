@@ -1,5 +1,7 @@
+import os
 import re
 from gettext import GNUTranslations
+from importlib.resources import files
 from pathlib import Path
 from typing import Self, cast
 
@@ -49,8 +51,15 @@ class LocaleService:
 
     def __init__(self) -> None:
         """Initialize with all available locales."""
-        # locale_dir = files("mex.model") / "i18n"
-        locale_dir = Path.cwd() / "locales"
+        use_module_locales = bool(
+            os.environ.get("MEX_EDITOR_USE_MODULE_LOCALES", "").lower().strip()
+            == "true"
+        )
+        locale_dir = (
+            Path.cwd() / "locales"
+            if use_module_locales
+            else files("mex.model") / "i18n"
+        )
         for mo_file in cast("Path", locale_dir).glob("*.mo"):
             locale = mo_file.name.removesuffix(".mo")
             language = re.split("[-_]", locale)[0]
@@ -73,7 +82,15 @@ class LocaleService:
                 self._translations[locale_id] = GNUTranslations(mo_file)
         return self._translations[locale_id]
 
-    def get_text(self, locale_id: str, msg_id: str):
+    def get_text(self, locale_id: str, msg_id: str) -> str:
+        """Get the text for a given locale_id and the msg_id.
+
+        Args:
+            locale_id (str): The locale to use.
+            msg_id (str): The message id of the message to get the text for.
+
+        Returns: The message of the msg_id for the given locale_id.
+        """
         translation = self._ensure_translation(locale_id)
         return translation.gettext(msg_id)
 

@@ -100,7 +100,7 @@ def label_var(  # noqa: PLR0913
             initial_value=initial_value,
             cache=cache,
             deps=inner_deps,
-            auto_deps=True,
+            auto_deps=False,
             interval=interval,
             backend=backend,
             **kwargs,

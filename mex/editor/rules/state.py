@@ -218,8 +218,8 @@ class RuleState(State):
     def show_submit_success_toast(self) -> Generator[EventSpec, None, None]:
         """Show a toast for a successfully submitted rule-set."""
         yield rx.toast.success(
-            title="Saved",
-            description=f"{self.stem_type} was saved successfully.",
+            title=self.label_save_success_dialog_title,
+            description=self.label_save_success_dialog_message_format,
             class_name="editor-toast",
             close_button=True,
             dismissible=True,
@@ -364,3 +364,12 @@ class RuleState(State):
     def label_save_button_saving_format(self) -> list[str]:
         """Label for save_button.saving_format."""
         return [self.stem_type if self.stem_type else ""]
+
+    @label_var(label_id="rules.save_success_dialog.title")
+    def label_save_success_dialog_title(self) -> None:
+        """Label for save_success_dialog.title."""
+
+    @label_var(label_id="rules.save_success_dialog.message_format")
+    def label_save_success_dialog_message_format(self) -> list[str]:
+        """Label for save_success_dialog.message_format."""
+        return [self.stem_type or ""]

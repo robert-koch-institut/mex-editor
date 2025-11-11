@@ -1,9 +1,7 @@
-from collections.abc import Generator
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, cast
+from unittest.mock import patch
 
-import pytest
 import reflex as rx
-from pytest import MonkeyPatch
 
 from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
@@ -11,7 +9,6 @@ from mex.editor.locale_service import LocaleService
 if TYPE_CHECKING:
     from reflex.state import ComputedVar
 
-locale_service = LocaleService.get()
 translations = {
     "locale-1": {
         "test_id": "locale-1.test_id",
@@ -24,18 +21,8 @@ translations = {
 }
 
 
-@pytest.fixture
-def use_mocked_locale_service() -> Generator[None, Any, None]:
-    original_get_text = locale_service.get_text
-    MonkeyPatch().setattr(
-        locale_service,
-        locale_service.get_text.__name__,
-        lambda locale, lid: translations[locale][lid],
-    )
-    yield
-    MonkeyPatch().setattr(
-        locale_service, locale_service.get_text.__name__, original_get_text
-    )
+def _get_text_mock(locale: str, msg_id: str) -> str:
+    return translations[locale][msg_id]
 
 
 class TestState(rx.State):
@@ -51,13 +38,15 @@ class TestState(rx.State):
         return [self.some_var]
 
 
-def test_label_var_inital_state(use_mocked_locale_service) -> None:  # noqa: ANN001, ARG001
+@patch.object(LocaleService.get(), "get_text", _get_text_mock)
+def test_label_var_inital_state() -> None:
     state = TestState()
     assert state.label_string_value == "locale-1.test_id"
     assert state.label_with_dependencies == "locale-1.test_dependency_id.1"
 
 
-def test_label_var_locale_change(use_mocked_locale_service) -> None:  # noqa: ANN001, ARG001
+@patch.object(LocaleService.get(), "get_text", _get_text_mock)
+def test_label_var_locale_change() -> None:
     state = TestState()
     assert state.label_string_value == "locale-1.test_id"
     assert state.label_with_dependencies == "locale-1.test_dependency_id.1"
@@ -67,7 +56,8 @@ def test_label_var_locale_change(use_mocked_locale_service) -> None:  # noqa: AN
     assert state.label_with_dependencies == "locale-2.test_dependency_id.1"
 
 
-def test_label_var_dependecy_update(use_mocked_locale_service) -> None:  # noqa: ANN001, ARG001
+@patch.object(LocaleService.get(), "get_text", _get_text_mock)
+def test_label_var_dependecy_update() -> None:
     state = TestState()
     assert state.label_with_dependencies == "locale-1.test_dependency_id.1"
 
@@ -78,7 +68,8 @@ def test_label_var_dependecy_update(use_mocked_locale_service) -> None:  # noqa:
     assert state.label_with_dependencies == "locale-2.test_dependency_id.245"
 
 
-def test_label_var_metadata_serialisation_stuff(use_mocked_locale_service) -> None:  # noqa: ANN001, ARG001
+@patch.object(LocaleService.get(), "get_text", _get_text_mock)
+def test_label_var_metadata_serialisation_stuff() -> None:
     label_string = cast("ComputedVar[str]", TestState.label_string_value)
     assert None in label_string._static_deps
     assert "current_locale" in label_string._static_deps[None]

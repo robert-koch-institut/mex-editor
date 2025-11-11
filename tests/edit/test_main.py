@@ -240,7 +240,7 @@ def test_edit_page_switch_roundtrip(
     submit.click()
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
-    expect(toast).to_contain_text("Saved")
+    expect(toast).to_have_attribute("data-type", "success")
     page.screenshot(path=f"{test_id}-toast_1.png")
 
     # force a page reload
@@ -265,7 +265,8 @@ def test_edit_page_switch_roundtrip(
     submit.click()
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
-    expect(toast).to_contain_text("Saved")
+    expect(toast).to_be_visible()
+    expect(toast).to_have_attribute("data-type", "success")
     page.screenshot(path=f"{test_id}-toast_2.png")
 
     # force a page reload again
@@ -508,7 +509,7 @@ def test_edit_page_additive_rule_roundtrip(
     # click on the save button and verify the toast
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
-    expect(toast).to_contain_text("Saved")
+    expect(toast).to_have_attribute("data-type", "success")
     page.screenshot(path=f"{test_id}-toast.png")
 
     # force a page reload

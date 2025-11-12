@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - Using the field label for new/remove additive value button
 - renaming the field_name function to field_name_card
+- Removed .mo files and converting .po files at runtime with polib
 - tests:
     - Increased global expect timeout (to 10,000)
     - replaced all locators thats searched for localized strings with data_test_id searches

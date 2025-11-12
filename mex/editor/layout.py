@@ -35,7 +35,7 @@ def user_menu() -> rx.Component:
             rx.menu.item(cast("User", State.user_mex).name, disabled=True),
             rx.menu.separator(),
             rx.menu.item(
-                "Logout",
+                State.label_nav_bar_logout_button,
                 on_select=State.logout,
                 custom_attrs={"data-testid": "logout-button"},
             ),
@@ -77,7 +77,10 @@ def nav_link(item: NavItem) -> rx.Component:
         on_click=State.navigate(item.raw_path),  # type: ignore[misc]
         underline=item.underline,  # type: ignore[arg-type]
         class_name="nav-item",
-        custom_attrs={"data-href": item.raw_path},
+        custom_attrs={
+            "data-href": item.raw_path,
+            "data-testid": f"nav-item-{item.path}",
+        },
     )
 
 
@@ -120,7 +123,7 @@ def nav_bar() -> rx.Component:
                 app_logo(),
                 rx.divider(orientation="vertical", size="2"),
                 rx.hstack(
-                    rx.foreach(State.nav_items, nav_link),
+                    rx.foreach(State.nav_items_translated, nav_link),
                     justify="start",
                     spacing="4",
                 ),

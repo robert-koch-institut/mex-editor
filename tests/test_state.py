@@ -8,8 +8,8 @@ from mex.editor.state import State, User
 
 def test_state_logout() -> None:
     state = State(user_mex=User(name="Test", authorization="Auth", write_access=True))
-    assert state.user_mex
 
+    assert state.user_mex
     assert "/" in str(list(state.logout()))  # type: ignore[misc]
     assert state.user_mex is None
 

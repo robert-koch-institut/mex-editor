@@ -1,3 +1,5 @@
+import re
+
 import nest_asyncio  # type: ignore[import-untyped]
 import pytest
 
@@ -49,3 +51,7 @@ async def test_resolve_editor_value(
 
     with pytest.raises(MExError):
         await resolve_editor_value(EditorValue(identifier=None))
+
+
+def build_pagination_regex(current: int, total: int) -> re.Pattern:
+    return re.compile(rf"\w+\s{current}\s\w+\s{total}\s\w+")

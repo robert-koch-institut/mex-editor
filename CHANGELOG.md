@@ -9,19 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Decorator for localized labels that creates a `ComputedVar[str]` that depends on `State.current_locale` and calls locale_service.get_text with a `label_id`
+- Localized labels for every page, component and layout
+
 ### Changes
 
 - Initial language now picking from available languages instead of hard coded value
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
-- Increased global expect timeout (to 10,000) for tests
 - Using the field label for new/remove additive value button
 - renaming the field_name function to field_name_card
+- Removed .mo files and converting .po files at runtime with polib
+- tests:
+    - Increased global expect timeout (to 10,000)
+    - replaced all locators thats searched for localized strings with data_test_id searches
+    - replaced localized string compares with regexs
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
 - Page numbers on search and ingest page
 
 ### Security

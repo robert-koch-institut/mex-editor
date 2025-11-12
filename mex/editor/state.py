@@ -7,6 +7,7 @@ from reflex.event import EventSpec
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
+from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import NavItem, User
 
@@ -29,31 +30,46 @@ class State(rx.State):
     target_path_after_login: str | None = None
     nav_items: list[NavItem] = [
         NavItem(
-            title="Search",
+            title="layout.nav_bar.search_navitem",
             path="/",
             raw_path="/?page=1",
         ),
         NavItem(
-            title="Create",
+            title="layout.nav_bar.create_navitem",
             path="/create",
             raw_path="/create/",
         ),
         NavItem(
-            title="Edit",
+            title="layout.nav_bar.edit_navitem",
             path="/item/[identifier]",
             raw_path=f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}/",
         ),
         NavItem(
-            title="Merge",
+            title="layout.nav_bar.merge_navitem",
             path="/merge",
             raw_path="/merge/",
         ),
         NavItem(
-            title="Ingest",
+            title="layout.nav_bar.ingest_navitem",
             path="/ingest",
             raw_path="/ingest/",
         ),
     ]
+
+    @rx.var
+    def nav_items_translated(self) -> list[NavItem]:
+        """The Navbar items with locale sensitive label."""
+        locale_service = LocaleService.get()
+
+        def _translate(item: NavItem) -> NavItem:
+            return NavItem(
+                title=locale_service.get_ui_label(self.current_locale, item.title),
+                path=item.path,
+                raw_path=item.raw_path,
+                underline=item.underline,
+            )
+
+        return [_translate(item) for item in self.nav_items]
 
     @rx.event
     def change_locale(self, locale: str) -> None:
@@ -171,3 +187,19 @@ class State(rx.State):
         # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         response = connector.request("GET", "_system/check")
         return str(response.get("version", "N/A"))
+
+    @label_var(label_id="components.titles.additional_titles")
+    def label_additional_titles(self) -> None:
+        """Label for titles.additional_titles."""
+
+    @label_var(label_id="components.pagination.next_button")
+    def label_pagination_next_button(self) -> None:
+        """Label for pagination.next_button."""
+
+    @label_var(label_id="components.pagination.previous_button")
+    def label_pagination_previous_button(self) -> None:
+        """Label for pagination.previous_button."""
+
+    @label_var(label_id="layout.nav_bar.logout_button")
+    def label_nav_bar_logout_button(self) -> None:
+        """Label for nav_bar.logout_button."""

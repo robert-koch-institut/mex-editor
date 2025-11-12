@@ -126,8 +126,8 @@ def login_user(
     frontend_url: str, page: Page, username: str, password: SecretStr
 ) -> Page:
     page.goto(frontend_url)
-    page.get_by_placeholder("Username").fill(username)
-    page.get_by_placeholder("Password").fill(password.get_secret_value())
+    page.get_by_test_id("input-username").fill(username)
+    page.get_by_test_id("input-password").fill(password.get_secret_value())
     page.get_by_test_id("login-button").click()
     return page
 

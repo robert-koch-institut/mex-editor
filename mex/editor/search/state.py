@@ -14,6 +14,8 @@ from mex.common.models import MERGED_MODEL_CLASSES, MergedPrimarySource
 from mex.common.transform import ensure_prefix
 from mex.common.types import Identifier
 from mex.editor.exceptions import escalate_error
+from mex.editor.label_var import label_var
+from mex.editor.locale_service import LocaleService
 from mex.editor.search.models import (
     ReferenceFieldFilter,
     ReferenceFieldIdentifierFilter,
@@ -52,6 +54,9 @@ def _build_had_primary_source_refresh_params(
         "reference_field": "hadPrimarySource" if had_primary_source else None,
         "referenced_identifier": had_primary_source,
     }
+
+
+locale_service = LocaleService.get()
 
 
 class SearchState(State):
@@ -371,6 +376,42 @@ class SearchState(State):
                     search_primary_sources, key=lambda source: source.title.lower()
                 )
             }
+
+    @label_var(label_id="search.search_input.placeholder")
+    def label_search_input_placeholder(self) -> None:
+        """Label for search_input.placeholder."""
+
+    @label_var(label_id="search.entitytype_filter.title")
+    def label_entitytype_filter_title(self) -> None:
+        """Label for entitytype_filter.title."""
+
+    @label_var(label_id="search.referencefield_filter.field.placholder")
+    def label_referencefield_filter_field_placholder(self) -> None:
+        """Label for referencefield_filter.field.placholder."""
+
+    @label_var(label_id="search.reference_filter.dynamic_tab")
+    def label_reference_filter_dynamic_tab(self) -> None:
+        """Label for reference_filter.dynamic_tab."""
+
+    @label_var(label_id="search.reference_filter.primarysource_tab")
+    def label_reference_filter_primarysource_tab(self) -> None:
+        """Label for reference_filter.primarysource_tab."""
+
+    @label_var(
+        label_id="search.result_summary.format",
+        deps=["current_results_length", "total"],
+    )
+    def label_result_summary_format(self) -> list[int]:
+        """Label for result_summary.format."""
+        return [self.current_results_length, self.total]
+
+    @label_var(label_id="search.reference_field_filter.placeholder")
+    def label_reference_field_filter_placeholder(self) -> None:
+        """Label for reference_field_filter.placeholder."""
+
+    @label_var(label_id="search.reference_field_filter.add")
+    def label_reference_field_filter_add(self) -> None:
+        """Label for reference_field_filter.add."""
 
 
 full_refresh = [

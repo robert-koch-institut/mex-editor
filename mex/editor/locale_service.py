@@ -1,10 +1,11 @@
 import re
-from collections.abc import Sequence
 from gettext import GNUTranslations
 from importlib.resources import files
+from io import BytesIO
 from pathlib import Path
 from typing import Self, cast
 
+import polib
 from babel import Locale as BabelLocale
 
 from mex.common.context import SingleSingletonStore
@@ -18,7 +19,7 @@ class MExLocale(BaseModel):
 
     id: str
     label: str
-    filepath: Path
+    language: str
 
 
 # TODO(ND): Move this to mex-common
@@ -51,15 +52,15 @@ class LocaleService:
 
     def __init__(self) -> None:
         """Initialize with all available locales."""
-        for mo_file in cast("Path", (files("mex.model") / "i18n")).glob("*.mo"):
-            locale = mo_file.name.removesuffix(".mo")
+        for po_file in (Path.cwd() / "locales").glob("*.po"):
+            locale = po_file.name.removesuffix(".po")
             language = re.split("[-_]", locale)[0]
             label = BabelLocale(language).get_language_name()
             self._available_locales[locale] = MExLocale(
-                id=locale, label=label, filepath=mo_file
+                id=locale, label=label, language=language
             )
 
-    def get_available_locales(self) -> Sequence[MExLocale]:
+    def get_available_locales(self) -> list[MExLocale]:
         """Get all available locales.
 
         Returns:
@@ -68,10 +69,34 @@ class LocaleService:
         return list(self._available_locales.values())
 
     def _ensure_translation(self, locale_id: str) -> GNUTranslations:
+        if locale_id not in self._available_locales:
+            error_msg = f"Given 'locale_id' ({locale_id}) is not valid. Valid values "
+            f"are: {', '.join([loc.id for loc in self.get_available_locales()])}"
+            raise ValueError(error_msg)
+
         if locale_id not in self._translations:
-            with self._available_locales[locale_id].filepath.open("rb") as mo_file:
-                self._translations[locale_id] = GNUTranslations(mo_file)
+            filename = f"{locale_id}.po"
+            model_po = polib.pofile(
+                cast("Path", (files("mex.model") / "i18n")) / filename
+            )
+            editor_po = polib.pofile(Path.cwd() / "locales" / filename)
+            editor_po.extend(model_po)
+            self._translations[locale_id] = GNUTranslations(
+                BytesIO(editor_po.to_binary())
+            )
         return self._translations[locale_id]
+
+    def get_ui_label(self, locale_id: str, msg_id: str) -> str:
+        """Get the text for a given locale_id and the msg_id.
+
+        Args:
+            locale_id (str): The locale to use.
+            msg_id (str): The message id of the message to get the text for.
+
+        Returns: The message of the msg_id for the given locale_id.
+        """
+        translation = self._ensure_translation(locale_id)
+        return translation.gettext(msg_id)
 
     def get_field_label(  # noqa: PLR0911
         self, locale_id: str, stem_type: str, field_name: str, n: int = 1

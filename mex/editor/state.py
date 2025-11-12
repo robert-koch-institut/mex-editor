@@ -63,7 +63,7 @@ class State(rx.State):
 
         def _translate(item: NavItem) -> NavItem:
             return NavItem(
-                title=locale_service.get_text(self.current_locale, item.title),
+                title=locale_service.get_ui_label(self.current_locale, item.title),
                 path=item.path,
                 raw_path=item.raw_path,
                 underline=item.underline,

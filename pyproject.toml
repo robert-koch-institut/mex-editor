@@ -12,6 +12,7 @@ dependencies = [
     "babel>=2",
     "fastapi>=0.117",
     "mex-common>=1.5.1,<1.6",
+    "polib==1.2.0",
     "pydantic>=2",
     "pyyaml>=6",
     "reflex>=0.7,<0.7.4",
@@ -32,6 +33,7 @@ optional-dependencies.dev = [
     "ruff>=0.13",
     "sphinx>=8",
     "types-ldap3",
+    "types-polib",
     "types-PyYAML",
     "types-requests",
 ]

@@ -38,14 +38,14 @@ class TestState(rx.State):
         return [self.some_var]
 
 
-@patch.object(LocaleService.get(), "get_text", _get_text_mock)
+@patch.object(LocaleService.get(), LocaleService.get_ui_label.__name__, _get_text_mock)
 def test_label_var_inital_state() -> None:
     state = TestState()
     assert state.label_string_value == "locale-1.test_id"
     assert state.label_with_dependencies == "locale-1.test_dependency_id.1"
 
 
-@patch.object(LocaleService.get(), "get_text", _get_text_mock)
+@patch.object(LocaleService.get(), LocaleService.get_ui_label.__name__, _get_text_mock)
 def test_label_var_locale_change() -> None:
     state = TestState()
     assert state.label_string_value == "locale-1.test_id"
@@ -56,7 +56,7 @@ def test_label_var_locale_change() -> None:
     assert state.label_with_dependencies == "locale-2.test_dependency_id.1"
 
 
-@patch.object(LocaleService.get(), "get_text", _get_text_mock)
+@patch.object(LocaleService.get(), LocaleService.get_ui_label.__name__, _get_text_mock)
 def test_label_var_dependecy_update() -> None:
     state = TestState()
     assert state.label_with_dependencies == "locale-1.test_dependency_id.1"
@@ -68,7 +68,7 @@ def test_label_var_dependecy_update() -> None:
     assert state.label_with_dependencies == "locale-2.test_dependency_id.245"
 
 
-@patch.object(LocaleService.get(), "get_text", _get_text_mock)
+@patch.object(LocaleService.get(), LocaleService.get_ui_label.__name__, _get_text_mock)
 def test_label_var_metadata_serialisation_stuff() -> None:
     label_string = cast("ComputedVar[str]", TestState.label_string_value)
     assert None in label_string._static_deps

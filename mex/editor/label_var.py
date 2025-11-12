@@ -83,7 +83,7 @@ def label_var(  # noqa: PLR0913
         )
         def inner(state: StateT) -> str:
             result = fget(state)
-            label = locale_service.get_text(state.current_locale, label_id)
+            label = locale_service.get_ui_label(state.current_locale, label_id)
             if result and isinstance(result, Iterable):
                 label = label.format(*result)
             return label

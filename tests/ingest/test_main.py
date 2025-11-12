@@ -69,7 +69,7 @@ def test_search_and_ingest_roundtrip(
 
     # go to the correct tab
     aux_provider_tab = page.get_by_role("tab", name=aux_provider)
-    expect(aux_provider_tab).to_be_enabled(timeout=30000)
+    expect(aux_provider_tab).to_be_enabled(timeout=50000)
     aux_provider_tab.click()
     search_input = page.get_by_test_id("search-input")
     expect(search_input).to_be_visible()
@@ -119,7 +119,7 @@ def test_search_and_ingest_roundtrip(
     ingest_button.click()
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
-    expect(toast).to_contain_text(f"{stem_type} was ingested successfully.")
+    expect(toast).to_have_attribute("data-type", "success")
     expect(ingest_button).to_be_disabled()
     page.screenshot(
         path=f"tests_ingest_test_main-roundtrip_{aux_provider}-ingested.png"

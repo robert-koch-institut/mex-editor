@@ -31,6 +31,7 @@ from mex.common.types import (
     ConsentType,
     Frequency,
     Identifier,
+    License,
     Link,
     LinkLanguage,
     MergedActivityIdentifier,
@@ -119,7 +120,12 @@ def test_get_primary_source_id_from_model_error() -> None:
             ),
             "hasConsentStatus",
             SubtractiveConsent(),
-            [EditorValue(text="ConsentStatus", badge="VALID_FOR_PROCESSING")],
+            [
+                EditorValue(
+                    text="ConsentStatus",
+                    badge=ConsentStatus["VALID_FOR_PROCESSING"].name,
+                )
+            ],
         ),
         (
             ExtractedPerson(
@@ -175,7 +181,7 @@ def test_get_primary_source_id_from_model_error() -> None:
             [
                 EditorValue(
                     text="Example Homepage",
-                    badge="EN",
+                    badge=LinkLanguage.EN.name,
                     href="http://example",
                     external=True,
                     enabled=False,
@@ -272,8 +278,12 @@ def test_transform_model_values_to_editor_values(
             "Resource",
             "license",
             InputConfig(
-                badge_default="CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL",
-                badge_options=["CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL"],
+                badge_default=License[
+                    "CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL"
+                ].name,
+                badge_options=[
+                    License["CREATIVE_COMMONS_ATTRIBUTION_INTERNATIONAL"].name
+                ],
                 badge_titles=["License"],
                 editable_badge=True,
                 allow_additive=True,
@@ -285,7 +295,14 @@ def test_transform_model_values_to_editor_values(
             "Resource",
             "documentation",
             InputConfig(
-                badge_options=["DE", "EN", "FR", "ES", "RU", LANGUAGE_VALUE_NONE],
+                badge_options=[
+                    LinkLanguage.DE.name,
+                    LinkLanguage.EN.name,
+                    LinkLanguage.FR.name,
+                    LinkLanguage.ES.name,
+                    LinkLanguage.RU.name,
+                    LANGUAGE_VALUE_NONE,
+                ],
                 badge_default=LANGUAGE_VALUE_NONE,
                 badge_titles=["LinkLanguage"],
                 editable_href=True,
@@ -300,7 +317,14 @@ def test_transform_model_values_to_editor_values(
             "Resource",
             "keyword",
             InputConfig(
-                badge_options=["DE", "EN", "FR", "ES", "RU", LANGUAGE_VALUE_NONE],
+                badge_options=[
+                    TextLanguage.DE.name,
+                    TextLanguage.EN.name,
+                    TextLanguage.FR.name,
+                    TextLanguage.ES.name,
+                    TextLanguage.RU.name,
+                    LANGUAGE_VALUE_NONE,
+                ],
                 badge_default=LANGUAGE_VALUE_NONE,
                 badge_titles=["TextLanguage"],
                 editable_badge=True,
@@ -314,7 +338,14 @@ def test_transform_model_values_to_editor_values(
             "Resource",
             "alternativeTitle",
             InputConfig(
-                badge_options=["DE", "EN", "FR", "ES", "RU", LANGUAGE_VALUE_NONE],
+                badge_options=[
+                    TextLanguage.DE.name,
+                    TextLanguage.EN.name,
+                    TextLanguage.FR.name,
+                    TextLanguage.ES.name,
+                    TextLanguage.RU.name,
+                    LANGUAGE_VALUE_NONE,
+                ],
                 badge_default=LANGUAGE_VALUE_NONE,
                 badge_titles=["TextLanguage"],
                 editable_badge=True,
@@ -718,14 +749,16 @@ def test_transform_fields_to_preventive(
     ("editor_value", "field_name", "class_name", "stem_type", "expected"),
     [
         (
-            EditorValue(text="Titel", badge="DE", href="https://beispiel"),
+            EditorValue(
+                text="Titel", badge=LinkLanguage.DE.name, href="https://beispiel"
+            ),
             "documentation",
             "AdditiveResource",
             "Resource",
             Link(url="https://beispiel", language=LinkLanguage.DE, title="Titel"),
         ),
         (
-            EditorValue(text="Beispiel Text", badge="DE"),
+            EditorValue(text="Beispiel Text", badge=TextLanguage.DE.name),
             "alternativeName",
             "AdditiveOrganization",
             "Organization",
@@ -739,7 +772,9 @@ def test_transform_fields_to_preventive(
             Text(language=None, value="Text"),
         ),
         (
-            EditorValue(text="ConsentStatus", badge="EXPRESSED_CONSENT"),
+            EditorValue(
+                text="ConsentStatus", badge=ConsentStatus["EXPRESSED_CONSENT"].name
+            ),
             "hasConsentType",
             "AdditiveConsent",
             "Consent",

@@ -53,9 +53,9 @@ def test_projects_and_resources(consent_page: Page) -> None:
 def test_pagination(consent_page: Page) -> None:
     page = consent_page
 
-    pagination_previous = page.get_by_test_id("pagination-previous-button")
-    pagination_next = page.get_by_test_id("pagination-next-button")
-    pagination_page_select = page.get_by_test_id("pagination-page-select")
+    pagination_previous = page.get_by_test_id("resource_pagination-previous-button")
+    pagination_next = page.get_by_test_id("resource_pagination-next-button")
+    pagination_page_select = page.get_by_test_id("resource_pagination-page-select")
 
     pagination_page_select.scroll_into_view_if_needed()
     page.screenshot(path="tests_consent_test_main_test_pagination.png")

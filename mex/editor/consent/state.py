@@ -34,9 +34,12 @@ class ConsentState(State):
     user_projects: list[SearchResult] = []
     user_resources: list[SearchResult] = []
     consent_status: SearchResult | None = None
-    total: Annotated[int, Field(ge=0)] = 0
-    current_page: Annotated[int, Field(ge=1)] = 1
-    limit: Annotated[int, Field(ge=1, le=100)] = 10
+    limit: Annotated[int, Field(ge=1, le=100)] = 5
+    projects_total: Annotated[int, Field(ge=0)] = 0
+    projects_current_page: Annotated[int, Field(ge=1)] = 1
+    resources_total: Annotated[int, Field(ge=0)] = 0
+    resources_current_page: Annotated[int, Field(ge=1)] = 1
+
     is_loading: bool = True
 
     @staticmethod
@@ -62,62 +65,82 @@ class ConsentState(State):
         self.is_loading = False
 
     @rx.var(cache=False)
-    def disable_previous_page(self) -> bool:
-        """Disable the 'Previous' button if on the first page."""
-        return self.current_page <= 1
+    def disable_projects_previous_page(self) -> bool:
+        """Disable the 'Previous' button if on the first page for projects."""
+        return self.projects_current_page <= 1
 
     @rx.var(cache=False)
-    def disable_next_page(self) -> bool:
-        """Disable the 'Next' button if on the last page."""
-        max_page = math.ceil(self.total / self.limit)
-        return self.current_page >= max_page
+    def disable_projects_next_page(self) -> bool:
+        """Disable the 'Next' button if on the last page for projects."""
+        max_page = math.ceil(self.projects_total / self.limit)
+        return self.projects_current_page >= max_page
+
+    @rx.var(cache=False)
+    def disable_resources_previous_page(self) -> bool:
+        """Disable the 'Previous' button if on the first page for resources."""
+        return self.resources_current_page <= 1
+
+    @rx.var(cache=False)
+    def disable_resources_next_page(self) -> bool:
+        """Disable the 'Next' button if on the last page for resources."""
+        max_page = math.ceil(self.resources_total / self.limit)
+        return self.resources_current_page >= max_page
 
     @rx.event
-    def go_to_previous_page(self) -> None:
-        """Navigate to the previous page."""
-        self.current_page = self.current_page - 1
+    def go_to_previous_page(self, category: str) -> None:
+        """Navigate to the previous page for any category."""
+        current_page = getattr(self, f"{category}_current_page")
+        setattr(self, f"{category}_current_page", current_page - 1)
 
     @rx.event
-    def go_to_next_page(self) -> None:
-        """Navigate to the next page."""
-        self.current_page = self.current_page + 1
+    def go_to_next_page(self, category: str) -> None:
+        """Navigate to the next page for any category."""
+        current_page = getattr(self, f"{category}_current_page")
+        setattr(self, f"{category}_current_page", current_page + 1)
 
     @rx.event
-    def set_page(self, page_number: str | int) -> None:
-        """Set the current page and refresh the results."""
-        self.current_page = int(page_number)
+    def set_projects_page(self, page_number: str | int) -> None:
+        """Set the current page for projects."""
+        self.projects_current_page = int(page_number)
+
+    @rx.event
+    def set_resources_page(self, page_number: str | int) -> None:
+        """Set the current page for resources."""
+        self.resources_current_page = int(page_number)
+
+    @rx.var(cache=False)
+    def projects_total_pages(self) -> list[str]:
+        """Return a list of total pages for projects based on the number of results."""
+        return [f"{i + 1}" for i in range(math.ceil(self.projects_total / self.limit))]
+
+    @rx.var(cache=False)
+    def resources_total_pages(self) -> list[str]:
+        """Return a list of total pages for resources based on the number of results."""
+        return [f"{i + 1}" for i in range(math.ceil(self.resources_total / self.limit))]
 
     @rx.event
     def get_all_data(self) -> Generator[EventSpec | None, None, None]:
         """Fetch all data for the user."""
-        yield from self.get_projects()  # type: ignore[misc]
-        yield from self.get_resources()  # type: ignore[misc]
-
-    @rx.event
-    def get_resources(self) -> Generator[EventSpec | None, None, None]:
-        """Fetch the user's resources."""
-        yield from self.fetch_data("MergedResource")  # type: ignore[misc]
-
-    @rx.event
-    def get_projects(self) -> Generator[EventSpec | None, None, None]:
-        """Fetch the user's activities."""
-        yield from self.fetch_data("MergedActivity")  # type: ignore[misc]
+        yield from self.fetch_data("projects")  # type: ignore[misc]
+        yield from self.fetch_data("resources")  # type: ignore[misc]
 
     @rx.event
     def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
-    @rx.var(cache=False)
-    def total_pages(self) -> list[str]:
-        """Return a list of total pages based on the number of results."""
-        return [f"{i + 1}" for i in range(math.ceil(self.total / self.limit))]
-
     @rx.event
-    def fetch_data(self, entity_type: str) -> Generator[EventSpec | None, None, None]:
+    def fetch_data(self, category: str) -> Generator[EventSpec | None, None, None]:
         """Fetch the user's projects, resources, or bibliography."""
         connector = BackendApiConnector.get()
-        skip = self.limit * (self.current_page - 1)
+
+        is_projects = category == "projects"
+        current_page = (
+            self.projects_current_page if is_projects else self.resources_current_page
+        )
+        entity_type = "MergedActivity" if is_projects else "MergedResource"
+
+        skip = self.limit * (current_page - 1)
         self.is_loading = True
         yield None
         try:
@@ -129,21 +152,27 @@ class ConsentState(State):
             )
         except HTTPError as exc:
             self.is_loading = False
-            self.current_page = 1
-            self.total = 0
-            self.user_projects = []
-            self.user_resources = []
+            if is_projects:
+                self.projects_current_page = 1
+                self.projects_total = 0
+                self.user_projects = []
+            else:
+                self.resources_current_page = 1
+                self.resources_total = 0
+                self.user_resources = []
             yield None
             yield from escalate_error(
                 "backend", "error fetching merged items", exc.response.text
             )
         else:
             self.is_loading = False
-            if entity_type == "MergedActivity":
-                self.user_projects = transform_models_to_results(response.items)
-            elif entity_type == "MergedResource":
-                self.user_resources = transform_models_to_results(response.items)
-            self.total = response.total
+            transformed_results = transform_models_to_results(response.items)
+            if is_projects:
+                self.user_projects = transformed_results
+                self.projects_total = response.total
+            else:
+                self.user_resources = transformed_results
+                self.resources_total = response.total
 
     @rx.event
     def get_consent(self) -> Generator[EventSpec | None, None, None]:

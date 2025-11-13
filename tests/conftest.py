@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 
 import pytest
 from fastapi.testclient import TestClient
@@ -24,6 +24,9 @@ from mex.common.types import (
     Identifier,
     IdentityProvider,
     Link,
+    MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedPrimarySourceIdentifier,
     Text,
     TextLanguage,
     Theme,
@@ -268,8 +271,9 @@ def load_dummy_data(
 def load_pagination_dummy_data(
     dummy_data: list[AnyExtractedModel],
     flush_graph_database: None,  # noqa: ARG001
+    request: pytest.FixtureRequest,
 ) -> None:
-    """Ingest dummy data into the backend."""
+    """Ingest dummy data into the backend with dynamic model types based on test context."""
     connector = BackendApiConnector.get()
     primary_source_1 = next(
         x for x in dummy_data if x.identifierInPrimarySource == "ps-1"
@@ -277,16 +281,57 @@ def load_pagination_dummy_data(
 
     pagination_dummy_data = []
     pagination_dummy_data.extend(dummy_data)
-    pagination_dummy_data.extend(
-        [
-            ExtractedContactPoint(
-                email=[Email(f"help-{i}@pagination.abc")],
-                hadPrimarySource=primary_source_1.stableTargetId,
-                identifierInPrimarySource=f"cp-pagination-test-{i}",
-            )
-            for i in range(100)
-        ]
-    )
+
+    # Determine which type of models to create based on test module
+    test_module = request.module.__name__
+
+    if "consent" in test_module:
+        contact_point_1 = next(
+            x for x in dummy_data if x.identifierInPrimarySource == "cp-1"
+        )
+        organizational_unit_1 = next(
+            x for x in dummy_data if x.identifierInPrimarySource == "ou-1"
+        )
+        pagination_dummy_data.extend(
+            [
+                ExtractedResource(
+                    hadPrimarySource=cast(
+                        "MergedPrimarySourceIdentifier", primary_source_1.stableTargetId
+                    ),
+                    identifierInPrimarySource=f"r-pagination-test-{i}",
+                    accessRestriction=AccessRestriction["OPEN"],
+                    contact=[
+                        cast(
+                            "MergedContactPointIdentifier",
+                            contact_point_1.stableTargetId,
+                        )
+                    ],
+                    theme=[Theme["BIOINFORMATICS_AND_SYSTEMS_BIOLOGY"]],
+                    title=[Text(value=f"Pagination Test Resource {i}", language=None)],
+                    unitInCharge=[
+                        cast(
+                            "MergedOrganizationalUnitIdentifier",
+                            organizational_unit_1.stableTargetId,
+                        )
+                    ],
+                )
+                for i in range(100)
+            ]
+        )
+    else:
+        pagination_dummy_data.extend(
+            [
+                ExtractedContactPoint(
+                    email=[Email(f"help-{i}@pagination.abc")],
+                    hadPrimarySource=cast(
+                        "MergedPrimarySourceIdentifier", primary_source_1.stableTargetId
+                    ),
+                    identifierInPrimarySource=f"cp-pagination-test-{i}",
+                )
+                for i in range(100)
+            ]
+        )
+
     connector.ingest(pagination_dummy_data)
 
 

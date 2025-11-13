@@ -27,6 +27,7 @@ def resources() -> rx.Component:
                 search_result,
             ),
         ),
+        consent_pagination("resources"),
         style=rx.Style(
             textAlign="center",
             marginBottom="var(--space-8)",
@@ -51,6 +52,7 @@ def projects() -> rx.Component:
                 search_result,
             ),
         ),
+        consent_pagination("projects"),
         style=rx.Style(
             textAlign="center",
             marginBottom="var(--space-4)",
@@ -165,44 +167,46 @@ def consent_status() -> rx.Component:
     )
 
 
-def pagination() -> rx.Component:
-    """Render pagination for navigating results."""
+def consent_pagination(category: str) -> rx.Component:
+    """Render pagination for navigating results dynamically."""
     return rx.center(
         rx.button(
             rx.text("Previous"),
             on_click=[
-                ConsentState.go_to_previous_page,
+                ConsentState.go_to_previous_page(category),  # type: ignore[misc]
                 ConsentState.scroll_to_top,
-                ConsentState.get_all_data,
+                ConsentState.fetch_data(category),  # type: ignore[misc]
                 ConsentState.resolve_identifiers,
             ],
-            disabled=ConsentState.disable_previous_page,
+            disabled=getattr(ConsentState, f"disable_{category}_previous_page"),
             variant="surface",
-            custom_attrs={"data-testid": "pagination-previous-button"},
+            custom_attrs={"data-testid": f"{category}-pagination-previous-button"},
             style=rx.Style(minWidth="10%"),
         ),
         rx.select(
-            ConsentState.total_pages,
-            value=cast("rx.vars.NumberVar", ConsentState.current_page).to_string(),
+            getattr(ConsentState, f"{category}_total_pages"),
+            value=cast(
+                "rx.vars.NumberVar", getattr(ConsentState, f"{category}_current_page")
+            ).to_string(),
             on_change=[
-                ConsentState.set_page,
+                getattr(ConsentState, f"set_{category}_page"),
                 ConsentState.scroll_to_top,
-                ConsentState.get_all_data,
+                ConsentState.fetch_data(category),  # type: ignore[misc]
                 ConsentState.resolve_identifiers,
             ],
-            custom_attrs={"data-testid": "pagination-page-select"},
+            custom_attrs={"data-testid": f"{category}-pagination-page-select"},
         ),
         rx.button(
             rx.text("Next"),
             on_click=[
-                ConsentState.go_to_next_page,
+                ConsentState.go_to_next_page(category),  # type: ignore[misc]
                 ConsentState.scroll_to_top,
-                ConsentState.get_all_data,
+                ConsentState.fetch_data(category),  # type: ignore[misc]
                 ConsentState.resolve_identifiers,
             ],
-            disabled=ConsentState.disable_next_page,
+            disabled=getattr(ConsentState, f"disable_{category}_next_page"),
             variant="surface",
-            custom_attrs={"data-testid": "pagination-next-button"},
+            custom_attrs={"data-testid": f"{category}-pagination-next-button"},
             style=rx.Style(minWidth="10%"),
         ),
         spacing="4",
@@ -217,7 +221,6 @@ def index() -> rx.Component:
             user_data(),
             projects(),
             resources(),
-            pagination(),
             rx.spacer(direction="column"),
             rx.box(
                 consent_box(),

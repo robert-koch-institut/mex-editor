@@ -1,6 +1,8 @@
+from collections.abc import Sequence
 from typing import Any
 
 import reflex as rx
+from reflex.base import BaseModel
 from reflex.components import Component
 from reflex.components.radix.themes.components.select import (
     HighLevelSelect,
@@ -14,19 +16,26 @@ from reflex.components.radix.themes.components.select import (
 from reflex.vars.base import Var
 
 
-class CustomHighLevelSelect(HighLevelSelect):
+class ValueLabelSelectItem(BaseModel):
+    """Items for ValueLabelHighLevelSelect that contain value and label."""
+
+    value: str
+    label: str
+
+
+class ValueLabelHighLevelSelect(HighLevelSelect):
     """High level wrapper for the Select component."""
 
     @classmethod
     def create_value_label_select(
         cls,
-        items: list[dict[str, str]] | Var[list[dict[str, str]]],
+        items: Sequence[ValueLabelSelectItem] | Var[Sequence[ValueLabelSelectItem]],
         **props,  # noqa: ANN003
     ) -> Component:
         """Create a select component. THIS IS COPY PASTE FROM HighLevelSelect!
 
         Args:
-            items: The items (as dict with "label" and "value") of the select.
+            items: The items (with "label" and "value") of the select.
             **props: Additional properties to apply to the select component.
 
         Returns:
@@ -66,16 +75,16 @@ class CustomHighLevelSelect(HighLevelSelect):
                 rx.foreach(
                     items,
                     lambda item: SelectItem.create(
-                        item["label"],
-                        value=item["value"],
+                        item.label,
+                        value=item.value,
                     ),
                 )
             ]
         else:
             child = [
                 SelectItem.create(
-                    item["label"],
-                    value=item["value"],
+                    item.label,
+                    value=item.value,
                 )
                 for item in items
             ]
@@ -95,4 +104,4 @@ class CustomHighLevelSelect(HighLevelSelect):
         )
 
 
-custom_select = CustomHighLevelSelect.create_value_label_select
+value_label_select = ValueLabelHighLevelSelect.create_value_label_select

@@ -22,6 +22,7 @@ from mex.editor.search.models import (
     SearchResult,
 )
 from mex.editor.search.transform import transform_models_to_results
+from mex.editor.search.value_label_select import ValueLabelSelectItem
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 
@@ -55,9 +56,6 @@ def _build_had_primary_source_refresh_params(
     }
 
 
-locale_service = LocaleService.get()
-
-
 class SearchState(State):
     """State management for the search page."""
 
@@ -74,6 +72,7 @@ class SearchState(State):
         field="", identifiers=[]
     )
     is_loading: bool = True
+    _locale_service = LocaleService.get()
 
     @rx.event
     def set_reference_filter_field(self, value: str) -> None:
@@ -132,7 +131,7 @@ class SearchState(State):
         )
 
     @rx.var(cache=False)
-    def all_fields_for_entity_types(self) -> list[dict[str, str]]:
+    def all_fields_for_entity_types(self) -> list[ValueLabelSelectItem]:
         """Get all fields for the currently selected entity types filter.
 
         Returns:
@@ -148,12 +147,12 @@ class SearchState(State):
 
         fields_with_type = [
             [
-                {
-                    "value": field,
-                    "label": locale_service.get_field_label(
+                ValueLabelSelectItem(
+                    value=field,
+                    label=self._locale_service.get_field_label(
                         self.current_locale, entity_type, field
                     ),
-                }
+                )
                 for field in REFERENCE_FIELDS_BY_CLASS_NAME[
                     ensure_prefix(entity_type, "Extracted")
                 ]
@@ -163,10 +162,10 @@ class SearchState(State):
 
         return sorted(
             {
-                item["value"]: item
+                item.value: item
                 for item in [f for fields in fields_with_type for f in fields]
             }.values(),
-            key=lambda x: x["label"],
+            key=lambda x: x.label,
         )
 
     @rx.var(cache=False)

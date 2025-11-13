@@ -9,13 +9,13 @@ from mex.editor.components import (
     render_title,
 )
 from mex.editor.layout import page
-from mex.editor.search.custom_select import custom_select
 from mex.editor.search.models import (
     ReferenceFieldIdentifierFilter,
     SearchPrimarySource,
     SearchResult,
 )
 from mex.editor.search.state import SearchState, full_refresh
+from mex.editor.search.value_label_select import value_label_select
 
 
 def search_result(result: SearchResult) -> rx.Component:
@@ -188,7 +188,7 @@ def reference_field_filter() -> rx.Component:
     """Render dropdown and text inputs for reference filtering the search result."""
     return rx.vstack(
         rx.hstack(
-            custom_select(
+            value_label_select(
                 items=SearchState.all_fields_for_entity_types,
                 value=SearchState.reference_field_filter.field,
                 placeholder="Field to filter by",

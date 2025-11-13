@@ -50,17 +50,6 @@ def browser_context_args(
     }
 
 
-@pytest.fixture(scope="session")
-def browser_type_launch_args(
-    browser_type_launch_args: dict[str, Any],
-) -> dict[str, Any]:
-    """Run the playwright browser always in headless mode."""
-    return {
-        **browser_type_launch_args,
-        "headless": True,
-    }
-
-
 @pytest.fixture
 def client() -> TestClient:
     """Return a fastAPI test client initialized with our app."""

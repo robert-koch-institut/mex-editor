@@ -53,17 +53,6 @@ class ConsentState(State):
             ),
         ]
 
-    @rx.event
-    def load_user(self) -> Generator[EventSpec | None, None, None]:
-        """Check the login and get user information."""
-        if not self.user_ldap:
-            self.target_path_after_login = self.router.page.raw_path
-            yield rx.redirect("/login-ldap")
-            return
-        if self.merged_login_person:
-            yield from self.get_consent()  # type: ignore[misc]
-        self.is_loading = False
-
     @rx.var(cache=False)
     def disable_projects_previous_page(self) -> bool:
         """Disable the 'Previous' button if on the first page for projects."""

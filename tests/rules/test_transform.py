@@ -773,7 +773,7 @@ def test_transform_fields_to_preventive(
         ),
         (
             EditorValue(
-                text="ConsentStatus", badge=ConsentStatus["EXPRESSED_CONSENT"].name
+                text="ConsentType", badge=ConsentType["EXPRESSED_CONSENT"].name
             ),
             "hasConsentType",
             "AdditiveConsent",

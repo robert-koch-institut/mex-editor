@@ -53,15 +53,15 @@ def test_projects_and_resources(consent_page: Page) -> None:
 def test_pagination(consent_page: Page) -> None:
     page = consent_page
 
-    pagination_previous = page.get_by_test_id("resource-pagination-previous-button")
-    pagination_next = page.get_by_test_id("resource-pagination-next-button")
-    pagination_page_select = page.get_by_test_id("resource-pagination-page-select")
+    pagination_previous = page.get_by_test_id("resources-pagination-previous-button")
+    pagination_next = page.get_by_test_id("resources-pagination-next-button")
+    pagination_page_select = page.get_by_test_id("resources-pagination-page-select")
 
     pagination_page_select.scroll_into_view_if_needed()
     page.screenshot(path="tests_consent_test_main_test_pagination.png")
 
     # check if:
-    # - previos is disabled
+    # - previous is disabled
     # - select shows all expected page numbers
     # - next is enabled
     expect(pagination_previous).to_be_disabled()

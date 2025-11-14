@@ -127,8 +127,9 @@ def writer_user_page(
 ) -> Page:
     login_user(frontend_url, page, *writer_user_credentials)
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
-    page.set_default_navigation_timeout(50000)
-    page.set_default_timeout(20000)
+    page.set_default_navigation_timeout(50_000)
+    page.set_default_timeout(10_000)
+    expect.set_options(timeout=10_000)
     return page
 
 
@@ -250,6 +251,32 @@ def load_dummy_data(
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
     connector.ingest(dummy_data)
+
+
+@pytest.fixture
+def load_pagination_dummy_data(
+    dummy_data: list[AnyExtractedModel],
+    flush_graph_database: None,  # noqa: ARG001
+) -> None:
+    """Ingest dummy data into the backend."""
+    connector = BackendApiConnector.get()
+    primary_source_1 = next(
+        x for x in dummy_data if x.identifierInPrimarySource == "ps-1"
+    )
+
+    pagination_dummy_data = []
+    pagination_dummy_data.extend(dummy_data)
+    pagination_dummy_data.extend(
+        [
+            ExtractedContactPoint(
+                email=[Email(f"help-{i}@pagination.abc")],
+                hadPrimarySource=primary_source_1.stableTargetId,
+                identifierInPrimarySource=f"cp-pagination-test-{i}",
+            )
+            for i in range(100)
+        ]
+    )
+    connector.ingest(pagination_dummy_data)
 
 
 @pytest.fixture

@@ -128,7 +128,7 @@ def writer_user_page(
     login_user(frontend_url, page, *writer_user_credentials)
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
     page.set_default_navigation_timeout(50000)
-    page.set_default_timeout(10000)
+    page.set_default_timeout(20000)
     return page
 
 

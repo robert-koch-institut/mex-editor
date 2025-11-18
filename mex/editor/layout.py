@@ -74,7 +74,7 @@ def nav_link(item: NavItem) -> rx.Component:
     """Return a link component for the given navigation item."""
     return rx.link(
         rx.text(item.title, size="4", weight="medium"),
-        on_click=State.navigate(item.raw_path),  # type: ignore[misc]
+        href=item.raw_path,
         underline=item.underline,  # type: ignore[arg-type]
         class_name="nav-item",
         custom_attrs={"data-href": item.raw_path},
@@ -159,47 +159,6 @@ def nav_bar() -> rx.Component:
     )
 
 
-def navigate_away_dialog() -> rx.Component:
-    """Render a dialog that informs the user about unsaved changes on the page.
-
-    If the dialog is dismissed navigation is stopped and the user stays on the page;
-    otherwise navigate away.
-    """
-    return rx.alert_dialog.root(
-        rx.alert_dialog.content(
-            rx.alert_dialog.title("Unsaved changes"),
-            rx.alert_dialog.description(
-                "There are unsaved changes on the page. If you navigate away "
-                "these changes will be lost. Do you want to navigate anyway?",
-            ),
-            rx.flex(
-                rx.alert_dialog.cancel(
-                    rx.button(
-                        "Stay here",
-                        color_scheme="gray",
-                        on_click=State.close_navigate_dialog,
-                    )
-                ),
-                rx.alert_dialog.action(
-                    rx.button(
-                        "Navigate away",
-                        color_scheme="tomato",
-                        on_click=[
-                            State.close_navigate_dialog,
-                            State.set_current_page_has_changes(False),  # type: ignore[misc]
-                            State.navigate(State.navigate_target),  # type: ignore[misc]
-                        ],
-                    )
-                ),
-                spacing="3",
-                style=rx.Style(marginTop="1rem"),
-                justify="end",
-            ),
-        ),
-        open=State.navigate_dialog_open,
-    )
-
-
 def page(*children: rx.Component) -> rx.Component:
     """Return a page fragment with navigation bar and given children."""
     return rx.cond(
@@ -216,7 +175,6 @@ def page(*children: rx.Component) -> rx.Component:
                 ),
                 custom_attrs={"data-testid": "page-body"},
             ),
-            navigate_away_dialog(),
             style=rx.Style(
                 {
                     "--app-max-width": "calc(1480px * var(--scaling))",

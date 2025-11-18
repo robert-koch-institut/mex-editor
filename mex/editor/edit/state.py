@@ -4,7 +4,6 @@ import reflex as rx
 from reflex.event import EventSpec
 
 from mex.editor.rules.state import RuleState
-from mex.editor.state import State
 
 
 class EditState(RuleState):
@@ -34,7 +33,10 @@ class EditState(RuleState):
             for ps in field.primary_sources
         )
 
-    def toggle_all_primary_source_and_editor_values(self) -> EventSpec:
+    @rx.event
+    def toggle_all_primary_source_and_editor_values(
+        self,
+    ) -> Generator[EventSpec, None, None]:
         """Toggle all primary source and editor values."""
         any_enabled = self.any_primary_source_or_editor_value_enabled
         new_state = not any_enabled
@@ -43,4 +45,4 @@ class EditState(RuleState):
                 ps.enabled = new_state
                 for value in ps.editor_values:
                     value.enabled = new_state
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        yield RuleState.update_local_edit

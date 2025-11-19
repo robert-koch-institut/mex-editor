@@ -33,7 +33,7 @@ unit:
 test:
 	# run the unit and integration test suites
 	@ echo running all tests; \
-	pdm run pytest -m 'not external'; \
+	pdm run pytest -x -m 'not external'; \
 
 wheel:
 	# build the python package

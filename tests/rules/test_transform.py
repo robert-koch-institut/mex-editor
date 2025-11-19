@@ -25,7 +25,6 @@ from mex.common.models import (
     SubtractivePerson,
 )
 from mex.common.types import (
-    EMAIL_PATTERN,
     AccessRestriction,
     ConsentStatus,
     ConsentType,
@@ -959,7 +958,8 @@ def test_transform_validation_error_to_messages() -> None:
     assert messages == [
         ValidationMessage(
             field_name="0",
-            message=f"String should match pattern '{EMAIL_PATTERN}'",
+            message="String should match pattern "
+            "'^[^@ \\t\\r\\n]+@[^@ \\t\\r\\n]+\\.[^@ \\t\\r\\n]+$'",
             input="OOPS",
         )
     ]

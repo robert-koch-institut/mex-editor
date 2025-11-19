@@ -253,14 +253,62 @@ def test_reference_filter_fields_for_entity_type(
     )
 
     expected_person_fields = [
-        "memberOf",
-        "affiliation",
-        "hadPrimarySource",
-        "stableTargetId",
+        "Fachgebiet",
+        "Affiliation",
+        "Primärsystem",
+        "Stabiler Identifikator",
     ]
     for field in expected_person_fields:
-        select_item = page.get_by_role("option", name=field)
+        select_item = page.get_by_role("option", name=field, exact=True)
         expect(select_item).to_be_visible()
+
+
+@pytest.mark.parametrize(
+    ("locale_id", "expected_items"),
+    [
+        pytest.param(
+            "de-DE",
+            [
+                "Affiliation",
+                "Autor*in",
+                "Datei",
+                "Fachgebiet",
+                "Kontakt",
+                "Nachfolge von",
+            ],
+            id="de-DE",
+        ),
+        pytest.param(
+            "en-US",
+            [
+                "Affiliation",
+                "Access platform",
+                "Contact",
+                "Author",
+                "Files",
+                "Publisher",
+            ],
+            id="en-US",
+        ),
+    ],
+)
+@pytest.mark.integration
+def test_reference_filter_field_translation(
+    frontend_url: str, writer_user_page: Page, locale_id: str, expected_items: list[str]
+) -> None:
+    page = writer_user_page
+    page.goto(frontend_url)
+    page.wait_for_selector("[data-testid='page-body']")
+
+    # switch language to specifid locale
+    lang_switcher = page.get_by_test_id("language-switcher")
+    lang_switcher.click()
+    page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()
+
+    # check expected items existing
+    page.get_by_test_id("reference-field-filter-field").click()
+    for item in expected_items:
+        expect(page.get_by_role("option", name=item, exact=True)).to_be_visible()
 
 
 @pytest.mark.integration
@@ -278,7 +326,7 @@ def test_reference_filter(
     # open select
     page.get_by_test_id("reference-field-filter-field").click()
     # click concat option
-    page.get_by_role("option", name="contact").click()
+    page.get_by_role("option", name="Kontakt").click()
     # add invalid field
     page.get_by_test_id("reference-field-filter-add-id").click()
     page.get_by_test_id("reference-field-filter-id-0").fill("invalidIdentifier!")
@@ -315,7 +363,7 @@ def test_push_search_params(
 
     # load page and verify url
     page.goto(frontend_url)
-    page.wait_for_url("**/", timeout=10000)
+    page.wait_for_url("**/")
 
     # select an entity type
     entity_types = page.get_by_test_id("entity-types")
@@ -350,10 +398,10 @@ def test_push_search_params(
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load-2.png")
     primary_sources.get_by_text(primary_source.title[0].value).click()
     checked = primary_sources.get_by_role("checkbox", checked=True)
+    expect(checked).to_have_count(1)
     page.screenshot(
         path="tests_search_test_main-test_push_search_params-on-click-2.png"
     )
-    expect(checked).to_have_count(1)
 
     # expect parameter change to be reflected in url
     page.wait_for_url(

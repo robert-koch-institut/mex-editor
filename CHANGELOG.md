@@ -10,17 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - CustomSelect-Component that has items with value and label instead of simple strings
+- add caching for playwright browsers and node-modules to testing workflow
 
 ### Changes
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
 
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
 - Field of the ReferenceFilter is now translated
 - Initial language now picking from available languages instead of hard coded value
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
-- Increased global expect timeout (to 10,000) for tests
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
+- Increased global expect timeout (to 15,000) for tests
 - Using the field label for new/remove additive value button
 - renaming the field_name function to field_name_card
+- prefer using enum names over just raw strings in tests
 
 ### Deprecated
 

@@ -64,7 +64,7 @@ def projects() -> rx.Component:
 def user_data() -> rx.Component:
     """Render the user data section with name and email."""
     return rx.cond(
-        ConsentState.merged_login_person,
+        ConsentState.is_loading,
         rx.vstack(
             rx.text(
                 ConsentState.merged_login_person.full_name,  # type: ignore  [union-attr]

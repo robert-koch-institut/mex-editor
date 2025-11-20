@@ -8,6 +8,7 @@ from requests import RequestException
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.settings import BaseSettings
+from mex.editor.exceptions import escalate_error
 from mex.editor.models import MergedLoginPerson
 from mex.editor.security import (
     has_read_access_mex,
@@ -45,8 +46,10 @@ class LoginLdapState(State):
             response = requests.post(
                 url, auth=(self.username, self.password), timeout=10
             )
-        except RequestException:
-            yield rx.window_alert("Cannot reach backend. Please try again later.")
+        except RequestException as exc:
+            yield from escalate_error(
+                "backend", "Cannot reach backend. Please try again later.", exc
+            )
             return
         if response:
             self.user_ldap = User(

@@ -73,6 +73,26 @@ jobs:
           restore-keys: |
             ${{ env.cache-name }}-
 
+      - name: Cache playwright
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-playwright
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ env.cache-name }}-${{ hashFiles('*.lock') }}
+          restore-keys: |
+            ${{ env.cache-name }}-
+
+      - name: Cache reflex
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-reflex
+        with:
+          path: .web/node_modules
+          key: ${{ env.cache-name }}-${{ hashFiles('*.lock') }}
+          restore-keys: |
+            ${{ env.cache-name }}-
+
       - name: Setup python
         uses: actions/setup-python@v6
         with:

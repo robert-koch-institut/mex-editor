@@ -101,7 +101,7 @@ def consent_box() -> rx.Component:
         rx.vstack(
             rx.markdown(
                 CONSENT_MD,
-                style=rx.Style({"fontSize": "13px", "lineHeight": "1.5"}),
+                style=rx.Style({"fontSize": "var(--font-size-2)"}),
             ),
             rx.hstack(
                 rx.button(

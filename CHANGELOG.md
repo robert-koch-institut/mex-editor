@@ -10,8 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - consent microsite
 
-### Changes
+- CustomSelect-Component that has items with value and label instead of simple strings
 
+- CustomSelect-Component that has items with value and label instead of simple strings
+
+### Changes
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
+
+- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+- Field of the ReferenceFilter is now translated
 - Initial language now picking from available languages instead of hard coded value
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - Increased global expect timeout (to 10,000) for tests
@@ -24,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
 - Page numbers on search and ingest page
 
 ### Security

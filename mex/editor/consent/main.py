@@ -64,7 +64,8 @@ def projects() -> rx.Component:
 def user_data() -> rx.Component:
     """Render the user data section with name and email."""
     return rx.cond(
-        not ConsentState.is_loading,
+        ConsentState.is_loading,
+        rx.text("Loading user data...", custom_attrs={"data-testid": "user-data"}),
         rx.vstack(
             rx.text(
                 ConsentState.merged_login_person.full_name,  # type: ignore  [union-attr]
@@ -91,7 +92,6 @@ def user_data() -> rx.Component:
             ),
             custom_attrs={"data-testid": "user-data"},
         ),
-        rx.text("Loading user data...", custom_attrs={"data-testid": "user-data"}),
     )
 
 

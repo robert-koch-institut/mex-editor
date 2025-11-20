@@ -20,7 +20,6 @@ from mex.common.models import (
 )
 from mex.common.types import (
     AccessRestriction,
-    Email,
     Identifier,
     IdentityProvider,
     Link,
@@ -157,12 +156,12 @@ def dummy_data() -> list[AnyExtractedModel]:
         title=[Text(value="Primary Source Two", language=TextLanguage.EN)],
     )
     contact_point_1 = ExtractedContactPoint(
-        email=[Email("info@contact-point.one")],
+        email=["info@contact-point.one"],
         hadPrimarySource=primary_source_1.stableTargetId,
         identifierInPrimarySource="cp-1",
     )
     contact_point_2 = ExtractedContactPoint(
-        email=[Email("help@contact-point.two")],
+        email=["help@contact-point.two"],
         hadPrimarySource=primary_source_1.stableTargetId,
         identifierInPrimarySource="cp-2",
     )
@@ -269,7 +268,7 @@ def load_pagination_dummy_data(
     pagination_dummy_data.extend(
         [
             ExtractedContactPoint(
-                email=[Email(f"help-{i}@pagination.abc")],
+                email=[f"help-{i}@pagination.abc"],
                 hadPrimarySource=primary_source_1.stableTargetId,
                 identifierInPrimarySource=f"cp-pagination-test-{i}",
             )

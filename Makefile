@@ -33,7 +33,7 @@ unit:
 test:
 	# run the unit and integration test suites
 	@ echo running all tests; \
-	pdm run pytest -m 'not external'; \
+	pdm run pytest -m 'not requires_rki_infrastructure'; \
 
 wheel:
 	# build the python package

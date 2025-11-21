@@ -2,7 +2,9 @@ from typing import TYPE_CHECKING, cast
 
 import reflex as rx
 
+from mex.editor.components import icon_by_stem_type, render_title
 from mex.editor.locale_service import LocaleService
+from mex.editor.rules.state import LocalDraft, RuleState
 from mex.editor.state import NavItem, State
 
 if TYPE_CHECKING:
@@ -70,14 +72,63 @@ def language_switcher() -> rx.Component:
     )
 
 
+def render_draft_menu_item(draft: LocalDraft) -> rx.Component:
+    return rx.menu.item(
+        rx.link(
+            rx.hstack(
+                icon_by_stem_type(
+                    draft.stem_type,
+                    size=22,
+                    style=rx.Style(color=rx.color("accent", 11)),
+                ),
+                render_title(draft.title),
+            ),
+            href=f"/create/{draft.identifier}",
+            style=rx.Style({"flex": "1"}),
+        )
+    )
+
+
 def nav_link(item: NavItem) -> rx.Component:
     """Return a link component for the given navigation item."""
-    return rx.link(
+    link = rx.link(
         rx.text(item.title, size="4", weight="medium"),
         href=item.raw_path,
         underline=item.underline,  # type: ignore[arg-type]
         class_name="nav-item",
         custom_attrs={"data-href": item.raw_path},
+    )
+
+    return rx.cond(
+        item.path.contains("/create"),  # type: ignore[attr-defined]
+        rx.cond(
+            RuleState.local_drafts.count,
+            rx.fragment(
+                link,
+                rx.menu.root(
+                    rx.menu.trigger(
+                        rx.badge(
+                            RuleState.local_drafts.count,
+                            style=rx.Style(
+                                {
+                                    "align-self": "center",
+                                    "margin-left": "-1em",
+                                    "cursor": "pointer",
+                                    "border": "1px solid transparent",
+                                }
+                            ),
+                            _hover={"border-color": f"{rx.color('accent', 8)}"},
+                        ),
+                    ),
+                    rx.menu.content(
+                        rx.foreach(
+                            RuleState.local_drafts.drafts, render_draft_menu_item
+                        )
+                    ),
+                ),
+            ),
+        ),
+        link,
     )
 
 

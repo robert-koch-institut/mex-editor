@@ -22,7 +22,7 @@ from mex.common.transform import ensure_postfix
 from mex.common.types import Identifier, Validation
 from mex.editor.exceptions import escalate_error
 from mex.editor.locale_service import LocaleService
-from mex.editor.models import EditorValue
+from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, EditorValue
 from mex.editor.rules.models import (
     EditorField,
     EditorPrimarySource,
@@ -38,6 +38,7 @@ from mex.editor.state import State
 from mex.editor.transform import (
     transform_models_to_stem_type,
     transform_models_to_title,
+    transform_value,
 )
 from mex.editor.utils import resolve_editor_value, resolve_identifier
 
@@ -69,7 +70,7 @@ def _are_fields_equal_editwise(
         for i in range(left_len):
             li_dict = _create_field_dict(left[i])
             ri_dict = _create_field_dict(right[i])
-            print("COMPARING\n", li_dict, "\nWITH\n", ri_dict)
+            # print("COMPARING\n", li_dict, "\nWITH\n", ri_dict)
             if li_dict != ri_dict:
                 return False
         return True
@@ -77,11 +78,26 @@ def _are_fields_equal_editwise(
     return False
 
 
+class CreateLocalChanges(rx.Base):
+    stem_type: str = ""
+    fields: list[EditorField] = []
+
+
 class LocalChanges(rx.Base):
     """Model to store user changes in the local storage of the browser."""
 
     edit: dict[str, list[EditorField]] = {}
-    create: dict[str, list[EditorField]] = {}
+    create: dict[str, CreateLocalChanges] = {}
+
+
+class LocalDraft(CreateLocalChanges):
+    title: EditorValue
+    identifier: str
+
+
+class LocalDraftSummary(rx.Base):
+    count: int = 0
+    drafts: Sequence[LocalDraft] = []
 
 
 class RuleState(State):
@@ -92,6 +108,7 @@ class RuleState(State):
 
     is_submitting: bool = False
     item_id: str | None = None
+    draft_id: str | None = None
     item_title: list[EditorValue] = []
     fields: list[EditorField] = []
     stem_type: str | None = None
@@ -109,21 +126,60 @@ class RuleState(State):
         api_fields: list[EditorField] = self.get_value("_api_fields")
         return not _are_fields_equal_editwise(fields, api_fields)
 
+    @rx.var
+    def local_drafts(self) -> LocalDraftSummary:
+        changes = LocalChanges.parse_raw(self.local_storage)
+
+        def _create_draft(x: CreateLocalChanges, identifier: str) -> LocalDraft:
+            config = MODEL_CONFIG_BY_STEM_TYPE[x.stem_type]
+            title_field = [
+                ps.editor_values[0]
+                for f in x.fields
+                for ps in f.primary_sources
+                if f.name == config.title and ps.editor_values
+            ]
+            print("creating draft", x.stem_type, config.model_dump_json(), title_field)
+
+            return LocalDraft(
+                identifier=identifier,
+                stem_type=x.stem_type,
+                fields=x.fields,
+                title=title_field[0]
+                if title_field
+                else transform_value(f"{x.stem_type}"),
+            )
+
+        drafts = [_create_draft(value, key) for key, value in changes.create.items()]
+
+        return LocalDraftSummary(count=len(drafts), drafts=drafts)
+
     @rx.event
     def update_local_edit(self) -> None:
         """Stores the current edit state in the local storage of the browser."""
-        changes = LocalChanges.parse_raw(self.local_storage)
-        if self.item_id:
-            changes.edit[self.item_id] = self.get_value("fields")
-        self.local_storage = LocalChanges.json(changes)
+        if self.item_id or self.draft_id:
+            changes = LocalChanges.parse_raw(self.local_storage)
+            fields = self.get_value("fields")
+            if self.item_id:
+                print("UPDATING LOCAL EDIT", self.item_id)
+                changes.edit[self.item_id] = fields
+            elif self.has_changes:
+                print("UPDATING LOCAL DRAFT", self.draft_id, self.stem_type)
+                changes.create[self.draft_id] = CreateLocalChanges(  # type: ignore[index]
+                    stem_type=self.stem_type or "",
+                    fields=fields,
+                )
+            self.local_storage = LocalChanges.json(changes)
 
     @rx.event
     def delete_local_edit(self) -> None:
         """Removes the current edit state in the local storage of the browser."""
-        changes = LocalChanges.parse_raw(self.local_storage)
-        if self.item_id:
-            changes.edit.pop(self.item_id)
-        self.local_storage = LocalChanges.json(changes)
+        if self.item_id or self.draft_id:
+            changes = LocalChanges.parse_raw(self.local_storage)
+            if self.item_id:
+                changes.edit.pop(self.item_id)
+            elif self.draft_id in changes.create:
+                changes.create.pop(self.draft_id)  # type: ignore[arg-type]
+            self.local_storage = LocalChanges.json(changes)
 
     @rx.var(cache=True, deps=["fields", "current_locale"])
     def translated_fields(self) -> Sequence[FieldTranslation]:
@@ -202,6 +258,12 @@ class RuleState(State):
         self.fields.clear()
         self.validation_messages.clear()
         self.item_id = self.router.page.params.get("identifier")
+        self.draft_id = self.router.page.params.get("draft_identifier")
+
+        if not self.item_id and not self.draft_id:
+            yield rx.redirect(path=f"/create/{Identifier.generate()}")
+            return
+
         try:
             extracted_items = self._get_extracted_items()
         except HTTPError as exc:
@@ -209,6 +271,7 @@ class RuleState(State):
                 "backend", "error fetching extracted items", exc.response.text
             )
             return
+
         if extracted_items:
             self.stem_type = transform_models_to_stem_type(extracted_items)
         try:
@@ -218,7 +281,8 @@ class RuleState(State):
                 "backend", "error fetching rule items", exc.response.text
             )
             return
-        if rule_set:
+
+        if rule_set and self.item_id:
             self.stem_type = transform_models_to_stem_type([rule_set.additive])
 
         if self.item_id:
@@ -236,13 +300,24 @@ class RuleState(State):
             subtractive=rule_set.subtractive,
             preventive=rule_set.preventive,
         )
+
         changes = LocalChanges.parse_raw(self.local_storage)
-        self.fields = (
-            changes.edit.get(self.item_id, loaded_fields)
-            if self.item_id
-            else loaded_fields
-        )
+        if self.item_id:
+            self.fields = changes.edit.get(self.item_id, loaded_fields)
+        elif self.draft_id:
+            local_create = changes.create.get(
+                self.draft_id,
+                CreateLocalChanges(
+                    stem_type=self.stem_type or RULE_SET_REQUEST_CLASSES[0].stemType,
+                    fields=loaded_fields,
+                ),
+            )
+            self.stem_type = local_create.stem_type
+            self.fields = local_create.fields
+        else:
+            self.fields = loaded_fields
         self._api_fields = copy.deepcopy(loaded_fields)
+        # print("REFRESH :: DONE", self.stem_type)
 
     def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:
         """Send the rule set to the backend."""

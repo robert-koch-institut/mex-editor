@@ -8,6 +8,22 @@ from mex.editor.rules.models import EditorValue
 from mex.editor.search.state import SearchState
 
 
+def render_value(value: EditorValue) -> rx.Component:
+    """Render a single editor value."""
+    return rx.hstack(
+        rx.cond(
+            value.href,
+            render_link(value),
+            render_text(value),
+        ),
+        rx.cond(
+            value.badge,
+            render_badge(value.badge),
+        ),
+        spacing="1",
+    )
+
+
 def render_title(title: EditorValue) -> rx.Component:
     """Render one title in a container with hidden overflow."""
     return rx.box(
@@ -129,22 +145,6 @@ def render_badge(text: str | None) -> rx.Component:
         variant="soft",
         color_scheme="gray",
         style=rx.Style(margin="auto 0"),
-    )
-
-
-def render_value(value: EditorValue) -> rx.Component:
-    """Render a single editor value."""
-    return rx.hstack(
-        rx.cond(
-            value.href,
-            render_link(value),
-            render_text(value),
-        ),
-        rx.cond(
-            value.badge,
-            render_badge(value.badge),
-        ),
-        spacing="1",
     )
 
 

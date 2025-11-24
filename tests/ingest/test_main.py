@@ -69,7 +69,7 @@ def test_search_and_ingest_roundtrip(
 
     # go to the correct tab
     aux_provider_tab = page.get_by_role("tab", name=aux_provider)
-    expect(aux_provider_tab).to_be_enabled(timeout=50000)
+    expect(aux_provider_tab).to_be_enabled(timeout=50_000)
     aux_provider_tab.click()
     search_input = page.get_by_test_id("search-input")
     expect(search_input).to_be_visible()
@@ -78,7 +78,7 @@ def test_search_and_ingest_roundtrip(
     # trigger invalid search
     search_input.fill(invalid_search)
     search_input.press("Enter")
-    expect(search_input).to_be_enabled(timeout=30000)
+    expect(search_input).to_be_enabled(timeout=30_000)
     page.screenshot(
         path=f"tests_ingest_test_main-roundtrip_{aux_provider}-invalid-search.png"
     )
@@ -91,14 +91,14 @@ def test_search_and_ingest_roundtrip(
     # trigger valid search
     search_input.fill(valid_search)
     search_input.press("Enter")
-    expect(search_input).to_be_enabled(timeout=30000)
+    expect(search_input).to_be_enabled(timeout=30_000)
     page.screenshot(
         path=f"tests_ingest_test_main-roundtrip_{aux_provider}-valid-search.png"
     )
 
     # test pagination is showing
     prev_button = page.get_by_test_id("pagination-previous-button")
-    expect(prev_button).to_be_disabled(timeout=30000)
+    expect(prev_button).to_be_disabled(timeout=30_000)
     expect(page.get_by_test_id("pagination-next-button")).to_be_visible()
     expect(page.get_by_test_id("pagination-page-select")).to_be_visible()
 
@@ -147,7 +147,7 @@ def test_infobox_visibility_and_content(ingest_page: Page) -> None:
     for provider in ALL_AUX_PROVIDERS:
         tab = page.get_by_role("tab", name=provider)
         tab.click(
-            timeout=50000
+            timeout=30_000
         )  # high timeout cuz tab might be disabled due to loading
 
         tab_content = page.locator(f"[id*='{provider}'][role='tabpanel']")

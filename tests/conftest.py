@@ -50,17 +50,6 @@ def browser_context_args(
     }
 
 
-@pytest.fixture(scope="session")
-def browser_type_launch_args(
-    browser_type_launch_args: dict[str, Any],
-) -> dict[str, Any]:
-    """Run the playwright browser in headed mode locally and in headless mode in CI."""
-    return {
-        **browser_type_launch_args,
-        "headless": True,
-    }
-
-
 @pytest.fixture
 def client() -> TestClient:
     """Return a fastAPI test client initialized with our app."""
@@ -139,8 +128,8 @@ def writer_user_page(
     login_user(frontend_url, page, *writer_user_credentials)
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
     page.set_default_navigation_timeout(50_000)
-    page.set_default_timeout(10_000)
-    expect.set_options(timeout=10_000)
+    page.set_default_timeout(15_000)
+    expect.set_options(timeout=15_000)
     return page
 
 

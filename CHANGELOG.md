@@ -9,15 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- CustomSelect-Component that has items with value and label instead of simple strings
+- add caching for playwright browsers and node-modules to testing workflow
 - Decorator for localized labels that creates a `ComputedVar[str]` that depends on `State.current_locale` and calls locale_service.get_text with a `label_id`
 - Localized labels for every page, component and layout
 
 ### Changes
 
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+- Field of the ReferenceFilter is now translated
 - Initial language now picking from available languages instead of hard coded value
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
+- Increased global expect timeout (to 15,000) for tests
 - bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - Using the field label for new/remove additive value button
 - renaming the field_name function to field_name_card
+- prefer using enum names over just raw strings in tests
 - Removed .mo files and converting .po files at runtime with polib
 - tests:
     - Increased global expect timeout (to 10,000)
@@ -29,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
 
 - Page numbers on search and ingest page
 

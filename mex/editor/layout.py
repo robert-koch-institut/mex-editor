@@ -127,6 +127,7 @@ def nav_link(item: NavItem) -> rx.Component:
                     ),
                 ),
             ),
+            link,
         ),
         link,
     )

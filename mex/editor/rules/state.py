@@ -1,6 +1,6 @@
 import copy
-from collections.abc import Generator, Sequence
-from typing import cast
+from collections.abc import Callable, Generator, Sequence
+from typing import Any, TypeVar, cast
 
 import reflex as rx
 from pydantic import ValidationError
@@ -46,13 +46,21 @@ locale_service = LocaleService.get()
 
 
 def _create_field_dict(field: EditorField) -> dict:
+    def _create_editor_value(editor_value: EditorValue):
+        result = copy.deepcopy(editor_value).dict()
+        if editor_value.identifier and not editor_value.text:
+            result.pop("text")
+        return result
+
     return {
         field.name: {
             "primary_sources": [
                 {
                     "identifier": f"{ps.identifier}",
                     "enabled": ps.enabled,
-                    "editor_values": copy.deepcopy(ps.editor_values),
+                    "editor_values": [
+                        _create_editor_value(ev) for ev in ps.editor_values
+                    ],
                 }
                 for ps in field.primary_sources
             ]
@@ -60,22 +68,112 @@ def _create_field_dict(field: EditorField) -> dict:
     }
 
 
-def _are_fields_equal_editwise(
-    left: Sequence[EditorField], right: Sequence[EditorField]
-) -> bool:
-    left = sorted(left, key=lambda x: x.name)
-    right = sorted(right, key=lambda x: x.name)
-    left_len = len(left)
-    if left_len == len(right):
-        for i in range(left_len):
-            li_dict = _create_field_dict(left[i])
-            ri_dict = _create_field_dict(right[i])
-            # print("COMPARING\n", li_dict, "\nWITH\n", ri_dict)
-            if li_dict != ri_dict:
-                return False
-        return True
+TCompareSeq = TypeVar("TCompareSeq")
 
-    return False
+
+def _compare_sequences(
+    left: Sequence[TCompareSeq],
+    right: Sequence[TCompareSeq],
+    key: Callable[[TCompareSeq], Any] | None,
+    comparator: Callable[[TCompareSeq, TCompareSeq], bool],
+) -> bool:
+    if key:
+        left = sorted(left, key=key)
+        right = sorted(right, key=key)
+    left_len = len(left)
+    if left_len != len(right):
+        return False
+
+    for i in range(left_len):
+        left_item = left[i]
+        right_item = right[i]
+        if key and key(left_item) != key(right_item):
+            return False
+        if not comparator(left_item, right_item):
+            return False
+
+    return True
+
+
+def _are_fields_equal_editwise_generic(
+    state_fields: Sequence[EditorField], api_fields: Sequence[EditorField]
+) -> bool:
+    def _compare_editor_value(state_value: EditorValue, api_value: EditorValue) -> bool:
+        value_compare_result = (
+            state_value.identifier == api_value.identifier
+            if api_value.identifier and not api_value.text
+            else state_value.identifier == api_value.identifier
+            and state_value.text == api_value.text
+        )
+
+        return (
+            value_compare_result
+            and state_value.badge == api_value.badge
+            and state_value.being_edited == api_value.being_edited
+            and state_value.enabled == api_value.enabled
+            and state_value.external == api_value.external
+            and state_value.href == api_value.href
+        )
+
+    def _compare_primary_sources(
+        state_ps: EditorPrimarySource, api_ps: EditorPrimarySource
+    ) -> bool:
+        return state_ps.enabled == api_ps.enabled and _compare_sequences(
+            state_ps.editor_values,
+            api_ps.editor_values,
+            None,
+            _compare_editor_value,
+        )
+
+    def _compare_fields(state_field: EditorField, api_field: EditorField) -> bool:
+        return _compare_sequences(
+            state_field.primary_sources,
+            api_field.primary_sources,
+            lambda x: x.identifier,
+            _compare_primary_sources,
+        )
+
+    return _compare_sequences(
+        state_fields, api_fields, lambda x: x.name, _compare_fields
+    )
+
+
+def _are_fields_equal_editwise(
+    state_fields: Sequence[EditorField], api_fields: Sequence[EditorField]
+) -> bool:
+    state_fields = sorted(state_fields, key=lambda x: x.name)
+    api_fields = sorted(api_fields, key=lambda x: x.name)
+    fields_len = len(api_fields)
+    if fields_len != len(state_fields):
+        return False
+
+    for i in range(fields_len):
+        state_field = state_fields[i]
+        api_field = api_fields[i]
+
+        if state_field.name == api_field.name:
+            state_psources = sorted(
+                state_field.primary_sources, key=lambda x: x.identifier
+            )
+            api_psources = sorted(api_field.primary_sources, key=lambda x: x.identifier)
+            source_len = len(api_psources)
+            if source_len != len(state_psources):
+                return False
+
+            for j in range(source_len):
+                state_ps = state_psources[j]
+                api_ps = api_psources[j]
+                if (
+                    state_ps.identifier != api_ps.identifier
+                    or state_ps.enabled != api_ps.enabled
+                ):
+                    return False
+
+                # sorted(api_ps.editor_values,
+                # state_value = state_ps.editor_values
+                # for k in range()
+
+    return True
 
 
 class CreateLocalChanges(rx.Base):
@@ -124,7 +222,16 @@ class RuleState(State):
         """
         fields: list[EditorField] = self.get_value("fields")
         api_fields: list[EditorField] = self.get_value("_api_fields")
-        return not _are_fields_equal_editwise(fields, api_fields)
+        result = not _are_fields_equal_editwise_generic(fields, api_fields)
+        print(
+            "COMPARE RESULT",
+            result,
+            "\n\n",
+            "\n".join([f.json() for f in fields]),
+            "\n\n",
+            "\n".join([f.json() for f in api_fields]),
+        )
+        return result
 
     @rx.var
     def local_drafts(self) -> LocalDraftSummary:

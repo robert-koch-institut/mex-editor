@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - renaming the field_name function to field_name_card
 - editor tests use backend-testing entrypoint
 - prefer using enum names over just raw strings in tests
+- change external test marker to requires_rki_infrastructure
 
 ### Deprecated
 

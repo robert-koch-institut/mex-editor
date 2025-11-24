@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- consent microsite with ldap auth to allow granting/revoking user info publishing
 - CustomSelect-Component that has items with value and label instead of simple strings
 - add caching for playwright browsers and node-modules to testing workflow
 
@@ -22,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increased global expect timeout (to 15,000) for tests
 - Using the field label for new/remove additive value button
 - renaming the field_name function to field_name_card
+- editor tests use backend-testing entrypoint
 - prefer using enum names over just raw strings in tests
 - change external test marker to requires_rki_infrastructure
 

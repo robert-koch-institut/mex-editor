@@ -8,7 +8,7 @@ from reflex.event import EventSpec
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
 from mex.editor.locale_service import LocaleService
-from mex.editor.models import NavItem, User
+from mex.editor.models import MergedLoginPerson, NavItem, User
 
 locale_service = LocaleService.get()
 available_locales = locale_service.get_available_locales()
@@ -26,6 +26,7 @@ class State(rx.State):
     navigate_target: str | None = None
     user_mex: User | None = None
     user_ldap: User | None = None
+    merged_login_person: MergedLoginPerson | None = None
     target_path_after_login: str | None = None
     nav_items: list[NavItem] = [
         NavItem(

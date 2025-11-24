@@ -52,7 +52,9 @@ def create_title() -> rx.Component:
             value=RuleState.stem_type,
             on_change=[
                 CreateState.set_stem_type,
+                RuleState.delete_local_edit,
                 RuleState.refresh,
+                RuleState.update_local_edit,
             ],
             custom_attrs={"data-testid": "entity-type-select"},
         ),
@@ -65,7 +67,22 @@ def index() -> rx.Component:
     return page(
         rx.vstack(
             rule_page_header(
-                create_title(),
+                rx.fragment(
+                    create_title(),
+                    rx.cond(
+                        RuleState.draft_id,
+                        rx.cond(
+                            CreateState.has_local_draft,
+                            rx.button(
+                                "Discard draft",
+                                on_click=[
+                                    RuleState.delete_local_edit,
+                                    rx.redirect(path="/create"),
+                                ],
+                            ),
+                        ),
+                    ),
+                )
             ),
             rx.foreach(
                 RuleState.translated_fields,

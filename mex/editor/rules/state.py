@@ -1,5 +1,6 @@
-from collections.abc import Generator, Sequence
-from typing import cast
+import copy
+from collections.abc import Callable, Generator, Sequence
+from typing import Any, TypeVar, cast
 
 import reflex as rx
 from pydantic import ValidationError
@@ -21,7 +22,7 @@ from mex.common.transform import ensure_postfix
 from mex.common.types import Identifier, Validation
 from mex.editor.exceptions import escalate_error
 from mex.editor.locale_service import LocaleService
-from mex.editor.models import EditorValue
+from mex.editor.models import MODEL_CONFIG_BY_STEM_TYPE, EditorValue
 from mex.editor.rules.models import (
     EditorField,
     EditorPrimarySource,
@@ -37,23 +38,257 @@ from mex.editor.state import State
 from mex.editor.transform import (
     transform_models_to_stem_type,
     transform_models_to_title,
+    transform_value,
 )
 from mex.editor.utils import resolve_editor_value, resolve_identifier
 
 locale_service = LocaleService.get()
 
 
+def _create_field_dict(field: EditorField) -> dict:
+    def _create_editor_value(editor_value: EditorValue):
+        result = copy.deepcopy(editor_value).dict()
+        if editor_value.identifier and not editor_value.text:
+            result.pop("text")
+        return result
+
+    return {
+        field.name: {
+            "primary_sources": [
+                {
+                    "identifier": f"{ps.identifier}",
+                    "enabled": ps.enabled,
+                    "editor_values": [
+                        _create_editor_value(ev) for ev in ps.editor_values
+                    ],
+                }
+                for ps in field.primary_sources
+            ]
+        }
+    }
+
+
+TCompareSeq = TypeVar("TCompareSeq")
+
+
+def _compare_sequences(
+    left: Sequence[TCompareSeq],
+    right: Sequence[TCompareSeq],
+    key: Callable[[TCompareSeq], Any] | None,
+    comparator: Callable[[TCompareSeq, TCompareSeq], bool],
+) -> bool:
+    if key:
+        left = sorted(left, key=key)
+        right = sorted(right, key=key)
+    left_len = len(left)
+    if left_len != len(right):
+        return False
+
+    for i in range(left_len):
+        left_item = left[i]
+        right_item = right[i]
+        if key and key(left_item) != key(right_item):
+            return False
+        if not comparator(left_item, right_item):
+            return False
+
+    return True
+
+
+def _are_fields_equal_editwise_generic(
+    state_fields: Sequence[EditorField], api_fields: Sequence[EditorField]
+) -> bool:
+    def _compare_editor_value(state_value: EditorValue, api_value: EditorValue) -> bool:
+        value_compare_result = (
+            state_value.identifier == api_value.identifier
+            if api_value.identifier and not api_value.text
+            else state_value.identifier == api_value.identifier
+            and state_value.text == api_value.text
+        )
+
+        return (
+            value_compare_result
+            and state_value.badge == api_value.badge
+            and state_value.being_edited == api_value.being_edited
+            and state_value.enabled == api_value.enabled
+            and state_value.external == api_value.external
+            and state_value.href == api_value.href
+        )
+
+    def _compare_primary_sources(
+        state_ps: EditorPrimarySource, api_ps: EditorPrimarySource
+    ) -> bool:
+        return state_ps.enabled == api_ps.enabled and _compare_sequences(
+            state_ps.editor_values,
+            api_ps.editor_values,
+            None,
+            _compare_editor_value,
+        )
+
+    def _compare_fields(state_field: EditorField, api_field: EditorField) -> bool:
+        return _compare_sequences(
+            state_field.primary_sources,
+            api_field.primary_sources,
+            lambda x: x.identifier,
+            _compare_primary_sources,
+        )
+
+    return _compare_sequences(
+        state_fields, api_fields, lambda x: x.name, _compare_fields
+    )
+
+
+def _are_fields_equal_editwise(
+    state_fields: Sequence[EditorField], api_fields: Sequence[EditorField]
+) -> bool:
+    state_fields = sorted(state_fields, key=lambda x: x.name)
+    api_fields = sorted(api_fields, key=lambda x: x.name)
+    fields_len = len(api_fields)
+    if fields_len != len(state_fields):
+        return False
+
+    for i in range(fields_len):
+        state_field = state_fields[i]
+        api_field = api_fields[i]
+
+        if state_field.name == api_field.name:
+            state_psources = sorted(
+                state_field.primary_sources, key=lambda x: x.identifier
+            )
+            api_psources = sorted(api_field.primary_sources, key=lambda x: x.identifier)
+            source_len = len(api_psources)
+            if source_len != len(state_psources):
+                return False
+
+            for j in range(source_len):
+                state_ps = state_psources[j]
+                api_ps = api_psources[j]
+                if (
+                    state_ps.identifier != api_ps.identifier
+                    or state_ps.enabled != api_ps.enabled
+                ):
+                    return False
+
+                # sorted(api_ps.editor_values,
+                # state_value = state_ps.editor_values
+                # for k in range()
+
+    return True
+
+
+class CreateLocalChanges(rx.Base):
+    stem_type: str = ""
+    fields: list[EditorField] = []
+
+
+class LocalChanges(rx.Base):
+    """Model to store user changes in the local storage of the browser."""
+
+    edit: dict[str, list[EditorField]] = {}
+    create: dict[str, CreateLocalChanges] = {}
+
+
+class LocalDraft(CreateLocalChanges):
+    title: EditorValue
+    identifier: str
+
+
+class LocalDraftSummary(rx.Base):
+    count: int = 0
+    drafts: Sequence[LocalDraft] = []
+
+
 class RuleState(State):
     """Base state for the edit and create components."""
 
+    local_storage: str = rx.LocalStorage("{}", sync=True)
+    _api_fields: list[EditorField] = []
+
     is_submitting: bool = False
     item_id: str | None = None
+    draft_id: str | None = None
     item_title: list[EditorValue] = []
     fields: list[EditorField] = []
     stem_type: str | None = None
     validation_messages: list[ValidationMessage] = []
 
-    @rx.var(cache=False)
+    @rx.var(cache=True, deps=["fields", "_api_fields"])
+    def has_changes(self) -> bool:
+        """Indicates if the current edit state differs from the original loaded state.
+
+        Returns:
+            bool: Returns True if the current edit state differs from the orginal
+            loaded state; otherwise False.
+        """
+        fields: list[EditorField] = self.get_value("fields")
+        api_fields: list[EditorField] = self.get_value("_api_fields")
+        result = not _are_fields_equal_editwise_generic(fields, api_fields)
+        print(
+            "COMPARE RESULT",
+            result,
+            "\n\n",
+            "\n".join([f.json() for f in fields]),
+            "\n\n",
+            "\n".join([f.json() for f in api_fields]),
+        )
+        return result
+
+    @rx.var
+    def local_drafts(self) -> LocalDraftSummary:
+        changes = LocalChanges.parse_raw(self.local_storage)
+
+        def _create_draft(x: CreateLocalChanges, identifier: str) -> LocalDraft:
+            config = MODEL_CONFIG_BY_STEM_TYPE[x.stem_type]
+            title_field = [
+                ps.editor_values[0]
+                for f in x.fields
+                for ps in f.primary_sources
+                if f.name == config.title and ps.editor_values
+            ]
+            print("creating draft", x.stem_type, config.model_dump_json(), title_field)
+
+            return LocalDraft(
+                identifier=identifier,
+                stem_type=x.stem_type,
+                fields=x.fields,
+                title=title_field[0]
+                if title_field
+                else transform_value(f"{x.stem_type}"),
+            )
+
+        drafts = [_create_draft(value, key) for key, value in changes.create.items()]
+
+        return LocalDraftSummary(count=len(drafts), drafts=drafts)
+
+    @rx.event
+    def update_local_edit(self) -> None:
+        """Stores the current edit state in the local storage of the browser."""
+        if self.item_id or self.draft_id:
+            changes = LocalChanges.parse_raw(self.local_storage)
+            fields = self.get_value("fields")
+            if self.item_id:
+                print("UPDATING LOCAL EDIT", self.item_id)
+                changes.edit[self.item_id] = fields
+            elif self.has_changes:
+                print("UPDATING LOCAL DRAFT", self.draft_id, self.stem_type)
+                changes.create[self.draft_id] = CreateLocalChanges(  # type: ignore[index]
+                    stem_type=self.stem_type or "",
+                    fields=fields,
+                )
+            self.local_storage = LocalChanges.json(changes)
+
+    @rx.event
+    def delete_local_edit(self) -> None:
+        """Removes the current edit state in the local storage of the browser."""
+        if self.item_id or self.draft_id:
+            changes = LocalChanges.parse_raw(self.local_storage)
+            if self.item_id:
+                changes.edit.pop(self.item_id)
+            elif self.draft_id in changes.create:
+                changes.create.pop(self.draft_id)  # type: ignore[arg-type]
+            self.local_storage = LocalChanges.json(changes)
+
+    @rx.var(cache=True, deps=["fields", "current_locale"])
     def translated_fields(self) -> Sequence[FieldTranslation]:
         """Compute the translated fields based on fields and current_locale.
 
@@ -130,6 +365,12 @@ class RuleState(State):
         self.fields.clear()
         self.validation_messages.clear()
         self.item_id = self.router.page.params.get("identifier")
+        self.draft_id = self.router.page.params.get("draft_identifier")
+
+        if not self.item_id and not self.draft_id:
+            yield rx.redirect(path=f"/create/{Identifier.generate()}")
+            return
+
         try:
             extracted_items = self._get_extracted_items()
         except HTTPError as exc:
@@ -137,6 +378,7 @@ class RuleState(State):
                 "backend", "error fetching extracted items", exc.response.text
             )
             return
+
         if extracted_items:
             self.stem_type = transform_models_to_stem_type(extracted_items)
         try:
@@ -146,7 +388,8 @@ class RuleState(State):
                 "backend", "error fetching rule items", exc.response.text
             )
             return
-        if rule_set:
+
+        if rule_set and self.item_id:
             self.stem_type = transform_models_to_stem_type([rule_set.additive])
 
         if self.item_id:
@@ -158,12 +401,30 @@ class RuleState(State):
             )
             self.item_title = transform_models_to_title([preview])
 
-        self.fields = transform_models_to_fields(
+        loaded_fields = transform_models_to_fields(
             extracted_items,
             additive=rule_set.additive,
             subtractive=rule_set.subtractive,
             preventive=rule_set.preventive,
         )
+
+        changes = LocalChanges.parse_raw(self.local_storage)
+        if self.item_id:
+            self.fields = changes.edit.get(self.item_id, loaded_fields)
+        elif self.draft_id:
+            local_create = changes.create.get(
+                self.draft_id,
+                CreateLocalChanges(
+                    stem_type=self.stem_type or RULE_SET_REQUEST_CLASSES[0].stemType,
+                    fields=loaded_fields,
+                ),
+            )
+            self.stem_type = local_create.stem_type
+            self.fields = local_create.fields
+        else:
+            self.fields = loaded_fields
+        self._api_fields = copy.deepcopy(loaded_fields)
+        # print("REFRESH :: DONE", self.stem_type)
 
     def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:
         """Send the rule set to the backend."""
@@ -193,7 +454,7 @@ class RuleState(State):
             )
             return
 
-        yield State.set_current_page_has_changes(False)  # type: ignore[misc]
+        yield RuleState.delete_local_edit
         # clear cache to show edits in the UI
         resolve_identifier.cache_clear()
         # trigger redirect to edit page or refresh state
@@ -256,13 +517,12 @@ class RuleState(State):
         field_name: str,
         href: str | None,
         enabled: bool,  # noqa: FBT001
-    ) -> EventSpec | None:
+    ) -> Generator[EventSpec, None, None]:
         """Toggle the `enabled` flag of a primary source."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             if primary_source.name.href == href:
                 primary_source.enabled = enabled
-                return State.set_current_page_has_changes(True)  # type: ignore[misc]
-        return None
+                yield RuleState.update_local_edit
 
     @rx.event
     def toggle_field_value(
@@ -270,70 +530,77 @@ class RuleState(State):
         field_name: str,
         value: EditorValue,
         enabled: bool,  # noqa: FBT001
-    ) -> EventSpec | None:
+    ) -> Generator[EventSpec, None, None]:
         """Toggle the `enabled` flag of a field value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             for editor_value in primary_source.editor_values:
                 if editor_value == value:
                     editor_value.enabled = enabled
-                    return State.set_current_page_has_changes(True)  # type: ignore[misc]
-
-        return None
+                    yield RuleState.update_local_edit
 
     @rx.event
     def toggle_field_value_editing(
         self,
         field_name: str,
         index: int,
-    ) -> None:
+    ) -> Generator[EventSpec, None, None]:
         """Toggle editing of a field value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[
             index
         ].being_edited = not primary_source.editor_values[index].being_edited
+        yield RuleState.update_local_edit
 
     @rx.event
-    def add_additive_value(self, field_name: str) -> EventSpec:
+    def add_additive_value(self, field_name: str) -> Generator[EventSpec, None, None]:
         """Add an additive rule to the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.append(EditorValue(being_edited=True))
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        yield RuleState.update_local_edit
 
     @rx.event
-    def remove_additive_value(self, field_name: str, index: int) -> EventSpec:
+    def remove_additive_value(
+        self, field_name: str, index: int
+    ) -> Generator[EventSpec, None, None]:
         """Remove an additive rule from the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.pop(index)
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        yield RuleState.update_local_edit
 
     @rx.event
-    def set_text_value(self, field_name: str, index: int, value: str) -> EventSpec:
+    def set_text_value(
+        self, field_name: str, index: int, value: str
+    ) -> Generator[EventSpec, None, None]:
         """Set the text attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].text = value
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        yield RuleState.update_local_edit
 
     @rx.event
     def set_identifier_value(
         self, field_name: str, index: int, value: str
-    ) -> EventSpec:
+    ) -> Generator[EventSpec, None, None]:
         """Set the identifier attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].identifier = value
         primary_source.editor_values[index].href = f"/item/{value}"
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        yield RuleState.update_local_edit
 
     @rx.event
-    def set_badge_value(self, field_name: str, index: int, value: str) -> EventSpec:
+    def set_badge_value(
+        self, field_name: str, index: int, value: str
+    ) -> Generator[EventSpec, None, None]:
         """Set the badge attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].badge = value
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        yield RuleState.update_local_edit
 
     @rx.event
-    def set_href_value(self, field_name: str, index: int, value: str) -> EventSpec:
+    def set_href_value(
+        self, field_name: str, index: int, value: str
+    ) -> Generator[EventSpec, None, None]:
         """Set an external href on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].href = value
         primary_source.editor_values[index].external = True
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        yield RuleState.update_local_edit

@@ -41,7 +41,24 @@ def index() -> rx.Component:
     return page(
         rx.vstack(
             rule_page_header(
-                edit_title(),
+                rx.fragment(
+                    edit_title(),
+                    rx.cond(
+                        EditState.has_changes,
+                        rx.fragment(
+                            "CHANGES!!!",
+                            rx.button(
+                                "Discard changes",
+                                on_click=[
+                                    RuleState.delete_local_edit,
+                                    RuleState.refresh,
+                                    RuleState.resolve_identifiers,
+                                ],
+                            ),
+                        ),
+                        rx.text("NO CHANGES"),
+                    ),
+                )
             ),
             toggle_all_switch(),
             rx.foreach(

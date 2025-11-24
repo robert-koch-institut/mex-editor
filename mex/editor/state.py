@@ -21,8 +21,6 @@ class State(rx.State):
         (x for x in available_locales if x.id.lower().startswith("de")),
         available_locales[0],
     ).id
-    current_page_has_changes: bool = False
-    navigate_dialog_open: bool = False
     navigate_target: str | None = None
     user_mex: User | None = None
     user_ldap: User | None = None
@@ -63,38 +61,6 @@ class State(rx.State):
             locale: The locale to change to.
         """
         self.current_locale = locale
-
-    @rx.event
-    def set_current_page_has_changes(self, value: bool) -> None:  # noqa: FBT001
-        """Set the current_page_has_changes attribute to the given value.
-
-        Args:
-            value: The value of the current_page_has_changes attribute.
-        """
-        self.current_page_has_changes = value
-
-    @rx.event
-    def close_navigate_dialog(self) -> None:
-        """Close the navigate dialog."""
-        self.navigate_dialog_open = False
-
-    @rx.event
-    def navigate(self, raw_path: str) -> EventSpec | None:
-        """Navigate to a given path and warn if there are unsaved changes.
-
-        If changes on the current page are present, a dialog will appear and warn the
-        user about unsaved changes. The user can decide to stay on the current page or
-        discard the changes and navigate away.
-
-        Args:
-            raw_path: The path to navigate to.
-        """
-        self.navigate_target = raw_path
-        if self.current_page_has_changes:
-            self.navigate_dialog_open = True
-            return None
-
-        return rx.redirect(self.navigate_target)
 
     @rx.event
     def logout(self) -> Generator[EventSpec, None, None]:

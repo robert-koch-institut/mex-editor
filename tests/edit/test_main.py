@@ -28,9 +28,6 @@ def edit_page(
     load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
     page = writer_user_page
-    page.set_default_navigation_timeout(50000)
-    page.set_default_timeout(10000)
-
     page.goto(f"{frontend_url}/item/{extracted_activity.stableTargetId}")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()

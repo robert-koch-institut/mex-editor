@@ -51,7 +51,7 @@ def test_aux_tab_section(ingest_page: Page) -> None:
     ids=["ldap", "wikidata", "orcid"],
 )
 @pytest.mark.integration
-@pytest.mark.external
+@pytest.mark.requires_rki_infrastructure
 def test_search_and_ingest_roundtrip(
     ingest_page: Page,
     aux_provider: str,

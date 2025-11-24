@@ -87,7 +87,7 @@ addopts = [
 ]
 markers = [
     "integration: mark a test as integration test",
-    "external: mark a test as external integration test"
+    "requires_rki_infrastructure: mark a test as requiring rki infrastructure"
 ]
 
 [tool.ruff]

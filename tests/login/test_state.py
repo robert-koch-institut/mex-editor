@@ -15,7 +15,6 @@ def test_login_state_login_success() -> None:
     assert state.user_mex
     assert state.user_mex.dict() == {
         "name": "writer",
-        "authorization": "Basic d3JpdGVyOndyaXRlcl9wYXNz",
         "write_access": True,
     }
 

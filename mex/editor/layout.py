@@ -108,8 +108,11 @@ def app_logo() -> rx.Component:
     )
 
 
-def nav_bar() -> rx.Component:
+def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
     """Return a navigation bar component."""
+    nav_items_to_use = (
+        nav_items_source if nav_items_source is not None else State.nav_items
+    )
     return rx.vstack(
         rx.box(
             style=rx.Style(
@@ -123,7 +126,7 @@ def nav_bar() -> rx.Component:
                 app_logo(),
                 rx.divider(orientation="vertical", size="2"),
                 rx.hstack(
-                    rx.foreach(State.nav_items_translated, nav_link),
+                    rx.foreach(nav_items_to_use, nav_link),
                     justify="start",
                     spacing="4",
                 ),
@@ -203,23 +206,44 @@ def navigate_away_dialog() -> rx.Component:
     )
 
 
-def page(*children: rx.Component) -> rx.Component:
-    """Return a page fragment with navigation bar and given children."""
-    return rx.cond(
-        State.user_mex,
-        rx.center(
-            nav_bar(),
-            rx.hstack(
-                *children,
-                style=rx.Style(
-                    maxWidth="var(--app-max-width)",
-                    minWidth="var(--app-min-width)",
-                    padding="calc(var(--space-6) * 4) var(--space-6) var(--space-6)",
-                    width="100%",
-                ),
-                custom_attrs={"data-testid": "page-body"},
+def page(
+    *children: rx.Component,
+    user_type: str = "user_mex",
+    nav_items_source: list[NavItem] | None = None,
+    include_navigate_dialog: bool = True,
+) -> rx.Component:
+    """Return a page fragment with navigation bar and given children.
+
+    Args:
+        *children: Components to render in the page body
+        user_type: State attribute to check for user login
+        nav_items_source: Custom navigation items, if None uses default
+        include_navigate_dialog: Whether to include the navigate away dialog
+    """
+    user_check = getattr(State, user_type)
+    navbar_component = nav_bar(nav_items_source)
+
+    page_content = [
+        navbar_component,
+        rx.hstack(
+            *children,
+            style=rx.Style(
+                maxWidth="var(--app-max-width)",
+                minWidth="var(--app-min-width)",
+                padding="calc(var(--space-6) * 4) var(--space-6) var(--space-6)",
+                width="100%",
             ),
-            navigate_away_dialog(),
+            custom_attrs={"data-testid": "page-body"},
+        ),
+    ]
+
+    if include_navigate_dialog:
+        page_content.append(navigate_away_dialog())
+
+    return rx.cond(
+        user_check,
+        rx.center(
+            *page_content,
             style=rx.Style(
                 {
                     "--app-max-width": "calc(1480px * var(--scaling))",

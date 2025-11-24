@@ -8,10 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- consent microsite
 
-- CustomSelect-Component that has items with value and label instead of simple strings
-
+- consent microsite with ldap auth to allow granting/revoking user info publishing
 - CustomSelect-Component that has items with value and label instead of simple strings
 - add caching for playwright browsers and node-modules to testing workflow
 

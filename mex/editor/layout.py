@@ -111,7 +111,7 @@ def app_logo() -> rx.Component:
 def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
     """Return a navigation bar component."""
     nav_items_to_use = (
-        nav_items_source if nav_items_source is not None else State.nav_items
+        nav_items_source if nav_items_source is not None else State.nav_items_translated
     )
     return rx.vstack(
         rx.box(

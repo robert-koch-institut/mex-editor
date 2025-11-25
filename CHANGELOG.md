@@ -8,21 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - CustomSelect-Component that has items with value and label instead of simple strings
 
 ### Changes
+
 - Field of the ReferenceFilter is now translated
 - Initial language now picking from available languages instead of hard coded value
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - Increased global expect timeout (to 10,000) for tests
 - Using the field label for new/remove additive value button
 - renaming the field_name function to field_name_card
+- updated neo4j dependency to 2025.10
+- updated mex-backend dependency to 1.3
+- updated mex-common dependency to 1.10
+- updated mex-artificial dependency to 1.2.1
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
 - Page numbers on search and ingest page
 
 ### Security

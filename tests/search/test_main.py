@@ -369,7 +369,7 @@ def test_push_search_params(
 
     # load page and verify url
     page.goto(frontend_url)
-    page.wait_for_url("**/", timeout=10000)
+    page.wait_for_url("**/")
 
     # select an entity type
     entity_types = page.get_by_test_id("entity-types")
@@ -386,12 +386,13 @@ def test_push_search_params(
     # add a query string to the search constraints
     search_input = page.get_by_placeholder("Search here...")
     expect(search_input).to_be_visible()
-    search_input.fill("Can I search here?")
+    search_input.fill("Une activité active")
     search_input.press("Enter")
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
-        "**/?q=Can+I+search+here%3F&page=1&entityType=Activity&referenceFilterStrategy=dynamic"
+        "**/?q=Une+activit%C3%A9+active&page=1&entityType=Activity"
+        "&referenceFilterStrategy=dynamic"
     )
 
     # activate tab for had primary source filtering
@@ -402,16 +403,19 @@ def test_push_search_params(
     primary_sources = page.get_by_test_id("had-primary-sources")
     expect(primary_sources).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load-2.png")
-    primary_sources.get_by_text(primary_source.title[0].value).click()
-    checked = primary_sources.get_by_role("checkbox", checked=True)
+    checkbox = primary_sources.get_by_text(primary_source.title[0].value)
+    expect(checkbox).to_be_visible()
+    checkbox.click()
     page.screenshot(
         path="tests_search_test_main-test_push_search_params-on-click-2.png"
     )
+    expect(page.get_by_test_id("search-results-section")).to_be_visible()
+    checked = primary_sources.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
-        "**/?q=Can+I+search+here%3F&page=1&entityType=Activity"
+        "**/?q=Une+activit%C3%A9+active&page=1&entityType=Activity"
         "&referenceFilterStrategy=had_primary_source"
         f"&hadPrimarySource={primary_source.stableTargetId}"
     )

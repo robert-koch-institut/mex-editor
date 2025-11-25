@@ -9,20 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- consent microsite with ldap auth to allow granting/revoking user info publishing
 - CustomSelect-Component that has items with value and label instead of simple strings
+- add caching for playwright browsers and node-modules to testing workflow
 
 ### Changes
 
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
 - Field of the ReferenceFilter is now translated
 - Initial language now picking from available languages instead of hard coded value
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
-- Increased global expect timeout (to 10,000) for tests
+- Increased global expect timeout (to 15,000) for tests
 - Using the field label for new/remove additive value button
 - renaming the field_name function to field_name_card
-- updated neo4j dependency to 2025.10
+- editor tests use backend-testing entrypoint
+- prefer using enum names over just raw strings in tests
+- change external test marker to requires_rki_infrastructure
+- updated mex-artificial dependency to 1.2.1
 - updated mex-backend dependency to 1.3
 - updated mex-common dependency to 1.10
-- updated mex-artificial dependency to 1.2.1
+- updated neo4j dependency to 2025.10
 
 ### Deprecated
 

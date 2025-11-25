@@ -15,7 +15,7 @@ from mex.common.models import (
     SubtractiveActivity,
 )
 from mex.common.transform import ensure_prefix
-from mex.common.types import Identifier, Text, TextLanguage
+from mex.common.types import ActivityType, Identifier, Text, TextLanguage, Theme
 from mex.editor.fields import REQUIRED_FIELDS_BY_CLASS_NAME
 from mex.editor.rules.transform import get_required_mergeable_field_names
 
@@ -125,7 +125,7 @@ def test_edit_page_renders_text(
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_text.png")
     expect(text).to_be_visible()
     expect(text).to_contain_text("Aktivität 1")  # text value
-    expect(text).to_contain_text("DE")  # language badge
+    expect(text).to_contain_text(TextLanguage.DE.name)  # language badge
 
 
 @pytest.mark.integration
@@ -136,7 +136,9 @@ def test_edit_page_renders_vocab(
     theme = page.get_by_test_id(f"value-theme-{extracted_activity.hadPrimarySource}-0")
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_vocab.png")
     expect(theme).to_be_visible()
-    expect(theme).to_contain_text("INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY")  # theme value
+    expect(theme).to_contain_text(
+        Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"].name
+    )  # theme value
     expect(theme).to_contain_text("Theme")  # vocabulary name
 
 
@@ -441,7 +443,9 @@ def test_edit_page_renders_vocabulary_input(edit_page: Page) -> None:
 
     badge_select = page.get_by_test_id("additive-rule-activityType-0-badge")
     expect(badge_select).to_be_visible()
-    expect(page.get_by_text("THIRD_PARTY_FUNDED_PROJECT")).to_be_visible()
+    expect(
+        page.get_by_text(ActivityType["THIRD_PARTY_FUNDED_PROJECT"].name)
+    ).to_be_visible()
     badge_select.focus()
     page.keyboard.press("ArrowDown")
     page.keyboard.press("ArrowDown")
@@ -450,7 +454,9 @@ def test_edit_page_renders_vocabulary_input(edit_page: Page) -> None:
     )
     page.keyboard.press("Enter")
     page.locator("body").focus()
-    expect(page.get_by_text("INTERNAL_PROJECT_ENDEAVOR")).to_be_visible()
+    expect(
+        page.get_by_text(ActivityType["INTERNAL_PROJECT_ENDEAVOR"].name)
+    ).to_be_visible()
 
 
 @pytest.mark.integration

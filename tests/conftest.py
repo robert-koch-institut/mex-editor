@@ -1,3 +1,4 @@
+from collections import deque
 from typing import Any, cast
 
 import pytest
@@ -6,21 +7,21 @@ from playwright.sync_api import Page, expect
 from pydantic import SecretStr
 from pytest import MonkeyPatch
 
-from mex.artificial.helpers import generate_artificial_extracted_items
+from mex.artificial.helpers import create_artificial_items_and_rule_sets
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import (
-    EXTRACTED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
+    AnyRuleSetResponse,
     ExtractedActivity,
     ExtractedContactPoint,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
     ExtractedResource,
 )
+from mex.common.sinks.backend_api import BackendApiSink
 from mex.common.types import (
     AccessRestriction,
-    Email,
     Identifier,
     IdentityProvider,
     Link,
@@ -160,12 +161,12 @@ def dummy_data() -> list[AnyExtractedModel]:
         title=[Text(value="Primary Source Two", language=TextLanguage.EN)],
     )
     contact_point_1 = ExtractedContactPoint(
-        email=[Email("info@contact-point.one")],
+        email=["info@contact-point.one"],
         hadPrimarySource=primary_source_1.stableTargetId,
         identifierInPrimarySource="cp-1",
     )
     contact_point_2 = ExtractedContactPoint(
-        email=[Email("help@contact-point.two")],
+        email=["help@contact-point.two"],
         hadPrimarySource=primary_source_1.stableTargetId,
         identifierInPrimarySource="cp-2",
     )
@@ -311,7 +312,7 @@ def load_pagination_dummy_data(
         pagination_dummy_data.extend(
             [
                 ExtractedContactPoint(
-                    email=[Email(f"help-{i}@pagination.abc")],
+                    email=[f"help-{i}@pagination.abc"],
                     hadPrimarySource=cast(
                         "MergedPrimarySourceIdentifier", primary_source_1.stableTargetId
                     ),
@@ -334,21 +335,20 @@ def extracted_activity(
 
 
 @pytest.fixture
-def artificial_extracted_items() -> list[AnyExtractedModel]:
-    return generate_artificial_extracted_items(
-        locale="de_DE",
-        seed=42,
-        count=25,
-        chattiness=16,
-        stem_types=list(EXTRACTED_MODEL_CLASSES_BY_NAME),
-    )
+def artificial_items() -> list[AnyExtractedModel | AnyRuleSetResponse]:
+    return [
+        item
+        for container in create_artificial_items_and_rule_sets(count=333)
+        for item in [container.extracted_item, container.rule_set]
+        if item
+    ]
 
 
 @pytest.fixture
-def load_artificial_extracted_items(
-    artificial_extracted_items: list[AnyExtractedModel],
-) -> list[AnyExtractedModel]:
-    """Ingest artificial data into the graph."""
-    connector = BackendApiConnector.get()
-    connector.ingest(artificial_extracted_items)
-    return artificial_extracted_items
+def load_artificial_items(
+    artificial_items: list[AnyExtractedModel | AnyRuleSetResponse],
+) -> list[AnyExtractedModel | AnyRuleSetResponse]:
+    """Ingest artificial items into the backend api."""
+    sink = BackendApiSink.get()
+    deque(sink.load(artificial_items), maxlen=0)
+    return artificial_items

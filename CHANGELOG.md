@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - editor tests use backend-testing entrypoint
 - prefer using enum names over just raw strings in tests
 - change external test marker to requires_rki_infrastructure
+- updated mex-artificial dependency to 1.2.1
+- updated mex-backend dependency to 1.3
+- updated mex-common dependency to 1.10
+- updated neo4j dependency to 2025.10
 
 ### Deprecated
 

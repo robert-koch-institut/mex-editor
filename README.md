@@ -71,6 +71,7 @@ components of the MEx project are open-sourced under the same license as well.
 - run unit and integration tests with `make test` or `.\mex.bat test`
 - run just the unit tests with `make unit` or `.\mex.bat unit`
   - for integration tests you need a local `mex-backend`, `neo4j` and `mex-editor`
+  - for browser tests, you can use the pytest arg `--headed` to see the UI
 
 ### Updating dependencies
 

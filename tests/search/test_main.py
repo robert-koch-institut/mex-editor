@@ -4,10 +4,12 @@ from playwright.sync_api import Page, expect
 from mex.common.models import (
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
+    AnyRuleSetResponse,
     ExtractedActivity,
     ExtractedPrimarySource,
     ExtractedResource,
 )
+from mex.editor.search.state import SearchState
 
 
 @pytest.mark.integration
@@ -42,10 +44,11 @@ def test_index(
 
 
 @pytest.mark.integration
-@pytest.mark.usefixtures("load_pagination_dummy_data")
+@pytest.mark.usefixtures("load_artificial_items")
 def test_pagination(
     frontend_url: str,
     writer_user_page: Page,
+    load_artificial_items: list[AnyExtractedModel | AnyRuleSetResponse],
 ) -> None:
     page = writer_user_page
     page.goto(frontend_url)
@@ -58,7 +61,7 @@ def test_pagination(
     page.screenshot(path="tests_search_test_main_test_pagination.png")
 
     # check if:
-    # - previos is disabled
+    # - previous is disabled
     # - select shows all expected page numbers
     # - next is enabled
     expect(pagination_previous).to_be_disabled()
@@ -78,9 +81,12 @@ def test_pagination(
     expect(pagination_page_select).to_have_text("2")
     expect(pagination_next).to_be_enabled()
 
-    pagination_next.click()
-    expect(pagination_previous).to_be_enabled()
-    expect(pagination_page_select).to_have_text("3")
+    pagination_page_select.scroll_into_view_if_needed()
+    pagination_page_select.focus()
+    page.keyboard.press("7")
+    assert len({i.stableTargetId for i in load_artificial_items}) == 333  # merged items
+    assert SearchState.__fields__["limit"].default == 50  # show 50 items per page
+    expect(pagination_page_select).to_have_text("7")  # 333/50 = 6.66, so 7 pages
     expect(pagination_next).to_be_disabled()
 
 
@@ -300,7 +306,7 @@ def test_reference_filter_field_translation(
     page.goto(frontend_url)
     page.wait_for_selector("[data-testid='page-body']")
 
-    # switch language to specifid locale
+    # switch language to specified locale
     lang_switcher = page.get_by_test_id("language-switcher")
     lang_switcher.click()
     page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()

@@ -23,7 +23,7 @@ def label_var(
     interval: datetime.timedelta | int | None = None,
     backend: bool | None = None,  # noqa: FBT001
     **kwargs,  # noqa: ANN003
-) -> Callable[[Callable[[StateT], ReturnT]], ComputedVar[str]]: ...  # pyright: ignore [reportInvalidTypeVarUse]
+) -> Callable[[Callable[[StateT], ReturnT]], ComputedVar[str]]: ...
 
 
 @overload
@@ -57,7 +57,6 @@ def label_var(  # noqa: PLR0913
         initial_value: The initial value of the computed var.
         cache: Whether to cache the computed value.
         deps: Explicit var dependencies to track.
-        auto_deps: Whether var dependencies should be auto-determined.
         interval: Interval at which the computed var should be updated.
         backend: Whether the computed var is a backend var.
         **kwargs: additional attributes to set on the instance

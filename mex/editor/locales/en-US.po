@@ -6,160 +6,157 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "search.search_input.placeholder"
-msgstr "Hier Suchen..."
+msgstr "Search here..."
 
 msgid "search.entitytype_filter.title"
-msgstr "Entitätstyp"
+msgstr "Entity Type"
 
-msgid "search.referencefield_filter.field.placholder"
-msgstr "Feld nachdem gefiltert wird"
+msgid "search.reference_field_filter.field_placeholder"
+msgstr "Field to filter by"
 
 msgid "search.reference_filter.dynamic_tab"
-msgstr "Dynamisch"
+msgstr "Dynamic"
 
 msgid "search.reference_filter.primarysource_tab"
-msgstr "Primärquelle"
+msgstr "PrimarySource"
 
 msgid "search.result_summary.format"
-msgstr "Zeige {0} von {1} Einträgen"
+msgstr "Showing {0} of {1} items"
 
 msgid "search.reference_field_filter.placeholder"
-msgstr "Feld zum Filtern"
+msgstr "Field to filter by"
 
 msgid "search.reference_field_filter.add"
-msgstr "Filter hinzufügen"
+msgstr "Add Filter"
 
 msgid "create.title.create_new"
-msgstr "Erzeugen von"
+msgstr "Create new"
 
 msgid "edit.toggle_all"
-msgstr "Alle umschalten"
+msgstr "Toggle all"
 
 msgid "login.username"
-msgstr "Benutzername"
+msgstr "Username"
 
 msgid "login.password"
-msgstr "Passwort"
+msgstr "Password"
 
 msgid "login.button_login"
-msgstr "Anmelden"
+msgstr "Login"
 
 msgid "login.invalid_credentials"
-msgstr "Ungültige Anmeldedaten!"
+msgstr "Invalid credentials!"
 
 msgid "ingest.search.placeholder"
-msgstr "Suchtext..."
+msgstr "Search here..."
 
 msgid "ingest.button_ingest"
-msgstr "Aufnehmen"
+msgstr "Ingest"
 
 msgid "ingest.button_ingested"
-msgstr "Aufgenommen"
+msgstr "Ingested"
 
 msgid "ingest.search.result_summary_format"
-msgstr "Zeige {0} von {1} Einträgen"
+msgstr "Showing {0} of {1} items"
 
 msgid "ingest.search_info.ldap"
-msgstr "Suchen Sie Benutzer nach ihrem Anzeigenamen und Email-Adressen. 'Sie können \"*\" als Platzhalter nutzen z.B. \"Muster*\".'"
+msgstr "Search users by display name and contact points by email. 'Please use \"*\" as placeholder e.g. \"Muster*\".'"
 
 msgid "ingest.search_info.wikidata"
-msgstr "Durchsuchen Sie Wikidata nach \"Concept URIs\". Fügen Sie einfach URI z.B. \"http://www.wikidata.org/entity/Q918501\" ein."
+msgstr "Search Wikidata by \"Concept URI\". Please paste URI e.g. \"http://www.wikidata.org/entity/Q918501\"."
 
 msgid "ingest.toast_success.title"
-msgstr "Aufgenommen"
+msgstr "Ingested"
 
 msgid "ingest.toast_success.message_format"
-msgstr "{} wurde erfolgreich aufgenommen."
+msgstr "{} was ingested successfully."
 
 msgid "merge.result_summary.format"
-msgstr "Zeige {0} von {1} Einträgen"
+msgstr "Showing {0} of {1} items"
 
 msgid "merge.submit_button"
-msgstr "Zusammenführung einreichen"
+msgstr "Submit Merge"
 
 msgid "merge.search_input.placeholder"
-msgstr "Hier Suchen..."
+msgstr "Search here..."
 
 msgid "merge.search.title_format"
-msgstr "Suche {0} Einträge"
+msgstr "Search {0} items"
 
 msgid "merge.search.clear_button"
-msgstr "Leeren"
+msgstr "Clear"
 
 msgid "merge.filter_entity_type.title"
-msgstr "Filtern nach Entitätstyp"
+msgstr "Filter by Entity Type"
 
 msgid "rules.additive_rule.add_button_prefix"
-msgstr "Hinzufügen von"
+msgstr "New"
 
 msgid "rules.additive_rule.remove_button_prefix"
-msgstr "Entfernen von"
+msgstr "Remove"
 
 msgid "rules.validation_result_dialog.close_button"
-msgstr "Schließen"
+msgstr "Close"
 
 msgid "rules.validation_result_dialog.title"
-msgstr "Validierungsfehler"
+msgstr "Validation Errors"
 
 msgid "rules.save_button.format"
-msgstr "Speichern von {0}"
+msgstr "Save {0}"
 
 msgid "rules.save_button.saving_format"
-msgstr "Speicher {0}..."
+msgstr "Saving {0}..."
 
 msgid "rules.save_success_dialog.title"
-msgstr "Gespeichert"
+msgstr "Saved"
 
 msgid "rules.save_success_dialog.message_format"
-msgstr "{} wurde erfolgreich gespeichert."
+msgstr "{} was saved successfully."
 
 msgid "components.titles.additional_titles"
-msgstr "+ zusätzliche Titel"
+msgstr "+ additional titles"
 
 msgid "components.pagination.next_button"
-msgstr "Nächste"
+msgstr "Next"
 
 msgid "components.pagination.previous_button"
-msgstr "Vorherige"
+msgstr "Previous"
 
 msgid "layout.nav_bar.logout_button"
-msgstr "Abmelden"
+msgstr "Logout"
 
 msgid "layout.nav_bar.search_navitem"
-msgstr "Suchen"
+msgstr "Search"
 
 msgid "layout.nav_bar.create_navitem"
-msgstr "Erstellen"
+msgstr "Create"
 
 msgid "layout.nav_bar.edit_navitem"
-msgstr "Bearbeiten"
+msgstr "Edit"
 
 msgid "layout.nav_bar.merge_navitem"
-msgstr "Zusammenführen"
+msgstr "Merge"
 
 msgid "layout.nav_bar.ingest_navitem"
-msgstr "Aufnehmen"
-
-msgid "abstract.singular"
-msgstr "Kurzbeschreibung"
+msgstr "Ingest"
 
 msgid "consent.resources.title"
-msgstr "Datenbestände & Datensätze"
+msgstr "Datasources & Records"
 
 msgid "consent.projects.title"
-msgstr "Projekte"
+msgstr "Projects"
 
 msgid "consent.user_data.loading"
-msgstr "Lade Kontodaten..."
+msgstr "Loading user data..."
 
 msgid "consent.consent_box.consent_button"
-msgstr "Einwilligen"
+msgstr "Consent"
 
 msgid "consent.consent_box.no_consent_button"
-msgstr "Ablehnen"
+msgstr "Denial"
 
 msgid "consent.consent_status.loading"
-msgstr "Lade Einverständniserklärung..."
+msgstr "Loading consent status..."
 
 msgid "consent.nav_bar.consent_navitem"
-msgstr "Einverständniserklärung"
+msgstr "Informed Consent"

@@ -2,14 +2,16 @@ import re
 from gettext import GNUTranslations
 from importlib.resources import files
 from io import BytesIO
-from pathlib import Path
-from typing import Self, cast
+from typing import TYPE_CHECKING, Self, cast
 
 import polib
 from babel import Locale as BabelLocale
 
 from mex.common.context import SingleSingletonStore
 from mex.common.models import BaseModel
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 LOCALE_SERVICE_STORE = SingleSingletonStore["LocaleService"]()
 
@@ -47,12 +49,13 @@ class LocaleService:
         """
         return cast("Self", LOCALE_SERVICE_STORE.load(cls))
 
+    _editor_locale_path = cast("Path", (files("mex.editor") / "locales"))
     _available_locales: dict[str, MExLocale] = {}
     _translations: dict[str, GNUTranslations] = {}
 
     def __init__(self) -> None:
         """Initialize with all available locales."""
-        for po_file in (Path.cwd() / "locales").glob("*.po"):
+        for po_file in self._editor_locale_path.glob("*.po"):
             locale = po_file.name.removesuffix(".po")
             language = re.split("[-_]", locale)[0]
             label = BabelLocale(language).get_language_name()
@@ -79,7 +82,7 @@ class LocaleService:
             model_po = polib.pofile(
                 cast("Path", (files("mex.model") / "i18n")) / filename
             )
-            editor_po = polib.pofile(Path.cwd() / "locales" / filename)
+            editor_po = polib.pofile(self._editor_locale_path / filename)
             editor_po.extend(model_po)
             self._translations[locale_id] = GNUTranslations(
                 BytesIO(editor_po.to_binary())
@@ -93,7 +96,8 @@ class LocaleService:
             locale_id (str): The locale to use.
             msg_id (str): The message id of the message to get the text for.
 
-        Returns: The message of the msg_id for the given locale_id.
+        Returns:
+            The message of the msg_id for the given locale_id.
         """
         translation = self._ensure_translation(locale_id)
         return translation.gettext(msg_id)

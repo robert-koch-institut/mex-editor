@@ -57,9 +57,6 @@ def _build_had_primary_source_refresh_params(
     }
 
 
-locale_service = LocaleService.get()
-
-
 class SearchState(State):
     """State management for the search page."""
 
@@ -404,9 +401,9 @@ class SearchState(State):
     def label_entitytype_filter_title(self) -> None:
         """Label for entitytype_filter.title."""
 
-    @label_var(label_id="search.referencefield_filter.field.placholder")
-    def label_referencefield_filter_field_placholder(self) -> None:
-        """Label for referencefield_filter.field.placholder."""
+    @label_var(label_id="search.reference_field_filter.field_placeholder")
+    def label_reference_field_filter_field_placholder(self) -> None:
+        """Label for reference_field_filter.field_placeholder."""
 
     @label_var(label_id="search.reference_filter.dynamic_tab")
     def label_reference_filter_dynamic_tab(self) -> None:

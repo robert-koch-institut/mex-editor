@@ -35,7 +35,7 @@ def user_menu() -> rx.Component:
             rx.menu.item(cast("User", State.user_mex).name, disabled=True),
             rx.menu.separator(),
             rx.menu.item(
-                "Logout",
+                State.label_nav_bar_logout_button,
                 on_select=State.logout,
                 custom_attrs={"data-testid": "logout-button"},
             ),
@@ -77,7 +77,10 @@ def nav_link(item: NavItem) -> rx.Component:
         on_click=State.navigate(item.raw_path),  # type: ignore[misc]
         underline=item.underline,  # type: ignore[arg-type]
         class_name="nav-item",
-        custom_attrs={"data-href": item.raw_path},
+        custom_attrs={
+            "data-href": item.raw_path,
+            "data-testid": f"nav-item-{item.path}",
+        },
     )
 
 
@@ -108,7 +111,7 @@ def app_logo() -> rx.Component:
 def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
     """Return a navigation bar component."""
     nav_items_to_use = (
-        nav_items_source if nav_items_source is not None else State.nav_items
+        nav_items_source if nav_items_source is not None else State.nav_items_translated
     )
     return rx.vstack(
         rx.box(
@@ -203,6 +206,19 @@ def navigate_away_dialog() -> rx.Component:
     )
 
 
+def custom_focus_script() -> rx.Script:
+    """Creates a Script that looks for '[data-focusme]' and calls '.focus()' in it."""
+    return rx.script(
+        """
+    (function() {
+        document.querySelectorAll('[data-focusme]').forEach(item=> {
+            setTimeout(() => item.focus(), 10);
+        })
+    })()
+    """
+    )
+
+
 def page(
     *children: rx.Component,
     user_type: str = "user_mex",
@@ -232,6 +248,7 @@ def page(
             ),
             custom_attrs={"data-testid": "page-body"},
         ),
+        custom_focus_script(),
     ]
 
     if include_navigate_dialog:

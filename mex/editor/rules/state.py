@@ -20,6 +20,7 @@ from mex.common.models import (
 from mex.common.transform import ensure_postfix
 from mex.common.types import Identifier, Validation
 from mex.editor.exceptions import escalate_error
+from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import EditorValue
 from mex.editor.rules.models import (
@@ -193,7 +194,7 @@ class RuleState(State):
             )
             return
 
-        yield State.set_current_page_has_changes(False)  # type: ignore[misc]
+        self.set_current_page_has_changes(False)  # type: ignore[misc]
         # clear cache to show edits in the UI
         resolve_identifier.cache_clear()
         # trigger redirect to edit page or refresh state
@@ -217,8 +218,8 @@ class RuleState(State):
     def show_submit_success_toast(self) -> Generator[EventSpec, None, None]:
         """Show a toast for a successfully submitted rule-set."""
         yield rx.toast.success(
-            title="Saved",
-            description=f"{self.stem_type} was saved successfully.",
+            title=self.label_save_success_dialog_title,
+            description=self.label_save_success_dialog_message_format,
             class_name="editor-toast",
             close_button=True,
             dismissible=True,
@@ -256,13 +257,12 @@ class RuleState(State):
         field_name: str,
         href: str | None,
         enabled: bool,  # noqa: FBT001
-    ) -> EventSpec | None:
+    ) -> None:
         """Toggle the `enabled` flag of a primary source."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             if primary_source.name.href == href:
                 primary_source.enabled = enabled
-                return State.set_current_page_has_changes(True)  # type: ignore[misc]
-        return None
+                self.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def toggle_field_value(
@@ -270,15 +270,13 @@ class RuleState(State):
         field_name: str,
         value: EditorValue,
         enabled: bool,  # noqa: FBT001
-    ) -> EventSpec | None:
+    ) -> None:
         """Toggle the `enabled` flag of a field value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             for editor_value in primary_source.editor_values:
                 if editor_value == value:
                     editor_value.enabled = enabled
-                    return State.set_current_page_has_changes(True)  # type: ignore[misc]
-
-        return None
+                    self.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
     def toggle_field_value_editing(
@@ -293,47 +291,80 @@ class RuleState(State):
         ].being_edited = not primary_source.editor_values[index].being_edited
 
     @rx.event
-    def add_additive_value(self, field_name: str) -> EventSpec:
+    def add_additive_value(self, field_name: str) -> None:
         """Add an additive rule to the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.append(EditorValue(being_edited=True))
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        self.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
-    def remove_additive_value(self, field_name: str, index: int) -> EventSpec:
+    def remove_additive_value(self, field_name: str, index: int) -> None:
         """Remove an additive rule from the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.pop(index)
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        self.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
-    def set_text_value(self, field_name: str, index: int, value: str) -> EventSpec:
+    def set_text_value(self, field_name: str, index: int, value: str) -> None:
         """Set the text attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].text = value
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        self.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
-    def set_identifier_value(
-        self, field_name: str, index: int, value: str
-    ) -> EventSpec:
+    def set_identifier_value(self, field_name: str, index: int, value: str) -> None:
         """Set the identifier attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].identifier = value
         primary_source.editor_values[index].href = f"/item/{value}"
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        self.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
-    def set_badge_value(self, field_name: str, index: int, value: str) -> EventSpec:
+    def set_badge_value(self, field_name: str, index: int, value: str) -> None:
         """Set the badge attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].badge = value
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        self.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
-    def set_href_value(self, field_name: str, index: int, value: str) -> EventSpec:
+    def set_href_value(self, field_name: str, index: int, value: str) -> None:
         """Set an external href on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].href = value
         primary_source.editor_values[index].external = True
-        return State.set_current_page_has_changes(True)  # type: ignore[misc]
+        self.set_current_page_has_changes(True)  # type: ignore[misc]
+
+    @label_var(label_id="rules.additive_rule.add_button_prefix")
+    def label_additive_rule_add_button_prefix(self) -> None:
+        """Label for additive_rule.add_button."""
+
+    @label_var(label_id="rules.additive_rule.remove_button_prefix")
+    def label_additive_rule_remove_button_prefix(self) -> None:
+        """Label for additive_rule.remove_button."""
+
+    @label_var(label_id="rules.validation_result_dialog.close_button")
+    def label_validation_result_dialog_close_button(self) -> None:
+        """Label for validation_result_dialog.close_button."""
+
+    @label_var(label_id="rules.validation_result_dialog.title")
+    def label_validation_result_dialog_title(self) -> None:
+        """Label for validation_result_dialog.title."""
+
+    @label_var(label_id="rules.save_button.format", deps=["stem_type"])
+    def label_save_button_format(self) -> list[str]:
+        """Label for save_button.format."""
+        return [self.stem_type or ""]
+
+    @label_var(label_id="rules.save_button.saving_format", deps=["stem_type"])
+    def label_save_button_saving_format(self) -> list[str]:
+        """Label for save_button.saving_format."""
+        return [self.stem_type or ""]
+
+    @label_var(label_id="rules.save_success_dialog.title")
+    def label_save_success_dialog_title(self) -> None:
+        """Label for save_success_dialog.title."""
+
+    @label_var(label_id="rules.save_success_dialog.message_format")
+    def label_save_success_dialog_message_format(self) -> list[str]:
+        """Label for save_success_dialog.message_format."""
+        return [self.stem_type or ""]

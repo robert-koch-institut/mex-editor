@@ -14,7 +14,10 @@ from mex.editor.search.models import (
     SearchPrimarySource,
     SearchResult,
 )
-from mex.editor.search.state import SearchState, full_refresh
+from mex.editor.search.state import (
+    SearchState,
+    full_refresh,
+)
 from mex.editor.search.value_label_select import value_label_select
 
 
@@ -52,7 +55,7 @@ def search_input() -> rx.Component:
                     default_value=SearchState.query_string,
                     max_length=100,
                     name="query_string",
-                    placeholder="Search here...",
+                    placeholder=SearchState.label_search_input_placeholder,
                     style=rx.Style(
                         {
                             "--text-field-selection-color": "",
@@ -65,6 +68,7 @@ def search_input() -> rx.Component:
                     ),
                     tab_index=1,
                     type="text",
+                    custom_attrs={"data-testid": "search-input"},
                 ),
                 rx.spacer(),
                 rx.button(
@@ -99,7 +103,7 @@ def entity_type_filter() -> rx.Component:
     """Render checkboxes for filtering the search results by entity type."""
     return rx.card(
         rx.text(
-            "entityType",
+            SearchState.label_entitytype_filter_title,
             style=rx.Style(
                 marginBottom="var(--space-4)",
                 userSelect="none",
@@ -191,7 +195,7 @@ def reference_field_filter() -> rx.Component:
             value_label_select(
                 items=SearchState.all_fields_for_entity_types,
                 value=SearchState.reference_field_filter.field,
-                placeholder="Field to filter by",
+                placeholder=SearchState.label_reference_field_filter_placeholder,
                 on_change=[
                     SearchState.set_reference_filter_field,
                     *full_refresh,
@@ -218,7 +222,7 @@ def reference_field_filter() -> rx.Component:
         rx.hstack(
             rx.button(
                 rx.icon("circle-plus"),
-                rx.text("Add Filter"),
+                rx.text(SearchState.label_reference_field_filter_add),
                 variant="surface",
                 color_scheme="gray",
                 on_click=[
@@ -243,14 +247,14 @@ def reference_filter_tab() -> rx.Component:
         rx.tabs.root(
             rx.tabs.list(
                 rx.tabs.trigger(
-                    "Dynamic",
+                    SearchState.label_reference_filter_dynamic_tab,
                     value="dynamic",
                     custom_attrs={
                         "data-testid": "reference-filter-strategy-dynamic-tab"
                     },
                 ),
                 rx.tabs.trigger(
-                    "PrimarySource",
+                    SearchState.label_reference_filter_primarysource_tab,
                     value="had_primary_source",
                     custom_attrs={
                         "data-testid": (
@@ -296,8 +300,7 @@ def results_summary() -> rx.Component:
     """Render a summary of the results found."""
     return rx.center(
         rx.text(
-            f"Showing {SearchState.current_results_length} "
-            f"of {SearchState.total} items",
+            SearchState.label_result_summary_format,
             style=rx.Style(
                 color="var(--gray-12)",
                 fontWeight="var(--font-weight-bold)",

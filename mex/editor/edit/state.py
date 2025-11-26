@@ -3,6 +3,7 @@ from collections.abc import Generator
 import reflex as rx
 from reflex.event import EventSpec
 
+from mex.editor.label_var import label_var
 from mex.editor.rules.state import RuleState
 from mex.editor.state import State
 
@@ -44,3 +45,7 @@ class EditState(RuleState):
                 for value in ps.editor_values:
                     value.enabled = new_state
         return State.set_current_page_has_changes(True)  # type: ignore[misc]
+
+    @label_var(label_id="edit.toggle_all")
+    def label_toggle_all(self) -> None:
+        """Label for toggle_all."""

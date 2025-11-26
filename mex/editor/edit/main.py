@@ -25,7 +25,7 @@ def toggle_all_switch() -> rx.Component:
     """Render a switch to toggle all primary source and values."""
     return rx.hstack(
         rx.spacer(),
-        "Toggle all",
+        EditState.label_toggle_all,
         rx.switch(
             checked=EditState.any_primary_source_or_editor_value_enabled,
             on_change=EditState.toggle_all_primary_source_and_editor_values,

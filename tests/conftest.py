@@ -118,8 +118,8 @@ def login_user(
     frontend_url: str, page: Page, username: str, password: SecretStr
 ) -> Page:
     page.goto(frontend_url)
-    page.get_by_placeholder("Username").fill(username)
-    page.get_by_placeholder("Password").fill(password.get_secret_value())
+    page.get_by_test_id("input-username").fill(username)
+    page.get_by_test_id("input-password").fill(password.get_secret_value())
     page.get_by_test_id("login-button").click()
     return page
 
@@ -131,8 +131,8 @@ def writer_user_page(
     login_user(frontend_url, page, *writer_user_credentials)
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
     page.set_default_navigation_timeout(50_000)
-    page.set_default_timeout(15_000)
-    expect.set_options(timeout=15_000)
+    page.set_default_timeout(30_000)
+    expect.set_options(timeout=30_000)
     return page
 
 

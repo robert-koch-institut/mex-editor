@@ -139,3 +139,24 @@ msgstr "Merge"
 
 msgid "layout.nav_bar.ingest_navitem"
 msgstr "Ingest"
+
+msgid "consent.resources.title"
+msgstr "Datasources & Records"
+
+msgid "consent.projects.title"
+msgstr "Projects"
+
+msgid "consent.user_data.loading"
+msgstr "Loading user data..."
+
+msgid "consent.consent_box.consent_button"
+msgstr "Consent"
+
+msgid "consent.consent_box.no_consent_button"
+msgstr "Denial"
+
+msgid "consent.consent_status.loading"
+msgstr "Loading consent status..."
+
+msgid "consent.nav_bar.consent_navitem"
+msgstr "Informed Consent"

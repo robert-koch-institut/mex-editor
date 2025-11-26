@@ -206,6 +206,19 @@ def navigate_away_dialog() -> rx.Component:
     )
 
 
+def custom_focus_script() -> rx.Script:
+    """Creates a Script that looks for '[data-focusme]' and calls '.focus()' in it."""
+    return rx.script(
+        """
+    (function() {
+        document.querySelectorAll('[data-focusme]').forEach(item=> {
+            setTimeout(() => item.focus(), 10);
+        })
+    })()
+    """
+    )
+
+
 def page(
     *children: rx.Component,
     user_type: str = "user_mex",
@@ -235,6 +248,7 @@ def page(
             ),
             custom_attrs={"data-testid": "page-body"},
         ),
+        custom_focus_script(),
     ]
 
     if include_navigate_dialog:

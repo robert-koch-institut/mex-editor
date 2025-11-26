@@ -142,3 +142,24 @@ msgstr "Aufnehmen"
 
 msgid "abstract.singular"
 msgstr "Kurzbeschreibung"
+
+msgid "consent.resources.title"
+msgstr "Datenbestände & Datensätze"
+
+msgid "consent.projects.title"
+msgstr "Projekte"
+
+msgid "consent.user_data.loading"
+msgstr "Lade Kontodaten..."
+
+msgid "consent.consent_box.consent_button"
+msgstr "Einwilligen"
+
+msgid "consent.consent_box.no_consent_button"
+msgstr "Ablehnen"
+
+msgid "consent.consent_status.loading"
+msgstr "Lade Einverständniserklärung..."
+
+msgid "consent.nav_bar.consent_navitem"
+msgstr "Einverständniserklärung"

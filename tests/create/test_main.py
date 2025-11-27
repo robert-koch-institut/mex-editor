@@ -1,7 +1,9 @@
 import re
+from typing import TypedDict
 
 import pytest
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Locator, Page, expect
+# from pydantic import BaseModel
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
@@ -17,6 +19,40 @@ def create_page(
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
     return page
+
+
+class DraftPage(TypedDict):
+    page: Page
+    draft_id: str
+    discard_button: Locator
+    draft_menu_trigger: Locator
+    draft_menu_item: Locator
+
+
+@pytest.fixture
+def draft_create_page(
+    create_page: Page,
+) -> DraftPage:
+    create_page.evaluate("() => window.localStorage.clear()")
+
+    url_regex = re.compile(r"/create/(\w+)")
+    expect(create_page).to_have_url(url_regex)
+    match = re.search(url_regex, create_page.url)
+    assert match
+    draft_id = match.group(1)
+    expect(create_page.get_by_test_id("page-body")).to_be_visible()
+    discard_button = create_page.get_by_test_id("discard-draft-button")
+    draft_menu_trigger = create_page.get_by_test_id("draft-menu-trigger")
+    expect(discard_button).not_to_be_visible()
+    expect(draft_menu_trigger).not_to_be_visible()
+
+    return DraftPage(
+        page=create_page,
+        draft_menu_trigger=draft_menu_trigger,
+        draft_id=draft_id,
+        discard_button=discard_button,
+        draft_menu_item=create_page.get_by_test_id(f"draft-{draft_id}-menu-item"),
+    )
 
 
 @pytest.mark.integration
@@ -125,3 +161,75 @@ def test_language_switcher(
     # find the accessPlatform field label and check the text
     field_access_platform = create_page.get_by_test_id("field-accessPlatform-name")
     expect(field_access_platform).to_have_text(expected_access_platform_field_label)
+
+
+@pytest.mark.integration
+def test_create_page_test_draft_creation_on_entity_type_change(
+    draft_create_page: DraftPage,
+) -> None:
+    create_page = draft_create_page.page
+
+    create_page.get_by_test_id("entity-type-select").click()
+    create_page.get_by_role("option", name="Resource", exact=True).click()
+
+    expect(draft_create_page.discard_button).to_be_visible()
+    expect(draft_create_page.draft_menu_trigger).to_have_text("1")
+    draft_create_page.draft_menu_trigger.click()
+    expect(draft_create_page.draft_menu_item).to_be_visible()
+
+
+@pytest.mark.integration
+def test_create_page_test_draft_creation_on_field_edit(
+    draft_create_page: DraftPage,
+) -> None:
+    create_page = draft_create_page.page
+
+    create_page.get_by_test_id("new-additive-title-00000000000000").click()
+    expect(draft_create_page.discard_button).to_be_visible()
+    expect(draft_create_page.draft_menu_trigger).to_have_text("1")
+    draft_create_page.draft_menu_trigger.click()
+    expect(draft_create_page.draft_menu_item).to_be_visible()
+
+
+@pytest.mark.integration
+def test_create_page_test_discard_draft(
+    draft_create_page: DraftPage,
+) -> None:
+    create_page = draft_create_page.page
+
+    create_page.get_by_test_id("new-additive-title-00000000000000").click()
+    create_page.get_by_test_id("new-additive-title-00000000000000-0-text").fill(
+        "Draft title for activity"
+    )
+    expect(draft_create_page.discard_button).to_be_visible()
+    expect(draft_create_page.draft_menu_trigger).to_have_text("1")
+
+    draft_create_page.discard_button.click()
+    expect(draft_create_page.discard_button).not_to_be_visible()
+    expect(draft_create_page.draft_menu_trigger).not_to_be_visible()
+
+
+@pytest.mark.integration
+def test_create_page_test_draft_menu_item_text(
+    draft_create_page: DraftPage,
+) -> None:
+    create_page = draft_create_page.page
+
+    create_page.get_by_test_id("new-additive-description-00000000000000").click()
+    create_page.get_by_test_id("additive-rule-description-0-text").fill(
+        "New Description."
+    )
+
+    expect(draft_create_page.discard_button).to_be_visible()
+    expect(draft_create_page.draft_menu_trigger).to_have_text("1")
+    draft_create_page.draft_menu_trigger.click()
+    expect(draft_create_page.draft_menu_item).to_be_visible()
+    expect(draft_create_page.draft_menu_item).to_have_text("Activity")
+
+    create_page.get_by_test_id("new-additive-title-00000000000000").click()
+    create_page.get_by_test_id("new-additive-title-00000000000000-0-text").fill(
+        "Draft title for activity"
+    )
+    draft_create_page.draft_menu_trigger.click()
+    expect(draft_create_page.draft_menu_item).to_be_visible()
+    expect(draft_create_page.draft_menu_item).to_have_text("Draft title for activity")

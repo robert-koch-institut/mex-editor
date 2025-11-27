@@ -28,9 +28,6 @@ def edit_page(
     load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
     page = writer_user_page
-    page.set_default_navigation_timeout(50000)
-    page.set_default_timeout(10000)
-
     page.goto(f"{frontend_url}/item/{extracted_activity.stableTargetId}")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
@@ -760,3 +757,66 @@ def test_edit_page_additive_add_remove_button_text_translation(
     expect(
         edit_page.get_by_test_id(f"additive-rule-{field_name}-0-remove-button")
     ).to_have_text(f"Remove {expected_field_label}")
+
+
+@pytest.mark.integration
+def test_edit_page_discard_changes_button_roundtrip(
+    edit_page: Page,
+    # extracted_activity: ExtractedActivity,
+) -> None:
+    discard_button = edit_page.get_by_test_id("discard-changes-button")
+    expect(discard_button).not_to_be_visible()
+
+    # add/remove new alternative title and check button visibility
+    edit_page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    edit_page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
+        "new added alternative title"
+    )
+    expect(discard_button).to_be_visible()
+    edit_page.get_by_test_id("additive-rule-alternativeTitle-0-remove-button").click()
+    expect(discard_button).not_to_be_visible()
+
+    # add new alternative title, save and check button visibility
+    edit_page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    edit_page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
+        "new saved added alternative title"
+    )
+    expect(discard_button).to_be_visible()
+    edit_page.get_by_test_id("submit-button").click()
+    expect(discard_button).not_to_be_visible()
+
+    # toggle existing value and check button visibility
+    edit_page.get_by_test_id("switch-abstract-ezQqKqG0cBsUdHSvwq0DqK-0").click()
+    expect(discard_button).to_be_visible()
+    edit_page.get_by_test_id("switch-abstract-ezQqKqG0cBsUdHSvwq0DqK-0").click()
+    expect(discard_button).not_to_be_visible()
+
+    # toggle primary source and check button visibility
+    edit_page.get_by_test_id("switch-abstract-ezQqKqG0cBsUdHSvwq0DqK").click()
+    expect(discard_button).to_be_visible()
+    edit_page.get_by_test_id("switch-abstract-ezQqKqG0cBsUdHSvwq0DqK").click()
+    expect(discard_button).not_to_be_visible()
+
+    # toogle all and check button visibility
+    edit_page.get_by_test_id("toggle-all-switch").click()
+    expect(discard_button).to_be_visible()
+    edit_page.get_by_test_id("toggle-all-switch").click()
+    expect(discard_button).not_to_be_visible()
+
+    # do changes navigate away, come back and check if changes still present, discard change
+    edit_page.get_by_test_id("new-additive-shortName-00000000000000").click()
+    shortname_text = edit_page.get_by_test_id("additive-rule-shortName-0-text")
+    shortname_text.fill("shortNameChanges")
+    # give the state some time to sync changes into local storage
+    edit_page.wait_for_timeout(1_000)
+    navigate_back_url = edit_page.url
+    edit_page.goto("https://www.google.com/")
+    expect(edit_page.get_by_label("Google", exact=True)).to_be_visible()
+    edit_page.goto(navigate_back_url, wait_until="load")
+    expect(discard_button).to_be_visible()
+    expect(shortname_text).to_have_value("shortNameChanges")
+    discard_button.click()
+    expect(
+        edit_page.get_by_test_id("additive-rule-shortName-0-text")
+    ).not_to_be_visible()
+    expect(discard_button).not_to_be_visible()

@@ -85,7 +85,8 @@ def render_draft_menu_item(draft: LocalDraft) -> rx.Component:
             ),
             href=f"/create/{draft.identifier}",
             style=rx.Style({"flex": "1"}),
-        )
+        ),
+        custom_attrs={"data-testid": f"draft-{draft.identifier}-menu-item"},
     )
 
 
@@ -118,6 +119,7 @@ def nav_link(item: NavItem) -> rx.Component:
                                 }
                             ),
                             _hover={"border-color": f"{rx.color('accent', 8)}"},
+                            custom_attrs={"data-testid": "draft-menu-trigger"}
                         ),
                     ),
                     rx.menu.content(

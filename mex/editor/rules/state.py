@@ -217,7 +217,7 @@ class RuleState(State):
         """Indicates if the current edit state differs from the original loaded state.
 
         Returns:
-            bool: Returns True if the current edit state differs from the orginal
+            Returns True if the current edit state differs from the orginal
             loaded state; otherwise False.
         """
         fields: list[EditorField] = self.get_value("fields")
@@ -245,7 +245,7 @@ class RuleState(State):
                 for ps in f.primary_sources
                 if f.name == config.title and ps.editor_values
             ]
-            print("creating draft", x.stem_type, config.model_dump_json(), title_field)
+            # print("creating draft", x.stem_type, config.model_dump_json(), title_field)
 
             return LocalDraft(
                 identifier=identifier,
@@ -269,7 +269,7 @@ class RuleState(State):
             if self.item_id:
                 print("UPDATING LOCAL EDIT", self.item_id)
                 changes.edit[self.item_id] = fields
-            elif self.has_changes:
+            elif self.draft_id:
                 print("UPDATING LOCAL DRAFT", self.draft_id, self.stem_type)
                 changes.create[self.draft_id] = CreateLocalChanges(  # type: ignore[index]
                     stem_type=self.stem_type or "",

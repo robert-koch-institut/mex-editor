@@ -54,6 +54,9 @@ def index() -> rx.Component:
                                     RuleState.refresh,
                                     RuleState.resolve_identifiers,
                                 ],
+                                custom_attrs={
+                                    "data-testid": "discard-changes-button"
+                                }
                             ),
                         ),
                         rx.text("NO CHANGES"),

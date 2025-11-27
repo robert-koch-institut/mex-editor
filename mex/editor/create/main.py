@@ -79,6 +79,7 @@ def index() -> rx.Component:
                                     RuleState.delete_local_edit,
                                     rx.redirect(path="/create"),
                                 ],
+                                custom_attrs={"data-testid": "discard-draft-button"}
                             ),
                         ),
                     ),

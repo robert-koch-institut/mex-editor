@@ -269,7 +269,7 @@ class RuleState(State):
             if self.item_id:
                 print("UPDATING LOCAL EDIT", self.item_id)
                 changes.edit[self.item_id] = fields
-            elif self.has_changes:
+            elif self.draft_id:
                 print("UPDATING LOCAL DRAFT", self.draft_id, self.stem_type)
                 changes.create[self.draft_id] = CreateLocalChanges(  # type: ignore[index]
                     stem_type=self.stem_type or "",

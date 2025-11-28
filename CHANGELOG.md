@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.2.0] - 2025-11-28
+
+### Added
+
 - consent microsite with ldap auth to allow granting/revoking user info publishing
 - CustomSelect-Component that has items with value and label instead of simple strings
 - add caching for playwright browsers and node-modules to testing workflow
@@ -27,15 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - prefer using enum names over just raw strings in tests
 - change external test marker to requires_rki_infrastructure
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - Page numbers on search and ingest page
-
-### Security
 
 ## [1.1.0] - 2025-10-10
 

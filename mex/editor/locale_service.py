@@ -50,11 +50,12 @@ class LocaleService:
         return cast("Self", LOCALE_SERVICE_STORE.load(cls))
 
     _editor_locale_path = cast("Path", (files("mex.editor") / "locales"))
+    _model_locale_path = cast("Path", (files("mex.model") / "i18n"))
     _available_locales: dict[str, MExLocale] = {}
     _translations: dict[str, GNUTranslations] = {}
 
     def __init__(self) -> None:
-        """Initialize with all available locales."""
+        """Initialize with all available locales in `_editor_locale_path`."""
         for po_file in self._editor_locale_path.glob("*.po"):
             locale = po_file.name.removesuffix(".po")
             language = re.split("[-_]", locale)[0]
@@ -62,14 +63,6 @@ class LocaleService:
             self._available_locales[locale] = MExLocale(
                 id=locale, label=label, language=language
             )
-
-    def get_available_locales(self) -> list[MExLocale]:
-        """Get all available locales.
-
-        Returns:
-            All available locales.
-        """
-        return list(self._available_locales.values())
 
     def _ensure_translation(self, locale_id: str) -> GNUTranslations:
         if locale_id not in self._available_locales:
@@ -79,15 +72,21 @@ class LocaleService:
 
         if locale_id not in self._translations:
             filename = f"{locale_id}.po"
-            model_po = polib.pofile(
-                cast("Path", (files("mex.model") / "i18n")) / filename
-            )
+            model_po = polib.pofile(self._model_locale_path / filename)
             editor_po = polib.pofile(self._editor_locale_path / filename)
             editor_po.extend(model_po)
             self._translations[locale_id] = GNUTranslations(
                 BytesIO(editor_po.to_binary())
             )
         return self._translations[locale_id]
+
+    def get_available_locales(self) -> list[MExLocale]:
+        """Get all available locales.
+
+        Returns:
+            All available locales.
+        """
+        return list(self._available_locales.values())
 
     def get_ui_label(self, locale_id: str, msg_id: str) -> str:
         """Get the text for a given locale_id and the msg_id.

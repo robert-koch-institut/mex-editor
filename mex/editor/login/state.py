@@ -11,10 +11,7 @@ from mex.common.settings import BaseSettings
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.models import MergedLoginPerson
-from mex.editor.security import (
-    has_read_access_mex,
-    has_write_access_mex,
-)
+from mex.editor.security import has_read_access_mex, has_write_access_mex
 from mex.editor.state import State, User
 
 
@@ -88,7 +85,9 @@ class LoginLdapState(LoginState):
             self.reset()  # reset username/password
             yield rx.redirect(target_path_after_login)
         else:
-            yield rx.window_alert(self.label_invalid_credentials)
+            yield rx.toast.error(
+                self.label_invalid_credentials, class_name="editor-toast"
+            )
 
 
 class LoginMExState(LoginState):
@@ -111,4 +110,6 @@ class LoginMExState(LoginState):
             self.reset()  # reset username/password
             yield rx.redirect(target_path_after_login)
         else:
-            yield rx.window_alert(self.label_invalid_credentials)
+            yield rx.toast.error(
+                self.label_invalid_credentials, class_name="editor-toast"
+            )

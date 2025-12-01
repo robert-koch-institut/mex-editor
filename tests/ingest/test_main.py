@@ -1,11 +1,14 @@
-import re
+from typing import TYPE_CHECKING
 
 import pytest
 from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider
-from tests.test_utils import build_pagination_regex
+from tests.conftest import build_pagination_regex, build_ui_label_regex
+
+if TYPE_CHECKING:
+    import re
 
 
 @pytest.fixture
@@ -138,8 +141,8 @@ def test_search_and_ingest_roundtrip(
 @pytest.mark.integration
 def test_infobox_visibility_and_content(ingest_page: Page) -> None:
     expected_callout_content: dict[AuxProvider, re.Pattern] = {
-        AuxProvider.LDAP: re.compile(r"\w+"),
-        AuxProvider.WIKIDATA: re.compile(r"\w+"),
+        AuxProvider.LDAP: build_ui_label_regex("ingest.search_info.ldap"),
+        AuxProvider.WIKIDATA: build_ui_label_regex("ingest.search_info.wikidata"),
     }
 
     page = ingest_page
@@ -147,7 +150,7 @@ def test_infobox_visibility_and_content(ingest_page: Page) -> None:
     for provider in ALL_AUX_PROVIDERS:
         tab = page.get_by_role("tab", name=provider)
         tab.click(
-            timeout=30_000
+            timeout=50_000
         )  # high timeout cuz tab might be disabled due to loading
 
         tab_content = page.locator(f"[id*='{provider}'][role='tabpanel']")

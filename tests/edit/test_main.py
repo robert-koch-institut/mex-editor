@@ -109,7 +109,7 @@ def test_edit_page_renders_primary_sources(
     expect(primary_source).to_contain_text(had_primary_source.title[0].value)
     link = primary_source.get_by_role("link")
     expect(link).to_have_attribute(
-        "data-href", f"/item/{extracted_activity.hadPrimarySource}"
+        "href", f"/item/{extracted_activity.hadPrimarySource}/"
     )
 
 
@@ -195,8 +195,8 @@ def test_edit_page_resolves_identifier(
         extracted_organizational_unit.shortName[0].value
     )  # resolved short name of unit
     expect(link).to_have_attribute(
-        "data-href",
-        f"/item/{extracted_activity.contact[1]}",  # link href
+        "href",
+        f"/item/{extracted_activity.contact[1]}/",  # link href
     )
     expect(link).not_to_have_attribute("target", "_blank")  # internal link
 
@@ -394,8 +394,8 @@ def test_edit_page_resolves_additive_identifier(
     )
     expect(rendered_identifier).to_have_count(1)
     assert (
-        rendered_identifier.first.get_attribute("data-href")
-        == f"/item/{organizational_unit.stableTargetId}"
+        rendered_identifier.first.get_attribute("href")
+        == f"/item/{organizational_unit.stableTargetId}/"
     )
 
     # assert raw identifier value is retained
@@ -653,67 +653,6 @@ def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> N
     expect(submit_button).not_to_be_disabled()
 
 
-@pytest.mark.integration
-def test_edit_page_navigation_unsaved_changes_warning_cancel_save_and_navigate(
-    edit_page: Page,
-) -> None:
-    page = edit_page
-
-    # do some changes
-    page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
-    page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
-        "new alternative title"
-    )
-
-    # try to navigate to search page (via navbar)
-    nav_bar = page.get_by_test_id("nav-bar")
-    search_nav = nav_bar.get_by_text("search")
-    search_nav.click()
-
-    # now dialog should appear
-    dialog = page.get_by_role("alertdialog", name="Unsaved changes")
-    expect(dialog).to_be_visible()
-
-    # cancel the navigation and check if url is still edit page
-    dialog.get_by_role("button", name="Stay here").click()
-    expect(page).to_have_url(re.compile("/item/.*"))
-
-    # click save changes
-    page.get_by_test_id("submit-button").click()
-    page.wait_for_selector(".editor-toast")
-
-    # navigate to search page (should work)
-    search_nav.click()
-    expect(dialog).to_be_hidden()
-    page.wait_for_url(re.compile("/"))
-
-
-@pytest.mark.integration
-def test_edit_page_navigation_unsaved_changes_warning_discard_changes_and_navigate(
-    edit_page: Page,
-) -> None:
-    page = edit_page
-
-    # do some changes
-    page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
-    page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
-        "new alternative title"
-    )
-
-    # try to navigate to search page (via navbar)
-    nav_bar = page.get_by_test_id("nav-bar")
-    search_nav = nav_bar.get_by_text("search")
-    search_nav.click()
-
-    # now dialog should appear
-    dialog = page.get_by_role("alertdialog", name="Unsaved changes")
-    expect(dialog).to_be_visible()
-
-    # discard changes and expect navigation (url is search page url)
-    dialog.get_by_role("button", name="Navigate away").click()
-    expect(page).to_have_url(re.compile("/"))
-
-
 @pytest.mark.parametrize(
     ("locale_id", "field_name", "expected_field_label"),
     [
@@ -764,44 +703,44 @@ def test_edit_page_discard_changes_button_roundtrip(
     edit_page: Page,
     # extracted_activity: ExtractedActivity,
 ) -> None:
-    discard_button = edit_page.get_by_test_id("discard-changes-button")
-    expect(discard_button).not_to_be_visible()
+    discard_dialog_button = edit_page.get_by_test_id("discard-changes-dialog-button")
+    expect(discard_dialog_button).not_to_be_visible()
 
     # add/remove new alternative title and check button visibility
     edit_page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
     edit_page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
         "new added alternative title"
     )
-    expect(discard_button).to_be_visible()
+    expect(discard_dialog_button).to_be_visible()
     edit_page.get_by_test_id("additive-rule-alternativeTitle-0-remove-button").click()
-    expect(discard_button).not_to_be_visible()
+    expect(discard_dialog_button).not_to_be_visible()
 
     # add new alternative title, save and check button visibility
     edit_page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
     edit_page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
         "new saved added alternative title"
     )
-    expect(discard_button).to_be_visible()
+    expect(discard_dialog_button).to_be_visible()
     edit_page.get_by_test_id("submit-button").click()
-    expect(discard_button).not_to_be_visible()
+    expect(discard_dialog_button).not_to_be_visible()
 
     # toggle existing value and check button visibility
     edit_page.get_by_test_id("switch-abstract-ezQqKqG0cBsUdHSvwq0DqK-0").click()
-    expect(discard_button).to_be_visible()
+    expect(discard_dialog_button).to_be_visible()
     edit_page.get_by_test_id("switch-abstract-ezQqKqG0cBsUdHSvwq0DqK-0").click()
-    expect(discard_button).not_to_be_visible()
+    expect(discard_dialog_button).not_to_be_visible()
 
     # toggle primary source and check button visibility
     edit_page.get_by_test_id("switch-abstract-ezQqKqG0cBsUdHSvwq0DqK").click()
-    expect(discard_button).to_be_visible()
+    expect(discard_dialog_button).to_be_visible()
     edit_page.get_by_test_id("switch-abstract-ezQqKqG0cBsUdHSvwq0DqK").click()
-    expect(discard_button).not_to_be_visible()
+    expect(discard_dialog_button).not_to_be_visible()
 
     # toogle all and check button visibility
     edit_page.get_by_test_id("toggle-all-switch").click()
-    expect(discard_button).to_be_visible()
+    expect(discard_dialog_button).to_be_visible()
     edit_page.get_by_test_id("toggle-all-switch").click()
-    expect(discard_button).not_to_be_visible()
+    expect(discard_dialog_button).not_to_be_visible()
 
     # do changes navigate away, come back and check if changes still present, discard change
     edit_page.get_by_test_id("new-additive-shortName-00000000000000").click()
@@ -810,13 +749,14 @@ def test_edit_page_discard_changes_button_roundtrip(
     # give the state some time to sync changes into local storage
     edit_page.wait_for_timeout(1_000)
     navigate_back_url = edit_page.url
-    edit_page.goto("https://www.google.com/")
-    expect(edit_page.get_by_label("Google", exact=True)).to_be_visible()
+    edit_page.goto("https://www.webseite.de")
+    expect(edit_page.get_by_text("webseite.de")).to_be_visible()
     edit_page.goto(navigate_back_url, wait_until="load")
-    expect(discard_button).to_be_visible()
+    expect(discard_dialog_button).to_be_visible()
     expect(shortname_text).to_have_value("shortNameChanges")
-    discard_button.click()
+    discard_dialog_button.click()
+    edit_page.get_by_test_id("discard-changes-button").click()
     expect(
         edit_page.get_by_test_id("additive-rule-shortName-0-text")
     ).not_to_be_visible()
-    expect(discard_button).not_to_be_visible()
+    expect(discard_dialog_button).not_to_be_visible()

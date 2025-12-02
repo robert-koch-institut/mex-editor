@@ -4,7 +4,8 @@ import reflex as rx
 
 from mex.editor.components import icon_by_stem_type, render_title
 from mex.editor.locale_service import LocaleService
-from mex.editor.rules.state import LocalDraft, RuleState
+from mex.editor.rules.models import UserDraft
+from mex.editor.rules.state import RuleState
 from mex.editor.state import NavItem, State
 
 if TYPE_CHECKING:
@@ -72,7 +73,8 @@ def language_switcher() -> rx.Component:
     )
 
 
-def render_draft_menu_item(draft: LocalDraft) -> rx.Component:
+def render_draft_menu_item(draft: UserDraft) -> rx.Component:
+    """Render a navigatable menu item for the given draft."""
     return rx.menu.item(
         rx.link(
             rx.hstack(
@@ -103,13 +105,13 @@ def nav_link(item: NavItem) -> rx.Component:
     return rx.cond(
         item.path.contains("/create"),  # type: ignore[attr-defined]
         rx.cond(
-            RuleState.local_drafts.count,
+            RuleState.draft_summary.count,
             rx.fragment(
                 link,
                 rx.menu.root(
                     rx.menu.trigger(
                         rx.badge(
-                            RuleState.local_drafts.count,
+                            RuleState.draft_summary.count,
                             style=rx.Style(
                                 {
                                     "align-self": "center",
@@ -119,12 +121,12 @@ def nav_link(item: NavItem) -> rx.Component:
                                 }
                             ),
                             _hover={"border-color": f"{rx.color('accent', 8)}"},
-                            custom_attrs={"data-testid": "draft-menu-trigger"}
+                            custom_attrs={"data-testid": "draft-menu-trigger"},
                         ),
                     ),
                     rx.menu.content(
                         rx.foreach(
-                            RuleState.local_drafts.drafts, render_draft_menu_item
+                            RuleState.draft_summary.drafts, render_draft_menu_item
                         )
                     ),
                 ),

@@ -45,4 +45,4 @@ class EditState(RuleState):
                 ps.enabled = new_state
                 for value in ps.editor_values:
                     value.enabled = new_state
-        yield RuleState.update_local_edit
+        yield RuleState.update_local_state

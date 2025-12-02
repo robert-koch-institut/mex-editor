@@ -1,3 +1,6 @@
+from collections.abc import Callable, Sequence
+from typing import Any, TypeVar
+
 from async_lru import alru_cache
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -34,3 +37,50 @@ def load_settings() -> EditorSettings:
     """Reset the settings store and fetch the editor settings."""
     SETTINGS_STORE.reset()
     return EditorSettings.get()
+
+
+TCompareSeq = TypeVar("TCompareSeq")
+
+
+def compare_sequences(
+    left: Sequence[TCompareSeq],
+    right: Sequence[TCompareSeq],
+    key: Callable[[TCompareSeq], Any] | None,
+    comparator: Callable[[TCompareSeq, TCompareSeq], bool],
+) -> bool:
+    """Compare two sequences by a given key and comperator.
+
+    How it works:
+    1. Sort sequences by key (if key provided)
+    2. Check if sequences have same length
+    3. Compare all items by index
+        a. Compare if the keys are equal (if key provided)
+        b. Compare items by given comperator
+
+    Args:
+        left (Sequence[TCompareSeq]): Left sequence to compare.
+        right (Sequence[TCompareSeq]): Right sequence to compare
+        key (Callable[[TCompareSeq], Any] | None): Key to sort sequences and compare
+        items.
+        comparator (Callable[[TCompareSeq, TCompareSeq], bool]): Comperator to use for
+        check comparison of items.
+
+    Returns:
+        True if the sequences are equal; otherwise False.
+    """
+    if key:
+        left = sorted(left, key=key)
+        right = sorted(right, key=key)
+    left_len = len(left)
+    if left_len != len(right):
+        return False
+
+    for i in range(left_len):
+        left_item = left[i]
+        right_item = right[i]
+        if key and key(left_item) != key(right_item):
+            return False
+        if not comparator(left_item, right_item):
+            return False
+
+    return True

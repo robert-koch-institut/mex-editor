@@ -52,13 +52,61 @@ def create_title() -> rx.Component:
             value=RuleState.stem_type,
             on_change=[
                 CreateState.set_stem_type,
-                RuleState.delete_local_edit,
+                RuleState.delete_local_state,
                 RuleState.refresh,
-                RuleState.update_local_edit,
+                RuleState.update_local_state,
             ],
             custom_attrs={"data-testid": "entity-type-select"},
         ),
         custom_attrs={"data-testid": "create-heading"},
+    )
+
+
+def discard_draft_button() -> rx.Component:
+    """Render a button to show discard draft dialog."""
+    return rx.cond(
+        CreateState.has_local_draft,
+        rx.alert_dialog.root(
+            rx.alert_dialog.trigger(
+                rx.button(
+                    "Discard draft",
+                    color_scheme="red",
+                ),
+                custom_attrs={"data-testid": "discard-draft-dialog-button"},
+            ),
+            rx.alert_dialog.content(
+                rx.alert_dialog.title("Discard draft"),
+                rx.alert_dialog.description(
+                    "Are you sure u want to delete your changes?",
+                    size="2",
+                ),
+                rx.flex(
+                    rx.alert_dialog.cancel(
+                        rx.button(
+                            "Cancel",
+                            variant="soft",
+                            color_scheme="gray",
+                        ),
+                    ),
+                    rx.alert_dialog.action(
+                        rx.button(
+                            "Discard draft",
+                            color_scheme="red",
+                            variant="solid",
+                            on_click=[
+                                RuleState.delete_local_state,
+                                rx.redirect(path="/create"),
+                            ],
+                            custom_attrs={"data-testid": "discard-draft-button"},
+                        ),
+                    ),
+                    spacing="3",
+                    margin_top="16px",
+                    justify="end",
+                ),
+                style=rx.Style(max_width=450),
+            ),
+        ),
     )
 
 
@@ -69,20 +117,7 @@ def index() -> rx.Component:
             rule_page_header(
                 rx.fragment(
                     create_title(),
-                    rx.cond(
-                        RuleState.draft_id,
-                        rx.cond(
-                            CreateState.has_local_draft,
-                            rx.button(
-                                "Discard draft",
-                                on_click=[
-                                    RuleState.delete_local_edit,
-                                    rx.redirect(path="/create"),
-                                ],
-                                custom_attrs={"data-testid": "discard-draft-button"}
-                            ),
-                        ),
-                    ),
+                    discard_draft_button(),
                 )
             ),
             rx.foreach(

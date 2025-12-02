@@ -108,7 +108,7 @@ class State(rx.State):
     ) -> EventSpec | None:
         """Event handler to push updated url parameter to the browser history."""
         for nav_item in self.nav_items:
-            if self.router.page.path == nav_item.path:
+            if self.router.page.path.startswith(nav_item.path):
                 self._update_raw_path(nav_item, params)
                 return rx.call_script(
                     f"window.history.pushState(null, '', '{nav_item.raw_path}');"
@@ -119,7 +119,7 @@ class State(rx.State):
     def load_nav(self) -> None:
         """Event hook for updating the navigation on page loads."""
         for nav_item in self.nav_items:
-            if self.router.page.path == nav_item.path:
+            if self.router.page.path.startswith(nav_item.path):
                 self._update_raw_path(nav_item, self.router.page.params)
                 nav_item.underline = "always"
             else:

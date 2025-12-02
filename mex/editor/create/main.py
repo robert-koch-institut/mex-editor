@@ -4,7 +4,7 @@ from mex.editor.create.state import CreateState
 from mex.editor.layout import page
 from mex.editor.rules.main import (
     editor_primary_source_stack,
-    field_name,
+    field_name_card,
     rule_page_header,
     validation_errors,
 )
@@ -17,24 +17,24 @@ def editor_field(
     """Return a horizontal grid of cards for editing one field."""
     field = field_translation.field
     return rx.hstack(
-        field_name(field_translation),
+        field_name_card(field_translation),
         rx.vstack(
             rx.foreach(
                 field.primary_sources,
                 lambda primary_source: rx.hstack(
                     editor_primary_source_stack(
-                        field.name,
+                        field_translation,
                         primary_source,
                     ),
-                    style={"width": "100%"},
+                    style=rx.Style(width="100%"),
                 ),
             ),
-            style={"width": "100%"},
+            style=rx.Style(width="100%"),
         ),
-        style={
-            "width": "100%",
-            "margin": "var(--space-3) 0",
-        },
+        style=rx.Style(
+            width="100%",
+            margin="var(--space-3) 0",
+        ),
         custom_attrs={"data-testid": f"field-{field.name}"},
         role="row",
     )
@@ -45,7 +45,7 @@ def create_title() -> rx.Component:
     return rx.hstack(
         rx.heading(
             "Create new",
-            style={"userSelect": "none"},
+            style=rx.Style(userSelect="none"),
         ),
         rx.select(
             CreateState.available_stem_types,
@@ -72,9 +72,9 @@ def index() -> rx.Component:
                 editor_field,
             ),
             validation_errors(),
-            style={
-                "width": "100%",
-                "marginTop": "calc(2 * var(--space-6))",
-            },
+            style=rx.Style(
+                width="100%",
+                marginTop="calc(2 * var(--space-6))",
+            ),
         ),
     )

@@ -48,7 +48,7 @@ def test_aux_tab_section(ingest_page: Page) -> None:
     ids=["ldap", "wikidata", "orcid"],
 )
 @pytest.mark.integration
-@pytest.mark.external
+@pytest.mark.requires_rki_infrastructure
 def test_search_and_ingest_roundtrip(
     ingest_page: Page,
     aux_provider: str,
@@ -66,7 +66,7 @@ def test_search_and_ingest_roundtrip(
 
     # go to the correct tab
     aux_provider_tab = page.get_by_role("tab", name=aux_provider)
-    expect(aux_provider_tab).to_be_enabled(timeout=30000)
+    expect(aux_provider_tab).to_be_enabled(timeout=30_000)
     aux_provider_tab.click()
     search_input = page.get_by_placeholder("Search here...")
     expect(search_input).to_be_visible()
@@ -75,7 +75,7 @@ def test_search_and_ingest_roundtrip(
     # trigger invalid search
     search_input.fill(invalid_search)
     search_input.press("Enter")
-    expect(search_input).to_be_enabled(timeout=30000)
+    expect(search_input).to_be_enabled(timeout=30_000)
     page.screenshot(
         path=f"tests_ingest_test_main-roundtrip_{aux_provider}-invalid-search.png"
     )
@@ -88,14 +88,14 @@ def test_search_and_ingest_roundtrip(
     # trigger valid search
     search_input.fill(valid_search)
     search_input.press("Enter")
-    expect(search_input).to_be_enabled(timeout=30000)
+    expect(search_input).to_be_enabled(timeout=30_000)
     page.screenshot(
         path=f"tests_ingest_test_main-roundtrip_{aux_provider}-valid-search.png"
     )
 
     # test pagination is showing
     prev_button = page.get_by_test_id("pagination-previous-button")
-    expect(prev_button).to_be_disabled(timeout=30000)
+    expect(prev_button).to_be_disabled(timeout=30_000)
     expect(page.get_by_test_id("pagination-next-button")).to_be_visible()
     expect(page.get_by_test_id("pagination-page-select")).to_be_visible()
 
@@ -119,7 +119,12 @@ def test_search_and_ingest_roundtrip(
     expect(toast).to_contain_text(f"{stem_type} was ingested successfully.")
     expect(ingest_button).to_be_disabled()
     page.screenshot(
-        path=f"tests_ingest_test_main-roundtrip_{aux_provider}-imported.png"
+        path=f"tests_ingest_test_main-roundtrip_{aux_provider}-ingested.png"
+    )
+    page.reload()
+    expect(ingest_button).to_be_disabled()
+    page.screenshot(
+        path=f"tests_ingest_test_main-roundtrip_{aux_provider}-ingested-reload.png"
     )
 
     # count the items afterwards
@@ -131,7 +136,7 @@ def test_search_and_ingest_roundtrip(
 def test_infobox_visibility_and_content(ingest_page: Page) -> None:
     expected_callout_content: dict[AuxProvider, str] = {
         AuxProvider.LDAP: (
-            "Search users by their fullname. "
+            "Search users by display name and contact points by email. "
             'Please use "*" as placeholder e.g. "Muster*".'
         ),
         AuxProvider.WIKIDATA: (
@@ -145,7 +150,7 @@ def test_infobox_visibility_and_content(ingest_page: Page) -> None:
     for provider in ALL_AUX_PROVIDERS:
         tab = page.get_by_role("tab", name=provider)
         tab.click(
-            timeout=50000
+            timeout=30_000
         )  # high timeout cuz tab might be disabled due to loading
 
         tab_content = page.locator(f"[id*='{provider}'][role='tabpanel']")

@@ -9,11 +9,10 @@ def test_login_state_login_success() -> None:
         parent_state=State(),
     )
 
-    assert "/" in str(state.login())
+    assert "/" in str(list(state.login()))  # type: ignore[misc]
     assert state.user_mex
     assert state.user_mex.dict() == {
         "name": "writer",
-        "authorization": "Basic d3JpdGVyOndyaXRlcl9wYXNz",
         "write_access": True,
     }
 
@@ -25,7 +24,7 @@ def test_login_state_login_error() -> None:
         parent_state=State(),
     )
 
-    assert "Invalid credentials" in str(state.login())
+    assert "Invalid credentials" in str(list(state.login()))  # type: ignore[misc]
     assert not state.user_mex
 
 
@@ -35,5 +34,5 @@ def test_login_state_redirect_to_original_url() -> None:
         password="writer_pass",  # noqa: S106
         parent_state=State(target_path_after_login="/some-url/"),
     )
-    assert "/some-url/" in str(state.login())
+    assert "/some-url/" in str(list(state.login()))  # type: ignore[misc]
     assert state.user_mex

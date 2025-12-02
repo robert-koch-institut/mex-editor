@@ -1,7 +1,16 @@
 import pytest
 
 from mex.common.models import AdditiveContactPoint, AnyExtractedModel
-from mex.common.types import APIType, Identifier, Link, LinkLanguage, Text, TextLanguage
+from mex.common.types import (
+    AccessRestriction,
+    APIType,
+    Identifier,
+    Link,
+    LinkLanguage,
+    Text,
+    TextLanguage,
+    Theme,
+)
 from mex.editor.models import LANGUAGE_VALUE_NONE, EditorValue
 from mex.editor.transform import (
     transform_models_to_preview,
@@ -36,10 +45,13 @@ from mex.editor.transform import (
             True,
             [
                 EditorValue(text="bar"),
-                EditorValue(text="APIType", badge="REST"),
-                EditorValue(text="hi there", badge="EN"),
+                EditorValue(text="APIType", badge=APIType["REST"].name),
+                EditorValue(text="hi there", badge=TextLanguage.EN.name),
                 EditorValue(
-                    text="homepage", badge="EN", href="http://mex", external=True
+                    text="homepage",
+                    badge=LinkLanguage.EN.name,
+                    href="http://mex",
+                    external=True,
                 ),
             ],
         ),
@@ -96,11 +108,11 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
     assert dummy_titles == [
         [
             # ps-1 primary source renders title as text
-            EditorValue(text="Primary Source One", badge="EN")
+            EditorValue(text="Primary Source One", badge=TextLanguage.EN.name)
         ],
         [
             # ps-2 primary source renders title as text
-            EditorValue(text="Primary Source Two", badge="EN")
+            EditorValue(text="Primary Source Two", badge=TextLanguage.EN.name)
         ],
         [
             # contact-point renders email as text
@@ -116,11 +128,29 @@ def test_transform_models_to_title(dummy_data: list[AnyExtractedModel]) -> None:
         ],
         [
             # activity renders title as text (with language badge)
-            EditorValue(text="Aktivität 1", badge="DE")
+            EditorValue(text="Aktivität 1", badge=TextLanguage.DE.name)
         ],
         [
             # resource renders title as text
             EditorValue(text="Bioinformatics Resource 1", badge=LANGUAGE_VALUE_NONE),
+        ],
+        [
+            EditorValue(
+                text="Some Resource with many titles 1",
+                badge=LANGUAGE_VALUE_NONE,
+            ),
+            EditorValue(
+                text="Some Resource with many titles 2",
+                badge=TextLanguage.EN.name,
+            ),
+            EditorValue(
+                text="Eine Resource mit vielen Titeln 3",
+                badge=TextLanguage.DE.name,
+            ),
+            EditorValue(
+                text="Some Resource with many titles 4",
+                badge=LANGUAGE_VALUE_NONE,
+            ),
         ],
     ]
 
@@ -142,7 +172,7 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
         [EditorValue(text="PrimarySource")],
         [EditorValue(text="info@contact-point.one")],
         [EditorValue(text="help@contact-point.two")],
-        [EditorValue(text="Unit 1", badge="EN", enabled=True)],
+        [EditorValue(text="Unit 1", badge=TextLanguage.EN.name, enabled=True)],
         [
             EditorValue(text="A1", enabled=True, badge=LANGUAGE_VALUE_NONE),
             EditorValue(identifier="wEvxYRPlmGVQCbZx9GAbn"),
@@ -153,7 +183,14 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
         ],
         [
             EditorValue(identifier="cWWm02l1c6cucKjIhkFqY4"),
-            EditorValue(text="Theme", badge="BIOINFORMATICS_AND_SYSTEMS_BIOLOGY"),
-            EditorValue(text="AccessRestriction", badge="OPEN"),
+            EditorValue(
+                text="Theme", badge=Theme["BIOINFORMATICS_AND_SYSTEMS_BIOLOGY"].name
+            ),
+            EditorValue(text="AccessRestriction", badge=AccessRestriction["OPEN"].name),
+        ],
+        [
+            EditorValue(identifier="cWWm02l1c6cucKjIhkFqY4"),
+            EditorValue(text="Theme", badge=Theme["PUBLIC_HEALTH"].name),
+            EditorValue(text="AccessRestriction", badge=AccessRestriction["OPEN"].name),
         ],
     ]

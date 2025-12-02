@@ -1,4 +1,4 @@
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
 from importlib.metadata import version
 from urllib.parse import urlencode
 
@@ -7,18 +7,26 @@ from reflex.event import EventSpec
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
-from mex.editor.models import NavItem, User
+from mex.editor.locale_service import LocaleService
+from mex.editor.models import MergedLoginPerson, NavItem, User
+
+locale_service = LocaleService.get()
+available_locales = locale_service.get_available_locales()
 
 
 class State(rx.State):
     """The base state for the app."""
 
-    current_locale: str = "de"
+    current_locale: str = next(
+        (x for x in available_locales if x.id.lower().startswith("de")),
+        available_locales[0],
+    ).id
     current_page_has_changes: bool = False
     navigate_dialog_open: bool = False
     navigate_target: str | None = None
     user_mex: User | None = None
     user_ldap: User | None = None
+    merged_login_person: MergedLoginPerson | None = None
     target_path_after_login: str | None = None
     nav_items: list[NavItem] = [
         NavItem(
@@ -58,19 +66,13 @@ class State(rx.State):
         self.current_locale = locale
 
     @rx.event
-    def set_current_page_has_changes(self, value: bool) -> EventSpec:  # noqa: FBT001
+    def set_current_page_has_changes(self, value: bool) -> None:  # noqa: FBT001
         """Set the current_page_has_changes attribute to the given value.
 
-        Sets the value of the current_page_has_changes attribute and updates the state
-        on client side.
-
         Args:
-            value : The value of the current_page_has_changes attribute.
+            value: The value of the current_page_has_changes attribute.
         """
         self.current_page_has_changes = value
-        return rx.call_script(
-            f"window.updateMexEditorChanges({str(value).lower()})",
-        )
 
     @rx.event
     def close_navigate_dialog(self) -> None:
@@ -79,15 +81,15 @@ class State(rx.State):
 
     @rx.event
     def navigate(self, raw_path: str) -> EventSpec | None:
-        """Navigate to a given path and warn the user about unsaved changes on the current page.
+        """Navigate to a given path and warn if there are unsaved changes.
 
-        If changes on the current page are present, a  dialog will appear and warn the
+        If changes on the current page are present, a dialog will appear and warn the
         user about unsaved changes. The user can decide to stay on the current page or
         discard the changes and navigate away.
 
         Args:
-            raw_path : The path to navigate to.
-        """  # noqa: E501
+            raw_path: The path to navigate to.
+        """
         self.navigate_target = raw_path
         if self.current_page_has_changes:
             self.navigate_dialog_open = True
@@ -96,26 +98,24 @@ class State(rx.State):
         return rx.redirect(self.navigate_target)
 
     @rx.event
-    def logout(self) -> EventSpec:
+    def logout(self) -> Generator[EventSpec, None, None]:
         """Log out a user."""
         self.reset()
-        return rx.redirect("/")
+        yield rx.redirect("/")
 
     @rx.event
-    def check_mex_login(self) -> EventSpec | None:
+    def check_mex_login(self) -> Generator[EventSpec, None, None]:
         """Check if a user is logged in."""
         if self.user_mex is None:
             self.target_path_after_login = self.router.page.raw_path
-            return rx.redirect("/login")
-        return None
+            yield rx.redirect("/login")
 
     @rx.event
-    def check_ldap_login(self) -> EventSpec | None:
+    def check_ldap_login(self) -> Generator[EventSpec, None, None]:
         """Check if a user is logged in to ldap."""
         if self.user_ldap is None:
             self.target_path_after_login = self.router.page.raw_path
-            return rx.redirect("/login-ldap")
-        return None
+            yield rx.redirect("/login-ldap")
 
     @staticmethod
     def _update_raw_path(
@@ -137,7 +137,6 @@ class State(rx.State):
             raw_path = f"{raw_path}?{query_str}"
         nav_item.raw_path = raw_path
 
-    @rx.event
     def push_url_params(
         self,
         params: Mapping[str, int | str | list[str]],
@@ -170,6 +169,6 @@ class State(rx.State):
     def backend_version(self) -> str:
         """Return the version of mex-backend."""
         connector = BackendApiConnector.get()
-        # TODO(ND): use proper connector method when available (stop-gap MX-1762)
+        # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         response = connector.request("GET", "_system/check")
         return str(response.get("version", "N/A"))

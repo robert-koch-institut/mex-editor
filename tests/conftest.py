@@ -1,3 +1,5 @@
+from typing import Any, cast
+
 import pytest
 from fastapi.testclient import TestClient
 from playwright.sync_api import Page, expect
@@ -22,22 +24,39 @@ from mex.common.types import (
     Identifier,
     IdentityProvider,
     Link,
+    MergedContactPointIdentifier,
+    MergedOrganizationalUnitIdentifier,
+    MergedPrimarySourceIdentifier,
     Text,
     TextLanguage,
     Theme,
     YearMonthDay,
 )
+from mex.editor.api.main import api
 from mex.editor.settings import EditorSettings
 from mex.editor.types import EditorUserDatabase, EditorUserPassword
-from mex.mex import app
 
 pytest_plugins = ("mex.common.testing.plugin",)
+
+
+@pytest.fixture(scope="session")
+def browser_context_args(
+    browser_context_args: dict[str, Any],
+) -> dict[str, Any]:
+    """Run the playwright test browser in a larger resolution than its default."""
+    return {
+        **browser_context_args,
+        "viewport": {
+            "width": 1600,
+            "height": 900,
+        },
+    }
 
 
 @pytest.fixture
 def client() -> TestClient:
     """Return a fastAPI test client initialized with our app."""
-    with TestClient(app.api, raise_server_exceptions=False) as test_client:
+    with TestClient(api, raise_server_exceptions=False) as test_client:
         return test_client
 
 
@@ -111,8 +130,9 @@ def writer_user_page(
 ) -> Page:
     login_user(frontend_url, page, *writer_user_credentials)
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
-    page.set_default_navigation_timeout(50000)
-    page.set_default_timeout(10000)
+    page.set_default_navigation_timeout(50_000)
+    page.set_default_timeout(15_000)
+    expect.set_options(timeout=15_000)
     return page
 
 
@@ -121,7 +141,7 @@ def flush_graph_database(is_integration_test: bool) -> None:  # noqa: FBT001
     """Flush the graph database before every integration test."""
     if is_integration_test:
         connector = BackendApiConnector.get()
-        # TODO(ND): use proper connector method when available (stopgap mx-1762)
+        # TODO(ND): use proper connector method when available (stopgap mx-1984)
         connector.request(method="DELETE", endpoint="/_system/graph")
 
 
@@ -186,6 +206,20 @@ def dummy_data() -> list[AnyExtractedModel]:
         title=[Text(value="Bioinformatics Resource 1", language=None)],
         unitInCharge=[organizational_unit_1.stableTargetId],
     )
+    resource_2 = ExtractedResource(
+        hadPrimarySource=primary_source_2.stableTargetId,
+        identifierInPrimarySource="r-2",
+        accessRestriction=AccessRestriction["OPEN"],
+        contact=[contact_point_1.stableTargetId, contact_point_2.stableTargetId],
+        theme=[Theme["PUBLIC_HEALTH"]],
+        title=[
+            Text(value="Some Resource with many titles 1", language=None),
+            Text(value="Some Resource with many titles 2", language=TextLanguage.EN),
+            Text(value="Eine Resource mit vielen Titeln 3", language=TextLanguage.DE),
+            Text(value="Some Resource with many titles 4", language=None),
+        ],
+        unitInCharge=[organizational_unit_1.stableTargetId],
+    )
     return [
         primary_source_1,
         primary_source_2,
@@ -194,6 +228,7 @@ def dummy_data() -> list[AnyExtractedModel]:
         organizational_unit_1,
         activity_1,
         resource_1,
+        resource_2,
     ]
 
 
@@ -219,6 +254,74 @@ def load_dummy_data(
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
     connector.ingest(dummy_data)
+
+
+@pytest.fixture
+def load_pagination_dummy_data(
+    dummy_data: list[AnyExtractedModel],
+    flush_graph_database: None,  # noqa: ARG001
+    request: pytest.FixtureRequest,
+) -> None:
+    """Ingest dummy data into the backend with dynamic model types based on test context."""
+    connector = BackendApiConnector.get()
+    primary_source_1 = next(
+        x for x in dummy_data if x.identifierInPrimarySource == "ps-1"
+    )
+
+    pagination_dummy_data = []
+    pagination_dummy_data.extend(dummy_data)
+
+    # Determine which type of models to create based on test module
+    test_module = request.module.__name__
+
+    if "consent" in test_module:
+        contact_point_1 = next(
+            x for x in dummy_data if x.identifierInPrimarySource == "cp-1"
+        )
+        organizational_unit_1 = next(
+            x for x in dummy_data if x.identifierInPrimarySource == "ou-1"
+        )
+        pagination_dummy_data.extend(
+            [
+                ExtractedResource(
+                    hadPrimarySource=cast(
+                        "MergedPrimarySourceIdentifier", primary_source_1.stableTargetId
+                    ),
+                    identifierInPrimarySource=f"r-pagination-test-{i}",
+                    accessRestriction=AccessRestriction["OPEN"],
+                    contact=[
+                        cast(
+                            "MergedContactPointIdentifier",
+                            contact_point_1.stableTargetId,
+                        )
+                    ],
+                    theme=[Theme["BIOINFORMATICS_AND_SYSTEMS_BIOLOGY"]],
+                    title=[Text(value=f"Pagination Test Resource {i}", language=None)],
+                    unitInCharge=[
+                        cast(
+                            "MergedOrganizationalUnitIdentifier",
+                            organizational_unit_1.stableTargetId,
+                        )
+                    ],
+                )
+                for i in range(100)
+            ]
+        )
+    else:
+        pagination_dummy_data.extend(
+            [
+                ExtractedContactPoint(
+                    email=[Email(f"help-{i}@pagination.abc")],
+                    hadPrimarySource=cast(
+                        "MergedPrimarySourceIdentifier", primary_source_1.stableTargetId
+                    ),
+                    identifierInPrimarySource=f"cp-pagination-test-{i}",
+                )
+                for i in range(100)
+            ]
+        )
+
+    connector.ingest(pagination_dummy_data)
 
 
 @pytest.fixture

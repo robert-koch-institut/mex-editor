@@ -9,17 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Localization (label and description only) for "de" and "en"
-- Warning when a page reflex navigates and there are still changes on the current page
-- added a switch to toggle all primary sources and values in the edit page
-- added textareas for fields listed in mex/editor/models.yaml
-- Warning when the create or edit browser window/tab is closed or navigated away
-- new filter for reference field filtering
-- tab to switch between new reference field filter and the old had primary source filter
-
 ### Changes
-
-- bump cookiecutter template to b18156
 
 ### Deprecated
 
@@ -27,10 +17,84 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [1.2.0] - 2025-11-28
+
+### Added
+
+- consent microsite with ldap auth to allow granting/revoking user info publishing
+- CustomSelect-Component that has items with value and label instead of simple strings
+- add caching for playwright browsers and node-modules to testing workflow
+
+### Changes
+
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/a67c71
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/6009e2
+- Field of the ReferenceFilter is now translated
+- Initial language now picking from available languages instead of hard coded value
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
+- Increased global expect timeout (to 15,000) for tests
+- Using the field label for new/remove additive value button
+- renaming the field_name function to field_name_card
+- editor tests use backend-testing entrypoint
+- prefer using enum names over just raw strings in tests
+- change external test marker to requires_rki_infrastructure
+
+### Fixed
+
+- Page numbers on search and ingest page
+
+## [1.1.0] - 2025-10-10
+
+### Added
+
+- badge with '+ additional titles' if there is more than one title present
+- allow to toggle all primary sources back on within the edit page
+- ingest button of already imported items are always deactivated
+
+### Changes
+
+- run local test browser in headed mode with higher resolution
+- update reflex to 0.7.3
+
+### Removed
+
+- removed warning when the create or edit browser window/tab is closed or navigated away
+
+## [1.0.2] - 2025-10-07
+
+### Fixed
+
+- use locale files from mex-model
+
+## [1.0.1] - 2025-10-07
+
+### Changes
+
+- bump mex-common to 1.5.1 and mex-model to 4.2.1
+
+## [1.0.0] - 2025-10-06
+
+### Added
+
+- submit button is disabled and contains a spinner while submitting
+- localization (label and description only) for "de" and "en"
+- warning when a page reflex navigates and there are still changes on the current page
+- added a switch to toggle all primary sources and values in the edit page
+- added textareas for fields listed in mex/editor/models.yaml
+- warning when the create or edit browser window/tab is closed or navigated away
+- new filter for reference field filtering
+- tab to switch between new reference field filter and the old had primary source filter
+
+### Changes
+
+- bump cookiecutter template to b18156
+
+### Fixed
+
 - fix badge default for link and text
 - fix title of edit page to be equal to search snippet
-
-### Security
 
 ## [0.22.0] - 2025-07-31
 

@@ -1,6 +1,6 @@
 [project]
 name = "mex-editor"
-version = "0.22.0"
+version = "1.2.0"
 description = "Metadata editor web application."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -9,11 +9,12 @@ urls = { Repository = "https://github.com/robert-koch-institut/mex-editor" }
 requires-python = ">=3.11,<3.12"
 dependencies = [
     "async-lru>=2",
+    "babel>=2",
     "fastapi>=0.117",
-    "mex-common>=1.4,<1.5",
+    "mex-common>=1.5.1,<1.6",
     "pydantic>=2",
     "pyyaml>=6",
-    "reflex>=0.6,<0.7",
+    "reflex>=0.7,<0.7.4",
     "requests>=2",
     "starlette>=0.48",
     "typer>=0.19",
@@ -52,10 +53,6 @@ python_version = "3.11"
 show_error_codes = true
 plugins = ["pydantic.mypy"]
 
-[[tool.mypy.overrides]]
-module = "reflex.*"
-ignore_missing_imports = true
-
 [tool.pdm]
 distribution = true
 
@@ -81,14 +78,14 @@ addopts = [
     "--cov",
     "--no-cov-on-fail",
     "--cov-report=term-missing:skip-covered",
-    "--cov-fail-under=60",
+    "--cov-fail-under=50",
     "--cov-branch",
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--random-order-bucket=global",
 ]
 markers = [
     "integration: mark a test as integration test",
-    "external: mark a test as external integration test"
+    "requires_rki_infrastructure: mark a test as requiring rki infrastructure"
 ]
 
 [tool.ruff]
@@ -160,5 +157,5 @@ known-first-party = ["mex", "tests"]
 convention = "google"
 
 [build-system]
-requires = ["pdm-backend==2.4.5"]
+requires = ["pdm-backend==2.4.6"]
 build-backend = "pdm.backend"

@@ -1,7 +1,7 @@
 import re
 
 import pytest
-from playwright.sync_api import Dialog, Page, expect
+from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
@@ -15,7 +15,7 @@ from mex.common.models import (
     SubtractiveActivity,
 )
 from mex.common.transform import ensure_prefix
-from mex.common.types import Identifier, Text, TextLanguage
+from mex.common.types import ActivityType, Identifier, Text, TextLanguage, Theme
 from mex.editor.fields import REQUIRED_FIELDS_BY_CLASS_NAME
 from mex.editor.rules.transform import get_required_mergeable_field_names
 
@@ -125,7 +125,7 @@ def test_edit_page_renders_text(
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_text.png")
     expect(text).to_be_visible()
     expect(text).to_contain_text("Aktivität 1")  # text value
-    expect(text).to_contain_text("DE")  # language badge
+    expect(text).to_contain_text(TextLanguage.DE.name)  # language badge
 
 
 @pytest.mark.integration
@@ -136,7 +136,9 @@ def test_edit_page_renders_vocab(
     theme = page.get_by_test_id(f"value-theme-{extracted_activity.hadPrimarySource}-0")
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_vocab.png")
     expect(theme).to_be_visible()
-    expect(theme).to_contain_text("INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY")  # theme value
+    expect(theme).to_contain_text(
+        Theme["INFECTIOUS_DISEASES_AND_EPIDEMIOLOGY"].name
+    )  # theme value
     expect(theme).to_contain_text("Theme")  # vocabulary name
 
 
@@ -441,7 +443,9 @@ def test_edit_page_renders_vocabulary_input(edit_page: Page) -> None:
 
     badge_select = page.get_by_test_id("additive-rule-activityType-0-badge")
     expect(badge_select).to_be_visible()
-    expect(page.get_by_text("THIRD_PARTY_FUNDED_PROJECT")).to_be_visible()
+    expect(
+        page.get_by_text(ActivityType["THIRD_PARTY_FUNDED_PROJECT"].name)
+    ).to_be_visible()
     badge_select.focus()
     page.keyboard.press("ArrowDown")
     page.keyboard.press("ArrowDown")
@@ -450,7 +454,9 @@ def test_edit_page_renders_vocabulary_input(edit_page: Page) -> None:
     )
     page.keyboard.press("Enter")
     page.locator("body").focus()
-    expect(page.get_by_text("INTERNAL_PROJECT_ENDEAVOR")).to_be_visible()
+    expect(
+        page.get_by_text(ActivityType["INTERNAL_PROJECT_ENDEAVOR"].name)
+    ).to_be_visible()
 
 
 @pytest.mark.integration
@@ -549,6 +555,7 @@ def test_edit_page_additive_rule_roundtrip(
     submit_button = page.get_by_test_id("submit-button")
     submit_button.scroll_into_view_if_needed()
     submit_button.click()
+    page.wait_for_timeout(30000)  # wait for save operation
     page.reload()
 
     # check the rule input is still gone
@@ -603,99 +610,56 @@ def test_required_fields_red_asterisk(
         asterisk = field.get_by_text("*", exact=True)
         if field_name in expected_required_fields:
             expect(asterisk).to_be_visible()
-            expect(asterisk).to_have_css("color", "rgb(255, 0, 0)")
+            expect(asterisk).to_have_css("color", "rgb(255, 99, 71)")
         else:
             expect(asterisk).to_have_count(0)
 
 
 @pytest.mark.integration
-def test_deactivate_all_switch(edit_page: Page) -> None:
+def test_toggle_all_switch(edit_page: Page) -> None:
     page = edit_page
 
-    expect(page.get_by_test_id("deactivate-all-switch")).to_be_checked()
-    page.get_by_test_id("deactivate-all-switch").click()
-    expect(page.get_by_test_id("deactivate-all-switch")).not_to_be_checked()
-    page.screenshot(path="tests_edit_test_main-test_deactivate_all_switch-clicked.png")
+    expect(page.get_by_test_id("toggle-all-switch")).to_be_checked()
+    page.get_by_test_id("toggle-all-switch").click()
+    expect(page.get_by_test_id("toggle-all-switch")).not_to_be_checked()
+    page.screenshot(path="tests_edit_test_main-test_toggle_all_switch-clicked.png")
 
     last_switch = None
-    all_swtiches = page.get_by_role("switch").all()
+    all_switches = page.get_by_role("switch").all()
 
-    for switch in all_swtiches:
+    for switch in all_switches:
         expect(switch).not_to_be_checked()
         last_switch = switch
 
     assert last_switch
     last_switch.click()
     last_switch.screenshot(
-        path="tests_edit_test_main-test_deactivate_all_last-switch-click.png"
+        path="tests_edit_test_main-test_toggle_all_last-switch-click.png"
     )
 
-    expect(page.get_by_test_id("deactivate-all-switch")).to_be_checked()
+    expect(page.get_by_test_id("toggle-all-switch")).to_be_checked()
 
 
 @pytest.mark.integration
-def test_edit_page_warn_tab_close(edit_page: Page) -> None:
-    page = edit_page
-
-    # ensure navigation without changes is working
-    page.goto("https://www.rki.de")
-    page.screenshot(
-        path="tests_edit_test_main-test_edit_page_warn_tab_close-rki_website.png"
-    )
-    assert "https://www.rki.de" in page.url
-
-    # back to edit site
-    page.go_back()
-    page.wait_for_url("**/item/**")
-    page.wait_for_selector(
-        "[data-testid='new-additive-alternativeTitle-00000000000000']"
-    )
-    page.screenshot(
-        path="tests_edit_test_main-test_edit_page_warn_tab_close-back_on_edit.png"
-    )
-
-    # change a value
-    page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
-    page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
+def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> None:
+    edit_page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    edit_page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
         "new alternative title"
     )
-    page.screenshot(
-        path="tests_edit_test_main-test_edit_page_warn_tab_close-page_with_changes.png"
-    )
+    # check default state
+    submit_button = edit_page.get_by_test_id("submit-button")
+    expect(submit_button).to_have_text(re.compile(r"Save .*"))
+    expect(submit_button).not_to_be_disabled()
 
-    handle_dialog_called: list[bool] = []
+    # submit item
+    submit_button.click()
+    expect(submit_button).to_have_text(re.compile(r"Saving .*"))
+    expect(submit_button).to_be_disabled()
 
-    def _handle_dialog(dialog: Dialog) -> None:
-        # damn i love python
-        nonlocal handle_dialog_called
-
-        assert dialog.type == "beforeunload"
-        handle_dialog_called.append(True)
-
-        # stay on the side
-        dialog.dismiss()
-
-    page.on("dialog", _handle_dialog)
-
-    # won't work cuz we dismiss the dialog
-    with pytest.raises(Exception, match="Timeout"):
-        page.goto("https://www.rki.de", timeout=3000)
-
-    # ensure still on edit site and dialog was called
-    assert "/item/" in page.url
-    assert len(handle_dialog_called) == 1
-    assert handle_dialog_called[0]
-
-    # after save we should navigate again without dialog
-    page.get_by_test_id("submit-button").click()
-    page.wait_for_selector(".editor-toast")
-    page.screenshot(
-        path="tests_edit_test_main-test_edit_page_warn_tab_close-save_toast.png"
-    )
-
-    page.goto("https://www.rki.de")
-    assert "https://www.rki.de" in page.url
-    assert len(handle_dialog_called) == 1
+    # check if back in default state after saving
+    edit_page.wait_for_timeout(30000)
+    expect(submit_button).to_have_text(re.compile(r"Save .*"))
+    expect(submit_button).not_to_be_disabled()
 
 
 @pytest.mark.integration
@@ -720,7 +684,7 @@ def test_edit_page_navigation_unsaved_changes_warning_cancel_save_and_navigate(
     expect(dialog).to_be_visible()
 
     # cancel the navigation and check if url is still edit page
-    dialog.get_by_role("button", name="Cancel").click()
+    dialog.get_by_role("button", name="Stay here").click()
     expect(page).to_have_url(re.compile("/item/.*"))
 
     # click save changes
@@ -755,5 +719,50 @@ def test_edit_page_navigation_unsaved_changes_warning_discard_changes_and_naviga
     expect(dialog).to_be_visible()
 
     # discard changes and expect navigation (url is search page url)
-    dialog.get_by_role("button", name="Discard changes").click()
+    dialog.get_by_role("button", name="Navigate away").click()
     expect(page).to_have_url(re.compile("/"))
+
+
+@pytest.mark.parametrize(
+    ("locale_id", "field_name", "expected_field_label"),
+    [
+        pytest.param(
+            "de-DE",
+            "alternativeTitle",
+            "Alternativtitel",
+            id="de-DE:alternativeTitle",
+        ),
+        pytest.param(
+            "en-US",
+            "alternativeTitle",
+            "Alternative title",
+            id="en-US:alternativeTitle",
+        ),
+        pytest.param(
+            "de-DE",
+            "abstract",
+            "Kurzbeschreibung",
+            id="de-DE:abstract",
+        ),
+        pytest.param(
+            "en-US",
+            "abstract",
+            "Abstract",
+            id="en-US:abstract",
+        ),
+    ],
+)
+@pytest.mark.integration
+def test_edit_page_additive_add_remove_button_text_translation(
+    edit_page: Page, locale_id: str, field_name: str, expected_field_label: str
+) -> None:
+    edit_page.get_by_test_id("language-switcher").click()
+    edit_page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()
+    add_alt_title_btn = edit_page.get_by_test_id(
+        f"new-additive-{field_name}-00000000000000"
+    )
+    expect(add_alt_title_btn).to_have_text(f"New {expected_field_label}")
+    add_alt_title_btn.click()
+    expect(
+        edit_page.get_by_test_id(f"additive-rule-{field_name}-0-remove-button")
+    ).to_have_text(f"Remove {expected_field_label}")

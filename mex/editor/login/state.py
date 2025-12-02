@@ -1,11 +1,17 @@
-from base64 import b64encode
+from collections.abc import Generator
+from urllib.parse import urljoin
 
 import reflex as rx
+import requests
 from reflex.event import EventSpec
+from requests import RequestException
 
+from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.settings import BaseSettings
+from mex.editor.exceptions import escalate_error
+from mex.editor.models import MergedLoginPerson
 from mex.editor.security import (
     has_read_access_mex,
-    has_write_access_ldap,
     has_write_access_mex,
 )
 from mex.editor.state import State, User
@@ -28,23 +34,40 @@ class LoginLdapState(State):
         self.password = password
 
     @rx.event
-    def login(self) -> EventSpec:
+    def login(self) -> Generator[EventSpec, None, None]:
         """Login a user."""
-        write_access = has_write_access_ldap(self.username, self.password)
-        if write_access:
-            encoded = b64encode(f"{self.username}:{self.password}".encode("ascii"))
+        settings = BaseSettings.get()
+        url = urljoin(
+            str(settings.backend_api_url),
+            f"{BackendApiConnector.API_VERSION}/merged-person-from-login",
+        )  # stopgap: MX-2083
+
+        try:
+            response = requests.post(
+                url, auth=(self.username, self.password), timeout=10
+            )
+        except RequestException as exc:
+            yield from escalate_error(
+                "backend", "Cannot reach backend. Please try again later.", exc
+            )
+            return
+        if response:
             self.user_ldap = User(
                 name=self.username,
-                authorization=f"Basic {encoded.decode('ascii')}",
-                write_access=write_access,
+                write_access=True,
             )
-            if self.target_path_after_login:
-                target_path_after_login = self.target_path_after_login
-            else:
-                target_path_after_login = "/"
+            response_user = response.json()
+            self.merged_login_person = MergedLoginPerson(
+                identifier=response_user["identifier"],
+                full_name=response_user["fullName"],
+                email=response_user["email"],
+                orcid_id=response_user["orcidId"],
+            )
+            target_path_after_login = self.target_path_after_login or "/"
             self.reset()  # reset username/password
-            return rx.redirect(target_path_after_login)
-        return rx.window_alert("Invalid credentials.")
+            yield rx.redirect(target_path_after_login)
+        else:
+            yield rx.window_alert("Invalid credentials.")
 
 
 class LoginMExState(State):
@@ -64,15 +87,13 @@ class LoginMExState(State):
         self.password = password
 
     @rx.event
-    def login(self) -> EventSpec:
+    def login(self) -> Generator[EventSpec, None, None]:
         """Login a user."""
         read_access = has_read_access_mex(self.username, self.password)
         write_access = has_write_access_mex(self.username, self.password)
         if read_access:
-            encoded = b64encode(f"{self.username}:{self.password}".encode("ascii"))
             self.user_mex = User(
                 name=self.username,
-                authorization=f"Basic {encoded.decode('ascii')}",
                 write_access=write_access,
             )
             if self.target_path_after_login:
@@ -80,5 +101,6 @@ class LoginMExState(State):
             else:
                 target_path_after_login = "/"
             self.reset()  # reset username/password
-            return rx.redirect(target_path_after_login)
-        return rx.window_alert("Invalid credentials.")
+            yield rx.redirect(target_path_after_login)
+        else:
+            yield rx.window_alert("Invalid credentials.")

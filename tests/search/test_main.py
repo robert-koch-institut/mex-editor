@@ -6,6 +6,7 @@ from mex.common.models import (
     AnyExtractedModel,
     ExtractedActivity,
     ExtractedPrimarySource,
+    ExtractedResource,
 )
 
 
@@ -41,7 +42,7 @@ def test_index(
 
 
 @pytest.mark.integration
-@pytest.mark.usefixtures("load_dummy_data")
+@pytest.mark.usefixtures("load_pagination_dummy_data")
 def test_pagination(
     frontend_url: str,
     writer_user_page: Page,
@@ -49,13 +50,38 @@ def test_pagination(
     page = writer_user_page
     page.goto(frontend_url)
 
-    # check sidebar is showing and disabled and selector is on page 1
     pagination_previous = page.get_by_test_id("pagination-previous-button")
     pagination_next = page.get_by_test_id("pagination-next-button")
     pagination_page_select = page.get_by_test_id("pagination-page-select")
+
+    pagination_page_select.scroll_into_view_if_needed()
+    page.screenshot(path="tests_search_test_main_test_pagination.png")
+
+    # check if:
+    # - previos is disabled
+    # - select shows all expected page numbers
+    # - next is enabled
     expect(pagination_previous).to_be_disabled()
+    expect(pagination_page_select).to_have_text("1")
+    pagination_page_select.click()
+    opt1 = page.get_by_role("option", name="1")
+    expect(opt1).to_be_visible()
+    expect(opt1).to_have_attribute("data-state", "checked")
+    expect(page.get_by_role("option", name="2")).to_be_visible()
+    expect(page.get_by_role("option", name="3")).to_be_visible()
+    expect(pagination_next).to_be_enabled()
+    # close the overlay, otherwise u cant click sth else
+    opt1.click()
+
+    pagination_next.click()
+    expect(pagination_previous).to_be_enabled()
+    expect(pagination_page_select).to_have_text("2")
+    expect(pagination_next).to_be_enabled()
+
+    pagination_next.click()
+    expect(pagination_previous).to_be_enabled()
+    expect(pagination_page_select).to_have_text("3")
     expect(pagination_next).to_be_disabled()
-    expect(pagination_page_select).to_be_disabled()
 
 
 @pytest.mark.integration
@@ -208,11 +234,11 @@ def test_reference_filter_fields_for_entity_type(
     hps_tab.click()
     expect(page.get_by_test_id("had-primary-sources")).to_be_visible()
 
-    dyn_tab = page.get_by_role("tab", name="Dynamisch")
+    dyn_tab = page.get_by_role("tab", name="Dynamic")
     dyn_tab.click()
-    assert page.get_by_test_id("reference-field-filter").is_visible()
+    expect(page.get_by_test_id("reference-field-filter")).to_be_visible()
 
-    # select person entityasdas
+    # select person entity
     entity_types = page.get_by_test_id("entity-types")
     entity_types.get_by_text("Person").click()
 
@@ -227,14 +253,62 @@ def test_reference_filter_fields_for_entity_type(
     )
 
     expected_person_fields = [
-        "memberOf",
-        "affiliation",
-        "hadPrimarySource",
-        "stableTargetId",
+        "Fachgebiet",
+        "Affiliation",
+        "Primärsystem",
+        "Stabiler Identifikator",
     ]
     for field in expected_person_fields:
-        select_item = page.get_by_role("option", name=field)
-        select_item.is_visible()
+        select_item = page.get_by_role("option", name=field, exact=True)
+        expect(select_item).to_be_visible()
+
+
+@pytest.mark.parametrize(
+    ("locale_id", "expected_items"),
+    [
+        pytest.param(
+            "de-DE",
+            [
+                "Affiliation",
+                "Autor*in",
+                "Datei",
+                "Fachgebiet",
+                "Kontakt",
+                "Nachfolge von",
+            ],
+            id="de-DE",
+        ),
+        pytest.param(
+            "en-US",
+            [
+                "Affiliation",
+                "Access platform",
+                "Contact",
+                "Author",
+                "Files",
+                "Publisher",
+            ],
+            id="en-US",
+        ),
+    ],
+)
+@pytest.mark.integration
+def test_reference_filter_field_translation(
+    frontend_url: str, writer_user_page: Page, locale_id: str, expected_items: list[str]
+) -> None:
+    page = writer_user_page
+    page.goto(frontend_url)
+    page.wait_for_selector("[data-testid='page-body']")
+
+    # switch language to specifid locale
+    lang_switcher = page.get_by_test_id("language-switcher")
+    lang_switcher.click()
+    page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()
+
+    # check expected items existing
+    page.get_by_test_id("reference-field-filter-field").click()
+    for item in expected_items:
+        expect(page.get_by_role("option", name=item, exact=True)).to_be_visible()
 
 
 @pytest.mark.integration
@@ -252,10 +326,10 @@ def test_reference_filter(
     # open select
     page.get_by_test_id("reference-field-filter-field").click()
     # click concat option
-    page.get_by_role("option", name="contact").click()
+    page.get_by_role("option", name="Kontakt").click()
     # add invalid field
     page.get_by_test_id("reference-field-filter-add-id").click()
-    page.get_by_test_id("reference-field-filter-id-0").fill("invalidIdentifer!")
+    page.get_by_test_id("reference-field-filter-id-0").fill("invalidIdentifier!")
     # check for validation error msg
     expect(
         page.get_by_test_id("reference-field-filter").get_by_text("pattern")
@@ -273,7 +347,7 @@ def test_reference_filter(
     page.screenshot(
         path="tests_search_test_main-test_reference_filter-reference_filter_valid_search.png"
     )
-    expect(page.get_by_text("Showing 2 of 2 items")).to_be_visible()
+    expect(page.get_by_text("Showing 3 of 3 items")).to_be_visible()
 
 
 @pytest.mark.integration
@@ -289,7 +363,7 @@ def test_push_search_params(
 
     # load page and verify url
     page.goto(frontend_url)
-    page.wait_for_url("**/", timeout=10000)
+    page.wait_for_url("**/")
 
     # select an entity type
     entity_types = page.get_by_test_id("entity-types")
@@ -306,12 +380,13 @@ def test_push_search_params(
     # add a query string to the search constraints
     search_input = page.get_by_placeholder("Search here...")
     expect(search_input).to_be_visible()
-    search_input.fill("Can I search here?")
+    search_input.fill("Une activité active")
     search_input.press("Enter")
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
-        "**/?q=Can+I+search+here%3F&page=1&entityType=Activity&referenceFilterStrategy=dynamic"
+        "**/?q=Une+activit%C3%A9+active&page=1&entityType=Activity"
+        "&referenceFilterStrategy=dynamic"
     )
 
     # activate tab for had primary source filtering
@@ -322,15 +397,55 @@ def test_push_search_params(
     primary_sources = page.get_by_test_id("had-primary-sources")
     expect(primary_sources).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load-2.png")
-    primary_sources.get_by_text(primary_source.title[0].value).click()
-    checked = primary_sources.get_by_role("checkbox", checked=True)
-    expect(checked).to_have_count(1)
+    checkbox = primary_sources.get_by_text(primary_source.title[0].value)
+    expect(checkbox).to_be_visible()
+    checkbox.click()
     page.screenshot(
         path="tests_search_test_main-test_push_search_params-on-click-2.png"
     )
+    expect(page.get_by_test_id("search-results-section")).to_be_visible()
+    checked = primary_sources.get_by_role("checkbox", checked=True)
+    expect(checked).to_have_count(1)
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
-        "**/?q=Can+I+search+here%3F&page=1&entityType=Activity"
-        f"&referenceFilterStrategy=had_primary_source&hadPrimarySource={primary_source.stableTargetId}"
+        "**/?q=Une+activit%C3%A9+active&page=1&entityType=Activity"
+        "&referenceFilterStrategy=had_primary_source"
+        f"&hadPrimarySource={primary_source.stableTargetId}"
     )
+
+
+@pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
+def test_additional_titles_badge(
+    frontend_url: str,
+    writer_user_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+) -> None:
+    # search for resources
+    page = writer_user_page
+    page.goto(f"{frontend_url}/?entityType=Resource")
+
+    resource_r2 = dummy_data_by_identifier_in_primary_source["r-2"]
+    assert isinstance(resource_r2, ExtractedResource)
+    resource_r2_result = page.get_by_test_id(f"result-{resource_r2.stableTargetId}")
+    first_title = resource_r2.title[0]
+
+    # expect title is visible and there are additional titles for 'r2'
+    expect(resource_r2_result).to_contain_text(first_title.value)
+    expect(resource_r2_result).to_contain_text("+ additional titles")
+
+    # hover additional titles
+    trigger = resource_r2_result.get_by_test_id("tooltip-additional-titles-trigger")
+    box = trigger.bounding_box()
+    assert box
+    page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+    trigger.hover()
+    page.screenshot(path="tests_search_test_additional_titles_badge_hover.png")
+
+    # check tooltip content
+    tooltip = page.get_by_test_id("tooltip-additional-titles")
+    expect(tooltip).to_be_visible()
+    expect(tooltip).not_to_contain_text(first_title.value)
+    for title in resource_r2.title[1:]:
+        expect(tooltip).to_contain_text(title.value)

@@ -73,7 +73,7 @@ def render_identifier(value: EditorValue) -> rx.Component:
         ),
         min_width="16ch",
         min_height="1lh",
-        loading=rx.cond(value.text, c1=False, c2=True),
+        loading=rx.cond(value.text, False, True),  # noqa: FBT003
     )
 
 
@@ -119,7 +119,7 @@ def render_text(value: EditorValue) -> rx.Component:
         render_span(value.text),
         min_width="16ch",
         min_height="1lh",
-        loading=rx.cond(value.text, c1=False, c2=True),
+        loading=rx.cond(value.text, False, True),  # noqa: FBT003
     )
 
 

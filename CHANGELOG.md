@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- upgrade reflex to version 0.7.14
+
 ### Deprecated
 
 ### Removed

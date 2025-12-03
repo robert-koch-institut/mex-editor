@@ -116,7 +116,9 @@ app.add_page(
     title="MEx Consent",
     on_load=[
         State.check_ldap_login,
-        ConsentState.load_user,
+        ConsentState.get_all_data,
+        ConsentState.resolve_identifiers,
+        ConsentState.get_consent,
     ],
 )
 if app.api:  # stopgap reflex 0.7.4

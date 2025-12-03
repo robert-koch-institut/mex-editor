@@ -29,13 +29,13 @@ jobs:
 
     services:
       neo4j:
-        image: neo4j:2025.08-community
+        image: neo4j:2025.09-community
         env:
           NEO4J_AUTH: neo4j/password
         ports:
           - 7687:7687
       backend:
-        image: ghcr.io/robert-koch-institut/mex-backend:1.1.1
+        image: ghcr.io/robert-koch-institut/mex-backend:1.2.0
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
           MEX_BACKEND_API_KEY_DATABASE: ${{ secrets.MEX_BACKEND_API_KEY_DATABASE }}
@@ -44,10 +44,12 @@ jobs:
           MEX_DEBUG: True
         ports:
           - 8080:8080
+        options: --entrypoint testing-backend
+
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
@@ -67,6 +69,26 @@ jobs:
           cache-name: cache-environment
         with:
           path: ~/.cache/pip
+          key: ${{ env.cache-name }}-${{ hashFiles('*.lock') }}
+          restore-keys: |
+            ${{ env.cache-name }}-
+
+      - name: Cache playwright
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-playwright
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ env.cache-name }}-${{ hashFiles('*.lock') }}
+          restore-keys: |
+            ${{ env.cache-name }}-
+
+      - name: Cache reflex
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-reflex
+        with:
+          path: .web/node_modules
           key: ${{ env.cache-name }}-${{ hashFiles('*.lock') }}
           restore-keys: |
             ${{ env.cache-name }}-

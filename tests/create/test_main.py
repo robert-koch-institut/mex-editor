@@ -115,7 +115,7 @@ def test_create_page_test_additive_buttons(create_page: Page) -> None:
     expect(remove_additive_rule_button).not_to_be_visible()
 
 
-@pytest.mark.external
+@pytest.mark.requires_rki_infrastructure
 @pytest.mark.integration
 def test_create_page_submit_item(create_page: Page) -> None:
     page = create_page
@@ -163,7 +163,7 @@ def test_language_switcher(
     create_page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()
 
     # select entity_type resource
-    create_page.get_by_test_id("entity-type-select").click(timeout=20000)
+    create_page.get_by_test_id("entity-type-select").click(timeout=30_000)
     create_page.get_by_role("option", name="Resource", exact=True).click()
     create_page.wait_for_timeout(20000)
 

@@ -36,13 +36,60 @@ def toggle_all_switch() -> rx.Component:
     )
 
 
+def discard_changes_button() -> rx.Component:
+    """Render a button to show discard changes dialog."""
+    return rx.cond(
+        EditState.has_changes,
+        rx.alert_dialog.root(
+            rx.alert_dialog.trigger(
+                rx.button(
+                    "Discard changes",
+                    color_scheme="red",
+                ),
+                custom_attrs={"data-testid": "discard-changes-dialog-button"},
+            ),
+            rx.alert_dialog.content(
+                rx.alert_dialog.title("Discard changes"),
+                rx.alert_dialog.description(
+                    "Are you sure u want to delete your changes?",
+                    size="2",
+                ),
+                rx.flex(
+                    rx.alert_dialog.cancel(
+                        rx.button(
+                            "Cancel",
+                            variant="soft",
+                            color_scheme="gray",
+                        ),
+                    ),
+                    rx.alert_dialog.action(
+                        rx.button(
+                            "Discard changes",
+                            color_scheme="red",
+                            variant="solid",
+                            on_click=[
+                                RuleState.delete_local_state,
+                                RuleState.refresh,
+                                RuleState.resolve_identifiers,
+                            ],
+                            custom_attrs={"data-testid": "discard-changes-button"},
+                        ),
+                    ),
+                    spacing="3",
+                    margin_top="16px",
+                    justify="end",
+                ),
+                style=rx.Style(max_width=450),
+            ),
+        ),
+    )
+
+
 def index() -> rx.Component:
     """Return the index for the edit component."""
     return page(
         rx.vstack(
-            rule_page_header(
-                edit_title(),
-            ),
+            rule_page_header(rx.hstack(edit_title(), discard_changes_button())),
             toggle_all_switch(),
             rx.foreach(
                 RuleState.translated_fields,

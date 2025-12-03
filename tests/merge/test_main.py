@@ -207,6 +207,9 @@ def test_additional_titles_badge(
 
     # hover additional titles
     trigger = resource_r2_result.get_by_test_id("tooltip-additional-titles-trigger")
+    box = trigger.bounding_box()
+    assert box
+    page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
     trigger.hover()
     page.screenshot(path="tests_merge_test_additional_titles_badge_hover.png")
 

@@ -54,6 +54,18 @@ app.add_page(
 )
 app.add_page(
     create_index,
+    route="/create/[draft_identifier]",
+    title="MEx Editor | Create",
+    on_load=[
+        State.check_mex_login,
+        State.load_nav,
+        # CreateState.reset_stem_type,
+        RuleState.refresh,
+        RuleState.resolve_identifiers,
+    ],
+)
+app.add_page(
+    create_index,
     route="/create",
     title="MEx Editor | Create",
     on_load=[

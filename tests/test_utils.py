@@ -61,5 +61,5 @@ def build_pagination_regex(current: int, total: int) -> re.Pattern:
 def build_ui_label_regex(label_id: str) -> re.Pattern:
     service = LocaleService.get()
     return re.compile(
-        f"({'|'.join(service.get_ui_label(locale.id, label_id) for locale in service.get_available_locales())})"
+        f"({'|'.join(re.escape(service.get_ui_label(locale.id, label_id)) for locale in service.get_available_locales())})"
     )

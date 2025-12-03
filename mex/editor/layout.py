@@ -218,52 +218,10 @@ def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
     )
 
 
-def navigate_away_dialog() -> rx.Component:
-    """Render a dialog that informs the user about unsaved changes on the page.
-
-    If the dialog is dismissed navigation is stopped and the user stays on the page;
-    otherwise navigate away.
-    """
-    return rx.alert_dialog.root(
-        rx.alert_dialog.content(
-            rx.alert_dialog.title("Unsaved changes"),
-            rx.alert_dialog.description(
-                "There are unsaved changes on the page. If you navigate away "
-                "these changes will be lost. Do you want to navigate anyway?",
-            ),
-            rx.flex(
-                rx.alert_dialog.cancel(
-                    rx.button(
-                        "Stay here",
-                        color_scheme="gray",
-                        on_click=State.close_navigate_dialog,
-                    )
-                ),
-                rx.alert_dialog.action(
-                    rx.button(
-                        "Navigate away",
-                        color_scheme="tomato",
-                        on_click=[
-                            State.close_navigate_dialog,
-                            State.set_current_page_has_changes(False),  # type: ignore[misc]
-                            State.navigate(State.navigate_target),  # type: ignore[misc]
-                        ],
-                    )
-                ),
-                spacing="3",
-                style=rx.Style(marginTop="1rem"),
-                justify="end",
-            ),
-        ),
-        open=State.navigate_dialog_open,
-    )
-
-
 def page(
     *children: rx.Component,
     user_type: str = "user_mex",
     nav_items_source: list[NavItem] | None = None,
-    include_navigate_dialog: bool = True,
 ) -> rx.Component:
     """Return a page fragment with navigation bar and given children.
 
@@ -271,7 +229,6 @@ def page(
         *children: Components to render in the page body
         user_type: State attribute to check for user login
         nav_items_source: Custom navigation items, if None uses default
-        include_navigate_dialog: Whether to include the navigate away dialog
     """
     user_check = getattr(State, user_type)
     navbar_component = nav_bar(nav_items_source)
@@ -290,23 +247,10 @@ def page(
         ),
     ]
 
-    if include_navigate_dialog:
-        page_content.append(navigate_away_dialog())
-
     return rx.cond(
         user_check,
         rx.center(
-            nav_bar(),
-            rx.hstack(
-                *children,
-                style=rx.Style(
-                    maxWidth="var(--app-max-width)",
-                    minWidth="var(--app-min-width)",
-                    padding="calc(var(--space-6) * 4) var(--space-6) var(--space-6)",
-                    width="100%",
-                ),
-                custom_attrs={"data-testid": "page-body"},
-            ),
+            *page_content,
             style=rx.Style(
                 {
                     "--app-max-width": "calc(1480px * var(--scaling))",

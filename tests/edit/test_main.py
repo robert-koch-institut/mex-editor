@@ -707,7 +707,7 @@ def test_edit_page_additive_add_remove_button_text_translation(
 @pytest.mark.integration
 def test_edit_page_discard_changes_button_roundtrip(
     edit_page: Page,
-    # extracted_activity: ExtractedActivity,
+    extracted_activity: ExtractedActivity,
 ) -> None:
     discard_dialog_button = edit_page.get_by_test_id("discard-changes-dialog-button")
     expect(discard_dialog_button).not_to_be_visible()
@@ -731,15 +731,26 @@ def test_edit_page_discard_changes_button_roundtrip(
     expect(discard_dialog_button).not_to_be_visible()
 
     # toggle existing value and check button visibility
-    edit_page.get_by_test_id("switch-abstract-ezQqKqG0cBsUdHSvwq0DqK-0").click()
+    edit_page.screenshot(
+        path="tests_edit_test_main-test_discard_changes_button_roundtrip-ps-abstract-before-click.png"
+    )
+    edit_page.get_by_test_id(
+        f"switch-abstract-{extracted_activity.hadPrimarySource}-0"
+    ).click()
     expect(discard_dialog_button).to_be_visible()
-    edit_page.get_by_test_id("switch-abstract-ezQqKqG0cBsUdHSvwq0DqK-0").click()
+    edit_page.get_by_test_id(
+        f"switch-abstract-{extracted_activity.hadPrimarySource}-0"
+    ).click()
     expect(discard_dialog_button).not_to_be_visible()
 
     # toggle primary source and check button visibility
-    edit_page.get_by_test_id("switch-abstract-ezQqKqG0cBsUdHSvwq0DqK").click()
+    edit_page.get_by_test_id(
+        f"switch-abstract-{extracted_activity.hadPrimarySource}"
+    ).click()
     expect(discard_dialog_button).to_be_visible()
-    edit_page.get_by_test_id("switch-abstract-ezQqKqG0cBsUdHSvwq0DqK").click()
+    edit_page.get_by_test_id(
+        f"switch-abstract-{extracted_activity.hadPrimarySource}"
+    ).click()
     expect(discard_dialog_button).not_to_be_visible()
 
     # toogle all and check button visibility

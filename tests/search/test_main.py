@@ -1,5 +1,3 @@
-import re
-
 import pytest
 from playwright.sync_api import Page, expect
 
@@ -10,7 +8,7 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
 )
-from tests.test_utils import build_pagination_regex
+from tests.test_utils import build_pagination_regex, build_ui_label_regex
 
 
 @pytest.mark.integration
@@ -437,7 +435,9 @@ def test_additional_titles_badge(
     # expect title is visible and there are additional titles for 'r2'
     expect(resource_r2_result).to_contain_text(first_title.value)
     addi_title_badge = resource_r2_result.get_by_test_id("additional-titles-badge")
-    expect(addi_title_badge).to_have_text(re.compile(r"\w+"))
+    expect(addi_title_badge).to_have_text(
+        build_ui_label_regex("components.titles.additional_titles")
+    )
 
     # hover additional titles
     box = addi_title_badge.bounding_box()

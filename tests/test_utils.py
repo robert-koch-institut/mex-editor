@@ -5,6 +5,7 @@ import pytest
 
 from mex.common.exceptions import EmptySearchResultError, MExError
 from mex.common.models import AnyExtractedModel, ExtractedPrimarySource
+from mex.editor.locale_service import LocaleService
 from mex.editor.models import EditorValue
 from mex.editor.utils import resolve_editor_value, resolve_identifier
 
@@ -55,3 +56,10 @@ async def test_resolve_editor_value(
 
 def build_pagination_regex(current: int, total: int) -> re.Pattern:
     return re.compile(rf"\w+\s{current}\s\w+\s{total}\s\w+")
+
+
+def build_ui_label_regex(label_id: str) -> re.Pattern:
+    service = LocaleService.get()
+    return re.compile(
+        f"({'|'.join(service.get_ui_label(locale.id, label_id) for locale in service.get_available_locales())})"
+    )

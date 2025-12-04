@@ -1,6 +1,7 @@
+import os
+import sys
 from pathlib import Path
 
-import typer
 import uvicorn
 from reflex import constants
 from reflex.config import environment, get_config
@@ -78,8 +79,12 @@ def editor_frontend() -> None:  # pragma: no cover
 def main() -> None:  # pragma: no cover
     """Start the editor api together with frontend."""
     # Set environment variables.
-    environment.REFLEX_USE_NPM.set(True)
     environment.REFLEX_USE_GRANIAN.set(False)
 
+    if "win32" in sys.platform:
+        # bun cache is not working correctly on windows
+        # https://github.com/oven-sh/bun/issues/20886
+        os.environ["BUN_OPTIONS"] = "--no-cache"
+
     # Run the editor.
-    typer.run(run)
+    run.main()

@@ -5,7 +5,7 @@ from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
-from tests.test_utils import build_ui_label_regex
+from tests.conftest import build_ui_label_regex
 
 
 @pytest.fixture

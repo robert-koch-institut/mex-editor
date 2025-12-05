@@ -6,7 +6,7 @@ from mex.common.models import (
     ExtractedContactPoint,
     ExtractedResource,
 )
-from tests.test_utils import build_pagination_regex, build_ui_label_regex
+from tests.conftest import build_pagination_regex, build_ui_label_regex
 
 
 @pytest.fixture

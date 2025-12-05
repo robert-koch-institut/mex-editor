@@ -2,7 +2,7 @@ import pytest
 from playwright.sync_api import Page, expect
 from pydantic import SecretStr
 
-from tests.test_utils import build_ui_label_regex
+from tests.conftest import build_ui_label_regex
 
 
 @pytest.mark.integration

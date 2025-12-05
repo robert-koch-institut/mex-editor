@@ -14,8 +14,8 @@ def login_ldap_user(
     settings = EditorSettings.get()
     url = urlsplit(settings.ldap_url.get_secret_value())
     page.goto(f"{frontend_url}/consent")
-    page.get_by_placeholder("Username").fill(str(url.username))
-    page.get_by_placeholder("Password").fill(str(url.password))
+    page.get_by_test_id("input-username").fill(str(url.username))
+    page.get_by_test_id("input-password").fill(str(url.password))
     page.get_by_test_id("login-button").click()
     page.wait_for_timeout(3000)
     page.screenshot(path="tests_ldap_login.png")
@@ -110,20 +110,21 @@ def test_index(consent_page: Page) -> None:
 def test_submit_consent(consent_page: Page) -> None:
     page = consent_page
 
-    # check if given consent is submitted
-    page.get_by_role("button", name="Einwilligen").click()
+    page.get_by_test_id("accept-consent-button").click()
     consent_status = page.get_by_test_id("consent-status")
     consent_status.scroll_into_view_if_needed()
+
+    # check if given consent is submitted
     page.screenshot(path="tests_consent_test_main-test_submit_consent_valid.png")
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
-    expect(toast).to_contain_text("Consent was saved successfully.")
+    expect(toast).to_have_attribute("data-type", "success")
     expect(consent_status).to_contain_text("VALID_FOR_PROCESSING")
 
     # check if denied consent is submitted
-    page.get_by_role("button", name="Ablehnen").click()
+    page.get_by_test_id("denial-consent-button").click()
     page.screenshot(path="tests_consent_test_main-test_submit_consent_invalid.png")
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
-    expect(toast).to_contain_text("Consent was saved successfully.")
+    expect(toast).to_have_attribute("data-type", "success")
     expect(consent_status).to_contain_text("INVALID_FOR_PROCESSING")

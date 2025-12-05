@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import cast
 
 import reflex as rx
@@ -8,14 +7,12 @@ from mex.editor.consent.layout import page
 from mex.editor.consent.state import ConsentState
 from mex.editor.search.main import search_result
 
-CONSENT_MD = Path("assets/consent_de.md").read_text(encoding="utf-8")
-
 
 def resources() -> rx.Component:
     """Render a list of the users resources."""
     return rx.vstack(
         rx.text(
-            "Datenbestände & Datensätze",
+            ConsentState.label_resources_title,
             weight="bold",
             style=rx.Style(
                 textTransform="uppercase",
@@ -40,7 +37,7 @@ def projects() -> rx.Component:
     """Render a list of the users projects."""
     return rx.vstack(
         rx.text(
-            "Projekte",
+            ConsentState.label_projects_title,
             weight="bold",
             style=rx.Style(
                 textTransform="uppercase",
@@ -65,7 +62,10 @@ def user_data() -> rx.Component:
     """Render the user data section with name and email."""
     return rx.cond(
         ConsentState.is_loading,
-        rx.text("Loading user data...", custom_attrs={"data-testid": "user-data"}),
+        rx.text(
+            ConsentState.label_user_data_loading,
+            custom_attrs={"data-testid": "user-data"},
+        ),
         rx.vstack(
             rx.text(
                 ConsentState.merged_login_person.full_name,  # type: ignore  [union-attr]
@@ -100,18 +100,20 @@ def consent_box() -> rx.Component:
     return rx.card(
         rx.vstack(
             rx.markdown(
-                CONSENT_MD,
+                ConsentState.consent_md,
                 style=rx.Style({"fontSize": "var(--font-size-2)"}),
             ),
             rx.hstack(
                 rx.button(
-                    "Einwilligen",
+                    ConsentState.label_consent_box_consent_button,
                     on_click=ConsentState.submit_rule_set("consent"),  # type: ignore[misc]
+                    custom_attrs={"data-testid": "accept-consent-button"},
                 ),
                 rx.spacer(),
                 rx.button(
-                    "Ablehnen",
+                    ConsentState.label_consent_box_no_consent_button,
                     on_click=ConsentState.submit_rule_set("denial"),  # type: ignore[misc]
+                    custom_attrs={"data-testid": "denial-consent-button"},
                 ),
             ),
             style=rx.Style(
@@ -162,7 +164,8 @@ def consent_status() -> rx.Component:
             custom_attrs={"data-testid": "consent-status"},
         ),
         rx.text(
-            "Loading consent status...", custom_attrs={"data-testid": "consent-status"}
+            ConsentState.label_consent_status_loading,
+            custom_attrs={"data-testid": "consent-status"},
         ),
     )
 
@@ -171,7 +174,7 @@ def consent_pagination(category: str) -> rx.Component:
     """Render pagination for navigating results dynamically."""
     return rx.center(
         rx.button(
-            rx.text("Previous"),
+            rx.text(ConsentState.label_pagination_previous_button),
             on_click=[
                 ConsentState.go_to_previous_page(category),  # type: ignore[misc]
                 ConsentState.scroll_to_top,
@@ -197,7 +200,7 @@ def consent_pagination(category: str) -> rx.Component:
             custom_attrs={"data-testid": f"{category}-pagination-page-select"},
         ),
         rx.button(
-            rx.text("Next"),
+            rx.text(ConsentState.label_pagination_next_button),
             on_click=[
                 ConsentState.go_to_next_page(category),  # type: ignore[misc]
                 ConsentState.scroll_to_top,

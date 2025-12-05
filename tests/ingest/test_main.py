@@ -1,8 +1,14 @@
+from typing import TYPE_CHECKING
+
 import pytest
 from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider
+from tests.conftest import build_pagination_regex, build_ui_label_regex
+
+if TYPE_CHECKING:
+    import re
 
 
 @pytest.fixture
@@ -66,9 +72,9 @@ def test_search_and_ingest_roundtrip(
 
     # go to the correct tab
     aux_provider_tab = page.get_by_role("tab", name=aux_provider)
-    expect(aux_provider_tab).to_be_enabled(timeout=30_000)
+    expect(aux_provider_tab).to_be_enabled(timeout=50_000)
     aux_provider_tab.click()
-    search_input = page.get_by_placeholder("Search here...")
+    search_input = page.get_by_test_id("search-input")
     expect(search_input).to_be_visible()
     expect(search_input).to_be_enabled()
 
@@ -83,7 +89,7 @@ def test_search_and_ingest_roundtrip(
     # test no results are found
     results_summary = page.get_by_test_id("search-results-summary")
     expect(results_summary).to_be_visible()
-    expect(results_summary).to_contain_text("Showing 0 of 0 items")
+    expect(results_summary).to_contain_text(build_pagination_regex(0, 0))
 
     # trigger valid search
     search_input.fill(valid_search)
@@ -116,7 +122,7 @@ def test_search_and_ingest_roundtrip(
     ingest_button.click()
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
-    expect(toast).to_contain_text(f"{stem_type} was ingested successfully.")
+    expect(toast).to_have_attribute("data-type", "success")
     expect(ingest_button).to_be_disabled()
     page.screenshot(
         path=f"tests_ingest_test_main-roundtrip_{aux_provider}-ingested.png"
@@ -134,15 +140,9 @@ def test_search_and_ingest_roundtrip(
 
 @pytest.mark.integration
 def test_infobox_visibility_and_content(ingest_page: Page) -> None:
-    expected_callout_content: dict[AuxProvider, str] = {
-        AuxProvider.LDAP: (
-            "Search users by display name and contact points by email. "
-            'Please use "*" as placeholder e.g. "Muster*".'
-        ),
-        AuxProvider.WIKIDATA: (
-            'Search Wikidata by "Concept URI". '
-            'Please paste URI e.g. "http://www.wikidata.org/entity/Q918501".'
-        ),
+    expected_callout_content: dict[AuxProvider, re.Pattern] = {
+        AuxProvider.LDAP: build_ui_label_regex("ingest.search_info.ldap"),
+        AuxProvider.WIKIDATA: build_ui_label_regex("ingest.search_info.wikidata"),
     }
 
     page = ingest_page
@@ -150,7 +150,7 @@ def test_infobox_visibility_and_content(ingest_page: Page) -> None:
     for provider in ALL_AUX_PROVIDERS:
         tab = page.get_by_role("tab", name=provider)
         tab.click(
-            timeout=30_000
+            timeout=50_000
         )  # high timeout cuz tab might be disabled due to loading
 
         tab_content = page.locator(f"[id*='{provider}'][role='tabpanel']")

@@ -1,38 +1,40 @@
 import reflex as rx
+from reflex.event import EventCallback
 
-from mex.editor.layout import app_logo
-from mex.editor.login.state import LoginLdapState, LoginMExState
+from mex.editor.layout import app_logo, custom_focus_script
+from mex.editor.login.state import LoginLdapState, LoginMExState, LoginState
 
 
-def login_user(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
+def login_user() -> rx.Component:
     """Return a form field for the user name."""
     return rx.vstack(
-        rx.text("Username"),
+        rx.text(LoginState.label_username),
         rx.input(
-            autofocus=True,
             name="username",
-            on_change=state.set_username,
-            placeholder="Username",
+            on_change=LoginState.set_username,
+            placeholder=LoginState.label_username,
             size="3",
             tab_index=1,
             style=rx.Style(width="100%"),
+            custom_attrs={"data-testid": "input-username", "data-focusme": ""},
         ),
         style=rx.Style(width="100%"),
     )
 
 
-def login_password(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
+def login_password() -> rx.Component:
     """Return a form field for the password."""
     return rx.vstack(
-        rx.text("Password"),
+        rx.text(LoginState.label_password),
         rx.input(
-            on_change=state.set_password,
+            on_change=LoginState.set_password,
             name="password",
-            placeholder="Password",
+            placeholder=LoginState.label_password,
             size="3",
             tab_index=2,
             type="password",
             style=rx.Style(width="100%"),
+            custom_attrs={"data-testid": "input-password"},
         ),
         style=rx.Style(width="100%"),
     )
@@ -43,7 +45,7 @@ def login_button() -> rx.Component:
     return rx.hstack(
         rx.spacer(),
         rx.button(
-            "Login",
+            LoginState.label_button_login,
             size="3",
             tab_index=3,
             style=rx.Style(
@@ -57,7 +59,7 @@ def login_button() -> rx.Component:
     )
 
 
-def login_form(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
+def login_form(login_callback: EventCallback) -> rx.Component:
     """Return a login form."""
     return rx.center(
         rx.card(
@@ -76,14 +78,15 @@ def login_form(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
                 rx.divider(size="4"),
                 rx.form(
                     rx.vstack(
-                        login_user(state),
-                        login_password(state),
+                        login_user(),
+                        login_password(),
                         login_button(),
                         style=rx.Style(width="100%"),
                     ),
-                    on_submit=state.login,
+                    on_submit=login_callback,
                     spacing="4",
                 ),
+                custom_focus_script(),
             ),
             style=rx.Style(
                 width="calc(340px * var(--scaling))",
@@ -97,9 +100,9 @@ def login_form(state: type[LoginLdapState | LoginMExState]) -> rx.Component:
 
 def ldap_login() -> rx.Component:
     """Return the index for the login component."""
-    return login_form(LoginLdapState)
+    return login_form(LoginLdapState.login)
 
 
 def mex_login() -> rx.Component:
     """Return the index for the login component."""
-    return login_form(LoginMExState)
+    return login_form(LoginMExState.login)

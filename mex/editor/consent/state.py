@@ -1,6 +1,7 @@
 import math
 from collections.abc import Generator
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Annotated
 
 import reflex as rx
@@ -21,6 +22,7 @@ from mex.common.types import (
     YearMonthDayTime,
 )
 from mex.editor.exceptions import escalate_error
+from mex.editor.label_var import label_var
 from mex.editor.models import NavItem
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
@@ -39,19 +41,35 @@ class ConsentState(State):
     projects_current_page: Annotated[int, Field(ge=1)] = 1
     resources_total: Annotated[int, Field(ge=0)] = 0
     resources_current_page: Annotated[int, Field(ge=1)] = 1
-
     is_loading: bool = True
 
-    @staticmethod
-    def get_consent_nav_items() -> list[NavItem]:
-        """Return navigation items for the consent interface."""
-        return [
-            NavItem(
-                title="Informed Consent",
-                path="/consent",
-                raw_path="/consent/",
-            ),
-        ]
+    _consent_nav_items: list[NavItem] = [
+        NavItem(
+            title="consent.nav_bar.consent_navitem",
+            path="/consent",
+            raw_path="/consent/",
+        ),
+    ]
+
+    @rx.var
+    def consent_nav_items_translated(self) -> list[NavItem]:
+        """Get the translated consent nav items, based on the current_locale.
+
+        Returns:
+            The translated consent nav items.
+        """
+        return [self._translate_nav_item(item) for item in self._consent_nav_items]
+
+    @rx.var
+    def consent_md(self) -> str:
+        """Get the translated consent markdown, based on the current_locale.
+
+        Returns:
+            The translated consent markdown.
+        """
+        return Path(f"assets/consent_{self.current_locale}.md").read_text(
+            encoding="utf-8"
+        )
 
     @rx.var(cache=False)
     def disable_projects_previous_page(self) -> bool:
@@ -241,8 +259,8 @@ class ConsentState(State):
     def show_submit_success_toast(self) -> EventSpec:
         """Show a toast for a successfully submitted rule-set."""
         return rx.toast.success(
-            title="Saved",
-            description="Consent was saved successfully.",
+            title=self.label_save_success_dialog_title,
+            description=self.label_save_success_dialog_content,
             class_name="editor-toast",
             close_button=True,
             dismissible=True,
@@ -261,3 +279,35 @@ class ConsentState(State):
                     if preview.identifier and not preview.text:
                         async with self:
                             await resolve_editor_value(preview)
+
+    @label_var(label_id="consent.resources.title")
+    def label_resources_title(self) -> None:
+        """Label for resources.title."""
+
+    @label_var(label_id="consent.projects.title")
+    def label_projects_title(self) -> None:
+        """Label for projects.title."""
+
+    @label_var(label_id="consent.user_data.loading")
+    def label_user_data_loading(self) -> None:
+        """Label for user_data.loading  ."""
+
+    @label_var(label_id="consent.consent_box.consent_button")
+    def label_consent_box_consent_button(self) -> None:
+        """Label for consent_box.consent_button."""
+
+    @label_var(label_id="consent.consent_box.no_consent_button")
+    def label_consent_box_no_consent_button(self) -> None:
+        """Label for consent_box.no_consent_button."""
+
+    @label_var(label_id="consent.consent_status.loading")
+    def label_consent_status_loading(self) -> None:
+        """Label for consent_status.loading."""
+
+    @label_var(label_id="consent.save_success_dialog.title")
+    def label_save_success_dialog_title(self) -> None:
+        """Label for save_success_dialog.title."""
+
+    @label_var(label_id="consent.save_success_dialog.content")
+    def label_save_success_dialog_content(self) -> None:
+        """Label for save_success_dialog.content."""

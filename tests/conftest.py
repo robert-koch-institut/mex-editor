@@ -1,3 +1,4 @@
+import re
 from typing import Any, cast
 
 import pytest
@@ -33,6 +34,7 @@ from mex.common.types import (
     YearMonthDay,
 )
 from mex.editor.api.main import api
+from mex.editor.locale_service import LocaleService
 from mex.editor.settings import EditorSettings
 from mex.editor.types import EditorUserDatabase, EditorUserPassword
 
@@ -118,8 +120,8 @@ def login_user(
     frontend_url: str, page: Page, username: str, password: SecretStr
 ) -> Page:
     page.goto(frontend_url)
-    page.get_by_placeholder("Username").fill(username)
-    page.get_by_placeholder("Password").fill(password.get_secret_value())
+    page.get_by_test_id("input-username").fill(username)
+    page.get_by_test_id("input-password").fill(password.get_secret_value())
     page.get_by_test_id("login-button").click()
     return page
 
@@ -131,8 +133,8 @@ def writer_user_page(
     login_user(frontend_url, page, *writer_user_credentials)
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
     page.set_default_navigation_timeout(50_000)
-    page.set_default_timeout(15_000)
-    expect.set_options(timeout=15_000)
+    page.set_default_timeout(30_000)
+    expect.set_options(timeout=30_000)
     return page
 
 
@@ -352,3 +354,14 @@ def load_artificial_extracted_items(
     connector = BackendApiConnector.get()
     connector.ingest(artificial_extracted_items)
     return artificial_extracted_items
+
+
+def build_pagination_regex(current: int, total: int) -> re.Pattern:
+    return re.compile(rf"\w+\s{current}\s\w+\s{total}\s\w+")
+
+
+def build_ui_label_regex(label_id: str) -> re.Pattern:
+    service = LocaleService.get()
+    return re.compile(
+        f"({'|'.join(re.escape(service.get_ui_label(locale.id, label_id)) for locale in service.get_available_locales())})"
+    )

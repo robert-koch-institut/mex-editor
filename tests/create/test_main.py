@@ -5,6 +5,7 @@ from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
+from tests.conftest import build_ui_label_regex
 
 
 @pytest.fixture
@@ -26,7 +27,9 @@ def test_create_page_updates_nav_bar(create_page: Page) -> None:
     page.screenshot(path="tests_create_test_main-test_create_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
     nav_item = nav_bar.locator(".nav-item").all()[1]
-    expect(nav_item).to_contain_text("Create")
+    expect(nav_item).to_contain_text(
+        build_ui_label_regex("layout.nav_bar.create_navitem")
+    )
     expect(nav_item).to_have_class(re.compile("rt-underline-always"))
 
 
@@ -89,7 +92,11 @@ def test_create_page_submit_item(create_page: Page) -> None:
 
     submit_button = page.get_by_test_id("submit-button")
     submit_button.click()
-    expect(page.get_by_text("AccessPlatform was saved successfully")).to_be_visible()
+
+    toast = page.locator(".editor-toast").first
+    expect(toast).to_be_visible()
+    expect(toast).to_have_attribute("data-type", "success")
+
     connector = BackendApiConnector.get()
     result = connector.fetch_merged_items(query_string="Test01234567")
     assert result.total == 1

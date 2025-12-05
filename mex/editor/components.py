@@ -1,12 +1,16 @@
 from collections.abc import Callable
+from dataclasses import dataclass
+import math
 from typing import Any, cast
 
 import reflex as rx
+from reflex.event import EventType
+from reflex.vars import Var
 
 from mex.editor.ingest.state import IngestState
 from mex.editor.rules.models import EditorValue
 from mex.editor.search.state import SearchState
-from mex.editor.state import State
+from mex.editor.state import State, PaginationStateMixin
 
 
 def render_title(title: EditorValue) -> rx.Component:
@@ -150,55 +154,132 @@ def render_value(value: EditorValue) -> rx.Component:
     )
 
 
-def pagination(
-    state: type[IngestState | SearchState], *page_load_hooks: Callable[[], Any]
-) -> rx.Component:
-    """Render pagination for navigating search results."""
-    current_page = cast("rx.Var[int]", state.current_page)
+@dataclass
+class PaginationButtonOptions:
+    disabled: bool | Var[bool]
+    on_click: EventType[()] | None = None
+
+
+@dataclass
+class PaginationPageOptions:
+    current_page: int | Var[int]
+    pages: list[str] | Var[list[str]]
+    disabled: bool | Var[bool]
+    on_change: EventType[()] | None = None
+
+
+@dataclass
+class PaginationOptions:
+    prev_options: PaginationButtonOptions
+    next_options: PaginationButtonOptions
+    page_options: PaginationPageOptions
+
+    @staticmethod
+    def create(
+        state: PaginationStateMixin,
+        prev_click: EventType[()] | None = None,
+        next_click: EventType[()] | None = None,
+        change_page: EventType[()] | None = None,
+    ):
+        prev_click = (
+            [state.go_to_previous_page, prev_click]
+            if prev_click
+            else [state.go_to_previous_page]
+        )
+        next_click = (
+            [state.go_to_next_page, next_click]
+            if next_click
+            else [state.go_to_next_page]
+        )
+        change_page = (
+            [state.set_page, change_page] if change_page else [state.go_to_next_page]
+        )
+
+        return PaginationOptions(
+            PaginationButtonOptions(state.disable_previous_page, prev_click),
+            PaginationButtonOptions(state.disable_next_page, next_click),
+            PaginationPageOptions(
+                state.current_page,
+                state.page_selection,
+                state.disable_page_selection,
+                change_page,
+            ),
+        )
+
+
+def pagination_abstract(options: PaginationOptions):
     return rx.center(
         rx.button(
             rx.text("Previous"),
-            on_click=[
-                state.go_to_previous_page,
-                state.scroll_to_top,
-                state.refresh,
-                state.resolve_identifiers,
-                *page_load_hooks,
-            ],
-            disabled=state.disable_previous_page,
+            on_click=options.prev_options.on_click,
+            disabled=options.prev_options.disabled,
             variant="surface",
             custom_attrs={"data-testid": "pagination-previous-button"},
             style=rx.Style(minWidth="10%"),
         ),
         rx.select(
-            state.page_selection,
-            value=rx.Var.to_string(current_page),
-            on_change=[
-                state.set_page,
-                state.scroll_to_top,
-                state.refresh,
-                state.resolve_identifiers,
-                *page_load_hooks,
-            ],
-            disabled=state.disable_page_selection,
+            options.page_options.pages,
+            value=options.page_options.current_page.to_string()
+            if isinstance(options.page_options.current_page, Var)
+            else f"{options.page_options.current_page}",
+            on_change=options.page_options.on_change,
+            disabled=options.page_options.disabled,
             custom_attrs={"data-testid": "pagination-page-select"},
         ),
         rx.button(
             rx.text("Next", weight="bold"),
-            on_click=[
-                state.go_to_next_page,
-                state.scroll_to_top,
-                state.refresh,
-                state.resolve_identifiers,
-                *page_load_hooks,
-            ],
-            disabled=state.disable_next_page,
+            on_click=options.next_options.on_click,
+            disabled=options.next_options.disabled,
             variant="surface",
             custom_attrs={"data-testid": "pagination-next-button"},
             style=rx.Style(minWidth="10%"),
         ),
         spacing="4",
         style=rx.Style(width="100%"),
+    )
+
+
+def pagination(
+    state: type[IngestState | SearchState], *page_load_hooks: Callable[[], Any]
+) -> rx.Component:
+    """Render pagination for navigating search results."""
+    current_page = cast("rx.Var[int]", state.current_page)
+
+    return pagination_abstract(
+        PaginationOptions(
+            PaginationButtonOptions(
+                state.disable_previous_page,
+                [
+                    state.go_to_previous_page,
+                    state.scroll_to_top,
+                    state.refresh,
+                    state.resolve_identifiers,
+                    *page_load_hooks,
+                ],
+            ),
+            PaginationButtonOptions(
+                state.disable_next_page,
+                [
+                    state.go_to_next_page,
+                    state.scroll_to_top,
+                    state.refresh,
+                    state.resolve_identifiers,
+                    *page_load_hooks,
+                ],
+            ),
+            PaginationPageOptions(
+                current_page,
+                state.page_selection,
+                state.disable_page_selection,
+                [
+                    state.set_page,
+                    state.scroll_to_top,
+                    state.refresh,
+                    state.resolve_identifiers,
+                    *page_load_hooks,
+                ],
+            ),
+        )
     )
 
 

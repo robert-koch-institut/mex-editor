@@ -1,5 +1,6 @@
 from collections.abc import Generator, Mapping
 from importlib.metadata import version
+import math
 from urllib.parse import urlencode
 
 import reflex as rx
@@ -172,3 +173,53 @@ class State(rx.State):
         # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         response = connector.request("GET", "_system/check")
         return str(response.get("version", "N/A"))
+
+
+class PaginationStateMixin(rx.State, mixin=True):
+    total: int = 0
+    limit: int = 50
+    current_page: int = 1
+
+    @rx.var
+    def max_page(self) -> int:
+        return math.ceil(self.total / self.limit)
+
+    @rx.var
+    def page_selection(self) -> list[str]:
+        """Return a list of total pages based on the number of results."""
+        return [f"{i + 1}" for i in range(self.max_page)]
+
+    @rx.var
+    def disable_page_selection(self) -> bool:
+        """Whether the page selection in the pagination should be disabled."""
+        return self.max_page == 1
+
+    @rx.var
+    def disable_previous_page(self) -> bool:
+        """Disable the 'Previous' button if on the first page."""
+        return self.current_page <= 1
+
+    @rx.var
+    def disable_next_page(self) -> bool:
+        """Disable the 'Next' button if on the last page."""
+        return self.current_page >= self.max_page
+
+    @rx.event
+    def set_page(self, page_number: str | int) -> None:
+        """Set the current page and refresh the results."""
+        self.current_page = int(page_number)
+
+    @rx.event
+    def go_to_first_page(self) -> None:
+        """Navigate to the first page."""
+        self.current_page = 1
+
+    @rx.event
+    def go_to_previous_page(self) -> None:
+        """Navigate to the previous page."""
+        self.current_page = self.current_page - 1
+
+    @rx.event
+    def go_to_next_page(self) -> None:
+        """Navigate to the next page."""
+        self.current_page = self.current_page + 1

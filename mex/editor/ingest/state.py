@@ -11,43 +11,19 @@ from mex.common.models import AnyExtractedModel, PaginatedItemsContainer
 from mex.editor.exceptions import escalate_error
 from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider, IngestResult
 from mex.editor.ingest.transform import transform_models_to_results
-from mex.editor.state import State
+from mex.editor.state import PaginationStateMixin, State
 from mex.editor.utils import resolve_editor_value
 
 
-class IngestState(State):
+class IngestState(State, PaginationStateMixin):
     """State management for the ingest page."""
 
     results_transformed: list[IngestResult] = []
     results_extracted: list[AnyExtractedModel] = []
-    total: int = 0
-    limit: int = 50
     query_string: str = ""
-    current_page: int = 1
     current_aux_provider: AuxProvider = AuxProvider.LDAP
     aux_providers: list[AuxProvider] = ALL_AUX_PROVIDERS
     is_loading: bool = True
-
-    @rx.var(cache=False)
-    def page_selection(self) -> list[str]:
-        """Return a list of total pages based on the number of results."""
-        return [f"{i + 1}" for i in range(math.ceil(self.total / self.limit))]
-
-    @rx.var(cache=False)
-    def disable_page_selection(self) -> bool:
-        """Whether the page selection in the pagination should be disabled."""
-        return math.ceil(self.total / self.limit) == 1
-
-    @rx.var(cache=False)
-    def disable_previous_page(self) -> bool:
-        """Disable the 'Previous' button if on the first page."""
-        return self.current_page <= 1
-
-    @rx.var(cache=False)
-    def disable_next_page(self) -> bool:
-        """Disable the 'Next' button if on the last page."""
-        max_page = math.ceil(self.total / self.limit)
-        return self.current_page >= max_page
 
     @rx.var(cache=False)
     def current_results_length(self) -> int:
@@ -67,11 +43,6 @@ class IngestState(State):
         self.current_aux_provider = AuxProvider(value)
 
     @rx.event
-    def set_page(self, page_number: str | int) -> None:
-        """Set the current page and refresh the results."""
-        self.current_page = int(page_number)
-
-    @rx.event
     def handle_submit(self, form_data: dict[str, Any]) -> None:
         """Handle the form submit."""
         self.query_string = form_data["query_string"]
@@ -80,21 +51,6 @@ class IngestState(State):
     def reset_query_string(self) -> None:
         """Reset the query string."""
         self.query_string = ""
-
-    @rx.event
-    def go_to_first_page(self) -> None:
-        """Navigate to the first page."""
-        self.current_page = 1
-
-    @rx.event
-    def go_to_previous_page(self) -> None:
-        """Navigate to the previous page."""
-        self.current_page = self.current_page - 1
-
-    @rx.event
-    def go_to_next_page(self) -> None:
-        """Navigate to the next page."""
-        self.current_page = self.current_page + 1
 
     @rx.event
     def ingest_result(self, index: int) -> Generator[EventSpec, None, None]:

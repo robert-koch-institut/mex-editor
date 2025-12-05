@@ -1,5 +1,6 @@
 from typing import cast
 
+from mex.common.fields import ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES
 import reflex as rx
 
 from mex.editor.components import icon_by_stem_type, render_span, render_value
@@ -11,6 +12,7 @@ from mex.editor.rules.models import (
     ValidationMessage,
 )
 from mex.editor.rules.state import FieldTranslation, RuleState
+from mex.editor.search.search_reference_dialog import SearchReferenceDialog
 
 locale_service = LocaleService.get()
 
@@ -92,6 +94,7 @@ def editor_additive_value(
     value: EditorValue,
 ) -> rx.Component:
     """Render an additive value with buttons for editing and removal."""
+    # print(ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES)
     field_name = field_translation.field.name
     return rx.hstack(
         rx.hstack(
@@ -206,15 +209,21 @@ def identifier_input(
     identifier: str | None,
 ) -> rx.Component:
     """Render an input component for editing identifiers."""
-    return rx.input(
-        placeholder="Identifier",
-        value=identifier,
-        on_change=RuleState.set_identifier_value(field_name, index),  # type: ignore[misc]
-        style=rx.Style(
-            margin="calc(-1 * var(--space-1))",
-            width="100%",
+    return rx.hstack(
+        rx.input(
+            placeholder="Identifier",
+            value=identifier,
+            on_change=RuleState.set_identifier_value(field_name, index),  # type: ignore[misc]
+            style=rx.Style(
+                margin="calc(-1 * var(--space-1))",
+                width="100%",
+                flex="1",
+            ),
+            custom_attrs={
+                "data-testid": f"additive-rule-{field_name}-{index}-identifier"
+            },
         ),
-        custom_attrs={"data-testid": f"additive-rule-{field_name}-{index}-identifier"},
+        SearchReferenceDialog.create()
     )
 
 

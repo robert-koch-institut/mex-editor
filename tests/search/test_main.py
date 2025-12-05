@@ -243,10 +243,7 @@ def test_reference_filter_fields_for_entity_type(
     entity_types = page.get_by_test_id("entity-types")
     entity_types.get_by_text("Person").click()
 
-    reference_field_filter = page.get_by_test_id("reference-field-filter")
-    ref_filter_field = reference_field_filter.get_by_test_id(
-        "reference-field-filter-field"
-    )
+    ref_filter_field = page.get_by_test_id("reference-field-filter-field")
     ref_filter_field.click()
 
     page.screenshot(
@@ -430,22 +427,25 @@ def test_additional_titles_badge(
     resource_r2 = dummy_data_by_identifier_in_primary_source["r-2"]
     assert isinstance(resource_r2, ExtractedResource)
     resource_r2_result = page.get_by_test_id(f"result-{resource_r2.stableTargetId}")
+    expect(resource_r2_result).to_be_visible()
+    page.screenshot(path="tests_search_test_additional_titles_badge_on_load.png")
     first_title = resource_r2.title[0]
 
     # expect title is visible and there are additional titles for 'r2'
     expect(resource_r2_result).to_contain_text(first_title.value)
-    addi_title_badge = resource_r2_result.get_by_test_id("additional-titles-badge")
-    expect(addi_title_badge).to_have_text(
+    additional_title_badge = page.get_by_test_id("additional-titles-badge").first
+    expect(additional_title_badge).to_be_visible()
+    page.screenshot(path="tests_search_test_additional_titles_badge_on_visible.png")
+    expect(additional_title_badge).to_have_text(
         build_ui_label_regex("components.titles.additional_titles")
     )
 
     # hover additional titles
-    addi_title_badge.scroll_into_view_if_needed()
-    box = addi_title_badge.bounding_box()
+    box = additional_title_badge.bounding_box()
     assert box
     page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
-    addi_title_badge.hover()
-    page.screenshot(path="tests_search_test_additional_titles_badge_hover.png")
+    additional_title_badge.hover()
+    page.screenshot(path="tests_search_test_additional_titles_badge_on_hover.png")
 
     # check tooltip content
     tooltip = page.get_by_test_id("tooltip-additional-titles")

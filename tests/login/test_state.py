@@ -28,7 +28,9 @@ def test_login_state_login_error() -> None:
         ),
     )  # type: ignore[call-arg]
 
-    assert 'window["alert"]' in str(list(state.login()))  # type: ignore[misc]
+    event_str = str(list(state.login()))  # type: ignore[misc]
+    assert "toast" in event_str
+    assert "error" in event_str
     assert not state.user_mex
 
 

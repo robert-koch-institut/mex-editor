@@ -210,6 +210,7 @@ def test_additional_titles_badge(
     )
 
     # hover additional titles
+    addi_title_badge.scroll_into_view_if_needed()
     box = addi_title_badge.bounding_box(timeout=50_000)
     assert box
     page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)

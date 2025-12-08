@@ -11,9 +11,7 @@ from mex.editor.rules.main import (
 from mex.editor.rules.state import FieldTranslation, RuleState
 
 
-def editor_field(
-    field_translation: FieldTranslation,
-) -> rx.Component:
+def editor_field(field_translation: FieldTranslation) -> rx.Component:
     """Return a horizontal grid of cards for editing one field."""
     field = field_translation.field
     return rx.hstack(
@@ -44,7 +42,7 @@ def create_title() -> rx.Component:
     """Return the title for the create page."""
     return rx.hstack(
         rx.heading(
-            "Create new",
+            CreateState.label_title_create_new,
             style=rx.Style(userSelect="none"),
         ),
         rx.select(

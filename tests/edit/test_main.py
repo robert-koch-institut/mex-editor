@@ -28,9 +28,6 @@ def edit_page(
     load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
     page = writer_user_page
-    page.set_default_navigation_timeout(50000)
-    page.set_default_timeout(10000)
-
     page.goto(f"{frontend_url}/item/{extracted_activity.stableTargetId}")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
@@ -44,7 +41,7 @@ def test_edit_page_updates_nav_bar(edit_page: Page) -> None:
     page.screenshot(path="tests_edit_test_main-test_edit_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
     nav_item = nav_bar.locator(".nav-item").all()[2]
-    expect(nav_item).to_contain_text("Edit")
+    expect(nav_item).to_have_attribute("data-testid", "nav-item-/item/[identifier]")
     expect(nav_item).to_have_class(re.compile("rt-underline-always"))
 
 
@@ -242,7 +239,7 @@ def test_edit_page_switch_roundtrip(
     submit.click()
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
-    expect(toast).to_contain_text("Saved")
+    expect(toast).to_have_attribute("data-type", "success")
     page.screenshot(path=f"{test_id}-toast_1.png")
 
     # force a page reload
@@ -267,7 +264,8 @@ def test_edit_page_switch_roundtrip(
     submit.click()
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
-    expect(toast).to_contain_text("Saved")
+    expect(toast).to_be_visible()
+    expect(toast).to_have_attribute("data-type", "success")
     page.screenshot(path=f"{test_id}-toast_2.png")
 
     # force a page reload again
@@ -514,7 +512,7 @@ def test_edit_page_additive_rule_roundtrip(
     # click on the save button and verify the toast
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
-    expect(toast).to_contain_text("Saved")
+    expect(toast).to_have_attribute("data-type", "success")
     page.screenshot(path=f"{test_id}-toast.png")
 
     # force a page reload
@@ -648,17 +646,19 @@ def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> N
     )
     # check default state
     submit_button = edit_page.get_by_test_id("submit-button")
-    expect(submit_button).to_have_text(re.compile(r"Save .*"))
+    initial_text = submit_button.text_content()
+    initial_text = initial_text if initial_text else ""
+    expect(submit_button).to_have_text(initial_text)
     expect(submit_button).not_to_be_disabled()
 
     # submit item
     submit_button.click()
-    expect(submit_button).to_have_text(re.compile(r"Saving .*"))
+    expect(submit_button).not_to_have_text(initial_text)
     expect(submit_button).to_be_disabled()
 
     # check if back in default state after saving
     edit_page.wait_for_timeout(30000)
-    expect(submit_button).to_have_text(re.compile(r"Save .*"))
+    expect(submit_button).to_have_text(initial_text)
     expect(submit_button).not_to_be_disabled()
 
 
@@ -676,7 +676,7 @@ def test_edit_page_navigation_unsaved_changes_warning_cancel_save_and_navigate(
 
     # try to navigate to search page (via navbar)
     nav_bar = page.get_by_test_id("nav-bar")
-    search_nav = nav_bar.get_by_text("search")
+    search_nav = nav_bar.get_by_test_id("nav-item-/")
     search_nav.click()
 
     # now dialog should appear
@@ -711,7 +711,7 @@ def test_edit_page_navigation_unsaved_changes_warning_discard_changes_and_naviga
 
     # try to navigate to search page (via navbar)
     nav_bar = page.get_by_test_id("nav-bar")
-    search_nav = nav_bar.get_by_text("search")
+    search_nav = nav_bar.get_by_test_id("nav-item-/")
     search_nav.click()
 
     # now dialog should appear
@@ -761,8 +761,8 @@ def test_edit_page_additive_add_remove_button_text_translation(
     add_alt_title_btn = edit_page.get_by_test_id(
         f"new-additive-{field_name}-00000000000000"
     )
-    expect(add_alt_title_btn).to_have_text(f"New {expected_field_label}")
+    expect(add_alt_title_btn).to_have_text(re.compile(f"{expected_field_label}"))
     add_alt_title_btn.click()
     expect(
         edit_page.get_by_test_id(f"additive-rule-{field_name}-0-remove-button")
-    ).to_have_text(f"Remove {expected_field_label}")
+    ).to_have_text(re.compile(rf"[\w\s]*{expected_field_label}[\w\s]*"))

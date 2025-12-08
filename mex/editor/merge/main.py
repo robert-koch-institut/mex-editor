@@ -45,8 +45,9 @@ def results_summary(category: Literal["merged", "extracted"]) -> rx.Component:
     """Render a summary of the results found."""
     return rx.center(
         rx.text(
-            f"Showing {MergeState.results_count[category]} "
-            f"of {MergeState.total_count[category]} items",
+            MergeState.label_result_summary_format_merged
+            if category == "merged"
+            else MergeState.label_result_summary_format_extracted,
             style=rx.Style(
                 color="var(--gray-12)",
                 fontWeight="var(--font-weight-bold)",
@@ -90,7 +91,9 @@ def entity_type_choice_extracted(choice: tuple[str, bool]) -> rx.Component:
 def entity_type_filter(category: Literal["merged", "extracted"]) -> rx.Component:
     """Render checkboxes for filtering the search results by entity type."""
     return rx.card(
-        rx.text("Filter by Entity Type", margin_bottom="0.5em", size="1"),
+        rx.text(
+            MergeState.label_filter_entity_type_title, margin_bottom="0.5em", size="1"
+        ),
         rx.scroll_area(
             rx.flex(
                 rx.cond(
@@ -130,7 +133,7 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     max_length=100,
                     name=f"query_string_{category}",
                     on_change=MergeState.handle_submit(category),  # type: ignore[misc]
-                    placeholder="Search here...",
+                    placeholder=MergeState.label_search_input_placeholder,
                     style=rx.Style(
                         {
                             "--text-field-selection-color": "",
@@ -184,7 +187,7 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
 def submit_button() -> rx.Component:
     """Render a submit button to commit the merging."""
     return rx.button(
-        "Submit Merge",
+        MergeState.label_submit_button,
         color_scheme="jade",
         size="3",
         on_click=MergeState.submit_merge_items,
@@ -197,7 +200,9 @@ def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
     """Return the search interface."""
     return rx.vstack(
         rx.heading(
-            f"Search {category} items",
+            MergeState.label_search_title_merged
+            if category == "merged"
+            else MergeState.label_search_title_extracted,
             style=rx.Style(
                 whiteSpace="nowrap",
                 overflow="hidden",

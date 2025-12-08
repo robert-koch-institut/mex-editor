@@ -1,11 +1,11 @@
 from typing import cast
 
-from mex.common.fields import ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES
 import reflex as rx
 
 from mex.editor.components import icon_by_stem_type, render_span, render_value
 from mex.editor.locale_service import LocaleService
 from mex.editor.rules.models import (
+    EditorField,
     EditorPrimarySource,
     EditorValue,
     InputConfig,
@@ -94,14 +94,13 @@ def editor_additive_value(
     value: EditorValue,
 ) -> rx.Component:
     """Render an additive value with buttons for editing and removal."""
-    # print(ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES)
     field_name = field_translation.field.name
     return rx.hstack(
         rx.hstack(
             rx.cond(
                 value.being_edited,
                 additive_rule_input(
-                    field_name,
+                    field_translation.field,
                     primary_source.input_config,
                     index,
                     value,
@@ -207,6 +206,7 @@ def identifier_input(
     field_name: str,
     index: int,
     identifier: str | None,
+    reference_value_types: list[str],
 ) -> rx.Component:
     """Render an input component for editing identifiers."""
     return rx.hstack(
@@ -223,7 +223,13 @@ def identifier_input(
                 "data-testid": f"additive-rule-{field_name}-{index}-identifier"
             },
         ),
-        SearchReferenceDialog.create()
+        SearchReferenceDialog.create(
+            on_identifier_selected=lambda x: RuleState.set_identifier_value(
+                field_name, index, x
+            ),
+            reference_types=reference_value_types,
+        ),
+        style=rx.Style(flex="1"),
     )
 
 
@@ -261,7 +267,7 @@ def badge_input(
 
 
 def additive_rule_input(
-    field_name: str,
+    field: EditorField,
     input_config: InputConfig,
     index: int,
     value: EditorValue,
@@ -270,23 +276,28 @@ def additive_rule_input(
     return rx.hstack(
         rx.cond(
             input_config.editable_href,
-            href_input(field_name, index, value.href),
+            href_input(field.name, index, value.href),
         ),
         rx.cond(
             input_config.editable_text,
             rx.cond(
                 input_config.render_textarea,
-                textarea_input(field_name, index, value.text),
-                text_input(field_name, index, value.text),
+                textarea_input(field.name, index, value.text),
+                text_input(field.name, index, value.text),
             ),
         ),
         rx.cond(
             input_config.editable_identifier,
-            identifier_input(field_name, index, value.identifier),
+            identifier_input(
+                field.name,
+                index,
+                value.identifier,
+                ["MergedContactPoint", "MergedResource"],
+            ),
         ),
         rx.cond(
             input_config.editable_badge,
-            badge_input(field_name, index, input_config, value.badge),
+            badge_input(field.name, index, input_config, value.badge),
         ),
         width="100%",
     )

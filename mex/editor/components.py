@@ -1,6 +1,5 @@
 from collections.abc import Callable
 from dataclasses import dataclass
-import math
 from typing import Any, cast
 
 import reflex as rx
@@ -10,7 +9,7 @@ from reflex.vars import Var
 from mex.editor.ingest.state import IngestState
 from mex.editor.rules.models import EditorValue
 from mex.editor.search.state import SearchState
-from mex.editor.state import State, PaginationStateMixin
+from mex.editor.state import PaginationStateMixin, State
 
 
 def render_title(title: EditorValue) -> rx.Component:
@@ -176,23 +175,21 @@ class PaginationOptions:
 
     @staticmethod
     def create(
-        state: PaginationStateMixin,
-        prev_click: EventType[()] | None = None,
-        next_click: EventType[()] | None = None,
-        change_page: EventType[()] | None = None,
+        state: PaginationStateMixin | type[PaginationStateMixin],
+        on_page_change: EventType[()] | None = None,
     ):
         prev_click = (
-            [state.go_to_previous_page, prev_click]
-            if prev_click
+            [state.go_to_previous_page, on_page_change]
+            if on_page_change
             else [state.go_to_previous_page]
         )
         next_click = (
-            [state.go_to_next_page, next_click]
-            if next_click
+            [state.go_to_next_page, on_page_change]
+            if on_page_change
             else [state.go_to_next_page]
         )
         change_page = (
-            [state.set_page, change_page] if change_page else [state.go_to_next_page]
+            [state.set_page, on_page_change] if on_page_change else [state.set_page]
         )
 
         return PaginationOptions(

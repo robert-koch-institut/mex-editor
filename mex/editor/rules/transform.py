@@ -37,6 +37,7 @@ from mex.common.types import (
     TextLanguage,
 )
 from mex.editor.fields import (
+    REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME,
     REQUIRED_FIELDS_BY_CLASS_NAME,
     TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES,
 )
@@ -233,7 +234,7 @@ def transform_models_to_fields(
     """
     mergeable_fields = sorted(
         {
-            f
+            (f, e.entityType)
             for e in [*extracted_items, additive]
             for f in MERGEABLE_FIELDS_BY_CLASS_NAME[e.entityType]
         }
@@ -242,11 +243,15 @@ def transform_models_to_fields(
     fields_by_name = {
         field_name: EditorField(
             name=field_name,
+            value_type=REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME[entity_type].get(
+                field_name, []
+            ),
             primary_sources=[],
             is_required=field_name in required_fields,
         )
-        for field_name in mergeable_fields
+        for (field_name, entity_type) in mergeable_fields
     }
+    print("FIELD BY NAME", fields_by_name)
 
     for extracted in extracted_items:
         _transform_model_to_editor_primary_sources(

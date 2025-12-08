@@ -3,9 +3,12 @@ from typing import cast
 from mex.common.fields import (
     ALL_MODEL_CLASSES_BY_NAME,
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
+    MERGED_IDENTIFIER_CLASSES,
+    REFERENCE_FIELDS_BY_CLASS_NAME,
     TEMPORAL_FIELDS_BY_CLASS_NAME,
 )
 from mex.common.types import AnyTemporalEntity, TemporalEntityPrecision
+from mex.common.utils import contains_any_types, get_all_fields
 
 # TODO(ND): move these lookups to mex.common.fields
 
@@ -40,4 +43,23 @@ TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES = {
         for field_name in field_names
     }
     for class_name, field_names in TEMPORAL_FIELDS_BY_CLASS_NAME.items()
+}
+
+# TODO(ND): Same as https://github.com/robert-koch-institut/mex-backend/blob/main/mex/backend/fields.py#L61
+# needs to be moved to common.
+
+# allowed entity types grouped for reference fields
+REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME = {
+    class_name: {
+        field_name: sorted(
+            identifier_class.__name__.removesuffix("Identifier")
+            for identifier_class in MERGED_IDENTIFIER_CLASSES
+            if contains_any_types(
+                get_all_fields(ALL_MODEL_CLASSES_BY_NAME[class_name])[field_name],
+                identifier_class,
+            )
+        )
+        for field_name in field_names
+    }
+    for class_name, field_names in REFERENCE_FIELDS_BY_CLASS_NAME.items()
 }

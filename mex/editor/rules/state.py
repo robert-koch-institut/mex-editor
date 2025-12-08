@@ -33,6 +33,7 @@ from mex.editor.rules.transform import (
     transform_models_to_fields,
     transform_validation_error_to_messages,
 )
+from mex.editor.search.models import SearchResult
 from mex.editor.state import State
 from mex.editor.transform import (
     transform_models_to_stem_type,
@@ -52,6 +53,12 @@ class RuleState(State):
     fields: list[EditorField] = []
     stem_type: str | None = None
     validation_messages: list[ValidationMessage] = []
+
+    @rx.event
+    def test_callback(
+        self, x: bool, y: list[SearchResult], field_name: str, index: int
+    ) -> None:
+        print("RULESTATE::test_callback", x, y, field_name, index)
 
     @rx.var(cache=False)
     def translated_fields(self) -> Sequence[FieldTranslation]:
@@ -314,13 +321,14 @@ class RuleState(State):
         return State.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event
-    def set_identifier_value(
+    async def set_identifier_value(
         self, field_name: str, index: int, value: str
     ) -> EventSpec:
         """Set the identifier attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].identifier = value
         primary_source.editor_values[index].href = f"/item/{value}"
+        await resolve_editor_value(primary_source.editor_values[index])
         return State.set_current_page_has_changes(True)  # type: ignore[misc]
 
     @rx.event

@@ -9,6 +9,7 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MERGED_MODEL_CLASSES
 from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
+from mex.editor.label_var import label_var
 from mex.editor.search.models import SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
@@ -189,3 +190,43 @@ class MergeState(State):
             dismissible=True,
             duration=5000,
         )
+
+    @label_var(
+        label_id="merge.result_summary.format", deps=["results_count", "total_count"]
+    )
+    def label_result_summary_format_merged(self) -> list[int]:
+        """Label for result_summary.format."""
+        return [self.results_count["merged"], self.total_count["merged"]]
+
+    @label_var(
+        label_id="merge.result_summary.format", deps=["results_count", "total_count"]
+    )
+    def label_result_summary_format_extracted(self) -> list[int]:
+        """Label for result_summary.format."""
+        return [self.results_count["extracted"], self.total_count["extracted"]]
+
+    @label_var(label_id="merge.submit_button")
+    def label_submit_button(self) -> None:
+        """Label for submit_button."""
+
+    @label_var(label_id="merge.search_input.placeholder")
+    def label_search_input_placeholder(self) -> None:
+        """Label for search_input.placeholder."""
+
+    @label_var(label_id="merge.search.title_format")
+    def label_search_title_merged(self) -> list[str]:
+        """Label for search.title_merged."""
+        return ["merged"]
+
+    @label_var(label_id="merge.search.title_format")
+    def label_search_title_extracted(self) -> list[str]:
+        """Label for search.title_merged."""
+        return ["extracted"]
+
+    @label_var(label_id="merge.search.clear_button")
+    def label_search_clear_button(self) -> None:
+        """Label for search.clear_button."""
+
+    @label_var(label_id="merge.filter_entity_type.title")
+    def label_filter_entity_type_title(self) -> None:
+        """Label for filter_entity_type.title."""

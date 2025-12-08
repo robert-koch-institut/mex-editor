@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - replaced all locators thats searched for localized strings with data_test_id searches
     - replaced localized string compares with regexs
 - change external test marker to requires_rki_infrastructure
+- change failed login alert type from browser dialog to toast
 
 ### Deprecated
 
@@ -41,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-
+- fix broken unit tests and flaky additional title test
 - Page numbers on search and ingest page
 
 ### Security

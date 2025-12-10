@@ -189,7 +189,7 @@ class PaginationOptions:
             else [state.go_to_next_page]
         )
         change_page = (
-            [state.set_page, on_page_change] if on_page_change else [state.set_page]
+            [state.set_current_page, on_page_change] if on_page_change else [state.set_current_page]
         )
 
         return PaginationOptions(
@@ -269,7 +269,7 @@ def pagination(
                 state.page_selection,
                 state.disable_page_selection,
                 [
-                    state.set_page,
+                    state.set_current_page,
                     state.scroll_to_top,
                     state.refresh,
                     state.resolve_identifiers,

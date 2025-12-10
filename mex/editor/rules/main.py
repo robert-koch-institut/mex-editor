@@ -292,7 +292,8 @@ def additive_rule_input(
                 field.name,
                 index,
                 value.identifier,
-                ["MergedContactPoint", "MergedResource"],
+                field.value_type
+                # ["MergedContactPoint", "MergedResource"],
             ),
         ),
         rx.cond(

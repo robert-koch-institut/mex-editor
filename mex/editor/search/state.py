@@ -174,7 +174,7 @@ class SearchState(State, PaginationStateMixin):
     def load_search_params(self) -> None:
         """Load url params into the state."""
         router: RouterData = self.get_value("router")
-        self.set_page(router.page.params.get("page", 1))  # type: ignore[misc]
+        self.set_current_page(router.page.params.get("page", 1))  # type: ignore[misc]
         self.query_string = router.page.params.get("q", "")
         type_params = router.page.params.get("entityType", [])
         type_params = type_params if isinstance(type_params, list) else [type_params]
@@ -296,16 +296,15 @@ class SearchState(State, PaginationStateMixin):
         except HTTPError as exc:
             self.is_loading = False
             self.results = []
-            self.total = 0
-            self.current_page = 1
-            yield None
+            yield self.set_total(0)
+            yield self.set_current_page(1)
             yield from escalate_error(
                 "backend", "error fetching merged items", exc.response.text
             )
         else:
             self.is_loading = False
             self.results = transform_models_to_results(response.items)
-            self.total = response.total
+            yield self.set_total(response.total)
 
     @rx.event
     def get_available_primary_sources(self) -> Generator[EventSpec, None, None]:

@@ -185,6 +185,10 @@ class PaginationStateMixin(rx.State, mixin=True):
         return math.ceil(self.total / self.limit)
 
     @rx.var
+    def skip(self) -> int:
+        return self.limit * (self.current_page - 1)
+
+    @rx.var
     def page_selection(self) -> list[str]:
         """Return a list of total pages based on the number of results."""
         return [f"{i + 1}" for i in range(self.max_page)]
@@ -192,7 +196,7 @@ class PaginationStateMixin(rx.State, mixin=True):
     @rx.var
     def disable_page_selection(self) -> bool:
         """Whether the page selection in the pagination should be disabled."""
-        return self.max_page == 1
+        return self.current_page >= self.max_page
 
     @rx.var
     def disable_previous_page(self) -> bool:
@@ -205,9 +209,15 @@ class PaginationStateMixin(rx.State, mixin=True):
         return self.current_page >= self.max_page
 
     @rx.event
-    def set_page(self, page_number: str | int) -> None:
+    def set_total(self, total: int) -> None:
+        self.total = total
+        self.set_current_page(self.current_page)
+
+    @rx.event
+    def set_current_page(self, page_number: str | int) -> None:
         """Set the current page and refresh the results."""
-        self.current_page = int(page_number)
+        page_number = int(page_number) if page_number else 1
+        self.current_page = max(min(page_number, self.max_page), 1)
 
     @rx.event
     def go_to_first_page(self) -> None:
@@ -217,9 +227,14 @@ class PaginationStateMixin(rx.State, mixin=True):
     @rx.event
     def go_to_previous_page(self) -> None:
         """Navigate to the previous page."""
-        self.current_page = self.current_page - 1
+        self.set_current_page(self.current_page - 1)
 
     @rx.event
     def go_to_next_page(self) -> None:
         """Navigate to the next page."""
-        self.current_page = self.current_page + 1
+        self.set_current_page(self.current_page + 1)
+
+    @rx.event
+    def reset_pagination(self) -> None:
+        self.total = 0
+        self.current_page = 1

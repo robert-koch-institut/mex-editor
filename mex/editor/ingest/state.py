@@ -108,7 +108,7 @@ class IngestState(State, PaginationStateMixin):
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results."""
         connector = BackendApiConnector.get()
-        offset = self.limit * (self.current_page - 1)
+        # offset = self.limit * (self.current_page - 1)
         self.is_loading = True
         yield None
         try:
@@ -117,7 +117,7 @@ class IngestState(State, PaginationStateMixin):
                 endpoint=self.current_aux_provider,
                 params={
                     "q": self.query_string or None,
-                    "offset": str(offset),
+                    "offset": str(self.skip),
                     "limit": str(self.limit),
                 },
             )
@@ -125,8 +125,8 @@ class IngestState(State, PaginationStateMixin):
             self.is_loading = False
             self.results_transformed = []
             self.results_extracted = []
-            self.total = 0
-            self.current_page = 1
+            yield self.set_total(0)
+            yield self.set_current_page(1)
             yield None
             yield from escalate_error(
                 "backend",
@@ -140,4 +140,4 @@ class IngestState(State, PaginationStateMixin):
             )
             self.results_extracted = container.items
             self.results_transformed = transform_models_to_results(container.items)
-            self.total = container.total
+            self.set_total(container.total)

@@ -38,7 +38,7 @@ def user_menu() -> rx.Component:
             rx.menu.item(cast("User", State.user_mex).name, disabled=True),
             rx.menu.separator(),
             rx.menu.item(
-                "Logout",
+                State.label_nav_bar_logout_button,
                 on_select=State.logout,
                 custom_attrs={"data-testid": "logout-button"},
             ),
@@ -99,7 +99,43 @@ def nav_link(item: NavItem) -> rx.Component:
         href=item.raw_path,
         underline=item.underline,  # type: ignore[arg-type]
         class_name="nav-item",
-        custom_attrs={"data-href": item.raw_path},
+        custom_attrs={
+            "data-testid": f"nav-item-{item.path}",
+        },
+    )
+
+    return rx.cond(
+        item.path.contains("/create"),  # type: ignore[attr-defined]
+        rx.cond(
+            RuleState.draft_summary.count,
+            rx.fragment(
+                link,
+                rx.menu.root(
+                    rx.menu.trigger(
+                        rx.badge(
+                            RuleState.draft_summary.count,
+                            style=rx.Style(
+                                {
+                                    "align-self": "center",
+                                    "margin-left": "-1em",
+                                    "cursor": "pointer",
+                                    "border": "1px solid transparent",
+                                }
+                            ),
+                            _hover={"border-color": f"{rx.color('accent', 8)}"},
+                            custom_attrs={"data-testid": "draft-menu-trigger"},
+                        ),
+                    ),
+                    rx.menu.content(
+                        rx.foreach(
+                            RuleState.draft_summary.drafts, render_draft_menu_item
+                        )
+                    ),
+                ),
+            ),
+            link,
+        ),
+        link,
     )
 
     return rx.cond(
@@ -164,7 +200,7 @@ def app_logo() -> rx.Component:
 def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
     """Return a navigation bar component."""
     nav_items_to_use = (
-        nav_items_source if nav_items_source is not None else State.nav_items
+        nav_items_source if nav_items_source is not None else State.nav_items_translated
     )
     return rx.vstack(
         rx.box(
@@ -218,6 +254,19 @@ def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
     )
 
 
+def custom_focus_script() -> rx.Script:
+    """Creates a Script that looks for '[data-focusme]' and calls '.focus()' in it."""
+    return rx.script(
+        """
+    (function() {
+        document.querySelectorAll('[data-focusme]').forEach(item=> {
+            setTimeout(() => item.focus(), 10);
+        })
+    })()
+    """
+    )
+
+
 def page(
     *children: rx.Component,
     user_type: str = "user_mex",
@@ -245,6 +294,7 @@ def page(
             ),
             custom_attrs={"data-testid": "page-body"},
         ),
+        custom_focus_script(),
     ]
 
     return rx.cond(

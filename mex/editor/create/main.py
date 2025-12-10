@@ -11,9 +11,7 @@ from mex.editor.rules.main import (
 from mex.editor.rules.state import FieldTranslation, RuleState
 
 
-def editor_field(
-    field_translation: FieldTranslation,
-) -> rx.Component:
+def editor_field(field_translation: FieldTranslation) -> rx.Component:
     """Return a horizontal grid of cards for editing one field."""
     field = field_translation.field
     return rx.hstack(
@@ -44,7 +42,7 @@ def create_title() -> rx.Component:
     """Return the title for the create page."""
     return rx.hstack(
         rx.heading(
-            "Create new",
+            CreateState.label_title_create_new,
             style=rx.Style(userSelect="none"),
         ),
         rx.select(
@@ -69,28 +67,28 @@ def discard_draft_button() -> rx.Component:
         rx.alert_dialog.root(
             rx.alert_dialog.trigger(
                 rx.button(
-                    "Discard draft",
+                    CreateState.label_discard_draft_button,
                     color_scheme="red",
                 ),
                 custom_attrs={"data-testid": "discard-draft-dialog-button"},
             ),
             rx.alert_dialog.content(
-                rx.alert_dialog.title("Discard draft"),
+                rx.alert_dialog.title(CreateState.label_discard_draft_dialog_title),
                 rx.alert_dialog.description(
-                    "Are you sure u want to delete your changes?",
+                    CreateState.label_discard_draft_dialog_description,
                     size="2",
                 ),
                 rx.flex(
                     rx.alert_dialog.cancel(
                         rx.button(
-                            "Cancel",
+                            CreateState.label_discard_draft_dialog_cancel_button,
                             variant="soft",
                             color_scheme="gray",
                         ),
                     ),
                     rx.alert_dialog.action(
                         rx.button(
-                            "Discard draft",
+                            CreateState.label_discard_draft_dialog_discard_button,
                             color_scheme="red",
                             variant="solid",
                             on_click=[

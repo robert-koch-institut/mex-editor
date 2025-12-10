@@ -25,7 +25,7 @@ def toggle_all_switch() -> rx.Component:
     """Render a switch to toggle all primary source and values."""
     return rx.hstack(
         rx.spacer(),
-        "Toggle all",
+        EditState.label_toggle_all,
         rx.switch(
             checked=EditState.any_primary_source_or_editor_value_enabled,
             on_change=EditState.toggle_all_primary_source_and_editor_values,
@@ -43,28 +43,28 @@ def discard_changes_button() -> rx.Component:
         rx.alert_dialog.root(
             rx.alert_dialog.trigger(
                 rx.button(
-                    "Discard changes",
+                    EditState.label_discard_changes_button,
                     color_scheme="red",
                 ),
                 custom_attrs={"data-testid": "discard-changes-dialog-button"},
             ),
             rx.alert_dialog.content(
-                rx.alert_dialog.title("Discard changes"),
+                rx.alert_dialog.title(EditState.label_discard_changes_dialog_title),
                 rx.alert_dialog.description(
-                    "Are you sure u want to delete your changes?",
+                    EditState.label_discard_changes_dialog_description,
                     size="2",
                 ),
                 rx.flex(
                     rx.alert_dialog.cancel(
                         rx.button(
-                            "Cancel",
+                            EditState.label_discard_changes_dialog_cancel_button,
                             variant="soft",
                             color_scheme="gray",
                         ),
                     ),
                     rx.alert_dialog.action(
                         rx.button(
-                            "Discard changes",
+                            EditState.label_discard_changes_dialog_discard_button,
                             color_scheme="red",
                             variant="solid",
                             on_click=[

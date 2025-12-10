@@ -9,5 +9,5 @@ def page(*children: rx.Component) -> rx.Component:
     return shared_page(
         *children,
         user_type="user_ldap",
-        nav_items_source=ConsentState.get_consent_nav_items(),
+        nav_items_source=ConsentState.consent_nav_items_translated,  # type: ignore[arg-type]
     )

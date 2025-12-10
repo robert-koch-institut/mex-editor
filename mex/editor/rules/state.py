@@ -21,6 +21,7 @@ from mex.common.models import (
 from mex.common.transform import ensure_postfix
 from mex.common.types import Identifier, Validation
 from mex.editor.exceptions import escalate_error
+from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import EditorValue
 from mex.editor.rules.local_storage_mixin_state import LocalStorageMixinState
@@ -327,8 +328,8 @@ class RuleState(State, LocalStorageMixinState):
     def show_submit_success_toast(self) -> Generator[EventSpec, None, None]:
         """Show a toast for a successfully submitted rule-set."""
         yield rx.toast.success(
-            title="Saved",
-            description=f"{self.stem_type} was saved successfully.",
+            title=self.label_save_success_dialog_title,
+            description=self.label_save_success_dialog_message_format,
             class_name="editor-toast",
             close_button=True,
             dismissible=True,
@@ -454,3 +455,38 @@ class RuleState(State, LocalStorageMixinState):
         primary_source.editor_values[index].href = value
         primary_source.editor_values[index].external = True
         yield RuleState.update_local_state
+
+    @label_var(label_id="rules.additive_rule.add_button_prefix")
+    def label_additive_rule_add_button_prefix(self) -> None:
+        """Label for additive_rule.add_button."""
+
+    @label_var(label_id="rules.additive_rule.remove_button_prefix")
+    def label_additive_rule_remove_button_prefix(self) -> None:
+        """Label for additive_rule.remove_button."""
+
+    @label_var(label_id="rules.validation_result_dialog.close_button")
+    def label_validation_result_dialog_close_button(self) -> None:
+        """Label for validation_result_dialog.close_button."""
+
+    @label_var(label_id="rules.validation_result_dialog.title")
+    def label_validation_result_dialog_title(self) -> None:
+        """Label for validation_result_dialog.title."""
+
+    @label_var(label_id="rules.save_button.format", deps=["stem_type"])
+    def label_save_button_format(self) -> list[str]:
+        """Label for save_button.format."""
+        return [self.stem_type or ""]
+
+    @label_var(label_id="rules.save_button.saving_format", deps=["stem_type"])
+    def label_save_button_saving_format(self) -> list[str]:
+        """Label for save_button.saving_format."""
+        return [self.stem_type or ""]
+
+    @label_var(label_id="rules.save_success_dialog.title")
+    def label_save_success_dialog_title(self) -> None:
+        """Label for save_success_dialog.title."""
+
+    @label_var(label_id="rules.save_success_dialog.message_format")
+    def label_save_success_dialog_message_format(self) -> list[str]:
+        """Label for save_success_dialog.message_format."""
+        return [self.stem_type or ""]

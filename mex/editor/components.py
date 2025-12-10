@@ -6,6 +6,7 @@ import reflex as rx
 from mex.editor.ingest.state import IngestState
 from mex.editor.rules.models import EditorValue
 from mex.editor.search.state import SearchState
+from mex.editor.state import State
 
 
 def render_value(value: EditorValue) -> rx.Component:
@@ -43,8 +44,9 @@ def render_additional_titles(titles: list[EditorValue]) -> rx.Component:
         rx.hover_card.root(
             rx.hover_card.trigger(
                 rx.badge(
-                    "+ additional titles",
+                    State.label_additional_titles,
                     style=rx.Style(margin="auto 0"),
+                    custom_attrs={"data-testid": "additional-titles-badge"},
                 ),
                 custom_attrs={"data-testid": "tooltip-additional-titles-trigger"},
             ),
@@ -155,7 +157,7 @@ def pagination(
     current_page = cast("rx.Var[int]", state.current_page)
     return rx.center(
         rx.button(
-            rx.text("Previous"),
+            rx.text(State.label_pagination_previous_button),
             on_click=[
                 state.go_to_previous_page,
                 state.scroll_to_top,
@@ -182,7 +184,7 @@ def pagination(
             custom_attrs={"data-testid": "pagination-page-select"},
         ),
         rx.button(
-            rx.text("Next", weight="bold"),
+            rx.text(State.label_pagination_next_button, weight="bold"),
             on_click=[
                 state.go_to_next_page,
                 state.scroll_to_top,

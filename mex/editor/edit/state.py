@@ -3,6 +3,7 @@ from collections.abc import Generator
 import reflex as rx
 from reflex.event import EventSpec
 
+from mex.editor.label_var import label_var
 from mex.editor.rules.state import RuleState
 
 
@@ -46,3 +47,27 @@ class EditState(RuleState):
                 for value in ps.editor_values:
                     value.enabled = new_state
         yield RuleState.update_local_state
+
+    @label_var(label_id="edit.toggle_all")
+    def label_toggle_all(self) -> None:
+        """Label for toggle_all."""
+
+    @label_var(label_id="edit.discard_changes.button")
+    def label_discard_changes_button(self) -> None:
+        """Label for discard_changes.button."""
+
+    @label_var(label_id="edit.discard_changes_dialog.title")
+    def label_discard_changes_dialog_title(self) -> None:
+        """Label for discard_changes_dialog.title."""
+
+    @label_var(label_id="edit.discard_changes_dialog.description")
+    def label_discard_changes_dialog_description(self) -> None:
+        """Label for discard_changes_dialog.description."""
+
+    @label_var(label_id="edit.discard_changes_dialog.cancel_button")
+    def label_discard_changes_dialog_cancel_button(self) -> None:
+        """Label for discard_changes_dialog.cancel_button."""
+
+    @label_var(label_id="edit.discard_changes_dialog.discard_button")
+    def label_discard_changes_dialog_discard_button(self) -> None:
+        """Label for discard_changes_dialog.discard_button."""

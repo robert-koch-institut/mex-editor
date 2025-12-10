@@ -100,16 +100,8 @@ app.add_page(
         IngestState.flag_ingested_items,
     ],
 )
-app.add_page(
-    login_mex_index,
-    route="/login",
-    title="MEx Editor | Login",
-)
-app.add_page(
-    login_ldap_index,
-    route="/login-ldap",
-    title="MEx Editor | Login",
-)
+app.add_page(login_mex_index, route="/login", title="MEx Editor | Login")
+app.add_page(login_ldap_index, route="/login-ldap", title="MEx Editor | Login")
 app.add_page(
     consent_index,
     route="/consent",

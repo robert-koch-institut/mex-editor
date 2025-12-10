@@ -1,15 +1,18 @@
 from typing import Any
+from unittest.mock import MagicMock
 
 import pytest
+from pytest import MonkeyPatch
 
 from mex.editor.models import NavItem
 from mex.editor.state import State, User
 
 
-def test_state_logout() -> None:
+def test_state_logout(monkeypatch: MonkeyPatch) -> None:
     state = State(user_mex=User(name="Test", write_access=True))
-    assert state.user_mex
+    monkeypatch.setattr(State, "_mark_dirty", MagicMock(spec=State._mark_dirty))
 
+    assert state.user_mex
     assert "/" in str(list(state.logout()))  # type: ignore[misc]
     assert state.user_mex is None
 

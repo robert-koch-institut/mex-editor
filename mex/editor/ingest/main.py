@@ -36,7 +36,7 @@ def ingest_button(result: IngestResult, index: int) -> rx.Component:
     return rx.cond(
         result.show_ingest_button,
         rx.button(
-            "Ingest",
+            IngestState.label_button_ingest,
             align="end",
             color_scheme="jade",
             variant="surface",
@@ -45,7 +45,7 @@ def ingest_button(result: IngestResult, index: int) -> rx.Component:
             custom_attrs={"data-testid": f"ingest-button-{index}"},
         ),
         rx.button(
-            "Ingested",
+            IngestState.label_button_ingested,
             align="end",
             color_scheme="gray",
             variant="surface",
@@ -112,7 +112,7 @@ def search_input() -> rx.Component:
                     autofocus=True,
                     max_length=100,
                     name="query_string",
-                    placeholder="Search here...",
+                    placeholder=IngestState.label_search_placeholder,
                     style=rx.Style(
                         {
                             "--text-field-selection-color": "",
@@ -128,6 +128,7 @@ def search_input() -> rx.Component:
                     ),
                     disabled=IngestState.is_loading,
                     type="text",
+                    custom_attrs={"data-testid": "search-input"},
                 ),
                 rx.button(
                     rx.icon("search"),
@@ -156,8 +157,7 @@ def results_summary() -> rx.Component:
     """Render a summary of the results found."""
     return rx.center(
         rx.text(
-            f"Showing {IngestState.current_results_length} "
-            f"of {IngestState.total} items",
+            IngestState.label_search_result_summary_format,
             style=rx.Style(
                 color="var(--gray-12)",
                 fontWeight="var(--font-weight-bold)",
@@ -204,17 +204,11 @@ def search_infobox() -> rx.Component | rx.Var[Any]:
         IngestState.current_aux_provider,
         (
             AuxProvider.LDAP,
-            rx.callout(
-                "Search users by display name and contact points by email. "
-                'Please use "*" as placeholder e.g. "Muster*".',
-            ),
+            rx.callout(IngestState.label_search_info_ldap),
         ),
         (
             AuxProvider.WIKIDATA,
-            rx.callout(
-                'Search Wikidata by "Concept URI". '
-                'Please paste URI e.g. "http://www.wikidata.org/entity/Q918501".'
-            ),
+            rx.callout(IngestState.label_search_info_wikidata),
         ),
     )
 

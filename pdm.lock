@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:8fb52b8567d729b1368e5f3c6d8a4e9204aca8623f5b05ad6e3206dea2312f3b"
+content_hash = "sha256:44c3088ba05ba216adcdf8e43013f63f3cc48fdcbcc7a0ba05b0def8675cca73"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -1211,6 +1211,16 @@ files = [
 ]
 
 [[package]]
+name = "polib"
+version = "1.2.0"
+summary = "A library to manipulate gettext files (po and mo files)."
+groups = ["default"]
+files = [
+    {file = "polib-1.2.0-py2.py3-none-any.whl", hash = "sha256:1c77ee1b81feb31df9bca258cbc58db1bbb32d10214b173882452c73af06d62d"},
+    {file = "polib-1.2.0.tar.gz", hash = "sha256:f3ef94aefed6e183e342a8a269ae1fc4742ba193186ad76f175938621dbfc26b"},
+]
+
+[[package]]
 name = "prompt-toolkit"
 version = "3.0.52"
 requires_python = ">=3.8"
@@ -2149,6 +2159,17 @@ dependencies = [
 files = [
     {file = "types_ldap3-2.9.13.20251121-py3-none-any.whl", hash = "sha256:20356bf413cb178898f5b171463b44b82044b8b69f9331e09950009cfef05e48"},
     {file = "types_ldap3-2.9.13.20251121.tar.gz", hash = "sha256:58f1a63ab56c6e47102035682ec1acf1b127467ae2f52a916f40a6aca852e5a5"},
+]
+
+[[package]]
+name = "types-polib"
+version = "1.2.0.20250401"
+requires_python = ">=3.9"
+summary = "Typing stubs for polib"
+groups = ["dev"]
+files = [
+    {file = "types_polib-1.2.0.20250401-py3-none-any.whl", hash = "sha256:366dc395519cf8f49d343a30e372dbe662b5621440b621cf190e455cd8436b40"},
+    {file = "types_polib-1.2.0.20250401.tar.gz", hash = "sha256:0a7d2cc4918680925c43ccd604c561933d98fb79a8e6dc3f6de433189c9d606d"},
 ]
 
 [[package]]

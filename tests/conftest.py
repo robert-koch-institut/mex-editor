@@ -1,5 +1,5 @@
-from collections.abc import Generator
 import re
+from collections.abc import Generator
 from typing import Any, cast
 
 import pytest

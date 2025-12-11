@@ -373,7 +373,6 @@ class RuleState(State, LocalStorageMixinState):
             if primary_source.name.href == href:
                 primary_source.enabled = enabled
                 yield RuleState.update_local_state
-                # yield RuleState.update_local_edit
 
     @rx.event
     def toggle_field_value(

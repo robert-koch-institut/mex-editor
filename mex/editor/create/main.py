@@ -68,7 +68,7 @@ def discard_draft_button() -> rx.Component:
             rx.alert_dialog.trigger(
                 rx.button(
                     CreateState.label_discard_draft_button,
-                    color_scheme="red",
+                    color_scheme="tomato",
                 ),
                 custom_attrs={"data-testid": "discard-draft-dialog-button"},
             ),
@@ -89,7 +89,7 @@ def discard_draft_button() -> rx.Component:
                     rx.alert_dialog.action(
                         rx.button(
                             CreateState.label_discard_draft_dialog_discard_button,
-                            color_scheme="red",
+                            color_scheme="tomato",
                             variant="solid",
                             on_click=[
                                 RuleState.delete_local_state,

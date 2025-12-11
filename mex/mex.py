@@ -59,7 +59,6 @@ app.add_page(
     on_load=[
         State.check_mex_login,
         State.load_nav,
-        # CreateState.reset_stem_type,
         RuleState.refresh,
         RuleState.resolve_identifiers,
     ],

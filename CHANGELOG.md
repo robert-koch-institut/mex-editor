@@ -15,11 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
 - Using href navigation instead of navigation via code (`page.navigate()`).
-- Initial language now picking from available languages instead of hard coded value
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
-- Increased global expect timeout (to 30,000) for tests
-- Using the field label for new/remove additive value button
-- renaming the field_name function to field_name_card
 
 ### Deprecated
 

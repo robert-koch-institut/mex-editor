@@ -44,7 +44,7 @@ def discard_changes_button() -> rx.Component:
             rx.alert_dialog.trigger(
                 rx.button(
                     EditState.label_discard_changes_button,
-                    color_scheme="red",
+                    color_scheme="tomato",
                 ),
                 custom_attrs={"data-testid": "discard-changes-dialog-button"},
             ),
@@ -65,7 +65,7 @@ def discard_changes_button() -> rx.Component:
                     rx.alert_dialog.action(
                         rx.button(
                             EditState.label_discard_changes_dialog_discard_button,
-                            color_scheme="red",
+                            color_scheme="tomato",
                             variant="solid",
                             on_click=[
                                 RuleState.delete_local_state,

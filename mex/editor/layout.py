@@ -115,46 +115,10 @@ def nav_link(item: NavItem) -> rx.Component:
                         rx.badge(
                             RuleState.draft_summary.count,
                             style=rx.Style(
-                                {
-                                    "align-self": "center",
-                                    "margin-left": "-1em",
-                                    "cursor": "pointer",
-                                    "border": "1px solid transparent",
-                                }
-                            ),
-                            _hover={"border-color": f"{rx.color('accent', 8)}"},
-                            custom_attrs={"data-testid": "draft-menu-trigger"},
-                        ),
-                    ),
-                    rx.menu.content(
-                        rx.foreach(
-                            RuleState.draft_summary.drafts, render_draft_menu_item
-                        )
-                    ),
-                ),
-            ),
-            link,
-        ),
-        link,
-    )
-
-    return rx.cond(
-        item.path.contains("/create"),  # type: ignore[attr-defined]
-        rx.cond(
-            RuleState.draft_summary.count,
-            rx.fragment(
-                link,
-                rx.menu.root(
-                    rx.menu.trigger(
-                        rx.badge(
-                            RuleState.draft_summary.count,
-                            style=rx.Style(
-                                {
-                                    "align-self": "center",
-                                    "margin-left": "-1em",
-                                    "cursor": "pointer",
-                                    "border": "1px solid transparent",
-                                }
+                                align_self="center",
+                                margin_left="-1em",
+                                cursor="pointer",
+                                border="1px solid transparent",
                             ),
                             _hover={"border-color": f"{rx.color('accent', 8)}"},
                             custom_attrs={"data-testid": "draft-menu-trigger"},

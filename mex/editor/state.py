@@ -22,8 +22,6 @@ class State(rx.State):
         (x for x in _available_locales if x.id.lower().startswith("de")),
         _available_locales[0],
     ).id
-    current_page_has_changes: bool = False
-    navigate_dialog_open: bool = False
     navigate_target: str | None = None
     user_mex: User | None = None
     user_ldap: User | None = None
@@ -78,38 +76,6 @@ class State(rx.State):
         self.current_locale = locale
 
     @rx.event
-    def set_current_page_has_changes(self, value: bool) -> None:  # noqa: FBT001
-        """Set the current_page_has_changes attribute to the given value.
-
-        Args:
-            value: The value of the current_page_has_changes attribute.
-        """
-        self.current_page_has_changes = value
-
-    @rx.event
-    def close_navigate_dialog(self) -> None:
-        """Close the navigate dialog."""
-        self.navigate_dialog_open = False
-
-    @rx.event
-    def navigate(self, raw_path: str) -> EventSpec | None:
-        """Navigate to a given path and warn if there are unsaved changes.
-
-        If changes on the current page are present, a dialog will appear and warn the
-        user about unsaved changes. The user can decide to stay on the current page or
-        discard the changes and navigate away.
-
-        Args:
-            raw_path: The path to navigate to.
-        """
-        self.navigate_target = raw_path
-        if self.current_page_has_changes:
-            self.navigate_dialog_open = True
-            return None
-
-        return rx.redirect(self.navigate_target)
-
-    @rx.event
     def logout(self) -> Generator[EventSpec, None, None]:
         """Log out a user."""
         self.reset()
@@ -155,7 +121,12 @@ class State(rx.State):
     ) -> EventSpec | None:
         """Event handler to push updated url parameter to the browser history."""
         for nav_item in self._nav_items:
-            if self.router.page.path == nav_item.path:
+            fullmatch = nav_item.path == "/"
+            if (
+                self.router.page.path == nav_item.path
+                if fullmatch
+                else self.router.page.path.startswith(nav_item.path)
+            ):
                 self._update_raw_path(nav_item, params)
                 return rx.call_script(
                     f"window.history.pushState(null, '', '{nav_item.raw_path}');"
@@ -166,7 +137,12 @@ class State(rx.State):
     def load_nav(self) -> None:
         """Event hook for updating the navigation on page loads."""
         for nav_item in self._nav_items:
-            if self.router.page.path == nav_item.path:
+            fullmatch = nav_item.path == "/"
+            if (
+                self.router.page.path == nav_item.path
+                if fullmatch
+                else self.router.page.path.startswith(nav_item.path)
+            ):
                 self._update_raw_path(nav_item, self.router.page.params)
                 nav_item.underline = "always"
             else:

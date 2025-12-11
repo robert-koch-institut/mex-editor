@@ -35,6 +35,36 @@ msgstr "Create new"
 msgid "edit.toggle_all"
 msgstr "Toggle all"
 
+msgid "edit.discard_changes.button"
+msgstr "Discard changes"
+
+msgid "edit.discard_changes_dialog.title"
+msgstr "Discard changes?"
+
+msgid "edit.discard_changes_dialog.description"
+msgstr "Are you sure u want to delete your changes? You are not able to revert the discarding."
+
+msgid "edit.discard_changes_dialog.cancel_button"
+msgstr "Cancel"
+
+msgid "edit.discard_changes_dialog.discard_button"
+msgstr "Discard changes"
+
+msgid "create.discard_draft.button"
+msgstr "Discard draft"
+
+msgid "create.discard_draft_dialog.title"
+msgstr "Discard draft?"
+
+msgid "create.discard_draft_dialog.description"
+msgstr "Are your sure to discard the draft? You are not able to revert the discarding."
+
+msgid "create.discard_draft_dialog.cancel_button"
+msgstr "Cancel"
+
+msgid "create.discard_draft_dialog.discard_button"
+msgstr "Discard draft"
+
 msgid "login.username"
 msgstr "Username"
 

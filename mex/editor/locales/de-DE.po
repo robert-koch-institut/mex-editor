@@ -35,6 +35,36 @@ msgstr "Erzeugen von"
 msgid "edit.toggle_all"
 msgstr "Alle umschalten"
 
+msgid "edit.discard_changes.button"
+msgstr "Änderungen verwerfen"
+
+msgid "edit.discard_changes_dialog.title"
+msgstr "Änderungen wirklich verwerfen?"
+
+msgid "edit.discard_changes_dialog.description"
+msgstr "Sind Sie sicher, dass Sie Ihre Änderungen verwerfen möchten? Es ist nicht möglich das Verwerfen der Änderungen rückgängig zu machen."
+
+msgid "edit.discard_changes_dialog.cancel_button"
+msgstr "Abbrechen"
+
+msgid "edit.discard_changes_dialog.discard_button"
+msgstr "Änderungen verwerfen"
+
+msgid "create.discard_draft.button"
+msgstr "Entwurf verwerfen"
+
+msgid "create.discard_draft_dialog.title"
+msgstr "Entwurf verwerfen?"
+
+msgid "create.discard_draft_dialog.description"
+msgstr "Sind Sie sicher, dass Sie Ihren Entwurf verwerfen möchten? Es ist nicht möglich das Verwerfen des Entwurfs rückgängig zu machen."
+
+msgid "create.discard_draft_dialog.cancel_button"
+msgstr "Abbrechen"
+
+msgid "create.discard_draft_dialog.discard_button"
+msgstr "Entwurf verwerfen"
+
 msgid "login.username"
 msgstr "Benutzername"
 

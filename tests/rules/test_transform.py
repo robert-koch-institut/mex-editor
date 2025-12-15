@@ -25,7 +25,6 @@ from mex.common.models import (
     SubtractivePerson,
 )
 from mex.common.types import (
-    EMAIL_PATTERN,
     AccessRestriction,
     ConsentStatus,
     ConsentType,
@@ -65,6 +64,7 @@ from mex.editor.rules.transform import (
     transform_models_to_fields,
     transform_validation_error_to_messages,
 )
+from tests.conftest import get_email_pattern
 
 
 @pytest.mark.parametrize(
@@ -994,7 +994,7 @@ def test_transform_validation_error_to_messages() -> None:
     assert messages == [
         ValidationMessage(
             field_name="0",
-            message=f"String should match pattern '{EMAIL_PATTERN}'",
+            message=f"String should match pattern '{get_email_pattern()}'",
             input="OOPS",
         )
     ]

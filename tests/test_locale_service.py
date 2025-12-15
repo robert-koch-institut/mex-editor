@@ -60,7 +60,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             "Resource",
             "contributor",
             False,
-            "Mitwirkende-DE*r",
+            "Mitwirkende*r",
             id="de-DE:Resource.contributor(singular)",
         ),
         pytest.param(
@@ -68,7 +68,7 @@ def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
             "Resource",
             "contributor",
             True,
-            "Mitwirkende-DE",
+            "Mitwirkende",
             id="de-DE:Resource.contributor(plural)",
         ),
         pytest.param(

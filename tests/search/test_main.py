@@ -265,7 +265,7 @@ def test_reference_filter_fields_for_entity_type(
     ("locale_id", "expected_items"),
     [
         pytest.param(
-            "de",
+            "de-DE",
             [
                 "Affiliation",
                 "Autor*in",
@@ -274,10 +274,10 @@ def test_reference_filter_fields_for_entity_type(
                 "Kontakt",
                 "Nachfolge von",
             ],
-            id="de",
+            id="de-DE",
         ),
         pytest.param(
-            "en",
+            "en-US",
             [
                 "Affiliation",
                 "Access platform",
@@ -286,7 +286,7 @@ def test_reference_filter_fields_for_entity_type(
                 "Files",
                 "Publisher",
             ],
-            id="en",
+            id="en-US",
         ),
     ],
 )

@@ -1,6 +1,5 @@
 import re
-from collections.abc import Generator
-from typing import Any, cast, get_args
+from typing import Any, cast
 
 import pytest
 from fastapi.testclient import TestClient
@@ -20,8 +19,8 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
 )
-from mex.common.models.person import EmailStr
 from mex.common.types import (
+    EMAIL_PATTERN,
     AccessRestriction,
     Identifier,
     IdentityProvider,
@@ -337,10 +336,11 @@ def extracted_activity(
 
 
 @pytest.fixture
-def artificial_extracted_items() -> Generator[AnyExtractedModel, None, None]:
+def artificial_extracted_items() -> list[AnyExtractedModel]:
     return generate_artificial_extracted_items(
         locale="de_DE",
         seed=42,
+        count=25,
         chattiness=16,
         stem_types=list(EXTRACTED_MODEL_CLASSES_BY_NAME),
     )
@@ -368,5 +368,4 @@ def build_ui_label_regex(label_id: str) -> re.Pattern:
 
 
 def get_email_pattern() -> str:
-    # TODO(zc): check for a nicer solution
-    return get_args(EmailStr)[1].metadata[0].pattern
+    return EMAIL_PATTERN

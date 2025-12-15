@@ -727,28 +727,28 @@ def test_edit_page_navigation_unsaved_changes_warning_discard_changes_and_naviga
     ("locale_id", "field_name", "expected_field_label"),
     [
         pytest.param(
-            "de",
+            "de-DE",
             "alternativeTitle",
             "Alternativtitel",
-            id="de:alternativeTitle",
+            id="de-DE:alternativeTitle",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "alternativeTitle",
             "Alternative title",
-            id="en:alternativeTitle",
+            id="en-US:alternativeTitle",
         ),
         pytest.param(
-            "de",
+            "de-DE",
             "abstract",
             "Kurzbeschreibung",
-            id="de:abstract",
+            id="de-DE:abstract",
         ),
         pytest.param(
-            "en",
+            "en-US",
             "abstract",
             "Abstract",
-            id="en:abstract",
+            id="en-US:abstract",
         ),
     ],
 )

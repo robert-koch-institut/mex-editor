@@ -5,7 +5,6 @@ import reflex as rx
 from mex.editor.components import icon_by_stem_type, render_span, render_value
 from mex.editor.locale_service import LocaleService
 from mex.editor.rules.models import (
-    EditorField,
     EditorPrimarySource,
     EditorValue,
     InputConfig,
@@ -100,7 +99,7 @@ def editor_additive_value(
             rx.cond(
                 value.being_edited,
                 additive_rule_input(
-                    field_translation.field,
+                    field_translation,
                     primary_source.input_config,
                     index,
                     value,
@@ -203,31 +202,34 @@ def textarea_input(
 
 
 def identifier_input(
-    field_name: str,
+    field_translation: FieldTranslation,
+    # field_name: str,
     index: int,
     identifier: str | None,
-    reference_value_types: list[str],
+    # reference_value_types: list[str],
 ) -> rx.Component:
     """Render an input component for editing identifiers."""
+    field = field_translation.field
     return rx.hstack(
         rx.input(
             placeholder="Identifier",
             value=identifier,
-            on_change=RuleState.set_identifier_value(field_name, index),  # type: ignore[misc]
+            on_change=RuleState.set_identifier_value(field.name, index),  # type: ignore[misc]
             style=rx.Style(
                 margin="calc(-1 * var(--space-1))",
                 width="100%",
                 flex="1",
             ),
             custom_attrs={
-                "data-testid": f"additive-rule-{field_name}-{index}-identifier"
+                "data-testid": f"additive-rule-{field.name}-{index}-identifier"
             },
         ),
         SearchReferenceDialog.create(
             on_identifier_selected=lambda x: RuleState.set_identifier_value(
-                field_name, index, x
+                field_translation.field.name, index, x
             ),
-            reference_types=reference_value_types,
+            translated_field=field_translation,
+            # reference_types=field.value_type,
         ),
         style=rx.Style(flex="1"),
     )
@@ -267,12 +269,13 @@ def badge_input(
 
 
 def additive_rule_input(
-    field: EditorField,
+    field_translation: FieldTranslation,
     input_config: InputConfig,
     index: int,
     value: EditorValue,
 ) -> rx.Component:
     """Return an input mask for additive rules."""
+    field = field_translation.field
     return rx.hstack(
         rx.cond(
             input_config.editable_href,
@@ -289,10 +292,9 @@ def additive_rule_input(
         rx.cond(
             input_config.editable_identifier,
             identifier_input(
-                field.name,
+                field_translation,
                 index,
                 value.identifier,
-                field.value_type
                 # ["MergedContactPoint", "MergedResource"],
             ),
         ),

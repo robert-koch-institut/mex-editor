@@ -189,7 +189,9 @@ class PaginationOptions:
             else [state.go_to_next_page]
         )
         change_page = (
-            [state.set_current_page, on_page_change] if on_page_change else [state.set_current_page]
+            [state.set_current_page, on_page_change]
+            if on_page_change
+            else [state.set_current_page]
         )
 
         return PaginationOptions(
@@ -204,8 +206,11 @@ class PaginationOptions:
         )
 
 
-def pagination_abstract(options: PaginationOptions):
-    return rx.center(
+def pagination_abstract(options: PaginationOptions, **kwargs: dict):
+    style = kwargs.pop("style", rx.Style())
+    used_style = rx.Style(width="100%")
+    used_style.update(style)
+    return rx.flex(
         rx.button(
             rx.text("Previous"),
             on_click=options.prev_options.on_click,
@@ -232,7 +237,7 @@ def pagination_abstract(options: PaginationOptions):
             style=rx.Style(minWidth="10%"),
         ),
         spacing="4",
-        style=rx.Style(width="100%"),
+        style=used_style,
     )
 
 

@@ -13,7 +13,7 @@ class CreateState(RuleState):
     @rx.event
     def set_stem_type(
         self, stem_type: str
-    ) -> None:  # Generator[EventSpec, None, None]:
+    ) -> None:
         """Set the stem type."""
         self.stem_type = stem_type
 

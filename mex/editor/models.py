@@ -11,19 +11,22 @@ from mex.common.types import MergedPersonIdentifier
 
 
 class EqualityDetector(Protocol):
-    def is_equal(self, other: "EqualityDetector") -> bool: ...
+    """Interface for checking equality without overriding __eq__."""
+
+    def is_equal(self, other: "EqualityDetector") -> bool: ...  # noqa: D102
 
 
 def sequence_is_equal(
     left: Sequence[EqualityDetector], right: Sequence[EqualityDetector]
 ) -> bool:
+    """Check if the given sequences are equal (based on EqualityDetector.is_equal)."""
     try:
-        return any(a.is_equal(b) for a, b in zip(left, right, strict=True))
+        return all(a.is_equal(b) for a, b in zip(left, right, strict=True))
     except ValueError:
         return False  # sequences don't have same length
 
 
-class EditorValue(rx.Base, EqualityDetector):
+class EditorValue(rx.Base):
     """Model for describing atomic values in the editor."""
 
     text: str | None = None
@@ -35,10 +38,12 @@ class EditorValue(rx.Base, EqualityDetector):
     being_edited: bool = False
 
     def is_equal(self, other: "EqualityDetector") -> bool:
+        """Check if self and other are equal."""
         if isinstance(other, EditorValue):
-            self_dict = self.dict(exclude={"text"} if self.identifier else {})
-            other_dict = other.dict(exclude={"text"} if other.identifier else {})
-            return self_dict != other_dict
+            exclude = {"text"} if other.identifier and not other.text else set()
+            self_dict = self.dict(exclude=exclude)
+            other_dict = other.dict(exclude=exclude)
+            return self_dict == other_dict
         return False
 
 

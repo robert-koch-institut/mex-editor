@@ -28,7 +28,7 @@ class ValidationMessage(rx.Base):
     input: str
 
 
-class EditorPrimarySource(rx.Base, EqualityDetector):
+class EditorPrimarySource(rx.Base):
     """Model for describing the editor state for one primary source."""
 
     name: EditorValue
@@ -38,40 +38,17 @@ class EditorPrimarySource(rx.Base, EqualityDetector):
     enabled: bool
 
     def is_equal(self, other: "EqualityDetector") -> bool:
+        """Check if self and other are equal."""
         if isinstance(other, EditorPrimarySource):
             return (
-                self.identifier != other.identifier
-                or self.enabled != other.enabled
-                or sequence_is_equal(self.editor_values, other.editor_values)
+                self.identifier == other.identifier
+                and self.enabled == other.enabled
+                and sequence_is_equal(self.editor_values, other.editor_values)
             )
         return False
 
 
-# class EditorValue(_EditorValue):
-#     def is_equal(self, other: "EditorValue") -> bool:
-#         self_dict = self.dict(exclude={"text"} if self.identifier else {})
-#         other_dict = other.dict({"text"} if other.identifier else {})
-#         return self_dict != other_dict
-
-
-# class EditorPrimarySource(_EditorPrimarySource):
-#     def is_equal(self, other: "EditorPrimarySource") -> bool:
-#         return (
-#             self.identifier != other.identifier
-#             or self.enabled != other.enabled
-#             or sequence_is_equal(self.editor_values, other.editor_values)
-#         )
-
-
-# class EditorField(_EditorField):
-#     def is_equal(self, other: "EditorField") -> bool:
-#         return (
-#             self.name != other.name
-#             or sequence_is_equal(self.primary_sources, other.primary_sources)
-#         )
-
-
-class EditorField(rx.Base, EqualityDetector):
+class EditorField(rx.Base):
     """Model for describing the editor state for a single field."""
 
     name: str
@@ -79,8 +56,9 @@ class EditorField(rx.Base, EqualityDetector):
     is_required: bool
 
     def is_equal(self, other: "EqualityDetector") -> bool:
+        """Check if self and other are equal."""
         if isinstance(other, EditorField):
-            return self.name != other.name or sequence_is_equal(
+            return self.name == other.name and sequence_is_equal(
                 self.primary_sources, other.primary_sources
             )
         return False

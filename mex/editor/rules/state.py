@@ -44,52 +44,9 @@ from mex.editor.transform import (
     transform_models_to_stem_type,
     transform_models_to_title,
 )
-from mex.editor.utils import compare_sequences, resolve_editor_value, resolve_identifier
+from mex.editor.utils import resolve_editor_value, resolve_identifier
 
 locale_service = LocaleService.get()
-
-
-# def _are_fields_equal_editwise(
-#     state_fields: Sequence[EditorField], api_fields: Sequence[EditorField]
-# ) -> bool:
-#     def _compare_editor_value(state_value: EditorValue, api_value: EditorValue) -> bool:
-#         value_compare_result = (
-#             state_value.identifier == api_value.identifier
-#             if api_value.identifier and not api_value.text
-#             else state_value.identifier == api_value.identifier
-#             and state_value.text == api_value.text
-#         )
-
-#         return (
-#             value_compare_result
-#             and state_value.badge == api_value.badge
-#             and state_value.being_edited == api_value.being_edited
-#             and state_value.enabled == api_value.enabled
-#             and state_value.external == api_value.external
-#             and state_value.href == api_value.href
-#         )
-
-#     def _compare_primary_sources(
-#         state_ps: EditorPrimarySource, api_ps: EditorPrimarySource
-#     ) -> bool:
-#         return state_ps.enabled == api_ps.enabled and compare_sequences(
-#             state_ps.editor_values,
-#             api_ps.editor_values,
-#             None,
-#             _compare_editor_value,
-#         )
-
-#     def _compare_fields(state_field: EditorField, api_field: EditorField) -> bool:
-#         return compare_sequences(
-#             state_field.primary_sources,
-#             api_field.primary_sources,
-#             lambda x: x.identifier,
-#             _compare_primary_sources,
-#         )
-
-#     return compare_sequences(
-#         state_fields, api_fields, lambda x: x.name, _compare_fields
-#     )
 
 
 class RuleState(State, LocalStorageMixinState):
@@ -117,7 +74,6 @@ class RuleState(State, LocalStorageMixinState):
         api_fields: list[EditorField] = self.get_value("_api_fields")
 
         return not sequence_is_equal(fields, api_fields)
-        # return not _are_fields_equal_editwise(fields, api_fields)
 
     @rx.event
     def update_local_state(self) -> None:

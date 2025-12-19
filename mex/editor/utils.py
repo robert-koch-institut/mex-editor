@@ -1,6 +1,3 @@
-from collections.abc import Callable, Sequence
-from typing import Any, TypeVar
-
 from async_lru import alru_cache
 
 from mex.common.backend_api.connector import BackendApiConnector

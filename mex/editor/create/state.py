@@ -18,7 +18,7 @@ class CreateState(RuleState):
         self.stem_type = stem_type
 
     @rx.event
-    def reset_stem_type(self) -> None:  # Generator[EventSpec, None, None]:
+    def reset_stem_type(self) -> None:
         """Set the stem type to its default."""
         self.stem_type = RULE_SET_REQUEST_CLASSES[0].stemType
 

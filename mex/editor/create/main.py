@@ -50,11 +50,61 @@ def create_title() -> rx.Component:
             value=RuleState.stem_type,
             on_change=[
                 CreateState.set_stem_type,
+                RuleState.delete_local_state,
                 RuleState.refresh,
+                RuleState.update_local_state,
             ],
             custom_attrs={"data-testid": "entity-type-select"},
         ),
         custom_attrs={"data-testid": "create-heading"},
+    )
+
+
+def discard_draft_button() -> rx.Component:
+    """Render a button to show discard draft dialog."""
+    return rx.cond(
+        CreateState.has_local_draft,
+        rx.alert_dialog.root(
+            rx.alert_dialog.trigger(
+                rx.button(
+                    CreateState.label_discard_draft_button,
+                    color_scheme="tomato",
+                ),
+                custom_attrs={"data-testid": "discard-draft-dialog-button"},
+            ),
+            rx.alert_dialog.content(
+                rx.alert_dialog.title(CreateState.label_discard_draft_dialog_title),
+                rx.alert_dialog.description(
+                    CreateState.label_discard_draft_dialog_description,
+                    size="2",
+                ),
+                rx.flex(
+                    rx.alert_dialog.cancel(
+                        rx.button(
+                            CreateState.label_discard_draft_dialog_cancel_button,
+                            variant="soft",
+                            color_scheme="gray",
+                        ),
+                    ),
+                    rx.alert_dialog.action(
+                        rx.button(
+                            CreateState.label_discard_draft_dialog_discard_button,
+                            color_scheme="tomato",
+                            variant="solid",
+                            on_click=[
+                                RuleState.delete_local_state,
+                                rx.redirect(path="/create"),
+                            ],
+                            custom_attrs={"data-testid": "discard-draft-button"},
+                        ),
+                    ),
+                    spacing="3",
+                    margin_top="16px",
+                    justify="end",
+                ),
+                style=rx.Style(max_width=450),
+            ),
+        ),
     )
 
 
@@ -63,7 +113,10 @@ def index() -> rx.Component:
     return page(
         rx.vstack(
             rule_page_header(
-                create_title(),
+                rx.fragment(
+                    create_title(),
+                    discard_draft_button(),
+                )
             ),
             rx.foreach(
                 RuleState.translated_fields,

@@ -1,15 +1,18 @@
 from collections.abc import Callable
-from dataclasses import dataclass
 from typing import Any, cast
 
 import reflex as rx
-from reflex.event import EventType
 from reflex.vars import Var
 
 from mex.editor.ingest.state import IngestState
+from mex.editor.models import (
+    PaginationButtonOptions,
+    PaginationOptions,
+    PaginationPageOptions,
+)
 from mex.editor.rules.models import EditorValue
 from mex.editor.search.state import SearchState
-from mex.editor.state import PaginationStateMixin, State
+from mex.editor.state import State
 
 
 def render_title(title: EditorValue) -> rx.Component:
@@ -153,60 +156,8 @@ def render_value(value: EditorValue) -> rx.Component:
     )
 
 
-@dataclass
-class PaginationButtonOptions:
-    disabled: bool | Var[bool]
-    on_click: EventType[()] | None = None
-
-
-@dataclass
-class PaginationPageOptions:
-    current_page: int | Var[int]
-    pages: list[str] | Var[list[str]]
-    disabled: bool | Var[bool]
-    on_change: EventType[()] | None = None
-
-
-@dataclass
-class PaginationOptions:
-    prev_options: PaginationButtonOptions
-    next_options: PaginationButtonOptions
-    page_options: PaginationPageOptions
-
-    @staticmethod
-    def create(
-        state: PaginationStateMixin | type[PaginationStateMixin],
-        on_page_change: EventType[()] | None = None,
-    ):
-        prev_click = (
-            [state.go_to_previous_page, on_page_change]
-            if on_page_change
-            else [state.go_to_previous_page]
-        )
-        next_click = (
-            [state.go_to_next_page, on_page_change]
-            if on_page_change
-            else [state.go_to_next_page]
-        )
-        change_page = (
-            [state.set_current_page, on_page_change]
-            if on_page_change
-            else [state.set_current_page]
-        )
-
-        return PaginationOptions(
-            PaginationButtonOptions(state.disable_previous_page, prev_click),
-            PaginationButtonOptions(state.disable_next_page, next_click),
-            PaginationPageOptions(
-                state.current_page,
-                state.page_selection,
-                state.disable_page_selection,
-                change_page,
-            ),
-        )
-
-
-def pagination_abstract(options: PaginationOptions, **kwargs: dict):
+def pagination_abstract(options: PaginationOptions, **kwargs: dict) -> rx.Component:
+    """Create pagination based on given options."""
     style = kwargs.pop("style", rx.Style())
     used_style = rx.Style(width="100%")
     used_style.update(style)
@@ -244,7 +195,7 @@ def pagination_abstract(options: PaginationOptions, **kwargs: dict):
 def pagination(
     state: type[IngestState | SearchState], *page_load_hooks: Callable[[], Any]
 ) -> rx.Component:
-    """Render pagination for navigating search results."""
+    """Create pagination for IngestState or SearchState."""
     current_page = cast("rx.Var[int]", state.current_page)
 
     return pagination_abstract(

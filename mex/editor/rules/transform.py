@@ -239,19 +239,26 @@ def transform_models_to_fields(
             for f in MERGEABLE_FIELDS_BY_CLASS_NAME[e.entityType]
         }
     )
+
+    def _make_string_type(x: type, entity_type: str, field_name: str) -> str:
+        result = x.__name__
+        if field_name in REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME[entity_type]:
+            result = result.removesuffix("Identifier")
+        return result
+
     required_fields = get_required_mergeable_field_names(additive)
     fields_by_name = {
         field_name: EditorField(
             name=field_name,
-            value_type=REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME[entity_type].get(
-                field_name, []
-            ),
+            value_type=[
+                _make_string_type(x, entity_type, field_name)
+                for x in ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES[entity_type][field_name]
+            ],
             primary_sources=[],
             is_required=field_name in required_fields,
         )
         for (field_name, entity_type) in mergeable_fields
     }
-    print("FIELD BY NAME", fields_by_name)
 
     for extracted in extracted_items:
         _transform_model_to_editor_primary_sources(

@@ -227,9 +227,9 @@ def identifier_input(
         SearchReferenceDialog.create(
             on_identifier_selected=lambda x: RuleState.set_identifier_value(
                 field_translation.field.name, index, x
-            ),
-            translated_field=field_translation,
-            # reference_types=field.value_type,
+            ),  # type: ignore[misc]
+            reference_types=field_translation.field.value_type,
+            field_label=field_translation.label,
         ),
         style=rx.Style(flex="1"),
     )
@@ -291,12 +291,7 @@ def additive_rule_input(
         ),
         rx.cond(
             input_config.editable_identifier,
-            identifier_input(
-                field_translation,
-                index,
-                value.identifier,
-                # ["MergedContactPoint", "MergedResource"],
-            ),
+            identifier_input(field_translation, index, value.identifier),
         ),
         rx.cond(
             input_config.editable_badge,

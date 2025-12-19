@@ -1,4 +1,3 @@
-import math
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Literal
 
@@ -15,6 +14,7 @@ from mex.common.transform import ensure_prefix
 from mex.common.types import Identifier
 from mex.editor.exceptions import escalate_error
 from mex.editor.locale_service import LocaleService
+from mex.editor.pagination_state_mixin import PaginationStateMixin
 from mex.editor.search.models import (
     ReferenceFieldFilter,
     ReferenceFieldIdentifierFilter,
@@ -23,7 +23,7 @@ from mex.editor.search.models import (
 )
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.search.value_label_select import ValueLabelSelectItem
-from mex.editor.state import State, PaginationStateMixin
+from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 
 if TYPE_CHECKING:
@@ -296,15 +296,15 @@ class SearchState(State, PaginationStateMixin):
         except HTTPError as exc:
             self.is_loading = False
             self.results = []
-            yield self.set_total(0)
-            yield self.set_current_page(1)
+            yield self.set_total(0)  # type: ignore[misc]
+            yield self.set_current_page(1)  # type: ignore[misc]
             yield from escalate_error(
                 "backend", "error fetching merged items", exc.response.text
             )
         else:
             self.is_loading = False
             self.results = transform_models_to_results(response.items)
-            yield self.set_total(response.total)
+            yield self.set_total(response.total)  # type: ignore[misc]
 
     @rx.event
     def get_available_primary_sources(self) -> Generator[EventSpec, None, None]:

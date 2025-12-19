@@ -33,7 +33,6 @@ from mex.editor.rules.transform import (
     transform_models_to_fields,
     transform_validation_error_to_messages,
 )
-from mex.editor.search.models import SearchResult
 from mex.editor.state import State
 from mex.editor.transform import (
     transform_models_to_stem_type,
@@ -53,12 +52,6 @@ class RuleState(State):
     fields: list[EditorField] = []
     stem_type: str | None = None
     validation_messages: list[ValidationMessage] = []
-
-    @rx.event
-    def test_callback(
-        self, x: bool, y: list[SearchResult], field_name: str, index: int
-    ) -> None:
-        print("RULESTATE::test_callback", x, y, field_name, index)
 
     @rx.var(cache=False)
     def translated_fields(self) -> Sequence[FieldTranslation]:

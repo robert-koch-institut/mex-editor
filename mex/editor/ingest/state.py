@@ -1,4 +1,3 @@
-import math
 from collections.abc import Generator
 from typing import Any
 
@@ -11,7 +10,8 @@ from mex.common.models import AnyExtractedModel, PaginatedItemsContainer
 from mex.editor.exceptions import escalate_error
 from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider, IngestResult
 from mex.editor.ingest.transform import transform_models_to_results
-from mex.editor.state import PaginationStateMixin, State
+from mex.editor.pagination_state_mixin import PaginationStateMixin
+from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 
 
@@ -108,7 +108,6 @@ class IngestState(State, PaginationStateMixin):
     def refresh(self) -> Generator[EventSpec | None, None, None]:
         """Refresh the search results."""
         connector = BackendApiConnector.get()
-        # offset = self.limit * (self.current_page - 1)
         self.is_loading = True
         yield None
         try:
@@ -125,8 +124,8 @@ class IngestState(State, PaginationStateMixin):
             self.is_loading = False
             self.results_transformed = []
             self.results_extracted = []
-            yield self.set_total(0)
-            yield self.set_current_page(1)
+            yield self.set_total(0)  # type: ignore[misc]
+            yield self.set_current_page(1)  # type: ignore[misc]
             yield None
             yield from escalate_error(
                 "backend",
@@ -140,4 +139,4 @@ class IngestState(State, PaginationStateMixin):
             )
             self.results_extracted = container.items
             self.results_transformed = transform_models_to_results(container.items)
-            self.set_total(container.total)
+            self.set_total(container.total)  # type: ignore[misc]

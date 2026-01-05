@@ -2,7 +2,10 @@ from typing import TYPE_CHECKING, cast
 
 import reflex as rx
 
+from mex.editor.components import icon_by_stem_type, render_title
 from mex.editor.locale_service import LocaleService
+from mex.editor.rules.models import UserDraft
+from mex.editor.rules.state import RuleState
 from mex.editor.state import NavItem, State
 
 if TYPE_CHECKING:
@@ -35,7 +38,7 @@ def user_menu() -> rx.Component:
             rx.menu.item(cast("User", State.user_mex).name, disabled=True),
             rx.menu.separator(),
             rx.menu.item(
-                "Logout",
+                State.label_nav_bar_logout_button,
                 on_select=State.logout,
                 custom_attrs={"data-testid": "logout-button"},
             ),
@@ -70,14 +73,67 @@ def language_switcher() -> rx.Component:
     )
 
 
+def render_draft_menu_item(draft: UserDraft) -> rx.Component:
+    """Render a navigatable menu item for the given draft."""
+    return rx.menu.item(
+        rx.link(
+            rx.hstack(
+                icon_by_stem_type(
+                    draft.stem_type,
+                    size=22,
+                    style=rx.Style(color=rx.color("accent", 11)),
+                ),
+                render_title(draft.title),
+            ),
+            href=f"/create/{draft.identifier}",
+            style=rx.Style({"flex": "1"}),
+        ),
+        custom_attrs={"data-testid": f"draft-{draft.identifier}-menu-item"},
+    )
+
+
 def nav_link(item: NavItem) -> rx.Component:
     """Return a link component for the given navigation item."""
-    return rx.link(
+    link = rx.link(
         rx.text(item.title, size="4", weight="medium"),
-        on_click=State.navigate(item.raw_path),  # type: ignore[misc]
+        href=item.raw_path,
         underline=item.underline,  # type: ignore[arg-type]
         class_name="nav-item",
-        custom_attrs={"data-href": item.raw_path},
+        custom_attrs={
+            "data-testid": f"nav-item-{item.path}",
+        },
+    )
+
+    return rx.cond(
+        item.path.contains("/create"),  # type: ignore[attr-defined]
+        rx.cond(
+            RuleState.draft_summary.count,
+            rx.fragment(
+                link,
+                rx.menu.root(
+                    rx.menu.trigger(
+                        rx.badge(
+                            RuleState.draft_summary.count,
+                            style=rx.Style(
+                                align_self="center",
+                                margin_left="-1em",
+                                cursor="pointer",
+                                border="1px solid transparent",
+                            ),
+                            _hover={"border-color": f"{rx.color('accent', 8)}"},
+                            custom_attrs={"data-testid": "draft-menu-trigger"},
+                        ),
+                    ),
+                    rx.menu.content(
+                        rx.foreach(
+                            RuleState.draft_summary.drafts, render_draft_menu_item
+                        )
+                    ),
+                ),
+            ),
+            link,
+        ),
+        link,
     )
 
 
@@ -108,7 +164,7 @@ def app_logo() -> rx.Component:
 def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
     """Return a navigation bar component."""
     nav_items_to_use = (
-        nav_items_source if nav_items_source is not None else State.nav_items
+        nav_items_source if nav_items_source is not None else State.nav_items_translated
     )
     return rx.vstack(
         rx.box(
@@ -162,44 +218,16 @@ def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
     )
 
 
-def navigate_away_dialog() -> rx.Component:
-    """Render a dialog that informs the user about unsaved changes on the page.
-
-    If the dialog is dismissed navigation is stopped and the user stays on the page;
-    otherwise navigate away.
+def custom_focus_script() -> rx.Script:
+    """Creates a Script that looks for '[data-focusme]' and calls '.focus()' in it."""
+    return rx.script(
+        """
+    (function() {
+        document.querySelectorAll('[data-focusme]').forEach(item=> {
+            setTimeout(() => item.focus(), 10);
+        })
+    })()
     """
-    return rx.alert_dialog.root(
-        rx.alert_dialog.content(
-            rx.alert_dialog.title("Unsaved changes"),
-            rx.alert_dialog.description(
-                "There are unsaved changes on the page. If you navigate away "
-                "these changes will be lost. Do you want to navigate anyway?",
-            ),
-            rx.flex(
-                rx.alert_dialog.cancel(
-                    rx.button(
-                        "Stay here",
-                        color_scheme="gray",
-                        on_click=State.close_navigate_dialog,
-                    )
-                ),
-                rx.alert_dialog.action(
-                    rx.button(
-                        "Navigate away",
-                        color_scheme="tomato",
-                        on_click=[
-                            State.close_navigate_dialog,
-                            State.set_current_page_has_changes(False),  # type: ignore[misc]
-                            State.navigate(State.navigate_target),  # type: ignore[misc]
-                        ],
-                    )
-                ),
-                spacing="3",
-                style=rx.Style(marginTop="1rem"),
-                justify="end",
-            ),
-        ),
-        open=State.navigate_dialog_open,
     )
 
 
@@ -207,7 +235,6 @@ def page(
     *children: rx.Component,
     user_type: str = "user_mex",
     nav_items_source: list[NavItem] | None = None,
-    include_navigate_dialog: bool = True,
 ) -> rx.Component:
     """Return a page fragment with navigation bar and given children.
 
@@ -215,7 +242,6 @@ def page(
         *children: Components to render in the page body
         user_type: State attribute to check for user login
         nav_items_source: Custom navigation items, if None uses default
-        include_navigate_dialog: Whether to include the navigate away dialog
     """
     user_check = getattr(State, user_type)
     navbar_component = nav_bar(nav_items_source)
@@ -232,10 +258,8 @@ def page(
             ),
             custom_attrs={"data-testid": "page-body"},
         ),
+        custom_focus_script(),
     ]
-
-    if include_navigate_dialog:
-        page_content.append(navigate_away_dialog())
 
     return rx.cond(
         user_check,

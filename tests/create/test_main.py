@@ -1,11 +1,15 @@
 import re
+from typing import TypedDict
 
 import pytest
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Locator, Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.models import AnyExtractedModel
+from tests.conftest import build_ui_label_regex
+
+url_regex = re.compile(r"/create/(\w+)")
 
 
 @pytest.fixture
@@ -16,9 +20,48 @@ def create_page(
 ) -> Page:
     page = writer_user_page
     page.goto(f"{frontend_url}/create")
+    expect(page).to_have_url(url_regex)
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
     return page
+
+
+class DraftPage(TypedDict):
+    page: Page
+    draft_id: str
+    discard_button: Locator
+    draft_menu_trigger: Locator
+    draft_menu_item: Locator
+    discard_dialog_button: Locator
+
+
+@pytest.fixture
+def draft_create_page(
+    create_page: Page,
+) -> DraftPage:
+    create_page.evaluate("() => window.localStorage.clear()")
+
+    match = re.search(url_regex, create_page.url)
+    assert match
+    draft_id = match.group(1)
+    expect(create_page.get_by_test_id("page-body")).to_be_visible()
+    discard_button = create_page.get_by_test_id("discard-draft-button")
+    draft_menu_trigger = create_page.get_by_test_id("draft-menu-trigger")
+    discard_draft_dialog_button = create_page.get_by_test_id(
+        "discard-draft-dialog-button"
+    )
+    expect(discard_button).not_to_be_visible()
+    expect(draft_menu_trigger).not_to_be_visible()
+    expect(discard_draft_dialog_button).not_to_be_visible()
+
+    return DraftPage(
+        page=create_page,
+        draft_menu_trigger=draft_menu_trigger,
+        draft_id=draft_id,
+        discard_dialog_button=discard_draft_dialog_button,
+        discard_button=discard_button,
+        draft_menu_item=create_page.get_by_test_id(f"draft-{draft_id}-menu-item"),
+    )
 
 
 @pytest.mark.integration
@@ -28,7 +71,9 @@ def test_create_page_updates_nav_bar(create_page: Page) -> None:
     page.screenshot(path="tests_create_test_main-test_create_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
     nav_item = nav_bar.locator(".nav-item").all()[1]
-    expect(nav_item).to_contain_text("Create")
+    expect(nav_item).to_contain_text(
+        build_ui_label_regex("layout.nav_bar.create_navitem")
+    )
     expect(nav_item).to_have_class(re.compile("rt-underline-always"))
 
 
@@ -91,7 +136,11 @@ def test_create_page_submit_item(create_page: Page) -> None:
 
     submit_button = page.get_by_test_id("submit-button")
     submit_button.click()
-    expect(page.get_by_text("AccessPlatform was saved successfully")).to_be_visible()
+
+    toast = page.locator(".editor-toast").first
+    expect(toast).to_be_visible()
+    expect(toast).to_have_attribute("data-type", "success")
+
     connector = BackendApiConnector.get()
     result = connector.fetch_merged_items(query_string="Test01234567")
     assert result.total == 1
@@ -117,6 +166,9 @@ def test_language_switcher(
 
     # change language and wait for reload
     lang_switcher.click()
+    create_page.screenshot(
+        path="tests_create_test_main-test_language_switcher-switcher_clicked.png"
+    )
     create_page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()
 
     # select entity_type resource
@@ -164,3 +216,79 @@ def test_search_reference_dialog(
     expect(
         field_uic.get_by_test_id("additive-rule-unitInCharge-0-identifier")
     ).to_have_value("")
+
+
+@pytest.mark.integration
+def test_create_page_test_draft_creation_on_entity_type_change(
+    draft_create_page: DraftPage,
+) -> None:
+    create_page = draft_create_page["page"]
+
+    create_page.get_by_test_id("entity-type-select").click()
+    create_page.get_by_role("option", name="Resource", exact=True).click()
+
+    expect(draft_create_page["discard_dialog_button"]).to_be_visible()
+    expect(draft_create_page["draft_menu_trigger"]).to_have_text("1")
+    draft_create_page["draft_menu_trigger"].click()
+    expect(draft_create_page["draft_menu_item"]).to_be_visible()
+
+
+@pytest.mark.integration
+def test_create_page_test_draft_creation_on_field_edit(
+    draft_create_page: DraftPage,
+) -> None:
+    create_page = draft_create_page["page"]
+
+    create_page.get_by_test_id("new-additive-title-00000000000000").click()
+    expect(draft_create_page["discard_dialog_button"]).to_be_visible()
+    expect(draft_create_page["draft_menu_trigger"]).to_have_text("1")
+    draft_create_page["draft_menu_trigger"].click()
+    expect(draft_create_page["draft_menu_item"]).to_be_visible()
+
+
+@pytest.mark.integration
+def test_create_page_test_discard_draft(
+    draft_create_page: DraftPage,
+) -> None:
+    create_page = draft_create_page["page"]
+
+    create_page.get_by_test_id("new-additive-title-00000000000000").click()
+    create_page.get_by_test_id("additive-rule-title-0-text").fill(
+        "Draft title for activity"
+    )
+    expect(draft_create_page["discard_dialog_button"]).to_be_visible()
+    expect(draft_create_page["draft_menu_trigger"]).to_have_text("1")
+
+    draft_create_page["discard_dialog_button"].click()
+    draft_create_page["discard_button"].click()
+    expect(draft_create_page["discard_dialog_button"]).not_to_be_visible()
+    expect(draft_create_page["draft_menu_trigger"]).not_to_be_visible()
+
+
+@pytest.mark.integration
+def test_create_page_test_draft_menu_item_text(
+    draft_create_page: DraftPage,
+) -> None:
+    create_page = draft_create_page["page"]
+
+    create_page.get_by_test_id("new-additive-description-00000000000000").click()
+    create_page.get_by_test_id("additive-rule-description-0-text").fill(
+        "New Description."
+    )
+
+    expect(draft_create_page["discard_dialog_button"]).to_be_visible()
+    expect(draft_create_page["draft_menu_trigger"]).to_have_text("1")
+    draft_create_page["draft_menu_trigger"].click()
+    expect(draft_create_page["draft_menu_item"]).to_be_visible()
+    expect(draft_create_page["draft_menu_item"]).to_have_text("AccessPlatform")
+    # force the menu overlay to close
+    create_page.mouse.click(10, 10)
+    create_page.get_by_test_id("new-additive-title-00000000000000").click()
+    create_page.get_by_test_id("additive-rule-title-0-text").fill(
+        "Draft title for access platform"
+    )
+    draft_create_page["draft_menu_trigger"].click()
+    expect(draft_create_page["draft_menu_item"]).to_be_visible()
+    expect(draft_create_page["draft_menu_item"]).to_have_text(
+        "Draft title for access platform"
+    )

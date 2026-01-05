@@ -134,7 +134,8 @@ def remove_additive_button(
             height="1rem",
             width="1rem",
         ),
-        f"Remove {field_translation.label}",
+        f"{RuleState.label_additive_rule_remove_button_prefix} "
+        f"{field_translation.label}",
         color_scheme="tomato",
         variant="soft",
         size="1",
@@ -391,7 +392,8 @@ def new_additive_button(
                 height="1rem",
                 width="1rem",
             ),
-            f"New {field_translation.label}",
+            f"{RuleState.label_additive_rule_add_button_prefix} "
+            f"{field_translation.label}",
             color_scheme="jade",
             variant="soft",
             size="1",
@@ -515,7 +517,7 @@ def validation_errors() -> rx.Component:
     """Return an overlay showing validation errors."""
     return rx.alert_dialog.root(
         rx.alert_dialog.content(
-            rx.alert_dialog.title("Validation Errors"),
+            rx.alert_dialog.title(RuleState.label_validation_result_dialog_title),
             rx.alert_dialog.description(
                 rx.card(
                     rx.data_list.root(
@@ -526,7 +528,7 @@ def validation_errors() -> rx.Component:
             ),
             rx.alert_dialog.action(
                 rx.button(
-                    "Close",
+                    RuleState.label_validation_result_dialog_close_button,
                     on_click=RuleState.clear_validation_messages,
                     style=rx.Style(margin="var(--line-height-1) 0"),
                     custom_attrs={"data-testid": "close-validation-errors-button"},
@@ -543,8 +545,8 @@ def submit_button() -> rx.Component:
     return rx.button(
         rx.cond(
             RuleState.is_submitting,
-            rx.spinner(f"Saving {RuleState.stem_type}"),
-            rx.text(f"Save {RuleState.stem_type}"),
+            rx.spinner(RuleState.label_save_button_saving_format),
+            rx.text(RuleState.label_save_button_format),
         ),
         size="3",
         color_scheme="jade",

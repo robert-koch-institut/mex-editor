@@ -15,6 +15,22 @@ from mex.editor.search.state import SearchState
 from mex.editor.state import State
 
 
+def render_value(value: EditorValue) -> rx.Component:
+    """Render a single editor value."""
+    return rx.hstack(
+        rx.cond(
+            value.href,
+            render_link(value),
+            render_text(value),
+        ),
+        rx.cond(
+            value.badge,
+            render_badge(value.badge),
+        ),
+        spacing="1",
+    )
+
+
 def render_title(title: EditorValue) -> rx.Component:
     """Render one title in a container with hidden overflow."""
     return rx.box(
@@ -34,8 +50,9 @@ def render_additional_titles(titles: list[EditorValue]) -> rx.Component:
         rx.hover_card.root(
             rx.hover_card.trigger(
                 rx.badge(
-                    "+ additional titles",
+                    State.label_additional_titles,
                     style=rx.Style(margin="auto 0"),
+                    custom_attrs={"data-testid": "additional-titles-badge"},
                 ),
                 custom_attrs={"data-testid": "tooltip-additional-titles-trigger"},
             ),
@@ -70,12 +87,11 @@ def render_identifier(value: EditorValue) -> rx.Component:
     return rx.skeleton(
         rx.link(
             value.text,
-            on_click=State.navigate(value.href),  # type: ignore[misc]
+            href=value.href,
             high_contrast=True,
             role="link",
             class_name="truncate",
             title=value.text,
-            custom_attrs={"data-href": value.href},
         ),
         min_width="16ch",
         min_height="1lh",
@@ -140,22 +156,6 @@ def render_badge(text: str | None) -> rx.Component:
     )
 
 
-def render_value(value: EditorValue) -> rx.Component:
-    """Render a single editor value."""
-    return rx.hstack(
-        rx.cond(
-            value.href,
-            render_link(value),
-            render_text(value),
-        ),
-        rx.cond(
-            value.badge,
-            render_badge(value.badge),
-        ),
-        spacing="1",
-    )
-
-
 def pagination_abstract(options: PaginationOptions, **kwargs: dict) -> rx.Component:
     """Create pagination based on given options."""
     style = kwargs.pop("style", rx.Style())
@@ -163,7 +163,7 @@ def pagination_abstract(options: PaginationOptions, **kwargs: dict) -> rx.Compon
     used_style.update(style)
     return rx.flex(
         rx.button(
-            rx.text("Previous"),
+            rx.text(State.label_pagination_previous_button),
             on_click=options.prev_options.on_click,
             disabled=options.prev_options.disabled,
             variant="surface",
@@ -180,7 +180,7 @@ def pagination_abstract(options: PaginationOptions, **kwargs: dict) -> rx.Compon
             custom_attrs={"data-testid": "pagination-page-select"},
         ),
         rx.button(
-            rx.text("Next", weight="bold"),
+            rx.text(State.label_pagination_next_button, weight="bold"),
             on_click=options.next_options.on_click,
             disabled=options.next_options.disabled,
             variant="surface",

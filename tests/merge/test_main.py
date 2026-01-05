@@ -6,6 +6,7 @@ from mex.common.models import (
     ExtractedContactPoint,
     ExtractedResource,
 )
+from tests.conftest import build_pagination_regex, build_ui_label_regex
 
 
 @pytest.fixture
@@ -50,7 +51,7 @@ def test_search_input_merged(merge_page: Page) -> None:
     checked = entity_types_merged.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
     page.get_by_test_id("search-button-merged").click()
-    expect(page.get_by_text("Showing 1 of 1 items")).to_be_visible()
+    expect(page.get_by_text(build_pagination_regex(1, 1))).to_be_visible()
     page.screenshot(
         path="tests_merge_items_test_main-test_merged_search_input-on-search-input-1-found.png"
     )
@@ -66,7 +67,7 @@ def test_search_input_merged(merge_page: Page) -> None:
 
     # check search trigger by entity type
     entity_types_merged.get_by_text("ContactPoint").click()
-    expect(page.get_by_text("Showing 2 of 2 items")).to_be_visible()
+    expect(page.get_by_text(build_pagination_regex(2, 2))).to_be_visible()
 
 
 @pytest.mark.integration
@@ -84,7 +85,7 @@ def test_search_input_extracted(merge_page: Page) -> None:
     checked = entity_types_extracted.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
     page.get_by_test_id("search-button-extracted").click()
-    expect(page.get_by_text("Showing 1 of 1 items")).to_be_visible()
+    expect(page.get_by_text(build_pagination_regex(1, 1))).to_be_visible()
     page.screenshot(
         path="tests_merge_items_test_main-test_extracted_search_input-on-search-input-1-found.png"
     )
@@ -100,7 +101,7 @@ def test_search_input_extracted(merge_page: Page) -> None:
 
     # check search trigger by entity type
     entity_types_extracted.get_by_text("ContactPoint").click()
-    expect(page.get_by_text("Showing 2 of 2 items")).to_be_visible()
+    expect(page.get_by_text(build_pagination_regex(2, 2))).to_be_visible()
 
 
 @pytest.mark.integration
@@ -119,7 +120,7 @@ def test_select_result_extracted(
     expect(entity_types_extracted).to_be_visible()
     entity_types_extracted.get_by_text("ContactPoint").click()
     page.get_by_test_id("search-button-extracted").click()
-    expect(page.get_by_text("Showing 2 of 2 items")).to_be_visible()
+    expect(page.get_by_text(build_pagination_regex(2, 2))).to_be_visible()
     contact_point_1 = dummy_data_by_identifier_in_primary_source["cp-1"]
     result = page.get_by_test_id(f"result-extracted-{contact_point_1.identifier}")
     result.get_by_role("checkbox").click()
@@ -146,7 +147,7 @@ def test_select_result_merged(
     expect(entity_types_merged).to_be_visible()
     entity_types_merged.get_by_text("ContactPoint").click()
     page.get_by_test_id("search-button-merged").click()
-    expect(page.get_by_text("Showing 2 of 2 items")).to_be_visible()
+    expect(page.get_by_text(build_pagination_regex(2, 2))).to_be_visible()
     contact_point_1 = dummy_data_by_identifier_in_primary_source["cp-1"]
     result = page.get_by_test_id(f"result-merged-{contact_point_1.stableTargetId}")
     result.get_by_role("checkbox").click()
@@ -174,7 +175,7 @@ def test_resolves_identifier(
     page.get_by_test_id("search-button-extracted").click()
     expect(
         page.get_by_test_id("extracted-results-summary").get_by_text(
-            "Showing 1 of 1 items"
+            build_pagination_regex(1, 1)
         )
     ).to_be_visible()
     page.screenshot(path="tests_merge_test_main-test_resolves_identifier.png")
@@ -199,16 +200,25 @@ def test_additional_titles_badge(
     resource_r2_result = page.get_by_test_id(
         f"result-extracted-{resource_r2.identifier}"
     )
+    expect(resource_r2_result).to_be_visible()
+    page.screenshot(path="tests_merge_test_additional_titles_badge_on_load.png")
     first_title = resource_r2.title[0]
 
     # expect title is visible and there are additional titles for 'r2'
     expect(resource_r2_result).to_contain_text(first_title.value)
-    expect(resource_r2_result).to_contain_text("+ additional titles")
+    additional_title_badge = page.get_by_test_id("additional-titles-badge").first
+    expect(additional_title_badge).to_be_visible()
+    page.screenshot(path="tests_search_test_additional_titles_badge_on_visible.png")
+    expect(additional_title_badge).to_have_text(
+        build_ui_label_regex("components.titles.additional_titles")
+    )
 
     # hover additional titles
-    trigger = resource_r2_result.get_by_test_id("tooltip-additional-titles-trigger")
-    trigger.hover()
-    page.screenshot(path="tests_merge_test_additional_titles_badge_hover.png")
+    box = additional_title_badge.bounding_box()
+    assert box
+    page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+    additional_title_badge.hover()
+    page.screenshot(path="tests_search_test_additional_titles_badge_on_hover.png")
 
     # check tooltip content
     tooltip = page.get_by_test_id("tooltip-additional-titles")

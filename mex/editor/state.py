@@ -7,54 +7,64 @@ from reflex.event import EventSpec
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
+from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import MergedLoginPerson, NavItem, User
-
-locale_service = LocaleService.get()
-available_locales = locale_service.get_available_locales()
 
 
 class State(rx.State):
     """The base state for the app."""
 
+    _locale_service = LocaleService.get()
+    _available_locales = _locale_service.get_available_locales()
+
     current_locale: str = next(
-        (x for x in available_locales if x.id.lower().startswith("de")),
-        available_locales[0],
+        (x for x in _available_locales if x.id.lower().startswith("de")),
+        _available_locales[0],
     ).id
-    current_page_has_changes: bool = False
-    navigate_dialog_open: bool = False
     navigate_target: str | None = None
     user_mex: User | None = None
     user_ldap: User | None = None
     merged_login_person: MergedLoginPerson | None = None
     target_path_after_login: str | None = None
-    nav_items: list[NavItem] = [
+    _nav_items: list[NavItem] = [
         NavItem(
-            title="Search",
+            title="layout.nav_bar.search_navitem",
             path="/",
             raw_path="/?page=1",
         ),
         NavItem(
-            title="Create",
+            title="layout.nav_bar.create_navitem",
             path="/create",
             raw_path="/create/",
         ),
         NavItem(
-            title="Edit",
+            title="layout.nav_bar.edit_navitem",
             path="/item/[identifier]",
             raw_path=f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}/",
         ),
         NavItem(
-            title="Merge",
+            title="layout.nav_bar.merge_navitem",
             path="/merge",
             raw_path="/merge/",
         ),
         NavItem(
-            title="Ingest",
+            title="layout.nav_bar.ingest_navitem",
             path="/ingest",
             raw_path="/ingest/",
         ),
     ]
+
+    def _translate_nav_item(self, item: NavItem) -> NavItem:
+        return NavItem(
+            title=self._locale_service.get_ui_label(self.current_locale, item.title),
+            **item.dict(exclude={"title"}),
+        )
+
+    @rx.var
+    def nav_items_translated(self) -> list[NavItem]:
+        """The Navbar items with locale sensitive label."""
+        return [self._translate_nav_item(item) for item in self._nav_items]
 
     @rx.event
     def change_locale(self, locale: str) -> None:
@@ -64,38 +74,6 @@ class State(rx.State):
             locale: The locale to change to.
         """
         self.current_locale = locale
-
-    @rx.event
-    def set_current_page_has_changes(self, value: bool) -> None:  # noqa: FBT001
-        """Set the current_page_has_changes attribute to the given value.
-
-        Args:
-            value: The value of the current_page_has_changes attribute.
-        """
-        self.current_page_has_changes = value
-
-    @rx.event
-    def close_navigate_dialog(self) -> None:
-        """Close the navigate dialog."""
-        self.navigate_dialog_open = False
-
-    @rx.event
-    def navigate(self, raw_path: str) -> EventSpec | None:
-        """Navigate to a given path and warn if there are unsaved changes.
-
-        If changes on the current page are present, a dialog will appear and warn the
-        user about unsaved changes. The user can decide to stay on the current page or
-        discard the changes and navigate away.
-
-        Args:
-            raw_path: The path to navigate to.
-        """
-        self.navigate_target = raw_path
-        if self.current_page_has_changes:
-            self.navigate_dialog_open = True
-            return None
-
-        return rx.redirect(self.navigate_target)
 
     @rx.event
     def logout(self) -> Generator[EventSpec, None, None]:
@@ -142,8 +120,13 @@ class State(rx.State):
         params: Mapping[str, int | str | list[str]],
     ) -> EventSpec | None:
         """Event handler to push updated url parameter to the browser history."""
-        for nav_item in self.nav_items:
-            if self.router.page.path == nav_item.path:
+        for nav_item in self._nav_items:
+            fullmatch = nav_item.path == "/"
+            if (
+                self.router.page.path == nav_item.path
+                if fullmatch
+                else self.router.page.path.startswith(nav_item.path)
+            ):
                 self._update_raw_path(nav_item, params)
                 return rx.call_script(
                     f"window.history.pushState(null, '', '{nav_item.raw_path}');"
@@ -153,8 +136,13 @@ class State(rx.State):
     @rx.event
     def load_nav(self) -> None:
         """Event hook for updating the navigation on page loads."""
-        for nav_item in self.nav_items:
-            if self.router.page.path == nav_item.path:
+        for nav_item in self._nav_items:
+            fullmatch = nav_item.path == "/"
+            if (
+                self.router.page.path == nav_item.path
+                if fullmatch
+                else self.router.page.path.startswith(nav_item.path)
+            ):
                 self._update_raw_path(nav_item, self.router.page.params)
                 nav_item.underline = "always"
             else:
@@ -172,3 +160,19 @@ class State(rx.State):
         # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         response = connector.request("GET", "_system/check")
         return str(response.get("version", "N/A"))
+
+    @label_var(label_id="components.titles.additional_titles")
+    def label_additional_titles(self) -> None:
+        """Label for titles.additional_titles."""
+
+    @label_var(label_id="components.pagination.next_button")
+    def label_pagination_next_button(self) -> None:
+        """Label for pagination.next_button."""
+
+    @label_var(label_id="components.pagination.previous_button")
+    def label_pagination_previous_button(self) -> None:
+        """Label for pagination.previous_button."""
+
+    @label_var(label_id="layout.nav_bar.logout_button")
+    def label_nav_bar_logout_button(self) -> None:
+        """Label for nav_bar.logout_button."""

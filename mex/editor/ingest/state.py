@@ -10,6 +10,7 @@ from mex.common.models import AnyExtractedModel, PaginatedItemsContainer
 from mex.editor.exceptions import escalate_error
 from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider, IngestResult
 from mex.editor.ingest.transform import transform_models_to_results
+from mex.editor.label_var import label_var
 from mex.editor.pagination_state_mixin import PaginationStateMixin
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
@@ -67,8 +68,10 @@ class IngestState(State, PaginationStateMixin):
         else:
             self.results_transformed[index].show_ingest_button = False
             yield rx.toast.success(
-                title="Ingested",
-                description=f"{model.stemType} was ingested successfully.",
+                title=self.label_toast_success_title,
+                description=self.label_toast_success_message_format.format(
+                    model.stemType
+                ),
                 class_name="editor-toast",
                 close_button=True,
                 dismissible=True,
@@ -140,3 +143,39 @@ class IngestState(State, PaginationStateMixin):
             self.results_extracted = container.items
             self.results_transformed = transform_models_to_results(container.items)
             self.set_total(container.total)  # type: ignore[misc]
+
+    @label_var(label_id="ingest.button_ingest")
+    def label_button_ingest(self) -> None:
+        """Label for button_ingest."""
+
+    @label_var(label_id="ingest.button_ingested")
+    def label_button_ingested(self) -> None:
+        """Label for button_ingested."""
+
+    @label_var(label_id="ingest.search.placeholder")
+    def label_search_placeholder(self) -> None:
+        """Label for search.placeholder."""
+
+    @label_var(
+        label_id="ingest.search.result_summary_format",
+        deps=["current_results_length", "total"],
+    )
+    def label_search_result_summary_format(self) -> list[int]:
+        """Label for search.result_summary_format."""
+        return [self.current_results_length, self.total]
+
+    @label_var(label_id="ingest.search_info.ldap")
+    def label_search_info_ldap(self) -> None:
+        """Label for search_info.ldap."""
+
+    @label_var(label_id="ingest.search_info.wikidata")
+    def label_search_info_wikidata(self) -> None:
+        """Label for search_info.wikidata."""
+
+    @label_var(label_id="ingest.toast_success.title")
+    def label_toast_success_title(self) -> None:
+        """Label for toast_success.title."""
+
+    @label_var(label_id="ingest.toast_success.message_format")
+    def label_toast_success_message_format(self) -> None:
+        """Label for toast_success.message_format."""

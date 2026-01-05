@@ -1,7 +1,9 @@
+from collections.abc import Sequence
+
 import reflex as rx
 
 from mex.common.types import MergedPrimarySourceIdentifier
-from mex.editor.models import EditorValue
+from mex.editor.models import EditorValue, EqualityDetector, sequence_is_equal
 
 
 class InputConfig(rx.Base):
@@ -35,6 +37,16 @@ class EditorPrimarySource(rx.Base):
     editor_values: list[EditorValue]
     enabled: bool
 
+    def is_equal(self, other: "EqualityDetector") -> bool:
+        """Check if self and other are equal."""
+        if isinstance(other, EditorPrimarySource):
+            return (
+                self.identifier == other.identifier
+                and self.enabled == other.enabled
+                and sequence_is_equal(self.editor_values, other.editor_values)
+            )
+        return False
+
 
 class EditorField(rx.Base):
     """Model for describing the editor state for a single field."""
@@ -43,6 +55,14 @@ class EditorField(rx.Base):
     primary_sources: list[EditorPrimarySource]
     is_required: bool
 
+    def is_equal(self, other: "EqualityDetector") -> bool:
+        """Check if self and other are equal."""
+        if isinstance(other, EditorField):
+            return self.name == other.name and sequence_is_equal(
+                self.primary_sources, other.primary_sources
+            )
+        return False
+
 
 class FieldTranslation(rx.Base):
     """Wraps an editor field to add translated label and description."""
@@ -50,3 +70,47 @@ class FieldTranslation(rx.Base):
     field: EditorField
     label: str
     description: str
+
+
+class LocalEdit(rx.Base):
+    """Model to store local edits in the browser."""
+
+    fields: list[EditorField]
+
+
+class LocalDraft(LocalEdit):
+    """Model to store local drafts in the browser."""
+
+    stem_type: str
+
+
+class UserEdit(LocalEdit):
+    """Model to represent local edits."""
+
+    identifier: str
+
+
+class UserDraft(LocalDraft):
+    """Model to represent local drafts."""
+
+    identifier: str
+    title: EditorValue
+
+
+class UserDraftSummary(rx.Base):
+    """Model to summarize the local drafts."""
+
+    count: int = 0
+    drafts: Sequence[UserDraft] = []
+
+
+class LocalDraftStorageObject(rx.Base):
+    """Model to de-/serialize local drafts in browsers local storage."""
+
+    value: dict[str, LocalDraft]
+
+
+class LocalEditStorageObject(rx.Base):
+    """Model to de-/serialize local edits in browsers local storage."""
+
+    value: dict[str, LocalEdit]

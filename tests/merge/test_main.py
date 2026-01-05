@@ -208,7 +208,7 @@ def test_additional_titles_badge(
     expect(resource_r2_result).to_contain_text(first_title.value)
     additional_title_badge = page.get_by_test_id("additional-titles-badge").first
     expect(additional_title_badge).to_be_visible()
-    page.screenshot(path="tests_merge_test_additional_titles_badge_on_visible.png")
+    page.screenshot(path="tests_search_test_additional_titles_badge_on_visible.png")
     expect(additional_title_badge).to_have_text(
         build_ui_label_regex("components.titles.additional_titles")
     )
@@ -218,7 +218,7 @@ def test_additional_titles_badge(
     assert box
     page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
     additional_title_badge.hover()
-    page.screenshot(path="tests_merge_test_additional_titles_badge_on_hover.png")
+    page.screenshot(path="tests_search_test_additional_titles_badge_on_hover.png")
 
     # check tooltip content
     tooltip = page.get_by_test_id("tooltip-additional-titles")

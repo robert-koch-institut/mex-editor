@@ -128,6 +128,7 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
     ) -> rx.Component:
         """Create a new instance of the Component."""
         pagination_opts = PaginationOptions.create(cls, cls.search)
+        compid_prefix = "search-reference-dialog"
 
         def render_properties(props: list[EditorValue]) -> rx.Component:
             return rx.hstack(
@@ -183,13 +184,18 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
                         rx.button(
                             "Auswählen",
                             on_click=on_identifier_selected(item.identifier),  # type: ignore[misc]
+                            custom_attrs={
+                                "data-testid": f"{compid_prefix}-result-select-button"
+                            },
                         ),
                         style=rx.Style(flex="0 0 auto"),
                     ),
                     align="center",
                 ),
                 class_name="search-result-card",
-                custom_attrs={"data-testid": f"result-{item.identifier}"},
+                custom_attrs={
+                    "data-testid": f"{compid_prefix}-result-{item.identifier}"
+                },
                 style=rx.Style(width="100%", flex="1 0 auto", min_height="0"),
             )
 
@@ -202,6 +208,7 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
                     rx.vstack(
                         rx.foreach(cls.results, render_result_item),
                         style=rx.Style(overflow="auto", max_height="50vh"),
+                        custom_attrs={"data-testid": f"{compid_prefix}-search-results"},
                     ),
                     rx.center(
                         rx.text(
@@ -211,6 +218,7 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
                             size="7",
                             style=rx.Style(padding="3em 0"),
                         ),
+                        style=rx.Style(width="100%"),
                     ),
                 ),
             )
@@ -223,7 +231,11 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
                             rx.hstack(
                                 rx.input(
                                     value=cls.user_query,
-                                    custom_attrs={"data-focusme": ""},
+                                    on_change=cls.set_user_query,  # type: ignore[attr-defined]
+                                    custom_attrs={
+                                        "data-focusme": "",
+                                        "data-testid": f"{compid_prefix}-query-input",
+                                    },
                                     placeholder="Suchtext",
                                     name="query",
                                     disabled=cls.is_loading,
@@ -238,7 +250,7 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
                                     type="submit",
                                     variant="surface",
                                     disabled=cls.is_loading,
-                                    id="search-reference-dialog-form-submit-button",
+                                    id=f"{compid_prefix}-form-submit-button",
                                     custom_attrs={"data-testid": "search-button"},
                                 ),
                                 style=rx.Style(flex="1"),
@@ -265,11 +277,11 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
                             style=rx.Style(display="None"),
                         ),
                     ),
-                    id="search-reference-dialog-form",
+                    id=f"{compid_prefix}-form",
                     on_submit=[cls.handle_submit, cls.resolve_identifiers],
                 ),
                 rx.script(
-                    "setTimeout(() => document.getElementById('search-reference-dialog-form-submit-button').click())"  # noqa: E501
+                    f"setTimeout(() => document.getElementById('{compid_prefix}-form-submit-button').click())"  # noqa: E501
                 ),
             )
 
@@ -283,6 +295,7 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
                     ),
                     variant="soft",
                     size="1",
+                    custom_attrs={"data-testid": f"{compid_prefix}-button"},
                 )
             ),
             rx.dialog.content(

@@ -11,7 +11,7 @@ from mex.editor.rules.models import (
     ValidationMessage,
 )
 from mex.editor.rules.state import FieldTranslation, RuleState
-from mex.editor.search.search_reference_dialog import SearchReferenceDialog
+from mex.editor.search_reference_dialog import SearchReferenceDialog
 
 locale_service = LocaleService.get()
 

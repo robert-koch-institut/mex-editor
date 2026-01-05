@@ -5,12 +5,14 @@ from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
+from mex.common.models import AnyExtractedModel
 
 
 @pytest.fixture
 def create_page(
     frontend_url: str,
     writer_user_page: Page,
+    load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
     page = writer_user_page
     page.goto(f"{frontend_url}/create")
@@ -125,3 +127,40 @@ def test_language_switcher(
     # find the accessPlatform field label and check the text
     field_access_platform = create_page.get_by_test_id("field-accessPlatform-name")
     expect(field_access_platform).to_have_text(expected_access_platform_field_label)
+
+
+@pytest.mark.integration
+def test_search_reference_dialog(
+    create_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+) -> None:
+    dialog_prefix = "search-reference-dialog"
+    field_contact = create_page.get_by_test_id("field-contact")
+    field_contact.get_by_test_id("new-additive-contact-00000000000000").click()
+    field_contact.get_by_test_id(f"{dialog_prefix}-button").click()
+
+    query_input = create_page.get_by_test_id(f"{dialog_prefix}-query-input")
+    search_results = create_page.get_by_test_id(f"{dialog_prefix}-search-results")
+    expect(search_results.locator(".search-result-card")).to_have_count(3)
+
+    query_input.fill("OU")
+    query_input.press("Enter")
+    expect(search_results.locator(".search-result-card")).to_have_count(1)
+
+    ou = dummy_data_by_identifier_in_primary_source["ou-1"]
+    create_page.get_by_test_id(f"{dialog_prefix}-result-select-button").click()
+    expect(
+        create_page.get_by_test_id(f"{dialog_prefix}-query-input")
+    ).not_to_be_visible()
+    expect(
+        field_contact.get_by_test_id("additive-rule-contact-0-identifier")
+    ).to_have_value(ou.stableTargetId)
+
+    field_uic = create_page.get_by_test_id("field-unitInCharge")
+    field_uic.get_by_test_id("new-additive-unitInCharge-00000000000000").click()
+    field_uic.get_by_test_id(f"{dialog_prefix}-button").click()
+    expect(search_results.locator(".search-result-card")).to_have_count(1)
+    create_page.locator(".rt-DialogOverlay").click(position={"x": 10, "y": 10})
+    expect(
+        field_uic.get_by_test_id("additive-rule-unitInCharge-0-identifier")
+    ).to_have_value("")

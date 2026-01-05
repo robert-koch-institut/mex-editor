@@ -15,6 +15,8 @@ from mex.editor.components import (
     render_value,
 )
 from mex.editor.exceptions import escalate_error
+from mex.editor.label_var import label_var
+from mex.editor.layout import custom_focus_script
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import EditorValue
 from mex.editor.pagination_state_mixin import PaginationStateMixin
@@ -36,6 +38,34 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
     is_loading: bool = False
 
     _locale_service = LocaleService.get()
+
+    @label_var(label_id="search_reference_dialog.title")
+    def label_title(self) -> None:
+        """Label for title."""
+
+    @label_var(label_id="search_reference_dialog.description")
+    def label_description(self) -> None:
+        """Label for description."""
+
+    @label_var(label_id="search_reference_dialog.description.valid_types")
+    def label_description_valid_types(self) -> None:
+        """Label for dialog_description.valid_types."""
+
+    @label_var(label_id="search_reference_dialog.query.placeholder")
+    def label_query_placeholder(self) -> None:
+        """Label for query."""
+
+    @label_var(
+        label_id="search_reference_dialog.results.none_found_format",
+        deps=["user_query"],
+    )
+    def label_results_none_found_format(self) -> list[str]:
+        """Label for results.none_found_format."""
+        return [self.user_query]
+
+    @label_var(label_id="search_reference_dialog.results.select_button")
+    def label_results_select_button(self) -> None:
+        """Label for results.select_button."""
 
     @rx.var
     def label_user_reference_types(self) -> str:
@@ -182,7 +212,7 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
                     ),
                     rx.dialog.close(
                         rx.button(
-                            "Auswählen",
+                            cls.label_results_select_button,
                             on_click=on_identifier_selected(item.identifier),  # type: ignore[misc]
                             custom_attrs={
                                 "data-testid": f"{compid_prefix}-result-select-button"
@@ -212,8 +242,7 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
                     ),
                     rx.center(
                         rx.text(
-                            f"Leider wurden keine Ergebnisse für '{cls.user_query}' "
-                            "gefunden :(",
+                            cls.label_results_none_found_format,
                             color_scheme="gray",
                             size="7",
                             style=rx.Style(padding="3em 0"),
@@ -236,7 +265,7 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
                                         "data-focusme": "",
                                         "data-testid": f"{compid_prefix}-query-input",
                                     },
-                                    placeholder="Suchtext",
+                                    placeholder=cls.label_query_placeholder,
                                     name="query",
                                     disabled=cls.is_loading,
                                     style=rx.Style(
@@ -302,19 +331,19 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
                 rx.dialog.title(
                     rx.cond(
                         field_label,
-                        f"Suche nach Referenzen für {field_label}...",
-                        "Suche nach Referenzen...",
+                        f"{cls.label_title} ({field_label})",
+                        f"{cls.label_title}",
                     )
                 ),
                 rx.dialog.description(
                     rx.text(
-                        f"Gültige Referenztypen: {cls.label_user_reference_types}",
+                        f"{cls.label_description_valid_types}: "
+                        f"{cls.label_user_reference_types}",
                         as_="span",
                     ),
                     rx.el.br(),
                     rx.text(
-                        "Klicken Sie anschließend auf 'Auswählen' in dem entprechenden "
-                        "Eintrag um diesen auszuwählen.",
+                        cls.label_description,
                         as_="span",
                     ),
                     size="2",
@@ -325,6 +354,7 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
                     render_result(),
                     align="stretch",
                 ),
+                custom_focus_script(),
                 style=rx.Style({"max-width": "62vw !important"}),
             ),
             on_open_change=cls.cleanup_state_on_dialog_close,

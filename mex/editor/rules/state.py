@@ -4,7 +4,7 @@ from typing import cast
 
 import reflex as rx
 from pydantic import ValidationError
-from reflex.event import EventSpec
+from reflex.event import EventHandler, EventSpec
 from requests import HTTPError
 from starlette import status
 
@@ -80,23 +80,25 @@ class RuleState(State, LocalStorageMixinState):
         """Updates the local edits and drafts with current values."""
         _fields = self.get_value("fields")
         if self.item_id:
-            self.update_edit(self.item_id, LocalEdit(fields=_fields))  # type: ignore[misc]
+            cast("EventHandler", self.update_edit)(
+                self.item_id, LocalEdit(fields=_fields)
+            )
         elif self.draft_id:
-            self.update_draft(
+            cast("EventHandler", self.update_draft)(
                 self.draft_id,
                 LocalDraft(
                     fields=_fields,
                     stem_type=self.stem_type or "",
                 ),
-            )  # type: ignore[misc]
+            )
 
     @rx.event
     def delete_local_state(self) -> None:
         """Delete local state for draft or edit."""
         if self.item_id:
-            self.delete_edit(self.item_id)  # type: ignore[misc]
+            cast("EventHandler", self.delete_edit)(self.item_id)
         elif self.draft_id:
-            self.delete_draft(self.draft_id)  # type: ignore[misc]
+            cast("EventHandler", self.delete_draft)(self.draft_id)
 
     @rx.var(cache=True, deps=["fields", "current_locale"])
     def translated_fields(self) -> Sequence[FieldTranslation]:
@@ -121,7 +123,7 @@ class RuleState(State, LocalStorageMixinState):
             ]
         return []
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for field in self.fields:
@@ -261,7 +263,7 @@ class RuleState(State, LocalStorageMixinState):
             )
             return
 
-        yield RuleState.delete_local_state
+        yield RuleState.delete_local_state  # type: ignore[misc]
 
         # clear cache to show edits in the UI
         resolve_identifier.cache_clear()
@@ -269,9 +271,9 @@ class RuleState(State, LocalStorageMixinState):
         if rule_set_response.stableTargetId != self.item_id:
             yield rx.redirect(f"/item/{rule_set_response.stableTargetId}/?saved")
         else:
-            yield RuleState.refresh
-            yield RuleState.show_submit_success_toast
-            yield RuleState.resolve_identifiers
+            yield RuleState.refresh  # type: ignore[misc]
+            yield RuleState.show_submit_success_toast  # type: ignore[misc]
+            yield RuleState.resolve_identifiers  # type: ignore[misc]
 
     @rx.event
     def set_is_submitting(self, value: bool) -> None:  # noqa: FBT001
@@ -330,7 +332,7 @@ class RuleState(State, LocalStorageMixinState):
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             if primary_source.name.href == href:
                 primary_source.enabled = enabled
-                yield RuleState.update_local_state
+                yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def toggle_field_value(
@@ -344,7 +346,7 @@ class RuleState(State, LocalStorageMixinState):
             for editor_value in primary_source.editor_values:
                 if editor_value == value:
                     editor_value.enabled = enabled
-                    yield RuleState.update_local_state
+                    yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def toggle_field_value_editing(
@@ -357,14 +359,14 @@ class RuleState(State, LocalStorageMixinState):
         primary_source.editor_values[
             index
         ].being_edited = not primary_source.editor_values[index].being_edited
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def add_additive_value(self, field_name: str) -> Generator[EventSpec, None, None]:
         """Add an additive rule to the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.append(EditorValue(being_edited=True))
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def remove_additive_value(
@@ -373,7 +375,7 @@ class RuleState(State, LocalStorageMixinState):
         """Remove an additive rule from the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.pop(index)
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def set_text_value(
@@ -382,7 +384,7 @@ class RuleState(State, LocalStorageMixinState):
         """Set the text attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].text = value
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def set_identifier_value(
@@ -392,7 +394,7 @@ class RuleState(State, LocalStorageMixinState):
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].identifier = value
         primary_source.editor_values[index].href = f"/item/{value}"
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def set_badge_value(
@@ -401,7 +403,7 @@ class RuleState(State, LocalStorageMixinState):
         """Set the badge attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].badge = value
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def set_href_value(
@@ -411,7 +413,7 @@ class RuleState(State, LocalStorageMixinState):
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].href = value
         primary_source.editor_values[index].external = True
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @label_var(label_id="rules.additive_rule.add_button_prefix")
     def label_additive_rule_add_button_prefix(self) -> None:

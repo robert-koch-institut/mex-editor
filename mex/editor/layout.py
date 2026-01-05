@@ -9,6 +9,8 @@ from mex.editor.rules.state import RuleState
 from mex.editor.state import NavItem, State
 
 if TYPE_CHECKING:
+    from reflex.event import EventHandler
+
     from mex.editor.models import User
 
 locale_service = LocaleService.get()
@@ -63,7 +65,7 @@ def language_switcher() -> rx.Component:
                 locale_service.get_available_locales(),
                 lambda locale: rx.menu.item(
                     rx.text(locale.label),
-                    on_click=State.change_locale(locale.id),  # type: ignore[misc]
+                    on_click=cast("EventHandler", State.change_locale)(locale.id),
                     custom_attrs={
                         "data-testid": f"language-switcher-menu-item-{locale.id}"
                     },

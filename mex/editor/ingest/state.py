@@ -127,7 +127,7 @@ class IngestState(State):
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results_transformed:
@@ -136,7 +136,7 @@ class IngestState(State):
                     async with self:
                         await resolve_editor_value(value)
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def flag_ingested_items(self) -> None:
         """Check and flag, if any result is already ingested into backend."""
         connector = BackendApiConnector.get()

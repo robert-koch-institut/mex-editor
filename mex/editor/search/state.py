@@ -1,10 +1,10 @@
 import math
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, cast
 
 import reflex as rx
 from pydantic import TypeAdapter, ValidationError
-from reflex.event import EventSpec
+from reflex.event import EventHandler, EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -127,7 +127,7 @@ class SearchState(State):
         self.reference_field_filter.identifiers.append(
             ReferenceFieldIdentifierFilter(value="", validation_msg=None)
         )
-        SearchState.set_reference_field_filter_identifier(  # type: ignore[misc]
+        cast("EventHandler", SearchState.set_reference_field_filter_identifier)(
             len(self.reference_field_filter.identifiers) - 1, ""
         )
 
@@ -199,7 +199,7 @@ class SearchState(State):
     def load_search_params(self) -> None:
         """Load url params into the state."""
         router: RouterData = self.get_value("router")
-        self.set_page(router.page.params.get("page", 1))  # type: ignore[misc]
+        cast("EventHandler", self.set_page)(router.page.params.get("page", 1))
         self.query_string = router.page.params.get("q", "")
         type_params = router.page.params.get("entityType", [])
         type_params = type_params if isinstance(type_params, list) else [type_params]
@@ -304,7 +304,7 @@ class SearchState(State):
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results:

@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING, cast
+
 import reflex as rx
 
 from mex.common.types import IDENTIFIER_PATTERN
@@ -19,6 +21,9 @@ from mex.editor.search.state import (
     full_refresh,
 )
 from mex.editor.search.value_label_select import value_label_select
+
+if TYPE_CHECKING:
+    from reflex.event import EventHandler
 
 
 def search_result(result: SearchResult) -> rx.Component:
@@ -92,7 +97,7 @@ def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            SearchState.set_entity_type(choice[0]),  # type: ignore[misc]
+            cast("EventHandler", SearchState.set_entity_type)(choice[0]),
             *full_refresh,
         ],
         disabled=SearchState.is_loading,
@@ -126,7 +131,7 @@ def primary_source_choice(choice: tuple[str, SearchPrimarySource]) -> rx.Compone
         choice[1].title,
         checked=choice[1].checked,
         on_change=[
-            SearchState.set_had_primary_source(choice[0]),  # type: ignore[misc]
+            cast("EventHandler", SearchState.set_had_primary_source)(choice[0]),
             *full_refresh,
         ],
         disabled=SearchState.is_loading,
@@ -154,9 +159,10 @@ def reference_field_filter_identifier(
             rx.input(
                 value=identifier.value,
                 on_change=[
-                    lambda x: SearchState.set_reference_field_filter_identifier(  # type: ignore[misc]
-                        index, x
-                    ),
+                    lambda x: cast(
+                        "EventHandler",
+                        SearchState.set_reference_field_filter_identifier,
+                    )(index, x),
                     *full_refresh,
                 ],
                 required=True,
@@ -170,7 +176,10 @@ def reference_field_filter_identifier(
                 variant="surface",
                 color_scheme="gray",
                 on_click=[
-                    lambda: SearchState.remove_reference_field_filter_identifier(index),  # type: ignore[misc]
+                    lambda: cast(
+                        "EventHandler",
+                        SearchState.remove_reference_field_filter_identifier,
+                    )(index),
                     *full_refresh,
                 ],
                 custom_attrs={
@@ -208,7 +217,7 @@ def reference_field_filter() -> rx.Component:
                 variant="surface",
                 color_scheme="gray",
                 on_click=[
-                    SearchState.set_reference_filter_field(""),  # type: ignore[misc]
+                    cast("EventHandler", SearchState.set_reference_filter_field)(""),
                     *full_refresh,
                 ],
             ),
@@ -330,7 +339,9 @@ def search_results() -> rx.Component:
                 SearchState.results,
                 search_result,
             ),
-            pagination(SearchState, SearchState.push_search_params),
+            pagination(
+                SearchState, cast("EventHandler", SearchState.push_search_params)
+            ),
             spacing="4",
             custom_attrs={"data-testid": "search-results-section"},
             style=rx.Style(

@@ -11,7 +11,7 @@ from mex.editor.rules.models import (
     ValidationMessage,
 )
 from mex.editor.rules.state import FieldTranslation, RuleState
-from mex.editor.search_reference_dialog import SearchReferenceDialog
+from mex.editor.search_reference_dialog import search_reference_dialog
 
 locale_service = LocaleService.get()
 
@@ -225,7 +225,7 @@ def identifier_input(
                 "data-testid": f"additive-rule-{field.name}-{index}-identifier"
             },
         ),
-        SearchReferenceDialog.create(
+        search_reference_dialog(
             on_identifier_selected=lambda x: RuleState.set_identifier_value(
                 field_translation.field.name, index, x
             ),  # type: ignore[misc]

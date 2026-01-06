@@ -26,8 +26,8 @@ from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 
 
-class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
-    """Dialog to search for specific entitytypes by name."""
+class SearchReferenceDialogState(State, PaginationStateMixin):
+    """State for the search reference dialog."""
 
     limit = 10
     user_query: str = ""
@@ -49,11 +49,11 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
 
     @label_var(label_id="search_reference_dialog.description.valid_types")
     def label_description_valid_types(self) -> None:
-        """Label for dialog_description.valid_types."""
+        """Label for description.valid_types."""
 
     @label_var(label_id="search_reference_dialog.query.placeholder")
     def label_query_placeholder(self) -> None:
-        """Label for query."""
+        """Label for query.placeholder."""
 
     @label_var(
         label_id="search_reference_dialog.results.none_found_format",
@@ -149,213 +149,217 @@ class SearchReferenceDialog(State, rx.ComponentState, PaginationStateMixin):
             self.results = transform_models_to_dialog_results(response.items)
             yield self.set_total(response.total)  # type: ignore[misc]
 
-    @classmethod
-    def get_component(
-        cls,
-        on_identifier_selected: EventType[str],
-        reference_types: list[str],
-        field_label: str,
-    ) -> rx.Component:
-        """Create a new instance of the Component."""
-        pagination_opts = PaginationOptions.create(cls, cls.search)
-        compid_prefix = "search-reference-dialog"
 
-        def render_properties(props: list[EditorValue]) -> rx.Component:
-            return rx.hstack(
-                rx.foreach(
-                    props,
-                    render_value,
-                ),
-                style=rx.Style(
-                    color="var(--gray-12)",
-                    fontWeight="var(--font-weight-light)",
-                ),
-                wrap="wrap",
-            )
+def search_reference_dialog(
+    on_identifier_selected: EventType[str],
+    reference_types: list[str],
+    field_label: str,
+) -> rx.Component:
+    """Create a button that opens a dialog to search for references."""
+    pagination_opts = PaginationOptions.create(
+        SearchReferenceDialogState, SearchReferenceDialogState.search
+    )
+    compid_prefix = "search-reference-dialog"
 
-        def render_result_item(item: ReferenceDialogSearchResult) -> rx.Component:
-            """Render a single merged item search result."""
-            return rx.card(
-                rx.hstack(
-                    rx.vstack(
-                        rx.hstack(
-                            icon_by_stem_type(
-                                item.stem_type,
-                                size=22,
-                                style=rx.Style(color=rx.color("accent", 11)),
-                            ),
-                            render_title(item.title[0]),
-                            render_additional_titles(item.title[1:]),
-                            rx.button(
-                                rx.icon(
-                                    rx.cond(
-                                        cls.expanded_properties.contains(  # type: ignore[attr-defined]
-                                            item.identifier
-                                        ),
-                                        "minimize_2",
-                                        "maximize_2",
-                                    ),
-                                    style=rx.Style(width="1em", height="1em"),
-                                ),
-                                color_scheme="gray",
-                                variant="surface",
-                                size="1",
-                                on_click=cls.toggle_expand_properties(item.identifier),  # type: ignore[misc]
-                            ),
+    def render_properties(props: list[EditorValue]) -> rx.Component:
+        return rx.hstack(
+            rx.foreach(
+                props,
+                render_value,
+            ),
+            style=rx.Style(
+                color="var(--gray-12)",
+                fontWeight="var(--font-weight-light)",
+            ),
+            wrap="wrap",
+        )
+
+    def render_result_item(item: ReferenceDialogSearchResult) -> rx.Component:
+        """Render a single merged item search result."""
+        return rx.card(
+            rx.hstack(
+                rx.vstack(
+                    rx.hstack(
+                        icon_by_stem_type(
+                            item.stem_type,
+                            size=22,
+                            style=rx.Style(color=rx.color("accent", 11)),
                         ),
-                        rx.cond(
-                            cls.expanded_properties.contains(item.identifier),  # type: ignore[attr-defined]
-                            render_properties(item.all_properties),
-                            render_properties(item.preview),
-                        ),
-                        style=rx.Style(width="100%", flex="1", min_width="0"),
-                    ),
-                    rx.dialog.close(
+                        render_title(item.title[0]),
+                        render_additional_titles(item.title[1:]),
                         rx.button(
-                            cls.label_results_select_button,
-                            on_click=on_identifier_selected(item.identifier),  # type: ignore[misc]
-                            custom_attrs={
-                                "data-testid": f"{compid_prefix}-result-select-button"
-                            },
-                        ),
-                        style=rx.Style(flex="0 0 auto"),
-                    ),
-                    align="center",
-                ),
-                class_name="search-result-card",
-                custom_attrs={
-                    "data-testid": f"{compid_prefix}-result-{item.identifier}"
-                },
-                style=rx.Style(width="100%", flex="1 0 auto", min_height="0"),
-            )
-
-        def render_result() -> rx.Component:
-            return rx.cond(
-                cls.is_loading,
-                rx.spinner(),
-                rx.cond(
-                    cls.results,
-                    rx.vstack(
-                        rx.foreach(cls.results, render_result_item),
-                        style=rx.Style(overflow="auto", max_height="50vh"),
-                        custom_attrs={"data-testid": f"{compid_prefix}-search-results"},
-                    ),
-                    rx.center(
-                        rx.text(
-                            cls.label_results_none_found_format,
-                            color_scheme="gray",
-                            size="7",
-                            style=rx.Style(padding="3em 0"),
-                        ),
-                        style=rx.Style(width="100%"),
-                    ),
-                ),
-            )
-
-        def render_search_form() -> rx.Component:
-            return rx.fragment(
-                rx.form(
-                    rx.vstack(
-                        rx.hstack(
-                            rx.hstack(
-                                rx.input(
-                                    value=cls.user_query,
-                                    on_change=cls.set_user_query,  # type: ignore[attr-defined]
-                                    custom_attrs={
-                                        "data-focusme": "",
-                                        "data-testid": f"{compid_prefix}-query-input",
-                                    },
-                                    placeholder=cls.label_query_placeholder,
-                                    name="query",
-                                    disabled=cls.is_loading,
-                                    style=rx.Style(
-                                        flex="1",
-                                        max_width="380px",
-                                        min_width="180px",
+                            rx.icon(
+                                rx.cond(
+                                    SearchReferenceDialogState.expanded_properties.contains(  # type: ignore[attr-defined]
+                                        item.identifier
                                     ),
+                                    "minimize_2",
+                                    "maximize_2",
                                 ),
-                                rx.button(
-                                    rx.icon("search"),
-                                    type="submit",
-                                    variant="surface",
-                                    disabled=cls.is_loading,
-                                    id=f"{compid_prefix}-form-submit-button",
-                                    custom_attrs={"data-testid": "search-button"},
-                                ),
-                                style=rx.Style(flex="1"),
+                                style=rx.Style(width="1em", height="1em"),
                             ),
-                            rx.spacer(),
-                            pagination_abstract(
-                                pagination_opts, style=rx.Style(flex="0")
-                            ),
-                            align="stretch",
-                            justify="between",
-                            style=rx.Style(width="100%"),
-                            wrap="wrap",
-                        ),
-                        rx.el.div(
-                            rx.foreach(
-                                reference_types,
-                                lambda value, index: rx.checkbox(
-                                    value,
-                                    name=f"reference_type[{index}]",
-                                    value=value,
-                                    checked=True,
-                                ),
-                            ),
-                            style=rx.Style(display="None"),
+                            color_scheme="gray",
+                            variant="surface",
+                            size="1",
+                            on_click=SearchReferenceDialogState.toggle_expand_properties(
+                                item.identifier
+                            ),  # type: ignore[misc]
                         ),
                     ),
-                    id=f"{compid_prefix}-form",
-                    on_submit=[cls.handle_submit, cls.resolve_identifiers],
+                    rx.cond(
+                        SearchReferenceDialogState.expanded_properties.contains(  # type: ignore[attr-defined]
+                            item.identifier
+                        ),
+                        render_properties(item.all_properties),
+                        render_properties(item.preview),
+                    ),
+                    style=rx.Style(width="100%", flex="1", min_width="0"),
                 ),
-                rx.script(
-                    f"setTimeout(() => document.getElementById('{compid_prefix}-form-submit-button').click())"  # noqa: E501
+                rx.dialog.close(
+                    rx.button(
+                        SearchReferenceDialogState.label_results_select_button,
+                        on_click=on_identifier_selected(item.identifier),  # type: ignore[misc]
+                        custom_attrs={
+                            "data-testid": f"{compid_prefix}-result-select-button"
+                        },
+                    ),
+                    style=rx.Style(flex="0 0 auto"),
                 ),
-            )
+                align="center",
+            ),
+            class_name="search-result-card",
+            custom_attrs={"data-testid": f"{compid_prefix}-result-{item.identifier}"},
+            style=rx.Style(width="100%", flex="1 0 auto", min_height="0"),
+        )
 
-        return rx.dialog.root(
-            rx.dialog.trigger(
-                rx.icon_button(
-                    rx.icon(
-                        "search",
-                        height="1rem",
-                        width="1rem",
+    def render_result() -> rx.Component:
+        return rx.cond(
+            SearchReferenceDialogState.is_loading,
+            rx.spinner(),
+            rx.cond(
+                SearchReferenceDialogState.results,
+                rx.vstack(
+                    rx.foreach(SearchReferenceDialogState.results, render_result_item),
+                    style=rx.Style(overflow="auto", max_height="50vh"),
+                    custom_attrs={"data-testid": f"{compid_prefix}-search-results"},
+                ),
+                rx.center(
+                    rx.text(
+                        SearchReferenceDialogState.label_results_none_found_format,
+                        color_scheme="gray",
+                        size="7",
+                        style=rx.Style(padding="3em 0"),
                     ),
-                    variant="soft",
-                    size="1",
-                    custom_attrs={"data-testid": f"{compid_prefix}-button"},
+                    style=rx.Style(width="100%"),
+                ),
+            ),
+        )
+
+    def render_search_form() -> rx.Component:
+        return rx.fragment(
+            rx.form(
+                rx.vstack(
+                    rx.hstack(
+                        rx.hstack(
+                            rx.input(
+                                value=SearchReferenceDialogState.user_query,
+                                on_change=SearchReferenceDialogState.set_user_query,  # type: ignore[attr-defined]
+                                custom_attrs={
+                                    "data-focusme": "",
+                                    "data-testid": f"{compid_prefix}-query-input",
+                                },
+                                placeholder=SearchReferenceDialogState.label_query_placeholder,
+                                name="query",
+                                disabled=SearchReferenceDialogState.is_loading,
+                                style=rx.Style(
+                                    flex="1",
+                                    max_width="380px",
+                                    min_width="180px",
+                                ),
+                            ),
+                            rx.button(
+                                rx.icon("search"),
+                                type="submit",
+                                variant="surface",
+                                disabled=SearchReferenceDialogState.is_loading,
+                                id=f"{compid_prefix}-form-submit-button",
+                                custom_attrs={"data-testid": "search-button"},
+                            ),
+                            style=rx.Style(flex="1"),
+                        ),
+                        rx.spacer(),
+                        pagination_abstract(pagination_opts, style=rx.Style(flex="0")),
+                        align="stretch",
+                        justify="between",
+                        style=rx.Style(width="100%"),
+                        wrap="wrap",
+                    ),
+                    rx.el.div(
+                        rx.foreach(
+                            reference_types,
+                            lambda value, index: rx.checkbox(
+                                value,
+                                name=f"reference_type[{index}]",
+                                value=value,
+                                checked=True,
+                            ),
+                        ),
+                        style=rx.Style(display="None"),
+                    ),
+                ),
+                id=f"{compid_prefix}-form",
+                on_submit=[
+                    SearchReferenceDialogState.handle_submit,
+                    SearchReferenceDialogState.resolve_identifiers,
+                ],
+            ),
+            rx.script(
+                f"setTimeout(() => document.getElementById('{compid_prefix}-form-submit-button').click())"  # noqa: E501
+            ),
+        )
+
+    return rx.dialog.root(
+        rx.dialog.trigger(
+            rx.icon_button(
+                rx.icon(
+                    "search",
+                    height="1rem",
+                    width="1rem",
+                ),
+                variant="soft",
+                size="1",
+                custom_attrs={"data-testid": f"{compid_prefix}-button"},
+            )
+        ),
+        rx.dialog.content(
+            rx.dialog.title(
+                rx.cond(
+                    field_label,
+                    f"{SearchReferenceDialogState.label_title} ({field_label})",
+                    f"{SearchReferenceDialogState.label_title}",
                 )
             ),
-            rx.dialog.content(
-                rx.dialog.title(
-                    rx.cond(
-                        field_label,
-                        f"{cls.label_title} ({field_label})",
-                        f"{cls.label_title}",
-                    )
+            rx.dialog.description(
+                rx.text(
+                    f"{SearchReferenceDialogState.label_description_valid_types}: "
+                    f"{SearchReferenceDialogState.label_user_reference_types}",
+                    as_="span",
                 ),
-                rx.dialog.description(
-                    rx.text(
-                        f"{cls.label_description_valid_types}: "
-                        f"{cls.label_user_reference_types}",
-                        as_="span",
-                    ),
-                    rx.el.br(),
-                    rx.text(
-                        cls.label_description,
-                        as_="span",
-                    ),
-                    size="2",
-                    margin_bottom="16px",
+                rx.el.br(),
+                rx.text(
+                    SearchReferenceDialogState.label_description,
+                    as_="span",
                 ),
-                rx.vstack(
-                    render_search_form(),
-                    render_result(),
-                    align="stretch",
-                ),
-                custom_focus_script(),
-                style=rx.Style({"max-width": "62vw !important"}),
+                size="2",
+                margin_bottom="16px",
             ),
-            on_open_change=cls.cleanup_state_on_dialog_close,
-        )
+            rx.vstack(
+                render_search_form(),
+                render_result(),
+                align="stretch",
+            ),
+            custom_focus_script(),
+            style=rx.Style({"max-width": "62vw !important"}),
+        ),
+        on_open_change=SearchReferenceDialogState.cleanup_state_on_dialog_close,
+    )

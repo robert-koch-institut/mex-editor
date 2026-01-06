@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - upgrade reflex to version 0.7.14
 - fix and/or evade type checking issues with reflex event handlers
+- use pytest base_url plugin to make editor url configurable for testing
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/2039340
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75

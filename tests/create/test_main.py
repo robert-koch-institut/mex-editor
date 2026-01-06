@@ -13,11 +13,11 @@ url_regex = re.compile(r"/create/(\w+)")
 
 @pytest.fixture
 def create_page(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
 ) -> Page:
     page = writer_user_page
-    page.goto(f"{frontend_url}/create")
+    page.goto(f"{base_url}/create")
     expect(page).to_have_url(url_regex)
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()

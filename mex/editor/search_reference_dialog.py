@@ -1,4 +1,4 @@
-from collections.abc import Generator
+from collections.abc import Generator, Iterable
 
 import reflex as rx
 from reflex.app import EventSpec
@@ -152,8 +152,8 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
 
 def search_reference_dialog(
     on_identifier_selected: EventType[str],
-    reference_types: list[str],
-    field_label: str,
+    reference_types: rx.Var[Iterable[str]] | Iterable[str],
+    field_label: rx.Var[str] | str | None = None,
 ) -> rx.Component:
     """Create a button that opens a dialog to search for references."""
     pagination_opts = PaginationOptions.create(

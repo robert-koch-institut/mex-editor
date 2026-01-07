@@ -12,6 +12,7 @@ from mex.editor.models import (
     MODEL_CONFIG_BY_STEM_TYPE,
     EditorValue,
 )
+from mex.editor.rules.models import EditorField
 
 
 def ensure_list(values: object) -> list[object]:
@@ -80,6 +81,21 @@ def transform_models_to_stem_type(
     if not models:
         return None
     return models[0].stemType
+
+
+def transform_fields_to_title(
+    stem_type: str, fields: Sequence[EditorField]
+) -> list[EditorValue]:
+    """Convert a list of fields into editor values based on the title config."""
+    config = MODEL_CONFIG_BY_STEM_TYPE[stem_type]
+    titles = [
+        value
+        for f in fields
+        for ps in f.primary_sources
+        for value in ps.editor_values
+        if f.name == config.title and ps.editor_values
+    ]
+    return titles if titles and titles[0].text else [transform_value(stem_type)]
 
 
 def transform_models_to_title(

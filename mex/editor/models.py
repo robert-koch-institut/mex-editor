@@ -127,9 +127,6 @@ class PaginationOptions:
             state: The state to create the options for.
             on_page_change: EventHandler that gets executed when the current_page
             changes. Defaults to None.
-
-        Returns:
-            _type_: _description_
         """
         prev_click = (
             [state.go_to_previous_page, on_page_change]

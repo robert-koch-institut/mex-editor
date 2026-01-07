@@ -204,10 +204,8 @@ def textarea_input(
 
 def identifier_input(
     field_translation: FieldTranslation,
-    # field_name: str,
     index: int,
     identifier: str | None,
-    # reference_value_types: list[str],
 ) -> rx.Component:
     """Render an input component for editing identifiers."""
     field = field_translation.field

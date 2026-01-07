@@ -235,7 +235,7 @@ def search_reference_dialog(
     def render_result() -> rx.Component:
         return rx.cond(
             SearchReferenceDialogState.is_loading,
-            rx.spinner(),
+            rx.center(rx.spinner()),
             rx.cond(
                 SearchReferenceDialogState.results,
                 rx.vstack(

@@ -45,7 +45,7 @@ TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES = {
     for class_name, field_names in TEMPORAL_FIELDS_BY_CLASS_NAME.items()
 }
 
-# TODO(ND): Same as https://github.com/robert-koch-institut/mex-backend/blob/main/mex/backend/fields.py#L61
+# TODO(FE): Same as https://github.com/robert-koch-institut/mex-backend/blob/main/mex/backend/fields.py#L61
 # needs to be moved to common.
 
 # allowed entity types grouped for reference fields

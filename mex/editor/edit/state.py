@@ -25,7 +25,7 @@ class EditState(RuleState):
         """Determine if any primary source or editor value is enabled.
 
         Returns:
-            bool: Return true if any primary source or editor value is enabled,
+            Return true if any primary source or editor value is enabled,
             otherwise false.
         """
         return any(

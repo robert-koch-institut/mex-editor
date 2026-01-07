@@ -67,7 +67,7 @@ class RuleState(State, LocalStorageMixinState):
         """Indicates if the current edit state differs from the original loaded state.
 
         Returns:
-            Returns True if the current edit state differs from the orginal
+            Returns True if the current edit state differs from the original
             loaded state; otherwise False.
         """
         fields: list[EditorField] = self.get_value("fields")
@@ -80,7 +80,10 @@ class RuleState(State, LocalStorageMixinState):
         """Updates the local edits and drafts with current values."""
         _fields = self.get_value("fields")
         if self.item_id:
-            self.update_edit(self.item_id, LocalEdit(fields=_fields))
+            self.update_edit(
+                self.item_id,
+                LocalEdit(fields=_fields),
+            )  # type: ignore[operator]
         elif self.draft_id:
             self.update_draft(
                 self.draft_id,
@@ -88,15 +91,15 @@ class RuleState(State, LocalStorageMixinState):
                     fields=_fields,
                     stem_type=self.stem_type or "",
                 ),
-            )
+            )  # type: ignore[operator]
 
     @rx.event
     def delete_local_state(self) -> None:
         """Delete local state for draft or edit."""
         if self.item_id:
-            self.delete_edit(self.item_id)
+            self.delete_edit(self.item_id)  # type: ignore[operator]
         elif self.draft_id:
-            self.delete_draft(self.draft_id)
+            self.delete_draft(self.draft_id)  # type: ignore[operator]
 
     @rx.var(cache=True, deps=["fields", "current_locale"])
     def translated_fields(self) -> Sequence[FieldTranslation]:

@@ -127,16 +127,16 @@ class SearchState(State):
         self.reference_field_filter.identifiers.append(
             ReferenceFieldIdentifierFilter(value="", validation_msg=None)
         )
-        SearchState.set_reference_field_filter_identifier(
+        self.set_reference_field_filter_identifier(
             len(self.reference_field_filter.identifiers) - 1, ""
-        )
+        )  # type: ignore[operator]
 
     @rx.var(cache=False)
     def all_fields_for_entity_types(self) -> list[ValueLabelSelectItem]:
         """Get all fields for the currently selected entity types filter.
 
         Returns:
-            list[str]: The fields for the selected entity types.
+            The fields for the selected entity types.
         """
         selected_entity_types = [
             item[0]
@@ -199,7 +199,7 @@ class SearchState(State):
     def load_search_params(self) -> None:
         """Load url params into the state."""
         router: RouterData = self.get_value("router")
-        self.set_page(router.page.params.get("page", 1))
+        self.set_page(router.page.params.get("page", 1))  # type: ignore[operator]
         self.query_string = router.page.params.get("q", "")
         type_params = router.page.params.get("entityType", [])
         type_params = type_params if isinstance(type_params, list) else [type_params]

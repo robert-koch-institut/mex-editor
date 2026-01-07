@@ -270,10 +270,10 @@ def get_required_mergeable_field_names(
     """Returns list of required mergeable fields.
 
     Args:
-            model: Model to inspect
+        model: Model to inspect
 
     Returns:
-            A list of required mergeable fields from given model
+        A list of required mergeable fields from given model
     """
     merged_type = ensure_prefix(model.stemType, "Merged")
     required_fields = set(REQUIRED_FIELDS_BY_CLASS_NAME[merged_type])

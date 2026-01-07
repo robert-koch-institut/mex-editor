@@ -63,7 +63,7 @@ def language_switcher() -> rx.Component:
                 locale_service.get_available_locales(),
                 lambda locale: rx.menu.item(
                     rx.text(locale.label),
-                    on_click=State.change_locale(locale.id),
+                    on_click=State.change_locale(locale.id),  # type: ignore[operator]
                     custom_attrs={
                         "data-testid": f"language-switcher-menu-item-{locale.id}"
                     },

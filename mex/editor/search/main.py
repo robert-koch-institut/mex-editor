@@ -14,10 +14,7 @@ from mex.editor.search.models import (
     SearchPrimarySource,
     SearchResult,
 )
-from mex.editor.search.state import (
-    SearchState,
-    full_refresh,
-)
+from mex.editor.search.state import SearchState, full_refresh
 from mex.editor.search.value_label_select import value_label_select
 
 
@@ -92,7 +89,7 @@ def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            SearchState.set_entity_type(choice[0]),
+            SearchState.set_entity_type(choice[0]),  # type: ignore[operator]
             *full_refresh,
         ],
         disabled=SearchState.is_loading,
@@ -126,7 +123,7 @@ def primary_source_choice(choice: tuple[str, SearchPrimarySource]) -> rx.Compone
         choice[1].title,
         checked=choice[1].checked,
         on_change=[
-            SearchState.set_had_primary_source(choice[0]),
+            SearchState.set_had_primary_source(choice[0]),  # type: ignore[operator]
             *full_refresh,
         ],
         disabled=SearchState.is_loading,
@@ -154,7 +151,7 @@ def reference_field_filter_identifier(
             rx.input(
                 value=identifier.value,
                 on_change=[
-                    SearchState.set_reference_field_filter_identifier(index),
+                    SearchState.set_reference_field_filter_identifier(index),  # type: ignore[operator]
                     *full_refresh,
                 ],
                 required=True,
@@ -168,7 +165,7 @@ def reference_field_filter_identifier(
                 variant="surface",
                 color_scheme="gray",
                 on_click=[
-                    SearchState.remove_reference_field_filter_identifier(index),
+                    SearchState.remove_reference_field_filter_identifier(index),  # type: ignore[operator]
                     *full_refresh,
                 ],
                 custom_attrs={
@@ -206,7 +203,7 @@ def reference_field_filter() -> rx.Component:
                 variant="surface",
                 color_scheme="gray",
                 on_click=[
-                    SearchState.set_reference_filter_field(""),
+                    SearchState.set_reference_filter_field(""),  # type: ignore[operator]
                     *full_refresh,
                 ],
             ),
@@ -239,7 +236,7 @@ def reference_filter_tab() -> rx.Component:
     Containing two tabs for dynamic filtering and filtering by primary source.
 
     Returns:
-        rx.Component: The tab list component containing two tabs.
+        The tab list component containing two tabs.
     """
     return rx.card(
         rx.tabs.root(
@@ -330,7 +327,7 @@ def search_results() -> rx.Component:
             ),
             pagination(
                 SearchState,
-                SearchState.push_search_params,
+                SearchState.push_search_params,  # type: ignore[arg-type]
             ),
             spacing="4",
             custom_attrs={"data-testid": "search-results-section"},

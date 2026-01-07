@@ -9,8 +9,6 @@ from mex.editor.rules.state import RuleState
 from mex.editor.state import NavItem, State
 
 if TYPE_CHECKING:
-    from reflex.event import EventHandler
-
     from mex.editor.models import User
 
 locale_service = LocaleService.get()
@@ -65,7 +63,7 @@ def language_switcher() -> rx.Component:
                 locale_service.get_available_locales(),
                 lambda locale: rx.menu.item(
                     rx.text(locale.label),
-                    on_click=cast("EventHandler", State.change_locale)(locale.id),
+                    on_click=State.change_locale(locale.id),
                     custom_attrs={
                         "data-testid": f"language-switcher-menu-item-{locale.id}"
                     },
@@ -76,7 +74,7 @@ def language_switcher() -> rx.Component:
 
 
 def render_draft_menu_item(draft: UserDraft) -> rx.Component:
-    """Render a navigatable menu item for the given draft."""
+    """Render a navigable menu item for the given draft."""
     return rx.menu.item(
         rx.link(
             rx.hstack(

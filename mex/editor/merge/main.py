@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Literal, cast
+from typing import Literal
 
 import reflex as rx
 
@@ -11,9 +11,6 @@ from mex.editor.components import (
 from mex.editor.layout import page
 from mex.editor.merge.state import MergeState
 from mex.editor.search.models import SearchResult
-
-if TYPE_CHECKING:
-    from reflex.event import EventHandler
 
 
 def search_result(
@@ -69,9 +66,9 @@ def entity_type_choice_merged(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            cast("EventHandler", MergeState.set_entity_type_merged)(choice[0]),
-            cast("EventHandler", MergeState.refresh)(["merged"]),
-            cast("EventHandler", MergeState.resolve_identifiers),
+            MergeState.set_entity_type_merged(choice[0]),
+            MergeState.refresh(["merged"]),
+            MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
     )
@@ -83,9 +80,9 @@ def entity_type_choice_extracted(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            cast("EventHandler", MergeState.set_entity_type_extracted)(choice[0]),
-            cast("EventHandler", MergeState.refresh)(["extracted"]),
-            cast("EventHandler", MergeState.resolve_identifiers),
+            MergeState.set_entity_type_extracted(choice[0]),
+            MergeState.refresh(["extracted"]),
+            MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
     )
@@ -135,7 +132,7 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     default_value=MergeState.query_strings[category],
                     max_length=100,
                     name=f"query_string_{category}",
-                    on_change=cast("EventHandler", MergeState.handle_submit)(category),
+                    on_change=MergeState.handle_submit(category),
                     placeholder=MergeState.label_search_input_placeholder,
                     style=rx.Style(
                         {
@@ -159,7 +156,7 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     "Clear",
                     variant="surface",
                     disabled=MergeState.is_loading,
-                    on_click=cast("EventHandler", MergeState.clear_input)(category),
+                    on_click=MergeState.clear_input(category),
                     custom_attrs={"data-testid": f"clear-button-{category}"},
                 ),
                 rx.button(
@@ -168,8 +165,8 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     variant="surface",
                     disabled=MergeState.is_loading,
                     on_click=[
-                        cast("EventHandler", MergeState.refresh)([category]),
-                        cast("EventHandler", MergeState.resolve_identifiers),
+                        MergeState.refresh([category]),
+                        MergeState.resolve_identifiers,
                     ],
                     custom_attrs={"data-testid": f"search-button-{category}"},
                 ),

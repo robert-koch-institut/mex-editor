@@ -1,10 +1,10 @@
 import math
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Literal, cast
+from typing import TYPE_CHECKING, Literal
 
 import reflex as rx
 from pydantic import TypeAdapter, ValidationError
-from reflex.event import EventHandler, EventSpec
+from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -127,7 +127,7 @@ class SearchState(State):
         self.reference_field_filter.identifiers.append(
             ReferenceFieldIdentifierFilter(value="", validation_msg=None)
         )
-        cast("EventHandler", SearchState.set_reference_field_filter_identifier)(
+        SearchState.set_reference_field_filter_identifier(
             len(self.reference_field_filter.identifiers) - 1, ""
         )
 
@@ -199,7 +199,7 @@ class SearchState(State):
     def load_search_params(self) -> None:
         """Load url params into the state."""
         router: RouterData = self.get_value("router")
-        cast("EventHandler", self.set_page)(router.page.params.get("page", 1))
+        self.set_page(router.page.params.get("page", 1))
         self.query_string = router.page.params.get("q", "")
         type_params = router.page.params.get("entityType", [])
         type_params = type_params if isinstance(type_params, list) else [type_params]

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 import reflex as rx
 
@@ -6,9 +6,6 @@ from mex.editor.components import render_value
 from mex.editor.consent.layout import page
 from mex.editor.consent.state import ConsentState
 from mex.editor.search.main import search_result
-
-if TYPE_CHECKING:
-    from reflex.event import EventHandler
 
 
 def resources() -> rx.Component:
@@ -109,17 +106,13 @@ def consent_box() -> rx.Component:
             rx.hstack(
                 rx.button(
                     ConsentState.label_consent_box_consent_button,
-                    on_click=cast("EventHandler", ConsentState.submit_rule_set)(
-                        "consent"
-                    ),
+                    on_click=ConsentState.submit_rule_set("consent"),
                     custom_attrs={"data-testid": "accept-consent-button"},
                 ),
                 rx.spacer(),
                 rx.button(
                     ConsentState.label_consent_box_no_consent_button,
-                    on_click=cast("EventHandler", ConsentState.submit_rule_set)(
-                        "denial"
-                    ),
+                    on_click=ConsentState.submit_rule_set("denial"),
                     custom_attrs={"data-testid": "denial-consent-button"},
                 ),
             ),
@@ -183,9 +176,9 @@ def consent_pagination(category: str) -> rx.Component:
         rx.button(
             rx.text(ConsentState.label_pagination_previous_button),
             on_click=[
-                cast("EventHandler", ConsentState.go_to_previous_page)(category),
+                ConsentState.go_to_previous_page(category),
                 ConsentState.scroll_to_top,
-                cast("EventHandler", ConsentState.fetch_data)(category),
+                ConsentState.fetch_data(category),
                 ConsentState.resolve_identifiers,
             ],
             disabled=getattr(ConsentState, f"disable_{category}_previous_page"),
@@ -201,7 +194,7 @@ def consent_pagination(category: str) -> rx.Component:
             on_change=[
                 getattr(ConsentState, f"set_{category}_page"),
                 ConsentState.scroll_to_top,
-                cast("EventHandler", ConsentState.fetch_data)(category),
+                ConsentState.fetch_data(category),
                 ConsentState.resolve_identifiers,
             ],
             custom_attrs={"data-testid": f"{category}-pagination-page-select"},
@@ -209,9 +202,9 @@ def consent_pagination(category: str) -> rx.Component:
         rx.button(
             rx.text(ConsentState.label_pagination_next_button),
             on_click=[
-                cast("EventHandler", ConsentState.go_to_next_page)(category),
+                ConsentState.go_to_next_page(category),
                 ConsentState.scroll_to_top,
-                cast("EventHandler", ConsentState.fetch_data)(category),
+                ConsentState.fetch_data(category),
                 ConsentState.resolve_identifiers,
             ],
             disabled=getattr(ConsentState, f"disable_{category}_next_page"),

@@ -4,7 +4,7 @@ from typing import cast
 
 import reflex as rx
 from pydantic import ValidationError
-from reflex.event import EventHandler, EventSpec
+from reflex.event import EventSpec
 from requests import HTTPError
 from starlette import status
 
@@ -80,11 +80,9 @@ class RuleState(State, LocalStorageMixinState):
         """Updates the local edits and drafts with current values."""
         _fields = self.get_value("fields")
         if self.item_id:
-            cast("EventHandler", self.update_edit)(
-                self.item_id, LocalEdit(fields=_fields)
-            )
+            self.update_edit(self.item_id, LocalEdit(fields=_fields))
         elif self.draft_id:
-            cast("EventHandler", self.update_draft)(
+            self.update_draft(
                 self.draft_id,
                 LocalDraft(
                     fields=_fields,
@@ -96,9 +94,9 @@ class RuleState(State, LocalStorageMixinState):
     def delete_local_state(self) -> None:
         """Delete local state for draft or edit."""
         if self.item_id:
-            cast("EventHandler", self.delete_edit)(self.item_id)
+            self.delete_edit(self.item_id)
         elif self.draft_id:
-            cast("EventHandler", self.delete_draft)(self.draft_id)
+            self.delete_draft(self.draft_id)
 
     @rx.var(cache=True, deps=["fields", "current_locale"])
     def translated_fields(self) -> Sequence[FieldTranslation]:

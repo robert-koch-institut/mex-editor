@@ -90,7 +90,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
 
     @rx.event
     def cleanup_state_on_dialog_close(self, is_open: bool) -> None:  # noqa: FBT001
-        """Cleanup dialog state when closed to adress ComponentState bug."""
+        """Cleanup dialog state when closed to address ComponentState bug."""
         if not is_open:
             self.user_query = ""
             self.user_reference_types = []
@@ -159,7 +159,7 @@ def search_reference_dialog(
     pagination_opts = PaginationOptions.create(
         SearchReferenceDialogState, SearchReferenceDialogState.search
     )
-    compid_prefix = "search-reference-dialog"
+    component_id_prefix = "search-reference-dialog"
 
     def render_properties(props: list[EditorValue]) -> rx.Component:
         return rx.hstack(
@@ -220,7 +220,7 @@ def search_reference_dialog(
                         SearchReferenceDialogState.label_results_select_button,
                         on_click=on_identifier_selected(item.identifier),  # type: ignore[misc]
                         custom_attrs={
-                            "data-testid": f"{compid_prefix}-result-select-button"
+                            "data-testid": f"{component_id_prefix}-result-select-button"
                         },
                     ),
                     style=rx.Style(flex="0 0 auto"),
@@ -228,7 +228,9 @@ def search_reference_dialog(
                 align="center",
             ),
             class_name="search-result-card",
-            custom_attrs={"data-testid": f"{compid_prefix}-result-{item.identifier}"},
+            custom_attrs={
+                "data-testid": f"{component_id_prefix}-result-{item.identifier}"
+            },
             style=rx.Style(width="100%", flex="1 0 auto", min_height="0"),
         )
 
@@ -241,7 +243,9 @@ def search_reference_dialog(
                 rx.vstack(
                     rx.foreach(SearchReferenceDialogState.results, render_result_item),
                     style=rx.Style(overflow="auto", max_height="50vh"),
-                    custom_attrs={"data-testid": f"{compid_prefix}-search-results"},
+                    custom_attrs={
+                        "data-testid": f"{component_id_prefix}-search-results"
+                    },
                 ),
                 rx.center(
                     rx.text(
@@ -266,7 +270,7 @@ def search_reference_dialog(
                                 on_change=SearchReferenceDialogState.set_user_query,  # type: ignore[attr-defined]
                                 custom_attrs={
                                     "data-focusme": "",
-                                    "data-testid": f"{compid_prefix}-query-input",
+                                    "data-testid": f"{component_id_prefix}-query-input",
                                 },
                                 placeholder=SearchReferenceDialogState.label_query_placeholder,
                                 name="query",
@@ -282,7 +286,7 @@ def search_reference_dialog(
                                 type="submit",
                                 variant="surface",
                                 disabled=SearchReferenceDialogState.is_loading,
-                                id=f"{compid_prefix}-form-submit-button",
+                                id=f"{component_id_prefix}-form-submit-button",
                                 custom_attrs={"data-testid": "search-button"},
                             ),
                             style=rx.Style(flex="1"),
@@ -307,14 +311,14 @@ def search_reference_dialog(
                         style=rx.Style(display="None"),
                     ),
                 ),
-                id=f"{compid_prefix}-form",
+                id=f"{component_id_prefix}-form",
                 on_submit=[
                     SearchReferenceDialogState.handle_submit,
                     SearchReferenceDialogState.resolve_identifiers,
                 ],
             ),
             rx.script(
-                f"setTimeout(() => document.getElementById('{compid_prefix}-form-submit-button').click())"  # noqa: E501
+                f"setTimeout(() => document.getElementById('{component_id_prefix}-form-submit-button').click())"  # noqa: E501
             ),
         )
 
@@ -328,7 +332,7 @@ def search_reference_dialog(
                 ),
                 variant="soft",
                 size="1",
-                custom_attrs={"data-testid": f"{compid_prefix}-button"},
+                custom_attrs={"data-testid": f"{component_id_prefix}-button"},
             )
         ),
         rx.dialog.content(

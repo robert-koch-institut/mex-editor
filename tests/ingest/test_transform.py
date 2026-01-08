@@ -3,10 +3,10 @@ from unittest.mock import MagicMock, Mock, patch
 from mex.common.models import AnyExtractedModel
 from mex.editor.ingest.models import IngestResult
 from mex.editor.ingest.transform import (
-    model_to_all_properties,
     transform_models_to_results,
 )
 from mex.editor.models import EditorValue
+from mex.editor.transform import transform_model_to_all_properties
 
 
 def test_model_to_all_properties() -> None:
@@ -19,7 +19,7 @@ def test_model_to_all_properties() -> None:
         "mex.editor.transform.transform_values",
         side_effect=lambda x, allow_link: [EditorValue(text=f"value{x}")],
     ):
-        result = model_to_all_properties(model)
+        result = transform_model_to_all_properties(model)
 
     assert len(result) == 2
     assert result[0].text == "value1"

@@ -63,3 +63,14 @@ REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME = {
     }
     for class_name, field_names in REFERENCE_FIELDS_BY_CLASS_NAME.items()
 }
+
+# stringified allowed types grouped by field and class names
+STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME = {
+    class_name: {
+        field_name: REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME[class_name].get(
+            field_name, sorted(str(field_type.__name__) for field_type in field_types)
+        )
+        for field_name, field_types in fields.items()
+    }
+    for class_name, fields in ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES.items()
+}

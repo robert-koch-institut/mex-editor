@@ -16,7 +16,7 @@ class PaginationStateMixin(rx.State, mixin=True):
 
     @rx.var
     def max_page(self) -> int:
-        """Retrun the maximum page, based on total and limit."""
+        """Return the maximum page, based on total and limit."""
         return math.ceil(self.total / self.limit)
 
     @rx.var
@@ -52,7 +52,7 @@ class PaginationStateMixin(rx.State, mixin=True):
 
     @rx.event
     def set_current_page(self, page_number: str | int) -> None:
-        """Set the current page (coerced to be between 1 aned max_page)."""
+        """Set the current page (coerced to be between 1 and max_page)."""
         page_number = int(page_number) if page_number else 1
         self.current_page = max(min(page_number, self.max_page), 1)
 

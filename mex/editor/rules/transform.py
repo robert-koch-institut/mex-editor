@@ -37,8 +37,8 @@ from mex.common.types import (
     TextLanguage,
 )
 from mex.editor.fields import (
-    REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME,
     REQUIRED_FIELDS_BY_CLASS_NAME,
+    STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME,
     TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES,
 )
 from mex.editor.models import (
@@ -240,19 +240,12 @@ def transform_models_to_fields(
         }
     )
 
-    def _make_string_type(x: type, entity_type: str, field_name: str) -> str:
-        result = x.__name__
-        if field_name in REFERENCED_ENTITY_TYPES_BY_FIELD_BY_CLASS_NAME[entity_type]:
-            result = result.removesuffix("Identifier")
-        return result
-
     required_fields = get_required_mergeable_field_names(additive)
     fields_by_name = {
         field_name: EditorField(
             name=field_name,
-            value_type=[
-                _make_string_type(x, entity_type, field_name)
-                for x in ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES[entity_type][field_name]
+            value_type=STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME[entity_type][
+                field_name
             ],
             primary_sources=[],
             is_required=field_name in required_fields,

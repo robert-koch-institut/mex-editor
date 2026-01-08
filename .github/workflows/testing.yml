@@ -29,7 +29,7 @@ jobs:
 
     services:
       neo4j:
-        image: neo4j:2025.10-community
+        image: neo4j:2025.11-community
         env:
           NEO4J_AUTH: neo4j/password
         ports:
@@ -54,7 +54,7 @@ jobs:
           fetch-depth: 1
 
       - name: Cache requirements
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           cache-name: cache-requirements
         with:
@@ -64,7 +64,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Cache environment
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           cache-name: cache-environment
         with:
@@ -74,7 +74,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Cache playwright
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           cache-name: cache-playwright
         with:
@@ -84,7 +84,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Cache reflex
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           cache-name: cache-reflex
         with:
@@ -115,7 +115,7 @@ jobs:
 
       - name: Upload screenshots
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: playwright-screenshots-${{ github.run_id }}
           path: test*.png

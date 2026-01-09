@@ -20,7 +20,7 @@ def transform_models_to_results(
             title=transform_models_to_title([model]),
             preview=transform_models_to_preview([model]),
             all_properties=transform_model_to_all_properties(model),
-            show_properties=False,
+            show_all_properties=False,
             show_ingest_button=True,
         )
         for model in models

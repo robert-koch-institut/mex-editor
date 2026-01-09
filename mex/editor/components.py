@@ -158,9 +158,7 @@ def render_badge(text: str | None) -> rx.Component:
 
 def pagination_abstract(options: PaginationOptions, **kwargs: dict) -> rx.Component:
     """Create pagination based on given options."""
-    style = kwargs.pop("style", rx.Style())
-    used_style = rx.Style(width="100%")
-    used_style.update(style)
+    style = rx.Style().update(kwargs.pop("style", None))
     return rx.flex(
         rx.button(
             rx.text(State.label_pagination_previous_button),
@@ -188,7 +186,7 @@ def pagination_abstract(options: PaginationOptions, **kwargs: dict) -> rx.Compon
             style=rx.Style(minWidth="10%"),
         ),
         spacing="4",
-        style=used_style,
+        style=style,
     )
 
 

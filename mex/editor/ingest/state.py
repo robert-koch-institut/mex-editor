@@ -32,11 +32,11 @@ class IngestState(State, PaginationStateMixin):
         return len(self.results_transformed)
 
     @rx.event
-    def toggle_show_properties(self, index: int) -> None:
-        """Toggle the show properties state."""
-        self.results_transformed[index].show_properties = not self.results_transformed[
+    def toggle_show_all_properties(self, item: IngestResult, index: int) -> None:
+        """Toggle if all properties are visible for given identifier."""
+        self.results_transformed[
             index
-        ].show_properties
+        ].show_all_properties = not item.show_all_properties
 
     @rx.event
     def set_current_aux_provider(self, value: str) -> None:

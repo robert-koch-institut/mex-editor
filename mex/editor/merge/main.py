@@ -2,43 +2,14 @@ from typing import Literal
 
 import reflex as rx
 
-from mex.editor.components import (
-    icon_by_stem_type,
-    render_additional_titles,
-    render_search_preview,
-    render_title,
-)
 from mex.editor.layout import page
 from mex.editor.merge.state import MergeState
-from mex.editor.search.models import SearchResult
-
-
-def search_result(
-    result: SearchResult,
-    index: int,
-    category: Literal["merged", "extracted"],
-) -> rx.Component:
-    """Render a single merged or extracted item search result with checkbox."""
-    return rx.card(
-        rx.vstack(
-            rx.hstack(
-                rx.checkbox(
-                    checked=MergeState.selected_items[category] == index,
-                    on_change=MergeState.select_item(category, index),  # type:ignore[misc]
-                ),
-                icon_by_stem_type(
-                    result.stem_type,
-                    size=22,
-                ),
-                render_title(result.title[0]),
-                render_additional_titles(result.title[1:]),
-            ),
-            render_search_preview(result.preview),
-        ),
-        class_name="search-result-card",
-        custom_attrs={"data-testid": f"result-{category}-{result.identifier}"},
-        style=rx.Style(width="100%"),
-    )
+from mex.editor.models import SearchResult
+from mex.editor.search_reference_dialog import search_result_list
+from mex.editor.search_result_component import (
+    SearchResultListItemOptions,
+    SearchResultListOptions,
+)
 
 
 def results_summary(category: Literal["merged", "extracted"]) -> rx.Component:
@@ -198,6 +169,13 @@ def submit_button() -> rx.Component:
 
 def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
     """Return the search interface."""
+
+    def render_checkbox(_: SearchResult, index: int) -> rx.Component:
+        return rx.checkbox(
+            checked=MergeState.selected_items[category] == index,
+            on_change=MergeState.select_item(category, index),  # type:ignore[misc]
+        )
+
     return rx.vstack(
         rx.heading(
             MergeState.label_search_title_merged
@@ -214,14 +192,20 @@ def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
         results_summary(category),
         rx.cond(
             category == "merged",
-            rx.foreach(
+            search_result_list(
                 MergeState.results_merged,
-                lambda result, index: search_result(result, index, category="merged"),
+                SearchResultListOptions(
+                    item_options=SearchResultListItemOptions(
+                        render_prepend_fn=render_checkbox
+                    )
+                ),
             ),
-            rx.foreach(
+            search_result_list(
                 MergeState.results_extracted,
-                lambda result, index: search_result(
-                    result, index, category="extracted"
+                SearchResultListOptions(
+                    item_options=SearchResultListItemOptions(
+                        render_prepend_fn=render_checkbox
+                    )
                 ),
             ),
         ),

@@ -2,48 +2,23 @@ import reflex as rx
 
 from mex.common.types import IDENTIFIER_PATTERN
 from mex.editor.components import (
-    icon_by_stem_type,
     pagination,
-    render_additional_titles,
-    render_search_preview,
-    render_title,
 )
 from mex.editor.layout import page
 from mex.editor.search.models import (
     ReferenceFieldIdentifierFilter,
     SearchPrimarySource,
-    SearchResult,
 )
 from mex.editor.search.state import (
     SearchState,
     full_refresh,
 )
 from mex.editor.search.value_label_select import value_label_select
-
-
-def search_result(result: SearchResult) -> rx.Component:
-    """Render a single merged item search result."""
-    return rx.card(
-        rx.vstack(
-            rx.hstack(
-                icon_by_stem_type(
-                    result.stem_type,
-                    size=22,
-                    style=rx.Style(color=rx.color("accent", 11)),
-                ),
-                rx.link(
-                    render_title(result.title[0]),
-                    href=f"/item/{result.identifier}",
-                ),
-                render_additional_titles(result.title[1:]),
-            ),
-            render_search_preview(result.preview),
-            style=rx.Style(width="100%"),
-        ),
-        class_name="search-result-card",
-        custom_attrs={"data-testid": f"result-{result.identifier}"},
-        style=rx.Style(width="100%"),
-    )
+from mex.editor.search_result_component import (
+    SearchResultListItemOptions,
+    SearchResultListOptions,
+    search_result_list,
+)
 
 
 def search_input() -> rx.Component:
@@ -291,6 +266,7 @@ def sidebar() -> rx.Component:
         entity_type_filter(),
         reference_filter_tab(),
         spacing="4",
+        align="stretch",
         custom_attrs={"data-testid": "search-sidebar"},
         style=rx.Style(width="25%"),
     )
@@ -326,19 +302,23 @@ def search_results() -> rx.Component:
         ),
         rx.vstack(
             results_summary(),
-            rx.foreach(
+            search_result_list(
                 SearchState.results,
-                search_result,
+                SearchResultListOptions(
+                    item_options=SearchResultListItemOptions(enable_title_href=True)
+                ),
             ),
+            # rx.foreach(
+            #     SearchState.results,
+            #     search_result,
+            # ),
             rx.center(
                 pagination(SearchState, SearchState.push_search_params),
             ),
             spacing="4",
             custom_attrs={"data-testid": "search-results-section"},
-            style=rx.Style(
-                minWidth="0",
-                width="100%",
-            ),
+            align="stretch",
+            style=rx.Style(flex=1),
         ),
     )
 
@@ -350,6 +330,6 @@ def index() -> rx.Component:
             sidebar(),
             search_results(),
             spacing="4",
-            style=rx.Style(width="100%"),
+            style=rx.Style(flex=1),
         )
     )

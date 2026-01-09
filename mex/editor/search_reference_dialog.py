@@ -8,20 +8,20 @@ from requests import HTTPError
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.components import (
     PaginationOptions,
-    icon_by_stem_type,
     pagination_abstract,
-    render_additional_titles,
-    render_title,
-    render_value,
 )
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.layout import custom_focus_script
 from mex.editor.locale_service import LocaleService
-from mex.editor.models import EditorValue
+from mex.editor.models import SearchResult
 from mex.editor.pagination_state_mixin import PaginationStateMixin
-from mex.editor.search.models import ReferenceDialogSearchResult
 from mex.editor.search.transform import transform_models_to_dialog_results
+from mex.editor.search_result_component import (
+    SearchResultListItemOptions,
+    SearchResultListOptions,
+    search_result_list,
+)
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 
@@ -33,8 +33,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
     user_query: str = ""
     user_reference_types: list[str] = []
 
-    results: list[ReferenceDialogSearchResult] = []
-    expanded_properties: list[str] = []
+    results: list[SearchResult] = []
     is_loading: bool = False
 
     _locale_service = LocaleService.get()
@@ -81,12 +80,9 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
         return "|".join(result)
 
     @rx.event
-    def toggle_expand_properties(self, identifier: str) -> None:
+    def toggle_show_all_properties(self, item: SearchResult, index: int) -> None:
         """Toggle if all properties are visible for given identifier."""
-        if identifier in self.expanded_properties:
-            self.expanded_properties.remove(identifier)
-        else:
-            self.expanded_properties.append(identifier)
+        self.results[index].show_all_properties = not item.show_all_properties
 
     @rx.event
     def cleanup_state_on_dialog_close(self, is_open: bool) -> None:  # noqa: FBT001
@@ -95,7 +91,6 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
             self.user_query = ""
             self.user_reference_types = []
             self.results = []
-            self.expanded_properties = []
             self.reset_pagination()  # type: ignore[misc]
 
     @rx.event(background=True)
@@ -161,91 +156,33 @@ def search_reference_dialog(
     )
     component_id_prefix = "search-reference-dialog"
 
-    def render_properties(props: list[EditorValue]) -> rx.Component:
-        return rx.hstack(
-            rx.foreach(
-                props,
-                render_value,
-            ),
-            style=rx.Style(
-                color="var(--gray-12)",
-                fontWeight="var(--font-weight-light)",
-            ),
-            wrap="wrap",
-        )
-
-    def render_result_item(item: ReferenceDialogSearchResult) -> rx.Component:
-        """Render a single merged item search result."""
-        return rx.card(
-            rx.hstack(
-                rx.vstack(
-                    rx.hstack(
-                        icon_by_stem_type(
-                            item.stem_type,
-                            size=22,
-                            style=rx.Style(color=rx.color("accent", 11)),
-                        ),
-                        render_title(item.title[0]),
-                        render_additional_titles(item.title[1:]),
-                        rx.button(
-                            rx.icon(
-                                rx.cond(
-                                    SearchReferenceDialogState.expanded_properties.contains(  # type: ignore[attr-defined]
-                                        item.identifier
-                                    ),
-                                    "minimize_2",
-                                    "maximize_2",
-                                ),
-                                style=rx.Style(width="1em", height="1em"),
-                            ),
-                            color_scheme="gray",
-                            variant="surface",
-                            size="1",
-                            on_click=SearchReferenceDialogState.toggle_expand_properties(
-                                item.identifier
-                            ),  # type: ignore[misc]
-                        ),
-                    ),
-                    rx.cond(
-                        SearchReferenceDialogState.expanded_properties.contains(  # type: ignore[attr-defined]
-                            item.identifier
-                        ),
-                        render_properties(item.all_properties),
-                        render_properties(item.preview),
-                    ),
-                    style=rx.Style(width="100%", flex="1", min_width="0"),
-                ),
-                rx.dialog.close(
-                    rx.button(
-                        SearchReferenceDialogState.label_results_select_button,
-                        on_click=on_identifier_selected(item.identifier),  # type: ignore[misc]
-                        custom_attrs={
-                            "data-testid": f"{component_id_prefix}-result-select-button"
-                        },
-                    ),
-                    style=rx.Style(flex="0 0 auto"),
-                ),
-                align="center",
-            ),
-            class_name="search-result-card",
-            custom_attrs={
-                "data-testid": f"{component_id_prefix}-result-{item.identifier}"
-            },
-            style=rx.Style(width="100%", flex="1 0 auto", min_height="0"),
-        )
-
     def render_result() -> rx.Component:
+        def render_select_button(item: SearchResult, _: int) -> rx.Component:
+            return rx.dialog.close(
+                rx.button(
+                    SearchReferenceDialogState.label_results_select_button,
+                    on_click=on_identifier_selected(item.identifier),  # type: ignore[misc]
+                    custom_attrs={
+                        "data-testid": f"{component_id_prefix}-result-select-button"
+                    },
+                ),
+                style=rx.Style(margin_left="auto"),
+            )
+
         return rx.cond(
             SearchReferenceDialogState.is_loading,
             rx.center(rx.spinner()),
             rx.cond(
                 SearchReferenceDialogState.results,
-                rx.vstack(
-                    rx.foreach(SearchReferenceDialogState.results, render_result_item),
-                    style=rx.Style(overflow="auto", max_height="50vh"),
-                    custom_attrs={
-                        "data-testid": f"{component_id_prefix}-search-results"
-                    },
+                search_result_list(
+                    SearchReferenceDialogState.results,
+                    SearchResultListOptions(
+                        item_options=SearchResultListItemOptions(
+                            enable_show_all_properties=True,
+                            on_toggle_show_all_properties=SearchReferenceDialogState.toggle_show_all_properties,
+                            render_title_fn=render_select_button,
+                        )
+                    ),
                 ),
                 rx.center(
                     rx.text(

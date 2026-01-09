@@ -3,32 +3,16 @@ from typing import Any
 import reflex as rx
 
 from mex.editor.components import (
-    icon_by_stem_type,
     pagination,
-    render_additional_titles,
-    render_search_preview,
-    render_title,
-    render_value,
 )
 from mex.editor.ingest.models import AuxProvider, IngestResult
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
-
-
-def expand_properties_button(result: IngestResult, index: int) -> rx.Component:
-    """Render a button to expand all properties of an ingest result."""
-    return rx.button(
-        rx.cond(
-            result.show_properties,
-            rx.icon("minimize-2", size=15),
-            rx.icon("maximize-2", size=15),
-        ),
-        on_click=IngestState.toggle_show_properties(index),  # type: ignore[misc]
-        align="end",
-        color_scheme="gray",
-        variant="surface",
-        custom_attrs={"data-testid": f"expand-properties-button-{index}"},
-    )
+from mex.editor.search_result_component import (
+    SearchResultListItemOptions,
+    SearchResultListOptions,
+    search_result_list,
+)
 
 
 def ingest_button(result: IngestResult, index: int) -> rx.Component:
@@ -53,53 +37,6 @@ def ingest_button(result: IngestResult, index: int) -> rx.Component:
             width="calc(8em * var(--scaling))",
             custom_attrs={"data-testid": f"ingest-button-{index}"},
         ),
-    )
-
-
-def render_all_properties(result: IngestResult) -> rx.Component:
-    """Render all properties of the ingest result."""
-    return rx.box(
-        rx.hstack(
-            rx.foreach(
-                result.all_properties,
-                render_value,
-            ),
-            style=rx.Style(
-                fontWeight="var(--font-weight-light)",
-                flexWrap="wrap",
-                alignItems="start",
-            ),
-        ),
-        custom_attrs={"data-testid": "all-properties-display"},
-    )
-
-
-def ingest_result(result: IngestResult, index: int) -> rx.Component:
-    """Render an ingest result with title, buttons and preview or all properties."""
-    return rx.card(
-        rx.vstack(
-            rx.hstack(
-                icon_by_stem_type(
-                    result.stem_type,
-                    size=22,
-                ),
-                render_title(result.title[0]),
-                render_additional_titles(result.title[1:]),
-                rx.spacer(),
-                expand_properties_button(result, index),
-                ingest_button(result, index),
-                style=rx.Style(width="100%"),
-            ),
-            rx.cond(
-                result.show_properties,
-                render_all_properties(result),
-                render_search_preview(result.preview),
-            ),
-            style=rx.Style(width="100%"),
-        ),
-        class_name="search-result-card",
-        custom_attrs={"data-testid": f"result-{result.identifier}"},
-        style=rx.Style(width="100%"),
     )
 
 
@@ -183,15 +120,24 @@ def search_results() -> rx.Component:
         ),
         rx.vstack(
             results_summary(),
-            rx.foreach(
-                IngestState.results_transformed,
-                ingest_result,
+            search_result_list(
+                IngestState.results_transformed,  # type: ignore[arg-type]
+                SearchResultListOptions(
+                    item_options=SearchResultListItemOptions(
+                        render_append_fn=ingest_button  # type: ignore[arg-type]
+                    )
+                ),
             ),
+            # rx.foreach(
+            #     IngestState.results_transformed,
+            #     ingest_result,
+            # ),
             rx.center(
                 pagination(IngestState, IngestState.flag_ingested_items),
             ),
             spacing="4",
             custom_attrs={"data-testid": "search-results-section"},
+            align="stretch",
             style=rx.Style(
                 minWidth="0",
                 width="100%",

@@ -154,3 +154,14 @@ class PaginationOptions:
                 change_page,
             ),
         )
+
+
+class SearchResult(rx.Base):
+    """Search result preview."""
+
+    identifier: str
+    stem_type: str
+    title: list[EditorValue]
+    preview: list[EditorValue]
+    show_all_properties: bool = False
+    all_properties: list[EditorValue]

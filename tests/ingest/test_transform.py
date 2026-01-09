@@ -16,7 +16,7 @@ def test_model_to_all_properties() -> None:
     model.model_fields = {"field1": Mock(), "field2": Mock()}
 
     with patch(
-        "mex.editor.transform.transform_values",
+        "mex.editor.transform.transform_model_to_all_properties",
         side_effect=lambda x, allow_link: [EditorValue(text=f"value{x}")],
     ):
         result = transform_model_to_all_properties(model)
@@ -36,7 +36,7 @@ def test_transform_models_to_results_single_model() -> None:
     model.wikidataId = "wikidataId"
 
     with patch(
-        "mex.editor.ingest.transform.model_to_all_properties",
+        "mex.editor.ingest.transform.transform_model_to_all_properties",
         return_value=[EditorValue(text="property")],
     ):
         result = transform_models_to_results([model])
@@ -99,7 +99,7 @@ def test_transform_models_to_results_multiple_models() -> None:
     model2.wikidataId = "wikidataId2"
 
     with patch(
-        "mex.editor.ingest.transform.model_to_all_properties",
+        "mex.editor.ingest.transform.transform_model_to_all_properties",
         return_value=[EditorValue(text="property")],
     ):
         result = transform_models_to_results([model1, model2])

@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- consent page filters items based on person
+- consent page UI clean up
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/2039340
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75

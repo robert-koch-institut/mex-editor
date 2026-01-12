@@ -1,17 +1,13 @@
 from collections.abc import Sequence
-from dataclasses import dataclass
 from importlib.resources import files
 from typing import Protocol
 
 import reflex as rx
 import yaml
 from pydantic import TypeAdapter
-from reflex.event import EventType
-from reflex.vars import Var
 
 from mex.common.models import BaseModel
 from mex.common.types import MergedPersonIdentifier
-from mex.editor.pagination_state_mixin import PaginationStateMixin
 
 
 class EqualityDetector(Protocol):
@@ -88,72 +84,6 @@ MODEL_CONFIG_BY_STEM_TYPE = TypeAdapter(dict[str, ModelConfig]).validate_python(
     yaml.safe_load(files("mex.editor").joinpath("models.yaml").open())
 )
 LANGUAGE_VALUE_NONE = "None"
-
-
-@dataclass
-class PaginationButtonOptions:
-    """Options for a pagination button."""
-
-    disabled: bool | Var[bool]
-    on_click: EventType[()] | None = None
-
-
-@dataclass
-class PaginationPageOptions:
-    """Options for the pagination component."""
-
-    current_page: int | Var[int]
-    pages: list[str] | Var[list[str]]
-    disabled: bool | Var[bool]
-    on_change: EventType[()] | None = None
-
-
-@dataclass
-class PaginationOptions:
-    """Options for the pagination component."""
-
-    prev_options: PaginationButtonOptions
-    next_options: PaginationButtonOptions
-    page_options: PaginationPageOptions
-
-    @staticmethod
-    def create(
-        state: PaginationStateMixin | type[PaginationStateMixin],
-        on_page_change: EventType[()] | None = None,
-    ) -> "PaginationOptions":
-        """Create pagination options for a given state.
-
-        Args:
-            state: The state to create the options for.
-            on_page_change: EventHandler that gets executed when the current_page
-            changes. Defaults to None.
-        """
-        prev_click = (
-            [state.go_to_previous_page, on_page_change]
-            if on_page_change
-            else [state.go_to_previous_page]
-        )
-        next_click = (
-            [state.go_to_next_page, on_page_change]
-            if on_page_change
-            else [state.go_to_next_page]
-        )
-        change_page = (
-            [state.set_current_page, on_page_change]
-            if on_page_change
-            else [state.set_current_page]
-        )
-
-        return PaginationOptions(
-            PaginationButtonOptions(state.disable_previous_page, prev_click),
-            PaginationButtonOptions(state.disable_next_page, next_click),
-            PaginationPageOptions(
-                state.current_page,
-                state.page_selection,
-                state.disable_page_selection,
-                change_page,
-            ),
-        )
 
 
 class SearchResult(rx.Base):

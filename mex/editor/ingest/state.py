@@ -11,7 +11,7 @@ from mex.editor.exceptions import escalate_error
 from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider, IngestResult
 from mex.editor.ingest.transform import transform_models_to_results
 from mex.editor.label_var import label_var
-from mex.editor.pagination_state_mixin import PaginationStateMixin
+from mex.editor.pagination_component import PaginationStateMixin
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 

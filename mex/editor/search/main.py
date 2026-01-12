@@ -1,8 +1,8 @@
 import reflex as rx
 
 from mex.common.types import IDENTIFIER_PATTERN
-from mex.editor.components import (
-    pagination,
+from mex.editor.component_option_helper import (
+    build_pagination_options,
 )
 from mex.editor.layout import page
 from mex.editor.search.models import (
@@ -15,9 +15,10 @@ from mex.editor.search.state import (
 )
 from mex.editor.search.value_label_select import value_label_select
 from mex.editor.search_result_component import (
+    SearchResultComponentOptions,
     SearchResultListItemOptions,
     SearchResultListOptions,
-    search_result_list,
+    search_result_component,
 )
 
 
@@ -272,23 +273,6 @@ def sidebar() -> rx.Component:
     )
 
 
-def results_summary() -> rx.Component:
-    """Render a summary of the results found."""
-    return rx.center(
-        rx.text(
-            SearchState.label_result_summary_format,
-            style=rx.Style(
-                color="var(--gray-12)",
-                fontWeight="var(--font-weight-bold)",
-                margin="var(--space-4)",
-                userSelect="none",
-            ),
-            custom_attrs={"data-testid": "search-results-summary"},
-        ),
-        style=rx.Style(width="100%"),
-    )
-
-
 def search_results() -> rx.Component:
     """Render the search results with a summary, result list, and pagination."""
     return rx.cond(
@@ -300,25 +284,17 @@ def search_results() -> rx.Component:
                 width="100%",
             ),
         ),
-        rx.vstack(
-            results_summary(),
-            search_result_list(
-                SearchState.results,
-                SearchResultListOptions(
+        search_result_component(
+            SearchState.results,
+            SearchResultComponentOptions(
+                summary_text=SearchState.label_result_summary_format,
+                list=SearchResultListOptions(
                     item_options=SearchResultListItemOptions(enable_title_href=True)
                 ),
+                pagination=build_pagination_options(
+                    SearchState, SearchState.push_search_params
+                ),
             ),
-            # rx.foreach(
-            #     SearchState.results,
-            #     search_result,
-            # ),
-            rx.center(
-                pagination(SearchState, SearchState.push_search_params),
-            ),
-            spacing="4",
-            custom_attrs={"data-testid": "search-results-section"},
-            align="stretch",
-            style=rx.Style(flex=1),
         ),
     )
 

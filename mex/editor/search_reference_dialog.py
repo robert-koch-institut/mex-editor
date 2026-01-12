@@ -6,16 +6,16 @@ from reflex.event import EventType
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.editor.components import (
-    PaginationOptions,
-    pagination_abstract,
-)
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.layout import custom_focus_script
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import SearchResult
-from mex.editor.pagination_state_mixin import PaginationStateMixin
+from mex.editor.pagination_component import (
+    PaginationOptions,
+    PaginationStateMixin,
+    pagination,
+)
 from mex.editor.search.transform import transform_models_to_dialog_results
 from mex.editor.search_result_component import (
     SearchResultListItemOptions,
@@ -183,6 +183,7 @@ def search_reference_dialog(
                             render_title_fn=render_select_button,
                         )
                     ),
+                    style=rx.Style(max_height="50vh"),
                 ),
                 rx.center(
                     rx.text(
@@ -229,7 +230,7 @@ def search_reference_dialog(
                             style=rx.Style(flex="1"),
                         ),
                         rx.spacer(),
-                        pagination_abstract(pagination_opts, style=rx.Style(flex="0")),
+                        pagination(pagination_opts, style=rx.Style(flex="0")),
                         align="stretch",
                         justify="between",
                         style=rx.Style(width="100%"),

@@ -5,10 +5,11 @@ import reflex as rx
 from mex.editor.layout import page
 from mex.editor.merge.state import MergeState
 from mex.editor.models import SearchResult
-from mex.editor.search_reference_dialog import search_result_list
 from mex.editor.search_result_component import (
+    SearchResultComponentOptions,
     SearchResultListItemOptions,
     SearchResultListOptions,
+    search_result_component,
 )
 
 
@@ -176,6 +177,10 @@ def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
             on_change=MergeState.select_item(category, index),  # type:ignore[misc]
         )
 
+    list_options = SearchResultListOptions(
+        item_options=SearchResultListItemOptions(render_prepend_fn=render_checkbox)
+    )
+
     return rx.vstack(
         rx.heading(
             MergeState.label_search_title_merged
@@ -189,23 +194,20 @@ def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
             custom_attrs={"data-testid": f"create-heading-{category}"},
         ),
         search_input(category),
-        results_summary(category),
         rx.cond(
             category == "merged",
-            search_result_list(
+            search_result_component(
                 MergeState.results_merged,
-                SearchResultListOptions(
-                    item_options=SearchResultListItemOptions(
-                        render_prepend_fn=render_checkbox
-                    )
+                SearchResultComponentOptions(
+                    summary_text=MergeState.label_result_summary_format_merged,
+                    list=list_options,
                 ),
             ),
-            search_result_list(
+            search_result_component(
                 MergeState.results_extracted,
-                SearchResultListOptions(
-                    item_options=SearchResultListItemOptions(
-                        render_prepend_fn=render_checkbox
-                    )
+                SearchResultComponentOptions(
+                    summary_text=MergeState.label_result_summary_format_extracted,
+                    list=list_options,
                 ),
             ),
         ),

@@ -2,16 +2,17 @@ from typing import Any
 
 import reflex as rx
 
-from mex.editor.components import (
-    pagination,
+from mex.editor.component_option_helper import (
+    build_pagination_options,
 )
 from mex.editor.ingest.models import AuxProvider, IngestResult
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
 from mex.editor.search_result_component import (
+    SearchResultComponentOptions,
     SearchResultListItemOptions,
     SearchResultListOptions,
-    search_result_list,
+    search_result_component,
 )
 
 
@@ -90,23 +91,6 @@ def search_input() -> rx.Component:
     )
 
 
-def results_summary() -> rx.Component:
-    """Render a summary of the results found."""
-    return rx.center(
-        rx.text(
-            IngestState.label_search_result_summary_format,
-            style=rx.Style(
-                color="var(--gray-12)",
-                fontWeight="var(--font-weight-bold)",
-                margin="var(--space-4)",
-                userSelect="none",
-            ),
-            custom_attrs={"data-testid": "search-results-summary"},
-        ),
-        style=rx.Style(width="100%"),
-    )
-
-
 def search_results() -> rx.Component:
     """Render the search results with a heading, result list, and pagination."""
     return rx.cond(
@@ -118,29 +102,18 @@ def search_results() -> rx.Component:
                 width="100%",
             ),
         ),
-        rx.vstack(
-            results_summary(),
-            search_result_list(
-                IngestState.results_transformed,  # type: ignore[arg-type]
-                SearchResultListOptions(
+        search_result_component(
+            IngestState.results_transformed,  # type: ignore[arg-type]
+            SearchResultComponentOptions(
+                summary_text=IngestState.label_search_result_summary_format,
+                pagination=build_pagination_options(
+                    IngestState, IngestState.flag_ingested_items
+                ),
+                list=SearchResultListOptions(
                     item_options=SearchResultListItemOptions(
                         render_append_fn=ingest_button  # type: ignore[arg-type]
                     )
                 ),
-            ),
-            # rx.foreach(
-            #     IngestState.results_transformed,
-            #     ingest_result,
-            # ),
-            rx.center(
-                pagination(IngestState, IngestState.flag_ingested_items),
-            ),
-            spacing="4",
-            custom_attrs={"data-testid": "search-results-section"},
-            align="stretch",
-            style=rx.Style(
-                minWidth="0",
-                width="100%",
             ),
         ),
     )

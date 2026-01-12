@@ -1,5 +1,6 @@
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from typing import Any
 
 import reflex as rx
 from reflex.event import EventCallback
@@ -11,6 +12,7 @@ from mex.editor.components import (
     render_value,
 )
 from mex.editor.models import EditorValue, SearchResult
+from mex.editor.pagination_component import PaginationOptions, pagination
 
 
 @dataclass
@@ -39,11 +41,15 @@ class SearchResultListOptions:
 def search_result_list(
     items: list[SearchResult] | rx.Var[list[SearchResult]],
     options: SearchResultListOptions | None = None,
+    **kwargs: dict[str, Any],
 ) -> rx.Component:
     """Render a list of search result items."""
-    # TODO(FE): Might be an arg (important for: styling?, testing)
-    component_id_prefix = "search-result-list"
+    component_name = "search-result-list"
     options = options or SearchResultListOptions()
+
+    style = rx.Style(overflow="auto")
+    input_style = kwargs.pop("style", rx.Style())
+    style.update(input_style)
 
     def render_properties(
         properties: list[EditorValue], property_type: str
@@ -61,7 +67,7 @@ def search_result_list(
             wrap="wrap",
             align="center",
             custom_attrs={
-                "data-testid": f"{component_id_prefix}-{property_type}-properties"
+                "data-testid": f"{component_name}-properties-{property_type}"
             },
         )
 
@@ -141,9 +147,7 @@ def search_result_list(
                 align="stretch",
             ),
             class_name="search-result-card",
-            custom_attrs={
-                "data-testid": f"{component_id_prefix}-search-result-{item.identifier}"
-            },
+            custom_attrs={"data-testid": f"{component_name}-item-{item.identifier}"},
             style=rx.Style(width="100%", flex="1 0 auto", min_height="0"),
         )
 
@@ -153,7 +157,60 @@ def search_result_list(
             rx.foreach(
                 items, lambda x, i: search_result_item(x, i, options.item_options)
             ),
-            style=rx.Style(overflow="auto", max_height="50vh"),
-            custom_attrs={"data-testid": f"{component_id_prefix}-search-result-list"},
+            style=style,
+            custom_attrs={"data-testid": f"{component_name}"},
         ),
+    )
+
+
+def search_result_summary(summary_text: rx.Var[str]) -> rx.Component:
+    """Render the search result summary text."""
+    return rx.text(
+        summary_text,
+        # SearchState.label_result_summary_format,
+        style=rx.Style(
+            color="var(--gray-12)",
+            fontWeight="var(--font-weight-bold)",
+            margin="var(--space-4)",
+            userSelect="none",
+        ),
+        custom_attrs={"data-testid": "search-result-summary"},
+    )
+
+
+@dataclass
+class SearchResultComponentOptions:
+    """Options for the search result component."""
+
+    summary_text: rx.Var[str]
+    list: SearchResultListOptions
+    pagination: PaginationOptions | None = None
+
+
+def search_result_component(
+    result: rx.Var[list[SearchResult]] | list[SearchResult],
+    options: SearchResultComponentOptions,
+    **kwargs: dict[str, Any],
+) -> rx.Component:
+    """Render the search result component with summary, list, and pagination."""
+    style = rx.Style(overflow="auto")
+    input_style = kwargs.pop("style", rx.Style())
+    style.update(input_style)
+
+    content = [
+        rx.center(search_result_summary(options.summary_text)),
+        search_result_list(
+            result,
+            options.list,
+        ),
+    ]
+    if options.pagination:
+        content.append(rx.center(pagination(options.pagination)))
+
+    return rx.vstack(
+        *content,
+        spacing="4",
+        custom_attrs={"data-testid": "search-result-component"},
+        align="stretch",
+        style=style,
     )

@@ -154,7 +154,7 @@ def href_input(
     """Render an input component for editing a href attribute."""
     return rx.input(
         placeholder="URL",
-        value=href,
+        value=rx.cond(href, href, ""),
         on_change=RuleState.set_href_value(field_name, index),  # type: ignore[operator]
         style=rx.Style(
             margin="calc(-1 * var(--space-1))",
@@ -172,7 +172,7 @@ def text_input(
     """Render an input component for editing a text attribute."""
     return rx.input(
         placeholder="Text",
-        value=text,
+        value=rx.cond(text, text, ""),
         on_change=RuleState.set_text_value(field_name, index),  # type: ignore[operator]
         style=rx.Style(
             margin="calc(-1 * var(--space-1))",
@@ -190,7 +190,7 @@ def textarea_input(
     """Render a textarea component for editing a textarea attribute."""
     return rx.text_area(
         placeholder="Text",
-        value=text,
+        value=rx.cond(text, text, ""),
         on_change=RuleState.set_text_value(field_name, index),  # type: ignore[operator]
         style=rx.Style(
             margin="calc(-1 * var(--space-1))",
@@ -212,7 +212,7 @@ def identifier_input(
     return rx.hstack(
         rx.input(
             placeholder="Identifier",
-            value=identifier,
+            value=rx.cond(identifier, identifier, ""),
             on_change=RuleState.set_identifier_value(field.name, index),  # type: ignore[operator]
             style=rx.Style(
                 margin="calc(-1 * var(--space-1))",
@@ -252,7 +252,7 @@ def badge_input(
                 value=rx.cond(
                     badge,
                     badge,
-                    input_config.badge_default,
+                    rx.cond(input_config.badge_default, input_config.badge_default, ""),
                 ),
                 size="1",
                 variant="soft",

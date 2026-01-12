@@ -1,5 +1,5 @@
 import copy
-from collections.abc import Generator, Sequence
+from collections.abc import AsyncGenerator, Generator, Sequence
 from typing import cast
 
 import reflex as rx
@@ -388,13 +388,14 @@ class RuleState(State, LocalStorageMixinState):
         yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
-    def set_identifier_value(
+    async def set_identifier_value(
         self, field_name: str, index: int, value: str
-    ) -> Generator[EventSpec, None, None]:
+    ) -> AsyncGenerator[EventSpec, None]:
         """Set the identifier attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].identifier = value
         primary_source.editor_values[index].href = f"/item/{value}"
+        await resolve_editor_value(primary_source.editor_values[index])
         yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
@@ -446,7 +447,7 @@ class RuleState(State, LocalStorageMixinState):
     def label_save_success_dialog_title(self) -> None:
         """Label for save_success_dialog.title."""
 
-    @label_var(label_id="rules.save_success_dialog.message_format")
+    @label_var(label_id="rules.save_success_dialog.message_format", deps=["stem_type"])
     def label_save_success_dialog_message_format(self) -> list[str]:
         """Label for save_success_dialog.message_format."""
         return [self.stem_type or ""]

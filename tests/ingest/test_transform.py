@@ -1,29 +1,11 @@
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock, patch
 
 from mex.common.models import AnyExtractedModel
 from mex.editor.ingest.models import IngestResult
 from mex.editor.ingest.transform import (
-    model_to_all_properties,
     transform_models_to_results,
 )
 from mex.editor.models import EditorValue
-
-
-def test_model_to_all_properties() -> None:
-    model = MagicMock(spec=AnyExtractedModel)
-    model.field1 = "value1"
-    model.field2 = "value2"
-    model.model_fields = {"field1": Mock(), "field2": Mock()}
-
-    with patch(
-        "mex.editor.transform.transform_values",
-        side_effect=lambda x, allow_link: [EditorValue(text=f"value{x}")],
-    ):
-        result = model_to_all_properties(model)
-
-    assert len(result) == 2
-    assert result[0].text == "value1"
-    assert result[1].text == "value2"
 
 
 def test_transform_models_to_results_single_model() -> None:
@@ -36,7 +18,7 @@ def test_transform_models_to_results_single_model() -> None:
     model.wikidataId = "wikidataId"
 
     with patch(
-        "mex.editor.ingest.transform.model_to_all_properties",
+        "mex.editor.ingest.transform.transform_model_to_all_properties",
         return_value=[EditorValue(text="property")],
     ):
         result = transform_models_to_results([model])
@@ -99,7 +81,7 @@ def test_transform_models_to_results_multiple_models() -> None:
     model2.wikidataId = "wikidataId2"
 
     with patch(
-        "mex.editor.ingest.transform.model_to_all_properties",
+        "mex.editor.ingest.transform.transform_model_to_all_properties",
         return_value=[EditorValue(text="property")],
     ):
         result = transform_models_to_results([model1, model2])

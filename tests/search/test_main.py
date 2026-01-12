@@ -367,10 +367,21 @@ def test_push_search_params(
     entity_types = page.get_by_test_id("entity-types")
     expect(entity_types).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load.png")
-    entity_types.get_by_text("Activity").click()
+    activity_checkbox = entity_types.get_by_text("Activity")
+    activity_checkbox.click()
+
+    # wait for the checkbox to actually become checked (websocket roundtrip complete)
+    # Find the actual checkbox input by its accessible role and wait for it to be checked
+    activity_checkbox_input = entity_types.get_by_role("checkbox", name="Activity")
+    expect(activity_checkbox_input).to_be_checked()
+
+    # verify exactly one checkbox is checked
     checked = entity_types.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-click.png")
+
+    # wait for search results section to stabilize
+    expect(page.get_by_test_id("search-results-section")).to_be_visible()
 
     # expect parameter change to be reflected in url
     page.wait_for_url("**/?page=1&entityType=Activity&referenceFilterStrategy=dynamic")
@@ -380,6 +391,9 @@ def test_push_search_params(
     expect(search_input).to_be_visible()
     search_input.fill("Une activité active")
     search_input.press("Enter")
+
+    # wait for search results to update
+    expect(page.get_by_test_id("search-results-section")).to_be_visible()
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
@@ -401,7 +415,17 @@ def test_push_search_params(
     page.screenshot(
         path="tests_search_test_main-test_push_search_params-on-click-2.png"
     )
+
+    # wait for the checkbox to actually become checked
+    primary_source_checkbox_input = primary_sources.get_by_role(
+        "checkbox", name=primary_source.title[0].value
+    )
+    expect(primary_source_checkbox_input).to_be_checked()
+
+    # wait for search results to update
     expect(page.get_by_test_id("search-results-section")).to_be_visible()
+
+    # verify exactly one checkbox is checked
     checked = primary_sources.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
 

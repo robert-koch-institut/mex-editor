@@ -136,3 +136,14 @@ def transform_models_to_preview(
     if previews:
         return previews
     return transform_values(transform_models_to_stem_type(models))
+
+
+def transform_model_to_all_properties(
+    model: AnyExtractedModel | AnyPreviewModel,
+) -> list[EditorValue]:
+    """Transform all properties of a model into a list of EditorValues."""
+    return [
+        value
+        for field_name in model.model_fields
+        for value in transform_values(getattr(model, field_name), allow_link=False)
+    ]

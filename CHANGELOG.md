@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - LocalStorage to store drafts and edits local on browser side.
+- Dialog to search for entities by name and entity-type.
 
 ### Changes
 
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
 - Using href navigation instead of navigation via code (`page.navigate()`).
+- Refactored pagination into state mixin and component with options.
 
 ### Deprecated
 

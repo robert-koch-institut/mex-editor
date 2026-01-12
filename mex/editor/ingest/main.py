@@ -187,7 +187,9 @@ def search_results() -> rx.Component:
                 IngestState.results_transformed,
                 ingest_result,
             ),
-            pagination(IngestState, IngestState.flag_ingested_items),
+            rx.center(
+                pagination(IngestState, IngestState.flag_ingested_items),
+            ),
             spacing="4",
             custom_attrs={"data-testid": "search-results-section"},
             style=rx.Style(

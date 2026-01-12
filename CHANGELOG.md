@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Dialogs for navigating away while having changes on create or edit page.
+- dropped npm support in favor of bun
 
 ### Fixed
 

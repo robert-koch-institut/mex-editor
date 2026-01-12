@@ -24,7 +24,7 @@ def search_result(
             rx.hstack(
                 rx.checkbox(
                     checked=MergeState.selected_items[category] == index,
-                    on_change=MergeState.select_item(category, index),  # type:ignore[operator]
+                    on_change=MergeState.select_item(category, index),  # type: ignore[operator]
                 ),
                 icon_by_stem_type(
                     result.stem_type,
@@ -66,8 +66,8 @@ def entity_type_choice_merged(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            MergeState.set_entity_type_merged(choice[0]),  # type:ignore[operator]
-            MergeState.refresh(["merged"]),  # type:ignore[operator]
+            MergeState.set_entity_type_merged(choice[0]),  # type: ignore[operator]
+            MergeState.refresh(["merged"]),  # type: ignore[operator]
             MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
@@ -80,8 +80,8 @@ def entity_type_choice_extracted(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            MergeState.set_entity_type_extracted(choice[0]),  # type:ignore[operator]
-            MergeState.refresh(["extracted"]),  # type:ignore[operator]
+            MergeState.set_entity_type_extracted(choice[0]),  # type: ignore[operator]
+            MergeState.refresh(["extracted"]),  # type: ignore[operator]
             MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
@@ -132,7 +132,7 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     default_value=MergeState.query_strings[category],
                     max_length=100,
                     name=f"query_string_{category}",
-                    on_change=MergeState.handle_submit(category),  # type:ignore[operator]
+                    on_change=MergeState.handle_submit(category),  # type: ignore[operator]
                     placeholder=MergeState.label_search_input_placeholder,
                     style=rx.Style(
                         {
@@ -156,7 +156,7 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     "Clear",
                     variant="surface",
                     disabled=MergeState.is_loading,
-                    on_click=MergeState.clear_input(category),  # type:ignore[operator]
+                    on_click=MergeState.clear_input(category),  # type: ignore[operator]
                     custom_attrs={"data-testid": f"clear-button-{category}"},
                 ),
                 rx.button(
@@ -165,7 +165,7 @@ def search_input(category: Literal["merged", "extracted"]) -> rx.Component:
                     variant="surface",
                     disabled=MergeState.is_loading,
                     on_click=[
-                        MergeState.refresh([category]),  # type:ignore[operator]
+                        MergeState.refresh([category]),  # type: ignore[operator]
                         MergeState.resolve_identifiers,
                     ],
                     custom_attrs={"data-testid": f"search-button-{category}"},

@@ -117,7 +117,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
             if str(key).startswith("reference_type")
         ]
 
-        yield from SearchReferenceDialogState.search()  # type: ignore[operator]
+        yield SearchReferenceDialogState.search  # type: ignore[misc]
 
     @rx.event
     def search(self) -> Generator[EventSpec | None, None, None]:

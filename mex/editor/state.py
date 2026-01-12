@@ -153,7 +153,7 @@ class State(rx.State):
         """Return the version of mex-editor."""
         return version("mex-editor")
 
-    @rx.var(cache=True)
+    @rx.var(cache=True, initial_value="N/A")
     def backend_version(self) -> str:
         """Return the version of mex-backend."""
         connector = BackendApiConnector.get()

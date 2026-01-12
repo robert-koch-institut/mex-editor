@@ -193,3 +193,21 @@ msgstr "Lade Einverständniserklärung..."
 
 msgid "consent.nav_bar.consent_navitem"
 msgstr "Einverständniserklärung"
+
+msgid "search_reference_dialog.title"
+msgstr "Suche nach Referenzen"
+
+msgid "search_reference_dialog.description"
+msgstr "Klicken Sie anschließend auf 'Auswählen' in dem entprechenden Eintrag um diesen auszuwählen."
+
+msgid "search_reference_dialog.description.valid_types"
+msgstr "Gültige Referenztypen"
+
+msgid "search_reference_dialog.query.placeholder"
+msgstr "Suchtext"
+
+msgid "search_reference_dialog.results.none_found_format"
+msgstr "Leider wurden keine Ergebnisse für '{}' gefunden :("
+
+msgid "search_reference_dialog.results.select_button"
+msgstr "Auswählen"

@@ -190,3 +190,21 @@ msgstr "Loading consent status..."
 
 msgid "consent.nav_bar.consent_navitem"
 msgstr "Informed Consent"
+
+msgid "search_reference_dialog.title"
+msgstr "Search for references"
+
+msgid "search_reference_dialog.description"
+msgstr "Click on 'Select' to use select the corrosponding entry."
+
+msgid "search_reference_dialog.description.valid_types"
+msgstr "Valid entitytypes are:"
+
+msgid "search_reference_dialog.query.placeholder"
+msgstr "Searchtext"
+
+msgid "search_reference_dialog.results.none_found_format"
+msgstr "We are sorry, but there are no entries for '{}' :("
+
+msgid "search_reference_dialog.results.select_button"
+msgstr "Select"

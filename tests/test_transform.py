@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock, Mock, patch
+
 import pytest
 
 from mex.common.models import AdditiveContactPoint, AnyExtractedModel
@@ -13,6 +15,7 @@ from mex.common.types import (
 )
 from mex.editor.models import LANGUAGE_VALUE_NONE, EditorValue
 from mex.editor.transform import (
+    transform_model_to_all_properties,
     transform_models_to_preview,
     transform_models_to_stem_type,
     transform_models_to_title,
@@ -194,3 +197,20 @@ def test_transform_models_to_preview(dummy_data: list[AnyExtractedModel]) -> Non
             EditorValue(text="AccessRestriction", badge=AccessRestriction["OPEN"].name),
         ],
     ]
+
+
+def test_model_to_all_properties() -> None:
+    model = MagicMock(spec=AnyExtractedModel)
+    model.field1 = "value1"
+    model.field2 = "value2"
+    model.model_fields = {"field1": Mock(), "field2": Mock()}
+
+    with patch(
+        "mex.editor.transform.transform_model_to_all_properties",
+        side_effect=lambda x, allow_link: [EditorValue(text=f"value{x}")],
+    ):
+        result = transform_model_to_all_properties(model)
+
+    assert len(result) == 2
+    assert result[0].text == "value1"
+    assert result[1].text == "value2"

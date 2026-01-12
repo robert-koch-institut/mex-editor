@@ -12,6 +12,12 @@ class SearchResult(rx.Base):
     preview: list[EditorValue]
 
 
+class ReferenceDialogSearchResult(SearchResult):
+    """Search result preview with all properties."""
+
+    all_properties: list[EditorValue]
+
+
 class SearchPrimarySource(rx.Base):
     """Primary source filter."""
 

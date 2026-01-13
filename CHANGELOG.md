@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Component to display search results
 - LocalStorage to store drafts and edits local on browser side.
 - Dialog to search for entities by name and entity-type.
 

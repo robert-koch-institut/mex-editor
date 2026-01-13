@@ -224,9 +224,8 @@ def test_additional_titles_badge(
     # hover additional titles
     box = additional_title_badge.bounding_box()
     assert box
-    page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
-    additional_title_badge.hover()
-    page.screenshot(path="tests_search_test_additional_titles_badge_on_hover.png")
+    page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2, steps=5)
+    page.screenshot(path="tests_merge_test_additional_titles_badge_on_hover.png")
 
     # check tooltip content
     tooltip = page.get_by_test_id("tooltip-additional-titles")

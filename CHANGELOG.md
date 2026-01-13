@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Component to display search results
 - LocalStorage to store drafts and edits local on browser side.
+- add cve scanning of frontend dependencies
 - Dialog to search for entities by name and entity-type.
 
 ### Changes

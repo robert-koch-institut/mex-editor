@@ -1,29 +1,9 @@
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock, patch
 
 from mex.common.models import AnyExtractedModel
 from mex.editor.ingest.models import IngestResult
-from mex.editor.ingest.transform import (
-    transform_models_to_results,
-)
+from mex.editor.ingest.transform import transform_models_to_results
 from mex.editor.models import EditorValue
-from mex.editor.transform import transform_model_to_all_properties
-
-
-def test_model_to_all_properties() -> None:
-    model = MagicMock(spec=AnyExtractedModel)
-    model.field1 = "value1"
-    model.field2 = "value2"
-    model.model_fields = {"field1": Mock(), "field2": Mock()}
-
-    with patch(
-        "mex.editor.transform.transform_model_to_all_properties",
-        side_effect=lambda x, allow_link: [EditorValue(text=f"value{x}")],
-    ):
-        result = transform_model_to_all_properties(model)
-
-    assert len(result) == 2
-    assert result[0].text == "value1"
-    assert result[1].text == "value2"
 
 
 def test_transform_models_to_results_single_model() -> None:

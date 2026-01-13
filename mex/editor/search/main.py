@@ -295,6 +295,7 @@ def search_results() -> rx.Component:
                     SearchState, SearchState.push_search_params
                 ),
             ),
+            style=rx.Style(flex=1),
         ),
     )
 

@@ -447,6 +447,7 @@ def test_additional_titles_badge(
     box = additional_title_badge.bounding_box()
     assert box
     page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2, steps=5)
+    additional_title_badge.hover()
     page.screenshot(path="tests_search_test_additional_titles_badge_on_hover.png")
 
     # check tooltip content

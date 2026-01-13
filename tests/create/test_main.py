@@ -192,7 +192,7 @@ def test_search_reference_dialog(
     field_contact.get_by_test_id(f"{dialog_prefix}-button").click()
 
     query_input = create_page.get_by_test_id(f"{dialog_prefix}-query-input")
-    search_results = create_page.get_by_test_id(f"{dialog_prefix}-search-results")
+    search_results = create_page.get_by_test_id("search-results-list")
     expect(search_results.locator(".search-result-card")).to_have_count(3)
 
     query_input.fill("OU")

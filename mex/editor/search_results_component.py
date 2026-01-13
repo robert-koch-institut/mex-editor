@@ -16,8 +16,8 @@ from mex.editor.pagination_component import PaginationOptions, pagination
 
 
 @dataclass
-class SearchResultListItemOptions:
-    """Options for rendering a search result list item."""
+class SearchResultsListItemOptions:
+    """Options for rendering a search results list item."""
 
     enable_show_all_properties: bool = False
     on_toggle_show_all_properties: EventCallback[SearchResult, int] | None = None
@@ -30,22 +30,21 @@ class SearchResultListItemOptions:
 
 
 @dataclass
-class SearchResultListOptions:
-    """Options for rendering a search result list."""
+class SearchResultsListOptions:
+    """Options for rendering a search results list."""
 
-    item_options: SearchResultListItemOptions = field(
-        default_factory=SearchResultListItemOptions
+    item_options: SearchResultsListItemOptions = field(
+        default_factory=SearchResultsListItemOptions
     )
 
 
-def search_result_list(
+def search_results_list(
     items: list[SearchResult] | rx.Var[list[SearchResult]],
-    options: SearchResultListOptions | None = None,
+    options: SearchResultsListOptions | None = None,
     **kwargs: dict[str, Any],
 ) -> rx.Component:
-    """Render a list of search result items."""
-    component_name = "search-result-list"
-    options = options or SearchResultListOptions()
+    """Render a list of search results items."""
+    options = options or SearchResultsListOptions()
 
     style = rx.Style(overflow="auto")
     input_style = kwargs.pop("style", rx.Style())
@@ -66,15 +65,13 @@ def search_result_list(
             ),
             wrap="wrap",
             align="center",
-            custom_attrs={
-                "data-testid": f"{component_name}-properties-{property_type}"
-            },
+            custom_attrs={"data-testid": f"display-properties-{property_type}"},
         )
 
-    def search_result_item(
-        item: SearchResult, index: int, options: SearchResultListItemOptions
+    def search_results_item(
+        item: SearchResult, index: int, options: SearchResultsListItemOptions
     ) -> rx.Component:
-        """Render a search result item."""
+        """Render a search results item."""
         title = render_title(item.title[0])
 
         title_line_children = [
@@ -91,6 +88,14 @@ def search_result_list(
             else title,
             render_additional_titles(item.title[1:]),
         ]
+
+        if options.enable_show_all_properties ^ bool(
+            options.on_toggle_show_all_properties
+        ):
+            error_msg = "'enable_show_all_properties' is 'True' but "
+            "'on_toggle_show_all_properties' is not set; or vice versa."
+            raise ValueError(error_msg)
+
         if options.enable_show_all_properties and options.on_toggle_show_all_properties:
             title_line_children.append(
                 rx.button(
@@ -106,6 +111,7 @@ def search_result_list(
                     variant="surface",
                     size="1",
                     on_click=options.on_toggle_show_all_properties(item, index),
+                    custom_attrs={"data-testid": "toggle-show-all-properties-button"},
                 )
             )
 
@@ -147,7 +153,7 @@ def search_result_list(
                 align="stretch",
             ),
             class_name="search-result-card",
-            custom_attrs={"data-testid": f"{component_name}-item-{item.identifier}"},
+            custom_attrs={"data-testid": f"search-result-{item.identifier}"},
             style=rx.Style(width="100%", flex="1 0 auto", min_height="0"),
         )
 
@@ -155,41 +161,40 @@ def search_result_list(
         items,
         rx.vstack(
             rx.foreach(
-                items, lambda x, i: search_result_item(x, i, options.item_options)
+                items, lambda x, i: search_results_item(x, i, options.item_options)
             ),
             style=style,
-            custom_attrs={"data-testid": f"{component_name}"},
+            custom_attrs={"data-testid": "search-results-list"},
         ),
     )
 
 
-def search_result_summary(summary_text: rx.Var[str]) -> rx.Component:
-    """Render the search result summary text."""
+def search_results_summary(summary_text: rx.Var[str]) -> rx.Component:
+    """Render the search results summary text."""
     return rx.text(
         summary_text,
-        # SearchState.label_result_summary_format,
         style=rx.Style(
             color="var(--gray-12)",
             fontWeight="var(--font-weight-bold)",
             margin="var(--space-4)",
             userSelect="none",
         ),
-        custom_attrs={"data-testid": "search-result-summary"},
+        custom_attrs={"data-testid": "search-results-summary"},
     )
 
 
 @dataclass
-class SearchResultComponentOptions:
-    """Options for the search result component."""
+class SearchResultsComponentOptions:
+    """Options for the search results component."""
 
     summary_text: rx.Var[str]
-    list: SearchResultListOptions
+    list: SearchResultsListOptions
     pagination: PaginationOptions | None = None
 
 
-def search_result_component(
-    result: rx.Var[list[SearchResult]] | list[SearchResult],
-    options: SearchResultComponentOptions,
+def search_results_component(
+    results: rx.Var[list[SearchResult]] | list[SearchResult],
+    options: SearchResultsComponentOptions,
     **kwargs: dict[str, Any],
 ) -> rx.Component:
     """Render the search result component with summary, list, and pagination."""
@@ -198,9 +203,9 @@ def search_result_component(
     style.update(input_style)
 
     content = [
-        rx.center(search_result_summary(options.summary_text)),
-        search_result_list(
-            result,
+        rx.center(search_results_summary(options.summary_text)),
+        search_results_list(
+            results,
             options.list,
         ),
     ]
@@ -210,7 +215,7 @@ def search_result_component(
     return rx.vstack(
         *content,
         spacing="4",
-        custom_attrs={"data-testid": "search-result-component"},
+        custom_attrs={"data-testid": "search-results-component"},
         align="stretch",
         style=style,
     )

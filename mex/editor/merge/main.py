@@ -5,31 +5,12 @@ import reflex as rx
 from mex.editor.layout import page
 from mex.editor.merge.state import MergeState
 from mex.editor.models import SearchResult
-from mex.editor.search_result_component import (
-    SearchResultComponentOptions,
-    SearchResultListItemOptions,
-    SearchResultListOptions,
-    search_result_component,
+from mex.editor.search_results_component import (
+    SearchResultsComponentOptions,
+    SearchResultsListItemOptions,
+    SearchResultsListOptions,
+    search_results_component,
 )
-
-
-def results_summary(category: Literal["merged", "extracted"]) -> rx.Component:
-    """Render a summary of the results found."""
-    return rx.center(
-        rx.text(
-            MergeState.label_result_summary_format_merged
-            if category == "merged"
-            else MergeState.label_result_summary_format_extracted,
-            style=rx.Style(
-                color="var(--gray-12)",
-                fontWeight="var(--font-weight-bold)",
-                margin="var(--space-4)",
-                userSelect="none",
-            ),
-        ),
-        style=rx.Style(width="100%"),
-        custom_attrs={"data-testid": f"{category}-results-summary"},
-    )
 
 
 def entity_type_choice_merged(choice: tuple[str, bool]) -> rx.Component:
@@ -177,8 +158,8 @@ def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
             on_change=MergeState.select_item(category, index),  # type:ignore[misc]
         )
 
-    list_options = SearchResultListOptions(
-        item_options=SearchResultListItemOptions(render_prepend_fn=render_checkbox)
+    list_options = SearchResultsListOptions(
+        item_options=SearchResultsListItemOptions(render_prepend_fn=render_checkbox)
     )
 
     return rx.vstack(
@@ -194,28 +175,28 @@ def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
             custom_attrs={"data-testid": f"create-heading-{category}"},
         ),
         search_input(category),
-        rx.cond(
-            category == "merged",
-            search_result_component(
-                MergeState.results_merged,
-                SearchResultComponentOptions(
-                    summary_text=MergeState.label_result_summary_format_merged,
-                    list=list_options,
+        rx.el.div(
+            rx.cond(
+                category == "merged",
+                search_results_component(
+                    MergeState.results_merged,
+                    SearchResultsComponentOptions(
+                        summary_text=MergeState.label_result_summary_format_merged,
+                        list=list_options,
+                    ),
+                ),
+                search_results_component(
+                    MergeState.results_extracted,
+                    SearchResultsComponentOptions(
+                        summary_text=MergeState.label_result_summary_format_extracted,
+                        list=list_options,
+                    ),
                 ),
             ),
-            search_result_component(
-                MergeState.results_extracted,
-                SearchResultComponentOptions(
-                    summary_text=MergeState.label_result_summary_format_extracted,
-                    list=list_options,
-                ),
-            ),
+            custom_attrs={"data-testid": f"{category}-search-results-container"},
         ),
-        style=rx.Style(
-            width="50%",
-            margin="var(--space-4)",
-            align="center",
-        ),
+        align="stretch",
+        style=rx.Style(width="50%", margin="var(--space-4)"),
     )
 
 

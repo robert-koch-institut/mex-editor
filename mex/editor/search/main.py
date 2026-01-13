@@ -14,11 +14,11 @@ from mex.editor.search.state import (
     full_refresh,
 )
 from mex.editor.search.value_label_select import value_label_select
-from mex.editor.search_result_component import (
-    SearchResultComponentOptions,
-    SearchResultListItemOptions,
-    SearchResultListOptions,
-    search_result_component,
+from mex.editor.search_results_component import (
+    SearchResultsComponentOptions,
+    SearchResultsListItemOptions,
+    SearchResultsListOptions,
+    search_results_component,
 )
 
 
@@ -284,12 +284,12 @@ def search_results() -> rx.Component:
                 width="100%",
             ),
         ),
-        search_result_component(
+        search_results_component(
             SearchState.results,
-            SearchResultComponentOptions(
+            SearchResultsComponentOptions(
                 summary_text=SearchState.label_result_summary_format,
-                list=SearchResultListOptions(
-                    item_options=SearchResultListItemOptions(enable_title_href=True)
+                list=SearchResultsListOptions(
+                    item_options=SearchResultsListItemOptions(enable_title_href=True)
                 ),
                 pagination=build_pagination_options(
                     SearchState, SearchState.push_search_params

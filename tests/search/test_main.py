@@ -20,8 +20,8 @@ def test_index(
 
     # load page and establish section is visible
     page.goto(frontend_url)
-    section = page.get_by_test_id("search-results-section")
-    expect(section).to_be_visible()
+    component = page.get_by_test_id("search-results-component")
+    expect(component).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_index-on-load.png")
 
     # check heading is showing
@@ -29,12 +29,12 @@ def test_index(
 
     # check mex primary source is showing
     primary_source = page.get_by_test_id(
-        f"result-{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+        f"search-result-{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}"
     )
     expect(primary_source.first).to_be_visible()
 
     # check activity is showing
-    activity = page.get_by_test_id(f"result-{extracted_activity.stableTargetId}")
+    activity = page.get_by_test_id(f"search-result-{extracted_activity.stableTargetId}")
     activity.scroll_into_view_if_needed()
     expect(activity).to_be_visible()
     expect(activity).to_contain_text("info@contact-point.one")  # resolved preview
@@ -401,7 +401,7 @@ def test_push_search_params(
     page.screenshot(
         path="tests_search_test_main-test_push_search_params-on-click-2.png"
     )
-    expect(page.get_by_test_id("search-results-section")).to_be_visible()
+    expect(page.get_by_test_id("search-results-component")).to_be_visible()
     checked = primary_sources.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
 
@@ -426,7 +426,9 @@ def test_additional_titles_badge(
 
     resource_r2 = dummy_data_by_identifier_in_primary_source["r-2"]
     assert isinstance(resource_r2, ExtractedResource)
-    resource_r2_result = page.get_by_test_id(f"result-{resource_r2.stableTargetId}")
+    resource_r2_result = page.get_by_test_id(
+        f"search-result-{resource_r2.stableTargetId}"
+    )
     expect(resource_r2_result).to_be_visible()
     page.screenshot(path="tests_search_test_additional_titles_badge_on_load.png")
     first_title = resource_r2.title[0]

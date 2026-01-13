@@ -8,11 +8,11 @@ from mex.editor.component_option_helper import (
 from mex.editor.ingest.models import AuxProvider, IngestResult
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
-from mex.editor.search_result_component import (
-    SearchResultComponentOptions,
-    SearchResultListItemOptions,
-    SearchResultListOptions,
-    search_result_component,
+from mex.editor.search_results_component import (
+    SearchResultsComponentOptions,
+    SearchResultsListItemOptions,
+    SearchResultsListOptions,
+    search_results_component,
 )
 
 
@@ -102,16 +102,18 @@ def search_results() -> rx.Component:
                 width="100%",
             ),
         ),
-        search_result_component(
+        search_results_component(
             IngestState.results_transformed,  # type: ignore[arg-type]
-            SearchResultComponentOptions(
+            SearchResultsComponentOptions(
                 summary_text=IngestState.label_search_result_summary_format,
                 pagination=build_pagination_options(
                     IngestState, IngestState.flag_ingested_items
                 ),
-                list=SearchResultListOptions(
-                    item_options=SearchResultListItemOptions(
-                        render_append_fn=ingest_button  # type: ignore[arg-type]
+                list=SearchResultsListOptions(
+                    item_options=SearchResultsListItemOptions(
+                        enable_show_all_properties=True,
+                        on_toggle_show_all_properties=IngestState.toggle_show_all_properties,
+                        render_append_fn=ingest_button,  # type: ignore[arg-type]
                     )
                 ),
             ),

@@ -122,7 +122,10 @@ def test_select_result_extracted(
     page.get_by_test_id("search-button-extracted").click()
     expect(page.get_by_text(build_pagination_regex(2, 2))).to_be_visible()
     contact_point_1 = dummy_data_by_identifier_in_primary_source["cp-1"]
-    result = page.get_by_test_id(f"result-extracted-{contact_point_1.identifier}")
+    extracted_search_results = page.get_by_test_id("extracted-search-results-container")
+    result = extracted_search_results.get_by_test_id(
+        f"search-result-{contact_point_1.identifier}"
+    )
     result.get_by_role("checkbox").click()
     checked = entity_types_extracted.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
@@ -149,7 +152,10 @@ def test_select_result_merged(
     page.get_by_test_id("search-button-merged").click()
     expect(page.get_by_text(build_pagination_regex(2, 2))).to_be_visible()
     contact_point_1 = dummy_data_by_identifier_in_primary_source["cp-1"]
-    result = page.get_by_test_id(f"result-merged-{contact_point_1.stableTargetId}")
+    merged_search_results = page.get_by_test_id("merged-search-results-container")
+    result = merged_search_results.get_by_test_id(
+        f"search-result-{contact_point_1.stableTargetId}"
+    )
     result.get_by_role("checkbox").click()
     checked = entity_types_merged.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
@@ -173,13 +179,14 @@ def test_resolves_identifier(
     expect(entity_types_extracted).to_be_visible()
     entity_types_extracted.get_by_text("Activity").click()
     page.get_by_test_id("search-button-extracted").click()
+    extracted_results = page.get_by_test_id("extracted-search-results-container")
     expect(
-        page.get_by_test_id("extracted-results-summary").get_by_text(
+        extracted_results.get_by_test_id("search-results-summary").get_by_text(
             build_pagination_regex(1, 1)
         )
     ).to_be_visible()
     page.screenshot(path="tests_merge_test_main-test_resolves_identifier.png")
-    result = page.get_by_test_id(f"result-extracted-{activity_1.identifier}")
+    result = extracted_results.get_by_test_id(f"search-result-{activity_1.identifier}")
     email = result.get_by_text(f"{contact_point_1.email[0]}")
     expect(email).to_be_visible()
 
@@ -197,8 +204,9 @@ def test_additional_titles_badge(
 
     resource_r2 = dummy_data_by_identifier_in_primary_source["r-2"]
     assert isinstance(resource_r2, ExtractedResource)
-    resource_r2_result = page.get_by_test_id(
-        f"result-extracted-{resource_r2.identifier}"
+    extracted_results = page.get_by_test_id("extracted-search-results-container")
+    resource_r2_result = extracted_results.get_by_test_id(
+        f"search-result-{resource_r2.identifier}"
     )
     expect(resource_r2_result).to_be_visible()
     page.screenshot(path="tests_merge_test_additional_titles_badge_on_load.png")

@@ -17,10 +17,10 @@ from mex.editor.pagination_component import (
     pagination,
 )
 from mex.editor.search.transform import transform_models_to_dialog_results
-from mex.editor.search_result_component import (
-    SearchResultListItemOptions,
-    SearchResultListOptions,
-    search_result_list,
+from mex.editor.search_results_component import (
+    SearchResultsListItemOptions,
+    SearchResultsListOptions,
+    search_results_list,
 )
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
@@ -174,10 +174,10 @@ def search_reference_dialog(
             rx.center(rx.spinner()),
             rx.cond(
                 SearchReferenceDialogState.results,
-                search_result_list(
+                search_results_list(
                     SearchReferenceDialogState.results,
-                    SearchResultListOptions(
-                        item_options=SearchResultListItemOptions(
+                    SearchResultsListOptions(
+                        item_options=SearchResultsListItemOptions(
                             enable_show_all_properties=True,
                             on_toggle_show_all_properties=SearchReferenceDialogState.toggle_show_all_properties,
                             render_title_fn=render_select_button,

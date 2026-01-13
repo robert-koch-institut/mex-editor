@@ -18,8 +18,8 @@ def transform_models_to_results(
             identifier=model.identifier,
             title=transform_models_to_title([model]),
             preview=transform_models_to_preview([model]),
-            stem_type=model.stemType,
             all_properties=[],
+            stem_type=model.stemType,
         )
         for model in models
     ]

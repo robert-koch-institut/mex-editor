@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:3c48d6994eb97fbe399793e005c9010b5e372bf298b1d89b7ea24f4a3cfe1d39"
+content_hash = "sha256:964e86463dcd5c4a5385af5999613ffcf68b5beafe6504b115e3acc8c94b178e"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -1631,17 +1631,17 @@ files = [
 
 [[package]]
 name = "sqlmodel"
-version = "0.0.29"
-requires_python = ">=3.8"
+version = "0.0.31"
+requires_python = ">=3.9"
 summary = "SQLModel, SQL databases in Python, designed for simplicity, compatibility, and robustness."
 groups = ["default"]
 dependencies = [
     "SQLAlchemy<2.1.0,>=2.0.14",
-    "pydantic<3.0.0,>=1.10.13",
+    "pydantic>=2.7.0",
 ]
 files = [
-    {file = "sqlmodel-0.0.29-py3-none-any.whl", hash = "sha256:56e4b3e9ab5825f6cbdd40bc46f90f01c0f73c73f44843a03d494c0845a948cd"},
-    {file = "sqlmodel-0.0.29.tar.gz", hash = "sha256:cdebdeda7addb3d934c7a70812a23aa8bdff5550bfffa023db72dec1ba5e45d7"},
+    {file = "sqlmodel-0.0.31-py3-none-any.whl", hash = "sha256:6d946d56cac4c2db296ba1541357cee2e795d68174e2043cd138b916794b1513"},
+    {file = "sqlmodel-0.0.31.tar.gz", hash = "sha256:2d41a8a9ee05e40736e2f9db8ea28cbfe9b5d4e5a18dd139e80605025e0c516c"},
 ]
 
 [[package]]

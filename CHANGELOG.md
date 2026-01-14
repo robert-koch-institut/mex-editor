@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.3.0] - 2026-01-14
+
+### Added
+
 - LocalStorage to store drafts and edits local on browser side.
 - add cve scanning of frontend dependencies
 - Dialog to search for entities by name and entity-type.
@@ -24,8 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Using href navigation instead of navigation via code (`page.navigate()`).
 - Refactored pagination into state mixin and component with options.
 
-### Deprecated
-
 ### Removed
 
 - Dialogs for navigating away while having changes on create or edit page.
@@ -34,8 +46,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fixed bun cache options for windows
-
-### Security
 
 ## [1.2.0] - 2025-11-28
 

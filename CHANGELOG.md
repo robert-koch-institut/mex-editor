@@ -11,17 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update reflex env vars to use `REFLEX_` prefix in dockerfile
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
-- fix application specifier for new uvicorn version
-
 ### Security
+
+## [1.3.1] - 2026-01-14
+
+### Changes
+
+- update reflex env vars to use `REFLEX_` prefix in dockerfile
+
+### Fixed
+
+- fix application specifier for new uvicorn version
 
 ## [1.3.0] - 2026-01-14
 

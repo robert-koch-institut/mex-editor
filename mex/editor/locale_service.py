@@ -114,7 +114,7 @@ class LocaleService:
             used. Defaults to 1.
 
         Returns:
-            str: The human readable name of the field.
+            The human readable name of the field.
         """
         translation = self._ensure_translation(locale_id)
         msg_id_singular = f"{field_name}.singular"
@@ -170,7 +170,7 @@ class LocaleService:
             field_name: The name of the field.
 
         Returns:
-            str: The description of the field.
+            The description of the field.
         """
         translation = self._ensure_translation(locale_id)
         msg_id_description = f"{field_name}.description"

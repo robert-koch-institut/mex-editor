@@ -25,7 +25,7 @@ class CreateState(RuleState):
         """Indicates if a local draft is existing.
 
         Returns:
-            bool: Returns true if a local draft exists; otherwise false.
+            Returns true if a local draft exists; otherwise false.
         """
         return bool(self.draft_id) and self.draft_id in self.drafts
 

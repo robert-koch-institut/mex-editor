@@ -11,7 +11,7 @@ def test_login_state_login_success() -> None:
         ),
     )  # type: ignore[call-arg]
 
-    assert "/" in str(list(state.login()))  # type: ignore[misc]
+    assert "/" in str(list(state.login()))  # type: ignore[operator]
     assert state.user_mex
     assert state.user_mex.dict() == {
         "name": "writer",
@@ -28,7 +28,7 @@ def test_login_state_login_error() -> None:
         ),
     )  # type: ignore[call-arg]
 
-    event_str = str(list(state.login()))  # type: ignore[misc]
+    event_str = str(list(state.login()))  # type: ignore[operator]
     assert "toast" in event_str
     assert "error" in event_str
     assert not state.user_mex
@@ -42,5 +42,5 @@ def test_login_state_redirect_to_original_url() -> None:
             parent_state=State(target_path_after_login="/some-url/"),
         ),
     )  # type: ignore[call-arg]
-    assert "/some-url/" in str(list(state.login()))  # type: ignore[misc]
+    assert "/some-url/" in str(list(state.login()))  # type: ignore[operator]
     assert state.user_mex

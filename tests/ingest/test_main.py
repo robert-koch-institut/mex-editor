@@ -12,9 +12,9 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture
-def ingest_page(frontend_url: str, writer_user_page: Page) -> Page:
+def ingest_page(base_url: str, writer_user_page: Page) -> Page:
     page = writer_user_page
-    page.goto(f"{frontend_url}/ingest")
+    page.goto(f"{base_url}/ingest")
     section = page.get_by_test_id("aux-tab-section")
     expect(section).to_be_visible()
     return page

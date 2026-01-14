@@ -14,12 +14,12 @@ from tests.conftest import build_pagination_regex, build_ui_label_regex
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_index(
-    frontend_url: str, writer_user_page: Page, extracted_activity: ExtractedActivity
+    base_url: str, writer_user_page: Page, extracted_activity: ExtractedActivity
 ) -> None:
     page = writer_user_page
 
     # load page and establish section is visible
-    page.goto(frontend_url)
+    page.goto(base_url)
     section = page.get_by_test_id("search-results-section")
     expect(section).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_index-on-load.png")
@@ -45,11 +45,11 @@ def test_index(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_pagination_dummy_data")
 def test_pagination(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
 ) -> None:
     page = writer_user_page
-    page.goto(frontend_url)
+    page.goto(base_url)
 
     pagination_previous = page.get_by_test_id("pagination-previous-button")
     pagination_next = page.get_by_test_id("pagination-next-button")
@@ -88,11 +88,11 @@ def test_pagination(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_search_input(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
 ) -> None:
     page = writer_user_page
-    page.goto(frontend_url)
+    page.goto(base_url)
 
     # check sidebar is showing
     sidebar = page.get_by_test_id("search-sidebar")
@@ -120,11 +120,11 @@ def test_search_input(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_entity_types(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
 ) -> None:
     page = writer_user_page
-    page.goto(frontend_url)
+    page.goto(base_url)
 
     # check sidebar is showing
     sidebar = page.get_by_test_id("search-sidebar")
@@ -146,12 +146,12 @@ def test_entity_types(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_had_primary_sources(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     page = writer_user_page
-    page.goto(frontend_url)
+    page.goto(base_url)
 
     extracted_primary_source_one = dummy_data_by_identifier_in_primary_source["ps-1"]
     assert isinstance(extracted_primary_source_one, ExtractedPrimarySource)
@@ -187,14 +187,14 @@ def test_had_primary_sources(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_load_search_params(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     page = writer_user_page
     expected_model = dummy_data_by_identifier_in_primary_source["cp-2"]
     page.goto(
-        f"{frontend_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
+        f"{base_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
         f"&hadPrimarySource={expected_model.hadPrimarySource}&referenceFilterStrategy=had_primary_source"
     )
 
@@ -224,11 +224,11 @@ def test_load_search_params(
 
 @pytest.mark.integration
 def test_reference_filter_fields_for_entity_type(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
 ) -> None:
     page = writer_user_page
-    page.goto(frontend_url)
+    page.goto(base_url)
     page.wait_for_selector("[data-testid='page-body']")
 
     hps_tab = page.get_by_test_id("reference-filter-strategy-had-primary-source-tab")
@@ -292,10 +292,10 @@ def test_reference_filter_fields_for_entity_type(
 )
 @pytest.mark.integration
 def test_reference_filter_field_translation(
-    frontend_url: str, writer_user_page: Page, locale_id: str, expected_items: list[str]
+    base_url: str, writer_user_page: Page, locale_id: str, expected_items: list[str]
 ) -> None:
     page = writer_user_page
-    page.goto(frontend_url)
+    page.goto(base_url)
     page.wait_for_selector("[data-testid='page-body']")
 
     # switch language to specifid locale
@@ -312,12 +312,12 @@ def test_reference_filter_field_translation(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_reference_filter(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     page = writer_user_page
-    page.goto(frontend_url)
+    page.goto(base_url)
 
     contact = dummy_data_by_identifier_in_primary_source["cp-1"]
 
@@ -351,7 +351,7 @@ def test_reference_filter(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_push_search_params(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
@@ -360,17 +360,28 @@ def test_push_search_params(
     assert type(primary_source) is ExtractedPrimarySource
 
     # load page and verify url
-    page.goto(frontend_url)
+    page.goto(base_url)
     page.wait_for_url("**/")
 
     # select an entity type
     entity_types = page.get_by_test_id("entity-types")
     expect(entity_types).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load.png")
-    entity_types.get_by_text("Activity").click()
+    activity_checkbox = entity_types.get_by_text("Activity")
+    activity_checkbox.click()
+
+    # wait for the checkbox to actually become checked (websocket roundtrip complete)
+    # Find the actual checkbox input by its accessible role and wait for it to be checked
+    activity_checkbox_input = entity_types.get_by_role("checkbox", name="Activity")
+    expect(activity_checkbox_input).to_be_checked()
+
+    # verify exactly one checkbox is checked
     checked = entity_types.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-click.png")
+
+    # wait for search results section to stabilize
+    expect(page.get_by_test_id("search-results-section")).to_be_visible()
 
     # expect parameter change to be reflected in url
     page.wait_for_url("**/?page=1&entityType=Activity&referenceFilterStrategy=dynamic")
@@ -380,6 +391,9 @@ def test_push_search_params(
     expect(search_input).to_be_visible()
     search_input.fill("Une activité active")
     search_input.press("Enter")
+
+    # wait for search results to update
+    expect(page.get_by_test_id("search-results-section")).to_be_visible()
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
@@ -401,7 +415,17 @@ def test_push_search_params(
     page.screenshot(
         path="tests_search_test_main-test_push_search_params-on-click-2.png"
     )
+
+    # wait for the checkbox to actually become checked
+    primary_source_checkbox_input = primary_sources.get_by_role(
+        "checkbox", name=primary_source.title[0].value
+    )
+    expect(primary_source_checkbox_input).to_be_checked()
+
+    # wait for search results to update
     expect(page.get_by_test_id("search-results-section")).to_be_visible()
+
+    # verify exactly one checkbox is checked
     checked = primary_sources.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
 
@@ -416,13 +440,13 @@ def test_push_search_params(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_additional_titles_badge(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     # search for resources
     page = writer_user_page
-    page.goto(f"{frontend_url}/?entityType=Resource")
+    page.goto(f"{base_url}/?entityType=Resource")
 
     resource_r2 = dummy_data_by_identifier_in_primary_source["r-2"]
     assert isinstance(resource_r2, ExtractedResource)

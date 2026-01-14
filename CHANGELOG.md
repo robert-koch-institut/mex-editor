@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- upgrade reflex to version 0.7.14
+- fix and/or evade type checking issues with reflex event handlers
+- use pytest base_url plugin to make editor url configurable for testing
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/2039340
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
@@ -26,8 +29,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Dialogs for navigating away while having changes on create or edit page.
+- dropped npm support in favor of bun
 
 ### Fixed
+
+- fixed bun cache options for windows
 
 ### Security
 
@@ -38,7 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - consent microsite with ldap auth to allow granting/revoking user info publishing
 - CustomSelect-Component that has items with value and label instead of simple strings
 - add caching for playwright browsers and node-modules to testing workflow
-- Decorator for localized labels that creates a `ComputedVar[str]` that depends on `State.current_locale` and calls locale_service.get_text with a `label_id`
+- Decorator for localized labels that creates a `ComputedVar[str]` that depends on
+  `State.current_locale` and calls locale_service.get_text with a `label_id`
 - Localized labels for every page, component and layout
 
 ### Changes
@@ -49,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial language now picking from available languages instead of hard coded value
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - Increased global expect timeout (to 15,000) for tests
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - Using the field label for new/remove additive value button
 - renaming the field_name function to field_name_card
 - editor tests use backend-testing entrypoint

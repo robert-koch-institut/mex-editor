@@ -86,16 +86,16 @@ def render_identifier(value: EditorValue) -> rx.Component:
     """Render an editor value as a clickable internal link that loads the edit page."""
     return rx.skeleton(
         rx.link(
-            value.text,
-            href=value.href,
+            rx.cond(value.text, value.text, ""),
+            href=rx.cond(value.href, value.href, ""),
             high_contrast=True,
             role="link",
             class_name="truncate",
-            title=value.text,
+            title=rx.cond(value.text, value.text, ""),
         ),
         min_width="16ch",
         min_height="1lh",
-        loading=rx.cond(value.text, c1=False, c2=True),
+        loading=rx.cond(value.text, False, True),  # noqa: FBT003
     )
 
 
@@ -105,12 +105,12 @@ def render_external_link(value: EditorValue) -> rx.Component:
         rx.cond(
             value.text,
             value.text,
-            value.href,
+            rx.cond(value.href, value.href, ""),
         ),
-        href=value.href,
+        href=rx.cond(value.href, value.href, ""),
         high_contrast=True,
         is_external=True,
-        title=value.text,
+        title=rx.cond(value.text, value.text, ""),
         class_name="truncate",
         role="link",
     )
@@ -128,10 +128,10 @@ def render_link(value: EditorValue) -> rx.Component:
 def render_span(text: str | None) -> rx.Component:
     """Render a generic span with the given text."""
     return rx.text(
-        text,
+        rx.cond(text, text, ""),
         as_="span",
         class_name="truncate",
-        title=text,
+        title=rx.cond(text, text, ""),
     )
 
 
@@ -141,7 +141,7 @@ def render_text(value: EditorValue) -> rx.Component:
         render_span(value.text),
         min_width="16ch",
         min_height="1lh",
-        loading=rx.cond(value.text, c1=False, c2=True),
+        loading=rx.cond(value.text, False, True),  # noqa: FBT003
     )
 
 

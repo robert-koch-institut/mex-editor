@@ -22,13 +22,13 @@ from mex.editor.rules.transform import get_required_mergeable_field_names
 
 @pytest.fixture
 def edit_page(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
     extracted_activity: ExtractedActivity,
     load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
     page = writer_user_page
-    page.goto(f"{frontend_url}/item/{extracted_activity.stableTargetId}")
+    page.goto(f"{base_url}/item/{extracted_activity.stableTargetId}")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
     return page

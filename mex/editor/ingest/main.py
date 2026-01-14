@@ -23,7 +23,7 @@ def expand_properties_button(result: IngestResult, index: int) -> rx.Component:
             rx.icon("minimize-2", size=15),
             rx.icon("maximize-2", size=15),
         ),
-        on_click=IngestState.toggle_show_properties(index),  # type: ignore[misc]
+        on_click=IngestState.toggle_show_properties(index),  # type: ignore[operator]
         align="end",
         color_scheme="gray",
         variant="surface",
@@ -40,7 +40,7 @@ def ingest_button(result: IngestResult, index: int) -> rx.Component:
             align="end",
             color_scheme="jade",
             variant="surface",
-            on_click=IngestState.ingest_result(index),  # type: ignore[misc]
+            on_click=IngestState.ingest_result(index),  # type: ignore[operator]
             width="calc(8em * var(--scaling))",
             custom_attrs={"data-testid": f"ingest-button-{index}"},
         ),

@@ -11,11 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update reflex env vars to use `REFLEX_` prefix in dockerfile
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- fix application specifier for new uvicorn version
 
 ### Security
 
@@ -26,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - LocalStorage to store drafts and edits local on browser side.
 - add cve scanning of frontend dependencies
 - Dialog to search for entities by name and entity-type.
+- Decorator for localized labels that creates a `ComputedVar[str]` that depends on
+  `State.current_locale` and calls locale_service.get_text with a `label_id`
+- Localized labels for every page, component and layout
 
 ### Changes
 
@@ -37,6 +44,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
 - Using href navigation instead of navigation via code (`page.navigate()`).
 - Refactored pagination into state mixin and component with options.
+- Removed .mo files and converting .po files at runtime with polib
+- tests:
+  - Increased global expect timeout (to 10,000)
+  - replaced all locators thats searched for localized strings with data_test_id searches
+  - replaced localized string compares with regexs
+- change failed login alert type from browser dialog to toast
 
 ### Removed
 
@@ -46,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fixed bun cache options for windows
+- fix broken unit tests and flaky additional title test
 
 ## [1.2.0] - 2025-11-28
 
@@ -54,9 +68,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - consent microsite with ldap auth to allow granting/revoking user info publishing
 - CustomSelect-Component that has items with value and label instead of simple strings
 - add caching for playwright browsers and node-modules to testing workflow
-- Decorator for localized labels that creates a `ComputedVar[str]` that depends on
-  `State.current_locale` and calls locale_service.get_text with a `label_id`
-- Localized labels for every page, component and layout
 
 ### Changes
 
@@ -66,22 +77,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial language now picking from available languages instead of hard coded value
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - Increased global expect timeout (to 15,000) for tests
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - Using the field label for new/remove additive value button
 - renaming the field_name function to field_name_card
 - editor tests use backend-testing entrypoint
 - prefer using enum names over just raw strings in tests
-- Removed .mo files and converting .po files at runtime with polib
-- tests:
-    - Increased global expect timeout (to 10,000)
-    - replaced all locators thats searched for localized strings with data_test_id searches
-    - replaced localized string compares with regexs
 - change external test marker to requires_rki_infrastructure
-- change failed login alert type from browser dialog to toast
 
 ### Fixed
 
-- fix broken unit tests and flaky additional title test
 - Page numbers on search and ingest page
 
 ## [1.1.0] - 2025-10-10

@@ -288,10 +288,10 @@ def search_results() -> rx.Component:
             SearchState.results,
             SearchResultsComponentOptions(
                 summary_text=SearchState.label_result_summary_format,
-                list=SearchResultsListOptions(
+                list_options=SearchResultsListOptions(
                     item_options=SearchResultsListItemOptions(enable_title_href=True)
                 ),
-                pagination=build_pagination_options(
+                pagination_options=build_pagination_options(
                     SearchState, SearchState.push_search_params
                 ),
             ),

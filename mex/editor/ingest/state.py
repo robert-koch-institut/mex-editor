@@ -33,7 +33,7 @@ class IngestState(State, PaginationStateMixin):
 
     @rx.event
     def toggle_show_all_properties(self, item: IngestResult, index: int) -> None:
-        """Toggle if all properties are visible for given identifier."""
+        """Toggle if all properties are visible for given item at index."""
         self.results_transformed[
             index
         ].show_all_properties = not item.show_all_properties

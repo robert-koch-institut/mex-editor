@@ -106,10 +106,10 @@ def search_results() -> rx.Component:
             IngestState.results_transformed,  # type: ignore[arg-type]
             SearchResultsComponentOptions(
                 summary_text=IngestState.label_search_result_summary_format,
-                pagination=build_pagination_options(
+                pagination_options=build_pagination_options(
                     IngestState, IngestState.flag_ingested_items
                 ),
-                list=SearchResultsListOptions(
+                list_options=SearchResultsListOptions(
                     item_options=SearchResultsListItemOptions(
                         enable_show_all_properties=True,
                         on_toggle_show_all_properties=IngestState.toggle_show_all_properties,

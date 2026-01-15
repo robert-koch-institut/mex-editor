@@ -175,21 +175,21 @@ def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
             custom_attrs={"data-testid": f"create-heading-{category}"},
         ),
         search_input(category),
-        rx.el.div(
+        rx.box(
             rx.cond(
                 category == "merged",
                 search_results_component(
                     MergeState.results_merged,
                     SearchResultsComponentOptions(
                         summary_text=MergeState.label_result_summary_format_merged,
-                        list=list_options,
+                        list_options=list_options,
                     ),
                 ),
                 search_results_component(
                     MergeState.results_extracted,
                     SearchResultsComponentOptions(
                         summary_text=MergeState.label_result_summary_format_extracted,
-                        list=list_options,
+                        list_options=list_options,
                     ),
                 ),
             ),

@@ -21,7 +21,6 @@ from mex.editor.search.models import (
     ReferenceFieldFilter,
     ReferenceFieldIdentifierFilter,
     SearchPrimarySource,
-    # SearchResult,
 )
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.search.value_label_select import ValueLabelSelectItem

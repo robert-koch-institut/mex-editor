@@ -1,6 +1,5 @@
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any
 
 import reflex as rx
 from reflex.event import EventCallback
@@ -41,14 +40,13 @@ class SearchResultsListOptions:
 def search_results_list(
     items: list[SearchResult] | rx.Var[list[SearchResult]],
     options: SearchResultsListOptions | None = None,
-    **kwargs: dict[str, Any],
+    style: rx.Style | None = None,
 ) -> rx.Component:
     """Render a list of search results items."""
     options = options or SearchResultsListOptions()
 
-    style = rx.Style(overflow="auto")
-    input_style = kwargs.pop("style", rx.Style())
-    style.update(input_style)
+    used_style = rx.Style(overflow="auto")
+    used_style.update(style or {})
 
     def render_properties(
         properties: list[EditorValue], property_type: str
@@ -163,7 +161,7 @@ def search_results_list(
             rx.foreach(
                 items, lambda x, i: search_results_item(x, i, options.item_options)
             ),
-            style=style,
+            style=used_style,
             custom_attrs={"data-testid": "search-results-list"},
         ),
     )
@@ -188,34 +186,33 @@ class SearchResultsComponentOptions:
     """Options for the search results component."""
 
     summary_text: rx.Var[str]
-    list: SearchResultsListOptions
-    pagination: PaginationOptions | None = None
+    list_options: SearchResultsListOptions
+    pagination_options: PaginationOptions | None = None
 
 
 def search_results_component(
     results: rx.Var[list[SearchResult]] | list[SearchResult],
     options: SearchResultsComponentOptions,
-    **kwargs: dict[str, Any],
+    style: rx.Style | None = None,
 ) -> rx.Component:
     """Render the search result component with summary, list, and pagination."""
-    style = rx.Style(overflow="auto")
-    input_style = kwargs.pop("style", rx.Style())
-    style.update(input_style)
+    used_style = rx.Style(overflow="auto")
+    used_style.update(style or {})
 
     content = [
         rx.center(search_results_summary(options.summary_text)),
         search_results_list(
             results,
-            options.list,
+            options.list_options,
         ),
     ]
-    if options.pagination:
-        content.append(rx.center(pagination(options.pagination)))
+    if options.pagination_options:
+        content.append(rx.center(pagination(options.pagination_options)))
 
     return rx.vstack(
         *content,
         spacing="4",
         custom_attrs={"data-testid": "search-results-component"},
         align="stretch",
-        style=style,
+        style=used_style,
     )

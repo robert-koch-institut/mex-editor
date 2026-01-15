@@ -1,11 +1,9 @@
 import reflex as rx
-from fastapi.responses import PlainTextResponse
 from reflex.components.radix import themes
 from reflex.utils.console import info as log_info
 
 from mex.common.logging import logger
 from mex.editor.api.main import api as editor_api
-from mex.editor.api.main import check_system_status, get_prometheus_metrics
 from mex.editor.consent.main import index as consent_index
 from mex.editor.consent.state import ConsentState
 from mex.editor.create.main import index as create_index
@@ -27,6 +25,7 @@ from mex.editor.utils import load_settings
 app = rx.App(
     theme=themes.theme(accent_color="blue", has_background=False),
     style={">a": {"opacity": "0"}},
+    api_transformer=editor_api,
 )
 app.add_page(
     search_index,
@@ -112,23 +111,6 @@ app.add_page(
         ConsentState.get_consent,
     ],
 )
-if app.api:  # stopgap reflex 0.7.4
-    app.api.add_api_route(
-        "/_system/check",
-        check_system_status,
-        tags=["system"],
-    )
-    app.api.add_api_route(
-        "/_system/metrics",
-        get_prometheus_metrics,
-        response_class=PlainTextResponse,
-        tags=["system"],
-    )
-    app.api.title = editor_api.title
-    app.api.version = editor_api.version
-    app.api.contact = editor_api.contact
-    app.api.description = editor_api.description
-
 app.register_lifespan_task(
     lambda: logger.info(load_settings().text()),
 )

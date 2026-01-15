@@ -484,14 +484,10 @@ def test_transform_model_to_editor_primary_sources(
     expected_family_name: list[EditorPrimarySource],
 ) -> None:
     given_name = EditorField(
-        name="givenName",
-        primary_sources=[],
-        is_required=False,
+        name="givenName", primary_sources=[], is_required=False, value_type=["str"]
     )
     family_name = EditorField(
-        name="familyName",
-        primary_sources=[],
-        is_required=False,
+        name="familyName", primary_sources=[], is_required=False, value_type=["str"]
     )
     fields_by_name = {"givenName": given_name, "familyName": family_name}
 
@@ -521,6 +517,7 @@ def test_transform_models_to_fields() -> None:
     fields_by_name = {f.name: f for f in editor_fields}
     assert fields_by_name["givenName"].dict() == {
         "is_required": False,
+        "value_type": ["str"],
         "name": "givenName",
         "primary_sources": [
             {
@@ -587,6 +584,7 @@ def test_transform_models_to_fields() -> None:
     }
     assert fields_by_name["memberOf"].dict() == {
         "is_required": False,
+        "value_type": ["MergedOrganizationalUnit"],
         "name": "memberOf",
         "primary_sources": [
             {
@@ -650,6 +648,7 @@ def test_transform_models_to_fields() -> None:
             EditorField(
                 name="unknownField",
                 is_required=False,
+                value_type=[],
                 primary_sources=[
                     EditorPrimarySource(
                         enabled=True,
@@ -666,6 +665,7 @@ def test_transform_models_to_fields() -> None:
             EditorField(
                 name="familyName",
                 is_required=False,
+                value_type=["str"],
                 primary_sources=[
                     EditorPrimarySource(
                         enabled=True,
@@ -697,6 +697,7 @@ def test_transform_fields_to_additive(
             EditorField(
                 name="unknownField",
                 is_required=False,
+                value_type=[],
                 primary_sources=[
                     EditorPrimarySource(
                         enabled=True,
@@ -715,6 +716,7 @@ def test_transform_fields_to_additive(
             EditorField(
                 name="familyName",
                 is_required=False,
+                value_type=["str"],
                 primary_sources=[
                     EditorPrimarySource(
                         enabled=True,
@@ -861,6 +863,7 @@ def test_transform_editor_value_to_model_value(
             EditorField(
                 name="unknownField",
                 is_required=False,
+                value_type=[],
                 primary_sources=[
                     EditorPrimarySource(
                         name=EditorValue(text="Primary Source 1"),
@@ -877,6 +880,7 @@ def test_transform_editor_value_to_model_value(
             EditorField(
                 name="familyName",
                 is_required=False,
+                value_type=["str"],
                 primary_sources=[
                     EditorPrimarySource(
                         name=EditorValue(text="Primary Source 1"),
@@ -918,6 +922,7 @@ def test_transform_fields_to_rule_set() -> None:
             EditorField(
                 name="givenName",
                 is_required=False,
+                value_type=["str"],
                 primary_sources=[
                     EditorPrimarySource(
                         name=EditorValue(text="Enabled Primary Source"),
@@ -938,6 +943,7 @@ def test_transform_fields_to_rule_set() -> None:
             EditorField(
                 name="familyName",
                 is_required=False,
+                value_type=["str"],
                 primary_sources=[
                     EditorPrimarySource(
                         name=EditorValue(text="Primary Source 1"),

@@ -1,5 +1,4 @@
 import re
-from collections.abc import Generator
 from typing import Any, cast
 
 import pytest
@@ -83,12 +82,6 @@ def set_identity_provider(
         monkeypatch.setattr(settings, "identity_provider", IdentityProvider.MEMORY)
 
 
-@pytest.fixture
-def frontend_url() -> str:
-    """Return the URL of the current local frontend server for testing."""
-    return "http://localhost:3000"
-
-
 @pytest.fixture(autouse=True)
 def patch_editor_user_database(
     is_integration_test: bool,  # noqa: FBT001
@@ -116,10 +109,8 @@ def writer_user_credentials() -> tuple[str, SecretStr]:
     raise RuntimeError(msg)  # pragma: no cover
 
 
-def login_user(
-    frontend_url: str, page: Page, username: str, password: SecretStr
-) -> Page:
-    page.goto(frontend_url)
+def login_user(base_url: str, page: Page, username: str, password: SecretStr) -> Page:
+    page.goto(base_url)
     page.get_by_test_id("input-username").fill(username)
     page.get_by_test_id("input-password").fill(password.get_secret_value())
     page.get_by_test_id("login-button").click()
@@ -128,9 +119,9 @@ def login_user(
 
 @pytest.fixture
 def writer_user_page(
-    page: Page, writer_user_credentials: tuple[str, SecretStr], frontend_url: str
+    page: Page, writer_user_credentials: tuple[str, SecretStr], base_url: str
 ) -> Page:
-    login_user(frontend_url, page, *writer_user_credentials)
+    login_user(base_url, page, *writer_user_credentials)
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
     page.set_default_navigation_timeout(50_000)
     page.set_default_timeout(30_000)
@@ -336,10 +327,11 @@ def extracted_activity(
 
 
 @pytest.fixture
-def artificial_extracted_items() -> Generator[AnyExtractedModel, None, None]:
+def artificial_extracted_items() -> list[AnyExtractedModel]:
     return generate_artificial_extracted_items(
         locale="de_DE",
         seed=42,
+        count=50,
         chattiness=16,
         stem_types=list(EXTRACTED_MODEL_CLASSES_BY_NAME),
     )

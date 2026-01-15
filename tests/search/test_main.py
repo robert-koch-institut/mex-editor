@@ -381,7 +381,7 @@ def test_push_search_params(
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-click.png")
 
     # wait for search results section to stabilize
-    expect(page.get_by_test_id("search-results-section")).to_be_visible()
+    expect(page.get_by_test_id("search-results-component")).to_be_visible()
 
     # expect parameter change to be reflected in url
     page.wait_for_url("**/?page=1&entityType=Activity&referenceFilterStrategy=dynamic")
@@ -393,7 +393,7 @@ def test_push_search_params(
     search_input.press("Enter")
 
     # wait for search results to update
-    expect(page.get_by_test_id("search-results-section")).to_be_visible()
+    expect(page.get_by_test_id("search-results-component")).to_be_visible()
 
     # expect parameter change to be reflected in url
     page.wait_for_url(

@@ -83,7 +83,7 @@ class IngestState(State, PaginationStateMixin):
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results_transformed:
@@ -92,7 +92,7 @@ class IngestState(State, PaginationStateMixin):
                     async with self:
                         await resolve_editor_value(value)
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def flag_ingested_items(self) -> None:
         """Check and flag, if any result is already ingested into backend."""
         connector = BackendApiConnector.get()
@@ -127,8 +127,8 @@ class IngestState(State, PaginationStateMixin):
             self.is_loading = False
             self.results_transformed = []
             self.results_extracted = []
-            yield self.set_total(0)  # type: ignore[misc]
-            yield self.set_current_page(1)  # type: ignore[misc]
+            yield IngestState.set_total(0)  # type: ignore[operator]
+            yield IngestState.set_current_page(1)  # type: ignore[operator]
             yield None
             yield from escalate_error(
                 "backend",
@@ -142,7 +142,7 @@ class IngestState(State, PaginationStateMixin):
             )
             self.results_extracted = container.items
             self.results_transformed = transform_models_to_results(container.items)
-            self.set_total(container.total)  # type: ignore[misc]
+            self.set_total(container.total)  # type: ignore[operator]
 
     @label_var(label_id="ingest.button_ingest")
     def label_button_ingest(self) -> None:

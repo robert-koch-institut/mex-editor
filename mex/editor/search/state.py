@@ -124,16 +124,16 @@ class SearchState(State, PaginationStateMixin):
         self.reference_field_filter.identifiers.append(
             ReferenceFieldIdentifierFilter(value="", validation_msg=None)
         )
-        SearchState.set_reference_field_filter_identifier(  # type: ignore[misc]
+        self.set_reference_field_filter_identifier(
             len(self.reference_field_filter.identifiers) - 1, ""
-        )
+        )  # type: ignore[operator]
 
     @rx.var(cache=False)
     def all_fields_for_entity_types(self) -> list[ValueLabelSelectItem]:
         """Get all fields for the currently selected entity types filter.
 
         Returns:
-            list[str]: The fields for the selected entity types.
+            The fields for the selected entity types.
         """
         selected_entity_types = [
             item[0]
@@ -175,7 +175,7 @@ class SearchState(State, PaginationStateMixin):
     def load_search_params(self) -> None:
         """Load url params into the state."""
         router: RouterData = self.get_value("router")
-        self.set_current_page(router.page.params.get("page", 1))  # type: ignore[misc]
+        self.set_current_page(router.page.params.get("page", 1))  # type: ignore[operator]
         self.query_string = router.page.params.get("q", "")
         type_params = router.page.params.get("entityType", [])
         type_params = type_params if isinstance(type_params, list) else [type_params]
@@ -260,7 +260,7 @@ class SearchState(State, PaginationStateMixin):
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results:
@@ -297,15 +297,15 @@ class SearchState(State, PaginationStateMixin):
         except HTTPError as exc:
             self.is_loading = False
             self.results = []
-            yield self.set_total(0)  # type: ignore[misc]
-            yield self.set_current_page(1)  # type: ignore[misc]
+            yield SearchState.set_total(0)  # type: ignore[operator]
+            yield SearchState.set_current_page(1)  # type: ignore[operator]
             yield from escalate_error(
                 "backend", "error fetching merged items", exc.response.text
             )
         else:
             self.is_loading = False
             self.results = transform_models_to_results(response.items)
-            yield self.set_total(response.total)  # type: ignore[misc]
+            yield SearchState.set_total(response.total)  # type: ignore[operator]
 
     @rx.event
     def get_available_primary_sources(self) -> Generator[EventSpec, None, None]:

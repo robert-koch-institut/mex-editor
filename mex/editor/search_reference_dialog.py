@@ -91,9 +91,9 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
             self.user_query = ""
             self.user_reference_types = []
             self.results = []
-            self.reset_pagination()  # type: ignore[misc]
+            self.reset_pagination()  # type: ignore[operator]
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results:
@@ -112,7 +112,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
             if str(key).startswith("reference_type")
         ]
 
-        yield from self.search()  # type: ignore[misc]
+        yield SearchReferenceDialogState.search  # type: ignore[misc]
 
     @rx.event
     def search(self) -> Generator[EventSpec | None, None, None]:
@@ -134,7 +134,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
             self.is_loading = False
             self.results = []
             self.total = 0
-            yield self.set_current_page(1)  # type: ignore[misc]
+            yield SearchReferenceDialogState.set_current_page(1)  # type: ignore[operator]
             yield None
             yield from escalate_error(
                 "backend", "error fetching merged items", exc.response.text
@@ -142,7 +142,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
         else:
             self.is_loading = False
             self.results = transform_models_to_dialog_results(response.items)
-            yield self.set_total(response.total)  # type: ignore[misc]
+            yield SearchReferenceDialogState.set_total(response.total)  # type: ignore[operator]
 
 
 def search_reference_dialog(
@@ -179,7 +179,7 @@ def search_reference_dialog(
                     SearchResultsListOptions(
                         item_options=SearchResultsListItemOptions(
                             enable_show_all_properties=True,
-                            on_toggle_show_all_properties=SearchReferenceDialogState.toggle_show_all_properties,
+                            on_toggle_show_all_properties=SearchReferenceDialogState.toggle_show_all_properties,  # type: ignore[arg-type]
                             render_title_fn=render_select_button,
                         )
                     ),

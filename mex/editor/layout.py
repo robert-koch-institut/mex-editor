@@ -63,7 +63,7 @@ def language_switcher() -> rx.Component:
                 locale_service.get_available_locales(),
                 lambda locale: rx.menu.item(
                     rx.text(locale.label),
-                    on_click=State.change_locale(locale.id),  # type: ignore[misc]
+                    on_click=State.change_locale(locale.id),  # type: ignore[operator]
                     custom_attrs={
                         "data-testid": f"language-switcher-menu-item-{locale.id}"
                     },
@@ -74,7 +74,7 @@ def language_switcher() -> rx.Component:
 
 
 def render_draft_menu_item(draft: UserDraft) -> rx.Component:
-    """Render a navigatable menu item for the given draft."""
+    """Render a navigable menu item for the given draft."""
     return rx.menu.item(
         rx.link(
             rx.hstack(

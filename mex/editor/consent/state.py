@@ -127,8 +127,8 @@ class ConsentState(State):
     @rx.event
     def get_all_data(self) -> Generator[EventSpec | None, None, None]:
         """Fetch all data for the user."""
-        yield from self.fetch_data("projects")  # type: ignore[misc]
-        yield from self.fetch_data("resources")  # type: ignore[misc]
+        yield type(self).fetch_data("projects")  # type: ignore[operator]
+        yield type(self).fetch_data("resources")  # type: ignore[operator]
 
     @rx.event
     def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
@@ -244,8 +244,8 @@ class ConsentState(State):
             )
             return
         else:
-            yield from self.get_consent()  # type: ignore[misc]
-            yield self.show_submit_success_toast()  # type: ignore[misc]
+            yield type(self).get_consent()  # type: ignore[operator]
+            yield type(self).show_submit_success_toast()  # type: ignore[operator]
 
     def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:
         """Send the rule set to the backend."""
@@ -266,7 +266,7 @@ class ConsentState(State):
             duration=5000,
         )
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human-readable display values."""
         for result_list in (

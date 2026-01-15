@@ -9,11 +9,11 @@ from mex.editor.settings import EditorSettings
 @pytest.fixture
 def login_ldap_user(
     page: Page,
-    frontend_url: str,
+    base_url: str,
 ) -> Page:
     settings = EditorSettings.get()
     url = urlsplit(settings.ldap_url.get_secret_value())
-    page.goto(f"{frontend_url}/consent")
+    page.goto(f"{base_url}/consent")
     page.get_by_test_id("input-username").fill(str(url.username))
     page.get_by_test_id("input-password").fill(str(url.password))
     page.get_by_test_id("login-button").click()
@@ -25,11 +25,11 @@ def login_ldap_user(
 
 @pytest.fixture
 def consent_page(
-    frontend_url: str,
+    base_url: str,
     login_ldap_user: Page,
 ) -> Page:
     page = login_ldap_user
-    page.goto(f"{frontend_url}/consent")
+    page.goto(f"{base_url}/consent")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
     page.screenshot(path="tests_consent_test_main-test_index-on-load.png")

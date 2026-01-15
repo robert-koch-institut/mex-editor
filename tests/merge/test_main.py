@@ -11,11 +11,11 @@ from tests.conftest import build_pagination_regex, build_ui_label_regex
 
 @pytest.fixture
 def merge_page(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
 ) -> Page:
     page = writer_user_page
-    page.goto(f"{frontend_url}/merge")
+    page.goto(f"{base_url}/merge")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
     page.screenshot(path="tests_merge_items_test_main-test_index-on-load.png")

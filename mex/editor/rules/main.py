@@ -25,7 +25,7 @@ def editor_value_switch(
     """Return a switch for toggling subtractive rules."""
     return rx.switch(
         checked=value.enabled,
-        on_change=RuleState.toggle_field_value(field_name, value),  # type: ignore[misc]
+        on_change=RuleState.toggle_field_value(field_name, value),  # type: ignore[operator]
         custom_attrs={
             "data-testid": f"switch-{field_name}-{primary_source.identifier}-{index}"
         },
@@ -57,8 +57,8 @@ def editor_edit_button(
         variant="soft",
         size="1",
         on_click=[
-            RuleState.toggle_field_value_editing(field_name, index),  # type: ignore[misc]
-            RuleState.resolve_identifiers,  # type: ignore[misc]
+            RuleState.toggle_field_value_editing(field_name, index),  # type: ignore[operator]
+            RuleState.resolve_identifiers,
         ],
         custom_attrs={
             "data-testid": (
@@ -139,7 +139,7 @@ def remove_additive_button(
         color_scheme="tomato",
         variant="soft",
         size="1",
-        on_click=RuleState.remove_additive_value(field_name, index),  # type: ignore[misc]
+        on_click=RuleState.remove_additive_value(field_name, index),  # type: ignore[operator]
         custom_attrs={
             "data-testid": f"additive-rule-{field_name}-{index}-remove-button"
         },
@@ -154,8 +154,8 @@ def href_input(
     """Render an input component for editing a href attribute."""
     return rx.input(
         placeholder="URL",
-        value=href,
-        on_change=RuleState.set_href_value(field_name, index),  # type: ignore[misc]
+        value=rx.cond(href, href, ""),
+        on_change=RuleState.set_href_value(field_name, index),  # type: ignore[operator]
         style=rx.Style(
             margin="calc(-1 * var(--space-1))",
             width="100%",
@@ -172,8 +172,8 @@ def text_input(
     """Render an input component for editing a text attribute."""
     return rx.input(
         placeholder="Text",
-        value=text,
-        on_change=RuleState.set_text_value(field_name, index),  # type: ignore[misc]
+        value=rx.cond(text, text, ""),
+        on_change=RuleState.set_text_value(field_name, index),  # type: ignore[operator]
         style=rx.Style(
             margin="calc(-1 * var(--space-1))",
             width="100%",
@@ -190,8 +190,8 @@ def textarea_input(
     """Render a textarea component for editing a textarea attribute."""
     return rx.text_area(
         placeholder="Text",
-        value=text,
-        on_change=RuleState.set_text_value(field_name, index),  # type: ignore[misc]
+        value=rx.cond(text, text, ""),
+        on_change=RuleState.set_text_value(field_name, index),  # type: ignore[operator]
         style=rx.Style(
             margin="calc(-1 * var(--space-1))",
             width="100%",
@@ -212,8 +212,8 @@ def identifier_input(
     return rx.hstack(
         rx.input(
             placeholder="Identifier",
-            value=identifier,
-            on_change=RuleState.set_identifier_value(field.name, index),  # type: ignore[misc]
+            value=rx.cond(identifier, identifier, ""),
+            on_change=RuleState.set_identifier_value(field.name, index),  # type: ignore[operator]
             style=rx.Style(
                 margin="calc(-1 * var(--space-1))",
                 width="100%",
@@ -226,7 +226,7 @@ def identifier_input(
         search_reference_dialog(
             on_identifier_selected=lambda x: RuleState.set_identifier_value(
                 field_translation.field.name, index, x
-            ),  # type: ignore[misc]
+            ),  # type: ignore[operator]
             reference_types=field_translation.field.value_type,
             field_label=field_translation.label,
         ),
@@ -252,13 +252,13 @@ def badge_input(
                 value=rx.cond(
                     badge,
                     badge,
-                    input_config.badge_default,
+                    rx.cond(input_config.badge_default, input_config.badge_default, ""),
                 ),
                 size="1",
                 variant="soft",
                 radius="large",
                 color_scheme="gray",
-                on_change=RuleState.set_badge_value(field_name, index),  # type: ignore[misc]
+                on_change=RuleState.set_badge_value(field_name, index),  # type: ignore[operator]
                 custom_attrs={
                     "data-testid": f"additive-rule-{field_name}-{index}-badge"
                 },
@@ -341,7 +341,10 @@ def primary_source_switch(
     """Return a switch for toggling preventive rules."""
     return rx.switch(
         checked=primary_source.enabled,
-        on_change=RuleState.toggle_primary_source(field_name, primary_source.name.href),  # type: ignore[misc]
+        on_change=RuleState.toggle_primary_source(
+            field_name,
+            primary_source.name.href,
+        ),  # type: ignore[operator]
         custom_attrs={
             "data-testid": f"switch-{field_name}-{primary_source.identifier}"
         },
@@ -395,7 +398,7 @@ def new_additive_button(
             color_scheme="jade",
             variant="soft",
             size="1",
-            on_click=RuleState.add_additive_value(field_name),  # type: ignore[misc]
+            on_click=RuleState.add_additive_value(field_name),  # type: ignore[operator]
             custom_attrs={
                 "data-testid": f"new-additive-{field_name}-{primary_source_identifier}"
             },
@@ -549,10 +552,10 @@ def submit_button() -> rx.Component:
         size="3",
         color_scheme="jade",
         on_click=[
-            RuleState.set_is_submitting(True),  # type: ignore[misc]
+            RuleState.set_is_submitting(value=True),  # type: ignore[operator]
             RuleState.submit_rule_set,
             RuleState.resolve_identifiers,
-            RuleState.set_is_submitting(False),  # type: ignore[misc]
+            RuleState.set_is_submitting(value=False),  # type: ignore[operator]
         ],
         disabled=RuleState.is_submitting,
         style=rx.Style(margin="var(--line-height-1) 0"),

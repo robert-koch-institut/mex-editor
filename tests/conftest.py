@@ -1,4 +1,5 @@
 import re
+from collections.abc import Generator
 from typing import Any, cast
 
 import pytest
@@ -327,11 +328,10 @@ def extracted_activity(
 
 
 @pytest.fixture
-def artificial_extracted_items() -> list[AnyExtractedModel]:
+def artificial_extracted_items() -> Generator[AnyExtractedModel, None, None]:
     return generate_artificial_extracted_items(
         locale="de_DE",
         seed=42,
-        count=50,
         chattiness=16,
         stem_types=list(EXTRACTED_MODEL_CLASSES_BY_NAME),
     )

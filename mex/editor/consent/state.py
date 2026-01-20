@@ -23,8 +23,7 @@ from mex.common.types import (
 )
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
-from mex.editor.models import NavItem
-from mex.editor.search.models import SearchResult
+from mex.editor.models import NavItem, SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value

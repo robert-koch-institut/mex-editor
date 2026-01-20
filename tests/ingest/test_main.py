@@ -106,13 +106,13 @@ def test_search_and_ingest_roundtrip(
     expect(page.get_by_test_id("pagination-page-select")).to_be_visible()
 
     # test expand button works
-    expand_button = page.get_by_test_id("expand-properties-button-0")
+    expand_button = page.get_by_test_id("toggle-show-all-properties-button").first
     expect(expand_button).to_be_visible()
 
     page.screenshot(path=f"tests_ingest_test_main-roundtrip_{aux_provider}.png")
-    expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
+    expect(page.get_by_test_id("display-properties-all")).not_to_be_visible()
     expand_button.click()
-    expect(page.get_by_test_id("all-properties-display")).to_be_visible()
+    expect(page.get_by_test_id("display-properties-all")).to_be_visible()
     page.screenshot(
         path=f"tests_ingest_test_main-roundtrip_{aux_provider}-expanded.png"
     )

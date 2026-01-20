@@ -11,7 +11,7 @@ from mex.editor.exceptions import escalate_error
 from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider, IngestResult
 from mex.editor.ingest.transform import transform_models_to_results
 from mex.editor.label_var import label_var
-from mex.editor.pagination_state_mixin import PaginationStateMixin
+from mex.editor.pagination_component import PaginationStateMixin
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 
@@ -32,11 +32,11 @@ class IngestState(State, PaginationStateMixin):
         return len(self.results_transformed)
 
     @rx.event
-    def toggle_show_properties(self, index: int) -> None:
-        """Toggle the show properties state."""
-        self.results_transformed[index].show_properties = not self.results_transformed[
+    def toggle_show_all_properties(self, item: IngestResult, index: int) -> None:
+        """Toggle if all properties are visible for given item at index."""
+        self.results_transformed[
             index
-        ].show_properties
+        ].show_all_properties = not item.show_all_properties
 
     @rx.event
     def set_current_aux_provider(self, value: str) -> None:

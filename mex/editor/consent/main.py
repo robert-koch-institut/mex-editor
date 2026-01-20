@@ -5,7 +5,7 @@ import reflex as rx
 from mex.editor.components import render_value
 from mex.editor.consent.layout import page
 from mex.editor.consent.state import ConsentState
-from mex.editor.search.main import search_result
+from mex.editor.search_reference_dialog import search_results_list
 
 
 def resources() -> rx.Component:
@@ -18,12 +18,7 @@ def resources() -> rx.Component:
                 textTransform="uppercase",
             ),
         ),
-        rx.vstack(
-            rx.foreach(
-                ConsentState.user_resources,
-                search_result,
-            ),
-        ),
+        search_results_list(ConsentState.user_resources),
         consent_pagination("resources"),
         style=rx.Style(
             textAlign="center",
@@ -43,12 +38,7 @@ def projects() -> rx.Component:
                 textTransform="uppercase",
             ),
         ),
-        rx.vstack(
-            rx.foreach(
-                ConsentState.user_projects,
-                search_result,
-            ),
-        ),
+        search_results_list(ConsentState.user_projects),
         consent_pagination("projects"),
         style=rx.Style(
             textAlign="center",

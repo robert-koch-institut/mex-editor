@@ -22,7 +22,9 @@ dependencies = [
     "typer>=0.21",
     "uvicorn>=0.40",
 ]
-optional-dependencies.dev = [
+
+[dependency-groups]
+dev = [
     "ipdb>=0.13",
     "mex-artificial>=1",
     "mypy>=1",
@@ -55,21 +57,6 @@ context = 5
 python_version = "3.11"
 show_error_codes = true
 plugins = ["pydantic.mypy"]
-
-[tool.pdm]
-distribution = true
-
-[tool.pdm.scripts]
-update-all = { cmd = "pdm update --group :all --update-all --save-compatible" }
-lock-all = { cmd = "pdm lock --group :all --python='==3.11.*'" }
-install-lockfile = { cmd = "pdm install --group :all --frozen-lockfile" }
-install-playwright = { cmd = "pdm run playwright install firefox" }
-install-all = { composite = ["install-lockfile", "install-playwright"] }
-apidoc = { cmd = "pdm run sphinx-apidoc -f -o docs/source mex" }
-sphinx = { cmd = "pdm run sphinx-build -aE -b dirhtml docs docs/dist" }
-doc = { composite = ["apidoc", "sphinx"] }
-lint = { cmd = "pre-commit run --all-files" }
-test = { cmd = "pdm run pytest -m 'not external'" }
 
 [tool.pydantic-mypy]
 warn_untyped_fields = true

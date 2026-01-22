@@ -23,9 +23,9 @@ from mex.editor.search.models import (
     SearchResult,
 )
 from mex.editor.search.transform import transform_models_to_results
-from mex.editor.search.value_label_select import ValueLabelSelectItem
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
+from mex.editor.value_label_select import ValueLabelSelectItem
 
 if TYPE_CHECKING:
     from reflex.istate.data import RouterData

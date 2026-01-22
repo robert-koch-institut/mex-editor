@@ -34,6 +34,11 @@ class State(rx.State):
             raw_path="/?page=1",
         ),
         NavItem(
+            title="layout.nav_bar.advanced_search_navitem",
+            path="/advanced-search",
+            raw_path="/advanced-search/?page=1",
+        ),
+        NavItem(
             title="layout.nav_bar.create_navitem",
             path="/create",
             raw_path="/create/",

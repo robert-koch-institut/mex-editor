@@ -208,3 +208,6 @@ msgstr "We are sorry, but there are no entries for '{}' :("
 
 msgid "search_reference_dialog.results.select_button"
 msgstr "Select"
+
+msgid "layout.nav_bar.advanced_search_navitem"
+msgstr "Advanced Search"

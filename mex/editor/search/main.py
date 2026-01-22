@@ -15,7 +15,7 @@ from mex.editor.search.models import (
     SearchResult,
 )
 from mex.editor.search.state import SearchState, full_refresh
-from mex.editor.search.value_label_select import value_label_select
+from mex.editor.value_label_select import value_label_select
 
 
 def search_result(result: SearchResult) -> rx.Component:

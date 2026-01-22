@@ -211,3 +211,6 @@ msgstr "Leider wurden keine Ergebnisse für '{}' gefunden :("
 
 msgid "search_reference_dialog.results.select_button"
 msgstr "Auswählen"
+
+msgid "layout.nav_bar.advanced_search_navitem"
+msgstr "Erweiterte Suche"

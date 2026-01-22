@@ -77,7 +77,7 @@ components of the MEx project are open-sourced under the same license as well.
 - update boilerplate files with `cruft update`
 - update global requirements in `requirements.txt` manually
 - update git hooks with `pre-commit autoupdate`
-- update package dependencies using `pdm update-all`
+- update package dependencies using `uv sync --upgrade`
 - update github actions in `.github/workflows/*.yml` manually
 
 ### Creating release
@@ -93,8 +93,8 @@ components of the MEx project are open-sourced under the same license as well.
 
 ## Commands
 
-- run `pdm run {command} --help` to print instructions
-- run `pdm run {command} --debug` for interactive debugging
+- run `uv run {command} --help` to print instructions
+- run `uv run {command} --debug` for interactive debugging
 
 ### editor
 

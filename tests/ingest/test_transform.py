@@ -2,9 +2,7 @@ from unittest.mock import MagicMock, patch
 
 from mex.common.models import AnyExtractedModel
 from mex.editor.ingest.models import IngestResult
-from mex.editor.ingest.transform import (
-    transform_models_to_results,
-)
+from mex.editor.ingest.transform import transform_models_to_results
 from mex.editor.models import EditorValue
 
 
@@ -60,7 +58,7 @@ def test_transform_models_to_results_single_model() -> None:
     ]
     assert len(result[0].all_properties) == 1
     assert result[0].all_properties[0].text == "property"
-    assert result[0].show_properties is False
+    assert result[0].show_all_properties is False
 
 
 def test_transform_models_to_results_multiple_models() -> None:

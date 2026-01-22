@@ -1,8 +1,6 @@
 from enum import StrEnum
 
-import reflex as rx
-
-from mex.editor.models import EditorValue
+from mex.editor.models import SearchResult
 
 
 class AuxProvider(StrEnum):
@@ -20,13 +18,7 @@ ALL_AUX_PROVIDERS: list[AuxProvider] = [
 ]
 
 
-class IngestResult(rx.Base):
+class IngestResult(SearchResult):
     """Ingest search result."""
 
-    identifier: str
-    stem_type: str
-    title: list[EditorValue]
-    preview: list[EditorValue]
-    show_properties: bool
-    all_properties: list[EditorValue]
     show_ingest_button: bool

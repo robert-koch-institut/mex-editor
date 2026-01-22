@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 
 from mex.common.models import AnyExtractedModel, AnyPreviewModel
-from mex.editor.search.models import ReferenceDialogSearchResult, SearchResult
+from mex.editor.models import SearchResult
 from mex.editor.transform import (
     transform_model_to_all_properties,
     transform_models_to_preview,
@@ -18,6 +18,7 @@ def transform_models_to_results(
             identifier=model.identifier,
             title=transform_models_to_title([model]),
             preview=transform_models_to_preview([model]),
+            all_properties=[],
             stem_type=model.stemType,
         )
         for model in models
@@ -26,10 +27,10 @@ def transform_models_to_results(
 
 def transform_models_to_dialog_results(
     models: Iterable[AnyPreviewModel | AnyExtractedModel],
-) -> list[ReferenceDialogSearchResult]:
+) -> list[SearchResult]:
     """Convert a list of models into a list of search result models."""
     return [
-        ReferenceDialogSearchResult(
+        SearchResult(
             identifier=model.identifier,
             title=transform_models_to_title([model]),
             preview=transform_models_to_preview([model]),

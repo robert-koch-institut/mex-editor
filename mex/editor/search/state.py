@@ -15,12 +15,12 @@ from mex.common.types import Identifier
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
-from mex.editor.pagination_state_mixin import PaginationStateMixin
+from mex.editor.models import SearchResult
+from mex.editor.pagination_component import PaginationStateMixin
 from mex.editor.search.models import (
     ReferenceFieldFilter,
     ReferenceFieldIdentifierFilter,
     SearchPrimarySource,
-    SearchResult,
 )
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State

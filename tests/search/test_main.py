@@ -20,8 +20,8 @@ def test_index(
 
     # load page and establish section is visible
     page.goto(base_url)
-    section = page.get_by_test_id("search-results-section")
-    expect(section).to_be_visible()
+    component = page.get_by_test_id("search-results-component")
+    expect(component).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_index-on-load.png")
 
     # check heading is showing
@@ -29,12 +29,12 @@ def test_index(
 
     # check mex primary source is showing
     primary_source = page.get_by_test_id(
-        f"result-{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+        f"search-result-{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}"
     )
     expect(primary_source.first).to_be_visible()
 
     # check activity is showing
-    activity = page.get_by_test_id(f"result-{extracted_activity.stableTargetId}")
+    activity = page.get_by_test_id(f"search-result-{extracted_activity.stableTargetId}")
     activity.scroll_into_view_if_needed()
     expect(activity).to_be_visible()
     expect(activity).to_contain_text("info@contact-point.one")  # resolved preview
@@ -381,7 +381,7 @@ def test_push_search_params(
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-click.png")
 
     # wait for search results section to stabilize
-    expect(page.get_by_test_id("search-results-section")).to_be_visible()
+    expect(page.get_by_test_id("search-results-component")).to_be_visible()
 
     # expect parameter change to be reflected in url
     page.wait_for_url("**/?page=1&entityType=Activity&referenceFilterStrategy=dynamic")
@@ -393,7 +393,7 @@ def test_push_search_params(
     search_input.press("Enter")
 
     # wait for search results to update
-    expect(page.get_by_test_id("search-results-section")).to_be_visible()
+    expect(page.get_by_test_id("search-results-component")).to_be_visible()
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
@@ -423,7 +423,7 @@ def test_push_search_params(
     expect(primary_source_checkbox_input).to_be_checked()
 
     # wait for search results to update
-    expect(page.get_by_test_id("search-results-section")).to_be_visible()
+    expect(page.get_by_test_id("search-results-component")).to_be_visible()
 
     # verify exactly one checkbox is checked
     checked = primary_sources.get_by_role("checkbox", checked=True)
@@ -450,7 +450,9 @@ def test_additional_titles_badge(
 
     resource_r2 = dummy_data_by_identifier_in_primary_source["r-2"]
     assert isinstance(resource_r2, ExtractedResource)
-    resource_r2_result = page.get_by_test_id(f"result-{resource_r2.stableTargetId}")
+    resource_r2_result = page.get_by_test_id(
+        f"search-result-{resource_r2.stableTargetId}"
+    )
     expect(resource_r2_result).to_be_visible()
     page.screenshot(path="tests_search_test_additional_titles_badge_on_load.png")
     first_title = resource_r2.title[0]
@@ -458,6 +460,7 @@ def test_additional_titles_badge(
     # expect title is visible and there are additional titles for 'r2'
     expect(resource_r2_result).to_contain_text(first_title.value)
     additional_title_badge = page.get_by_test_id("additional-titles-badge").first
+    additional_title_badge.scroll_into_view_if_needed()
     expect(additional_title_badge).to_be_visible()
     page.screenshot(path="tests_search_test_additional_titles_badge_on_visible.png")
     expect(additional_title_badge).to_have_text(
@@ -467,7 +470,7 @@ def test_additional_titles_badge(
     # hover additional titles
     box = additional_title_badge.bounding_box()
     assert box
-    page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+    page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2, steps=5)
     additional_title_badge.hover()
     page.screenshot(path="tests_search_test_additional_titles_badge_on_hover.png")
 

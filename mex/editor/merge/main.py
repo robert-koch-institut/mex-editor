@@ -2,62 +2,15 @@ from typing import Literal
 
 import reflex as rx
 
-from mex.editor.components import (
-    icon_by_stem_type,
-    render_additional_titles,
-    render_search_preview,
-    render_title,
-)
 from mex.editor.layout import page
 from mex.editor.merge.state import MergeState
-from mex.editor.search.models import SearchResult
-
-
-def search_result(
-    result: SearchResult,
-    index: int,
-    category: Literal["merged", "extracted"],
-) -> rx.Component:
-    """Render a single merged or extracted item search result with checkbox."""
-    return rx.card(
-        rx.vstack(
-            rx.hstack(
-                rx.checkbox(
-                    checked=MergeState.selected_items[category] == index,
-                    on_change=MergeState.select_item(category, index),  # type: ignore[operator]
-                ),
-                icon_by_stem_type(
-                    result.stem_type,
-                    size=22,
-                ),
-                render_title(result.title[0]),
-                render_additional_titles(result.title[1:]),
-            ),
-            render_search_preview(result.preview),
-        ),
-        class_name="search-result-card",
-        custom_attrs={"data-testid": f"result-{category}-{result.identifier}"},
-        style=rx.Style(width="100%"),
-    )
-
-
-def results_summary(category: Literal["merged", "extracted"]) -> rx.Component:
-    """Render a summary of the results found."""
-    return rx.center(
-        rx.text(
-            MergeState.label_result_summary_format_merged
-            if category == "merged"
-            else MergeState.label_result_summary_format_extracted,
-            style=rx.Style(
-                color="var(--gray-12)",
-                fontWeight="var(--font-weight-bold)",
-                margin="var(--space-4)",
-                userSelect="none",
-            ),
-        ),
-        style=rx.Style(width="100%"),
-        custom_attrs={"data-testid": f"{category}-results-summary"},
-    )
+from mex.editor.models import SearchResult
+from mex.editor.search_results_component import (
+    SearchResultsComponentOptions,
+    SearchResultsListItemOptions,
+    SearchResultsListOptions,
+    search_results_component,
+)
 
 
 def entity_type_choice_merged(choice: tuple[str, bool]) -> rx.Component:
@@ -198,6 +151,17 @@ def submit_button() -> rx.Component:
 
 def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
     """Return the search interface."""
+
+    def render_checkbox(_: SearchResult, index: int) -> rx.Component:
+        return rx.checkbox(
+            checked=MergeState.selected_items[category] == index,
+            on_change=MergeState.select_item(category, index),  # type:ignore[operator]
+        )
+
+    list_options = SearchResultsListOptions(
+        item_options=SearchResultsListItemOptions(render_prepend_fn=render_checkbox)
+    )
+
     return rx.vstack(
         rx.heading(
             MergeState.label_search_title_merged
@@ -211,25 +175,28 @@ def search_panel(category: Literal["merged", "extracted"]) -> rx.Component:
             custom_attrs={"data-testid": f"create-heading-{category}"},
         ),
         search_input(category),
-        results_summary(category),
-        rx.cond(
-            category == "merged",
-            rx.foreach(
-                MergeState.results_merged,
-                lambda result, index: search_result(result, index, category="merged"),
-            ),
-            rx.foreach(
-                MergeState.results_extracted,
-                lambda result, index: search_result(
-                    result, index, category="extracted"
+        rx.box(
+            rx.cond(
+                category == "merged",
+                search_results_component(
+                    MergeState.results_merged,
+                    SearchResultsComponentOptions(
+                        summary_text=MergeState.label_result_summary_format_merged,
+                        list_options=list_options,
+                    ),
+                ),
+                search_results_component(
+                    MergeState.results_extracted,
+                    SearchResultsComponentOptions(
+                        summary_text=MergeState.label_result_summary_format_extracted,
+                        list_options=list_options,
+                    ),
                 ),
             ),
+            custom_attrs={"data-testid": f"{category}-search-results-container"},
         ),
-        style=rx.Style(
-            width="50%",
-            margin="var(--space-4)",
-            align="center",
-        ),
+        align="stretch",
+        style=rx.Style(width="50%", margin="var(--space-4)"),
     )
 
 

@@ -107,7 +107,7 @@ jobs:
           MEX_BACKEND_API_KEY: ${{ secrets.MEX_BACKEND_API_KEY }}
           MEX_IDENTITY_PROVIDER: backend
         run: |
-          pdm run editor &
+          uv run editor &
           echo `date -Iseconds` INFO checking service readiness &&
           curl --connect-timeout 10 --retry 10 --retry-delay 10 --retry-all-errors http://localhost:8000/_system/check &&
           curl --connect-timeout 10 --retry 10 --retry-delay 10 --retry-all-errors http://localhost:8080/v0/_system/check &&

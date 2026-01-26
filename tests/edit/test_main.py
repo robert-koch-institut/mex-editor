@@ -666,28 +666,28 @@ def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> N
     ("locale_id", "field_name", "expected_field_label"),
     [
         pytest.param(
-            "de-DE",
+            "de",
             "alternativeTitle",
             "Alternativtitel",
-            id="de-DE:alternativeTitle",
+            id="de:alternativeTitle",
         ),
         pytest.param(
-            "en-US",
+            "en",
             "alternativeTitle",
             "Alternative title",
-            id="en-US:alternativeTitle",
+            id="en:alternativeTitle",
         ),
         pytest.param(
-            "de-DE",
+            "de",
             "abstract",
             "Kurzbeschreibung",
-            id="de-DE:abstract",
+            id="de:abstract",
         ),
         pytest.param(
-            "en-US",
+            "en",
             "abstract",
             "Abstract",
-            id="en-US:abstract",
+            id="en:abstract",
         ),
     ],
 )

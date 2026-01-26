@@ -1,15 +1,12 @@
 import math
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import reflex as rx
 from reflex.event import EventType
 from reflex.vars import Var
 
 from mex.editor.state import State
-
-if TYPE_CHECKING:
-    from pydantic.v1.fields import ModelField
 
 
 class PaginationStateMixin(rx.State, mixin=True):
@@ -79,10 +76,9 @@ class PaginationStateMixin(rx.State, mixin=True):
     @rx.event
     def reset_pagination(self) -> None:
         """Reset the pagination to its default values."""
-        fields: dict[str, ModelField] = self.get_fields()
         self.total = 0
         self.current_page = 1
-        self.limit = fields["limit"].default
+        self.limit = self.__fields__["limit"].default
 
 
 @dataclass

@@ -210,7 +210,7 @@ def search_reference_dialog(
                         rx.hstack(
                             rx.input(
                                 value=SearchReferenceDialogState.user_query,
-                                on_change=SearchReferenceDialogState.set_user_query,  # type: ignore[attr-defined]
+                                on_change=SearchReferenceDialogState.set_user_query,
                                 custom_attrs={
                                     "data-focusme": "",
                                     "data-testid": f"{component_id_prefix}-query-input",

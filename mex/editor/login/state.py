@@ -1,10 +1,13 @@
 from collections.abc import Generator
+from urllib.parse import urljoin
 
 import reflex as rx
+import requests
 from reflex.event import EventSpec
 from requests import RequestException
 
 from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.settings import BaseSettings
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.models import MergedLoginPerson
@@ -51,9 +54,16 @@ class LoginLdapState(LoginState):
     @rx.event
     def login(self) -> Generator[EventSpec, None, None]:
         """Login a user."""
-        connector = BackendApiConnector.get()
+        settings = BaseSettings.get()
+        url = urljoin(
+            str(settings.backend_api_url),
+            f"{BackendApiConnector.API_VERSION}/merged-person-from-login",
+        )  # stopgap: MX-2083
+
         try:
-            response = connector.merged_person_from_login()
+            response = requests.post(
+                url, auth=(self.username, self.password), timeout=10
+            )
         except RequestException as exc:
             yield from escalate_error(
                 "backend", "Cannot reach backend. Please try again later.", exc
@@ -64,11 +74,12 @@ class LoginLdapState(LoginState):
                 name=self.username,
                 write_access=True,
             )
+            response_user = response.json()
             self.merged_login_person = MergedLoginPerson(
-                identifier=response.identifier,
-                full_name=response.fullName,
-                email=response.email,
-                orcid_id=response.orcidId,
+                identifier=response_user["identifier"],
+                full_name=response_user["fullName"],
+                email=response_user["email"],
+                orcid_id=response_user["orcidId"],
             )
             target_path_after_login = self.target_path_after_login or "/"
             self.reset()  # reset username/password

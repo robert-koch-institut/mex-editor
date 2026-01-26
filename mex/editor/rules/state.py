@@ -273,7 +273,7 @@ class RuleState(State, LocalStorageMixinState):
         else:
             yield RuleState.refresh  # type: ignore[misc]
             yield RuleState.show_submit_success_toast  # type: ignore[misc]
-            yield RuleState.resolve_identifiers  # type: ignore[misc]
+            yield RuleState.resolve_identifiers
 
     @rx.event
     def set_is_submitting(self, value: bool) -> None:  # noqa: FBT001

@@ -1,4 +1,5 @@
 from collections.abc import Generator, Iterable
+from typing import Any
 
 import reflex as rx
 from reflex.event import EventSpec, EventType
@@ -102,7 +103,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
                         await resolve_editor_value(value)
 
     @rx.event
-    def handle_submit(self, form_data: dict[str, str]) -> Generator[EventSpec | None]:
+    def handle_submit(self, form_data: dict[str, Any]) -> Generator[EventSpec | None]:
         """Handle form submit by sync values and start search."""
         self.user_query = str(form_data.get("query", ""))
         self.user_reference_types = [

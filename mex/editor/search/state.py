@@ -1,5 +1,5 @@
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 import reflex as rx
 from pydantic import TypeAdapter, ValidationError
@@ -254,7 +254,7 @@ class SearchState(State, PaginationStateMixin):
         self.had_primary_sources[index].checked = value
 
     @rx.event
-    def handle_submit(self, form_data: dict[str, str]) -> None:
+    def handle_submit(self, form_data: dict[str, Any]) -> None:
         """Handle the form submit."""
         self.query_string = form_data["query_string"]
 

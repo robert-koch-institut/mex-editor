@@ -1,5 +1,5 @@
 import reflex as rx
-from reflex.event import EventNamespace
+from reflex.event import EventCallback
 
 from mex.editor.layout import app_logo, custom_focus_script
 from mex.editor.login.state import LoginLdapState, LoginMExState, LoginState
@@ -59,7 +59,7 @@ def login_button() -> rx.Component:
     )
 
 
-def login_form(login_callback: EventNamespace) -> rx.Component:
+def login_form(login_callback: EventCallback) -> rx.Component:
     """Return a login form."""
     return rx.center(
         rx.card(

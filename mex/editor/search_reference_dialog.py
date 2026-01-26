@@ -93,6 +93,11 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
             self.results = []
             self.reset_pagination()  # type: ignore[operator]
 
+    @rx.event
+    def set_user_query(self, value: str) -> None:
+        """Set the user query value."""
+        self.user_query = value
+
     @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""

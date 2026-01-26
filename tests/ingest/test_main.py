@@ -8,7 +8,7 @@ from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider
 from tests.conftest import build_pagination_regex, build_ui_label_regex
 
 if TYPE_CHECKING:
-    import re
+    from re import Pattern
 
 
 @pytest.fixture
@@ -140,7 +140,7 @@ def test_search_and_ingest_roundtrip(
 
 @pytest.mark.integration
 def test_infobox_visibility_and_content(ingest_page: Page) -> None:
-    expected_callout_content: dict[AuxProvider, re.Pattern] = {
+    expected_callout_content: dict[AuxProvider, Pattern[str]] = {
         AuxProvider.LDAP: build_ui_label_regex("ingest.search_info.ldap"),
         AuxProvider.WIKIDATA: build_ui_label_regex("ingest.search_info.wikidata"),
     }

@@ -8,7 +8,8 @@ from mex.editor.rules.main import (
     rule_page_header,
     validation_errors,
 )
-from mex.editor.rules.state import FieldTranslation, RuleState
+from mex.editor.rules.models import FieldTranslation
+from mex.editor.rules.state import RuleState
 
 
 def editor_field(field_translation: FieldTranslation) -> rx.Component:

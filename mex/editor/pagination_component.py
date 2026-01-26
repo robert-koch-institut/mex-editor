@@ -1,6 +1,6 @@
 import math
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import reflex as rx
 from reflex.event import EventType
@@ -151,9 +151,12 @@ class PaginationOptions:
         )
 
 
-def pagination(options: PaginationOptions, **kwargs: dict) -> rx.Component:
+def pagination(
+    options: PaginationOptions,
+    style: rx.Style | dict[str, Any] | None = None,
+) -> rx.Component:
     """Create pagination based on given options."""
-    style = rx.Style().update(kwargs.pop("style", None))
+    style = rx.Style().update(style)
     return rx.flex(
         rx.button(
             rx.text(State.label_pagination_previous_button),

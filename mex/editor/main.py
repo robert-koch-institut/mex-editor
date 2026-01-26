@@ -29,14 +29,14 @@ def editor_api() -> None:  # pragma: no cover
     environment.REFLEX_USE_GRANIAN.set(False)
 
     # Delete the states folder if it exists.
-    reset_disk_state_manager()
+    reset_disk_state_manager()  # type: ignore[no-untyped-call]
 
     # Reload the config to make sure the env vars are persistent.
     get_config(reload=True)
 
     # Run the api.
     uvicorn.run(
-        get_app_instance(),
+        get_app_instance(),  # type: ignore[no-untyped-call]
         host=settings.editor_api_host,
         port=settings.editor_api_port,
         root_path=settings.editor_api_root_path,

@@ -55,7 +55,7 @@ cover/
 pytestdebug.log
 
 # Translations
-#*.mo
+*.mo
 *.pot
 
 # Scrapy stuff

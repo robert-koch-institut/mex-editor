@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 import pytest
 from pytest import MonkeyPatch
 
-from mex.editor.models import NavItem
-from mex.editor.state import State, User
+from mex.editor.models import NavItem, User
+from mex.editor.state import State
 
 
 def test_state_logout(monkeypatch: MonkeyPatch) -> None:

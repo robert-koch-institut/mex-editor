@@ -11,7 +11,7 @@ class EditState(RuleState):
     """State for the edit component."""
 
     @rx.event
-    def show_submit_success_toast_on_redirect(self) -> Generator[EventSpec, None, None]:
+    def show_submit_success_toast_on_redirect(self) -> Generator[EventSpec]:
         """Show a success toast when the saved param is set."""
         if "saved" in self.router.page.params:
             yield EditState.show_submit_success_toast  # type: ignore[misc]
@@ -37,7 +37,7 @@ class EditState(RuleState):
     @rx.event
     def toggle_all_primary_source_and_editor_values(
         self,
-    ) -> Generator[EventSpec, None, None]:
+    ) -> Generator[EventSpec]:
         """Toggle all primary source and editor values."""
         any_enabled = self.any_primary_source_or_editor_value_enabled
         new_state = not any_enabled

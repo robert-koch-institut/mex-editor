@@ -2,7 +2,7 @@ import math
 from collections.abc import Generator
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, cast
 
 import reflex as rx
 from pydantic import Field
@@ -125,18 +125,18 @@ class ConsentState(State):
         return [f"{i + 1}" for i in range(math.ceil(self.resources_total / self.limit))]
 
     @rx.event
-    def get_all_data(self) -> Generator[EventSpec | None, None, None]:
+    def get_all_data(self) -> Generator[EventSpec | None]:
         """Fetch all data for the user."""
         yield type(self).fetch_data("projects")  # type: ignore[operator]
         yield type(self).fetch_data("resources")  # type: ignore[operator]
 
     @rx.event
-    def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
+    def scroll_to_top(self) -> Generator[EventSpec | None]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
     @rx.event
-    def fetch_data(self, category: str) -> Generator[EventSpec | None, None, None]:
+    def fetch_data(self, category: str) -> Generator[EventSpec | None]:
         """Fetch the user's projects, resources, or bibliography."""
         connector = BackendApiConnector.get()
 
@@ -181,7 +181,7 @@ class ConsentState(State):
                 self.resources_total = response.total
 
     @rx.event
-    def get_consent(self) -> Generator[EventSpec | None, None, None]:
+    def get_consent(self) -> Generator[EventSpec | None]:
         """Fetch the user's consent status."""
         if not self.merged_login_person:
             yield None
@@ -213,7 +213,7 @@ class ConsentState(State):
     def submit_rule_set(
         self,
         consented: str,
-    ) -> Generator[EventSpec | None, None, None]:
+    ) -> Generator[EventSpec | None]:
         """Convert the fields to a rule set and submit it to the backend."""
         if not self.merged_login_person:
             yield None
@@ -238,7 +238,7 @@ class ConsentState(State):
         try:
             self._send_rule_set_request(rule_set_request)
         except HTTPError as exc:
-            self.reset()
+            self.reset()  # type: ignore[no-untyped-call]
             yield from escalate_error(
                 "backend", "error submitting rule set", exc.response.text
             )
@@ -257,13 +257,16 @@ class ConsentState(State):
     @rx.event
     def show_submit_success_toast(self) -> EventSpec:
         """Show a toast for a successfully submitted rule-set."""
-        return rx.toast.success(
-            title=self.label_save_success_dialog_title,
-            description=self.label_save_success_dialog_content,
-            class_name="editor-toast",
-            close_button=True,
-            dismissible=True,
-            duration=5000,
+        return cast(
+            "EventSpec",
+            rx.toast.success(
+                title=self.label_save_success_dialog_title,
+                description=self.label_save_success_dialog_content,
+                class_name="editor-toast",
+                close_button=True,
+                dismissible=True,
+                duration=5000,
+            ),
         )
 
     @rx.event(background=True)  # type: ignore[operator]

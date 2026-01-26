@@ -1,8 +1,7 @@
 from collections.abc import Generator, Iterable
 
 import reflex as rx
-from reflex.app import EventSpec
-from reflex.event import EventType
+from reflex.event import EventSpec, EventType
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -103,7 +102,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
                         await resolve_editor_value(value)
 
     @rx.event
-    def handle_submit(self, form_data: dict) -> Generator[EventSpec | None, None, None]:
+    def handle_submit(self, form_data: dict[str, str]) -> Generator[EventSpec | None]:
         """Handle form submit by sync values and start search."""
         self.user_query = str(form_data.get("query", ""))
         self.user_reference_types = [
@@ -115,7 +114,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
         yield SearchReferenceDialogState.search  # type: ignore[misc]
 
     @rx.event
-    def search(self) -> Generator[EventSpec | None, None, None]:
+    def search(self) -> Generator[EventSpec | None]:
         """Search for entities by query and reference_types."""
         if self.is_loading:
             return

@@ -109,7 +109,7 @@ class MergeState(State):
     def refresh(
         self,
         categories: Iterable[Literal["merged", "extracted"]] = ("merged", "extracted"),
-    ) -> Generator[EventSpec | None, None, None]:
+    ) -> Generator[EventSpec | None]:
         """Refresh the search results for the specified category."""
         if "merged" in categories:
             self.selected_items["merged"] = None
@@ -118,7 +118,7 @@ class MergeState(State):
             self.selected_items["extracted"] = None
             yield from self._refresh_extracted()
 
-    def _refresh_merged(self) -> Generator[EventSpec | None, None, None]:
+    def _refresh_merged(self) -> Generator[EventSpec | None]:
         """Refresh the search results for merged items."""
         connector = BackendApiConnector.get()
         entity_type = [
@@ -147,7 +147,7 @@ class MergeState(State):
             self.results_count["merged"] = len(self.results_merged)
             self.total_count["merged"] = response.total
 
-    def _refresh_extracted(self) -> Generator[EventSpec | None, None, None]:
+    def _refresh_extracted(self) -> Generator[EventSpec | None]:
         """Refresh the search results for extracted items."""
         connector = BackendApiConnector.get()
         entity_type = [
@@ -180,7 +180,7 @@ class MergeState(State):
             self.total_count["extracted"] = response.total
 
     @rx.event
-    def submit_merge_items(self) -> Generator[EventSpec, None, None]:
+    def submit_merge_items(self) -> Generator[EventSpec]:
         """Submit merging of the items."""
         yield rx.toast.error(
             title="Not Implemented",

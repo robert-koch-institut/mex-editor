@@ -203,7 +203,7 @@ def test_model_to_all_properties() -> None:
     model = MagicMock(spec=AnyExtractedModel)
     model.field1 = "value1"
     model.field2 = "value2"
-    model.model_fields = {"field1": Mock(), "field2": Mock()}
+    type(model).model_fields = {"field1": Mock(), "field2": Mock()}
 
     with patch(
         "mex.editor.transform.transform_model_to_all_properties",

@@ -1,3 +1,5 @@
+from typing import get_args
+
 import pytest
 from pydantic import ValidationError
 
@@ -24,8 +26,8 @@ from mex.common.models import (
     SubtractiveConsent,
     SubtractivePerson,
 )
+from mex.common.models.person import EmailStr
 from mex.common.types import (
-    EMAIL_PATTERN,
     AccessRestriction,
     ConsentStatus,
     ConsentType,
@@ -1000,7 +1002,7 @@ def test_transform_validation_error_to_messages() -> None:
     assert messages == [
         ValidationMessage(
             field_name="0",
-            message=f"String should match pattern '{EMAIL_PATTERN}'",
+            message=f"String should match pattern '{get_args(EmailStr)[1].metadata[0].pattern}'",
             input="OOPS",
         )
     ]

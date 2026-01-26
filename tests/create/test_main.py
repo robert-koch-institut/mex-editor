@@ -152,8 +152,8 @@ def test_create_page_submit_item(create_page: Page) -> None:
         "expected_access_platform_field_label",
     ),
     [
-        pytest.param("de-DE", "Zugriffsplattform", id="locale de-DE"),
-        pytest.param("en-US", "Access platform", id="locale en-US"),
+        pytest.param("de", "Zugriffsplattform", id="locale de"),
+        pytest.param("en", "Access platform", id="locale en"),
     ],
 )
 @pytest.mark.integration

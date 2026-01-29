@@ -8,13 +8,13 @@ from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider
 from tests.conftest import build_pagination_regex, build_ui_label_regex
 
 if TYPE_CHECKING:
-    import re
+    from re import Pattern
 
 
 @pytest.fixture
-def ingest_page(frontend_url: str, writer_user_page: Page) -> Page:
+def ingest_page(base_url: str, writer_user_page: Page) -> Page:
     page = writer_user_page
-    page.goto(f"{frontend_url}/ingest")
+    page.goto(f"{base_url}/ingest")
     section = page.get_by_test_id("aux-tab-section")
     expect(section).to_be_visible()
     return page
@@ -106,13 +106,13 @@ def test_search_and_ingest_roundtrip(
     expect(page.get_by_test_id("pagination-page-select")).to_be_visible()
 
     # test expand button works
-    expand_button = page.get_by_test_id("expand-properties-button-0")
+    expand_button = page.get_by_test_id("toggle-show-all-properties-button").first
     expect(expand_button).to_be_visible()
 
     page.screenshot(path=f"tests_ingest_test_main-roundtrip_{aux_provider}.png")
-    expect(page.get_by_test_id("all-properties-display")).not_to_be_visible()
+    expect(page.get_by_test_id("display-properties-all")).not_to_be_visible()
     expand_button.click()
-    expect(page.get_by_test_id("all-properties-display")).to_be_visible()
+    expect(page.get_by_test_id("display-properties-all")).to_be_visible()
     page.screenshot(
         path=f"tests_ingest_test_main-roundtrip_{aux_provider}-expanded.png"
     )
@@ -140,7 +140,7 @@ def test_search_and_ingest_roundtrip(
 
 @pytest.mark.integration
 def test_infobox_visibility_and_content(ingest_page: Page) -> None:
-    expected_callout_content: dict[AuxProvider, re.Pattern] = {
+    expected_callout_content: dict[AuxProvider, Pattern[str]] = {
         AuxProvider.LDAP: build_ui_label_regex("ingest.search_info.ldap"),
         AuxProvider.WIKIDATA: build_ui_label_regex("ingest.search_info.wikidata"),
     }

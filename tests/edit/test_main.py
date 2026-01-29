@@ -22,13 +22,13 @@ from mex.editor.rules.transform import get_required_mergeable_field_names
 
 @pytest.fixture
 def edit_page(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
     extracted_activity: ExtractedActivity,
     load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
     page = writer_user_page
-    page.goto(f"{frontend_url}/item/{extracted_activity.stableTargetId}")
+    page.goto(f"{base_url}/item/{extracted_activity.stableTargetId}")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
     return page
@@ -666,28 +666,28 @@ def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> N
     ("locale_id", "field_name", "expected_field_label"),
     [
         pytest.param(
-            "de-DE",
+            "de",
             "alternativeTitle",
             "Alternativtitel",
-            id="de-DE:alternativeTitle",
+            id="de:alternativeTitle",
         ),
         pytest.param(
-            "en-US",
+            "en",
             "alternativeTitle",
             "Alternative title",
-            id="en-US:alternativeTitle",
+            id="en:alternativeTitle",
         ),
         pytest.param(
-            "de-DE",
+            "de",
             "abstract",
             "Kurzbeschreibung",
-            id="de-DE:abstract",
+            id="de:abstract",
         ),
         pytest.param(
-            "en-US",
+            "en",
             "abstract",
             "Abstract",
-            id="en-US:abstract",
+            id="en:abstract",
         ),
     ],
 )

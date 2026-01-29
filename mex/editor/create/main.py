@@ -8,7 +8,8 @@ from mex.editor.rules.main import (
     rule_page_header,
     validation_errors,
 )
-from mex.editor.rules.state import FieldTranslation, RuleState
+from mex.editor.rules.models import FieldTranslation
+from mex.editor.rules.state import RuleState
 
 
 def editor_field(field_translation: FieldTranslation) -> rx.Component:
@@ -47,7 +48,7 @@ def create_title() -> rx.Component:
         ),
         rx.select(
             CreateState.available_stem_types,
-            value=RuleState.stem_type,
+            value=rx.cond(RuleState.stem_type, RuleState.stem_type, ""),
             on_change=[
                 CreateState.set_stem_type,
                 RuleState.delete_local_state,

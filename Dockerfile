@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.11 AS base
+FROM python:3.13 AS base
 
 LABEL org.opencontainers.image.authors="mex@rki.de"
 LABEL org.opencontainers.image.description="Metadata editor web application."
@@ -16,12 +16,12 @@ ENV PIP_NO_INPUT=on
 ENV PIP_PREFER_BINARY=on
 ENV PIP_PROGRESS_BAR=off
 
-ENV APP_NAME=mex
-ENV FRONTEND_PORT=8030
-ENV DEPLOY_URL=http://0.0.0.0:8030
-ENV BACKEND_PORT=8031
-ENV API_URL=http://0.0.0.0:8031
-ENV TELEMETRY_ENABLED=False
+ENV REFLEX_APP_NAME=mex
+ENV REFLEX_FRONTEND_PORT=8030
+ENV REFLEX_DEPLOY_URL=http://0.0.0.0:8030
+ENV REFLEX_BACKEND_PORT=8031
+ENV REFLEX_API_URL=http://0.0.0.0:8031
+ENV REFLEX_TELEMETRY_ENABLED=False
 ENV REFLEX_ENV_MODE=prod
 ENV REFLEX_DIR=/app/reflex
 

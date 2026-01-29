@@ -76,20 +76,20 @@ class State(rx.State):
         self.current_locale = locale
 
     @rx.event
-    def logout(self) -> Generator[EventSpec, None, None]:
+    def logout(self) -> Generator[EventSpec]:
         """Log out a user."""
-        self.reset()
+        self.reset()  # type: ignore[no-untyped-call]
         yield rx.redirect("/")
 
     @rx.event
-    def check_mex_login(self) -> Generator[EventSpec, None, None]:
+    def check_mex_login(self) -> Generator[EventSpec]:
         """Check if a user is logged in."""
         if self.user_mex is None:
             self.target_path_after_login = self.router.page.raw_path
             yield rx.redirect("/login")
 
     @rx.event
-    def check_ldap_login(self) -> Generator[EventSpec, None, None]:
+    def check_ldap_login(self) -> Generator[EventSpec]:
         """Check if a user is logged in to ldap."""
         if self.user_ldap is None:
             self.target_path_after_login = self.router.page.raw_path
@@ -153,7 +153,7 @@ class State(rx.State):
         """Return the version of mex-editor."""
         return version("mex-editor")
 
-    @rx.var(cache=True)
+    @rx.var(cache=True, initial_value="N/A")
     def backend_version(self) -> str:
         """Return the version of mex-backend."""
         connector = BackendApiConnector.get()

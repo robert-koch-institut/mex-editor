@@ -4,9 +4,10 @@ import reflex as rx
 
 from mex.editor.components import icon_by_stem_type, render_title
 from mex.editor.locale_service import LocaleService
+from mex.editor.models import NavItem
 from mex.editor.rules.models import UserDraft
 from mex.editor.rules.state import RuleState
-from mex.editor.state import NavItem, State
+from mex.editor.state import State
 
 if TYPE_CHECKING:
     from mex.editor.models import User
@@ -65,7 +66,7 @@ def language_switcher() -> rx.Component:
                 locale_service.get_available_locales(),
                 lambda locale: rx.menu.item(
                     rx.text(locale.label),
-                    on_click=State.change_locale(locale.id),  # type: ignore[misc]
+                    on_click=State.change_locale(locale.id),  # type: ignore[operator]
                     custom_attrs={
                         "data-testid": f"language-switcher-menu-item-{locale.id}"
                     },
@@ -76,7 +77,7 @@ def language_switcher() -> rx.Component:
 
 
 def render_draft_menu_item(draft: UserDraft) -> rx.Component:
-    """Render a navigatable menu item for the given draft."""
+    """Render a navigable menu item for the given draft."""
     return rx.menu.item(
         rx.link(
             rx.hstack(

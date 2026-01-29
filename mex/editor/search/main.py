@@ -1,49 +1,22 @@
 import reflex as rx
 
 from mex.common.types import IDENTIFIER_PATTERN
-from mex.editor.components import (
-    icon_by_stem_type,
-    pagination,
-    render_additional_titles,
-    render_search_preview,
-    render_title,
+from mex.editor.component_option_helper import (
+    build_pagination_options,
 )
 from mex.editor.layout import page
 from mex.editor.search.models import (
     ReferenceFieldIdentifierFilter,
     SearchPrimarySource,
-    SearchResult,
 )
-from mex.editor.search.state import (
-    SearchState,
-    full_refresh,
-)
+from mex.editor.search.state import SearchState, full_refresh
 from mex.editor.search.value_label_select import value_label_select
-
-
-def search_result(result: SearchResult) -> rx.Component:
-    """Render a single merged item search result."""
-    return rx.card(
-        rx.vstack(
-            rx.hstack(
-                icon_by_stem_type(
-                    result.stem_type,
-                    size=22,
-                    style=rx.Style(color=rx.color("accent", 11)),
-                ),
-                rx.link(
-                    render_title(result.title[0]),
-                    href=f"/item/{result.identifier}",
-                ),
-                render_additional_titles(result.title[1:]),
-            ),
-            render_search_preview(result.preview),
-            style=rx.Style(width="100%"),
-        ),
-        class_name="search-result-card",
-        custom_attrs={"data-testid": f"result-{result.identifier}"},
-        style=rx.Style(width="100%"),
-    )
+from mex.editor.search_results_component import (
+    SearchResultsComponentOptions,
+    SearchResultsListItemOptions,
+    SearchResultsListOptions,
+    search_results_component,
+)
 
 
 def search_input() -> rx.Component:
@@ -92,7 +65,7 @@ def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
         choice[0],
         checked=choice[1],
         on_change=[
-            SearchState.set_entity_type(choice[0]),  # type: ignore[misc]
+            SearchState.set_entity_type(choice[0]),  # type: ignore[operator]
             *full_refresh,
         ],
         disabled=SearchState.is_loading,
@@ -126,7 +99,7 @@ def primary_source_choice(choice: tuple[str, SearchPrimarySource]) -> rx.Compone
         choice[1].title,
         checked=choice[1].checked,
         on_change=[
-            SearchState.set_had_primary_source(choice[0]),  # type: ignore[misc]
+            SearchState.set_had_primary_source(choice[0]),  # type: ignore[operator]
             *full_refresh,
         ],
         disabled=SearchState.is_loading,
@@ -154,9 +127,7 @@ def reference_field_filter_identifier(
             rx.input(
                 value=identifier.value,
                 on_change=[
-                    lambda x: SearchState.set_reference_field_filter_identifier(  # type: ignore[misc]
-                        index, x
-                    ),
+                    SearchState.set_reference_field_filter_identifier(index),  # type: ignore[operator]
                     *full_refresh,
                 ],
                 required=True,
@@ -170,7 +141,7 @@ def reference_field_filter_identifier(
                 variant="surface",
                 color_scheme="gray",
                 on_click=[
-                    lambda: SearchState.remove_reference_field_filter_identifier(index),  # type: ignore[misc]
+                    SearchState.remove_reference_field_filter_identifier(index),  # type: ignore[operator]
                     *full_refresh,
                 ],
                 custom_attrs={
@@ -208,7 +179,7 @@ def reference_field_filter() -> rx.Component:
                 variant="surface",
                 color_scheme="gray",
                 on_click=[
-                    SearchState.set_reference_filter_field(""),  # type: ignore[misc]
+                    SearchState.set_reference_filter_field(""),  # type: ignore[operator]
                     *full_refresh,
                 ],
             ),
@@ -241,7 +212,7 @@ def reference_filter_tab() -> rx.Component:
     Containing two tabs for dynamic filtering and filtering by primary source.
 
     Returns:
-        rx.Component: The tab list component containing two tabs.
+        The tab list component containing two tabs.
     """
     return rx.card(
         rx.tabs.root(
@@ -291,25 +262,9 @@ def sidebar() -> rx.Component:
         entity_type_filter(),
         reference_filter_tab(),
         spacing="4",
+        align="stretch",
         custom_attrs={"data-testid": "search-sidebar"},
         style=rx.Style(width="25%"),
-    )
-
-
-def results_summary() -> rx.Component:
-    """Render a summary of the results found."""
-    return rx.center(
-        rx.text(
-            SearchState.label_result_summary_format,
-            style=rx.Style(
-                color="var(--gray-12)",
-                fontWeight="var(--font-weight-bold)",
-                margin="var(--space-4)",
-                userSelect="none",
-            ),
-            custom_attrs={"data-testid": "search-results-summary"},
-        ),
-        style=rx.Style(width="100%"),
     )
 
 
@@ -324,19 +279,19 @@ def search_results() -> rx.Component:
                 width="100%",
             ),
         ),
-        rx.vstack(
-            results_summary(),
-            rx.foreach(
-                SearchState.results,
-                search_result,
+        search_results_component(
+            SearchState.results,
+            SearchResultsComponentOptions(
+                summary_text=SearchState.label_result_summary_format,
+                list_options=SearchResultsListOptions(
+                    item_options=SearchResultsListItemOptions(enable_title_href=True)
+                ),
+                pagination_options=build_pagination_options(
+                    SearchState,
+                    SearchState.push_search_params,  # type: ignore[arg-type]
+                ),
             ),
-            pagination(SearchState, SearchState.push_search_params),
-            spacing="4",
-            custom_attrs={"data-testid": "search-results-section"},
-            style=rx.Style(
-                minWidth="0",
-                width="100%",
-            ),
+            style=rx.Style(flex=1),
         ),
     )
 
@@ -348,6 +303,6 @@ def index() -> rx.Component:
             sidebar(),
             search_results(),
             spacing="4",
-            style=rx.Style(width="100%"),
+            style=rx.Style(flex=1),
         )
     )

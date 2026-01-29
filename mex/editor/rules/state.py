@@ -1,5 +1,5 @@
 import copy
-from collections.abc import Generator, Sequence
+from collections.abc import AsyncGenerator, Generator, Sequence
 from typing import cast
 
 import reflex as rx
@@ -23,7 +23,7 @@ from mex.common.types import Identifier, Validation
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
-from mex.editor.models import EditorValue
+from mex.editor.models import EditorValue, sequence_is_equal
 from mex.editor.rules.local_storage_mixin_state import LocalStorageMixinState
 from mex.editor.rules.models import (
     EditorField,
@@ -32,7 +32,6 @@ from mex.editor.rules.models import (
     LocalDraft,
     LocalEdit,
     ValidationMessage,
-    sequence_is_equal,
 )
 from mex.editor.rules.transform import (
     transform_fields_to_rule_set,
@@ -67,7 +66,7 @@ class RuleState(State, LocalStorageMixinState):
         """Indicates if the current edit state differs from the original loaded state.
 
         Returns:
-            Returns True if the current edit state differs from the orginal
+            Returns True if the current edit state differs from the original
             loaded state; otherwise False.
         """
         fields: list[EditorField] = self.get_value("fields")
@@ -80,7 +79,10 @@ class RuleState(State, LocalStorageMixinState):
         """Updates the local edits and drafts with current values."""
         _fields = self.get_value("fields")
         if self.item_id:
-            self.update_edit(self.item_id, LocalEdit(fields=_fields))  # type: ignore[misc]
+            self.update_edit(
+                self.item_id,
+                LocalEdit(fields=_fields),
+            )  # type: ignore[operator]
         elif self.draft_id:
             self.update_draft(
                 self.draft_id,
@@ -88,15 +90,15 @@ class RuleState(State, LocalStorageMixinState):
                     fields=_fields,
                     stem_type=self.stem_type or "",
                 ),
-            )  # type: ignore[misc]
+            )  # type: ignore[operator]
 
     @rx.event
     def delete_local_state(self) -> None:
         """Delete local state for draft or edit."""
         if self.item_id:
-            self.delete_edit(self.item_id)  # type: ignore[misc]
+            self.delete_edit(self.item_id)  # type: ignore[operator]
         elif self.draft_id:
-            self.delete_draft(self.draft_id)  # type: ignore[misc]
+            self.delete_draft(self.draft_id)  # type: ignore[operator]
 
     @rx.var(cache=True, deps=["fields", "current_locale"])
     def translated_fields(self) -> Sequence[FieldTranslation]:
@@ -121,7 +123,7 @@ class RuleState(State, LocalStorageMixinState):
             ]
         return []
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for field in self.fields:
@@ -170,7 +172,7 @@ class RuleState(State, LocalStorageMixinState):
         return rule_set_request_class()
 
     @rx.event
-    def refresh(self) -> Generator[EventSpec, None]:
+    def refresh(self) -> Generator[EventSpec]:
         """Refresh the edit or create page."""
         self.fields.clear()
         self.validation_messages.clear()
@@ -242,10 +244,10 @@ class RuleState(State, LocalStorageMixinState):
         return connector.create_rule_set(rule_set)
 
     @rx.event
-    def submit_rule_set(self) -> Generator[EventSpec, None, None]:
+    def submit_rule_set(self) -> Generator[EventSpec]:
         """Convert the fields to a rule set and submit it to the backend."""
         if self.stem_type is None:
-            self.reset()
+            self.reset()  # type: ignore[no-untyped-call]
             return
         try:
             rule_set_request = transform_fields_to_rule_set(self.stem_type, self.fields)
@@ -255,13 +257,13 @@ class RuleState(State, LocalStorageMixinState):
         try:
             rule_set_response = self._send_rule_set_request(rule_set_request)
         except HTTPError as exc:
-            self.reset()
+            self.reset()  # type: ignore[no-untyped-call]
             yield from escalate_error(
                 "backend", "error submitting rule set", exc.response.text
             )
             return
 
-        yield RuleState.delete_local_state
+        yield RuleState.delete_local_state  # type: ignore[misc]
 
         # clear cache to show edits in the UI
         resolve_identifier.cache_clear()
@@ -269,8 +271,8 @@ class RuleState(State, LocalStorageMixinState):
         if rule_set_response.stableTargetId != self.item_id:
             yield rx.redirect(f"/item/{rule_set_response.stableTargetId}/?saved")
         else:
-            yield RuleState.refresh
-            yield RuleState.show_submit_success_toast
+            yield RuleState.refresh  # type: ignore[misc]
+            yield RuleState.show_submit_success_toast  # type: ignore[misc]
             yield RuleState.resolve_identifiers
 
     @rx.event
@@ -283,7 +285,7 @@ class RuleState(State, LocalStorageMixinState):
         self.is_submitting = value
 
     @rx.event
-    def show_submit_success_toast(self) -> Generator[EventSpec, None, None]:
+    def show_submit_success_toast(self) -> Generator[EventSpec]:
         """Show a toast for a successfully submitted rule-set."""
         yield rx.toast.success(
             title=self.label_save_success_dialog_title,
@@ -325,12 +327,12 @@ class RuleState(State, LocalStorageMixinState):
         field_name: str,
         href: str | None,
         enabled: bool,  # noqa: FBT001
-    ) -> Generator[EventSpec, None, None]:
+    ) -> Generator[EventSpec]:
         """Toggle the `enabled` flag of a primary source."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             if primary_source.name.href == href:
                 primary_source.enabled = enabled
-                yield RuleState.update_local_state
+                yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def toggle_field_value(
@@ -338,80 +340,81 @@ class RuleState(State, LocalStorageMixinState):
         field_name: str,
         value: EditorValue,
         enabled: bool,  # noqa: FBT001
-    ) -> Generator[EventSpec, None, None]:
+    ) -> Generator[EventSpec]:
         """Toggle the `enabled` flag of a field value."""
         for primary_source in self._get_primary_sources_by_field_name(field_name):
             for editor_value in primary_source.editor_values:
                 if editor_value == value:
                     editor_value.enabled = enabled
-                    yield RuleState.update_local_state
+                    yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def toggle_field_value_editing(
         self,
         field_name: str,
         index: int,
-    ) -> Generator[EventSpec, None, None]:
+    ) -> Generator[EventSpec]:
         """Toggle editing of a field value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[
             index
         ].being_edited = not primary_source.editor_values[index].being_edited
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
-    def add_additive_value(self, field_name: str) -> Generator[EventSpec, None, None]:
+    def add_additive_value(self, field_name: str) -> Generator[EventSpec]:
         """Add an additive rule to the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.append(EditorValue(being_edited=True))
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def remove_additive_value(
         self, field_name: str, index: int
-    ) -> Generator[EventSpec, None, None]:
+    ) -> Generator[EventSpec]:
         """Remove an additive rule from the given field."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values.pop(index)
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def set_text_value(
         self, field_name: str, index: int, value: str
-    ) -> Generator[EventSpec, None, None]:
+    ) -> Generator[EventSpec]:
         """Set the text attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].text = value
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
-    def set_identifier_value(
+    async def set_identifier_value(
         self, field_name: str, index: int, value: str
-    ) -> Generator[EventSpec, None, None]:
+    ) -> AsyncGenerator[EventSpec]:
         """Set the identifier attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].identifier = value
         primary_source.editor_values[index].href = f"/item/{value}"
-        yield RuleState.update_local_state
+        await resolve_editor_value(primary_source.editor_values[index])
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def set_badge_value(
         self, field_name: str, index: int, value: str
-    ) -> Generator[EventSpec, None, None]:
+    ) -> Generator[EventSpec]:
         """Set the badge attribute on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].badge = value
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @rx.event
     def set_href_value(
         self, field_name: str, index: int, value: str
-    ) -> Generator[EventSpec, None, None]:
+    ) -> Generator[EventSpec]:
         """Set an external href on an additive editor value."""
         primary_source = self._get_editable_primary_source_by_field_name(field_name)
         primary_source.editor_values[index].href = value
         primary_source.editor_values[index].external = True
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @label_var(label_id="rules.additive_rule.add_button_prefix")
     def label_additive_rule_add_button_prefix(self) -> None:
@@ -443,7 +446,7 @@ class RuleState(State, LocalStorageMixinState):
     def label_save_success_dialog_title(self) -> None:
         """Label for save_success_dialog.title."""
 
-    @label_var(label_id="rules.save_success_dialog.message_format")
+    @label_var(label_id="rules.save_success_dialog.message_format", deps=["stem_type"])
     def label_save_success_dialog_message_format(self) -> list[str]:
         """Label for save_success_dialog.message_format."""
         return [self.stem_type or ""]

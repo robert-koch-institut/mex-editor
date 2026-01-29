@@ -9,26 +9,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- LocalStorage to store drafts and edits local on browser side.
+- Component to display search results
 
 ### Changes
 
 - consent page filters items based on person
 - consent page UI clean up
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/2039340
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
-- Using href navigation instead of navigation via code (`page.navigate()`).
+- bump python to 3.13
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/ad26e4
+- bump common to 1.11
+- switch package manager from pdm to uv
 
 ### Deprecated
 
 ### Removed
 
-- Dialogs for navigating away while having changes on create or edit page.
-
 ### Fixed
 
 ### Security
+
+## [1.3.1] - 2026-01-14
+
+### Changes
+
+- update reflex env vars to use `REFLEX_` prefix in dockerfile
+
+### Fixed
+
+- fix application specifier for new uvicorn version
+
+## [1.3.0] - 2026-01-14
+
+### Added
+
+- LocalStorage to store drafts and edits local on browser side.
+- add cve scanning of frontend dependencies
+- Dialog to search for entities by name and entity-type.
+- Decorator for localized labels that creates a `ComputedVar[str]` that depends on
+  `State.current_locale` and calls locale_service.get_text with a `label_id`
+- Localized labels for every page, component and layout
+
+### Changes
+
+- upgrade reflex to version 0.7.14
+- fix and/or evade type checking issues with reflex event handlers
+- use pytest base_url plugin to make editor url configurable for testing
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/2039340
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/c5ff3e
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/7c3e75
+- Using href navigation instead of navigation via code (`page.navigate()`).
+- Refactored pagination into state mixin and component with options.
+- Removed .mo files and converting .po files at runtime with polib
+- tests:
+  - Increased global expect timeout (to 10,000)
+  - replaced all locators thats searched for localized strings with data_test_id searches
+  - replaced localized string compares with regexs
+- change failed login alert type from browser dialog to toast
+
+### Removed
+
+- Dialogs for navigating away while having changes on create or edit page.
+- dropped npm support in favor of bun
+
+### Fixed
+
+- fixed bun cache options for windows
+- fix broken unit tests and flaky additional title test
 
 ## [1.2.0] - 2025-11-28
 
@@ -37,8 +83,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - consent microsite with ldap auth to allow granting/revoking user info publishing
 - CustomSelect-Component that has items with value and label instead of simple strings
 - add caching for playwright browsers and node-modules to testing workflow
-- Decorator for localized labels that creates a `ComputedVar[str]` that depends on `State.current_locale` and calls locale_service.get_text with a `label_id`
-- Localized labels for every page, component and layout
 
 ### Changes
 
@@ -48,22 +92,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial language now picking from available languages instead of hard coded value
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - Increased global expect timeout (to 15,000) for tests
-- bumped cookiecutter template to https://github.com/robert-koch-institut/mex-template/commit/3c389d
 - Using the field label for new/remove additive value button
 - renaming the field_name function to field_name_card
 - editor tests use backend-testing entrypoint
 - prefer using enum names over just raw strings in tests
-- Removed .mo files and converting .po files at runtime with polib
-- tests:
-    - Increased global expect timeout (to 10,000)
-    - replaced all locators thats searched for localized strings with data_test_id searches
-    - replaced localized string compares with regexs
 - change external test marker to requires_rki_infrastructure
-- change failed login alert type from browser dialog to toast
 
 ### Fixed
 
-- fix broken unit tests and flaky additional title test
 - Page numbers on search and ingest page
 
 ## [1.1.0] - 2025-10-10

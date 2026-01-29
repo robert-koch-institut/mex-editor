@@ -5,7 +5,7 @@ import reflex as rx
 from mex.editor.components import render_value
 from mex.editor.consent.layout import page
 from mex.editor.consent.state import ConsentState
-from mex.editor.search_reference_dialog import search_results_list
+from mex.editor.search_results_component import search_results_list
 
 
 def resources() -> rx.Component:
@@ -183,7 +183,7 @@ def consent_pagination(category: str) -> rx.Component:
             ).to_string(),
             on_change=[
                 getattr(ConsentState, f"set_{category}_page"),
-                ConsentState.scroll_to_top,  # type: ignore[operator]
+                ConsentState.scroll_to_top,
                 ConsentState.fetch_data(category),  # type: ignore[operator]
                 ConsentState.resolve_identifiers,
             ],

@@ -144,6 +144,6 @@ def transform_model_to_all_properties(
     """Transform all properties of a model into a list of EditorValues."""
     return [
         value
-        for field_name in model.model_fields
+        for field_name in type(model).model_fields
         for value in transform_values(getattr(model, field_name), allow_link=False)
     ]

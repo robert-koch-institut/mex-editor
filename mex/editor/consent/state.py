@@ -35,6 +35,10 @@ class ConsentState(State):
     user_projects: list[SearchResult] = []
     user_resources: list[SearchResult] = []
     consent_status: SearchResult | None = None
+    consent_display: dict[str, str] = {
+        "message": "Sie haben Ihre Zustimmung noch nicht erteilt.",
+        "color": "gray",
+    }
     limit: Annotated[int, Field(ge=1, le=100)] = 5
     projects_total: Annotated[int, Field(ge=0)] = 0
     projects_current_page: Annotated[int, Field(ge=1)] = 1
@@ -138,6 +142,9 @@ class ConsentState(State):
     @rx.event
     def fetch_data(self, category: str) -> Generator[EventSpec | None]:
         """Fetch the user's projects, resources, or bibliography."""
+        if not self.merged_login_person:
+            yield None
+            return
         connector = BackendApiConnector.get()
 
         is_projects = category == "projects"
@@ -155,6 +162,8 @@ class ConsentState(State):
                 entity_type=[entity_type],
                 skip=skip,
                 limit=self.limit,
+                reference_field="hasDataSubject",
+                referenced_identifier=[str(self.merged_login_person.identifier)],
             )
         except HTTPError as exc:
             self.is_loading = False
@@ -208,6 +217,7 @@ class ConsentState(State):
                 ]
             else:
                 self.consent_status = None
+            self.update_consent_message()
 
     @rx.event
     def submit_rule_set(
@@ -253,6 +263,39 @@ class ConsentState(State):
         if self.consent_status:
             return connector.update_rule_set(self.consent_status.identifier, rule_set)
         return connector.create_rule_set(rule_set)
+
+    def update_consent_message(self) -> None:
+        """Update the consent message based on the current consent status."""
+        if not self.consent_status:
+            self.consent_display = {
+                "message": "Sie haben Ihre Zustimmung noch nicht erteilt.",
+                "color": "gray",
+            }
+            return
+
+        consent_status = None
+        for preview in self.consent_status.preview:
+            if preview.text == "ConsentStatus":
+                consent_status = preview.badge
+                break
+
+        # format timestamp
+        timestamp_str = self.consent_status.title[0].text
+        timestamp_dt = datetime.fromisoformat(str(timestamp_str))
+        formatted_datetime = timestamp_dt.strftime("%d.%m.%Y um %H:%M")
+
+        if consent_status == "VALID_FOR_PROCESSING":
+            self.consent_display = {
+                "message": (
+                    f"Sie haben Ihre Einwilligung am {formatted_datetime} erteilt."
+                ),
+                "color": "green",
+            }
+        else:
+            self.consent_display = {
+                "message": f"Sie haben Ihre Ablehnung am {formatted_datetime} erteilt.",
+                "color": "red",
+            }
 
     @rx.event
     def show_submit_success_toast(self) -> EventSpec:

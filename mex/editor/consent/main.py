@@ -1,8 +1,7 @@
-from typing import cast
+from typing import Any, cast
 
 import reflex as rx
 
-from mex.editor.components import render_value
 from mex.editor.consent.layout import page
 from mex.editor.consent.state import ConsentState
 from mex.editor.search_results_component import search_results_list
@@ -128,23 +127,9 @@ def consent_status() -> rx.Component:
         ConsentState.merged_login_person,
         rx.vstack(
             rx.text(ConsentState.merged_login_person.full_name, weight="bold"),  # type: ignore [union-attr]
-            rx.cond(
-                ConsentState.consent_status,
-                rx.hstack(
-                    rx.foreach(
-                        ConsentState.consent_status.preview,  # type: ignore [union-attr]
-                        render_value,
-                    )
-                ),
-                rx.hstack(
-                    rx.text(
-                        "ConsentStatus: ",
-                    ),
-                    rx.spacer(direction="row"),
-                    rx.text(
-                        "ConsentType: ",
-                    ),
-                ),
+            rx.text(
+                ConsentState.consent_display["message"],
+                color_scheme=cast("Any", ConsentState.consent_display["color"]),
             ),
             style=rx.Style(
                 width="100%",

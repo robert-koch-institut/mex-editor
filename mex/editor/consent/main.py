@@ -5,7 +5,7 @@ import reflex as rx
 from mex.editor.components import render_value
 from mex.editor.consent.layout import page
 from mex.editor.consent.state import ConsentState
-from mex.editor.search.main import search_result
+from mex.editor.search_results_component import search_results_list
 
 
 def resources() -> rx.Component:
@@ -18,12 +18,7 @@ def resources() -> rx.Component:
                 textTransform="uppercase",
             ),
         ),
-        rx.vstack(
-            rx.foreach(
-                ConsentState.user_resources,
-                search_result,
-            ),
-        ),
+        search_results_list(ConsentState.user_resources),
         consent_pagination("resources"),
         style=rx.Style(
             textAlign="center",
@@ -43,12 +38,7 @@ def projects() -> rx.Component:
                 textTransform="uppercase",
             ),
         ),
-        rx.vstack(
-            rx.foreach(
-                ConsentState.user_projects,
-                search_result,
-            ),
-        ),
+        search_results_list(ConsentState.user_projects),
         consent_pagination("projects"),
         style=rx.Style(
             textAlign="center",
@@ -106,13 +96,13 @@ def consent_box() -> rx.Component:
             rx.hstack(
                 rx.button(
                     ConsentState.label_consent_box_consent_button,
-                    on_click=ConsentState.submit_rule_set("consent"),  # type: ignore[misc]
+                    on_click=ConsentState.submit_rule_set("consent"),  # type: ignore[operator]
                     custom_attrs={"data-testid": "accept-consent-button"},
                 ),
                 rx.spacer(),
                 rx.button(
                     ConsentState.label_consent_box_no_consent_button,
-                    on_click=ConsentState.submit_rule_set("denial"),  # type: ignore[misc]
+                    on_click=ConsentState.submit_rule_set("denial"),  # type: ignore[operator]
                     custom_attrs={"data-testid": "denial-consent-button"},
                 ),
             ),
@@ -176,9 +166,9 @@ def consent_pagination(category: str) -> rx.Component:
         rx.button(
             rx.text(ConsentState.label_pagination_previous_button),
             on_click=[
-                ConsentState.go_to_previous_page(category),  # type: ignore[misc]
+                ConsentState.go_to_previous_page(category),  # type: ignore[operator]
                 ConsentState.scroll_to_top,
-                ConsentState.fetch_data(category),  # type: ignore[misc]
+                ConsentState.fetch_data(category),  # type: ignore[operator]
                 ConsentState.resolve_identifiers,
             ],
             disabled=getattr(ConsentState, f"disable_{category}_previous_page"),
@@ -194,7 +184,7 @@ def consent_pagination(category: str) -> rx.Component:
             on_change=[
                 getattr(ConsentState, f"set_{category}_page"),
                 ConsentState.scroll_to_top,
-                ConsentState.fetch_data(category),  # type: ignore[misc]
+                ConsentState.fetch_data(category),  # type: ignore[operator]
                 ConsentState.resolve_identifiers,
             ],
             custom_attrs={"data-testid": f"{category}-pagination-page-select"},
@@ -202,9 +192,9 @@ def consent_pagination(category: str) -> rx.Component:
         rx.button(
             rx.text(ConsentState.label_pagination_next_button),
             on_click=[
-                ConsentState.go_to_next_page(category),  # type: ignore[misc]
+                ConsentState.go_to_next_page(category),  # type: ignore[operator]
                 ConsentState.scroll_to_top,
-                ConsentState.fetch_data(category),  # type: ignore[misc]
+                ConsentState.fetch_data(category),  # type: ignore[operator]
                 ConsentState.resolve_identifiers,
             ],
             disabled=getattr(ConsentState, f"disable_{category}_next_page"),

@@ -2,7 +2,7 @@ import math
 from collections.abc import Generator
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, cast
 
 import reflex as rx
 from pydantic import Field
@@ -23,8 +23,7 @@ from mex.common.types import (
 )
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
-from mex.editor.models import NavItem
-from mex.editor.search.models import SearchResult
+from mex.editor.models import NavItem, SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
@@ -126,18 +125,18 @@ class ConsentState(State):
         return [f"{i + 1}" for i in range(math.ceil(self.resources_total / self.limit))]
 
     @rx.event
-    def get_all_data(self) -> Generator[EventSpec | None, None, None]:
+    def get_all_data(self) -> Generator[EventSpec | None]:
         """Fetch all data for the user."""
-        yield from self.fetch_data("projects")  # type: ignore[misc]
-        yield from self.fetch_data("resources")  # type: ignore[misc]
+        yield type(self).fetch_data("projects")  # type: ignore[operator]
+        yield type(self).fetch_data("resources")  # type: ignore[operator]
 
     @rx.event
-    def scroll_to_top(self) -> Generator[EventSpec | None, None, None]:
+    def scroll_to_top(self) -> Generator[EventSpec | None]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
     @rx.event
-    def fetch_data(self, category: str) -> Generator[EventSpec | None, None, None]:
+    def fetch_data(self, category: str) -> Generator[EventSpec | None]:
         """Fetch the user's projects, resources, or bibliography."""
         connector = BackendApiConnector.get()
 
@@ -182,7 +181,7 @@ class ConsentState(State):
                 self.resources_total = response.total
 
     @rx.event
-    def get_consent(self) -> Generator[EventSpec | None, None, None]:
+    def get_consent(self) -> Generator[EventSpec | None]:
         """Fetch the user's consent status."""
         if not self.merged_login_person:
             yield None
@@ -214,7 +213,7 @@ class ConsentState(State):
     def submit_rule_set(
         self,
         consented: str,
-    ) -> Generator[EventSpec | None, None, None]:
+    ) -> Generator[EventSpec | None]:
         """Convert the fields to a rule set and submit it to the backend."""
         if not self.merged_login_person:
             yield None
@@ -239,14 +238,14 @@ class ConsentState(State):
         try:
             self._send_rule_set_request(rule_set_request)
         except HTTPError as exc:
-            self.reset()
+            self.reset()  # type: ignore[no-untyped-call]
             yield from escalate_error(
                 "backend", "error submitting rule set", exc.response.text
             )
             return
         else:
-            yield from self.get_consent()  # type: ignore[misc]
-            yield self.show_submit_success_toast()  # type: ignore[misc]
+            yield type(self).get_consent()  # type: ignore[operator]
+            yield type(self).show_submit_success_toast()  # type: ignore[operator]
 
     def _send_rule_set_request(self, rule_set: AnyRuleSetRequest) -> AnyRuleSetResponse:
         """Send the rule set to the backend."""
@@ -258,16 +257,19 @@ class ConsentState(State):
     @rx.event
     def show_submit_success_toast(self) -> EventSpec:
         """Show a toast for a successfully submitted rule-set."""
-        return rx.toast.success(
-            title=self.label_save_success_dialog_title,
-            description=self.label_save_success_dialog_content,
-            class_name="editor-toast",
-            close_button=True,
-            dismissible=True,
-            duration=5000,
+        return cast(
+            "EventSpec",
+            rx.toast.success(
+                title=self.label_save_success_dialog_title,
+                description=self.label_save_success_dialog_content,
+                class_name="editor-toast",
+                close_button=True,
+                dismissible=True,
+                duration=5000,
+            ),
         )
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human-readable display values."""
         for result_list in (

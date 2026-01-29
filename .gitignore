@@ -9,10 +9,7 @@ __pycache__/
 # Distribution / packaging
 .eggs/
 .installed.cfg
-.pdm-build
-.pdm-python
 .Python
-.python-version
 .web/
 *.egg
 *.egg-info/
@@ -58,7 +55,7 @@ cover/
 pytestdebug.log
 
 # Translations
-#*.mo
+*.mo
 *.pot
 
 # Scrapy stuff
@@ -78,9 +75,6 @@ target/
 # IPython
 profile_default/
 ipython_config.py
-
-# pyenv
-.python-version
 
 # PEP 582
 __pypackages__/
@@ -129,6 +123,7 @@ dmypy.json
 .invenio.private
 .states
 .tmp_dagster_home_*
+.nux/
 .web
 *.ndjson
 assets/external/

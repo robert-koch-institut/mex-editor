@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
 from mex.common.connector import CONNECTOR_STORE
-from mex.editor.api.models import SystemStatus
+from mex.common.models import VersionStatus
 
 api = FastAPI(
     title="mex-editor",
@@ -15,9 +15,9 @@ api = FastAPI(
 
 
 @api.get("/_system/check", tags=["system"])
-def check_system_status() -> SystemStatus:
+def check_system_status() -> VersionStatus:
     """Check that the editor server is healthy and responsive."""
-    return SystemStatus(status="ok", version=version("mex-editor"))
+    return VersionStatus(status="ok", version=version("mex-editor"))
 
 
 @api.get("/_system/metrics", response_class=PlainTextResponse, tags=["system"])

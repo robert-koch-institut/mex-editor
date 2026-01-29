@@ -1,4 +1,3 @@
-import math
 from collections.abc import Generator
 from typing import Any
 
@@ -12,43 +11,20 @@ from mex.editor.exceptions import escalate_error
 from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider, IngestResult
 from mex.editor.ingest.transform import transform_models_to_results
 from mex.editor.label_var import label_var
+from mex.editor.pagination_component import PaginationStateMixin
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 
 
-class IngestState(State):
+class IngestState(State, PaginationStateMixin):
     """State management for the ingest page."""
 
     results_transformed: list[IngestResult] = []
     results_extracted: list[AnyExtractedModel] = []
-    total: int = 0
-    limit: int = 50
     query_string: str = ""
-    current_page: int = 1
     current_aux_provider: AuxProvider = AuxProvider.LDAP
     aux_providers: list[AuxProvider] = ALL_AUX_PROVIDERS
     is_loading: bool = True
-
-    @rx.var(cache=False)
-    def page_selection(self) -> list[str]:
-        """Return a list of total pages based on the number of results."""
-        return [f"{i + 1}" for i in range(math.ceil(self.total / self.limit))]
-
-    @rx.var(cache=False)
-    def disable_page_selection(self) -> bool:
-        """Whether the page selection in the pagination should be disabled."""
-        return math.ceil(self.total / self.limit) == 1
-
-    @rx.var(cache=False)
-    def disable_previous_page(self) -> bool:
-        """Disable the 'Previous' button if on the first page."""
-        return self.current_page <= 1
-
-    @rx.var(cache=False)
-    def disable_next_page(self) -> bool:
-        """Disable the 'Next' button if on the last page."""
-        max_page = math.ceil(self.total / self.limit)
-        return self.current_page >= max_page
 
     @rx.var(cache=False)
     def current_results_length(self) -> int:
@@ -56,21 +32,16 @@ class IngestState(State):
         return len(self.results_transformed)
 
     @rx.event
-    def toggle_show_properties(self, index: int) -> None:
-        """Toggle the show properties state."""
-        self.results_transformed[index].show_properties = not self.results_transformed[
+    def toggle_show_all_properties(self, item: IngestResult, index: int) -> None:
+        """Toggle if all properties are visible for given item at index."""
+        self.results_transformed[
             index
-        ].show_properties
+        ].show_all_properties = not item.show_all_properties
 
     @rx.event
     def set_current_aux_provider(self, value: str) -> None:
         """Change the current aux provider."""
         self.current_aux_provider = AuxProvider(value)
-
-    @rx.event
-    def set_page(self, page_number: str | int) -> None:
-        """Set the current page and refresh the results."""
-        self.current_page = int(page_number)
 
     @rx.event
     def handle_submit(self, form_data: dict[str, Any]) -> None:
@@ -83,22 +54,7 @@ class IngestState(State):
         self.query_string = ""
 
     @rx.event
-    def go_to_first_page(self) -> None:
-        """Navigate to the first page."""
-        self.current_page = 1
-
-    @rx.event
-    def go_to_previous_page(self) -> None:
-        """Navigate to the previous page."""
-        self.current_page = self.current_page - 1
-
-    @rx.event
-    def go_to_next_page(self) -> None:
-        """Navigate to the next page."""
-        self.current_page = self.current_page + 1
-
-    @rx.event
-    def ingest_result(self, index: int) -> Generator[EventSpec, None, None]:
+    def ingest_result(self, index: int) -> Generator[EventSpec]:
         """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
         model = self.get_value(self.results_extracted[index])  # type: ignore[arg-type]
@@ -123,11 +79,11 @@ class IngestState(State):
             )
 
     @rx.event
-    def scroll_to_top(self) -> Generator[EventSpec, None, None]:
+    def scroll_to_top(self) -> Generator[EventSpec]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results_transformed:
@@ -136,7 +92,7 @@ class IngestState(State):
                     async with self:
                         await resolve_editor_value(value)
 
-    @rx.event(background=True)
+    @rx.event(background=True)  # type: ignore[operator]
     async def flag_ingested_items(self) -> None:
         """Check and flag, if any result is already ingested into backend."""
         connector = BackendApiConnector.get()
@@ -152,10 +108,9 @@ class IngestState(State):
                     result.show_ingest_button = False
 
     @rx.event
-    def refresh(self) -> Generator[EventSpec | None, None, None]:
+    def refresh(self) -> Generator[EventSpec | None]:
         """Refresh the search results."""
         connector = BackendApiConnector.get()
-        offset = self.limit * (self.current_page - 1)
         self.is_loading = True
         yield None
         try:
@@ -164,7 +119,7 @@ class IngestState(State):
                 endpoint=self.current_aux_provider,
                 params={
                     "q": self.query_string or None,
-                    "offset": str(offset),
+                    "offset": str(self.skip),
                     "limit": str(self.limit),
                 },
             )
@@ -172,8 +127,8 @@ class IngestState(State):
             self.is_loading = False
             self.results_transformed = []
             self.results_extracted = []
-            self.total = 0
-            self.current_page = 1
+            yield IngestState.set_total(0)  # type: ignore[operator]
+            yield IngestState.set_current_page(1)  # type: ignore[operator]
             yield None
             yield from escalate_error(
                 "backend",
@@ -187,7 +142,7 @@ class IngestState(State):
             )
             self.results_extracted = container.items
             self.results_transformed = transform_models_to_results(container.items)
-            self.total = container.total
+            self.set_total(container.total)  # type: ignore[operator]
 
     @label_var(label_id="ingest.button_ingest")
     def label_button_ingest(self) -> None:

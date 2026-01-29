@@ -11,10 +11,10 @@ class EditState(RuleState):
     """State for the edit component."""
 
     @rx.event
-    def show_submit_success_toast_on_redirect(self) -> Generator[EventSpec, None, None]:
+    def show_submit_success_toast_on_redirect(self) -> Generator[EventSpec]:
         """Show a success toast when the saved param is set."""
         if "saved" in self.router.page.params:
-            yield EditState.show_submit_success_toast
+            yield EditState.show_submit_success_toast  # type: ignore[misc]
             params = self.router.page.params.copy()
             params.pop("saved")
             if event := self.push_url_params(params):
@@ -25,7 +25,7 @@ class EditState(RuleState):
         """Determine if any primary source or editor value is enabled.
 
         Returns:
-            bool: Return true if any primary source or editor value is enabled,
+            Return true if any primary source or editor value is enabled,
             otherwise false.
         """
         return any(
@@ -37,7 +37,7 @@ class EditState(RuleState):
     @rx.event
     def toggle_all_primary_source_and_editor_values(
         self,
-    ) -> Generator[EventSpec, None, None]:
+    ) -> Generator[EventSpec]:
         """Toggle all primary source and editor values."""
         any_enabled = self.any_primary_source_or_editor_value_enabled
         new_state = not any_enabled
@@ -46,7 +46,7 @@ class EditState(RuleState):
                 ps.enabled = new_state
                 for value in ps.editor_values:
                     value.enabled = new_state
-        yield RuleState.update_local_state
+        yield RuleState.update_local_state  # type: ignore[misc]
 
     @label_var(label_id="edit.toggle_all")
     def label_toggle_all(self) -> None:

@@ -8,7 +8,7 @@ from mex.common.logging import logger
 
 def escalate_error(
     namespace: str, summary: str, payload: object
-) -> Generator[EventSpec, None, None]:
+) -> Generator[EventSpec]:
     """Escalate an error by spreading it to the python and browser logs and the UI."""
     logger.error(
         "%s - %s: %s",

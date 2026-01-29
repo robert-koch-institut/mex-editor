@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 import pytest
 from pytest import MonkeyPatch
 
-from mex.editor.models import NavItem
-from mex.editor.state import State, User
+from mex.editor.models import NavItem, User
+from mex.editor.state import State
 
 
 def test_state_logout(monkeypatch: MonkeyPatch) -> None:
@@ -13,7 +13,7 @@ def test_state_logout(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(State, "_mark_dirty", MagicMock(spec=State._mark_dirty))
 
     assert state.user_mex
-    assert "/" in str(list(state.logout()))  # type: ignore[misc]
+    assert "/" in str(list(state.logout()))  # type: ignore[operator]
     assert state.user_mex is None
 
 
@@ -21,14 +21,14 @@ def test_state_check_login_pass() -> None:
     state = State(user_mex=User(name="Test", write_access=True))
     assert state.user_mex
 
-    assert list(state.check_mex_login()) == []  # type: ignore[misc]
+    assert list(state.check_mex_login()) == []  # type: ignore[operator]
 
 
 def test_state_check_login_fail() -> None:
     state = State()
     assert state.user_mex is None
 
-    assert "/login" in str(list(state.check_mex_login()))  # type: ignore[misc]
+    assert "/login" in str(list(state.check_mex_login()))  # type: ignore[operator]
 
 
 @pytest.mark.parametrize(

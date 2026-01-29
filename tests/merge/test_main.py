@@ -11,11 +11,11 @@ from tests.conftest import build_pagination_regex, build_ui_label_regex
 
 @pytest.fixture
 def merge_page(
-    frontend_url: str,
+    base_url: str,
     writer_user_page: Page,
 ) -> Page:
     page = writer_user_page
-    page.goto(f"{frontend_url}/merge")
+    page.goto(f"{base_url}/merge")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
     page.screenshot(path="tests_merge_items_test_main-test_index-on-load.png")
@@ -122,7 +122,10 @@ def test_select_result_extracted(
     page.get_by_test_id("search-button-extracted").click()
     expect(page.get_by_text(build_pagination_regex(2, 2))).to_be_visible()
     contact_point_1 = dummy_data_by_identifier_in_primary_source["cp-1"]
-    result = page.get_by_test_id(f"result-extracted-{contact_point_1.identifier}")
+    extracted_search_results = page.get_by_test_id("extracted-search-results-container")
+    result = extracted_search_results.get_by_test_id(
+        f"search-result-{contact_point_1.identifier}"
+    )
     result.get_by_role("checkbox").click()
     checked = entity_types_extracted.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
@@ -149,7 +152,10 @@ def test_select_result_merged(
     page.get_by_test_id("search-button-merged").click()
     expect(page.get_by_text(build_pagination_regex(2, 2))).to_be_visible()
     contact_point_1 = dummy_data_by_identifier_in_primary_source["cp-1"]
-    result = page.get_by_test_id(f"result-merged-{contact_point_1.stableTargetId}")
+    merged_search_results = page.get_by_test_id("merged-search-results-container")
+    result = merged_search_results.get_by_test_id(
+        f"search-result-{contact_point_1.stableTargetId}"
+    )
     result.get_by_role("checkbox").click()
     checked = entity_types_merged.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
@@ -173,13 +179,14 @@ def test_resolves_identifier(
     expect(entity_types_extracted).to_be_visible()
     entity_types_extracted.get_by_text("Activity").click()
     page.get_by_test_id("search-button-extracted").click()
+    extracted_results = page.get_by_test_id("extracted-search-results-container")
     expect(
-        page.get_by_test_id("extracted-results-summary").get_by_text(
+        extracted_results.get_by_test_id("search-results-summary").get_by_text(
             build_pagination_regex(1, 1)
         )
     ).to_be_visible()
     page.screenshot(path="tests_merge_test_main-test_resolves_identifier.png")
-    result = page.get_by_test_id(f"result-extracted-{activity_1.identifier}")
+    result = extracted_results.get_by_test_id(f"search-result-{activity_1.identifier}")
     email = result.get_by_text(f"{contact_point_1.email[0]}")
     expect(email).to_be_visible()
 
@@ -197,8 +204,9 @@ def test_additional_titles_badge(
 
     resource_r2 = dummy_data_by_identifier_in_primary_source["r-2"]
     assert isinstance(resource_r2, ExtractedResource)
-    resource_r2_result = page.get_by_test_id(
-        f"result-extracted-{resource_r2.identifier}"
+    extracted_results = page.get_by_test_id("extracted-search-results-container")
+    resource_r2_result = extracted_results.get_by_test_id(
+        f"search-result-{resource_r2.identifier}"
     )
     expect(resource_r2_result).to_be_visible()
     page.screenshot(path="tests_merge_test_additional_titles_badge_on_load.png")
@@ -207,6 +215,7 @@ def test_additional_titles_badge(
     # expect title is visible and there are additional titles for 'r2'
     expect(resource_r2_result).to_contain_text(first_title.value)
     additional_title_badge = page.get_by_test_id("additional-titles-badge").first
+    additional_title_badge.scroll_into_view_if_needed()
     expect(additional_title_badge).to_be_visible()
     page.screenshot(path="tests_search_test_additional_titles_badge_on_visible.png")
     expect(additional_title_badge).to_have_text(
@@ -216,9 +225,9 @@ def test_additional_titles_badge(
     # hover additional titles
     box = additional_title_badge.bounding_box()
     assert box
-    page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+    page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2, steps=5)
     additional_title_badge.hover()
-    page.screenshot(path="tests_search_test_additional_titles_badge_on_hover.png")
+    page.screenshot(path="tests_merge_test_additional_titles_badge_on_hover.png")
 
     # check tooltip content
     tooltip = page.get_by_test_id("tooltip-additional-titles")

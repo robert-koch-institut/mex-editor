@@ -84,3 +84,14 @@ MODEL_CONFIG_BY_STEM_TYPE = TypeAdapter(dict[str, ModelConfig]).validate_python(
     yaml.safe_load(files("mex.editor").joinpath("models.yaml").open())
 )
 LANGUAGE_VALUE_NONE = "None"
+
+
+class SearchResult(rx.Base):
+    """Search result preview."""
+
+    identifier: str
+    stem_type: str
+    title: list[EditorValue]
+    preview: list[EditorValue]
+    show_all_properties: bool = False
+    all_properties: list[EditorValue]

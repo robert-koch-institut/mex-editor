@@ -41,4 +41,6 @@ def test_transform_models_to_results() -> None:
                 "enabled": True,
             }
         ],
+        "show_all_properties": False,
+        "all_properties": [],
     }

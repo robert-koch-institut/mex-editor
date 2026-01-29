@@ -10,7 +10,7 @@ from mex.editor.state import State
 
 
 class PaginationStateMixin(rx.State, mixin=True):
-    """State-Mixin for pagination behaviour."""
+    """State-Mixin for pagination behavior."""
 
     total: int = 0
     limit: int = 50

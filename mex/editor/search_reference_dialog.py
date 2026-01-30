@@ -1,4 +1,5 @@
 from collections.abc import Generator, Iterable
+from typing import cast
 
 import reflex as rx
 from reflex.app import EventSpec
@@ -142,7 +143,8 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
         else:
             self.is_loading = False
             self.results = transform_models_to_dialog_results(response.items)
-            yield SearchReferenceDialogState.set_total(response.total)  # type: ignore[operator]
+            yield SearchReferenceDialogState.set_total(response.total)  # type: ignore[operator]#
+            yield SearchReferenceDialogState.resolve_identifiers()
 
 
 def search_reference_dialog(
@@ -158,10 +160,24 @@ def search_reference_dialog(
 
     def render_result() -> rx.Component:
         def render_select_button(item: SearchResult, _: int) -> rx.Component:
+            def _array_handler() -> EventType:
+                return [
+                    x(item.identifier) for x in cast("Iterable", on_identifier_selected)
+                ]
+
+            def _handler() -> EventType:
+                return on_identifier_selected(item.identifier)  # type: ignore[misc]
+
+            inner_handler = (
+                _array_handler
+                if isinstance(on_identifier_selected, Iterable)
+                else _handler
+            )
+
             return rx.dialog.close(
                 rx.button(
                     SearchReferenceDialogState.label_results_select_button,
-                    on_click=on_identifier_selected(item.identifier),  # type: ignore[misc]
+                    on_click=inner_handler,
                     custom_attrs={
                         "data-testid": f"{component_id_prefix}-result-select-button"
                     },
@@ -250,10 +266,7 @@ def search_reference_dialog(
                     ),
                 ),
                 id=f"{component_id_prefix}-form",
-                on_submit=[
-                    SearchReferenceDialogState.handle_submit,
-                    SearchReferenceDialogState.resolve_identifiers,
-                ],
+                on_submit=SearchReferenceDialogState.handle_submit,
             ),
             rx.script(
                 f"setTimeout(() => document.getElementById('{component_id_prefix}-form-submit-button').click())"  # noqa: E501

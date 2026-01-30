@@ -3,7 +3,7 @@ from typing import Any
 import reflex as rx
 
 from mex.editor.component_option_helper import (
-    build_pagination_options,
+    build_pagination_for_state_options,
 )
 from mex.editor.ingest.models import AuxProvider, IngestResult
 from mex.editor.ingest.state import IngestState
@@ -106,7 +106,7 @@ def search_results() -> rx.Component:
             IngestState.results_transformed,  # type: ignore[arg-type]
             SearchResultsComponentOptions(
                 summary_text=IngestState.label_search_result_summary_format,
-                pagination_options=build_pagination_options(
+                pagination_options=build_pagination_for_state_options(
                     IngestState, IngestState.flag_ingested_items
                 ),
                 list_options=SearchResultsListOptions(

@@ -211,3 +211,15 @@ msgstr "Select"
 
 msgid "layout.nav_bar.advanced_search_navitem"
 msgstr "Advanced Search"
+
+msgid "advanced_search.reference_filter.add_value"
+msgstr "Add"
+
+msgid "advanced_search.reference_filter.title"
+msgstr "Reference filters"
+
+msgid "advanced_search.reference_filter.remove_value"
+msgstr "Remove"
+
+msgid "advanced_search.reference_filter.value_placeholder"
+msgstr "Identifier for"

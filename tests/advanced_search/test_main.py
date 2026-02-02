@@ -11,6 +11,7 @@ from mex.common.models import (
     MERGED_MODEL_CLASSES,
     MERGED_MODEL_CLASSES_BY_NAME,
     AnyMergedModel,
+    ExtractedActivity,
     MergedPrimarySource,
     MergedResource,
 )
@@ -92,7 +93,9 @@ def test_entity_types_filter(
 
 
 @pytest.mark.integration
-def test_reference_filter_one_field_filter(advanced_search_page: Page) -> None:
+def test_reference_filter_one_field_filter(
+    advanced_search_page: Page, extracted_activity: ExtractedActivity
+) -> None:
     page = advanced_search_page
 
     # Test one ref matching
@@ -102,7 +105,9 @@ def test_reference_filter_one_field_filter(advanced_search_page: Page) -> None:
         re.compile(r"ref-filter-value-label-select-item-(.+)-contact:(.*)")
     ).click()
     page.get_by_test_id("ref-filter-0-add-value").click()
-    page.get_by_test_id("filter-ref-0-value-0-value").fill("dhEePxM98fOIPnPLr0YqQi")
+    page.get_by_test_id("filter-ref-0-value-0-value").fill(
+        extracted_activity.contact[1]
+    )
     _make_screenshot(page, "test_reference_filter_one_field_filter_contact_set")
     expect(page.get_by_test_id(search_result_item_regex)).to_have_count(1)
 

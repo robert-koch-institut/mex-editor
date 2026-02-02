@@ -1,4 +1,6 @@
 import re
+from collections.abc import Generator
+from re import Pattern
 from typing import Any, cast
 
 import pytest
@@ -21,7 +23,6 @@ from mex.common.models import (
 )
 from mex.common.types import (
     AccessRestriction,
-    Email,
     Identifier,
     IdentityProvider,
     Link,
@@ -154,12 +155,12 @@ def dummy_data() -> list[AnyExtractedModel]:
         title=[Text(value="Primary Source Two", language=TextLanguage.EN)],
     )
     contact_point_1 = ExtractedContactPoint(
-        email=[Email("info@contact-point.one")],
+        email=["info@contact-point.one"],
         hadPrimarySource=primary_source_1.stableTargetId,
         identifierInPrimarySource="cp-1",
     )
     contact_point_2 = ExtractedContactPoint(
-        email=[Email("help@contact-point.two")],
+        email=["help@contact-point.two"],
         hadPrimarySource=primary_source_1.stableTargetId,
         identifierInPrimarySource="cp-2",
     )
@@ -305,7 +306,7 @@ def load_pagination_dummy_data(
         pagination_dummy_data.extend(
             [
                 ExtractedContactPoint(
-                    email=[Email(f"help-{i}@pagination.abc")],
+                    email=[f"help-{i}@pagination.abc"],
                     hadPrimarySource=cast(
                         "MergedPrimarySourceIdentifier", primary_source_1.stableTargetId
                     ),
@@ -328,11 +329,10 @@ def extracted_activity(
 
 
 @pytest.fixture
-def artificial_extracted_items() -> list[AnyExtractedModel]:
+def artificial_extracted_items() -> Generator[AnyExtractedModel]:
     return generate_artificial_extracted_items(
         locale="de_DE",
         seed=42,
-        count=25,
         chattiness=16,
         stem_types=list(EXTRACTED_MODEL_CLASSES_BY_NAME),
     )
@@ -348,11 +348,11 @@ def load_artificial_extracted_items(
     return artificial_extracted_items
 
 
-def build_pagination_regex(current: int, total: int) -> re.Pattern:
+def build_pagination_regex(current: int, total: int) -> Pattern[str]:
     return re.compile(rf"\w+\s{current}\s\w+\s{total}\s\w+")
 
 
-def build_ui_label_regex(label_id: str) -> re.Pattern:
+def build_ui_label_regex(label_id: str) -> Pattern[str]:
     service = LocaleService.get()
     return re.compile(
         f"({'|'.join(re.escape(service.get_ui_label(locale.id, label_id)) for locale in service.get_available_locales())})"

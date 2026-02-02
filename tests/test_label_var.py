@@ -7,7 +7,7 @@ from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
 
 if TYPE_CHECKING:
-    from reflex.state import ComputedVar
+    from reflex.vars.base import ComputedVar
 
 translations = {
     "locale-1": {

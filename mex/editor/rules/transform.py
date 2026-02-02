@@ -191,7 +191,7 @@ def _transform_model_to_editor_primary_sources(
     """With a model and rules, attach an editor primary source to the field."""
     primary_source_id = _get_primary_source_id_from_model(model)
     primary_source_name = transform_value(primary_source_id)
-    for field_name in model.model_fields:
+    for field_name in type(model).model_fields:
         if field_name in fields_by_name:
             editor_values = _transform_model_values_to_editor_values(
                 model,

@@ -195,7 +195,7 @@ def filter_references() -> rx.Component:
                 rx.button(
                     rx.icon("plus"),
                     on_click=AdvancedSearchState.add_ref_filter(
-                        AdvancedSearchState.all_fields_for_entity_types[0].value
+                        AdvancedSearchState.all_fields_for_entity_types[0].value # type: ignore[attr-defined]
                     ),  # type: ignore[operator]
                     variant="ghost",
                     color_scheme="jade",

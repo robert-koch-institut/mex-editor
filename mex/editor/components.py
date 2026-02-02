@@ -2,7 +2,7 @@ from typing import Any
 
 import reflex as rx
 
-from mex.editor.rules.models import EditorValue
+from mex.editor.models import EditorValue
 from mex.editor.state import State
 
 

@@ -53,7 +53,7 @@ class AdvancedSearchState(State, PaginationStateMixin):
             self.all_entity_types if len(self.entity_types) == 0 else self.entity_types
         )
 
-        fields_with_type: list[dict] = [
+        fields_with_type: list[dict[str, Any]] = [
             {
                 "field": field,
                 "label": self._locale_service.get_field_label(
@@ -98,7 +98,7 @@ class AdvancedSearchState(State, PaginationStateMixin):
         """Return the number of current search results."""
         return len(self.search_results)
 
-    def _get_field_data(self, field_value: str) -> dict:
+    def _get_field_data(self, field_value: str) -> dict[str, Any]:
         found_field = next(
             (x for x in self.all_fields_for_entity_types if x.value == field_value),
             None,
@@ -112,7 +112,7 @@ class AdvancedSearchState(State, PaginationStateMixin):
         }
 
     @rx.event
-    def search(self) -> Generator[EventSpec | None, None, None]:
+    def search(self) -> Generator[EventSpec | None]:
         """Perform the search with the current filters."""
         entity_type = [ensure_prefix(x, "Merged") for x in self.entity_types]
 

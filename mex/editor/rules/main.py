@@ -4,13 +4,14 @@ import reflex as rx
 
 from mex.editor.components import icon_by_stem_type, render_span, render_value
 from mex.editor.locale_service import LocaleService
+from mex.editor.models import EditorValue
 from mex.editor.rules.models import (
     EditorPrimarySource,
-    EditorValue,
+    FieldTranslation,
     InputConfig,
     ValidationMessage,
 )
-from mex.editor.rules.state import FieldTranslation, RuleState
+from mex.editor.rules.state import RuleState
 from mex.editor.search_reference_dialog import search_reference_dialog
 
 locale_service = LocaleService.get()
@@ -537,7 +538,9 @@ def validation_errors() -> rx.Component:
                 style=rx.Style(justifyContent="flex-end"),
             ),
         ),
-        open=cast("rx.vars.ArrayVar", RuleState.validation_messages).bool(),
+        open=cast(
+            "rx.vars.ArrayVar[list[ValidationMessage]]", RuleState.validation_messages
+        ).bool(),
     )
 
 

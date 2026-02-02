@@ -10,9 +10,9 @@ from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.settings import BaseSettings
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
-from mex.editor.models import MergedLoginPerson
+from mex.editor.models import MergedLoginPerson, User
 from mex.editor.security import has_read_access_mex, has_write_access_mex
-from mex.editor.state import State, User
+from mex.editor.state import State
 
 
 class LoginState(State):
@@ -52,7 +52,7 @@ class LoginLdapState(LoginState):
     """State management for the login page."""
 
     @rx.event
-    def login(self) -> Generator[EventSpec, None, None]:
+    def login(self) -> Generator[EventSpec]:
         """Login a user."""
         settings = BaseSettings.get()
         url = urljoin(
@@ -82,7 +82,8 @@ class LoginLdapState(LoginState):
                 orcid_id=response_user["orcidId"],
             )
             target_path_after_login = self.target_path_after_login or "/"
-            self.reset()  # reset username/password
+            # reset username/password
+            self.reset()  # type: ignore[no-untyped-call]
             yield rx.redirect(target_path_after_login)
         else:
             yield rx.toast.error(
@@ -94,7 +95,7 @@ class LoginMExState(LoginState):
     """State management for the login page."""
 
     @rx.event
-    def login(self) -> Generator[EventSpec, None, None]:
+    def login(self) -> Generator[EventSpec]:
         """Login a user."""
         read_access = has_read_access_mex(self.username, self.password)
         write_access = has_write_access_mex(self.username, self.password)
@@ -107,7 +108,8 @@ class LoginMExState(LoginState):
                 target_path_after_login = self.target_path_after_login
             else:
                 target_path_after_login = "/"
-            self.reset()  # reset username/password
+            # reset username/password
+            self.reset()  # type: ignore[no-untyped-call]
             yield rx.redirect(target_path_after_login)
         else:
             yield rx.toast.error(

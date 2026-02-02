@@ -1,3 +1,5 @@
+from typing import TypedDict
+
 import reflex as rx
 
 
@@ -21,3 +23,10 @@ class ReferenceFieldFilter(rx.Base):
 
     identifiers: list[ReferenceFieldIdentifierFilter]
     field: str
+
+
+class ReferenceFieldParameters(TypedDict):
+    """Reference field parameters to pass to the backend connector."""
+
+    reference_field: str | None
+    referenced_identifier: list[str] | None

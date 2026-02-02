@@ -1,5 +1,5 @@
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 import reflex as rx
 from pydantic import TypeAdapter, ValidationError
@@ -20,6 +20,7 @@ from mex.editor.pagination_component import PaginationStateMixin
 from mex.editor.search.models import (
     ReferenceFieldFilter,
     ReferenceFieldIdentifierFilter,
+    ReferenceFieldParameters,
     SearchPrimarySource,
 )
 from mex.editor.search.transform import transform_models_to_results
@@ -31,7 +32,9 @@ if TYPE_CHECKING:
     from reflex.istate.data import RouterData
 
 
-def _build_dynamic_refresh_params(reference_field_filter: ReferenceFieldFilter) -> dict:
+def _build_dynamic_refresh_params(
+    reference_field_filter: ReferenceFieldFilter,
+) -> ReferenceFieldParameters:
     identifiers = [
         x for x in reference_field_filter.identifiers if not x.validation_msg
     ]
@@ -45,7 +48,7 @@ def _build_dynamic_refresh_params(reference_field_filter: ReferenceFieldFilter) 
 
 def _build_had_primary_source_refresh_params(
     had_primary_sources: dict[str, SearchPrimarySource],
-) -> dict:
+) -> ReferenceFieldParameters:
     had_primary_source = [
         identifier
         for identifier, primary_source in had_primary_sources.items()
@@ -214,7 +217,7 @@ class SearchState(State, PaginationStateMixin):
         )
 
     @rx.event
-    def push_search_params(self) -> Generator[EventSpec | None, None, None]:
+    def push_search_params(self) -> Generator[EventSpec | None]:
         """Push a new browser history item with updated search parameters."""
         yield self.push_url_params(
             {
@@ -251,12 +254,12 @@ class SearchState(State, PaginationStateMixin):
         self.had_primary_sources[index].checked = value
 
     @rx.event
-    def handle_submit(self, form_data: dict) -> None:
+    def handle_submit(self, form_data: dict[str, Any]) -> None:
         """Handle the form submit."""
         self.query_string = form_data["query_string"]
 
     @rx.event
-    def scroll_to_top(self) -> Generator[EventSpec, None, None]:
+    def scroll_to_top(self) -> Generator[EventSpec]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
@@ -270,7 +273,7 @@ class SearchState(State, PaginationStateMixin):
                         await resolve_editor_value(preview)
 
     @rx.event
-    def refresh(self) -> Generator[EventSpec | None, None, None]:
+    def refresh(self) -> Generator[EventSpec | None]:
         """Refresh the search results."""
         # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         connector = BackendApiConnector.get()
@@ -308,7 +311,7 @@ class SearchState(State, PaginationStateMixin):
             yield SearchState.set_total(response.total)  # type: ignore[operator]
 
     @rx.event
-    def get_available_primary_sources(self) -> Generator[EventSpec, None, None]:
+    def get_available_primary_sources(self) -> Generator[EventSpec]:
         """Get all available primary sources."""
         # TODO(ND): use proper connector method when available (stop-gap MX-1984)
         connector = BackendApiConnector.get()

@@ -1,7 +1,7 @@
 import datetime
 from collections.abc import Callable, Iterable
 from functools import wraps
-from typing import Any, TypeVar, overload
+from typing import Any, overload
 
 from reflex.state import State
 from reflex.utils import types
@@ -9,46 +9,43 @@ from reflex.vars.base import ComputedVar, Var, computed_var
 
 from mex.editor.locale_service import LocaleService
 
-StateT = TypeVar("StateT", bound=State)
-ReturnT = TypeVar("ReturnT")
-
 
 @overload
-def label_var(
+def label_var[StateT: State, ReturnT](
     fget: None = None,
     label_id: str = "",
     initial_value: Any | types.Unset = types.Unset(),  # noqa: ANN401, B008
     cache: bool = True,  # noqa: FBT001, FBT002
-    deps: list[str | Var] | None = None,
+    deps: list[str | Var[str]] | None = None,
     interval: datetime.timedelta | int | None = None,
     backend: bool | None = None,  # noqa: FBT001
-    **kwargs,  # noqa: ANN003
+    **kwargs: Any,  # noqa: ANN401
 ) -> Callable[[Callable[[StateT], ReturnT]], ComputedVar[str]]: ...
 
 
 @overload
-def label_var(
+def label_var[StateT: State, ReturnT](
     fget: Callable[[StateT], ReturnT],
     label_id: str,
     initial_value: ReturnT | types.Unset = types.Unset(),  # noqa: B008
     cache: bool = True,  # noqa: FBT001, FBT002
-    deps: list[str | Var] | None = None,
+    deps: list[str | Var[str]] | None = None,
     interval: datetime.timedelta | int | None = None,
     backend: bool | None = None,  # noqa: FBT001
-    **kwargs,  # noqa: ANN003
+    **kwargs: Any,  # noqa: ANN401
 ) -> ComputedVar[str]: ...
 
 
-def label_var(  # noqa: PLR0913
+def label_var[StateT: State](  # noqa: PLR0913
     fget: Callable[[StateT], Any] | None = None,  # noqa: ARG001
     label_id: str = "",
     initial_value: Any | types.Unset = types.Unset(),  # noqa: B008
     cache: bool = True,  # noqa: FBT001, FBT002
-    deps: list[str | Var] | None = None,
+    deps: list[str | Var[str]] | None = None,
     interval: datetime.timedelta | int | None = None,
     backend: bool | None = None,  # noqa: FBT001
-    **kwargs,
-) -> ComputedVar | Callable[[Callable[[StateT], Any]], ComputedVar]:
+    **kwargs: Any,
+) -> ComputedVar[str] | Callable[[Callable[[StateT], Any]], ComputedVar[str]]:
     """A decorator to translate the given label_id base on the current locale.
 
     Args:

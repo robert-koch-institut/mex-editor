@@ -54,7 +54,7 @@ class IngestState(State, PaginationStateMixin):
         self.query_string = ""
 
     @rx.event
-    def ingest_result(self, index: int) -> Generator[EventSpec, None, None]:
+    def ingest_result(self, index: int) -> Generator[EventSpec]:
         """Ingest the selected result to MEx backend."""
         connector = BackendApiConnector.get()
         model = self.get_value(self.results_extracted[index])  # type: ignore[arg-type]
@@ -79,7 +79,7 @@ class IngestState(State, PaginationStateMixin):
             )
 
     @rx.event
-    def scroll_to_top(self) -> Generator[EventSpec, None, None]:
+    def scroll_to_top(self) -> Generator[EventSpec]:
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
@@ -108,7 +108,7 @@ class IngestState(State, PaginationStateMixin):
                     result.show_ingest_button = False
 
     @rx.event
-    def refresh(self) -> Generator[EventSpec | None, None, None]:
+    def refresh(self) -> Generator[EventSpec | None]:
         """Refresh the search results."""
         connector = BackendApiConnector.get()
         self.is_loading = True

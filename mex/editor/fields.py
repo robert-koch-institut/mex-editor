@@ -3,11 +3,14 @@ from typing import cast
 from mex.common.fields import (
     ALL_MODEL_CLASSES_BY_NAME,
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
-    MERGED_IDENTIFIER_CLASSES,
     REFERENCE_FIELDS_BY_CLASS_NAME,
     TEMPORAL_FIELDS_BY_CLASS_NAME,
 )
-from mex.common.types import AnyTemporalEntity, TemporalEntityPrecision
+from mex.common.types import (
+    MERGED_IDENTIFIER_CLASSES,
+    AnyTemporalEntity,
+    TemporalEntityPrecision,
+)
 from mex.common.utils import contains_any_types, get_all_fields
 
 # TODO(ND): move these lookups to mex.common.fields

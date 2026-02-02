@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from typing import Any
 
 import reflex as rx
-from reflex.base import BaseModel
+from pydantic import BaseModel
 from reflex.components import Component
 from reflex.components.radix.themes.components.select import (
     HighLevelSelect,
@@ -30,7 +30,7 @@ class ValueLabelHighLevelSelect(HighLevelSelect):
     def create_value_label_select(
         cls,
         items: Sequence[ValueLabelSelectItem] | Var[Sequence[ValueLabelSelectItem]],
-        **props,  # noqa: ANN003
+        **props: Any,  # noqa: ANN401
     ) -> Component:
         """Create a select component. THIS IS COPY PASTE FROM HighLevelSelect!
 

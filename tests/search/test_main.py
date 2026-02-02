@@ -194,7 +194,7 @@ def test_load_search_params(
     page = writer_user_page
     expected_model = dummy_data_by_identifier_in_primary_source["cp-2"]
     page.goto(
-        f"{base_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
+        f"{base_url}?q=help&page=1&entityType=ContactPoint&entityType=Consent"
         f"&hadPrimarySource={expected_model.hadPrimarySource}&referenceFilterStrategy=had_primary_source"
     )
 
@@ -446,7 +446,7 @@ def test_additional_titles_badge(
 ) -> None:
     # search for resources
     page = writer_user_page
-    page.goto(f"{base_url}/?entityType=Resource")
+    page.goto(f"{base_url}?entityType=Resource")
 
     resource_r2 = dummy_data_by_identifier_in_primary_source["r-2"]
     assert isinstance(resource_r2, ExtractedResource)

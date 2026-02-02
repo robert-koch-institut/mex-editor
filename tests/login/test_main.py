@@ -9,7 +9,7 @@ from tests.conftest import build_ui_label_regex
 def test_login_logout(
     base_url: str, page: Page, writer_user_credentials: tuple[str, SecretStr]
 ) -> None:
-    page.goto(f"{base_url}/")
+    page.goto(base_url)
 
     page.wait_for_url(f"{base_url}/login")
     page.get_by_test_id("input-username").fill(
@@ -37,7 +37,7 @@ def test_login_logout(
 
 @pytest.mark.integration
 def test_login_failure(base_url: str, page: Page) -> None:
-    page.goto(f"{base_url}/")
+    page.goto(base_url)
 
     page.wait_for_url(f"{base_url}/login")
     page.get_by_test_id("input-username").fill("Mallory")
@@ -58,7 +58,7 @@ def test_login_failure(base_url: str, page: Page) -> None:
 def test_login_with_enter_key(
     base_url: str, page: Page, writer_user_credentials: tuple[str, SecretStr]
 ) -> None:
-    page.goto(f"{base_url}/")
+    page.goto(base_url)
 
     page.get_by_test_id("input-username").fill(writer_user_credentials[0])
     password_input = page.get_by_test_id("input-password")

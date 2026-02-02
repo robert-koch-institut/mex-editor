@@ -1,6 +1,6 @@
 from collections.abc import Generator, Mapping
 from importlib.metadata import version
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, urlencode, urlparse
 
 import reflex as rx
 from reflex.event import EventSpec
@@ -85,14 +85,14 @@ class State(rx.State):
     def check_mex_login(self) -> Generator[EventSpec]:
         """Check if a user is logged in."""
         if self.user_mex is None:
-            self.target_path_after_login = self.router.page.raw_path
+            self.target_path_after_login = str(self.router.url)
             yield rx.redirect("/login")
 
     @rx.event
     def check_ldap_login(self) -> Generator[EventSpec]:
         """Check if a user is logged in to ldap."""
         if self.user_ldap is None:
-            self.target_path_after_login = self.router.page.raw_path
+            self.target_path_after_login = str(self.router.url)
             yield rx.redirect("/login-ldap")
 
     @staticmethod
@@ -123,9 +123,9 @@ class State(rx.State):
         for nav_item in self._nav_items:
             fullmatch = nav_item.path == "/"
             if (
-                self.router.page.path == nav_item.path
+                self.router.url.path == nav_item.path
                 if fullmatch
-                else self.router.page.path.startswith(nav_item.path)
+                else self.router.url.path.startswith(nav_item.path)
             ):
                 self._update_raw_path(nav_item, params)
                 return rx.call_script(
@@ -139,11 +139,13 @@ class State(rx.State):
         for nav_item in self._nav_items:
             fullmatch = nav_item.path == "/"
             if (
-                self.router.page.path == nav_item.path
+                self.router.url.path == nav_item.path
                 if fullmatch
-                else self.router.page.path.startswith(nav_item.path)
+                else self.router.url.path.startswith(nav_item.path)
             ):
-                self._update_raw_path(nav_item, self.router.page.params)
+                parsed_url = urlparse(self.router.url)
+                params = parse_qs(parsed_url.query)
+                self._update_raw_path(nav_item, params)
                 nav_item.underline = "always"
             else:
                 nav_item.underline = "none"

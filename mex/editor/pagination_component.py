@@ -1,9 +1,10 @@
 import math
+from collections.abc import Generator
 from dataclasses import dataclass
 from typing import Any
 
 import reflex as rx
-from reflex.event import EventType
+from reflex.event import EventSpec, EventType
 from reflex.vars import Var
 
 from mex.editor.state import State
@@ -47,10 +48,10 @@ class PaginationStateMixin(rx.State, mixin=True):
         return self.current_page >= self.max_page
 
     @rx.event
-    def set_total(self, total: int) -> None:
+    def set_total(self, total: int) -> Generator[EventSpec]:
         """Set the total of the pagination."""
         self.total = total
-        self.set_current_page(self.current_page)  # type: ignore[operator]
+        yield type(self).set_current_page(self.current_page)  # type: ignore[operator]
 
     @rx.event
     def set_current_page(self, page_number: str | int) -> None:
@@ -64,14 +65,14 @@ class PaginationStateMixin(rx.State, mixin=True):
         self.current_page = 1
 
     @rx.event
-    def go_to_previous_page(self) -> None:
+    def go_to_previous_page(self) -> Generator[EventSpec]:
         """Navigate to the previous page."""
-        self.set_current_page(self.current_page - 1)  # type: ignore[operator]
+        yield type(self).set_current_page(self.current_page - 1)  # type: ignore[operator]
 
     @rx.event
-    def go_to_next_page(self) -> None:
+    def go_to_next_page(self) -> Generator[EventSpec]:
         """Navigate to the next page."""
-        self.set_current_page(self.current_page + 1)  # type: ignore[operator]
+        yield type(self).set_current_page(self.current_page + 1)  # type: ignore[operator]
 
     @rx.event
     def reset_pagination(self) -> None:
@@ -117,7 +118,7 @@ class PaginationOptions:
         Args:
             state: The state to create the options for.
             on_page_change: EventHandler that gets executed when the current_page
-            changes. Defaults to None.
+                            changes. Defaults to None.
         """
         prev_click = (
             [state.go_to_previous_page, on_page_change]

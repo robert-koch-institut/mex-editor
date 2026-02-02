@@ -74,9 +74,10 @@ def editor_frontend() -> None:  # pragma: no cover
 
 
 def main() -> None:  # pragma: no cover
-    """Start the editor api together with frontend."""
+    """Start the editor api for local development."""
     # Set environment variables.
     environment.REFLEX_USE_GRANIAN.set(False)
+    environment.REFLEX_HOT_RELOAD_EXCLUDE_PATHS.set([Path("tests")])
 
     if "win32" in sys.platform:
         # bun cache is not working correctly on windows

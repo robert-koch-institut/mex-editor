@@ -8,12 +8,12 @@ license = { file = "LICENSE" }
 urls = { Repository = "https://github.com/robert-koch-institut/mex-editor" }
 requires-python = ">=3.13,<3.14"
 dependencies = [
-    "async-lru>=2.1,<3",
+    "async-lru>=2,<3",
     "babel>=2.17,<3",
     "fastapi>=0.128",
-    "mex-common>=1.13,<1.14",
+    "mex-common>=1.11,<1.12",
     "polib>=1.2,<1.3",
-    "pydantic>=2.12,<3",
+    "pydantic>=2.9,<3",
     "pyyaml>=6,<7",
     "reflex==0.8.14",
     "requests>=2.32,<3",
@@ -26,7 +26,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ipdb>=0.13",
-    "mex-artificial>=1.3,<2",
+    "mex-artificial>=1",
     "mypy>=1",
     "nest-asyncio>=1",
     "pytest-cov>=6",

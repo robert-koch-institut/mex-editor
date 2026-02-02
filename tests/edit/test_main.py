@@ -109,7 +109,7 @@ def test_edit_page_renders_primary_sources(
     expect(primary_source).to_contain_text(had_primary_source.title[0].value)
     link = primary_source.get_by_role("link")
     expect(link).to_have_attribute(
-        "href", f"/item/{extracted_activity.hadPrimarySource}/"
+        "href", f"/item/{extracted_activity.hadPrimarySource}"
     )
 
 
@@ -198,7 +198,7 @@ def test_edit_page_resolves_identifier(
     )  # resolved short name of unit
     expect(link).to_have_attribute(
         "href",
-        f"/item/{extracted_activity.contact[1]}/",  # link href
+        f"/item/{extracted_activity.contact[1]}",  # link href
     )
     expect(link).not_to_have_attribute("target", "_blank")  # internal link
 

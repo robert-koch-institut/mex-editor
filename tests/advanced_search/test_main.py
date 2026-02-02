@@ -11,7 +11,6 @@ from mex.common.models import (
     MERGED_MODEL_CLASSES,
     MERGED_MODEL_CLASSES_BY_NAME,
     AnyMergedModel,
-    ExtractedActivity,
     MergedPrimarySource,
     MergedResource,
 )
@@ -93,33 +92,34 @@ def test_entity_types_filter(
 
 
 @pytest.mark.integration
-def test_reference_filter_one_field_filter(
-    advanced_search_page: Page, extracted_activity: ExtractedActivity
-) -> None:
+def test_reference_filter_one_field_filter(advanced_search_page: Page) -> None:
     page = advanced_search_page
 
     # Test one ref matching
     page.get_by_test_id("add-reference-filter-button").click()
     page.get_by_test_id("ref-filter-0-field").click()
-    page.get_by_role("option", name=re.compile(r"Kontakt")).click()
+    page.get_by_test_id(
+        re.compile(r"ref-filter-value-label-select-item-(.+)-contact:(.*)")
+    ).click()
     page.get_by_test_id("ref-filter-0-add-value").click()
-    page.get_by_test_id("filter-ref-0-value-0-value").fill(
-        extracted_activity.contact[0]
-    )
+    page.get_by_test_id("filter-ref-0-value-0-value").fill("dhEePxM98fOIPnPLr0YqQi")
+    _make_screenshot(page, "test_reference_filter_one_field_filter_contact_set")
     expect(page.get_by_test_id(search_result_item_regex)).to_have_count(1)
+
     # Add another non existing contact value, should remain 1 match
     page.get_by_test_id("ref-filter-0-add-value").click()
-    page.get_by_test_id("filter-ref-0-value-1-value").fill(
-        f"{extracted_activity.contact[0][:8]}AAAABBBB"
+    page.get_by_test_id("filter-ref-0-value-1-value").fill("AABBPxM98fOIPnPLr0AABB")
+    _make_screenshot(
+        page, "test_reference_filter_one_field_filter_additional_imaginary_contact"
     )
     expect(page.get_by_test_id(search_result_item_regex)).to_have_count(1)
-    _make_screenshot(page, "test_reference_filter_one_field_filter_query_result")
 
     # Remove ref filter values and ref filter himself (one by one)
     page.get_by_test_id("filter-ref-0-value-1-remove").click()
     page.get_by_test_id("filter-ref-0-value-0-remove").click()
     page.get_by_test_id("ref-filter-0-remove").click()
     _make_screenshot(page, "test_reference_filter_one_field_filter_cleanup")
+    expect(page.get_by_test_id(search_result_item_regex)).to_have_count(9)
 
 
 @pytest.mark.parametrize(

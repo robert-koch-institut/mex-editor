@@ -57,6 +57,7 @@ app.add_page(
         State.check_mex_login,
         State.load_nav,
         AdvancedSearchState.search,
+        AdvancedSearchState.resolve_identifiers,
     ],
 )
 app.add_page(

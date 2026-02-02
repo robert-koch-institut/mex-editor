@@ -86,10 +86,10 @@ def ref_filter_value(
         rx.input(
             value=val,
             placeholder=f"{AdvancedSearchState.label_reference_filter_value_placeholder} '{ref.field_label}'",  # noqa: E501
-            on_change=lambda value: AdvancedSearchState.set_ref_filter_value(
-                index, val_index, value
-            ),  # type: ignore[operator]
-            on_blur=[
+            on_change=[
+                lambda value: AdvancedSearchState.set_ref_filter_value(
+                    index, val_index, value
+                ),  # type: ignore[operator]
                 AdvancedSearchState.search,
                 AdvancedSearchState.resolve_identifiers,
             ],
@@ -195,7 +195,7 @@ def filter_references() -> rx.Component:
                 rx.button(
                     rx.icon("plus"),
                     on_click=AdvancedSearchState.add_ref_filter(
-                        AdvancedSearchState.all_fields_for_entity_types[0].value # type: ignore[attr-defined]
+                        AdvancedSearchState.all_fields_for_entity_types[0].value  # type: ignore[attr-defined]
                     ),  # type: ignore[operator]
                     variant="ghost",
                     color_scheme="jade",

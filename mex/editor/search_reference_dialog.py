@@ -162,11 +162,11 @@ def search_reference_dialog(
             def _array_handler() -> EventType:  # type: ignore[type-arg]
                 return [
                     x(item.identifier)
-                    for x in cast("Iterable", on_identifier_selected) #type: ignore[type-arg]
+                    for x in cast("Iterable", on_identifier_selected)  # type: ignore[type-arg]
                 ]
 
             def _handler() -> EventType:  # type: ignore[type-arg]
-                return on_identifier_selected(item.identifier) #type: ignore[misc, no-any-return]
+                return on_identifier_selected(item.identifier)  # type: ignore[misc, no-any-return]
 
             inner_handler = (
                 _array_handler

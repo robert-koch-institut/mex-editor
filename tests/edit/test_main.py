@@ -396,9 +396,8 @@ def test_edit_page_resolves_additive_identifier(
         "link", name=organizational_unit.shortName[0].value
     )
     expect(rendered_identifier).to_have_count(1)
-    assert (
-        rendered_identifier.first.get_attribute("href")
-        == f"/item/{organizational_unit.stableTargetId}/"
+    expect(rendered_identifier.first).to_have_attribute(
+        "href", f"/item/{organizational_unit.stableTargetId}"
     )
 
     # assert raw identifier value is retained

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New page for advanced searching, including complex reference filter
 - Component to display search results
 
 ### Changes

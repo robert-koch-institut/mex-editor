@@ -211,3 +211,18 @@ msgstr "Leider wurden keine Ergebnisse für '{}' gefunden :("
 
 msgid "search_reference_dialog.results.select_button"
 msgstr "Auswählen"
+
+msgid "layout.nav_bar.advanced_search_navitem"
+msgstr "Erweiterte Suche"
+
+msgid "advanced_search.reference_filter.add_value"
+msgstr "Hinzufügen"
+
+msgid "advanced_search.reference_filter.title"
+msgstr "Referenzfilter"
+
+msgid "advanced_search.reference_filter.remove_value"
+msgstr "Entferne"
+
+msgid "advanced_search.reference_filter.value_placeholder"
+msgstr "ID für"

@@ -2,7 +2,7 @@ import reflex as rx
 
 from mex.common.types import IDENTIFIER_PATTERN
 from mex.editor.component_option_helper import (
-    build_pagination_options,
+    build_pagination_for_state_options,
 )
 from mex.editor.layout import page
 from mex.editor.search.models import (
@@ -10,13 +10,13 @@ from mex.editor.search.models import (
     SearchPrimarySource,
 )
 from mex.editor.search.state import SearchState, full_refresh
-from mex.editor.search.value_label_select import value_label_select
 from mex.editor.search_results_component import (
     SearchResultsComponentOptions,
     SearchResultsListItemOptions,
     SearchResultsListOptions,
     search_results_component,
 )
+from mex.editor.value_label_select import value_label_select
 
 
 def search_input() -> rx.Component:
@@ -286,7 +286,7 @@ def search_results() -> rx.Component:
                 list_options=SearchResultsListOptions(
                     item_options=SearchResultsListItemOptions(enable_title_href=True)
                 ),
-                pagination_options=build_pagination_options(
+                pagination_options=build_pagination_for_state_options(
                     SearchState,
                     SearchState.push_search_params,  # type: ignore[arg-type]
                 ),

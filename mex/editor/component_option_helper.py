@@ -6,6 +6,7 @@ from mex.editor.pagination_component import (
     PaginationButtonOptions,
     PaginationOptions,
     PaginationPageOptions,
+    PaginationStateMixin,
 )
 from mex.editor.search.state import SearchState
 
@@ -14,29 +15,25 @@ if TYPE_CHECKING:
 
 
 def build_pagination_options(
-    state: type[IngestState | SearchState], *page_load_hooks: Callable[[], Any]
+    state: PaginationStateMixin | type[PaginationStateMixin],
+    *page_load_hooks: Callable[[], Any],
 ) -> PaginationOptions:
-    """Build pagination options for IngestState or SearchState."""
+    """Build pagination options for a PaginationStateMixin."""
     current_page = cast("Var[int]", state.current_page)
+    hooks = list(page_load_hooks)
     return PaginationOptions(
         PaginationButtonOptions(
             state.disable_previous_page,
             [
                 state.go_to_previous_page,
-                state.scroll_to_top,
-                state.refresh,
-                state.resolve_identifiers,
-                *page_load_hooks,
+                *hooks,
             ],
         ),
         PaginationButtonOptions(
             state.disable_next_page,
             [
                 state.go_to_next_page,
-                state.scroll_to_top,
-                state.refresh,
-                state.resolve_identifiers,
-                *page_load_hooks,
+                *hooks,
             ],
         ),
         PaginationPageOptions(
@@ -45,10 +42,23 @@ def build_pagination_options(
             state.disable_page_selection,
             [
                 state.set_current_page,
-                state.scroll_to_top,
-                state.refresh,
-                state.resolve_identifiers,
-                *page_load_hooks,
+                *hooks,
             ],
         ),
+    )
+
+
+def build_pagination_for_state_options(
+    state: type[IngestState | SearchState] | IngestState | SearchState,
+    *page_load_hooks: Callable[[], Any],
+) -> PaginationOptions:
+    """Build pagination options for IngestState or SearchState."""
+    return build_pagination_options(
+        state,
+        *[
+            state.scroll_to_top,
+            state.refresh,
+            state.resolve_identifiers,
+            *page_load_hooks,
+        ],
     )

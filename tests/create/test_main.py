@@ -70,7 +70,7 @@ def test_create_page_updates_nav_bar(create_page: Page) -> None:
     nav_bar = page.get_by_test_id("nav-bar")
     page.screenshot(path="tests_create_test_main-test_create_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
-    nav_item = nav_bar.locator(".nav-item").all()[1]
+    nav_item = nav_bar.get_by_test_id("nav-item-/create")
     expect(nav_item).to_contain_text(
         build_ui_label_regex("layout.nav_bar.create_navitem")
     )

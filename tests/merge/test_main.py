@@ -47,7 +47,9 @@ def test_search_input_merged(merge_page: Page) -> None:
     search_input_merged.fill("Unit 1")
     entity_types_merged = page.get_by_test_id("entity-types-merged")
     expect(entity_types_merged).to_be_visible()
-    entity_types_merged.get_by_text("OrganizationalUnit").click()
+    entity_types_merged.get_by_test_id(
+        "extracted-entity-type-OrganizationalUnit"
+    ).click()
     checked = entity_types_merged.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
     page.get_by_test_id("search-button-merged").click()
@@ -81,7 +83,9 @@ def test_search_input_extracted(merge_page: Page) -> None:
     search_input_extracted.fill("Unit 1")
     entity_types_extracted = page.get_by_test_id("entity-types-extracted")
     expect(entity_types_extracted).to_be_visible()
-    entity_types_extracted.get_by_text("OrganizationalUnit").click()
+    entity_types_extracted.get_by_test_id(
+        "extracted-entity-type-OrganizationalUnit"
+    ).click()
     checked = entity_types_extracted.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
     page.get_by_test_id("search-button-extracted").click()
@@ -177,7 +181,8 @@ def test_resolves_identifier(
 
     entity_types_extracted = page.get_by_test_id("entity-types-extracted")
     expect(entity_types_extracted).to_be_visible()
-    entity_types_extracted.get_by_text("Activity").click()
+    entity_types_extracted.get_by_test_id("extracted-entity-type-Activity").click()
+
     page.get_by_test_id("search-button-extracted").click()
     extracted_results = page.get_by_test_id("extracted-search-results-container")
     expect(
@@ -199,8 +204,9 @@ def test_additional_titles_badge(
 ) -> None:
     # search for resources
     page = merge_page
-    a = page.get_by_test_id("entity-types-extracted")
-    a.get_by_role("checkbox", name="Resource", exact=True).click()
+    page.get_by_test_id("entity-types-extracted").get_by_test_id(
+        "extracted-entity-type-Resource"
+    ).click()
 
     resource_r2 = dummy_data_by_identifier_in_primary_source["r-2"]
     assert isinstance(resource_r2, ExtractedResource)

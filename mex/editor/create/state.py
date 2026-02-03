@@ -3,12 +3,27 @@ import reflex as rx
 from mex.common.models import RULE_SET_REQUEST_CLASSES
 from mex.editor.label_var import label_var
 from mex.editor.rules.state import RuleState
+from mex.editor.value_label_select import ValueLabelSelectItem
 
 
 class CreateState(RuleState):
     """State for the create component."""
 
     available_stem_types: list[str] = [r.stemType for r in RULE_SET_REQUEST_CLASSES]
+
+    @rx.var
+    def value_label_available_stem_types(self) -> list[ValueLabelSelectItem]:
+        """Get available_stem_types with translation."""
+        return sorted(
+            [
+                ValueLabelSelectItem(
+                    value=x,
+                    label=self._locale_service.get_ui_label(self.current_locale, x),
+                )
+                for x in self.available_stem_types
+            ],
+            key=lambda x: x.label,
+        )
 
     @rx.event
     def set_stem_type(self, stem_type: str) -> None:

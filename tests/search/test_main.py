@@ -133,14 +133,12 @@ def test_entity_types(
     # check entity types are showing and functioning
     entity_types = page.get_by_test_id("entity-types")
     expect(entity_types).to_be_visible()
-    assert "PrimarySource" in entity_types.all_text_contents()[0]
-
-    entity_types.get_by_text("Activity").click()
+    entity_types.get_by_test_id("entity-type-Activity").click()
     expect(page.get_by_text(build_pagination_regex(1, 1))).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_entity_types-on-select-entity-1-found.png"
     )
-    entity_types.get_by_text("Activity").click()
+    entity_types.get_by_test_id("entity-type-Activity").click()
 
 
 @pytest.mark.integration

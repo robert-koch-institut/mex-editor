@@ -47,9 +47,7 @@ def test_search_input_merged(merge_page: Page) -> None:
     search_input_merged.fill("Unit 1")
     entity_types_merged = page.get_by_test_id("entity-types-merged")
     expect(entity_types_merged).to_be_visible()
-    entity_types_merged.get_by_test_id(
-        "extracted-entity-type-OrganizationalUnit"
-    ).click()
+    entity_types_merged.get_by_test_id("merged-entity-type-OrganizationalUnit").click()
     checked = entity_types_merged.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
     page.get_by_test_id("search-button-merged").click()
@@ -68,7 +66,7 @@ def test_search_input_merged(merge_page: Page) -> None:
     )
 
     # check search trigger by entity type
-    entity_types_merged.get_by_text("ContactPoint").click()
+    entity_types_merged.get_by_test_id("merged-entity-type-ContactPoint").click()
     expect(page.get_by_text(build_pagination_regex(2, 2))).to_be_visible()
 
 

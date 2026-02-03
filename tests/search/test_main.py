@@ -387,7 +387,9 @@ def test_push_search_params(
     expect(page.get_by_test_id("search-results-component")).to_be_visible()
 
     # expect parameter change to be reflected in url
-    page.wait_for_url("**?page=1&entityType=Activity&referenceFilterStrategy=dynamic")
+    page.wait_for_url(
+        "**/?q=&page=1&entityType=Activity&referenceFilterStrategy=dynamic&referenceField="
+    )
 
     # add a query string to the search constraints
     search_input = page.get_by_test_id("search-input")
@@ -401,7 +403,7 @@ def test_push_search_params(
     # expect parameter change to be reflected in url
     page.wait_for_url(
         "**?q=Une+activit%C3%A9+active&page=1&entityType=Activity"
-        "&referenceFilterStrategy=dynamic"
+        "&referenceFilterStrategy=dynamic&referenceField="
     )
 
     # activate tab for had primary source filtering
@@ -434,9 +436,9 @@ def test_push_search_params(
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
-        "**?q=Une+activit%C3%A9+active&page=1&entityType=Activity"
-        "&referenceFilterStrategy=had_primary_source"
-        f"&hadPrimarySource={primary_source.stableTargetId}"
+        "**/?q=Une+activit%C3%A9+active&page=1&entityType=Activity&"
+        "referenceFilterStrategy=had_primary_source&"
+        f"hadPrimarySource={primary_source.stableTargetId}&referenceField="
     )
 
 

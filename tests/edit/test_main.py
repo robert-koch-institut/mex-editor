@@ -41,7 +41,7 @@ def test_edit_page_updates_nav_bar(edit_page: Page) -> None:
     expect(nav_bar).to_be_visible()
     page.screenshot(path="tests_edit_test_main-test_edit_page_updates_nav_bar.png")
     nav_item = nav_bar.locator(".nav-item").all()[2]
-    expect(nav_item).to_have_attribute("data-testid", "nav-item-/item/[identifier]")
+    expect(nav_item).to_have_attribute("data-testid", "nav-item-/item/[item_id]")
     assert nav_item.evaluate(
         "el => window.getComputedStyle(el).textDecorationLine === 'underline'"
     )

@@ -45,8 +45,8 @@ class ConsentState(State):
     _consent_nav_items: list[NavItem] = [
         NavItem(
             title="consent.nav_bar.consent_navitem",
-            path="/consent",
-            raw_path="/consent/",
+            route_ids=["/consent"],
+            raw_path="/consent",
         ),
     ]
 

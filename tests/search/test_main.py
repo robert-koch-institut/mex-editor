@@ -103,18 +103,21 @@ def test_search_input(
     expect(search_input).to_be_visible()
     search_input.fill("mex")
     search_input.press("Enter")
-    expect(page.get_by_text(build_pagination_regex(1, 1))).to_be_visible()
+    search_results_summary = page.get_by_test_id("search-results-summary")
+    expect(search_results_summary).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-1-found.png"
     )
+    expect(search_results_summary).to_have_text(build_pagination_regex(1, 1))
 
     search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
     page.get_by_test_id("search-button").click()
-    expect(page.get_by_text(build_pagination_regex(0, 0))).to_be_visible()
+    search_results_summary = page.get_by_test_id("search-results-summary")
+    expect(search_results_summary).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-0-found.png"
     )
-    search_input.fill("")
+    expect(search_results_summary).to_have_text(build_pagination_regex(0, 0))
 
 
 @pytest.mark.integration

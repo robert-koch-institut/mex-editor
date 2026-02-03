@@ -1,6 +1,5 @@
-from collections.abc import Generator, Mapping
+from collections.abc import Generator, Mapping, Sequence
 from importlib.metadata import version
-from urllib.parse import parse_qs, urlencode, urlparse
 
 import reflex as rx
 from reflex.event import EventSpec
@@ -10,6 +9,7 @@ from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
 from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import MergedLoginPerson, NavItem, User
+from mex.editor.utils import replace_url_params
 
 
 class State(rx.State):
@@ -30,28 +30,28 @@ class State(rx.State):
     _nav_items: list[NavItem] = [
         NavItem(
             title="layout.nav_bar.search_navitem",
-            path="/",
-            raw_path="/?page=1",
+            route_ids=["/", "/index"],
+            raw_path="/",
         ),
         NavItem(
             title="layout.nav_bar.create_navitem",
-            path="/create",
-            raw_path="/create/",
+            route_ids=["/create", "/create/[draft_id]"],
+            raw_path="/create",
         ),
         NavItem(
             title="layout.nav_bar.edit_navitem",
-            path="/item/[identifier]",
-            raw_path=f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}/",
+            route_ids=["/item/[item_id]"],
+            raw_path=f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}",
         ),
         NavItem(
             title="layout.nav_bar.merge_navitem",
-            path="/merge",
-            raw_path="/merge/",
+            route_ids=["/merge"],
+            raw_path="/merge",
         ),
         NavItem(
             title="layout.nav_bar.ingest_navitem",
-            path="/ingest",
-            raw_path="/ingest/",
+            route_ids=["/ingest"],
+            raw_path="/ingest",
         ),
     ]
 
@@ -95,57 +95,22 @@ class State(rx.State):
             self.target_path_after_login = str(self.router.url)
             yield rx.redirect("/login-ldap")
 
-    @staticmethod
-    def _update_raw_path(
-        nav_item: NavItem,
-        params: Mapping[str, int | str | list[str]],
-    ) -> None:
-        """Update the raw path of a nav item with the given parameters."""
-        raw_path = nav_item.path
-        param_tuples = list(params.items())
-        for key, value in param_tuples:
-            if f"[{key}]" in raw_path:
-                raw_path = raw_path.replace(f"[{key}]", f"{value}")
-        query_tuples: list[tuple[str, str]] = []
-        for key, value in param_tuples:
-            if f"[{key}]" not in nav_item.path:
-                value_list = value if isinstance(value, list) else [f"{value}"]
-                query_tuples.extend((key, item) for item in value_list if item)
-        if query_str := urlencode(query_tuples):
-            raw_path = f"{raw_path}?{query_str}"
-        nav_item.raw_path = raw_path
-
     def push_url_params(
         self,
-        params: Mapping[str, int | str | list[str]],
+        params: Mapping[str, int | str | Sequence[int | str]],
     ) -> EventSpec | None:
         """Event handler to push updated url parameter to the browser history."""
         for nav_item in self._nav_items:
-            fullmatch = nav_item.path == "/"
-            if (
-                self.router.url.path == nav_item.path
-                if fullmatch
-                else self.router.url.path.startswith(nav_item.path)
-            ):
-                self._update_raw_path(nav_item, params)
-                return rx.call_script(
-                    f"window.history.pushState(null, '', '{nav_item.raw_path}');"
-                )
+            if self.router.route_id in nav_item.route_ids:
+                url = replace_url_params(self.router.url, params)
+                return rx.call_script(f"window.history.pushState(null, '', '{url}');")
         return None
 
     @rx.event
     def load_nav(self) -> None:
         """Event hook for updating the navigation on page loads."""
         for nav_item in self._nav_items:
-            fullmatch = nav_item.path == "/"
-            if (
-                self.router.url.path == nav_item.path
-                if fullmatch
-                else self.router.url.path.startswith(nav_item.path)
-            ):
-                parsed_url = urlparse(self.router.url)
-                params = parse_qs(parsed_url.query)
-                self._update_raw_path(nav_item, params)
+            if self.router.route_id in nav_item.route_ids:
                 nav_item.underline = "always"
             else:
                 nav_item.underline = "none"

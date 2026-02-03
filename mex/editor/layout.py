@@ -101,12 +101,12 @@ def nav_link(item: NavItem) -> rx.Component:
         underline=item.underline,  # type: ignore[arg-type]
         class_name="nav-item",
         custom_attrs={
-            "data-testid": f"nav-item-{item.path}",
+            "data-testid": f"nav-item-{item.route_ids}",
         },
     )
 
     return rx.cond(
-        item.path.contains("/create"),  # type: ignore[attr-defined]
+        item.route_ids.contains("/create"),  # type: ignore[attr-defined]
         rx.cond(
             RuleState.draft_summary.count,
             rx.fragment(

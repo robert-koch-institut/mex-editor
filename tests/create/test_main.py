@@ -94,7 +94,10 @@ def test_create_page_renders_fields(create_page: Page) -> None:
         path="tests_create_test_main-test_create_page_renders_fields_select.png"
     )
     expect(page.get_by_role("row")).to_have_count(
-        len(MERGEABLE_FIELDS_BY_CLASS_NAME["ExtractedResource"])
+        len(
+            set(MERGEABLE_FIELDS_BY_CLASS_NAME["ExtractedResource"])
+            | set(MERGEABLE_FIELDS_BY_CLASS_NAME["AdditiveResource"])
+        )
     )
 
 

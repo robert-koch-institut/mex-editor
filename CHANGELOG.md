@@ -13,10 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- use merged-person-from-login connector method
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/33ca3a
 - bump python to 3.13
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/ad26e4
-- bump common to 1.11
+- bump common to 1.13.2
 - switch package manager from pdm to uv
 
 ### Deprecated

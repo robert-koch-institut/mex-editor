@@ -1,6 +1,6 @@
 [project]
 name = "mex-editor"
-version = "1.3.1"
+version = "1.4.1"
 description = "Metadata editor web application."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -11,7 +11,7 @@ dependencies = [
     "async-lru>=2,<3",
     "babel>=2.17,<3",
     "fastapi>=0.128",
-    "mex-common>=1.11,<1.12",
+    "mex-common>=1.13.2,<1.14",
     "polib>=1.2,<1.3",
     "pydantic>=2.9,<3",
     "pyyaml>=6,<7",

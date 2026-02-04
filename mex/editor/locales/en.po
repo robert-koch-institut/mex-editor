@@ -208,3 +208,12 @@ msgstr "We are sorry, but there are no entries for '{}' :("
 
 msgid "search_reference_dialog.results.select_button"
 msgstr "Select"
+
+msgid "consent.consent_status.consented_format"
+msgstr "You granted your consent on {}"
+
+msgid "consent.consent_status.declined_format"
+msgstr "You declined your consent on {}"
+
+msgid "consent.consent_status.no_consent"
+msgstr "You have not given consent yet."

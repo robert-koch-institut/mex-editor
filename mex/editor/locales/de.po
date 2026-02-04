@@ -211,3 +211,12 @@ msgstr "Leider wurden keine Ergebnisse für '{}' gefunden :("
 
 msgid "search_reference_dialog.results.select_button"
 msgstr "Auswählen"
+
+msgid "consent.consent_status.consented_format"
+msgstr "Sie haben Ihre Einwilligung am {} erteilt."
+
+msgid "consent.consent_status.declined_format"
+msgstr "Sie haben Ihre Ablehnung am {} erteilt."
+
+msgid "consent.consent_status.no_consent"
+msgstr "Sie haben noch keine Einwilligung erteilt."

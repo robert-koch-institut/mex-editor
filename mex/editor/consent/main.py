@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import cast
 
 import reflex as rx
 
@@ -124,12 +124,19 @@ def consent_box() -> rx.Component:
 def consent_status() -> rx.Component:
     """Render the current consent status for the user."""
     return rx.cond(
-        ConsentState.merged_login_person,
+        ConsentState.consent_status,
         rx.vstack(
             rx.text(ConsentState.merged_login_person.full_name, weight="bold"),  # type: ignore [union-attr]
-            rx.text(
-                ConsentState.consent_display["message"],
-                color_scheme=cast("Any", ConsentState.consent_display["color"]),
+            rx.cond(
+                ConsentState.consent_status.preview[0].badge == "VALID_FOR_PROCESSING",  # type: ignore [union-attr]
+                rx.text(
+                    ConsentState.label_consent_status_consented_format,
+                    color_scheme="green",
+                ),
+                rx.text(
+                    ConsentState.label_consent_status_declined_format,
+                    color_scheme="red",
+                ),
             ),
             style=rx.Style(
                 width="100%",
@@ -139,7 +146,7 @@ def consent_status() -> rx.Component:
             custom_attrs={"data-testid": "consent-status"},
         ),
         rx.text(
-            ConsentState.label_consent_status_loading,
+            ConsentState.label_consent_status_no_consent,
             custom_attrs={"data-testid": "consent-status"},
         ),
     )

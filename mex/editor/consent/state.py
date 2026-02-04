@@ -35,10 +35,6 @@ class ConsentState(State):
     user_projects: list[SearchResult] = []
     user_resources: list[SearchResult] = []
     consent_status: SearchResult | None = None
-    consent_display: dict[str, str] = {
-        "message": "Sie haben Ihre Zustimmung noch nicht erteilt.",
-        "color": "gray",
-    }
     limit: Annotated[int, Field(ge=1, le=100)] = 5
     projects_total: Annotated[int, Field(ge=0)] = 0
     projects_current_page: Annotated[int, Field(ge=1)] = 1
@@ -128,6 +124,15 @@ class ConsentState(State):
         """Return a list of total pages for resources based on the number of results."""
         return [f"{i + 1}" for i in range(math.ceil(self.resources_total / self.limit))]
 
+    @rx.var(cache=False)
+    def consent_datetime(self) -> str:
+        """Update datetime for a users consent status."""
+        if not self.consent_status:
+            return ""
+        timestamp_str = self.consent_status.title[0].text
+        timestamp_dt = datetime.fromisoformat(str(timestamp_str))
+        return timestamp_dt.strftime("%d.%m.%Y um %H:%M")
+
     @rx.event
     def get_all_data(self) -> Generator[EventSpec | None]:
         """Fetch all data for the user."""
@@ -162,7 +167,7 @@ class ConsentState(State):
                 entity_type=[entity_type],
                 skip=skip,
                 limit=self.limit,
-                reference_field="hasDataSubject",
+                reference_field="contact",
                 referenced_identifier=[str(self.merged_login_person.identifier)],
             )
         except HTTPError as exc:
@@ -217,7 +222,6 @@ class ConsentState(State):
                 ]
             else:
                 self.consent_status = None
-            self.update_consent_message()
 
     @rx.event
     def submit_rule_set(
@@ -264,39 +268,6 @@ class ConsentState(State):
             return connector.update_rule_set(self.consent_status.identifier, rule_set)
         return connector.create_rule_set(rule_set)
 
-    def update_consent_message(self) -> None:
-        """Update the consent message based on the current consent status."""
-        if not self.consent_status:
-            self.consent_display = {
-                "message": "Sie haben Ihre Zustimmung noch nicht erteilt.",
-                "color": "gray",
-            }
-            return
-
-        consent_status = None
-        for preview in self.consent_status.preview:
-            if preview.text == "ConsentStatus":
-                consent_status = preview.badge
-                break
-
-        # format timestamp
-        timestamp_str = self.consent_status.title[0].text
-        timestamp_dt = datetime.fromisoformat(str(timestamp_str))
-        formatted_datetime = timestamp_dt.strftime("%d.%m.%Y um %H:%M")
-
-        if consent_status == "VALID_FOR_PROCESSING":
-            self.consent_display = {
-                "message": (
-                    f"Sie haben Ihre Einwilligung am {formatted_datetime} erteilt."
-                ),
-                "color": "green",
-            }
-        else:
-            self.consent_display = {
-                "message": f"Sie haben Ihre Ablehnung am {formatted_datetime} erteilt.",
-                "color": "red",
-            }
-
     @rx.event
     def show_submit_success_toast(self) -> EventSpec:
         """Show a toast for a successfully submitted rule-set."""
@@ -324,6 +295,24 @@ class ConsentState(State):
                     if preview.identifier and not preview.text:
                         async with self:
                             await resolve_editor_value(preview)
+
+    @label_var(
+        label_id="consent.consent_status.consented_format", deps=["consent_datetime"]
+    )
+    def label_consent_status_consented_format(self) -> list[str]:
+        """Label for consent.consent_status.consented_format."""
+        return [self.consent_datetime]
+
+    @label_var(
+        label_id="consent.consent_status.declined_format", deps=["consent_datetime"]
+    )
+    def label_consent_status_declined_format(self) -> list[str]:
+        """Label for consent.consent_status.declined_format."""
+        return [self.consent_datetime]
+
+    @label_var(label_id="consent.consent_status.no_consent")
+    def label_consent_status_no_consent(self) -> None:
+        """Label for consent.status.no_consent."""
 
     @label_var(label_id="consent.resources.title")
     def label_resources_title(self) -> None:

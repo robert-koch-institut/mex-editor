@@ -24,9 +24,9 @@ from mex.editor.search.models import (
     SearchPrimarySource,
 )
 from mex.editor.search.transform import transform_models_to_results
-from mex.editor.search.value_label_select import ValueLabelSelectItem
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
+from mex.editor.value_label_select import ValueLabelSelectItem
 
 if TYPE_CHECKING:
     from reflex.istate.data import RouterData
@@ -74,6 +74,23 @@ class SearchState(State, PaginationStateMixin):
     )
     is_loading: bool = True
     _locale_service = LocaleService.get()
+
+    @rx.var
+    def label_entity_types(self) -> list[dict[str, Any]]:
+        """Get entity types with value, label and checked."""
+        return sorted(
+            [
+                {
+                    "label": self._locale_service.get_ui_label(
+                        self.current_locale, key
+                    ),
+                    "value": key,
+                    "checked": self.entity_types[key],
+                }
+                for key in self.entity_types
+            ],
+            key=lambda x: x["label"],
+        )
 
     @rx.event
     def set_reference_filter_field(self, value: str) -> None:

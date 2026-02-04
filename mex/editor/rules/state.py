@@ -432,21 +432,32 @@ class RuleState(State, LocalStorageMixinState):
     def label_validation_result_dialog_title(self) -> None:
         """Label for validation_result_dialog.title."""
 
-    @label_var(label_id="rules.save_button.format", deps=["stem_type"])
+    @label_var(label_id="rules.save_button.format", deps=["label_stem_type"])
     def label_save_button_format(self) -> list[str]:
         """Label for save_button.format."""
-        return [self.stem_type or ""]
+        return [self.label_stem_type]
 
-    @label_var(label_id="rules.save_button.saving_format", deps=["stem_type"])
+    @label_var(label_id="rules.save_button.saving_format", deps=["label_stem_type"])
     def label_save_button_saving_format(self) -> list[str]:
         """Label for save_button.saving_format."""
-        return [self.stem_type or ""]
+        return [self.label_stem_type]
 
     @label_var(label_id="rules.save_success_dialog.title")
     def label_save_success_dialog_title(self) -> None:
         """Label for save_success_dialog.title."""
 
-    @label_var(label_id="rules.save_success_dialog.message_format", deps=["stem_type"])
+    @label_var(
+        label_id="rules.save_success_dialog.message_format", deps=["label_stem_type"]
+    )
     def label_save_success_dialog_message_format(self) -> list[str]:
         """Label for save_success_dialog.message_format."""
-        return [self.stem_type or ""]
+        return [self.label_stem_type]
+
+    @rx.var
+    def label_stem_type(self) -> str:
+        """Label for stem_type."""
+        return (
+            self._locale_service.get_ui_label(self.current_locale, self.stem_type)
+            if self.stem_type
+            else ""
+        )

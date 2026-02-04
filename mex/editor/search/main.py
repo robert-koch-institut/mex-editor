@@ -1,3 +1,5 @@
+from typing import Any
+
 import reflex as rx
 
 from mex.common.types import IDENTIFIER_PATTERN
@@ -10,13 +12,13 @@ from mex.editor.search.models import (
     SearchPrimarySource,
 )
 from mex.editor.search.state import SearchState, full_refresh
-from mex.editor.search.value_label_select import value_label_select
 from mex.editor.search_results_component import (
     SearchResultsComponentOptions,
     SearchResultsListItemOptions,
     SearchResultsListOptions,
     search_results_component,
 )
+from mex.editor.value_label_select import value_label_select
 
 
 def search_input() -> rx.Component:
@@ -59,16 +61,17 @@ def search_input() -> rx.Component:
     )
 
 
-def entity_type_choice(choice: tuple[str, bool]) -> rx.Component:
+def entity_type_choice(choice: dict[str, Any]) -> rx.Component:
     """Render a single checkbox for filtering by entity type."""
     return rx.checkbox(
-        choice[0],
-        checked=choice[1],
+        choice["label"],
+        checked=choice["checked"],
         on_change=[
-            SearchState.set_entity_type(choice[0]),  # type: ignore[operator]
+            SearchState.set_entity_type(choice["value"]),  # type: ignore[operator]
             *full_refresh,
         ],
         disabled=SearchState.is_loading,
+        custom_attrs={"data-testid": f"entity-type-{choice['value']}"},
     )
 
 
@@ -84,7 +87,7 @@ def entity_type_filter() -> rx.Component:
         ),
         rx.vstack(
             rx.foreach(
-                SearchState.entity_types,
+                SearchState.label_entity_types,
                 entity_type_choice,
             ),
             custom_attrs={"data-testid": "entity-types"},

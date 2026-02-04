@@ -77,15 +77,16 @@ def test_edit_page_renders_heading(
 
 
 @pytest.mark.integration
-def test_edit_page_renders_fields(
-    edit_page: Page, extracted_activity: ExtractedActivity
-) -> None:
+def test_edit_page_renders_fields(edit_page: Page) -> None:
     page = edit_page
     funding_program = page.get_by_test_id("field-fundingProgram-name")
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_fields.png")
     expect(funding_program).to_be_visible()
     expect(page.get_by_role("row")).to_have_count(
-        len(MERGEABLE_FIELDS_BY_CLASS_NAME[extracted_activity.entityType])
+        len(
+            set(MERGEABLE_FIELDS_BY_CLASS_NAME["ExtractedActivity"])
+            | set(MERGEABLE_FIELDS_BY_CLASS_NAME["AdditiveActivity"])
+        )
     )
 
 
@@ -589,6 +590,7 @@ def test_required_fields_red_asterisk(
         "shortName",
         "start",
         "succeeds",
+        "supersededBy",
         "theme",
         "website",
     ]

@@ -179,6 +179,9 @@ msgstr "Datenbestände & Datensätze"
 msgid "consent.projects.title"
 msgstr "Projekte"
 
+msgid "consent.publications.title"
+msgstr "Publikationen"
+
 msgid "consent.user_data.loading"
 msgstr "Lade Kontodaten..."
 

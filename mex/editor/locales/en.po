@@ -176,6 +176,9 @@ msgstr "Datasources & Records"
 msgid "consent.projects.title"
 msgstr "Projects"
 
+msgid "consent.publications.title"
+msgstr "Publications"
+
 msgid "consent.user_data.loading"
 msgstr "Loading user data..."
 
@@ -189,7 +192,7 @@ msgid "consent.consent_status.loading"
 msgstr "Loading consent status..."
 
 msgid "consent.nav_bar.consent_navitem"
-msgstr "Informed Consent"
+msgstr "Consent"
 
 msgid "search_reference_dialog.title"
 msgstr "Search for references"

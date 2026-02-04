@@ -47,6 +47,26 @@ def projects() -> rx.Component:
     )
 
 
+def publications() -> rx.Component:
+    """Render a list of the users publications."""
+    return rx.vstack(
+        rx.text(
+            ConsentState.label_publications_title,
+            weight="bold",
+            style=rx.Style(
+                textTransform="uppercase",
+            ),
+        ),
+        search_results_list(ConsentState.user_publications),
+        consent_pagination("publications"),
+        style=rx.Style(
+            textAlign="center",
+            marginBottom="var(--space-4)",
+        ),
+        custom_attrs={"data-testid": "user-publications"},
+    )
+
+
 def user_data() -> rx.Component:
     """Render the user data section with name and email."""
     return rx.cond(
@@ -148,6 +168,7 @@ def consent_status() -> rx.Component:
         rx.text(
             ConsentState.label_consent_status_no_consent,
             custom_attrs={"data-testid": "consent-status"},
+            color_scheme="gray",
         ),
     )
 
@@ -206,6 +227,7 @@ def index() -> rx.Component:
             user_data(),
             projects(),
             resources(),
+            publications(),
             rx.spacer(direction="column"),
             rx.box(
                 consent_box(),

@@ -66,9 +66,9 @@ class MergedLoginPerson(rx.Base):
 class NavItem(rx.Base):
     """Model for one navigation bar item."""
 
-    title: str = ""
-    path: str = "/"
-    raw_path: str = "/"
+    title: str
+    route_ids: list[str]
+    raw_path: str
     underline: str = "none"
 
 

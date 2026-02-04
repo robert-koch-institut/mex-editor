@@ -103,18 +103,21 @@ def test_search_input(
     expect(search_input).to_be_visible()
     search_input.fill("mex")
     search_input.press("Enter")
-    expect(page.get_by_text(build_pagination_regex(1, 1))).to_be_visible()
+    search_results_summary = page.get_by_test_id("search-results-summary")
+    expect(search_results_summary).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-1-found.png"
     )
+    expect(search_results_summary).to_have_text(build_pagination_regex(1, 1))
 
     search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
     page.get_by_test_id("search-button").click()
-    expect(page.get_by_text(build_pagination_regex(0, 0))).to_be_visible()
+    search_results_summary = page.get_by_test_id("search-results-summary")
+    expect(search_results_summary).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-0-found.png"
     )
-    search_input.fill("")
+    expect(search_results_summary).to_have_text(build_pagination_regex(0, 0))
 
 
 @pytest.mark.integration
@@ -165,7 +168,7 @@ def test_had_primary_sources(
     tab.click()
 
     # check primary sources are showing and functioning
-    primary_sources = page.get_by_test_id("had-primary-sources")
+    primary_sources = page.get_by_test_id("primary-source-filter")
     primary_sources.scroll_into_view_if_needed()
     expect(primary_sources).to_be_visible()
     # check that title is resolved if primary source has a title
@@ -194,7 +197,7 @@ def test_load_search_params(
     page = writer_user_page
     expected_model = dummy_data_by_identifier_in_primary_source["cp-2"]
     page.goto(
-        f"{base_url}/?q=help&page=1&entityType=ContactPoint&entityType=Consent"
+        f"{base_url}?q=help&page=1&entityType=ContactPoint&entityType=Consent"
         f"&hadPrimarySource={expected_model.hadPrimarySource}&referenceFilterStrategy=had_primary_source"
     )
 
@@ -215,7 +218,7 @@ def test_load_search_params(
     expect(checked).to_have_count(2)
 
     # check primary sources are loaded from url
-    primary_sources = page.get_by_test_id("had-primary-sources")
+    primary_sources = page.get_by_test_id("primary-source-filter")
     unchecked = primary_sources.get_by_role("checkbox", checked=False)
     expect(unchecked).to_have_count(2)
     checked = primary_sources.get_by_role("checkbox", checked=True)
@@ -233,7 +236,7 @@ def test_reference_filter_fields_for_entity_type(
 
     hps_tab = page.get_by_test_id("reference-filter-strategy-had-primary-source-tab")
     hps_tab.click()
-    expect(page.get_by_test_id("had-primary-sources")).to_be_visible()
+    expect(page.get_by_test_id("primary-source-filter")).to_be_visible()
 
     dyn_tab = page.get_by_test_id("reference-filter-strategy-dynamic-tab")
     dyn_tab.click()
@@ -361,7 +364,7 @@ def test_push_search_params(
 
     # load page and verify url
     page.goto(base_url)
-    page.wait_for_url("**/")
+    page.wait_for_url(base_url)
 
     # select an entity type
     entity_types = page.get_by_test_id("entity-types")
@@ -384,7 +387,9 @@ def test_push_search_params(
     expect(page.get_by_test_id("search-results-component")).to_be_visible()
 
     # expect parameter change to be reflected in url
-    page.wait_for_url("**/?page=1&entityType=Activity&referenceFilterStrategy=dynamic")
+    page.wait_for_url(
+        "**/?q=&page=1&entityType=Activity&referenceFilterStrategy=dynamic&referenceField="
+    )
 
     # add a query string to the search constraints
     search_input = page.get_by_test_id("search-input")
@@ -397,8 +402,8 @@ def test_push_search_params(
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
-        "**/?q=Une+activit%C3%A9+active&page=1&entityType=Activity"
-        "&referenceFilterStrategy=dynamic"
+        "**?q=Une+activit%C3%A9+active&page=1&entityType=Activity"
+        "&referenceFilterStrategy=dynamic&referenceField="
     )
 
     # activate tab for had primary source filtering
@@ -406,7 +411,7 @@ def test_push_search_params(
     tab.click()
 
     # select a primary source
-    primary_sources = page.get_by_test_id("had-primary-sources")
+    primary_sources = page.get_by_test_id("primary-source-filter")
     expect(primary_sources).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load-2.png")
     checkbox = primary_sources.get_by_text(primary_source.title[0].value)
@@ -417,8 +422,9 @@ def test_push_search_params(
     )
 
     # wait for the checkbox to actually become checked
-    primary_source_checkbox_input = primary_sources.get_by_role(
-        "checkbox", name=primary_source.title[0].value
+    ps_id = dummy_data_by_identifier_in_primary_source["ps-1"].stableTargetId
+    primary_source_checkbox_input = primary_sources.get_by_test_id(
+        f"primary-source-filter-{ps_id}"
     )
     expect(primary_source_checkbox_input).to_be_checked()
 
@@ -431,9 +437,9 @@ def test_push_search_params(
 
     # expect parameter change to be reflected in url
     page.wait_for_url(
-        "**/?q=Une+activit%C3%A9+active&page=1&entityType=Activity"
-        "&referenceFilterStrategy=had_primary_source"
-        f"&hadPrimarySource={primary_source.stableTargetId}"
+        "**/?q=Une+activit%C3%A9+active&page=1&entityType=Activity&"
+        "referenceFilterStrategy=had_primary_source&"
+        f"hadPrimarySource={primary_source.stableTargetId}&referenceField="
     )
 
 
@@ -446,7 +452,7 @@ def test_additional_titles_badge(
 ) -> None:
     # search for resources
     page = writer_user_page
-    page.goto(f"{base_url}/?entityType=Resource")
+    page.goto(f"{base_url}?entityType=Resource")
 
     resource_r2 = dummy_data_by_identifier_in_primary_source["r-2"]
     assert isinstance(resource_r2, ExtractedResource)

@@ -2,6 +2,7 @@ import re
 from collections.abc import Generator
 from re import Pattern
 from typing import Any, cast
+from urllib.parse import urlsplit
 
 import pytest
 from fastapi.testclient import TestClient
@@ -10,7 +11,10 @@ from pydantic import SecretStr
 from pytest import MonkeyPatch
 
 from mex.artificial.helpers import generate_artificial_extracted_items
-from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.backend_api.connector import (
+    BackendApiConnector,
+    LDAPBackendApiConnector,
+)
 from mex.common.models import (
     EXTRACTED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
@@ -28,6 +32,7 @@ from mex.common.types import (
     Link,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
     Text,
     TextLanguage,
@@ -141,7 +146,9 @@ def flush_graph_database(is_integration_test: bool) -> None:  # noqa: FBT001
 
 
 @pytest.fixture
-def dummy_data() -> list[AnyExtractedModel]:
+def dummy_data(
+    request: pytest.FixtureRequest,
+) -> list[AnyExtractedModel]:
     """Create a set of interlinked dummy data."""
     primary_source_1 = ExtractedPrimarySource(
         hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
@@ -170,13 +177,19 @@ def dummy_data() -> list[AnyExtractedModel]:
         name=[Text(value="Unit 1", language=TextLanguage.EN)],
         shortName=["OU1"],
     )
+    test_module = request.module.__name__
+
+    if "consent" in test_module:
+        user_id = get_logged_in_user_id()
+    else:
+        user_id = contact_point_1.stableTargetId  # type: ignore[assignment]
     activity_1 = ExtractedActivity(
         abstract=[
             Text(value="An active activity.", language=TextLanguage.EN),
             Text(value="Une activité active.", language=None),
         ],
         contact=[
-            contact_point_1.stableTargetId,
+            user_id,
             organizational_unit_1.stableTargetId,
         ],
         hadPrimarySource=primary_source_1.stableTargetId,
@@ -196,7 +209,7 @@ def dummy_data() -> list[AnyExtractedModel]:
         hadPrimarySource=primary_source_1.stableTargetId,
         identifierInPrimarySource="r-1",
         accessRestriction=AccessRestriction["OPEN"],
-        contact=[contact_point_1.stableTargetId],
+        contact=[user_id],
         theme=[Theme["BIOINFORMATICS_AND_SYSTEMS_BIOLOGY"]],
         title=[Text(value="Bioinformatics Resource 1", language=None)],
         unitInCharge=[organizational_unit_1.stableTargetId],
@@ -205,7 +218,7 @@ def dummy_data() -> list[AnyExtractedModel]:
         hadPrimarySource=primary_source_2.stableTargetId,
         identifierInPrimarySource="r-2",
         accessRestriction=AccessRestriction["OPEN"],
-        contact=[contact_point_1.stableTargetId, contact_point_2.stableTargetId],
+        contact=[user_id, contact_point_2.stableTargetId],
         theme=[Theme["PUBLIC_HEALTH"]],
         title=[
             Text(value="Some Resource with many titles 1", language=None),
@@ -270,9 +283,7 @@ def load_pagination_dummy_data(
     test_module = request.module.__name__
 
     if "consent" in test_module:
-        contact_point_1 = next(
-            x for x in dummy_data if x.identifierInPrimarySource == "cp-1"
-        )
+        user_id = get_logged_in_user_id()
         organizational_unit_1 = next(
             x for x in dummy_data if x.identifierInPrimarySource == "ou-1"
         )
@@ -287,7 +298,7 @@ def load_pagination_dummy_data(
                     contact=[
                         cast(
                             "MergedContactPointIdentifier",
-                            contact_point_1.stableTargetId,
+                            user_id,
                         )
                     ],
                     theme=[Theme["BIOINFORMATICS_AND_SYSTEMS_BIOLOGY"]],
@@ -357,3 +368,17 @@ def build_ui_label_regex(label_id: str) -> Pattern[str]:
     return re.compile(
         f"({'|'.join(re.escape(service.get_ui_label(locale.id, label_id)) for locale in service.get_available_locales())})"
     )
+
+
+def get_logged_in_user_id() -> MergedPersonIdentifier:
+    """Return the merged person identifier of the currently logged in user."""
+    settings = EditorSettings.get()
+    url = urlsplit(settings.ldap_url.get_secret_value())
+    connector = LDAPBackendApiConnector.get()
+    persons = connector.merged_person_from_login(
+        username=str(url.username), password=str(url.password)
+    )
+    if not persons:
+        msg = "No merged login person found for the logged in user."
+        raise RuntimeError(msg)
+    return persons.identifier

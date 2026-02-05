@@ -2,7 +2,6 @@ from typing import cast
 
 import reflex as rx
 
-from mex.editor.components import render_value
 from mex.editor.consent.layout import page
 from mex.editor.consent.state import ConsentState
 from mex.editor.search_results_component import search_results_list
@@ -45,6 +44,26 @@ def projects() -> rx.Component:
             marginBottom="var(--space-4)",
         ),
         custom_attrs={"data-testid": "user-projects"},
+    )
+
+
+def publications() -> rx.Component:
+    """Render a list of the users publications."""
+    return rx.vstack(
+        rx.text(
+            ConsentState.label_publications_title,
+            weight="bold",
+            style=rx.Style(
+                textTransform="uppercase",
+            ),
+        ),
+        search_results_list(ConsentState.user_publications),
+        consent_pagination("publications"),
+        style=rx.Style(
+            textAlign="center",
+            marginBottom="var(--space-4)",
+        ),
+        custom_attrs={"data-testid": "user-publications"},
     )
 
 
@@ -125,25 +144,18 @@ def consent_box() -> rx.Component:
 def consent_status() -> rx.Component:
     """Render the current consent status for the user."""
     return rx.cond(
-        ConsentState.merged_login_person,
+        ConsentState.consent_status,
         rx.vstack(
             rx.text(ConsentState.merged_login_person.full_name, weight="bold"),  # type: ignore [union-attr]
             rx.cond(
-                ConsentState.consent_status,
-                rx.hstack(
-                    rx.foreach(
-                        ConsentState.consent_status.preview,  # type: ignore [union-attr]
-                        render_value,
-                    )
+                ConsentState.consent_status.preview[0].badge == "VALID_FOR_PROCESSING",  # type: ignore [union-attr]
+                rx.text(
+                    ConsentState.label_consent_status_consented_format,
+                    color_scheme="green",
                 ),
-                rx.hstack(
-                    rx.text(
-                        "ConsentStatus: ",
-                    ),
-                    rx.spacer(direction="row"),
-                    rx.text(
-                        "ConsentType: ",
-                    ),
+                rx.text(
+                    ConsentState.label_consent_status_declined_format,
+                    color_scheme="red",
                 ),
             ),
             style=rx.Style(
@@ -154,8 +166,9 @@ def consent_status() -> rx.Component:
             custom_attrs={"data-testid": "consent-status"},
         ),
         rx.text(
-            ConsentState.label_consent_status_loading,
+            ConsentState.label_consent_status_no_consent,
             custom_attrs={"data-testid": "consent-status"},
+            color_scheme="gray",
         ),
     )
 
@@ -214,6 +227,7 @@ def index() -> rx.Component:
             user_data(),
             projects(),
             resources(),
+            publications(),
             rx.spacer(direction="column"),
             rx.box(
                 consent_box(),

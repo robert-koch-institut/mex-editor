@@ -54,6 +54,9 @@ def unsaved_changes_dialog() -> rx.Component:
                         on_click=State.logout,
                         color_scheme="red",
                         variant="solid",
+                        custom_attrs={
+                            "data-testid": "unsaved-changes-dialog-logout-button"
+                        },
                     ),
                 ),
                 rx.alert_dialog.cancel(
@@ -62,12 +65,16 @@ def unsaved_changes_dialog() -> rx.Component:
                         variant="soft",
                         color_scheme="gray",
                         on_click=State.set_is_unsaved_changes_dialog_open(False),  # type: ignore[attr-defined]
+                        custom_attrs={
+                            "data-testid": "unsaved-changes-dialog-cancel-button"
+                        },
                     ),
                 ),
                 spacing="3",
                 margin_top="16px",
                 justify="end",
             ),
+            custom_attrs={"data-testid": "unsaved-changes-dialog"},
         ),
         open=State.is_unsaved_changes_dialog_open,
     )

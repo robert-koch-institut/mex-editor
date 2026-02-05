@@ -269,6 +269,54 @@ def test_create_page_test_discard_draft(
 
 
 @pytest.mark.integration
+def test_logout_unsaved_changes_dialog_on_draft_logout_normal(
+    draft_create_page: DraftPage,
+) -> None:
+    page = draft_create_page["page"]
+
+    # create and add contact there should be a draft
+    page.get_by_test_id("new-additive-contact-00000000000000").click()
+    expect(page.get_by_test_id("draft-menu-trigger")).to_be_visible()
+
+    # click logout and expect dialog
+    page.get_by_test_id("user-menu").click()
+    page.get_by_test_id("logout-button").click()
+    expect(page.get_by_test_id("unsaved-changes-dialog")).to_be_visible()
+
+    # cancel logout and delete draft
+    page.get_by_test_id("unsaved-changes-dialog-cancel-button").click()
+    expect(page.get_by_test_id("draft-menu-trigger")).to_be_visible()
+    page.get_by_test_id("discard-draft-dialog-button").click()
+    page.get_by_test_id("discard-draft-button").click()
+    expect(page.get_by_test_id("draft-menu-trigger")).not_to_be_visible()
+
+    # logout should work normal (no dialog anymore)
+    page.get_by_test_id("user-menu").click()
+    page.get_by_test_id("logout-button").click()
+    page.wait_for_url(re.compile(r"(.*)\/login\/"))
+    expect(page.get_by_test_id("login-button")).to_be_visible()
+
+
+@pytest.mark.integration
+def test_logout_unsaved_changes_dialog_on_draft(draft_create_page: DraftPage) -> None:
+    page = draft_create_page["page"]
+
+    # create and add contact there should be a draft
+    page.get_by_test_id("new-additive-contact-00000000000000").click()
+    expect(page.get_by_test_id("draft-menu-trigger")).to_be_visible()
+
+    # click logout and expect dialog
+    page.get_by_test_id("user-menu").click()
+    page.get_by_test_id("logout-button").click()
+    expect(page.get_by_test_id("unsaved-changes-dialog")).to_be_visible()
+    page.get_by_test_id("unsaved-changes-dialog-logout-button").click()
+
+    # logout should work
+    page.wait_for_url(re.compile(r"(.*)\/login\/"))
+    expect(page.get_by_test_id("login-button")).to_be_visible()
+
+
+@pytest.mark.integration
 def test_create_page_test_draft_menu_item_text(
     draft_create_page: DraftPage,
 ) -> None:

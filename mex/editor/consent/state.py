@@ -71,13 +71,16 @@ class ConsentState(State):
     publications_current_page: Annotated[int, Field(ge=1)] = 1
     is_loading: bool = True
 
-    _consent_nav_items: list[NavItem] = [
-        NavItem(
-            title="consent.nav_bar.consent_navitem",
-            path="/consent",
-            raw_path="/consent/",
-        ),
-    ]
+    @rx.var
+    def _consent_nav_items(self) -> list[NavItem]:
+        """Get the consent nav items."""
+        return [
+            NavItem(
+                title=self.label_nav_bar_consent_navitem,
+                path="/consent",
+                raw_path="/consent/",
+            ),
+        ]
 
     @rx.var
     def consent_nav_items_translated(self) -> list[NavItem]:
@@ -406,3 +409,7 @@ class ConsentState(State):
     @label_var(label_id="consent.save_success_dialog.content")
     def label_save_success_dialog_content(self) -> None:
         """Label for save_success_dialog.content."""
+
+    @label_var(label_id="consent.nav_bar.consent_navitem")
+    def label_nav_bar_consent_navitem(self) -> None:
+        """Label for nav_bar.consent_navitem."""

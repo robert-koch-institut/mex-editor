@@ -143,6 +143,12 @@ msgstr "Gespeichert"
 msgid "rules.save_success_dialog.message_format"
 msgstr "{} wurde erfolgreich gespeichert."
 
+msgid "consent.save_success_dialog.title"
+msgstr "Gespeichert"
+
+msgid "consent.save_success_dialog.content"
+msgstr "Ihre Antwort wurde erfolgreich gespeichert."
+
 msgid "components.titles.additional_titles"
 msgstr "+ zusätzliche Titel"
 

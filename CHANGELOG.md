@@ -9,15 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Component to display search results
-
 ### Changes
 
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/33ca3a
-- bump python to 3.13
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/ad26e4
-- bump common to 1.11
-- switch package manager from pdm to uv
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
 
 ### Deprecated
 
@@ -26,6 +20,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.4.1] - 2026-02-04
+
+### Fixed
+
+- fix uv export command
+
+## [1.4.0] - 2026-02-04
+
+### Added
+
+- Component to display search results
+
+### Changes
+
+- use merged-person-from-login connector method
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/33ca3a
+- bump python to 3.13
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/ad26e4
+- bump common to 1.13.2
+- switch package manager from pdm to uv
 
 ## [1.3.1] - 2026-01-14
 

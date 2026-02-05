@@ -1,4 +1,6 @@
+from datetime import datetime
 from urllib.parse import urlsplit
+from zoneinfo import ZoneInfo
 
 import pytest
 from playwright.sync_api import Page, expect
@@ -109,6 +111,7 @@ def test_index(consent_page: Page) -> None:
 @pytest.mark.usefixtures("load_dummy_data")
 def test_submit_consent(consent_page: Page) -> None:
     page = consent_page
+    today = datetime.now(tz=ZoneInfo("Europe/Berlin")).strftime("%d.%m.%Y")
 
     page.get_by_test_id("accept-consent-button").click()
     consent_status = page.get_by_test_id("consent-status")
@@ -119,7 +122,7 @@ def test_submit_consent(consent_page: Page) -> None:
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
     expect(toast).to_have_attribute("data-type", "success")
-    expect(consent_status).to_contain_text("Sie haben Ihre Einwilligung am")
+    expect(consent_status).to_contain_text(f"Sie haben Ihre Einwilligung am {today}")
 
     # check if denied consent is submitted
     page.get_by_test_id("denial-consent-button").click()
@@ -127,4 +130,4 @@ def test_submit_consent(consent_page: Page) -> None:
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
     expect(toast).to_have_attribute("data-type", "success")
-    expect(consent_status).to_contain_text("Sie haben Ihre Ablehnung am")
+    expect(consent_status).to_contain_text(f"Sie haben Ihre Ablehnung am {today}")

@@ -8,15 +8,8 @@ services:
     environment:
       - MEX_EDITOR_API_HOST=0.0.0.0
       - MEX_EDITOR_USER_DATABASE={"mex":["mex"]}
-    expose:
-      - 8030
-      - 8031
     healthcheck:
       test: [ "CMD", "curl", "http://0.0.0.0:8031/_system/check" ]
       interval: 60s
       timeout: 5s
       retries: 5
-    volumes:
-      - data:/app/data
-volumes:
-  data:

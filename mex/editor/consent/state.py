@@ -1,8 +1,9 @@
 import math
 from collections.abc import Generator
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Annotated, cast
+from zoneinfo import ZoneInfo
 
 import reflex as rx
 from pydantic import Field
@@ -302,7 +303,9 @@ class ConsentState(State):
                 else ConsentStatus["INVALID_FOR_PROCESSING"]
             ),
             hasDataSubject=self.merged_login_person.identifier,
-            isIndicatedAtTime=YearMonthDayTime(datetime.now(tz=UTC).isoformat()),
+            isIndicatedAtTime=YearMonthDayTime(
+                datetime.now(tz=ZoneInfo("Europe/Berlin")).isoformat()
+            ),
             hasConsentType=(
                 ConsentType["EXPRESSED_CONSENT"] if is_consenting else None
             ),

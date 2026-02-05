@@ -295,12 +295,15 @@ def test_logout_unsaved_changes_dialog_on_draft_logout_normal(
     expect(page.get_by_test_id("draft-menu-trigger")).to_be_visible()
     page.get_by_test_id("discard-draft-dialog-button").click()
     page.get_by_test_id("discard-draft-button").click()
+    # wait some time to sync local storages
+    page.wait_for_timeout(30000)
     expect(page.get_by_test_id("draft-menu-trigger")).not_to_be_visible()
     _screenshot("changes_removed")
 
     # logout should work normal (no dialog anymore)
     page.get_by_test_id("user-menu").click()
-    expect(page.get_by_test_id("logout-button")).to_be_visible()
+    logout_button = page.get_by_test_id("logout-button")
+    expect(logout_button).to_be_visible()
     _screenshot("user_menu")
     page.get_by_test_id("logout-button").click()
     page.wait_for_url(re.compile(r"(.*)\/login\/"))

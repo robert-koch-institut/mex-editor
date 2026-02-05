@@ -182,7 +182,7 @@ def dummy_data(
     if "consent" in test_module:
         user_id = get_logged_in_user_id()
     else:
-        user_id = contact_point_1.stableTargetId
+        user_id = contact_point_1.stableTargetId  # type: ignore[assignment]
     activity_1 = ExtractedActivity(
         abstract=[
             Text(value="An active activity.", language=TextLanguage.EN),
@@ -370,7 +370,6 @@ def build_ui_label_regex(label_id: str) -> Pattern[str]:
     )
 
 
-@pytest.fixture
 def get_logged_in_user_id() -> MergedPersonIdentifier:
     """Return the merged person identifier of the currently logged in user."""
     settings = EditorSettings.get()

@@ -23,7 +23,7 @@ def test_add_external_links_to_results() -> None:
     results = add_external_links_to_results(search_results)
 
     assert len(results) == 2
-    assert results[0].title[0].href == "https://mex.rki.de/item/111111111111111"
+    assert results[0].title[0].href == "https://mex.rki.de/records/mex/111111111111111"
     assert results[0].title[0].external is True
-    assert results[1].title[0].href == "https://mex.rki.de/item/222222222222222"
+    assert results[1].title[0].href == "https://mex.rki.de/records/mex/222222222222222"
     assert results[1].title[0].external is True

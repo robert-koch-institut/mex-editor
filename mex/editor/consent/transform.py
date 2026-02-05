@@ -1,5 +1,3 @@
-"""Transform functions for consent module search results."""
-
 from mex.editor.models import SearchResult
 
 
@@ -14,7 +12,7 @@ def add_external_links_to_results(results: list[SearchResult]) -> list[SearchRes
     """
     for result in results:
         for title_value in result.title:
-            title_value.href = f"https://mex.rki.de/item/{result.identifier}"
+            title_value.href = f"https://mex.rki.de/records/mex/{result.identifier}"
             title_value.external = True
 
     return results

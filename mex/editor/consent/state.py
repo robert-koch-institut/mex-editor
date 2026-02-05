@@ -187,7 +187,8 @@ class ConsentState(State):
             return ""
         timestamp_str = self.consent_status.title[0].text
         timestamp_dt = datetime.fromisoformat(str(timestamp_str))
-        return timestamp_dt.strftime("%d.%m.%Y um %H:%M")
+        timestamp_local = timestamp_dt.astimezone(ZoneInfo("Europe/Berlin"))
+        return timestamp_local.strftime("%d.%m.%Y um %H:%M")
 
     @rx.event
     def get_all_data(self) -> Generator[EventSpec | None]:

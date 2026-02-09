@@ -69,7 +69,7 @@ class NavItem(rx.Base):
     title: str
     route_ids: list[str]
     raw_path: str
-    underline: str = "none"
+    active: bool = False
 
 
 class ModelConfig(BaseModel):

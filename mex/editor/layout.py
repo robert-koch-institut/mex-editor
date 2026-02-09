@@ -98,8 +98,8 @@ def nav_link(item: NavItem) -> rx.Component:
     link = rx.link(
         rx.text(item.title, size="4", weight="medium"),
         href=item.raw_path,
-        underline=item.underline,  # type: ignore[arg-type]
-        class_name="nav-item",
+        underline=rx.cond(item.active, "always", "none"),
+        class_name=rx.cond(item.active, "nav-item nav-item-active", "nav-item"),
         custom_attrs={
             "data-testid": f"nav-item-{item.route_ids[0]}",
         },

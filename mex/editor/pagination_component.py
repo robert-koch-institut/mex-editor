@@ -13,7 +13,7 @@ class PaginationStateMixin(rx.State, mixin=True):
     """State-Mixin for pagination behavior."""
 
     total: int = 0
-    limit: int = 5
+    limit: int = 50
     current_page: int = 1
 
     @rx.var

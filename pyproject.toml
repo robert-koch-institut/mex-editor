@@ -17,7 +17,7 @@ dependencies = [
     "pyyaml>=6,<7",
     "reflex==0.7.14",
     "requests>=2.32",
-    "sqlmodel<0.0.30",
+    "sqlmodel<0.0.33",
     "starlette>=0.50",
     "typer>=0.21",
     "uvicorn>=0.40",

@@ -101,7 +101,7 @@ def nav_link(item: NavItem) -> rx.Component:
         underline=item.underline,  # type: ignore[arg-type]
         class_name="nav-item",
         custom_attrs={
-            "data-testid": f"nav-item-{item.route_ids}",
+            "data-testid": f"nav-item-{item.route_ids[0]}",
         },
     )
 

@@ -222,7 +222,6 @@ def search_reference_dialog(
                         disabled=SearchReferenceDialogState.is_loading,
                         custom_attrs={"data-testid": "search-button"},
                     ),
-                    style=rx.Style(flex="1"),
                 ),
                 on_submit=[
                     SearchReferenceDialogState.search,
@@ -234,7 +233,6 @@ def search_reference_dialog(
             align="stretch",
             justify="between",
             style=rx.Style(width="100%"),
-            wrap="wrap",
         )
 
     return rx.dialog.root(

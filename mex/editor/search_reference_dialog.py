@@ -68,9 +68,15 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
     @rx.var(cache=False)
     def label_user_reference_types(self) -> str:
         """Label for the reference types."""
-        # TODO(FE): PLACEHOLDER - translate reference types when doing MX-2092
-        result = [t.removeprefix("Merged") for t in self.user_reference_types]
-        return ", ".join(result)
+        # TODO(FE): PLACEHOLDER - translate reference types when doin MX-2092
+        dummy_translation = self._locale_service.get_field_label(
+            self.current_locale, "", "contact"
+        )
+        result = [
+            f"{self.current_locale}: {x} ({dummy_translation})"
+            for x in self.user_reference_types
+        ]
+        return "|".join(result)
 
     @rx.event
     def toggle_show_all_properties(self, item: SearchResult, index: int) -> None:

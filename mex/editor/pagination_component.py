@@ -1,10 +1,9 @@
 import math
-from collections.abc import Generator
 from dataclasses import dataclass
 from typing import Any
 
 import reflex as rx
-from reflex.event import EventSpec, EventType
+from reflex.event import EventType
 from reflex.vars import Var
 
 from mex.editor.state import State
@@ -14,7 +13,7 @@ class PaginationStateMixin(rx.State, mixin=True):
     """State-Mixin for pagination behavior."""
 
     total: int = 0
-    limit: int = 50
+    limit: int = 5
     current_page: int = 1
 
     @rx.var
@@ -48,10 +47,10 @@ class PaginationStateMixin(rx.State, mixin=True):
         return self.current_page >= self.max_page
 
     @rx.event
-    def set_total(self, total: int) -> Generator[EventSpec]:
+    def set_total(self, total: int) -> None:
         """Set the total of the pagination."""
         self.total = total
-        yield type(self).set_current_page(self.current_page)  # type: ignore[operator]
+        self.set_current_page(self.current_page)  # type: ignore[operator]
 
     @rx.event
     def set_current_page(self, page_number: str | int) -> None:
@@ -65,14 +64,14 @@ class PaginationStateMixin(rx.State, mixin=True):
         self.current_page = 1
 
     @rx.event
-    def go_to_previous_page(self) -> Generator[EventSpec]:
+    def go_to_previous_page(self) -> None:
         """Navigate to the previous page."""
-        yield type(self).set_current_page(self.current_page - 1)  # type: ignore[operator]
+        self.set_current_page(self.current_page - 1)  # type: ignore[operator]
 
     @rx.event
-    def go_to_next_page(self) -> Generator[EventSpec]:
+    def go_to_next_page(self) -> None:
         """Navigate to the next page."""
-        yield type(self).set_current_page(self.current_page + 1)  # type: ignore[operator]
+        self.set_current_page(self.current_page + 1)  # type: ignore[operator]
 
     @rx.event
     def reset_pagination(self) -> None:

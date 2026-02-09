@@ -176,13 +176,14 @@ class SearchState(State, PaginationStateMixin):
         return len(self.results)
 
     @rx.event
-    def load_search_params(self) -> Generator[EventSpec]:
+    def load_search_params(self) -> Generator[EventSpec | None]:
         """Load url params into the state."""
         router: RouterData = self.get_value("router")
         parsed_url = urlparse(router.url)
         params = parse_qs(parsed_url.query)
         current_page = params["page"][0] if "page" in params else 1
-        yield type(self).set_current_page(current_page)  # type: ignore[operator]
+        self.set_current_page(current_page)  # type: ignore[operator]
+        yield None
         self.query_string = " ".join(params.get("q", ""))
         type_params = params.get("entityType", [])
         type_params = type_params if isinstance(type_params, list) else [type_params]

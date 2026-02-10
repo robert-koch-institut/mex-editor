@@ -34,6 +34,7 @@ def consent_page(
     page.goto(f"{base_url}/consent")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
+    page.wait_for_timeout(5000)
     page.screenshot(path="tests_consent_test_main-test_index-on-load.png")
     return page
 
@@ -55,10 +56,14 @@ def test_projects_and_resources(consent_page: Page) -> None:
 def test_pagination(consent_page: Page) -> None:
     page = consent_page
 
-    pagination_previous = page.get_by_test_id("resources-pagination-previous-button")
-    pagination_next = page.get_by_test_id("resources-pagination-next-button")
-    pagination_page_select = page.get_by_test_id("resources-pagination-page-select")
+    res_list = page.get_by_test_id("user-resources")
+    pagination_previous = res_list.get_by_test_id("pagination-previous-button")
+    pagination_next = res_list.get_by_test_id("pagination-next-button")
+    pagination_page_select = res_list.get_by_test_id("pagination-page-select")
+    res_list.highlight()
 
+    page.screenshot(path="tests_consent_test_main_test_pagination.png")
+    pagination_previous.scroll_into_view_if_needed()
     pagination_page_select.scroll_into_view_if_needed()
     page.screenshot(path="tests_consent_test_main_test_pagination.png")
 

@@ -122,9 +122,10 @@ class ConsentCategoryList(State, rx.ComponentState, PaginationStateMixin):
     @rx.event
     def cleanup(self) -> None:
         """Cleanup the component state."""
+        self.category = ""
         self.items = []
-        self.config = None
         self.is_loading = False
+        self.config = None
         self.reset_pagination()  # type: ignore[operator]
 
     @classmethod

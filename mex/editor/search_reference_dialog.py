@@ -211,8 +211,7 @@ def search_reference_dialog(
                         type="text",
                         style=rx.Style(
                             flex="1",
-                            max_width="380px",
-                            min_width="180px",
+                            max_width="80%",
                         ),
                     ),
                     rx.button(

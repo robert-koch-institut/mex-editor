@@ -65,7 +65,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
     def label_results_select_button(self) -> None:
         """Label for results.select_button."""
 
-    @rx.var(cache=False)
+    @rx.var
     def label_user_reference_types(self) -> str:
         """Label for the reference types."""
         # TODO(FE): PLACEHOLDER - translate reference types when doin MX-2092

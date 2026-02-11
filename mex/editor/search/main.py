@@ -103,6 +103,7 @@ def primary_source_choice(choice: tuple[str, SearchPrimarySource]) -> rx.Compone
             *full_refresh,
         ],
         disabled=SearchState.is_loading,
+        custom_attrs={"data-testid": f"primary-source-filter-{choice[0]}"},
     )
 
 
@@ -113,7 +114,7 @@ def primary_source_filter() -> rx.Component:
             SearchState.had_primary_sources,
             primary_source_choice,
         ),
-        custom_attrs={"data-testid": "had-primary-sources"},
+        custom_attrs={"data-testid": "primary-source-filter"},
         style=rx.Style(width="100%"),
     )
 

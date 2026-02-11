@@ -74,7 +74,7 @@ def test_create_page_updates_nav_bar(create_page: Page) -> None:
     expect(nav_item).to_contain_text(
         build_ui_label_regex("layout.nav_bar.create_navitem")
     )
-    expect(nav_item).to_have_class(re.compile("rt-underline-always"))
+    expect(nav_item).to_have_class(re.compile(r"(^|\s)nav-item-active(\s|$)"))
 
 
 @pytest.mark.integration

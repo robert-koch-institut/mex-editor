@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from urllib.parse import parse_qs, urlparse
 
 import reflex as rx
 from reflex.event import EventSpec
@@ -13,9 +14,10 @@ class EditState(RuleState):
     @rx.event
     def show_submit_success_toast_on_redirect(self) -> Generator[EventSpec]:
         """Show a success toast when the saved param is set."""
-        if "saved" in self.router.page.params:
+        parsed_url = urlparse(self.router.url)
+        params = parse_qs(parsed_url.query)
+        if "saved" in params:
             yield EditState.show_submit_success_toast  # type: ignore[misc]
-            params = self.router.page.params.copy()
             params.pop("saved")
             if event := self.push_url_params(params):
                 yield event

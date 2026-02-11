@@ -155,15 +155,15 @@ def nav_link(item: NavItem) -> rx.Component:
     link = rx.link(
         rx.text(item.title, size="4", weight="medium"),
         href=item.raw_path,
-        underline=item.underline,  # type: ignore[arg-type]
-        class_name="nav-item",
+        underline=rx.cond(item.active, "always", "none"),
+        class_name=rx.cond(item.active, "nav-item nav-item-active", "nav-item"),
         custom_attrs={
-            "data-testid": f"nav-item-{item.path}",
+            "data-testid": f"nav-item-{item.route_ids[0]}",
         },
     )
 
     return rx.cond(
-        item.path.contains("/create"),  # type: ignore[attr-defined]
+        item.route_ids.contains("/create"),  # type: ignore[attr-defined]
         rx.cond(
             RuleState.draft_count,
             rx.fragment(

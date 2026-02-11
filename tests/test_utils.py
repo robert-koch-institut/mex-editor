@@ -4,7 +4,11 @@ import pytest
 from mex.common.exceptions import EmptySearchResultError, MExError
 from mex.common.models import AnyExtractedModel, ExtractedPrimarySource
 from mex.editor.models import EditorValue
-from mex.editor.utils import resolve_editor_value, resolve_identifier
+from mex.editor.utils import (
+    replace_url_params,
+    resolve_editor_value,
+    resolve_identifier,
+)
 
 nest_asyncio.apply()
 
@@ -49,3 +53,32 @@ async def test_resolve_editor_value(
 
     with pytest.raises(MExError):
         await resolve_editor_value(EditorValue(identifier=None))
+
+
+@pytest.mark.parametrize(
+    ("url", "params", "expected"),
+    [
+        (
+            "/",
+            {},
+            "/",
+        ),
+        (
+            "/thing/123",
+            {"some-param": "foo"},
+            "/thing/123?some-param=foo",
+        ),
+        (
+            "https://foo.bar/some/things.php?old=param&good=nope#title",
+            {"good": ["yes", "totally"]},
+            "https://foo.bar/some/things.php?good=yes&good=totally#title",
+        ),
+    ],
+)
+def test_replace_url_params(
+    url: str,
+    params: dict[str, int | str | list[int | str]],
+    expected: str,
+) -> None:
+    new_url = replace_url_params(url, params)
+    assert new_url == expected

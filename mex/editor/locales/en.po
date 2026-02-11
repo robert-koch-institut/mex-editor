@@ -208,3 +208,21 @@ msgstr "We are sorry, but there are no entries for '{}' :("
 
 msgid "search_reference_dialog.results.select_button"
 msgstr "Select"
+
+msgid "layout.unsaved_changes_dialog.title"
+msgstr "Logout? There are unsaved changes..."
+
+msgid "layout.unsaved_changes_dialog.description"
+msgstr "Are you sure you want to logout? The following changes will be lost:"
+
+msgid "layout.unsaved_changes_dialog.description_draft"
+msgstr "Draft/s"
+
+msgid "layout.unsaved_changes_dialog.description_edit"
+msgstr "Edit/s"
+
+msgid "layout.unsaved_changes_dialog.logout_button"
+msgstr "Logout anyway"
+
+msgid "layout.unsaved_changes_dialog.cancel_button"
+msgstr "Cancel"

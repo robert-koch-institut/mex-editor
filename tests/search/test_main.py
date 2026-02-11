@@ -282,7 +282,7 @@ def test_reference_filter_fields_for_entity_type(
                 "Contact",
                 "Author",
                 "Files",
-                "Publisher",
+                "Publishing institution",
             ],
             id="en",
         ),
@@ -296,7 +296,7 @@ def test_reference_filter_field_translation(
     page.goto(base_url)
     page.wait_for_selector("[data-testid='page-body']")
 
-    # switch language to specifid locale
+    # switch language to specified locale
     lang_switcher = page.get_by_test_id("language-switcher")
     lang_switcher.click()
     page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()

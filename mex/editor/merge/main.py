@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any, Literal
 
 import reflex as rx
 
@@ -13,31 +13,33 @@ from mex.editor.search_results_component import (
 )
 
 
-def entity_type_choice_merged(choice: tuple[str, bool]) -> rx.Component:
+def entity_type_choice_merged(choice: dict[str, Any]) -> rx.Component:
     """Render a single checkbox for filtering by merged entity type."""
     return rx.checkbox(
-        choice[0],
-        checked=choice[1],
+        choice["label"],
+        checked=choice["checked"],
         on_change=[
-            MergeState.set_entity_type_merged(choice[0]),  # type: ignore[operator]
+            MergeState.set_entity_type_merged(choice["value"]),  # type: ignore[operator]
             MergeState.refresh(["merged"]),  # type: ignore[operator]
             MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
+        custom_attrs={"data-testid": f"merged-entity-type-{choice['value']}"},
     )
 
 
-def entity_type_choice_extracted(choice: tuple[str, bool]) -> rx.Component:
+def entity_type_choice_extracted(choice: dict[str, Any]) -> rx.Component:
     """Render a single checkbox for filtering by extracted entity type."""
     return rx.checkbox(
-        choice[0],
-        checked=choice[1],
+        choice["label"],
+        checked=choice["checked"],
         on_change=[
-            MergeState.set_entity_type_extracted(choice[0]),  # type: ignore[operator]
+            MergeState.set_entity_type_extracted(choice["value"]),  # type: ignore[operator]
             MergeState.refresh(["extracted"]),  # type: ignore[operator]
             MergeState.resolve_identifiers,
         ],
         disabled=MergeState.is_loading,
+        custom_attrs={"data-testid": f"extracted-entity-type-{choice['value']}"},
     )
 
 
@@ -53,14 +55,14 @@ def entity_type_filter(category: Literal["merged", "extracted"]) -> rx.Component
                     category == "merged",
                     rx.vstack(
                         rx.foreach(
-                            MergeState.entity_types_merged,
+                            MergeState.label_entity_types_merged,
                             entity_type_choice_merged,
                         ),
                         custom_attrs={"data-testid": "entity-types-merged"},
                     ),
                     rx.vstack(
                         rx.foreach(
-                            MergeState.entity_types_extracted,
+                            MergeState.label_entity_types_extracted,
                             entity_type_choice_extracted,
                         ),
                         custom_attrs={"data-testid": "entity-types-extracted"},

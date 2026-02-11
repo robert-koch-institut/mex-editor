@@ -1,5 +1,5 @@
 from collections.abc import Generator, Iterable
-from typing import Literal
+from typing import Any, Literal
 
 import reflex as rx
 from reflex.event import EventSpec
@@ -45,6 +45,40 @@ class MergeState(State):
         "merged": None,
         "extracted": None,
     }
+
+    @rx.var
+    def label_entity_types_merged(self) -> list[dict[str, Any]]:
+        """Get entity_types_merged with value, label and checked."""
+        return sorted(
+            [
+                {
+                    "label": self._locale_service.get_ui_label(
+                        self.current_locale, key
+                    ),
+                    "value": key,
+                    "checked": self.entity_types_merged[key],
+                }
+                for key in self.entity_types_merged
+            ],
+            key=lambda x: x["label"],
+        )
+
+    @rx.var
+    def label_entity_types_extracted(self) -> list[dict[str, Any]]:
+        """Get entity_types_extracted with value, label and checked."""
+        return sorted(
+            [
+                {
+                    "label": self._locale_service.get_ui_label(
+                        self.current_locale, key
+                    ),
+                    "value": key,
+                    "checked": self.entity_types_extracted[key],
+                }
+                for key in self.entity_types_extracted
+            ],
+            key=lambda x: x["label"],
+        )
 
     @rx.event
     def select_item(self, category: Literal["merged", "extracted"], index: int) -> None:

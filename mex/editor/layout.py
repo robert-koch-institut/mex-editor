@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING, cast
 import reflex as rx
 
 from mex.editor.components import icon_by_stem_type, render_title
+from mex.editor.create.state import CreateState
+from mex.editor.edit.state import EditState
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import NavItem
 from mex.editor.rules.models import UserDraft
@@ -29,6 +31,56 @@ def user_button(user_type: str = "user_mex") -> rx.Component:
     )
 
 
+def unsaved_changes_dialog() -> rx.Component:
+    """Return a dialog that informs the user about unsaved changes."""
+    return rx.alert_dialog.root(
+        rx.alert_dialog.content(
+            rx.alert_dialog.title(State.label_unsaved_changes_dialog_title),
+            rx.alert_dialog.description(
+                State.label_unsaved_changes_dialog_description,
+                size="2",
+            ),
+            rx.unordered_list(
+                rx.list_item(
+                    f"{CreateState.draft_count} {State.label_unsaved_changes_dialog_description_draft}",  # noqa: E501
+                ),
+                rx.list_item(
+                    f"{EditState.edit_count} {State.label_unsaved_changes_dialog_description_edit}",  # noqa: E501
+                ),
+            ),
+            rx.flex(
+                rx.alert_dialog.action(
+                    rx.button(
+                        State.label_unsaved_changes_dialog_logout_button,
+                        on_click=State.logout,
+                        color_scheme="red",
+                        variant="solid",
+                        custom_attrs={
+                            "data-testid": "unsaved-changes-dialog-logout-button"
+                        },
+                    ),
+                ),
+                rx.alert_dialog.cancel(
+                    rx.button(
+                        State.label_unsaved_changes_dialog_cancel_button,
+                        variant="soft",
+                        color_scheme="gray",
+                        on_click=State.set_is_unsaved_changes_dialog_open(False),  # type: ignore[attr-defined]
+                        custom_attrs={
+                            "data-testid": "unsaved-changes-dialog-cancel-button"
+                        },
+                    ),
+                ),
+                spacing="3",
+                margin_top="16px",
+                justify="end",
+            ),
+            custom_attrs={"data-testid": "unsaved-changes-dialog"},
+        ),
+        open=State.is_unsaved_changes_dialog_open,
+    )
+
+
 def user_menu(user_type: str = "user_mex") -> rx.Component:
     """Return a user menu with a trigger, the user's name and a logout button."""
     user = State.user_mex if user_type == "user_mex" else State.user_ldap
@@ -42,7 +94,11 @@ def user_menu(user_type: str = "user_mex") -> rx.Component:
             rx.menu.separator(),
             rx.menu.item(
                 State.label_nav_bar_logout_button,
-                on_select=State.logout,
+                on_select=rx.cond(
+                    CreateState.draft_count + EditState.edit_count,
+                    State.set_is_unsaved_changes_dialog_open(True),  # type: ignore[attr-defined]
+                    State.logout,
+                ),
                 custom_attrs={"data-testid": "logout-button"},
             ),
             align="end",
@@ -76,8 +132,9 @@ def language_switcher() -> rx.Component:
     )
 
 
-def render_draft_menu_item(draft: UserDraft) -> rx.Component:
+def render_draft_menu_item(dict_entry: tuple[str, UserDraft]) -> rx.Component:
     """Render a navigable menu item for the given draft."""
+    draft = dict_entry[1]
     return rx.menu.item(
         rx.link(
             rx.hstack(
@@ -110,13 +167,13 @@ def nav_link(item: NavItem) -> rx.Component:
     return rx.cond(
         item.path.contains("/create"),  # type: ignore[attr-defined]
         rx.cond(
-            RuleState.draft_summary.count,
+            RuleState.draft_count,
             rx.fragment(
                 link,
                 rx.menu.root(
                     rx.menu.trigger(
                         rx.badge(
-                            RuleState.draft_summary.count,
+                            RuleState.draft_count,
                             style=rx.Style(
                                 align_self="center",
                                 margin_left="-1em",
@@ -128,9 +185,7 @@ def nav_link(item: NavItem) -> rx.Component:
                         ),
                     ),
                     rx.menu.content(
-                        rx.foreach(
-                            RuleState.draft_summary.drafts, render_draft_menu_item
-                        )
+                        rx.foreach(RuleState.drafts, render_draft_menu_item)
                     ),
                 ),
             ),
@@ -263,6 +318,7 @@ def page(
             ),
             custom_attrs={"data-testid": "page-body"},
         ),
+        unsaved_changes_dialog(),
         custom_focus_script(),
     ]
 

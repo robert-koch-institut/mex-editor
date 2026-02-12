@@ -27,6 +27,7 @@ class State(rx.State):
     user_ldap: User | None = None
     merged_login_person: MergedLoginPerson | None = None
     target_path_after_login: str | None = None
+    is_unsaved_changes_dialog_open: bool = False
     _nav_items: list[NavItem] = [
         NavItem(
             title="layout.nav_bar.search_navitem",
@@ -176,3 +177,27 @@ class State(rx.State):
     @label_var(label_id="layout.nav_bar.logout_button")
     def label_nav_bar_logout_button(self) -> None:
         """Label for nav_bar.logout_button."""
+
+    @label_var(label_id="layout.unsaved_changes_dialog.title")
+    def label_unsaved_changes_dialog_title(self) -> None:
+        """Label for unsaved_changes_dialog.title."""
+
+    @label_var(label_id="layout.unsaved_changes_dialog.description")
+    def label_unsaved_changes_dialog_description(self) -> None:
+        """Label for unsaved_changes_dialog.description."""
+
+    @label_var(label_id="layout.unsaved_changes_dialog.description_draft")
+    def label_unsaved_changes_dialog_description_draft(self) -> None:
+        """Label for unsaved_changes_dialog.description_draft."""
+
+    @label_var(label_id="layout.unsaved_changes_dialog.description_edit")
+    def label_unsaved_changes_dialog_description_edit(self) -> None:
+        """Label for unsaved_changes_dialog.description_edit."""
+
+    @label_var(label_id="layout.unsaved_changes_dialog.cancel_button")
+    def label_unsaved_changes_dialog_cancel_button(self) -> None:
+        """Label for unsaved_changes_dialog.cancel_button."""
+
+    @label_var(label_id="layout.unsaved_changes_dialog.logout_button")
+    def label_unsaved_changes_dialog_logout_button(self) -> None:
+        """Label for unsaved_changes_dialog.logout_button."""

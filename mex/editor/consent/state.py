@@ -353,6 +353,7 @@ class ConsentState(State):
         for result_list in (
             self.user_projects,
             self.user_resources,
+            self.user_publications,
         ):
             for result in result_list:
                 for preview in result.preview:

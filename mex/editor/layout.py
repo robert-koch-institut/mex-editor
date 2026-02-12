@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Literal, cast
 
 import reflex as rx
 
@@ -15,9 +15,11 @@ if TYPE_CHECKING:
 locale_service = LocaleService.get()
 
 
-def user_button(user_type: str = "user_mex") -> rx.Component:
+def user_button(
+    user_type: Literal["user_mex", "user_ldap"] = "user_mex",
+) -> rx.Component:
     """Return a user button with an icon that indicates their access rights."""
-    user = State.user_mex if user_type == "user_mex" else State.user_ldap
+    user = getattr(State, user_type)
     return rx.button(
         rx.cond(
             cast("User", user).write_access,
@@ -29,9 +31,9 @@ def user_button(user_type: str = "user_mex") -> rx.Component:
     )
 
 
-def user_menu(user_type: str = "user_mex") -> rx.Component:
+def user_menu(user_type: Literal["user_mex", "user_ldap"] = "user_mex") -> rx.Component:
     """Return a user menu with a trigger, the user's name and a logout button."""
-    user = State.user_mex if user_type == "user_mex" else State.user_ldap
+    user = getattr(State, user_type)
     return rx.menu.root(
         rx.menu.trigger(
             user_button(user_type),
@@ -165,7 +167,8 @@ def app_logo() -> rx.Component:
 
 
 def nav_bar(
-    nav_items_source: list[NavItem] | None = None, user_type: str = "user_mex"
+    nav_items_source: list[NavItem] | None = None,
+    user_type: Literal["user_mex", "user_ldap"] = "user_mex",
 ) -> rx.Component:
     """Return a navigation bar component."""
     nav_items_to_use = (
@@ -238,7 +241,7 @@ def custom_focus_script() -> rx.Script:
 
 def page(
     *children: rx.Component,
-    user_type: str = "user_mex",
+    user_type: Literal["user_mex", "user_ldap"] = "user_mex",
     nav_items_source: list[NavItem] | None = None,
 ) -> rx.Component:
     """Return a page fragment with navigation bar and given children.

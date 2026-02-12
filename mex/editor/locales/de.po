@@ -247,4 +247,3 @@ msgstr "Trotzdem abmelden"
 
 msgid "layout.unsaved_changes_dialog.cancel_button"
 msgstr "Abbrechen"
-

@@ -9,11 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- consent page filters items based on person
 - Warn about unsaved changes when logging out
 - pytest-retry since tests often failing on github (we belief due to low system/cpu performance in CI)
 
 ### Changes
 
+- consent page UI clean up
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
 
 ### Deprecated

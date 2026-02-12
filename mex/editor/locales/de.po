@@ -143,6 +143,12 @@ msgstr "Gespeichert"
 msgid "rules.save_success_dialog.message_format"
 msgstr "{} wurde erfolgreich gespeichert."
 
+msgid "consent.save_success_dialog.title"
+msgstr "Gespeichert"
+
+msgid "consent.save_success_dialog.content"
+msgstr "Ihre Antwort wurde erfolgreich gespeichert."
+
 msgid "components.titles.additional_titles"
 msgstr "+ zusätzliche Titel"
 
@@ -179,6 +185,9 @@ msgstr "Datenbestände & Datensätze"
 msgid "consent.projects.title"
 msgstr "Projekte"
 
+msgid "consent.publications.title"
+msgstr "Publikationen"
+
 msgid "consent.user_data.loading"
 msgstr "Lade Kontodaten..."
 
@@ -211,6 +220,15 @@ msgstr "Leider wurden keine Ergebnisse für '{}' gefunden :("
 
 msgid "search_reference_dialog.results.select_button"
 msgstr "Auswählen"
+
+msgid "consent.consent_status.consented_format"
+msgstr "Sie haben Ihre Einwilligung am {} erteilt."
+
+msgid "consent.consent_status.declined_format"
+msgstr "Sie haben Ihre Ablehnung am {} erteilt."
+
+msgid "consent.consent_status.no_consent"
+msgstr "Sie haben noch keine Einwilligung erteilt."
 
 msgid "layout.unsaved_changes_dialog.title"
 msgstr "Abmelden? Es gibt noch ungespeicherte Änderungen..."

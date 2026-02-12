@@ -143,6 +143,12 @@ msgstr "Saved"
 msgid "rules.save_success_dialog.message_format"
 msgstr "{} was saved successfully."
 
+msgid "consent.save_success_dialog.title"
+msgstr "Saved"
+
+msgid "consent.save_success_dialog.content"
+msgstr "Your answer was saved successfully."
+
 msgid "components.titles.additional_titles"
 msgstr "+ additional titles"
 
@@ -176,6 +182,9 @@ msgstr "Datasources & Records"
 msgid "consent.projects.title"
 msgstr "Projects"
 
+msgid "consent.publications.title"
+msgstr "Publications"
+
 msgid "consent.user_data.loading"
 msgstr "Loading user data..."
 
@@ -189,7 +198,7 @@ msgid "consent.consent_status.loading"
 msgstr "Loading consent status..."
 
 msgid "consent.nav_bar.consent_navitem"
-msgstr "Informed Consent"
+msgstr "Consent"
 
 msgid "search_reference_dialog.title"
 msgstr "Search for references"
@@ -208,6 +217,15 @@ msgstr "We are sorry, but there are no entries for '{}' :("
 
 msgid "search_reference_dialog.results.select_button"
 msgstr "Select"
+
+msgid "consent.consent_status.consented_format"
+msgstr "You granted your consent on {}"
+
+msgid "consent.consent_status.declined_format"
+msgstr "You declined your consent on {}"
+
+msgid "consent.consent_status.no_consent"
+msgstr "You have not given consent yet."
 
 msgid "layout.unsaved_changes_dialog.title"
 msgstr "Logout? There are unsaved changes..."

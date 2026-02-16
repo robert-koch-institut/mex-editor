@@ -15,7 +15,7 @@ dependencies = [
     "polib>=1.2,<1.3",
     "pydantic>=2.9,<3",
     "pyyaml>=6,<7",
-    "reflex==0.8.14",
+    "reflex==0.8.15",
     "requests>=2.32,<3",
     "sqlmodel==0.0.29",
     "starlette>=0.50,<0.51",

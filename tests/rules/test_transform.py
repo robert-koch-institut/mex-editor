@@ -200,7 +200,7 @@ def test_transform_model_values_to_editor_values(
     model: AnyExtractedModel | AnyMergedModel | AnyAdditiveModel,
     field_name: str,
     subtractive: AnySubtractiveModel,
-    expected: EditorValue,
+    expected: list[EditorValue],
 ) -> None:
     editor_value = _transform_model_values_to_editor_values(
         model, field_name, subtractive
@@ -515,7 +515,7 @@ def test_transform_models_to_fields() -> None:
 
     assert len(editor_fields) == len(MERGEABLE_FIELDS_BY_CLASS_NAME["MergedPerson"])
     fields_by_name = {f.name: f for f in editor_fields}
-    assert fields_by_name["givenName"].dict() == {
+    assert fields_by_name["givenName"].model_dump() == {
         "is_required": False,
         "value_type": ["str"],
         "name": "givenName",
@@ -582,7 +582,7 @@ def test_transform_models_to_fields() -> None:
             },
         ],
     }
-    assert fields_by_name["memberOf"].dict() == {
+    assert fields_by_name["memberOf"].model_dump() == {
         "is_required": False,
         "value_type": ["MergedOrganizationalUnit"],
         "name": "memberOf",

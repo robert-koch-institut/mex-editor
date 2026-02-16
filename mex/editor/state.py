@@ -59,7 +59,7 @@ class State(rx.State):
     def _translate_nav_item(self, item: NavItem) -> NavItem:
         return NavItem(
             title=self._locale_service.get_ui_label(self.current_locale, item.title),
-            **item.dict(exclude={"title"}),
+            **item.model_dump(exclude={"title"}),
         )
 
     @rx.var

@@ -1,18 +1,22 @@
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
-from mex.common.models import (
-    AnyExtractedModel,
-    AnyMergedModel,
-    AnyPreviewModel,
-    AnyRuleModel,
-)
 from mex.common.types import Identifier, Link, TemporalEntity, Text, VocabularyEnum
 from mex.editor.models import (
     LANGUAGE_VALUE_NONE,
     MODEL_CONFIG_BY_STEM_TYPE,
     EditorValue,
 )
-from mex.editor.rules.models import EditorField
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from mex.common.models import (
+        AnyExtractedModel,
+        AnyMergedModel,
+        AnyPreviewModel,
+        AnyRuleModel,
+    )
+    from mex.editor.rules.models import EditorField
 
 
 def ensure_list(values: object) -> list[object]:

@@ -1,12 +1,14 @@
 import math
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import reflex as rx
-from reflex.event import EventType
 from reflex.vars import Var
 
 from mex.editor.state import State
+
+if TYPE_CHECKING:
+    from reflex.event import EventType
 
 
 class PaginationStateMixin(rx.State, mixin=True):
@@ -111,7 +113,7 @@ class PaginationOptions:
     def create(
         state: PaginationStateMixin | type[PaginationStateMixin],
         on_page_change: EventType[()] | None = None,
-    ) -> "PaginationOptions":
+    ) -> PaginationOptions:
         """Create pagination options for a given state.
 
         Args:

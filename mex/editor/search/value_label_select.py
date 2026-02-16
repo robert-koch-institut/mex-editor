@@ -1,9 +1,7 @@
-from collections.abc import Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import reflex as rx
 from pydantic import BaseModel
-from reflex.components import Component
 from reflex.components.radix.themes.components.select import (
     HighLevelSelect,
     SelectContent,
@@ -14,6 +12,11 @@ from reflex.components.radix.themes.components.select import (
     SelectTrigger,
 )
 from reflex.vars.base import Var
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from reflex.components import Component
 
 
 class ValueLabelSelectItem(BaseModel):

@@ -1,16 +1,18 @@
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import reflex as rx
 
 from mex.editor.layout import page
 from mex.editor.merge.state import MergeState
-from mex.editor.models import SearchResult
 from mex.editor.search_results_component import (
     SearchResultsComponentOptions,
     SearchResultsListItemOptions,
     SearchResultsListOptions,
     search_results_component,
 )
+
+if TYPE_CHECKING:
+    from mex.editor.models import SearchResult
 
 
 def entity_type_choice_merged(choice: tuple[str, bool]) -> rx.Component:

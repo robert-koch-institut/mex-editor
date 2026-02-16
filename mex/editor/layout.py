@@ -6,13 +6,12 @@ from mex.editor.components import icon_by_stem_type, render_title
 from mex.editor.create.state import CreateState
 from mex.editor.edit.state import EditState
 from mex.editor.locale_service import LocaleService
-from mex.editor.models import NavItem
-from mex.editor.rules.models import UserDraft
 from mex.editor.rules.state import RuleState
 from mex.editor.state import State
 
 if TYPE_CHECKING:
-    from mex.editor.models import User
+    from mex.editor.models import NavItem, User
+    from mex.editor.rules.models import UserDraft
 
 locale_service = LocaleService.get()
 

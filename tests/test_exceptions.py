@@ -1,6 +1,9 @@
-from pytest import LogCaptureFixture
+from typing import TYPE_CHECKING
 
 from mex.editor.exceptions import escalate_error
+
+if TYPE_CHECKING:
+    from pytest import LogCaptureFixture
 
 
 def test_escalate_error(caplog: LogCaptureFixture) -> None:

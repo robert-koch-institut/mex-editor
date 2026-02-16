@@ -1,12 +1,10 @@
 import re
-from collections.abc import Generator
 from re import Pattern
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import pytest
 from fastapi.testclient import TestClient
 from playwright.sync_api import Page, expect
-from pydantic import SecretStr
 from pytest import MonkeyPatch
 
 from mex.artificial.helpers import generate_artificial_extracted_items
@@ -38,6 +36,11 @@ from mex.editor.api.main import api
 from mex.editor.locale_service import LocaleService
 from mex.editor.settings import EditorSettings
 from mex.editor.types import EditorUserDatabase, EditorUserPassword
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from pydantic import SecretStr
 
 pytest_plugins = ("mex.common.testing.plugin",)
 

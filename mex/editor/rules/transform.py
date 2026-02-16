@@ -1,7 +1,5 @@
 from functools import lru_cache
-from typing import cast
-
-from pydantic import ValidationError
+from typing import TYPE_CHECKING, cast
 
 from mex.common.fields import (
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
@@ -53,7 +51,11 @@ from mex.editor.rules.models import (
     ValidationMessage,
 )
 from mex.editor.transform import ensure_list, transform_value
-from mex.editor.types import AnyModelValue
+
+if TYPE_CHECKING:
+    from pydantic import ValidationError
+
+    from mex.editor.types import AnyModelValue
 
 
 def _get_primary_source_id_from_model(

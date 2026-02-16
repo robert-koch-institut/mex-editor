@@ -1,10 +1,8 @@
 import copy
-from collections.abc import AsyncGenerator, Generator, Sequence
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import reflex as rx
 from pydantic import ValidationError
-from reflex.event import EventSpec
 from requests import HTTPError
 from starlette import status
 
@@ -44,6 +42,11 @@ from mex.editor.transform import (
     transform_models_to_title,
 )
 from mex.editor.utils import resolve_editor_value, resolve_identifier
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator, Generator, Sequence
+
+    from reflex.event import EventSpec
 
 locale_service = LocaleService.get()
 

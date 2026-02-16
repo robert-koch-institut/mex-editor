@@ -1,9 +1,13 @@
-from collections.abc import Generator
+from typing import TYPE_CHECKING
 
 import reflex as rx
-from reflex.event import EventSpec
 
 from mex.common.logging import logger
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from reflex.event import EventSpec
 
 
 def escalate_error(

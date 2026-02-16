@@ -1,7 +1,6 @@
-from collections.abc import Generator
+from typing import TYPE_CHECKING
 
 import reflex as rx
-from reflex.event import EventSpec
 from requests import RequestException
 
 from mex.common.backend_api.connector import LDAPBackendApiConnector
@@ -10,6 +9,11 @@ from mex.editor.label_var import label_var
 from mex.editor.models import MergedLoginPerson, User
 from mex.editor.security import has_read_access_mex, has_write_access_mex
 from mex.editor.state import State
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from reflex.event import EventSpec
 
 
 class LoginState(State):

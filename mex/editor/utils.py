@@ -1,4 +1,4 @@
-from collections.abc import Mapping, Sequence
+from typing import TYPE_CHECKING
 from urllib.parse import urlencode, urlparse, urlunparse
 
 from async_lru import alru_cache
@@ -6,9 +6,13 @@ from async_lru import alru_cache
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import EmptySearchResultError, MExError
 from mex.common.settings import SETTINGS_STORE
-from mex.editor.models import EditorValue
 from mex.editor.settings import EditorSettings
 from mex.editor.transform import transform_models_to_title
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
+
+    from mex.editor.models import EditorValue
 
 
 @alru_cache(maxsize=5000)

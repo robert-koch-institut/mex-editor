@@ -1,9 +1,11 @@
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
-
-from pytest import MonkeyPatch
 
 from mex.editor.models import User
 from mex.editor.state import State
+
+if TYPE_CHECKING:
+    from pytest import MonkeyPatch
 
 
 def test_state_logout(monkeypatch: MonkeyPatch) -> None:

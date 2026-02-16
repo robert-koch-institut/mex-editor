@@ -1,9 +1,11 @@
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import reflex as rx
 
-from mex.editor.models import EditorValue
 from mex.editor.state import State
+
+if TYPE_CHECKING:
+    from mex.editor.models import EditorValue
 
 
 def render_value(value: EditorValue) -> rx.Component:

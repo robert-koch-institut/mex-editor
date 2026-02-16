@@ -1,8 +1,6 @@
-from collections.abc import Generator
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import reflex as rx
-from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -14,6 +12,11 @@ from mex.editor.label_var import label_var
 from mex.editor.pagination_component import PaginationStateMixin
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from reflex.event import EventSpec
 
 
 class IngestState(State, PaginationStateMixin):

@@ -6,11 +6,10 @@ import yaml
 from pydantic import TypeAdapter
 
 from mex.common.models import BaseModel
+from mex.common.types import MergedPersonIdentifier
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-
-    from mex.common.types import MergedPersonIdentifier
 
 
 class EqualityDetector(Protocol):

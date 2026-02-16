@@ -1,11 +1,7 @@
-from typing import TYPE_CHECKING
-
 import reflex as rx
 
+from mex.common.types import MergedPrimarySourceIdentifier
 from mex.editor.models import EditorValue, EqualityDetector, sequence_is_equal
-
-if TYPE_CHECKING:
-    from mex.common.types import MergedPrimarySourceIdentifier
 
 
 class InputConfig(rx.Base):

@@ -465,19 +465,18 @@ def test_additional_titles_badge(
 
     # expect title is visible and there are additional titles for 'r2'
     expect(resource_r2_result).to_contain_text(first_title.value)
-    additional_title_badge = page.get_by_test_id("additional-titles-badge").first
-    additional_title_badge.scroll_into_view_if_needed()
-    expect(additional_title_badge).to_be_visible()
+    page.get_by_test_id("additional-titles-badge").first.scroll_into_view_if_needed()
+    expect(page.get_by_test_id("additional-titles-badge").first).to_be_visible()
     page.screenshot(path="tests_search_test_additional_titles_badge_on_visible.png")
-    expect(additional_title_badge).to_have_text(
+    expect(page.get_by_test_id("additional-titles-badge").first).to_have_text(
         build_ui_label_regex("components.titles.additional_titles")
     )
 
     # hover additional titles
-    box = additional_title_badge.bounding_box()
+    box = page.get_by_test_id("additional-titles-badge").first.bounding_box()
     assert box
     page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2, steps=5)
-    additional_title_badge.hover()
+    page.get_by_test_id("additional-titles-badge").first.hover()
     page.screenshot(path="tests_search_test_additional_titles_badge_on_hover.png")
 
     # check tooltip content

@@ -10,7 +10,7 @@ from mex.common.models import MERGED_MODEL_CLASSES
 from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
-from mex.editor.models import SearchResult
+from mex.editor.models import SearchResult, ValueLabelCheckboxItem
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
@@ -47,20 +47,18 @@ class MergeState(State):
     }
 
     @rx.var
-    def label_entity_types_merged(self) -> list[dict[str, Any]]:
+    def label_entity_types_merged(self) -> list[ValueLabelCheckboxItem]:
         """Get entity_types_merged with value, label and checked."""
         return sorted(
             [
-                {
-                    "label": self._locale_service.get_ui_label(
-                        self.current_locale, key
-                    ),
-                    "value": key,
-                    "checked": self.entity_types_merged[key],
-                }
+                ValueLabelCheckboxItem(
+                    label=self._locale_service.get_ui_label(self.current_locale, key),
+                    value=key,
+                    checked=self.entity_types_merged[key],
+                )
                 for key in self.entity_types_merged
             ],
-            key=lambda x: x["label"],
+            key=lambda x: x.label,
         )
 
     @rx.var

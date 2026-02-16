@@ -6,7 +6,6 @@ from mex.editor.rules.models import (
     LocalEdit,
     LocalEditStorageObject,
     UserDraft,
-    UserDraftSummary,
     UserEdit,
 )
 from mex.editor.transform import transform_fields_to_title
@@ -37,10 +36,9 @@ class LocalStorageMixinState(rx.State, mixin=True):
         }
 
     @rx.var
-    def draft_summary(self) -> UserDraftSummary:
-        """Get a summary about local drafts."""
-        drafts = [value for key, value in self.drafts.items()]
-        return UserDraftSummary(count=len(drafts), drafts=drafts)
+    def draft_count(self) -> int:
+        """Get the count/size/length of drafts."""
+        return len(self.drafts)
 
     @rx.var
     def edits(self) -> dict[str, UserEdit]:
@@ -56,6 +54,11 @@ class LocalStorageMixinState(rx.State, mixin=True):
         return {
             key: _create_edit(value, key) for key, value in edit_store.value.items()
         }
+
+    @rx.var
+    def edit_count(self) -> int:
+        """Get the count/size/length of edits."""
+        return len(self.edits)
 
     @rx.event
     def update_draft(self, identifier: str, draft: LocalDraft) -> None:

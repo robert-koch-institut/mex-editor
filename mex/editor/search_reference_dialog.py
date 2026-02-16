@@ -194,44 +194,52 @@ def search_reference_dialog(
             ),
         )
 
-    def render_search_form() -> rx.Component:
+    def render_search_input_and_button() -> rx.Component:
         return rx.hstack(
-            rx.form(
-                rx.hstack(
-                    rx.input(
-                        value=SearchReferenceDialogState.user_query,
-                        on_change=SearchReferenceDialogState.set_user_query,
-                        custom_attrs={
-                            "data-focusme": "",
-                            "data-testid": f"{component_id_prefix}-query-input",
-                        },
-                        placeholder=SearchReferenceDialogState.label_query_placeholder,
-                        name="query",
-                        disabled=SearchReferenceDialogState.is_loading,
-                        type="text",
-                        style=rx.Style(
-                            flex="1",
-                            max_width="80%",
-                        ),
-                    ),
-                    rx.button(
-                        rx.icon("search"),
-                        type="submit",
-                        variant="surface",
-                        disabled=SearchReferenceDialogState.is_loading,
-                        custom_attrs={"data-testid": "search-button"},
-                    ),
+            rx.input(
+                value=SearchReferenceDialogState.user_query,
+                on_change=SearchReferenceDialogState.set_user_query,
+                custom_attrs={
+                    "data-focusme": "",
+                    "data-testid": f"{component_id_prefix}-query-input",
+                },
+                placeholder=SearchReferenceDialogState.label_query_placeholder,
+                name="query",
+                disabled=SearchReferenceDialogState.is_loading,
+                type="text",
+                style=rx.Style(
+                    flex="1",
+                    max_width="380px",
+                    min_width="180px",
                 ),
-                on_submit=[
-                    SearchReferenceDialogState.search,
-                    SearchReferenceDialogState.resolve_identifiers,
-                ],
             ),
-            rx.spacer(),
-            pagination(pagination_opts, style=rx.Style(flex="0")),
-            align="stretch",
-            justify="between",
-            style=rx.Style(width="100%"),
+            rx.button(
+                rx.icon("search"),
+                type="submit",
+                variant="surface",
+                disabled=SearchReferenceDialogState.is_loading,
+                custom_attrs={"data-testid": "search-button"},
+            ),
+            style=rx.Style(flex="1"),
+        )
+
+    def render_search_form() -> rx.Component:
+        return rx.form(
+            rx.vstack(
+                rx.hstack(
+                    render_search_input_and_button(),
+                    rx.el.br(),
+                    pagination(pagination_opts, style=rx.Style(flex="0")),
+                    align="stretch",
+                    justify="between",
+                    style=rx.Style(width="100%"),
+                    wrap="wrap",
+                ),
+            ),
+            on_submit=[
+                SearchReferenceDialogState.search,
+                SearchReferenceDialogState.resolve_identifiers,
+            ],
         )
 
     return rx.dialog.root(

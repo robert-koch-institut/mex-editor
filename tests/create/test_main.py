@@ -169,10 +169,10 @@ def test_language_switcher(
 
     # change language and wait for reload
     lang_switcher.click()
-    create_page.screenshot(
-        path="tests_create_test_main-test_language_switcher-switcher_clicked.png"
-    )
     create_page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()
+    create_page.screenshot(
+        path=f"tests_create_test_main-test_language_switcher-switcher_clicked-{locale_id}.png"
+    )
 
     # select entity_type resource
     create_page.get_by_test_id("entity-type-select").click(timeout=30_000)
@@ -180,7 +180,9 @@ def test_language_switcher(
         re.compile(r"value-label-select-item-(.+)-Resource")
     ).click()
     create_page.wait_for_timeout(20000)
-
+    create_page.screenshot(
+        path=f"tests_create_test_main-test_language_switcher-resource_selected-{locale_id}.png"
+    )
     # find the accessPlatform field label and check the text
     field_access_platform = create_page.get_by_test_id("field-accessPlatform-name")
     expect(field_access_platform).to_have_text(expected_access_platform_field_label)

@@ -365,12 +365,13 @@ def test_push_search_params(
     entity_types = page.get_by_test_id("entity-types")
     expect(entity_types).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load.png")
-    activity_checkbox = entity_types.get_by_text("Activity")
+
+    activity_checkbox = entity_types.get_by_test_id("entity-type-Activity")
     activity_checkbox.click()
 
     # wait for the checkbox to actually become checked (websocket roundtrip complete)
     # Find the actual checkbox input by its accessible role and wait for it to be checked
-    activity_checkbox_input = entity_types.get_by_role("checkbox", name="Activity")
+    activity_checkbox_input = entity_types.get_by_test_id("entity-type-Activity")
     expect(activity_checkbox_input).to_be_checked()
 
     # verify exactly one checkbox is checked

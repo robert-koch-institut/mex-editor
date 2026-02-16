@@ -306,7 +306,7 @@ def test_logout_unsaved_changes_dialog_on_draft_logout_normal(
     expect(logout_button).to_be_visible()
     _screenshot("user_menu")
     page.get_by_test_id("logout-button").click()
-    page.wait_for_url(re.compile(r"(.*)\/login\/"))
+    page.wait_for_url(re.compile(r"(.*)\/login\/?"))
     _screenshot("logout")
     expect(page.get_by_test_id("login-button")).to_be_visible()
 
@@ -333,7 +333,7 @@ def test_logout_unsaved_changes_dialog_on_draft(draft_create_page: DraftPage) ->
     page.get_by_test_id("unsaved-changes-dialog-logout-button").click()
 
     # logout should work
-    page.wait_for_url(re.compile(r"(.*)\/login\/"))
+    page.wait_for_url(re.compile(r"(.*)\/login\/?"))
     _screenshot("logout")
     expect(page.get_by_test_id("login-button")).to_be_visible()
 

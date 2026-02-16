@@ -228,7 +228,7 @@ def search_reference_dialog(
             rx.vstack(
                 rx.hstack(
                     render_search_input_and_button(),
-                    rx.el.br(),
+                    rx.spacer(),
                     pagination(pagination_opts, style=rx.Style(flex="0")),
                     align="stretch",
                     justify="between",

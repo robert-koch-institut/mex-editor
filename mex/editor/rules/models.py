@@ -1,5 +1,3 @@
-from collections.abc import Sequence
-
 import reflex as rx
 
 from mex.common.types import MergedPrimarySourceIdentifier
@@ -96,13 +94,6 @@ class UserDraft(LocalDraft):
 
     identifier: str
     title: EditorValue
-
-
-class UserDraftSummary(rx.Base):
-    """Model to summarize the local drafts."""
-
-    count: int = 0
-    drafts: Sequence[UserDraft] = []
 
 
 class LocalDraftStorageObject(rx.Base):

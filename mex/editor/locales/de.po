@@ -226,3 +226,21 @@ msgstr "Entferne"
 
 msgid "advanced_search.reference_filter.value_placeholder"
 msgstr "ID für"
+
+msgid "layout.unsaved_changes_dialog.title"
+msgstr "Abmelden? Es gibt noch ungespeicherte Änderungen..."
+
+msgid "layout.unsaved_changes_dialog.description"
+msgstr "Sind Sie sicher, dass Sie sich abmelden wollen? Die folgenden Änderungen würden verloren gehen:"
+
+msgid "layout.unsaved_changes_dialog.description_draft"
+msgstr "Entwurf/e"
+
+msgid "layout.unsaved_changes_dialog.description_edit"
+msgstr "Bearbeitung/en"
+
+msgid "layout.unsaved_changes_dialog.logout_button"
+msgstr "Trotzdem abmelden"
+
+msgid "layout.unsaved_changes_dialog.cancel_button"
+msgstr "Abbrechen"

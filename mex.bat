@@ -26,6 +26,7 @@ if "%CI%"=="" (
 @REM install packages from lock file in local virtual environment
 echo installing package
 uv sync
+uv run playwright install firefox
 exit /b %errorlevel%
 
 

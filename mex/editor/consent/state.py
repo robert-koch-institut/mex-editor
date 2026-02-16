@@ -2,7 +2,7 @@ import math
 from collections.abc import Generator
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Annotated, cast
+from typing import Annotated
 
 import reflex as rx
 from pydantic import Field
@@ -45,8 +45,8 @@ class ConsentState(State):
     _consent_nav_items: list[NavItem] = [
         NavItem(
             title="consent.nav_bar.consent_navitem",
-            path="/consent",
-            raw_path="/consent/",
+            route_ids=["/consent"],
+            raw_path="/consent",
         ),
     ]
 
@@ -257,16 +257,13 @@ class ConsentState(State):
     @rx.event
     def show_submit_success_toast(self) -> EventSpec:
         """Show a toast for a successfully submitted rule-set."""
-        return cast(
-            "EventSpec",
-            rx.toast.success(
-                title=self.label_save_success_dialog_title,
-                description=self.label_save_success_dialog_content,
-                class_name="editor-toast",
-                close_button=True,
-                dismissible=True,
-                duration=5000,
-            ),
+        return rx.toast.success(
+            title=self.label_save_success_dialog_title,
+            description=self.label_save_success_dialog_content,
+            class_name="editor-toast",
+            close_button=True,
+            dismissible=True,
+            duration=5000,
         )
 
     @rx.event(background=True)  # type: ignore[operator]

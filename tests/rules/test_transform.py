@@ -370,6 +370,19 @@ def test_transform_model_values_to_editor_values(
         pytest.param(
             "AdditiveResource", "Resource", "unknown", InputConfig(), id="unknown field"
         ),
+        pytest.param(
+            "ExtractedPerson",
+            "Person",
+            "identifierInPrimarySource",
+            InputConfig(
+                editable_text=False,
+                editable_badge=False,
+                editable_identifier=False,
+                editable_href=False,
+                allow_additive=False,
+            ),
+            id="final field identifierInPrimarySource",
+        ),
     ],
 )
 def test_transform_model_to_input_config(
@@ -385,6 +398,38 @@ def test_transform_model_to_input_config(
         True,  # noqa: FBT003
     )
     assert input_config == expected
+
+
+# def test_items_only_rules_not_show_identifier_in_primarysource() -> None:
+#     editor_fields = transform_models_to_fields(
+#         extracted_items=[],
+#         additive=AdditivePerson(givenName=["John"]),
+#         subtractive=SubtractivePerson(),
+#         preventive=PreventivePerson(),
+#     )
+
+#     field_names = {field.name for field in editor_fields}
+#     assert "identifierInPrimarySource" not in field_names
+
+
+# def test_extracted_item_includes_identifier_in_primary_source() -> None:
+#     extracted_item = ExtractedPerson(
+#         identifierInPrimarySource="fruit",
+#         hadPrimarySource=MergedPrimarySourceIdentifier.generate(),
+#         givenName=["Apple"],
+#         familyName=["Pear"],
+#     )
+
+#     editor_fields = transform_models_to_fields(
+#         extracted_items=[extracted_item],
+#         additive=AdditivePerson(),
+#         subtractive=SubtractivePerson(),
+#         preventive=PreventivePerson(),
+#     )
+
+#     field_names = {field.name for field in editor_fields}
+
+#     assert "identifierInPrimarySource" in field_names
 
 
 @pytest.mark.parametrize(

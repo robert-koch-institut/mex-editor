@@ -155,6 +155,15 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             editable_text=editable,
             allow_additive=editable,
         )
+    if field_name == "identifierInPrimarySource":
+        return InputConfig(
+            editable_text=False,
+            editable_badge=False,
+            editable_identifier=False,
+            editable_href=False,
+            allow_additive=False,
+            render_textarea=False,
+        )
     return InputConfig()
 
 

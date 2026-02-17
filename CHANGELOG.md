@@ -9,8 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Warn about unsaved changes when logging out
+- pytest-retry since tests often failing on github (we belief due to low system/cpu performance in CI)
+
 ### Changes
 
+- upgrade reflex to 0.8.14
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
 - change the docker build to multi-stage build
 

@@ -1,14 +1,9 @@
 import reflex as rx
 
 from mex.common.types import IDENTIFIER_PATTERN
-from mex.editor.component_option_helper import (
-    build_pagination_options,
-)
+from mex.editor.component_option_helper import build_pagination_options
 from mex.editor.layout import page
-from mex.editor.search.models import (
-    ReferenceFieldIdentifierFilter,
-    SearchPrimarySource,
-)
+from mex.editor.search.models import ReferenceFieldIdentifierFilter, SearchPrimarySource
 from mex.editor.search.state import SearchState, full_refresh
 from mex.editor.search.value_label_select import value_label_select
 from mex.editor.search_results_component import (

@@ -26,7 +26,7 @@ class MExLocale(BaseModel):
 
     def values(self) -> Iterable[str]:
         """Expose locale values to avoid reflex bug."""
-        return self.model_dump().values()  # sigh
+        return self.model_dump().values()  # sigh, don't ask
 
 
 # TODO(ND): Move this to mex-common

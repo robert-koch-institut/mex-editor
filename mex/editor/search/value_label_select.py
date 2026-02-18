@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Any
 
 import reflex as rx
@@ -28,7 +29,7 @@ class ValueLabelHighLevelSelect(HighLevelSelect):
     @classmethod
     def create_value_label_select(
         cls,
-        items: list[ValueLabelSelectItem] | Var[list[ValueLabelSelectItem]],
+        items: Sequence[ValueLabelSelectItem] | Var[Sequence[ValueLabelSelectItem]],
         **props: Any,  # noqa: ANN401
     ) -> Component:
         """Create a select component. THIS IS COPY PASTE FROM HighLevelSelect!

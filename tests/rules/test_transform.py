@@ -733,12 +733,12 @@ def test_transform_fields_to_additive(
                         editor_values=[],
                         name=EditorValue(text="Prevented Primary Source"),
                         identifier=MergedPrimarySourceIdentifier(
-                            "preventedPrimarySourceId"
+                            "preventedPrimarySrcId"
                         ),
                     ),
                 ],
             ),
-            {"familyName": ["preventedPrimarySourceId"]},
+            {"familyName": ["preventedPrimarySrcId"]},
         ),
     ],
 )

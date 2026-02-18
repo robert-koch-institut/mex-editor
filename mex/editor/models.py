@@ -3,10 +3,8 @@ from importlib.resources import files
 from typing import Protocol
 
 import yaml
-from pydantic import BaseModel as PydanticBaseModel
-from pydantic import TypeAdapter
+from pydantic import BaseModel, TypeAdapter
 
-from mex.common.models import BaseModel
 from mex.common.types import MergedPersonIdentifier
 
 
@@ -26,7 +24,7 @@ def sequence_is_equal(
         return False  # sequences don't have same length
 
 
-class EditorValue(PydanticBaseModel):
+class EditorValue(BaseModel):
     """Model for describing atomic values in the editor."""
 
     text: str | None = None
@@ -47,14 +45,14 @@ class EditorValue(PydanticBaseModel):
         return False
 
 
-class User(PydanticBaseModel):
+class User(BaseModel):
     """Info on the currently logged-in user."""
 
     name: str
     write_access: bool
 
 
-class MergedLoginPerson(PydanticBaseModel):
+class MergedLoginPerson(BaseModel):
     """Info on the currently logged-in user from the merged login endpoint."""
 
     identifier: MergedPersonIdentifier | None = None
@@ -63,7 +61,7 @@ class MergedLoginPerson(PydanticBaseModel):
     orcid_id: list[str] | None = None
 
 
-class NavItem(PydanticBaseModel):
+class NavItem(BaseModel):
     """Model for one navigation bar item."""
 
     title: str
@@ -86,7 +84,7 @@ MODEL_CONFIG_BY_STEM_TYPE = TypeAdapter(dict[str, ModelConfig]).validate_python(
 LANGUAGE_VALUE_NONE = "None"
 
 
-class SearchResult(PydanticBaseModel):
+class SearchResult(BaseModel):
     """Search result preview."""
 
     identifier: str

@@ -19,7 +19,7 @@ dependencies = [
     "requests>=2.32,<3",
     "sqlmodel==0.0.29",
     "starlette>=0.52,<0.53",
-    "typer>=0.21,<0.22",
+    "typer>=0.22,<0.23",
     "uvicorn>=0.40,<0.41",
 ]
 

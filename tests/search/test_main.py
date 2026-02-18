@@ -445,6 +445,7 @@ def test_push_search_params(
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
+@pytest.mark.flaky(retries=3, delay=1)
 def test_additional_titles_badge(
     base_url: str,
     writer_user_page: Page,

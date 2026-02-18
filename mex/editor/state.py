@@ -28,6 +28,7 @@ class State(rx.State):
     merged_login_person: MergedLoginPerson | None = None
     target_path_after_login: str | None = None
     is_unsaved_changes_dialog_open: bool = False
+
     _nav_items: list[NavItem] = [
         NavItem(
             title="layout.nav_bar.search_navitem",
@@ -66,6 +67,11 @@ class State(rx.State):
     def nav_items_translated(self) -> list[NavItem]:
         """The Navbar items with locale sensitive label."""
         return [self._translate_nav_item(item) for item in self._nav_items]
+
+    @rx.event
+    def set_is_unsaved_changes_dialog_open(self, value: bool) -> None:  # noqa: FBT001
+        """Set the unsaved changes dialog open state."""
+        self.is_unsaved_changes_dialog_open = value
 
     @rx.event
     def change_locale(self, locale: str) -> None:

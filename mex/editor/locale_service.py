@@ -1,4 +1,5 @@
 import re
+from collections.abc import Iterable
 from gettext import GNUTranslations
 from importlib.resources import files
 from io import BytesIO
@@ -6,9 +7,9 @@ from typing import TYPE_CHECKING, Self, cast
 
 import polib
 from babel import Locale as BabelLocale
+from pydantic import BaseModel
 
 from mex.common.context import SingleSingletonStore
-from mex.common.models import BaseModel
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -22,6 +23,10 @@ class MExLocale(BaseModel):
     id: str
     label: str
     language: str
+
+    def values(self) -> Iterable[str]:
+        """Expose locale values to avoid reflex bug."""
+        return self.model_dump().values()  # sigh
 
 
 # TODO(ND): Move this to mex-common

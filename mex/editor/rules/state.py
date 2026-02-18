@@ -1,5 +1,5 @@
 import copy
-from collections.abc import AsyncGenerator, Generator, Sequence
+from collections.abc import AsyncGenerator, Generator
 from typing import cast
 
 import reflex as rx
@@ -99,7 +99,7 @@ class RuleState(State, LocalStorageMixinState):
             self.delete_draft(self.draft_id)  # type: ignore[operator]
 
     @rx.var(cache=True, deps=["fields", "current_locale"])
-    def translated_fields(self) -> Sequence[FieldTranslation]:
+    def translated_fields(self) -> list[FieldTranslation]:
         """Compute the translated fields based on fields and current_locale.
 
         Returns:

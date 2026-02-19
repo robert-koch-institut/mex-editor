@@ -73,7 +73,7 @@ app.add_page(
 )
 app.add_page(
     create_index,
-    route="/create/[draft_identifier]",
+    route="/create/[draft_id]",
     title="MEx Editor | Create",
     on_load=[
         State.check_mex_login,
@@ -96,7 +96,7 @@ app.add_page(
 )
 app.add_page(
     edit_index,
-    route="/item/[identifier]",
+    route="/item/[item_id]",
     title="MEx Editor | Edit",
     on_load=[
         State.check_mex_login,

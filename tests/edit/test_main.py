@@ -38,10 +38,10 @@ def edit_page(
 def test_edit_page_updates_nav_bar(edit_page: Page) -> None:
     page = edit_page
     nav_bar = page.get_by_test_id("nav-bar")
-    page.screenshot(path="tests_edit_test_main-test_edit_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
+    page.screenshot(path="tests_edit_test_main-test_edit_page_updates_nav_bar.png")
     nav_item = nav_bar.get_by_test_id("nav-item-/item/[identifier]")
-    expect(nav_item).to_have_class(re.compile("rt-underline-always"))
+    expect(nav_item).to_have_class(re.compile(r"(^|\s)nav-item-active(\s|$)"))
 
 
 @pytest.mark.integration
@@ -109,7 +109,7 @@ def test_edit_page_renders_primary_sources(
     expect(primary_source).to_contain_text(had_primary_source.title[0].value)
     link = primary_source.get_by_role("link")
     expect(link).to_have_attribute(
-        "href", f"/item/{extracted_activity.hadPrimarySource}/"
+        "href", f"/item/{extracted_activity.hadPrimarySource}"
     )
 
 
@@ -198,7 +198,7 @@ def test_edit_page_resolves_identifier(
     )  # resolved short name of unit
     expect(link).to_have_attribute(
         "href",
-        f"/item/{extracted_activity.contact[1]}/",  # link href
+        f"/item/{extracted_activity.contact[1]}",  # link href
     )
     expect(link).not_to_have_attribute("target", "_blank")  # internal link
 
@@ -396,9 +396,8 @@ def test_edit_page_resolves_additive_identifier(
         "link", name=organizational_unit.shortName[0].value
     )
     expect(rendered_identifier).to_have_count(1)
-    assert (
-        rendered_identifier.first.get_attribute("href")
-        == f"/item/{organizational_unit.stableTargetId}/"
+    expect(rendered_identifier.first).to_have_attribute(
+        "href", f"/item/{organizational_unit.stableTargetId}"
     )
 
     # assert raw identifier value is retained

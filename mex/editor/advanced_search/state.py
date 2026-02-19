@@ -1,4 +1,5 @@
-from collections.abc import Generator, Iterable
+from collections.abc import Generator
+from dataclasses import dataclass
 from itertools import groupby
 from typing import Any
 
@@ -30,6 +31,15 @@ class RefFilter(rx.Base):
     values: list[str] = []
 
 
+@dataclass
+class FieldDescriptor:
+    """Model to describe a field with its name, label value types it can reference."""
+
+    field: str
+    label: str
+    value_types: list[str]
+
+
 class AdvancedSearchState(State, PaginationStateMixin):
     """State for the advanced search page."""
 
@@ -53,42 +63,36 @@ class AdvancedSearchState(State, PaginationStateMixin):
             self.all_entity_types if len(self.entity_types) == 0 else self.entity_types
         )
 
-        fields_with_type: list[dict[str, Any]] = [
-            {
-                "field": field,
-                "label": self._locale_service.get_field_label(
+        fields_with_type: list[FieldDescriptor] = [
+            FieldDescriptor(
+                field,
+                self._locale_service.get_field_label(
                     self.current_locale, entity_type, field
                 ),
-                "value_types": STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME[
+                STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME[
                     ensure_prefix(entity_type, "Extracted")
                 ][field],
-            }
+            )
             for entity_type in selected_entity_types
             for field in REFERENCE_FIELDS_BY_CLASS_NAME[
                 ensure_prefix(entity_type, "Extracted")
             ]
         ]
 
-        fields_with_all_ref_types_and_label: dict[str, set[str]] = {}
-        for k, g in groupby(fields_with_type, lambda x: x["field"]):
+        fields_with_all_ref_types_and_label: dict[tuple[str, str], set[str]] = {}
+        for k, g in groupby(fields_with_type, lambda x: x.field):
             group = list(g)
-            field_key = f"{k}::{group[0]['label']}"
+            field_key = (k, group[0].label)  # f"{k}::{group[0].label}"
 
             for item in group:
                 if field_key not in fields_with_all_ref_types_and_label:
                     fields_with_all_ref_types_and_label[field_key] = set()
-                fields_with_all_ref_types_and_label[field_key].update(
-                    item["value_types"]
-                )
-
-        def _build_select_item(key: str, value: Iterable[str]) -> ValueLabelSelectItem:
-            [field, label] = key.split("::")
-            return ValueLabelSelectItem(label=label, value=f"{field}:{','.join(value)}")
+                fields_with_all_ref_types_and_label[field_key].update(item.value_types)
 
         return sorted(
             [
-                _build_select_item(key, value)
-                for key, value in fields_with_all_ref_types_and_label.items()
+                ValueLabelSelectItem(label=label, value=f"{field}:{','.join(value)}")
+                for [field, label], value in fields_with_all_ref_types_and_label.items()
             ],
             key=lambda x: x.label,
         )
@@ -133,7 +137,7 @@ class AdvancedSearchState(State, PaginationStateMixin):
         connector = BackendApiConnector.get()
         try:
             fetch_result = connector.fetch_preview_items(
-                query_string=self.query if self.query else None,
+                query_string=self.query or None,
                 entity_type=entity_type,
                 referenced_identifier=ref_values,
                 reference_field=ref_field,
@@ -163,6 +167,15 @@ class AdvancedSearchState(State, PaginationStateMixin):
                 if preview.identifier and not preview.text:
                     async with self:
                         await resolve_editor_value(preview)
+
+    @rx.event
+    def set_query(self, query: str) -> None:
+        """Set the search query.
+
+        Args:
+            query: The search query string.
+        """
+        self.query = query
 
     @rx.event
     def on_query_form_submit(self, form_data: dict[str, Any]) -> None:

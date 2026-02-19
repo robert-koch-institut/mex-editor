@@ -23,7 +23,7 @@ def filter_query() -> rx.Component:
                         default_value=AdvancedSearchState.query,
                         max_length=100,
                         name="query",
-                        on_blur=AdvancedSearchState.set_query,  # type: ignore[attr-defined]
+                        on_blur=AdvancedSearchState.set_query,
                         placeholder=AdvancedSearchState.label_search_input_placeholder,
                         custom_attrs={"data-testid": "filter-query"},
                     ),
@@ -163,7 +163,7 @@ def ref_filter(ref: RefFilter, index: int) -> rx.Component:
                 ],
                 custom_attrs={"data-testid": f"ref-filter-{index}-remove"},
             ),
-            gap="4px",
+            gap="var(--space-1)",
             align="stretch",
         ),
         rx.foreach(
@@ -191,7 +191,7 @@ def filter_references() -> rx.Component:
     return rx.card(
         rx.vstack(
             rx.hstack(
-                rx.heading("Reference Filters", size="3"),
+                rx.heading(AdvancedSearchState.label_refrence_filter_title, size="3"),
                 rx.button(
                     rx.icon("plus"),
                     on_click=AdvancedSearchState.add_ref_filter(
@@ -207,7 +207,7 @@ def filter_references() -> rx.Component:
             rx.vstack(
                 rx.foreach(
                     AdvancedSearchState.refs,
-                    lambda ref, index: ref_filter(ref, index),
+                    ref_filter,
                 ),
                 align="stretch",
                 spacing="4",

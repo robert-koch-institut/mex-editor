@@ -80,7 +80,7 @@ class PaginationStateMixin(rx.State, mixin=True):
         """Reset the pagination to its default values."""
         self.total = 0
         self.current_page = 1
-        self.limit = self.__fields__["limit"].default
+        self.limit = self.get_fields()["limit"].default  # type: ignore[assignment]
 
 
 @dataclass

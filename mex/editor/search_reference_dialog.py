@@ -6,7 +6,6 @@ from requests import HTTPError
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
-from mex.editor.layout import custom_focus_script
 from mex.editor.locale_service import LocaleService
 from mex.editor.pagination_component import (
     PaginationOptions,
@@ -205,7 +204,6 @@ def search_reference_dialog(
                 value=SearchReferenceDialogState.user_query,
                 on_change=SearchReferenceDialogState.set_user_query,
                 custom_attrs={
-                    "data-focusme": "",
                     "data-testid": f"{component_id_prefix}-query-input",
                 },
                 placeholder=SearchReferenceDialogState.label_query_placeholder,
@@ -287,7 +285,6 @@ def search_reference_dialog(
                 render_result(),
                 align="stretch",
             ),
-            custom_focus_script(),
             style=rx.Style({"max-width": "62vw !important"}),
             on_open_auto_focus=[
                 SearchReferenceDialogState.set_user_query(""),  # type: ignore[operator]

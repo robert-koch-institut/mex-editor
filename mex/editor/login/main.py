@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 import reflex as rx
 
-from mex.editor.layout import app_logo, custom_focus_script
+from mex.editor.layout import app_logo
 from mex.editor.login.state import LoginLdapState, LoginMExState, LoginState
 
 if TYPE_CHECKING:
@@ -15,12 +15,13 @@ def login_user() -> rx.Component:
         rx.text(LoginState.label_username),
         rx.input(
             name="username",
+            auto_focus=True,
             on_change=LoginState.set_username,
             placeholder=LoginState.label_username,
             size="3",
             tab_index=1,
             style=rx.Style(width="100%"),
-            custom_attrs={"data-testid": "input-username", "data-focusme": ""},
+            custom_attrs={"data-testid": "input-username"},
         ),
         style=rx.Style(width="100%"),
     )
@@ -90,7 +91,6 @@ def login_form(login_callback: EventType[()]) -> rx.Component:
                     on_submit=login_callback,
                     spacing="4",
                 ),
-                custom_focus_script(),
             ),
             style=rx.Style(
                 width="calc(340px * var(--scaling))",

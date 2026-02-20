@@ -9,18 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Button on edit page to reset or delete rules
 - Warn about unsaved changes when logging out
 - pytest-retry since tests often failing on github (we belief due to low system/cpu performance in CI)
 
 ### Changes
 
 - bump python to 3.14
-- upgrade reflex to 0.8.14
+- upgrade reflex to 0.8.15
+- use pydantic v2 BaseModel instead of rx.Base
+- updated mex-common to 1.16.0
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
 
 ### Deprecated
 
 ### Removed
+
+- all custom scripts due to reflex docs
 
 ### Fixed
 

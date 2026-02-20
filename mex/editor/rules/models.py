@@ -1,10 +1,10 @@
-import reflex as rx
+from pydantic import BaseModel
 
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.editor.models import EditorValue, EqualityDetector, sequence_is_equal
 
 
-class InputConfig(rx.Base):
+class InputConfig(BaseModel):
     """Model for configuring input masks."""
 
     badge_default: str | None = None  # value to pre-select in drop-down menu
@@ -18,7 +18,7 @@ class InputConfig(rx.Base):
     render_textarea: bool = False  # whether this field is rendered as a textarea
 
 
-class ValidationMessage(rx.Base):
+class ValidationMessage(BaseModel):
     """Model for describing validation errors."""
 
     field_name: str
@@ -26,7 +26,7 @@ class ValidationMessage(rx.Base):
     input: str
 
 
-class EditorPrimarySource(rx.Base):
+class EditorPrimarySource(BaseModel):
     """Model for describing the editor state for one primary source."""
 
     name: EditorValue
@@ -46,7 +46,7 @@ class EditorPrimarySource(rx.Base):
         return False
 
 
-class EditorField(rx.Base):
+class EditorField(BaseModel):
     """Model for describing the editor state for a single field."""
 
     name: str
@@ -63,7 +63,7 @@ class EditorField(rx.Base):
         return False
 
 
-class FieldTranslation(rx.Base):
+class FieldTranslation(BaseModel):
     """Wraps an editor field to add translated label and description."""
 
     field: EditorField
@@ -71,7 +71,7 @@ class FieldTranslation(rx.Base):
     description: str
 
 
-class LocalEdit(rx.Base):
+class LocalEdit(BaseModel):
     """Model to store local edits in the browser."""
 
     fields: list[EditorField]
@@ -96,13 +96,13 @@ class UserDraft(LocalDraft):
     title: EditorValue
 
 
-class LocalDraftStorageObject(rx.Base):
+class LocalDraftStorageObject(BaseModel):
     """Model to de-/serialize local drafts in browsers local storage."""
 
     value: dict[str, LocalDraft]
 
 
-class LocalEditStorageObject(rx.Base):
+class LocalEditStorageObject(BaseModel):
     """Model to de-/serialize local edits in browsers local storage."""
 
     value: dict[str, LocalEdit]

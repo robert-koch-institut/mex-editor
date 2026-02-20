@@ -2,7 +2,9 @@ from typing import Any
 
 import reflex as rx
 
-from mex.editor.component_option_helper import build_pagination_options
+from mex.editor.component_option_helper import (
+    build_pagination_options,
+)
 from mex.editor.ingest.models import AuxProvider, IngestResult
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page

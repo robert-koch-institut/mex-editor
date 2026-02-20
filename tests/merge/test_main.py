@@ -38,7 +38,6 @@ def test_index(merge_page: Page) -> None:
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-@pytest.mark.flaky(retries=3, delay=1)
 def test_search_input_merged(merge_page: Page) -> None:
     page = merge_page
 
@@ -194,7 +193,6 @@ def test_resolves_identifier(
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-@pytest.mark.flaky(retries=3, delay=1)
 def test_additional_titles_badge(
     merge_page: Page,
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],

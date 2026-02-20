@@ -16,7 +16,11 @@ from mex.common.models import (
     AnyRuleSetResponse,
     ConsentRuleSetRequest,
 )
-from mex.common.types import ConsentStatus, ConsentType, YearMonthDayTime
+from mex.common.types import (
+    ConsentStatus,
+    ConsentType,
+    YearMonthDayTime,
+)
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.models import NavItem, SearchResult

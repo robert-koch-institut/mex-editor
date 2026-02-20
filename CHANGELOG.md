@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- updated mex-common to 1.16.0
+- upgrade reflex to 0.8.14
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
 
 ### Deprecated

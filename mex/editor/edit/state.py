@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from urllib.parse import parse_qs, urlparse
 
 import reflex as rx
 from reflex.event import EventSpec
@@ -19,42 +20,40 @@ class EditState(RuleState):
         self.is_deleting = True
         yield None
 
-        connector = BackendApiConnector.get()
-        # TODO(FE): Use func when merge backend in
-        # connector.delete_rule_set(self.item_id)
-        print("DELETING RULES", self.item_id)
+        if self.item_id:
+            connector = BackendApiConnector.get()
+            connector.delete_rule_set(self.item_id)
 
-        if self.delete_reset_mode == "delete":
-            yield rx.redirect("/")
-            yield rx.toast.success(
-                title=self.label_delete_rules_success_toast_title,
-                description=self.label_delete_rules_success_toast_text,
-                class_name="editor-toast",
-                close_button=True,
-                dismissible=True,
-                duration=5000,
-                custom_attrs={"data-testid": "delete-success-toast"},
-            )
-        elif self.delete_reset_mode == "reset":
-            yield rx.redirect(f"/item/{self.item_id}")
-            yield rx.toast.success(
-                title=self.label_reset_rules_success_toast_title,
-                description=self.label_reset_rules_success_toast_text,
-                class_name="editor-toast",
-                close_button=True,
-                dismissible=True,
-                duration=5000,
-                custom_attrs={"data-testid": "reset-success-toast"},
-            )
+            if self.delete_reset_mode == "delete":
+                yield rx.redirect("/")
+                yield rx.toast.success(
+                    title=self.label_delete_rules_success_toast_title,
+                    description=self.label_delete_rules_success_toast_text,
+                    class_name="editor-toast",
+                    close_button=True,
+                    dismissible=True,
+                    duration=5000,
+                )
+            elif self.delete_reset_mode == "reset":
+                yield rx.redirect(f"/item/{self.item_id}")
+                yield rx.toast.success(
+                    title=self.label_reset_rules_success_toast_title,
+                    description=self.label_reset_rules_success_toast_text,
+                    class_name="editor-toast",
+                    close_button=True,
+                    dismissible=True,
+                    duration=5000,
+                )
 
         self.is_deleting = False
 
     @rx.event
     def show_submit_success_toast_on_redirect(self) -> Generator[EventSpec]:
         """Show a success toast when the saved param is set."""
-        if "saved" in self.router.page.params:
+        parsed_url = urlparse(self.router.url)
+        params = parse_qs(parsed_url.query)
+        if "saved" in params:
             yield EditState.show_submit_success_toast  # type: ignore[misc]
-            params = self.router.page.params.copy()
             params.pop("saved")
             if event := self.push_url_params(params):
                 yield event

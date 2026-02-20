@@ -55,7 +55,7 @@ def load_delete_reset_data(
     connector.update_rule_set(
         cp1.stableTargetId,
         ContactPointRuleSetRequest(
-            additive=AdditiveContactPoint(email=["another_email.test.com"])
+            additive=AdditiveContactPoint(email=["another_email@test.com"])
         ),
     )
 
@@ -91,8 +91,11 @@ def test_edit_page_delete_reset_button(
     button = page.get_by_test_id("delete-reset-button")
     expect(button).to_be_visible()
     button.click()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_delete_reset_button-reset_clicked.png"
+    )
     page.wait_for_url(f"{base_url}/item/{reset_id}")
-    expect(page.get_by_test_id("reset-success-toast")).to_be_visible()
+    expect(page.locator(".editor-toast")).to_be_visible()
     expect(page.get_by_test_id("delete-reset-button")).not_to_be_visible()
 
     delete_id = load_delete_reset_data["delete"]
@@ -100,19 +103,22 @@ def test_edit_page_delete_reset_button(
     button = page.get_by_test_id("delete-reset-button")
     expect(button).to_be_visible()
     button.click()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_delete_reset_button-delete_clicked.png"
+    )
     page.wait_for_url(f"{base_url}/")
-    expect(page.get_by_test_id("delete-success-toast")).to_be_visible()
+    expect(page.locator(".editor-toast")).to_be_visible()
 
 
 @pytest.mark.integration
 def test_edit_page_updates_nav_bar(edit_page: Page) -> None:
     page = edit_page
     nav_bar = page.get_by_test_id("nav-bar")
-    page.screenshot(path="tests_edit_test_main-test_edit_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
+    page.screenshot(path="tests_edit_test_main-test_edit_page_updates_nav_bar.png")
     nav_item = nav_bar.locator(".nav-item").all()[2]
-    expect(nav_item).to_have_attribute("data-testid", "nav-item-/item/[identifier]")
-    expect(nav_item).to_have_class(re.compile("rt-underline-always"))
+    expect(nav_item).to_have_attribute("data-testid", "nav-item-/item/[item_id]")
+    expect(nav_item).to_have_class(re.compile(r"(^|\s)nav-item-active(\s|$)"))
 
 
 @pytest.mark.integration
@@ -180,7 +186,7 @@ def test_edit_page_renders_primary_sources(
     expect(primary_source).to_contain_text(had_primary_source.title[0].value)
     link = primary_source.get_by_role("link")
     expect(link).to_have_attribute(
-        "href", f"/item/{extracted_activity.hadPrimarySource}/"
+        "href", f"/item/{extracted_activity.hadPrimarySource}"
     )
 
 
@@ -269,7 +275,7 @@ def test_edit_page_resolves_identifier(
     )  # resolved short name of unit
     expect(link).to_have_attribute(
         "href",
-        f"/item/{extracted_activity.contact[1]}/",  # link href
+        f"/item/{extracted_activity.contact[1]}",  # link href
     )
     expect(link).not_to_have_attribute("target", "_blank")  # internal link
 
@@ -467,9 +473,8 @@ def test_edit_page_resolves_additive_identifier(
         "link", name=organizational_unit.shortName[0].value
     )
     expect(rendered_identifier).to_have_count(1)
-    assert (
-        rendered_identifier.first.get_attribute("href")
-        == f"/item/{organizational_unit.stableTargetId}/"
+    expect(rendered_identifier.first).to_have_attribute(
+        "href", f"/item/{organizational_unit.stableTargetId}"
     )
 
     # assert raw identifier value is retained
@@ -719,7 +724,7 @@ def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> N
     # check default state
     submit_button = edit_page.get_by_test_id("submit-button")
     initial_text = submit_button.text_content()
-    initial_text = initial_text if initial_text else ""
+    initial_text = initial_text or ""
     expect(submit_button).to_have_text(initial_text)
     expect(submit_button).not_to_be_disabled()
 

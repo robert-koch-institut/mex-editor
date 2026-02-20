@@ -54,8 +54,6 @@ class RuleState(State, LocalStorageMixinState):
     _api_fields: list[EditorField] = []
 
     is_submitting: bool = False
-    item_id: str | None = None
-    draft_id: str | None = None
     delete_reset_mode: None | Literal["delete", "reset"] = None
     item_title: list[EditorValue] = []
     fields: list[EditorField] = []
@@ -191,8 +189,6 @@ class RuleState(State, LocalStorageMixinState):
         self.delete_reset_mode = None
         self.fields.clear()
         self.validation_messages.clear()
-        self.item_id = self.router.page.params.get("identifier")
-        self.draft_id = self.router.page.params.get("draft_identifier")
 
         if not self.item_id and not self.draft_id:
             yield rx.redirect(path=f"/create/{Identifier.generate()}")

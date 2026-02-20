@@ -54,8 +54,6 @@ class RuleState(State, LocalStorageMixinState):
     _api_fields: list[EditorField] = []
 
     is_submitting: bool = False
-    item_id: str | None = None
-    draft_id: str | None = None
     item_title: list[EditorValue] = []
     fields: list[EditorField] = []
     stem_type: str | None = None
@@ -176,8 +174,6 @@ class RuleState(State, LocalStorageMixinState):
         """Refresh the edit or create page."""
         self.fields.clear()
         self.validation_messages.clear()
-        self.item_id = self.router.page.params.get("identifier")
-        self.draft_id = self.router.page.params.get("draft_identifier")
 
         if not self.item_id and not self.draft_id:
             yield rx.redirect(path=f"/create/{Identifier.generate()}")

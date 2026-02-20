@@ -622,7 +622,7 @@ dev = [
     { name = "pytest-cov" },
     { name = "pytest-playwright" },
     { name = "pytest-random-order" },
-    { name = "pytest-retry" },
+    { name = "pytest-rerunfailures" },
     { name = "ruff" },
     { name = "sphinx" },
     { name = "types-ldap3" },
@@ -658,7 +658,7 @@ dev = [
     { name = "pytest-cov", specifier = ">=6" },
     { name = "pytest-playwright", specifier = ">=0.7" },
     { name = "pytest-random-order", specifier = ">=1" },
-    { name = "pytest-retry", specifier = ">=1.7" },
+    { name = "pytest-rerunfailures", specifier = ">=16.1" },
     { name = "ruff", specifier = ">=0.14" },
     { name = "sphinx", specifier = ">=9" },
     { name = "types-ldap3" },
@@ -1084,15 +1084,16 @@ wheels = [
 ]
 
 [[package]]
-name = "pytest-retry"
-version = "1.7.0"
+name = "pytest-rerunfailures"
+version = "16.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "packaging" },
     { name = "pytest" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c5/5b/607b017994cca28de3a1ad22a3eee8418e5d428dcd8ec25b26b18e995a73/pytest_retry-1.7.0.tar.gz", hash = "sha256:f8d52339f01e949df47c11ba9ee8d5b362f5824dff580d3870ec9ae0057df80f", size = 19977, upload-time = "2025-01-19T01:56:13.115Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/de/04/71e9520551fc8fe2cf5c1a1842e4e600265b0815f2016b7c27ec85688682/pytest_rerunfailures-16.1.tar.gz", hash = "sha256:c38b266db8a808953ebd71ac25c381cb1981a78ff9340a14bcb9f1b9bff1899e", size = 30889, upload-time = "2025-10-10T07:06:01.238Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7c/ff/3266c8a73b9b93c4b14160a7e2b31d1e1088e28ed29f4c2d93ae34093bfd/pytest_retry-1.7.0-py3-none-any.whl", hash = "sha256:a2dac85b79a4e2375943f1429479c65beb6c69553e7dae6b8332be47a60954f4", size = 13775, upload-time = "2025-01-19T01:56:11.199Z" },
+    { url = "https://files.pythonhosted.org/packages/77/54/60eabb34445e3db3d3d874dc1dfa72751bfec3265bd611cb13c8b290adea/pytest_rerunfailures-16.1-py3-none-any.whl", hash = "sha256:5d11b12c0ca9a1665b5054052fcc1084f8deadd9328962745ef6b04e26382e86", size = 14093, upload-time = "2025-10-10T07:06:00.019Z" },
 ]
 
 [[package]]

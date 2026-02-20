@@ -648,7 +648,7 @@ def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> N
     # check default state
     submit_button = edit_page.get_by_test_id("submit-button")
     initial_text = submit_button.text_content()
-    initial_text = initial_text if initial_text else ""
+    initial_text = initial_text or ""
     expect(submit_button).to_have_text(initial_text)
     expect(submit_button).not_to_be_disabled()
 

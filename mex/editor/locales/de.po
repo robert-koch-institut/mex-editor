@@ -229,3 +229,21 @@ msgstr "Trotzdem abmelden"
 
 msgid "layout.unsaved_changes_dialog.cancel_button"
 msgstr "Abbrechen"
+
+msgid "edit.reset_rules.button"
+msgstr "Regeln zurücksetzen"
+
+msgid "edit.delete_rules.button"
+msgstr "Eintrag löschen"
+
+msgid "edit.delete_rules.success_toast_title"
+msgstr "Eintrag gelöscht"
+
+msgid "edit.delete_rules.success_toast_text"
+msgstr "Der Eintrag wurde erfolgreich gelöscht."
+
+msgid "edit.reset_rules.success_toast_title"
+msgstr "Regeln zurückgesetzt"
+
+msgid "edit.reset_rules.success_toast_text"
+msgstr "Die Regeln wurden erfolgreich zurückgesetzt."

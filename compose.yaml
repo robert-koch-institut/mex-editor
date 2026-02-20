@@ -6,10 +6,66 @@ services:
       - 8030:8030
       - 8031:8031
     environment:
-      - MEX_EDITOR_API_HOST=0.0.0.0
-      - MEX_EDITOR_USER_DATABASE={"mex":["mex"]}
+      - MEX_BACKEND_API_KEY=write_key
+      - MEX_BACKEND_API_URL=http://mex-backend:8080/
+      - MEX_BACKEND_API_USER_DATABASE={"write":{"admin":"admin"}}
+      - MEX_IDENTITY_PROVIDER=backend
     healthcheck:
-      test: [ "CMD", "curl", "http://0.0.0.0:8031/_system/check" ]
-      interval: 60s
+      test: [ "CMD", "curl", "http://mex-editor:8031/_system/check" ]
+      interval: 30s
       timeout: 5s
       retries: 5
+      start_period: 60s
+    depends_on:
+      mex-backend:
+        condition: service_healthy
+  mex-backend:
+    image: ghcr.io/robert-koch-institut/mex-backend:1.2.0
+    ports:
+      - 8080:8080
+    environment:
+      - MEX_BACKEND_API_KEY_DATABASE={"write":["write_key"]}
+      - MEX_BACKEND_API_USER_DATABASE={"write":{"admin":"admin"}}
+      - MEX_BACKEND_VALKEY_URL=valkey://valkey:6379
+      - MEX_GRAPH_URL=neo4j://neo4j:7687
+      - MEX_IDENTITY_PROVIDER=graph
+    healthcheck:
+      test: [ "CMD", "curl", "http://mex-backend:8080/v1/_system/check" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      neo4j:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+  neo4j:
+    image: neo4j:2025.10-community
+    environment:
+      - NEO4J_AUTH=neo4j/password
+    expose:
+      - 7687
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      test: [ "CMD", "cypher-shell", "-u", "neo4j", "-p", "password", "RETURN 1" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  valkey:
+    image: valkey/valkey:9.0.0
+    expose:
+      - 6379
+    volumes:
+      - valkey_data:/data
+    healthcheck:
+      test: [ "CMD", "valkey-cli", "ping" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+volumes:
+  neo4j_data:
+  valkey_data:

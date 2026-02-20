@@ -226,3 +226,21 @@ msgstr "Logout anyway"
 
 msgid "layout.unsaved_changes_dialog.cancel_button"
 msgstr "Cancel"
+
+msgid "edit.reset_rules.button"
+msgstr "Reset Rules"
+
+msgid "edit.delete_rules.button"
+msgstr "Delete Item"
+
+msgid "edit.delete_rules.success_toast_title"
+msgstr "Item deleted"
+
+msgid "edit.delete_rules.success_toast_text"
+msgstr "Item successfully deleted."
+
+msgid "edit.reset_rules.success_toast_title"
+msgstr "Rules reseted"
+
+msgid "edit.reset_rules.success_toast_text"
+msgstr "Rules successfully reseted."

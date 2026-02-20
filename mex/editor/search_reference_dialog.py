@@ -1,12 +1,14 @@
-from typing import TYPE_CHECKING
+from collections.abc import Generator, Iterable
 
 import reflex as rx
+from reflex.event import EventSpec, EventType
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
+from mex.editor.models import SearchResult
 from mex.editor.pagination_component import (
     PaginationOptions,
     PaginationStateMixin,
@@ -20,13 +22,6 @@ from mex.editor.search_results_component import (
 )
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
-
-if TYPE_CHECKING:
-    from collections.abc import Generator, Iterable
-
-    from reflex.event import EventSpec, EventType
-
-    from mex.editor.models import SearchResult
 
 
 class SearchReferenceDialogState(State, PaginationStateMixin):

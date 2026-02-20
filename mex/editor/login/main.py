@@ -1,12 +1,8 @@
-from typing import TYPE_CHECKING
-
 import reflex as rx
+from reflex.event import EventType
 
 from mex.editor.layout import app_logo
 from mex.editor.login.state import LoginLdapState, LoginMExState, LoginState
-
-if TYPE_CHECKING:
-    from reflex.event import EventType
 
 
 def login_user() -> rx.Component:

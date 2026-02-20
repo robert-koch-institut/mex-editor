@@ -1,7 +1,8 @@
+from collections.abc import Generator, Mapping, Sequence
 from importlib.metadata import version
-from typing import TYPE_CHECKING
 
 import reflex as rx
+from reflex.event import EventSpec
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
@@ -9,11 +10,6 @@ from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import MergedLoginPerson, NavItem, User
 from mex.editor.utils import replace_url_params
-
-if TYPE_CHECKING:
-    from collections.abc import Generator, Mapping, Sequence
-
-    from reflex.event import EventSpec
 
 
 class State(rx.State):

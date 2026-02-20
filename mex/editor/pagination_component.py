@@ -1,14 +1,12 @@
 import math
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import reflex as rx
+from reflex.event import EventType
 from reflex.vars import Var
 
 from mex.editor.state import State
-
-if TYPE_CHECKING:
-    from reflex.event import EventType
 
 
 class PaginationStateMixin(rx.State, mixin=True):

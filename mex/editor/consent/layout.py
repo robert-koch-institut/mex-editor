@@ -1,10 +1,7 @@
-from typing import TYPE_CHECKING
+import reflex as rx
 
 from mex.editor.consent.state import ConsentState
 from mex.editor.layout import page as shared_page
-
-if TYPE_CHECKING:
-    import reflex as rx
 
 
 def page(*children: rx.Component) -> rx.Component:

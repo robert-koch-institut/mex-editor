@@ -1,15 +1,13 @@
 import re
-from typing import TYPE_CHECKING, TypedDict
+from typing import TypedDict
 
 import pytest
 from playwright.sync_api import Locator, Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
+from mex.common.models import AnyExtractedModel
 from tests.conftest import build_ui_label_regex
-
-if TYPE_CHECKING:
-    from mex.common.models import AnyExtractedModel
 
 url_regex = re.compile(r"/create/(\w+)")
 

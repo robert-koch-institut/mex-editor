@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from re import Pattern
 
 import pytest
 from playwright.sync_api import Page, expect
@@ -6,9 +6,6 @@ from playwright.sync_api import Page, expect
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider
 from tests.conftest import build_pagination_regex, build_ui_label_regex
-
-if TYPE_CHECKING:
-    from re import Pattern
 
 
 @pytest.fixture

@@ -1,5 +1,3 @@
-from typing import TYPE_CHECKING
-
 import reflex as rx
 
 from mex.common.types import IDENTIFIER_PATTERN
@@ -14,12 +12,6 @@ from mex.editor.search_results_component import (
     SearchResultsListOptions,
     search_results_component,
 )
-
-if TYPE_CHECKING:
-    from mex.editor.search.models import (
-        ReferenceFieldIdentifierFilter,
-        SearchPrimarySource,
-    )
 
 
 def search_input() -> rx.Component:

@@ -1,20 +1,18 @@
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 import reflex as rx
 
 from mex.editor.components import icon_by_stem_type, render_span, render_value
 from mex.editor.locale_service import LocaleService
+from mex.editor.models import EditorValue
+from mex.editor.rules.models import (
+    EditorPrimarySource,
+    FieldTranslation,
+    InputConfig,
+    ValidationMessage,
+)
 from mex.editor.rules.state import RuleState
 from mex.editor.search_reference_dialog import search_reference_dialog
-
-if TYPE_CHECKING:
-    from mex.editor.models import EditorValue
-    from mex.editor.rules.models import (
-        EditorPrimarySource,
-        FieldTranslation,
-        InputConfig,
-        ValidationMessage,
-    )
 
 locale_service = LocaleService.get()
 

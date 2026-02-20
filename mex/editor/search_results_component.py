@@ -1,7 +1,8 @@
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
 
 import reflex as rx
+from reflex.event import EventCallback
 
 from mex.editor.components import (
     icon_by_stem_type,
@@ -9,14 +10,8 @@ from mex.editor.components import (
     render_title,
     render_value,
 )
+from mex.editor.models import EditorValue, SearchResult
 from mex.editor.pagination_component import PaginationOptions, pagination
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
-
-    from reflex.event import EventCallback
-
-    from mex.editor.models import EditorValue, SearchResult
 
 
 @dataclass

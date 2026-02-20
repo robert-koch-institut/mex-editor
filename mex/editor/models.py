@@ -1,13 +1,11 @@
+from collections.abc import Sequence
 from importlib.resources import files
-from typing import TYPE_CHECKING, Protocol
+from typing import Protocol
 
 import yaml
 from pydantic import BaseModel, TypeAdapter
 
 from mex.common.types import MergedPersonIdentifier
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
 
 
 class EqualityDetector(Protocol):

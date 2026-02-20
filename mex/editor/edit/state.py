@@ -1,16 +1,12 @@
-from typing import TYPE_CHECKING
+from collections.abc import Generator
 from urllib.parse import parse_qs, urlparse
 
 import reflex as rx
+from reflex.event import EventSpec
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.label_var import label_var
 from mex.editor.rules.state import RuleState
-
-if TYPE_CHECKING:
-    from collections.abc import Generator
-
-    from reflex.event import EventSpec
 
 
 class EditState(RuleState):

@@ -1,16 +1,12 @@
-from typing import TYPE_CHECKING
+from collections.abc import Iterable
 
+from mex.common.models import AnyExtractedModel, AnyPreviewModel
 from mex.editor.models import SearchResult
 from mex.editor.transform import (
     transform_model_to_all_properties,
     transform_models_to_preview,
     transform_models_to_title,
 )
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
-
-    from mex.common.models import AnyExtractedModel, AnyPreviewModel
 
 
 def transform_models_to_results(

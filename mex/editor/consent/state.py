@@ -1,10 +1,12 @@
 import math
+from collections.abc import Generator
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 import reflex as rx
 from pydantic import Field
+from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -25,11 +27,6 @@ from mex.editor.models import NavItem, SearchResult
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
-
-if TYPE_CHECKING:
-    from collections.abc import Generator
-
-    from reflex.event import EventSpec
 
 
 class ConsentState(State):

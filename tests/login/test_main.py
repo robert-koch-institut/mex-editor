@@ -1,12 +1,8 @@
-from typing import TYPE_CHECKING
-
 import pytest
 from playwright.sync_api import Page, expect
+from pydantic import SecretStr
 
 from tests.conftest import build_ui_label_regex
-
-if TYPE_CHECKING:
-    from pydantic import SecretStr
 
 
 @pytest.mark.integration

@@ -1,5 +1,3 @@
-from typing import TYPE_CHECKING
-
 import reflex as rx
 
 from mex.editor.create.state import CreateState
@@ -10,10 +8,8 @@ from mex.editor.rules.main import (
     rule_page_header,
     validation_errors,
 )
+from mex.editor.rules.models import FieldTranslation
 from mex.editor.rules.state import RuleState
-
-if TYPE_CHECKING:
-    from mex.editor.rules.models import FieldTranslation
 
 
 def editor_field(field_translation: FieldTranslation) -> rx.Component:

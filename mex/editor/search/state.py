@@ -1,8 +1,11 @@
-from typing import TYPE_CHECKING, Any, Literal
+from collections.abc import Generator
+from typing import Any, Literal
 from urllib.parse import parse_qs, urlparse
 
 import reflex as rx
 from pydantic import TypeAdapter, ValidationError
+from reflex.event import EventSpec
+from reflex.istate.data import RouterData
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -14,6 +17,7 @@ from mex.common.types import Identifier
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
+from mex.editor.models import SearchResult
 from mex.editor.pagination_component import PaginationStateMixin
 from mex.editor.search.models import (
     ReferenceFieldFilter,
@@ -25,14 +29,6 @@ from mex.editor.search.transform import transform_models_to_results
 from mex.editor.search.value_label_select import ValueLabelSelectItem
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
-
-if TYPE_CHECKING:
-    from collections.abc import Generator
-
-    from reflex.event import EventSpec
-    from reflex.istate.data import RouterData
-
-    from mex.editor.models import SearchResult
 
 
 def _build_dynamic_refresh_params(

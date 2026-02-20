@@ -143,7 +143,7 @@ select = ["ALL"]
 "reflex" = "rx"
 
 [tool.ruff.lint.flake8-type-checking]
-runtime-evaluated-base-classes = ["pydantic.BaseModel", "reflex.Base"]
+runtime-evaluated-base-classes = ["pydantic.BaseModel", "reflex.Base", "reflex.State"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["mex", "tests"]

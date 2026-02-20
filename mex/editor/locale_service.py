@@ -1,18 +1,16 @@
 import re
+from collections.abc import Iterable
 from gettext import GNUTranslations
 from importlib.resources import files
 from io import BytesIO
-from typing import TYPE_CHECKING, Self, cast
+from pathlib import Path
+from typing import Self, cast
 
 import polib
 from babel import Locale as BabelLocale
 from pydantic import BaseModel
 
 from mex.common.context import SingleSingletonStore
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
-    from pathlib import Path
 
 LOCALE_SERVICE_STORE = SingleSingletonStore["LocaleService"]()
 

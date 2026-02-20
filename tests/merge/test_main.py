@@ -102,7 +102,7 @@ def test_search_input_extracted(merge_page: Page) -> None:
     )
 
     # check search trigger by entity type
-    entity_types_extracted.get_by_text("ContactPoint").click()
+    entity_types_extracted.get_by_test_id("extracted-entity-type-ContactPoint").click()
     expect(page.get_by_text(build_pagination_regex(2, 2))).to_be_visible()
 
 
@@ -120,7 +120,8 @@ def test_select_result_extracted(
     search_input_extracted.fill("contact")
     entity_types_extracted = page.get_by_test_id("entity-types-extracted")
     expect(entity_types_extracted).to_be_visible()
-    entity_types_extracted.get_by_text("ContactPoint").click()
+
+    entity_types_extracted.get_by_test_id("extracted-entity-type-ContactPoint").click()
     page.get_by_test_id("search-button-extracted").click()
     expect(page.get_by_text(build_pagination_regex(2, 2))).to_be_visible()
     contact_point_1 = dummy_data_by_identifier_in_primary_source["cp-1"]
@@ -150,7 +151,7 @@ def test_select_result_merged(
     search_input_merged.fill("contact")
     entity_types_merged = page.get_by_test_id("entity-types-merged")
     expect(entity_types_merged).to_be_visible()
-    entity_types_merged.get_by_text("ContactPoint").click()
+    entity_types_merged.get_by_test_id("merged-entity-type-ContactPoint").click()
     page.get_by_test_id("search-button-merged").click()
     expect(page.get_by_text(build_pagination_regex(2, 2))).to_be_visible()
     contact_point_1 = dummy_data_by_identifier_in_primary_source["cp-1"]

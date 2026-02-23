@@ -98,7 +98,7 @@ def ref_filter_value(
         ),
         search_reference_dialog(
             field_label=ref.field_label,
-            reference_types=ref.reference_value_type,
+            reference_types=ref.field_value_types,
             on_identifier_selected=[
                 lambda value: AdvancedSearchState.set_ref_filter_value(
                     index, val_index, value
@@ -136,7 +136,7 @@ def ref_filter(ref: RefFilter, index: int) -> rx.Component:
         rx.vstack(
             value_label_select(
                 items=AdvancedSearchState.all_fields_for_entity_types,
-                value=ref.field,
+                value=ref.field_descriptor_json,
                 placeholder=AdvancedSearchState.label_reference_field_filter_placeholder,
                 on_change=[
                     lambda value: AdvancedSearchState.set_ref_filter_field(
@@ -220,7 +220,11 @@ def filter_references() -> rx.Component:
 def sidebar() -> rx.Component:
     """Render sidebar with filters for the search page."""
     return rx.vstack(
-        filter_query(), filter_entity_type(), filter_references(), align="stretch"
+        filter_query(),
+        filter_entity_type(),
+        filter_references(),
+        align="stretch",
+        style=rx.Style(flex="0 0 300px"),
     )
 
 

@@ -1,6 +1,6 @@
+import json
 from collections.abc import Generator
 from dataclasses import dataclass
-from itertools import groupby
 from typing import Any
 
 import reflex as rx
@@ -22,22 +22,42 @@ from mex.editor.utils import resolve_editor_value
 from mex.editor.value_label_select import ValueLabelSelectItem
 
 
-class RefFilter(rx.Base):
-    """Model to filter reference fields by values."""
-
-    field: str = ""
-    field_label: str = ""
-    reference_value_type: list[str] = []
-    values: list[str] = []
-
-
 @dataclass
 class FieldDescriptor:
     """Model to describe a field with its name, label value types it can reference."""
 
     field: str
-    label: str
-    value_types: list[str]
+    labels: set[str]
+    value_types: set[str]
+
+    def to_json(self) -> str:
+        """Serialize the FieldDescriptor to a JSON string."""
+        return json.dumps(
+            {
+                "field": self.field,
+                "labels": list(self.labels),
+                "value_types": list(self.value_types),
+            }
+        )
+
+    @classmethod
+    def from_json(cls, json_str: str) -> "FieldDescriptor":
+        """Deserialize a JSON string to a FieldDescriptor."""
+        data = json.loads(json_str)
+        return FieldDescriptor(
+            field=data["field"],
+            labels=set(data["labels"]),
+            value_types=set(data["value_types"]),
+        )
+
+
+class RefFilter(rx.Base):
+    """Model to filter reference fields by values."""
+
+    field_descriptor_json: str = ""
+    field_label: str = ""
+    field_value_types: list[str] = []
+    values: list[str] = []
 
 
 class AdvancedSearchState(State, PaginationStateMixin):
@@ -63,36 +83,31 @@ class AdvancedSearchState(State, PaginationStateMixin):
             self.all_entity_types if len(self.entity_types) == 0 else self.entity_types
         )
 
-        fields_with_type: list[FieldDescriptor] = [
-            FieldDescriptor(
-                field,
-                self._locale_service.get_field_label(
-                    self.current_locale, entity_type, field
-                ),
-                STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME[
-                    ensure_prefix(entity_type, "Extracted")
-                ][field],
-            )
-            for entity_type in selected_entity_types
+        items: dict[str, FieldDescriptor] = {}
+        for entity_type in selected_entity_types:
             for field in REFERENCE_FIELDS_BY_CLASS_NAME[
                 ensure_prefix(entity_type, "Extracted")
-            ]
-        ]
-
-        fields_with_all_ref_types_and_label: dict[tuple[str, str], set[str]] = {}
-        for k, g in groupby(fields_with_type, lambda x: x.field):
-            group = list(g)
-            field_key = (k, group[0].label)  # f"{k}::{group[0].label}"
-
-            for item in group:
-                if field_key not in fields_with_all_ref_types_and_label:
-                    fields_with_all_ref_types_and_label[field_key] = set()
-                fields_with_all_ref_types_and_label[field_key].update(item.value_types)
+            ]:
+                if field not in items:
+                    items[field] = FieldDescriptor(field, set(), set())
+                entry = items[field]
+                entry.labels.add(
+                    self._locale_service.get_field_label(
+                        self.current_locale, entity_type, field
+                    )
+                )
+                entry.value_types.update(
+                    STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME[
+                        ensure_prefix(entity_type, "Extracted")
+                    ][field]
+                )
 
         return sorted(
             [
-                ValueLabelSelectItem(label=label, value=f"{field}:{','.join(value)}")
-                for [field, label], value in fields_with_all_ref_types_and_label.items()
+                ValueLabelSelectItem(
+                    label=" / ".join(item.labels), value=item.to_json()
+                )
+                for key, item in items.items()
             ],
             key=lambda x: x.label,
         )
@@ -101,19 +116,6 @@ class AdvancedSearchState(State, PaginationStateMixin):
     def search_results_length(self) -> int:
         """Return the number of current search results."""
         return len(self.search_results)
-
-    def _get_field_data(self, field_value: str) -> dict[str, Any]:
-        found_field = next(
-            (x for x in self.all_fields_for_entity_types if x.value == field_value),
-            None,
-        )
-        [field_name, value_types_str] = field_value.split(":")
-        value_types = value_types_str.split(",")
-        return {
-            "field_label": found_field.label if found_field else field_value,
-            "reference_value_type": value_types,
-            "field_name": field_name,
-        }
 
     @rx.event
     def search(self) -> Generator[EventSpec | None]:
@@ -125,7 +127,7 @@ class AdvancedSearchState(State, PaginationStateMixin):
         # TODO(FE): rework when updated fetch method is here
         ref = self.refs[0] if self.refs else None
         ref_field = (
-            self._get_field_data(ref.field)["field_name"]
+            FieldDescriptor.from_json(ref.field_descriptor_json).field
             if ref and ref.values
             else None
         )
@@ -191,15 +193,22 @@ class AdvancedSearchState(State, PaginationStateMixin):
             self.entity_types.append(entity_type)
 
     @rx.event
-    def add_ref_filter(self, field: str) -> None:
+    def add_ref_filter(self, field_descriptor_json: str) -> None:
         """Add a reference filter.
 
         Args:
-            field: The field to filter on.
-            values: The values to filter by.
+            field_descriptor_json:  The field (FieldDescriptor, as json serialized str)
+            to filter on.
         """
-        field_data = self._get_field_data(field)
-        self.refs.append(RefFilter(field=field, values=[], **field_data))
+        field_data = FieldDescriptor.from_json(field_descriptor_json)
+
+        self.refs.append(
+            RefFilter(
+                field_descriptor_json=field_descriptor_json,
+                field_label=" / ".join(field_data.labels),
+                values=[],
+            )
+        )
 
     @rx.event
     def remove_ref_filter(self, index: int) -> None:
@@ -211,19 +220,20 @@ class AdvancedSearchState(State, PaginationStateMixin):
         self.refs.pop(index)
 
     @rx.event
-    def set_ref_filter_field(self, index: int, field: str) -> None:
+    def set_ref_filter_field(self, index: int, field_descriptor_json: str) -> None:
         """Set the field for a reference filter.
 
         Args:
             index: The index of the reference filter to update.
-            field: The new field.
+            field_descriptor_json: The field (FieldDescriptor, as json serialized str).
         """
         ref = self.refs[index]
-        field_data = self._get_field_data(field)
+        field_desc = FieldDescriptor.from_json(field_descriptor_json)
 
-        ref.field = field
-        ref.field_label = field_data["field_label"]
-        ref.reference_value_type = field_data["reference_value_type"]
+        ref.field_descriptor_json = field_descriptor_json
+        ref.field_label = " / ".join(field_desc.labels)
+        ref.field_value_types = list(field_desc.value_types)
+        ref.values = []
 
     @rx.event
     def add_ref_filter_value(self, index: int, value: str) -> None:

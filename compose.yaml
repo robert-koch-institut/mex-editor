@@ -1,9 +1,24 @@
 services:
-  mex-editor:
+  mex-editor-frontend:
     build:
       context: .
     ports:
       - 8030:8030
+    environment:
+      - MEX_EDITOR_API_HOST=http://mex-editor-api:8031
+    healthcheck:
+      test: [ "CMD", "curl", "http://mex-editor-frontend:8030" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    entrypoint: editor-frontend
+    depends_on:
+      - mex-editor-api
+  mex-editor-api:
+    build:
+      context: .
+    ports:
       - 8031:8031
     environment:
       - MEX_BACKEND_API_KEY=write_key
@@ -11,11 +26,12 @@ services:
       - MEX_BACKEND_API_USER_DATABASE={"write":{"admin":"admin"}}
       - MEX_IDENTITY_PROVIDER=backend
     healthcheck:
-      test: [ "CMD", "curl", "http://mex-editor:8031/_system/check" ]
+      test: [ "CMD", "curl", "http://mex-editor-api:8031/v0/_system/check" ]
       interval: 30s
       timeout: 5s
       retries: 5
       start_period: 60s
+    entrypoint: editor-api
     depends_on:
       mex-backend:
         condition: service_healthy
@@ -30,7 +46,7 @@ services:
       - MEX_GRAPH_URL=neo4j://neo4j:7687
       - MEX_IDENTITY_PROVIDER=graph
     healthcheck:
-      test: [ "CMD", "curl", "http://mex-backend:8080/v1/_system/check" ]
+      test: [ "CMD", "curl", "http://mex-backend:8080/v0/_system/check" ]
       interval: 30s
       timeout: 5s
       retries: 5

@@ -20,7 +20,7 @@ dependencies = [
     "sqlmodel==0.0.29",
     "starlette>=0.52,<0.53",
     "typer>=0.23,<0.24",
-    "uvicorn>=0.40,<0.41",
+    "uvicorn>=0.41,<0.42",
 ]
 
 [dependency-groups]

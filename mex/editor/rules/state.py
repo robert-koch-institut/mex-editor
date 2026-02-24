@@ -1,6 +1,6 @@
 import copy
 from collections.abc import AsyncGenerator, Generator, Sequence
-from typing import cast
+from typing import Literal, cast
 
 import reflex as rx
 from pydantic import ValidationError
@@ -54,6 +54,7 @@ class RuleState(State, LocalStorageMixinState):
     _api_fields: list[EditorField] = []
 
     is_submitting: bool = False
+    delete_reset_mode: None | Literal["delete", "reset"] = None
     item_title: list[EditorValue] = []
     fields: list[EditorField] = []
     stem_type: str | None = None
@@ -135,6 +136,19 @@ class RuleState(State, LocalStorageMixinState):
                         async with self:
                             await resolve_editor_value(editor_value)
 
+    @classmethod
+    def _contains_any_rule(
+        cls, rule_set: AnyRuleSetResponse | AnyRuleSetRequest
+    ) -> bool:
+        """Check if a rule set response contains any rule."""
+        return any(
+            [
+                rule_set.additive.model_dump(exclude_defaults=True),
+                rule_set.subtractive.model_dump(exclude_defaults=True),
+                rule_set.preventive.model_dump(exclude_defaults=True),
+            ]
+        )
+
     def _get_extracted_items(self) -> list[AnyExtractedModel]:
         """Get the list of extracted items the rules should apply to."""
         if self.item_id:
@@ -172,6 +186,7 @@ class RuleState(State, LocalStorageMixinState):
     @rx.event
     def refresh(self) -> Generator[EventSpec]:
         """Refresh the edit or create page."""
+        self.delete_reset_mode = None
         self.fields.clear()
         self.validation_messages.clear()
 
@@ -208,6 +223,9 @@ class RuleState(State, LocalStorageMixinState):
                 validation=Validation.LENIENT,
             )
             self.item_title = transform_models_to_title([preview])
+
+        if rule_set and self._contains_any_rule(rule_set):
+            self.delete_reset_mode = "reset" if extracted_items else "delete"
 
         loaded_fields = transform_models_to_fields(
             extracted_items,

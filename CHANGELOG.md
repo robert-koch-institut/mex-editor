@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Translations for entity types
+- Button on edit page to reset or delete rules
 - Warn about unsaved changes when logging out
 - pytest-retry since tests often failing on github (we belief due to low system/cpu performance in CI)
 
@@ -23,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 ### Removed
+
+- all custom scripts due to reflex docs
 
 ### Fixed
 

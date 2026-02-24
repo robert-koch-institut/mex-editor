@@ -274,19 +274,6 @@ def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
     )
 
 
-def custom_focus_script() -> rx.Script:
-    """Creates a Script that looks for '[data-focusme]' and calls '.focus()' in it."""
-    return rx.script(
-        """
-    (function() {
-        document.querySelectorAll('[data-focusme]').forEach(item=> {
-            setTimeout(() => item.focus(), 10);
-        })
-    })()
-    """
-    )
-
-
 def page(
     *children: rx.Component,
     user_type: str = "user_mex",
@@ -315,7 +302,6 @@ def page(
             custom_attrs={"data-testid": "page-body"},
         ),
         unsaved_changes_dialog(),
-        custom_focus_script(),
     ]
 
     return rx.cond(

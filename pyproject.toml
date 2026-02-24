@@ -31,7 +31,7 @@ dev = [
     "pytest-cov>=6",
     "pytest-playwright>=0.7",
     "pytest-random-order>=1",
-    "pytest-retry>=1.7",
+    "pytest-rerunfailures>=16.1",
     "pytest>=8",
     "ruff>=0.14",
     "sphinx>=9",
@@ -62,7 +62,6 @@ plugins = ["pydantic.mypy"]
 warn_untyped_fields = true
 
 [tool.pytest.ini_options]
-retries = 2
 addopts = [
     "--verbose",
     "--base-url=http://localhost:3000",
@@ -73,7 +72,9 @@ addopts = [
     "--cov-fail-under=60",
     "--cov-branch",
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
+    "--capture=no", # https://github.com/pytest-dev/pytest/issues/2064#issuecomment-421812955
     "--random-order-bucket=global",
+    "--reruns=2",
 ]
 markers = [
     "integration: mark a test as integration test",

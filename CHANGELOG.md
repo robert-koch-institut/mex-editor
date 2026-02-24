@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.5.0] - 2026-02-24
+
+### Added
+
 - New page for advanced searching, including complex reference filter
 - Translations for entity types
 - Button on edit page to reset or delete rules
@@ -22,15 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - upgrade reflex to 0.8.14
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
 
-### Deprecated
-
 ### Removed
 
 - all custom scripts due to reflex docs
-
-### Fixed
-
-### Security
 
 ## [1.4.1] - 2026-02-04
 

@@ -10,6 +10,7 @@ from mex.editor.rules.main import (
 )
 from mex.editor.rules.models import FieldTranslation
 from mex.editor.rules.state import RuleState
+from mex.editor.value_label_select import value_label_select
 
 
 def editor_field(field_translation: FieldTranslation) -> rx.Component:
@@ -46,8 +47,8 @@ def create_title() -> rx.Component:
             CreateState.label_title_create_new,
             style=rx.Style(userSelect="none"),
         ),
-        rx.select(
-            CreateState.available_stem_types,
+        value_label_select(
+            CreateState.value_label_available_stem_types,
             value=rx.cond(RuleState.stem_type, RuleState.stem_type, ""),
             on_change=[
                 CreateState.set_stem_type,

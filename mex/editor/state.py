@@ -35,6 +35,11 @@ class State(rx.State):
             raw_path="/",
         ),
         NavItem(
+            title="layout.nav_bar.advanced_search_navitem",
+            route_ids=["/advanced-search"],
+            raw_path="/advanced-search/?page=1",
+        ),
+        NavItem(
             title="layout.nav_bar.create_navitem",
             route_ids=["/create", "/create/[draft_id]"],
             raw_path="/create",
@@ -66,6 +71,15 @@ class State(rx.State):
     def nav_items_translated(self) -> list[NavItem]:
         """The Navbar items with locale sensitive label."""
         return [self._translate_nav_item(item) for item in self._nav_items]
+
+    @rx.event
+    def set_is_unsaved_changes_dialog_open(self, is_open: bool) -> None:  # noqa: FBT001
+        """Set the state of the unsaved changes dialog.
+
+        Args:
+            is_open: Whether the dialog should be open or not.
+        """
+        self.is_unsaved_changes_dialog_open = is_open
 
     @rx.event
     def change_locale(self, locale: str) -> None:

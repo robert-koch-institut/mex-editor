@@ -73,6 +73,7 @@ addopts = [
     "--cov-fail-under=60",
     "--cov-branch",
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
+    "--capture=no", # https://github.com/pytest-dev/pytest/issues/2064#issuecomment-421812955
     "--random-order-bucket=global",
     "--reruns=2",
 ]

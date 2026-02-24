@@ -64,7 +64,7 @@ def unsaved_changes_dialog() -> rx.Component:
                         State.label_unsaved_changes_dialog_cancel_button,
                         variant="soft",
                         color_scheme="gray",
-                        on_click=State.set_is_unsaved_changes_dialog_open(False),  # type: ignore[attr-defined]
+                        on_click=State.set_is_unsaved_changes_dialog_open(False),  # type: ignore[operator]
                         custom_attrs={
                             "data-testid": "unsaved-changes-dialog-cancel-button"
                         },
@@ -94,7 +94,7 @@ def user_menu() -> rx.Component:
                 State.label_nav_bar_logout_button,
                 on_select=rx.cond(
                     CreateState.draft_count + EditState.edit_count,
-                    State.set_is_unsaved_changes_dialog_open(True),  # type: ignore[attr-defined]
+                    State.set_is_unsaved_changes_dialog_open(True),  # type: ignore[operator]
                     State.logout,
                 ),
                 custom_attrs={"data-testid": "logout-button"},

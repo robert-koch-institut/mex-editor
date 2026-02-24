@@ -1,4 +1,5 @@
 from collections.abc import Generator, Iterable
+from typing import cast
 
 import reflex as rx
 from reflex.event import EventSpec, EventType
@@ -141,6 +142,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
             self.is_loading = False
             self.results = transform_models_to_dialog_results(response.items)
             yield SearchReferenceDialogState.set_total(response.total)  # type: ignore[operator]
+            yield SearchReferenceDialogState.resolve_identifiers()
 
 
 def search_reference_dialog(
@@ -156,10 +158,25 @@ def search_reference_dialog(
 
     def render_result() -> rx.Component:
         def render_select_button(item: SearchResult, _: int) -> rx.Component:
+            def _array_handler() -> EventType:  # type: ignore[type-arg]
+                return [
+                    x(item.identifier)
+                    for x in cast("Iterable", on_identifier_selected)  # type: ignore[type-arg]
+                ]
+
+            def _handler() -> EventType:  # type: ignore[type-arg]
+                return on_identifier_selected(item.identifier)  # type: ignore[misc, no-any-return]
+
+            inner_handler = (
+                _array_handler
+                if isinstance(on_identifier_selected, Iterable)
+                else _handler
+            )
+
             return rx.dialog.close(
                 rx.button(
                     SearchReferenceDialogState.label_results_select_button,
-                    on_click=on_identifier_selected(item.identifier),  # type: ignore[misc]
+                    on_click=inner_handler,
                     custom_attrs={
                         "data-testid": f"{component_id_prefix}-result-select-button"
                     },

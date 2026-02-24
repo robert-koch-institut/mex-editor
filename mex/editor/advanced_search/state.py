@@ -217,7 +217,8 @@ class AdvancedSearchState(State, PaginationStateMixin):
         Args:
             index: The index of ref filter to remove.
         """
-        self.refs.pop(index)
+        if index < len(self.refs):
+            self.refs.pop(index)
 
     @rx.event
     def set_ref_filter_field(self, index: int, field_descriptor_json: str) -> None:
@@ -243,7 +244,8 @@ class AdvancedSearchState(State, PaginationStateMixin):
             index: The index of the reference filter to update.
             value: The value to add.
         """
-        self.refs[index].values.append(value)
+        if index < len(self.refs):
+            self.refs[index].values.append(value)
 
     @rx.event
     def set_ref_filter_value(self, index: int, val_index: int, value: str) -> None:
@@ -254,7 +256,10 @@ class AdvancedSearchState(State, PaginationStateMixin):
             val_index: The index of the value to update.
             value: The new value.
         """
-        self.refs[index].values[val_index] = value
+        if index < len(self.refs):
+            values = self.refs[index].values
+            if val_index < len(values):
+                values[val_index] = value
 
     @rx.event
     def remove_ref_filter_value(self, index: int, val_index: int) -> None:

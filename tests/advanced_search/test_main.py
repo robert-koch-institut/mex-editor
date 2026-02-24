@@ -18,7 +18,6 @@ from mex.common.models import (
 from mex.common.models.organization import MergedOrganization
 from mex.common.models.person import MergedPerson
 from mex.common.transform import ensure_prefix
-from mex.editor.locale_service import LocaleService
 
 
 @pytest.fixture
@@ -101,8 +100,11 @@ def test_reference_filter_one_field_filter(
     # Test one ref matching
     page.get_by_test_id("add-reference-filter-button").click()
     page.get_by_test_id("ref-filter-0-field").click()
+
     page.get_by_test_id(
-        re.compile(r"ref-filter-value-label-select-item-(.+)-contact:(.*)")
+        re.compile(
+            r"ref-filter-value-label-select-item-(.+)-(.*)\"field\":\s*\"contact\"(.*)"
+        )
     ).click()
     page.get_by_test_id("ref-filter-0-add-value").click()
     page.get_by_test_id("filter-ref-0-value-0-value").fill(
@@ -142,9 +144,6 @@ def test_reference_filter_field_dependency(
 ) -> None:
     page = advanced_search_page
 
-    locale_service = LocaleService.get()
-    current_locale = page.get_by_test_id("language-switcher").text_content() or ""
-
     def _get_unique_field_label_combinations(
         stem_types: Iterable[str] = [],
     ) -> set[str]:
@@ -154,10 +153,7 @@ def test_reference_filter_field_dependency(
                 for field in REFERENCE_FIELDS_BY_CLASS_NAME[
                     ensure_prefix(merged_model_class.stemType, "Extracted")
                 ]:
-                    field_label = locale_service.get_field_label(
-                        current_locale, merged_model_class.stemType, field
-                    )
-                    unique_ref_fields_with_label.add(f"{field}::{field_label}")
+                    unique_ref_fields_with_label.add(f"{field}")
         return unique_ref_fields_with_label
 
     # select the correct filters

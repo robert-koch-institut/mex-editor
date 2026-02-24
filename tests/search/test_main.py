@@ -103,6 +103,7 @@ def test_search_input(
     expect(search_input).to_be_visible()
     search_input.fill("Bioinformatics")
     search_input.press("Enter")
+    page.wait_for_timeout(10000)  # wait for loading
     search_results_summary = page.get_by_test_id("search-results-summary")
     expect(search_results_summary).to_be_visible()
     page.screenshot(

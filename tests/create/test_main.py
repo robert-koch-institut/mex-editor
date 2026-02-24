@@ -89,7 +89,7 @@ def test_create_page_renders_heading(create_page: Page) -> None:
 def test_create_page_renders_fields(create_page: Page) -> None:
     page = create_page
     page.get_by_test_id("entity-type-select").click()
-    page.get_by_role("option", name="Resource", exact=True).click()
+    page.get_by_test_id(re.compile(r"value-label-select-item-(.+)-Resource")).click()
     page.screenshot(
         path="tests_create_test_main-test_create_page_renders_fields_select.png"
     )
@@ -169,16 +169,20 @@ def test_language_switcher(
 
     # change language and wait for reload
     lang_switcher.click()
-    create_page.screenshot(
-        path="tests_create_test_main-test_language_switcher-switcher_clicked.png"
-    )
     create_page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()
+    create_page.screenshot(
+        path=f"tests_create_test_main-test_language_switcher-switcher_clicked-{locale_id}.png"
+    )
 
     # select entity_type resource
     create_page.get_by_test_id("entity-type-select").click(timeout=30_000)
-    create_page.get_by_role("option", name="Resource", exact=True).click()
+    create_page.get_by_test_id(
+        re.compile(r"value-label-select-item-(.+)-Resource")
+    ).click()
     create_page.wait_for_timeout(20000)
-
+    create_page.screenshot(
+        path=f"tests_create_test_main-test_language_switcher-resource_selected-{locale_id}.png"
+    )
     # find the accessPlatform field label and check the text
     field_access_platform = create_page.get_by_test_id("field-accessPlatform-name")
     expect(field_access_platform).to_have_text(expected_access_platform_field_label)
@@ -228,7 +232,9 @@ def test_create_page_test_draft_creation_on_entity_type_change(
     create_page = draft_create_page["page"]
 
     create_page.get_by_test_id("entity-type-select").click()
-    create_page.get_by_role("option", name="Resource", exact=True).click()
+    create_page.get_by_test_id(
+        re.compile(r"value-label-select-item-(.+)-Resource")
+    ).click()
 
     expect(draft_create_page["discard_dialog_button"]).to_be_visible()
     expect(draft_create_page["draft_menu_trigger"]).to_have_text("1")

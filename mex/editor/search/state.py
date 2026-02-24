@@ -16,7 +16,7 @@ from mex.common.types import Identifier
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
-from mex.editor.models import SearchResult
+from mex.editor.models import SearchResult, ValueLabelCheckboxItem
 from mex.editor.pagination_component import PaginationStateMixin
 from mex.editor.search.models import (
     ReferenceFieldFilter,
@@ -75,6 +75,21 @@ class SearchState(State, PaginationStateMixin):
     )
     is_loading: bool = True
     _locale_service = LocaleService.get()
+
+    @rx.var
+    def label_entity_types(self) -> list[ValueLabelCheckboxItem]:
+        """Get entity types with value, label and checked."""
+        return sorted(
+            [
+                ValueLabelCheckboxItem(
+                    label=self._locale_service.get_ui_label(self.current_locale, key),
+                    value=key,
+                    checked=self.entity_types[key],
+                )
+                for key in self.entity_types
+            ],
+            key=lambda x: x.label,
+        )
 
     @rx.event
     def set_reference_filter_field(self, value: str) -> None:

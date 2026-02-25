@@ -295,7 +295,10 @@ def search_results() -> rx.Component:
                     SearchState.push_search_params,  # type: ignore[arg-type]
                 ),
             ),
-            style=rx.Style(flex=1),
+            style=rx.Style(
+                flex=1,
+                width="75%",
+            ),
         ),
     )
 

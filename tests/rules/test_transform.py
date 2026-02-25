@@ -5,6 +5,7 @@ from pydantic import ValidationError
 
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.models import (
+    MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AdditiveActivity,
     AdditiveContactPoint,
@@ -93,7 +94,7 @@ from mex.editor.rules.transform import (
             AdditiveContactPoint(
                 email="example@rki.de",
             ),
-            MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+            MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
         ),
     ],
 )
@@ -523,14 +524,14 @@ def test_transform_models_to_fields() -> None:
             {
                 "name": {
                     "text": None,
-                    "identifier": "00000000000000",
+                    "identifier": f"{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                     "badge": None,
                     "being_edited": False,
-                    "href": "/item/00000000000000",
+                    "href": f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                     "external": False,
                     "enabled": True,
                 },
-                "identifier": "00000000000000",
+                "identifier": f"{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                 "input_config": {
                     "badge_default": None,
                     "badge_options": [],
@@ -548,14 +549,14 @@ def test_transform_models_to_fields() -> None:
             {
                 "name": {
                     "text": None,
-                    "identifier": "00000000000000",
+                    "identifier": f"{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                     "badge": None,
                     "being_edited": False,
-                    "href": "/item/00000000000000",
+                    "href": f"/item/{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                     "external": False,
                     "enabled": True,
                 },
-                "identifier": "00000000000000",
+                "identifier": f"{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                 "input_config": {
                     "badge_default": None,
                     "badge_options": [],
@@ -590,14 +591,14 @@ def test_transform_models_to_fields() -> None:
             {
                 "name": {
                     "text": None,
-                    "identifier": "00000000000000",
+                    "identifier": f"{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                     "badge": None,
                     "being_edited": False,
-                    "href": "/item/00000000000000",
+                    "href": f"/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                     "external": False,
                     "enabled": True,
                 },
-                "identifier": "00000000000000",
+                "identifier": f"{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                 "input_config": {
                     "badge_default": None,
                     "badge_options": [],
@@ -615,14 +616,14 @@ def test_transform_models_to_fields() -> None:
             {
                 "name": {
                     "text": None,
-                    "identifier": "00000000000000",
+                    "identifier": f"{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                     "badge": None,
                     "being_edited": False,
-                    "href": "/item/00000000000000",
+                    "href": f"/item/{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                     "external": False,
                     "enabled": True,
                 },
-                "identifier": "00000000000000",
+                "identifier": f"{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                 "input_config": {
                     "badge_default": None,
                     "badge_options": [],
@@ -635,7 +636,7 @@ def test_transform_models_to_fields() -> None:
                     "render_textarea": False,
                 },
                 "editor_values": [],
-                "enabled": False,
+                "enabled": True,
             },
         ],
     }

@@ -672,7 +672,7 @@ def test_transform_models_to_fields() -> None:
                         enabled=True,
                         input_config=InputConfig(editable_text=True),
                         name=EditorValue(text="PS2"),
-                        identifier=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+                        identifier=MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
                         editor_values=[
                             EditorValue(text="Duplicate"),
                             EditorValue(text="Duplicate"),
@@ -967,7 +967,7 @@ def test_transform_fields_to_rule_set() -> None:
                     ),
                     EditorPrimarySource(
                         name=EditorValue(text="Primary Source 3"),
-                        identifier=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+                        identifier=MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
                         editor_values=[
                             EditorValue(text="SomeName", enabled=True),
                         ],

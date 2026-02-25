@@ -1,11 +1,13 @@
-from collections.abc import Sequence
 from importlib.resources import files
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
 
 import yaml
 from pydantic import BaseModel, TypeAdapter
 
 from mex.common.types import MergedPersonIdentifier
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 class EqualityDetector(Protocol):
@@ -82,6 +84,14 @@ MODEL_CONFIG_BY_STEM_TYPE = TypeAdapter(dict[str, ModelConfig]).validate_python(
     yaml.safe_load(files("mex.editor").joinpath("models.yaml").open())
 )
 LANGUAGE_VALUE_NONE = "None"
+
+
+class ValueLabelCheckboxItem(BaseModel):
+    """Item for checkbox state with a value, label and check state."""
+
+    value: str
+    label: str
+    checked: bool
 
 
 class SearchResult(BaseModel):

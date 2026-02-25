@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fixed width of search and advanced-search result lists
+- fixed redirect target after login screen interception
+
 ### Security
 
 ## [1.5.0] - 2026-02-24

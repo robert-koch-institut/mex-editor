@@ -230,30 +230,35 @@ def sidebar() -> rx.Component:
 
 def search_results() -> rx.Component:
     """Render search results page."""
-    return rx.box(
-        rx.cond(
-            AdvancedSearchState.is_searching,
-            rx.center(rx.spinner()),
-            search_results_component(
-                AdvancedSearchState.search_results,
-                options=SearchResultsComponentOptions(
-                    summary_text=AdvancedSearchState.label_result_summary_format,
-                    list_options=SearchResultsListOptions(
-                        item_options=SearchResultsListItemOptions(
-                            enable_title_href=True
-                        )
-                    ),
-                    pagination_options=build_pagination_options(
-                        AdvancedSearchState,
-                        *[
-                            AdvancedSearchState.search,
-                            AdvancedSearchState.resolve_identifiers,
-                        ],
-                    ),
-                ),
+    return rx.cond(
+        AdvancedSearchState.is_searching,
+        rx.center(
+            rx.spinner(size="3"),
+            style=rx.Style(
+                marginTop="var(--space-6)",
+                width="100%",
             ),
         ),
-        style=rx.Style(flex="1"),
+        search_results_component(
+            AdvancedSearchState.search_results,
+            options=SearchResultsComponentOptions(
+                summary_text=AdvancedSearchState.label_result_summary_format,
+                list_options=SearchResultsListOptions(
+                    item_options=SearchResultsListItemOptions(enable_title_href=True)
+                ),
+                pagination_options=build_pagination_options(
+                    AdvancedSearchState,
+                    *[
+                        AdvancedSearchState.search,
+                        AdvancedSearchState.resolve_identifiers,
+                    ],
+                ),
+            ),
+            style=rx.Style(
+                flex=1,
+                width="75%",
+            ),
+        ),
     )
 
 
@@ -261,6 +266,9 @@ def index() -> rx.Component:
     """Render index for the advanced search page."""
     return page(
         rx.hstack(
-            sidebar(), search_results(), align="stretch", style=rx.Style(flex="1")
+            sidebar(),
+            search_results(),
+            align="stretch",
+            style=rx.Style(flex="1"),
         )
     )

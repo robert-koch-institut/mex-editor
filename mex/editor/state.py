@@ -1,8 +1,10 @@
 from collections.abc import Generator, Mapping, Sequence
 from importlib.metadata import version
+from urllib.parse import urlparse, urlunparse
 
 import reflex as rx
 from reflex.event import EventSpec
+from reflex.istate.data import ReflexURL
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
@@ -96,19 +98,28 @@ class State(rx.State):
         self.reset()  # type: ignore[no-untyped-call]
         yield rx.redirect("/")
 
+    @staticmethod
+    def _strip_frontend_path(url: ReflexURL) -> str:
+        config = rx.config.get_config()
+        parsed = urlparse(url)
+        path = parsed.path
+        if path.startswith(config.frontend_path):
+            path = path[len(config.frontend_path) :] or "/"
+        return str(urlunparse(parsed._replace(path=path)))
+
     @rx.event
     def check_mex_login(self) -> Generator[EventSpec]:
         """Check if a user is logged in."""
         if self.user_mex is None:
-            self.target_path_after_login = str(self.router.url)
-            yield rx.redirect("/login")
+            self.target_path_after_login = self._strip_frontend_path(self.router.url)
+            yield rx.redirect("/login", replace=True)
 
     @rx.event
     def check_ldap_login(self) -> Generator[EventSpec]:
         """Check if a user is logged in to ldap."""
         if self.user_ldap is None:
-            self.target_path_after_login = str(self.router.url)
-            yield rx.redirect("/login-ldap")
+            self.target_path_after_login = self._strip_frontend_path(self.router.url)
+            yield rx.redirect("/login-ldap", replace=True)
 
     def push_url_params(
         self,

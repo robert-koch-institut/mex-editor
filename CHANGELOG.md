@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- change primary source of rules from mex to mex-editor
+
 ### Deprecated
 
 ### Removed

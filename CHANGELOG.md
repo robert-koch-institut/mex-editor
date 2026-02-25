@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fixed width of search and advanced-search result lists
 - fixed redirect target after login screen interception
+- fixed duplicate settings logging on startup
 
 ### Security
 

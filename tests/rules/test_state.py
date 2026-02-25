@@ -1,7 +1,7 @@
 import pytest
 
 from mex.common.models import (
-    MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
     ContactPointRuleSetResponse,
     ExtractedContactPoint,
 )
@@ -45,10 +45,10 @@ def test_state_get_primary_sources_by_field_name() -> None:
         ),
         EditorPrimarySource(
             name=EditorValue(
-                identifier=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
-                href="/item/{MEX_PRIMARY_SOURCE_STABLE_TARGET_ID}",
+                identifier=MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
+                href=f"/item/{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
             ),
-            identifier=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+            identifier=MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
             input_config=InputConfig(editable_text=True, allow_additive=True),
             editor_values=[],
             enabled=True,

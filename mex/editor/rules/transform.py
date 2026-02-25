@@ -302,7 +302,7 @@ def _transform_fields_to_additive(
             continue
         field_values = raw_rule.setdefault(field.name, [])
         for primary_source in field.primary_sources:
-            if primary_source.identifier != MEX_PRIMARY_SOURCE_STABLE_TARGET_ID:
+            if primary_source.identifier != MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID:
                 continue
             for editor_value in primary_source.editor_values:
                 additive_value = _transform_editor_value_to_model_value(

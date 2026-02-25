@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fixed settings logging on startup and in tests
+
 ### Security
 
 ## [1.5.1] - 2026-02-25
@@ -28,7 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fixed width of search and advanced-search result lists
 - fixed redirect target after login screen interception
-- fixed settings logging on startup and in tests
 
 ## [1.5.0] - 2026-02-24
 

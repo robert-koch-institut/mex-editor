@@ -75,7 +75,6 @@ addopts = [
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--capture=no", # https://github.com/pytest-dev/pytest/issues/2064#issuecomment-421812955
     "--random-order-bucket=global",
-    "--reruns=2",
 ]
 markers = [
     "integration: mark a test as integration test",

@@ -20,6 +20,7 @@ from mex.editor.rules.state import RuleState
 from mex.editor.search.main import index as search_index
 from mex.editor.search.state import SearchState
 from mex.editor.state import State
+from mex.editor.utils import load_settings
 
 app = rx.App(
     theme=themes.theme(accent_color="blue", has_background=False),
@@ -135,4 +136,7 @@ app.add_page(
         ConsentState.resolve_identifiers,
         ConsentState.get_consent,
     ],
+)
+app.register_lifespan_task(
+    load_settings,
 )

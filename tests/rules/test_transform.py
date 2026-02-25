@@ -549,14 +549,14 @@ def test_transform_models_to_fields() -> None:
             {
                 "name": {
                     "text": None,
-                    "identifier": f"{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
+                    "identifier": MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
                     "badge": None,
                     "being_edited": False,
                     "href": f"/item/{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                     "external": False,
                     "enabled": True,
                 },
-                "identifier": f"{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
+                "identifier": MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
                 "input_config": {
                     "badge_default": None,
                     "badge_options": [],
@@ -616,14 +616,14 @@ def test_transform_models_to_fields() -> None:
             {
                 "name": {
                     "text": None,
-                    "identifier": f"{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
+                    "identifier": MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
                     "badge": None,
                     "being_edited": False,
                     "href": f"/item/{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
                     "external": False,
                     "enabled": True,
                 },
-                "identifier": f"{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
+                "identifier": MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
                 "input_config": {
                     "badge_default": None,
                     "badge_options": [],

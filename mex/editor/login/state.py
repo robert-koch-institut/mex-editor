@@ -73,7 +73,7 @@ class LoginLdapState(LoginState):
             target_path_after_login = self.target_path_after_login or "/"
             # reset username/password
             self.reset()  # type: ignore[no-untyped-call]
-            yield rx.redirect(target_path_after_login)
+            yield rx.redirect(target_path_after_login, replace=True)
         else:
             yield rx.toast.error(
                 self.label_invalid_credentials, class_name="editor-toast"
@@ -93,13 +93,10 @@ class LoginMExState(LoginState):
                 name=self.username,
                 write_access=write_access,
             )
-            if self.target_path_after_login:
-                target_path_after_login = self.target_path_after_login
-            else:
-                target_path_after_login = "/"
+            target_path_after_login = self.target_path_after_login or "/"
             # reset username/password
             self.reset()  # type: ignore[no-untyped-call]
-            yield rx.redirect(target_path_after_login)
+            yield rx.redirect(target_path_after_login, replace=True)
         else:
             yield rx.toast.error(
                 self.label_invalid_credentials, class_name="editor-toast"

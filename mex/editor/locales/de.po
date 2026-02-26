@@ -229,6 +229,20 @@ msgstr "Sie haben Ihre Ablehnung am {} erteilt."
 
 msgid "consent.consent_status.no_consent"
 msgstr "Sie haben noch keine Einwilligung erteilt."
+msgid "layout.nav_bar.advanced_search_navitem"
+msgstr "Erweiterte Suche"
+
+msgid "advanced_search.reference_filter.add_value"
+msgstr "Hinzufügen"
+
+msgid "advanced_search.reference_filter.title"
+msgstr "Referenzfilter"
+
+msgid "advanced_search.reference_filter.remove_value"
+msgstr "Entferne"
+
+msgid "advanced_search.reference_filter.value_placeholder"
+msgstr "ID für"
 
 msgid "layout.unsaved_changes_dialog.title"
 msgstr "Abmelden? Es gibt noch ungespeicherte Änderungen..."
@@ -247,3 +261,21 @@ msgstr "Trotzdem abmelden"
 
 msgid "layout.unsaved_changes_dialog.cancel_button"
 msgstr "Abbrechen"
+
+msgid "edit.reset_rules.button"
+msgstr "Regeln zurücksetzen"
+
+msgid "edit.delete_rules.button"
+msgstr "Eintrag löschen"
+
+msgid "edit.delete_rules.success_toast_title"
+msgstr "Eintrag gelöscht"
+
+msgid "edit.delete_rules.success_toast_text"
+msgstr "Der Eintrag wurde erfolgreich gelöscht."
+
+msgid "edit.reset_rules.success_toast_title"
+msgstr "Regeln zurückgesetzt"
+
+msgid "edit.reset_rules.success_toast_text"
+msgstr "Die Regeln wurden erfolgreich zurückgesetzt."

@@ -70,11 +70,11 @@ def test_create_page_updates_nav_bar(create_page: Page) -> None:
     nav_bar = page.get_by_test_id("nav-bar")
     page.screenshot(path="tests_create_test_main-test_create_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
-    nav_item = nav_bar.locator(".nav-item").all()[1]
+    nav_item = nav_bar.get_by_test_id("nav-item-/create")
     expect(nav_item).to_contain_text(
         build_ui_label_regex("layout.nav_bar.create_navitem")
     )
-    expect(nav_item).to_have_class(re.compile("rt-underline-always"))
+    expect(nav_item).to_have_class(re.compile(r"(^|\s)nav-item-active(\s|$)"))
 
 
 @pytest.mark.integration
@@ -89,7 +89,7 @@ def test_create_page_renders_heading(create_page: Page) -> None:
 def test_create_page_renders_fields(create_page: Page) -> None:
     page = create_page
     page.get_by_test_id("entity-type-select").click()
-    page.get_by_role("option", name="Resource", exact=True).click()
+    page.get_by_test_id(re.compile(r"value-label-select-item-(.+)-Resource")).click()
     page.screenshot(
         path="tests_create_test_main-test_create_page_renders_fields_select.png"
     )
@@ -169,16 +169,20 @@ def test_language_switcher(
 
     # change language and wait for reload
     lang_switcher.click()
-    create_page.screenshot(
-        path="tests_create_test_main-test_language_switcher-switcher_clicked.png"
-    )
     create_page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()
+    create_page.screenshot(
+        path=f"tests_create_test_main-test_language_switcher-switcher_clicked-{locale_id}.png"
+    )
 
     # select entity_type resource
     create_page.get_by_test_id("entity-type-select").click(timeout=30_000)
-    create_page.get_by_role("option", name="Resource", exact=True).click()
+    create_page.get_by_test_id(
+        re.compile(r"value-label-select-item-(.+)-Resource")
+    ).click()
     create_page.wait_for_timeout(20000)
-
+    create_page.screenshot(
+        path=f"tests_create_test_main-test_language_switcher-resource_selected-{locale_id}.png"
+    )
     # find the accessPlatform field label and check the text
     field_access_platform = create_page.get_by_test_id("field-accessPlatform-name")
     expect(field_access_platform).to_have_text(expected_access_platform_field_label)
@@ -228,7 +232,9 @@ def test_create_page_test_draft_creation_on_entity_type_change(
     create_page = draft_create_page["page"]
 
     create_page.get_by_test_id("entity-type-select").click()
-    create_page.get_by_role("option", name="Resource", exact=True).click()
+    create_page.get_by_test_id(
+        re.compile(r"value-label-select-item-(.+)-Resource")
+    ).click()
 
     expect(draft_create_page["discard_dialog_button"]).to_be_visible()
     expect(draft_create_page["draft_menu_trigger"]).to_have_text("1")
@@ -306,7 +312,7 @@ def test_logout_unsaved_changes_dialog_on_draft_logout_normal(
     expect(logout_button).to_be_visible()
     _screenshot("user_menu")
     page.get_by_test_id("logout-button").click()
-    page.wait_for_url(re.compile(r"(.*)\/login\/"))
+    page.wait_for_url(re.compile(r"(.*)\/login\/?"))
     _screenshot("logout")
     expect(page.get_by_test_id("login-button")).to_be_visible()
 
@@ -333,7 +339,7 @@ def test_logout_unsaved_changes_dialog_on_draft(draft_create_page: DraftPage) ->
     page.get_by_test_id("unsaved-changes-dialog-logout-button").click()
 
     # logout should work
-    page.wait_for_url(re.compile(r"(.*)\/login\/"))
+    page.wait_for_url(re.compile(r"(.*)\/login\/?"))
     _screenshot("logout")
     expect(page.get_by_test_id("login-button")).to_be_visible()
 

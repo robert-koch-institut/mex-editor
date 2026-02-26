@@ -72,16 +72,13 @@ class ConsentState(State):
     publications_current_page: Annotated[int, Field(ge=1)] = 1
     is_loading: bool = True
 
-    @rx.var
-    def _consent_nav_items(self) -> list[NavItem]:
-        """Get the consent nav items."""
-        return [
-            NavItem(
-                title=self.label_nav_bar_consent_navitem,
-                path="/consent",
-                raw_path="/consent/",
-            ),
-        ]
+    _consent_nav_items: list[NavItem] = [
+        NavItem(
+            title=self.label_nav_bar_consent_navitem,
+            route_ids=["/consent"],
+            raw_path="/consent",
+        ),
+    ]
 
     @rx.var
     def consent_nav_items_translated(self) -> list[NavItem]:
@@ -335,16 +332,13 @@ class ConsentState(State):
     @rx.event
     def show_submit_success_toast(self) -> EventSpec:
         """Show a toast for a successfully submitted rule-set."""
-        return cast(
-            "EventSpec",
-            rx.toast.success(
-                title=self.label_save_success_dialog_title,
-                description=self.label_save_success_dialog_content,
-                class_name="editor-toast",
-                close_button=True,
-                dismissible=True,
-                duration=5000,
-            ),
+        return rx.toast.success(
+            title=self.label_save_success_dialog_title,
+            description=self.label_save_success_dialog_content,
+            class_name="editor-toast",
+            close_button=True,
+            dismissible=True,
+            duration=5000,
         )
 
     @rx.event(background=True)  # type: ignore[operator]

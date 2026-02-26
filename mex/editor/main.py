@@ -63,10 +63,7 @@ def editor_frontend() -> None:  # pragma: no cover
     get_compiled_app()
 
     # Set up the frontend for prod mode.
-    setup_frontend_prod(
-        Path.cwd(),
-        disable_telemetry=True,
-    )
+    setup_frontend_prod(Path.cwd())
 
     # Run the frontend.
     run_frontend_prod(
@@ -77,9 +74,10 @@ def editor_frontend() -> None:  # pragma: no cover
 
 
 def main() -> None:  # pragma: no cover
-    """Start the editor api together with frontend."""
+    """Start the editor api for local development."""
     # Set environment variables.
     environment.REFLEX_USE_GRANIAN.set(False)
+    environment.REFLEX_HOT_RELOAD_EXCLUDE_PATHS.set([Path("tests")])
 
     if "win32" in sys.platform:
         # bun cache is not working correctly on windows

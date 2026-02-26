@@ -66,10 +66,10 @@ class MergedLoginPerson(rx.Base):
 class NavItem(rx.Base):
     """Model for one navigation bar item."""
 
-    title: str = ""
-    path: str = "/"
-    raw_path: str = "/"
-    underline: str = "none"
+    title: str
+    route_ids: list[str]
+    raw_path: str
+    active: bool = False
 
 
 class ModelConfig(BaseModel):
@@ -84,6 +84,14 @@ MODEL_CONFIG_BY_STEM_TYPE = TypeAdapter(dict[str, ModelConfig]).validate_python(
     yaml.safe_load(files("mex.editor").joinpath("models.yaml").open())
 )
 LANGUAGE_VALUE_NONE = "None"
+
+
+class ValueLabelCheckboxItem(rx.Base):
+    """Item for checkbox state with a value, label and check state."""
+
+    value: str
+    label: str
+    checked: bool
 
 
 class SearchResult(rx.Base):

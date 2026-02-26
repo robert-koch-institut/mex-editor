@@ -1,8 +1,6 @@
 import reflex as rx
 from reflex.components.radix import themes
-from reflex.utils.console import info as log_info
 
-from mex.common.logging import logger
 from mex.editor.advanced_search.main import index as advanced_search_index
 from mex.editor.advanced_search.state import AdvancedSearchState
 from mex.editor.api.main import api as editor_api
@@ -118,8 +116,16 @@ app.add_page(
         IngestState.flag_ingested_items,
     ],
 )
-app.add_page(login_mex_index, route="/login", title="MEx Editor | Login")
-app.add_page(login_ldap_index, route="/login-ldap", title="MEx Editor | Login")
+app.add_page(
+    login_mex_index,
+    route="/login",
+    title="MEx Editor | Login",
+)
+app.add_page(
+    login_ldap_index,
+    route="/login-ldap",
+    title="MEx Editor | Login",
+)
 app.add_page(
     consent_index,
     route="/consent",
@@ -132,9 +138,5 @@ app.add_page(
     ],
 )
 app.register_lifespan_task(
-    lambda: logger.info(load_settings().text()),
-)
-app.register_lifespan_task(
-    log_info,
-    msg="MEx Editor is running, shut it down using CTRL+C",
+    load_settings,
 )

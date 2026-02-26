@@ -11,11 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- change primary source of rules from mex to mex-editor
+- moved pytest rerun config from toml to makefile
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- fixed settings logging on startup and in tests
 
 ### Security
 

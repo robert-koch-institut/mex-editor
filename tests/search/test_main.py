@@ -219,7 +219,7 @@ def test_load_search_params(
     # check primary sources are loaded from url
     primary_sources = page.get_by_test_id("primary-source-filter")
     unchecked = primary_sources.get_by_role("checkbox", checked=False)
-    expect(unchecked).to_have_count(2)
+    expect(unchecked).to_have_count(3)
     checked = primary_sources.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
 

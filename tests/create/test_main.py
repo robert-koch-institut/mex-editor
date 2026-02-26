@@ -6,7 +6,10 @@ from playwright.sync_api import Locator, Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
-from mex.common.models import AnyExtractedModel
+from mex.common.models import (
+    MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    AnyExtractedModel,
+)
 from tests.conftest import build_ui_label_regex
 
 url_regex = re.compile(r"/create/(\w+)")
@@ -104,7 +107,9 @@ def test_create_page_renders_fields(create_page: Page) -> None:
 @pytest.mark.integration
 def test_create_page_test_additive_buttons(create_page: Page) -> None:
     page = create_page
-    new_additive_button = page.get_by_test_id("new-additive-description-00000000000000")
+    new_additive_button = page.get_by_test_id(
+        f"new-additive-description-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    )
     new_additive_button.scroll_into_view_if_needed()
     page.screenshot(
         path="tests_create_test_main-test_edit_page_renders_new_additive_button.png"
@@ -127,7 +132,9 @@ def test_create_page_test_additive_buttons(create_page: Page) -> None:
 @pytest.mark.integration
 def test_create_page_submit_item(create_page: Page) -> None:
     page = create_page
-    new_additive_button = page.get_by_test_id("new-additive-title-00000000000000")
+    new_additive_button = page.get_by_test_id(
+        f"new-additive-title-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    )
     new_additive_button.scroll_into_view_if_needed()
     expect(new_additive_button).to_be_visible()
     new_additive_button.click()
@@ -195,7 +202,9 @@ def test_search_reference_dialog(
 ) -> None:
     dialog_prefix = "search-reference-dialog"
     field_contact = create_page.get_by_test_id("field-contact")
-    field_contact.get_by_test_id("new-additive-contact-00000000000000").click()
+    field_contact.get_by_test_id(
+        f"new-additive-contact-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     field_contact.get_by_test_id(f"{dialog_prefix}-button").click()
 
     query_input = create_page.get_by_test_id(f"{dialog_prefix}-query-input")
@@ -216,7 +225,9 @@ def test_search_reference_dialog(
     ).to_have_value(ou.stableTargetId)
 
     field_uic = create_page.get_by_test_id("field-unitInCharge")
-    field_uic.get_by_test_id("new-additive-unitInCharge-00000000000000").click()
+    field_uic.get_by_test_id(
+        f"new-additive-unitInCharge-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     field_uic.get_by_test_id(f"{dialog_prefix}-button").click()
     expect(search_results.locator(".search-result-card")).to_have_count(1)
     create_page.locator(".rt-DialogOverlay").click(position={"x": 10, "y": 10})
@@ -248,7 +259,9 @@ def test_create_page_test_draft_creation_on_field_edit(
 ) -> None:
     create_page = draft_create_page["page"]
 
-    create_page.get_by_test_id("new-additive-title-00000000000000").click()
+    create_page.get_by_test_id(
+        f"new-additive-title-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     expect(draft_create_page["discard_dialog_button"]).to_be_visible()
     expect(draft_create_page["draft_menu_trigger"]).to_have_text("1")
     draft_create_page["draft_menu_trigger"].click()
@@ -261,7 +274,9 @@ def test_create_page_test_discard_draft(
 ) -> None:
     create_page = draft_create_page["page"]
 
-    create_page.get_by_test_id("new-additive-title-00000000000000").click()
+    create_page.get_by_test_id(
+        f"new-additive-title-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     create_page.get_by_test_id("additive-rule-title-0-text").fill(
         "Draft title for activity"
     )
@@ -286,7 +301,9 @@ def test_logout_unsaved_changes_dialog_on_draft_logout_normal(
         )
 
     # create and add contact there should be a draft
-    page.get_by_test_id("new-additive-contact-00000000000000").click()
+    page.get_by_test_id(
+        f"new-additive-contact-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     expect(page.get_by_test_id("draft-menu-trigger")).to_be_visible()
     _screenshot("changes")
 
@@ -327,7 +344,9 @@ def test_logout_unsaved_changes_dialog_on_draft(draft_create_page: DraftPage) ->
         )
 
     # create and add contact there should be a draft
-    page.get_by_test_id("new-additive-contact-00000000000000").click()
+    page.get_by_test_id(
+        f"new-additive-contact-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     expect(page.get_by_test_id("draft-menu-trigger")).to_be_visible()
     _screenshot("changes")
 
@@ -350,7 +369,9 @@ def test_create_page_test_draft_menu_item_text(
 ) -> None:
     create_page = draft_create_page["page"]
 
-    create_page.get_by_test_id("new-additive-description-00000000000000").click()
+    create_page.get_by_test_id(
+        f"new-additive-description-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     create_page.get_by_test_id("additive-rule-description-0-text").fill(
         "New Description."
     )
@@ -362,7 +383,9 @@ def test_create_page_test_draft_menu_item_text(
     expect(draft_create_page["draft_menu_item"]).to_have_text("AccessPlatform")
     # force the menu overlay to close
     create_page.mouse.click(10, 10)
-    create_page.get_by_test_id("new-additive-title-00000000000000").click()
+    create_page.get_by_test_id(
+        f"new-additive-title-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     create_page.get_by_test_id("additive-rule-title-0-text").fill(
         "Draft title for access platform"
     )

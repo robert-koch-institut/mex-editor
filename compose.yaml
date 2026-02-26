@@ -62,8 +62,8 @@ services:
     image: neo4j:2025.10-community
     environment:
       - NEO4J_AUTH=neo4j/password
-    expose:
-      - 7687
+    ports:
+      - 7687:7687
     volumes:
       - neo4j_data:/data
     healthcheck:
@@ -74,8 +74,8 @@ services:
       start_period: 10s
   valkey:
     image: valkey/valkey:9.0.0
-    expose:
-      - 6379
+    ports:
+      - 6379:6379
     volumes:
       - valkey_data:/data
     healthcheck:

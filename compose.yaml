@@ -1,22 +1,89 @@
 services:
-  mex-editor:
+  mex-editor-frontend:
     build:
       context: .
     ports:
       - 8030:8030
+    environment:
+      - MEX_EDITOR_API_HOST=http://mex-editor-api:8031
+    healthcheck:
+      test: [ "CMD", "curl", "http://mex-editor-frontend:8030" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    entrypoint: editor-frontend
+    depends_on:
+      mex-editor-api:
+        condition: service_healthy
+  mex-editor-api:
+    build:
+      context: .
+    ports:
       - 8031:8031
     environment:
       - MEX_EDITOR_API_HOST=0.0.0.0
-      - MEX_EDITOR_USER_DATABASE={"mex":["mex"]}
-    expose:
-      - 8030
-      - 8031
+      - MEX_BACKEND_API_KEY=write_key
+      - MEX_BACKEND_API_URL=http://mex-backend:8080/
+      - MEX_BACKEND_API_USER_DATABASE={"write":{"admin":"admin"}}
+      - MEX_IDENTITY_PROVIDER=backend
     healthcheck:
-      test: [ "CMD", "curl", "http://0.0.0.0:8031/_system/check" ]
-      interval: 60s
+      test: [ "CMD", "curl", "http://mex-editor-api:8031/_system/check" ]
+      interval: 30s
       timeout: 5s
       retries: 5
+      start_period: 10s
+    entrypoint: editor-api
+    depends_on:
+      mex-backend:
+        condition: service_healthy
+  mex-backend:
+    image: ghcr.io/robert-koch-institut/mex-backend:1.6.0
+    ports:
+      - 8080:8080
+    environment:
+      - MEX_BACKEND_API_KEY_DATABASE={"write":["write_key"]}
+      - MEX_BACKEND_API_USER_DATABASE={"write":{"admin":"admin"}}
+      - MEX_BACKEND_VALKEY_URL=valkey://valkey:6379
+      - MEX_GRAPH_URL=neo4j://neo4j:7687
+      - MEX_IDENTITY_PROVIDER=graph
+    healthcheck:
+      test: [ "CMD", "python", "-c", "'import requests; requests.get(\"http://mex-backend:8080/v0/_system/check\").raise_for_status()'" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    depends_on:
+      neo4j:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+  neo4j:
+    image: neo4j:2025.12-community
+    environment:
+      - NEO4J_AUTH=neo4j/password
+    ports:
+      - 7687:7687
     volumes:
-      - data:/app/data
+      - neo4j_data:/data
+    healthcheck:
+      test: [ "CMD", "cypher-shell", "-u", "neo4j", "-p", "password", "RETURN 1" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  valkey:
+    image: valkey/valkey:9.0.0
+    ports:
+      - 6379:6379
+    volumes:
+      - valkey_data:/data
+    healthcheck:
+      test: [ "CMD", "valkey-cli", "ping" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 volumes:
-  data:
+  neo4j_data:
+  valkey_data:

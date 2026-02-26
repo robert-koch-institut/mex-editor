@@ -44,7 +44,6 @@ wheel:
 image:
 	# build the docker image
 	@ echo building docker image mex-editor:${LATEST}; \
-	export DOCKER_BUILDKIT=1; \
 	docker build \
 		--tag rki/mex-editor:${LATEST} \
 		--tag rki/mex-editor:latest .; \
@@ -54,15 +53,14 @@ run: image
 	@ echo running docker container mex-editor:${LATEST}; \
 	docker run \
 		--env MEX_EDITOR_API_HOST=0.0.0.0 \
+		--env MEX_EDITOR_USER_DATABASE='{"mex":["mex"]}' \
 		--publish 8030:8030 \
 		--publish 8031:8031 \
 		rki/mex-editor:${LATEST}; \
 
-start: image
+start:
 	# start the service using docker compose
 	@ echo start mex-editor:${LATEST} with compose; \
-	export DOCKER_BUILDKIT=1; \
-	export COMPOSE_DOCKER_CLI_BUILD=1; \
 	docker compose up --remove-orphans; \
 
 docs:

@@ -61,9 +61,9 @@ def test_query_filter(advanced_search_page: Page) -> None:
 @pytest.mark.parametrize(
     ("entity_types", "expected_count"),
     [
-        pytest.param([MergedPrimarySource.stemType], 3),
+        pytest.param([MergedPrimarySource.stemType], 4),
         pytest.param([MergedResource.stemType], 2),
-        pytest.param([MergedPrimarySource.stemType, MergedResource.stemType], 5),
+        pytest.param([MergedPrimarySource.stemType, MergedResource.stemType], 6),
     ],
 )
 @pytest.mark.integration
@@ -126,7 +126,7 @@ def test_reference_filter_one_field_filter(
     page.get_by_test_id("filter-ref-0-value-0-remove").click()
     page.get_by_test_id("ref-filter-0-remove").click()
     _make_screenshot(page, "test_reference_filter_one_field_filter_cleanup")
-    expect(page.get_by_test_id(search_result_item_regex)).to_have_count(9)
+    expect(page.get_by_test_id(search_result_item_regex)).to_have_count(10)
 
 
 @pytest.mark.parametrize(

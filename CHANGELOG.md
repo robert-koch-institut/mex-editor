@@ -9,14 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Warn about unsaved changes when logging out
-- pytest-retry since tests often failing on github (we belief due to low system/cpu performance in CI)
-
 ### Changes
 
-- updated mex-common to 1.16.0
-- upgrade reflex to 0.8.14
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
 - change the docker build to multi-stage build
 
 ### Deprecated
@@ -26,6 +20,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.5.1] - 2026-02-25
+
+### Fixed
+
+- fixed width of search and advanced-search result lists
+- fixed redirect target after login screen interception
+
+## [1.5.0] - 2026-02-24
+
+### Added
+
+- New page for advanced searching, including complex reference filter
+- Translations for entity types
+- Button on edit page to reset or delete rules
+- Warn about unsaved changes when logging out
+- pytest-retry since tests often failing on github (we belief due to low system/cpu performance in CI)
+
+### Changes
+
+- other rerun lib for pytest
+- updated mex-common to 1.16.0
+- upgrade reflex to 0.8.14
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
+
+### Removed
+
+- all custom scripts due to reflex docs
 
 ## [1.4.1] - 2026-02-04
 

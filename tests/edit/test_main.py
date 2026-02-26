@@ -1,4 +1,5 @@
 import re
+from typing import Literal
 
 import pytest
 from playwright.sync_api import Page, expect
@@ -8,7 +9,9 @@ from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
 from mex.common.models import (
     ActivityRuleSetRequest,
     AdditiveActivity,
+    AdditiveContactPoint,
     AnyExtractedModel,
+    ContactPointRuleSetRequest,
     ExtractedActivity,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
@@ -34,14 +37,86 @@ def edit_page(
     return page
 
 
+@pytest.fixture
+def load_delete_reset_data(
+    dummy_data: list[AnyExtractedModel],
+) -> dict[Literal["delete", "reset"] | None, str]:
+    connector = BackendApiConnector.get()
+    connector.ingest(dummy_data)
+
+    delete_resp = connector.create_rule_set(
+        ContactPointRuleSetRequest(
+            additive=AdditiveContactPoint(email=["DELETE_ME@test.de"])
+        )
+    )
+    cp1: AnyExtractedModel = next(
+        x for x in dummy_data if x.identifierInPrimarySource == "cp-1"
+    )
+    connector.update_rule_set(
+        cp1.stableTargetId,
+        ContactPointRuleSetRequest(
+            additive=AdditiveContactPoint(email=["another_email@test.com"])
+        ),
+    )
+
+    ou1: AnyExtractedModel = next(
+        x for x in dummy_data if x.identifierInPrimarySource == "ou-1"
+    )
+
+    return {
+        "delete": delete_resp.stableTargetId,
+        "reset": cp1.stableTargetId,
+        None: ou1.stableTargetId,
+    }
+
+
+@pytest.mark.integration
+def test_edit_page_delete_reset_button(
+    base_url: str,
+    writer_user_page: Page,
+    load_delete_reset_data: dict[Literal["delete", "reset"] | None, str],
+) -> None:
+    page = writer_user_page
+
+    def _navigate(stable_id: str) -> None:
+        page.goto(f"{base_url}/item/{stable_id}")
+        page_body = page.get_by_test_id("page-body")
+        expect(page_body).to_be_visible()
+
+    _navigate(load_delete_reset_data[None])
+    expect(page.get_by_test_id("delete-reset-button")).not_to_be_visible()
+
+    reset_id = load_delete_reset_data["reset"]
+    _navigate(reset_id)
+    button = page.get_by_test_id("delete-reset-button")
+    expect(button).to_be_visible()
+    button.click()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_delete_reset_button-reset_clicked.png"
+    )
+    page.wait_for_url(f"{base_url}/item/{reset_id}")
+    expect(page.locator(".editor-toast")).to_be_visible()
+    expect(page.get_by_test_id("delete-reset-button")).not_to_be_visible()
+
+    delete_id = load_delete_reset_data["delete"]
+    _navigate(delete_id)
+    button = page.get_by_test_id("delete-reset-button")
+    expect(button).to_be_visible()
+    button.click()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_delete_reset_button-delete_clicked.png"
+    )
+    page.wait_for_url(f"{base_url}/")
+    expect(page.locator(".editor-toast")).to_be_visible()
+
+
 @pytest.mark.integration
 def test_edit_page_updates_nav_bar(edit_page: Page) -> None:
     page = edit_page
     nav_bar = page.get_by_test_id("nav-bar")
     expect(nav_bar).to_be_visible()
     page.screenshot(path="tests_edit_test_main-test_edit_page_updates_nav_bar.png")
-    nav_item = nav_bar.locator(".nav-item").all()[2]
-    expect(nav_item).to_have_attribute("data-testid", "nav-item-/item/[item_id]")
+    nav_item = nav_bar.get_by_test_id("nav-item-/item/[item_id]")
     expect(nav_item).to_have_class(re.compile(r"(^|\s)nav-item-active(\s|$)"))
 
 
@@ -648,7 +723,7 @@ def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> N
     # check default state
     submit_button = edit_page.get_by_test_id("submit-button")
     initial_text = submit_button.text_content()
-    initial_text = initial_text if initial_text else ""
+    initial_text = initial_text or ""
     expect(submit_button).to_have_text(initial_text)
     expect(submit_button).not_to_be_disabled()
 

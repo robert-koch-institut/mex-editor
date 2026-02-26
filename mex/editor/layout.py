@@ -64,7 +64,7 @@ def unsaved_changes_dialog() -> rx.Component:
                         State.label_unsaved_changes_dialog_cancel_button,
                         variant="soft",
                         color_scheme="gray",
-                        on_click=State.set_is_unsaved_changes_dialog_open(False),  # type: ignore[attr-defined]
+                        on_click=State.set_is_unsaved_changes_dialog_open(False),  # type: ignore[operator]
                         custom_attrs={
                             "data-testid": "unsaved-changes-dialog-cancel-button"
                         },
@@ -94,7 +94,7 @@ def user_menu() -> rx.Component:
                 State.label_nav_bar_logout_button,
                 on_select=rx.cond(
                     CreateState.draft_count + EditState.edit_count,
-                    State.set_is_unsaved_changes_dialog_open(True),  # type: ignore[attr-defined]
+                    State.set_is_unsaved_changes_dialog_open(True),  # type: ignore[operator]
                     State.logout,
                 ),
                 custom_attrs={"data-testid": "logout-button"},
@@ -274,19 +274,6 @@ def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
     )
 
 
-def custom_focus_script() -> rx.Script:
-    """Creates a Script that looks for '[data-focusme]' and calls '.focus()' in it."""
-    return rx.script(
-        """
-    (function() {
-        document.querySelectorAll('[data-focusme]').forEach(item=> {
-            setTimeout(() => item.focus(), 10);
-        })
-    })()
-    """
-    )
-
-
 def page(
     *children: rx.Component,
     user_type: str = "user_mex",
@@ -315,7 +302,6 @@ def page(
             custom_attrs={"data-testid": "page-body"},
         ),
         unsaved_changes_dialog(),
-        custom_focus_script(),
     ]
 
     return rx.cond(

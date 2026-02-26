@@ -3,6 +3,8 @@ from reflex.components.radix import themes
 from reflex.utils.console import info as log_info
 
 from mex.common.logging import logger
+from mex.editor.advanced_search.main import index as advanced_search_index
+from mex.editor.advanced_search.state import AdvancedSearchState
 from mex.editor.api.main import api as editor_api
 from mex.editor.consent.main import index as consent_index
 from mex.editor.consent.state import ConsentState
@@ -24,7 +26,14 @@ from mex.editor.utils import load_settings
 
 app = rx.App(
     theme=themes.theme(accent_color="blue", has_background=False),
-    style={">a": {"opacity": "0"}},
+    style={
+        ">a": {"opacity": "0"},
+        ".truncate": {
+            "overflow": "hidden",
+            "text-overflow": "ellipsis",
+            "white-space": "nowrap",
+        },
+    },
     api_transformer=editor_api,
 )
 app.add_page(
@@ -38,6 +47,17 @@ app.add_page(
         SearchState.load_search_params,
         SearchState.refresh,
         SearchState.resolve_identifiers,
+    ],
+)
+app.add_page(
+    advanced_search_index,
+    route="/advanced-search",
+    title="MEx Editor | Advanced Search",
+    on_load=[
+        State.check_mex_login,
+        State.load_nav,
+        AdvancedSearchState.search,
+        AdvancedSearchState.resolve_identifiers,
     ],
 )
 app.add_page(

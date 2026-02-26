@@ -96,6 +96,7 @@ app.add_page(
         IngestState.refresh,
         IngestState.resolve_identifiers,
         IngestState.flag_ingested_items,
+        IngestState.resolve_primary_source_titles,
     ],
 )
 app.add_page(login_mex_index, route="/login", title="MEx Editor | Login")

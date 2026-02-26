@@ -4,7 +4,7 @@ import pytest
 from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProvider
+from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProviderKey
 from tests.conftest import build_pagination_regex, build_ui_label_regex
 
 if TYPE_CHECKING:
@@ -140,15 +140,15 @@ def test_search_and_ingest_roundtrip(
 
 @pytest.mark.integration
 def test_infobox_visibility_and_content(ingest_page: Page) -> None:
-    expected_callout_content: dict[AuxProvider, Pattern[str]] = {
-        AuxProvider.LDAP: build_ui_label_regex("ingest.search_info.ldap"),
-        AuxProvider.WIKIDATA: build_ui_label_regex("ingest.search_info.wikidata"),
+    expected_callout_content: dict[AuxProviderKey, Pattern[str]] = {
+        AuxProviderKey.LDAP: build_ui_label_regex("ingest.search_info.ldap"),
+        AuxProviderKey.WIKIDATA: build_ui_label_regex("ingest.search_info.wikidata"),
     }
 
     page = ingest_page
 
     for provider in ALL_AUX_PROVIDERS:
-        tab = page.get_by_role("tab", name=provider)
+        tab = page.get_by_role("tab", name=provider.dynamic_name)
         tab.click(
             timeout=50_000
         )  # high timeout cuz tab might be disabled due to loading
@@ -156,7 +156,7 @@ def test_infobox_visibility_and_content(ingest_page: Page) -> None:
         tab_content = page.locator(f"[id*='{provider}'][role='tabpanel']")
         callout = tab_content.locator(".rt-CalloutRoot")
 
-        expected_content = expected_callout_content.get(provider)
+        expected_content = expected_callout_content.get(provider.key)
         if expected_content:
             expect(callout).to_have_count(1)
             expect(callout).to_have_text(expected_content)

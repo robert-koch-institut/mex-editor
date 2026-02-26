@@ -5,7 +5,7 @@ import reflex as rx
 from mex.editor.component_option_helper import (
     build_pagination_options,
 )
-from mex.editor.ingest.models import AuxProvider, IngestResult
+from mex.editor.ingest.models import IngestResult
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
 from mex.editor.search_results_component import (
@@ -124,13 +124,13 @@ def search_results() -> rx.Component:
 def search_infobox() -> rx.Component | rx.Var[Any]:
     """Render information about the specific search provider query format."""
     return rx.match(
-        IngestState.current_aux_provider,
+        IngestState.current_aux_provider.key,
         (
-            AuxProvider.LDAP,
+            "ldap",
             rx.callout(IngestState.label_search_info_ldap),
         ),
         (
-            AuxProvider.WIKIDATA,
+            "wikidata",
             rx.callout(IngestState.label_search_info_wikidata),
         ),
     )
@@ -144,13 +144,13 @@ def tab_list() -> rx.Component:
             rx.foreach(
                 IngestState.aux_providers,
                 lambda provider: rx.tabs.trigger(
-                    provider,
-                    value=provider,
+                    provider.dynamic_name,
+                    value=provider.static_name,
                     disabled=IngestState.is_loading,
                 ),
             ),
             rx.spacer(),
-            style=rx.Style(width="calc(24em * var(--scaling))"),
+            style=rx.Style(width="calc(45em * var(--scaling))"),
         )
     )
 
@@ -168,7 +168,7 @@ def tab_content() -> rx.Component:
                 align="center",
                 spacing="5",
             ),
-            value=provider,
+            value=provider.static_name,
         ),
     )
 
@@ -180,7 +180,7 @@ def index() -> rx.Component:
             tab_list(),
             rx.spacer(),
             tab_content(),
-            default_value=f"{IngestState.current_aux_provider}",
+            default_value=f"{IngestState.current_aux_provider.dynamic_name}",
             on_change=[
                 IngestState.set_current_aux_provider,
                 IngestState.reset_query_string,

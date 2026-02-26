@@ -21,6 +21,7 @@ services:
     ports:
       - 8031:8031
     environment:
+      - MEX_EDITOR_API_HOST=0.0.0.0
       - MEX_BACKEND_API_KEY=write_key
       - MEX_BACKEND_API_URL=http://mex-backend:8080/
       - MEX_BACKEND_API_USER_DATABASE={"write":{"admin":"admin"}}
@@ -36,7 +37,7 @@ services:
       mex-backend:
         condition: service_healthy
   mex-backend:
-    image: ghcr.io/robert-koch-institut/mex-backend:1.2.0
+    image: ghcr.io/robert-koch-institut/mex-backend:1.6.0
     ports:
       - 8080:8080
     environment:

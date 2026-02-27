@@ -53,7 +53,6 @@ class ConsentCategoryList(rx.ComponentState, PaginationStateMixin):
     @rx.event
     def fetch_data(self) -> Generator[EventSpec | None]:
         """Fetch user-related data based on category."""
-        print("FETCH", self.category, self.merged_login_person)
         if not self.merged_login_person or not self.config:
             yield None
             return
@@ -114,7 +113,7 @@ class ConsentCategoryList(rx.ComponentState, PaginationStateMixin):
         """Initialize the component state."""
         self.category = category
         self.merged_login_person = merged_login_person
-        print("INIT", category, merged_login_person)
+
         config = CATEGORY_CONFIG.get(category)
         if not config:
             err_msg = f"Invalid category {category}."
@@ -141,7 +140,6 @@ class ConsentCategoryList(rx.ComponentState, PaginationStateMixin):
     ) -> rx.Component:
         """Get the category list component."""
         title = getattr(ConsentState, f"label_{category}_title")
-        print("ARG", merged_login_person)
 
         return rx.fragment(
             rx.cond(

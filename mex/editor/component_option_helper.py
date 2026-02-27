@@ -62,3 +62,39 @@ def build_pagination_for_state_options(
             *page_load_hooks,
         ],
     )
+
+
+# TODO(FE): Remove when 'mx-2130-advanced-search-page' is merged
+# and use 'build_pagination_options'
+def build_pagination_options_for_mixin(
+    state: PaginationStateMixin | type[PaginationStateMixin],
+    *page_load_hooks: Callable[[], Any],
+) -> PaginationOptions:
+    """Build pagination options for a PaginationStateMixin."""
+    current_page = cast("Var[int]", state.current_page)
+    hooks = list(page_load_hooks)
+    return PaginationOptions(
+        PaginationButtonOptions(
+            state.disable_previous_page,
+            [
+                state.go_to_previous_page,
+                *hooks,
+            ],
+        ),
+        PaginationButtonOptions(
+            state.disable_next_page,
+            [
+                state.go_to_next_page,
+                *hooks,
+            ],
+        ),
+        PaginationPageOptions(
+            current_page,
+            state.page_selection,
+            state.disable_page_selection,
+            [
+                state.set_current_page,
+                *hooks,
+            ],
+        ),
+    )

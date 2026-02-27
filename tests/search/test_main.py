@@ -87,16 +87,16 @@ def test_pagination(
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-def test_search_input(
-    base_url: str,
-    writer_user_page: Page,
-) -> None:
+def test_search_input(base_url: str, writer_user_page: Page) -> None:
     page = writer_user_page
     page.goto(base_url)
 
     # check sidebar is showing
     sidebar = page.get_by_test_id("search-sidebar")
     expect(sidebar).to_be_visible()
+
+    # wait for initial state to load (Reflex hydration complete)
+    expect(page.get_by_test_id("search-results-summary")).to_be_visible()
 
     # test search input is showing and functioning
     search_input = page.get_by_test_id("search-input")
@@ -109,16 +109,18 @@ def test_search_input(
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-1-found.png"
     )
-    expect(search_results_summary).to_have_text(build_pagination_regex(1, 1))
+    expect(page.get_by_test_id("search-results-summary")).to_have_text(
+        build_pagination_regex(1, 1)
+    )
 
     search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
     page.get_by_test_id("search-button").click()
-    search_results_summary = page.get_by_test_id("search-results-summary")
-    expect(search_results_summary).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-0-found.png"
     )
-    expect(search_results_summary).to_have_text(build_pagination_regex(0, 0))
+    expect(page.get_by_test_id("search-results-summary")).to_have_text(
+        build_pagination_regex(0, 0)
+    )
 
 
 @pytest.mark.integration
@@ -219,7 +221,7 @@ def test_load_search_params(
     # check primary sources are loaded from url
     primary_sources = page.get_by_test_id("primary-source-filter")
     unchecked = primary_sources.get_by_role("checkbox", checked=False)
-    expect(unchecked).to_have_count(2)
+    expect(unchecked).to_have_count(3)
     checked = primary_sources.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
 
@@ -465,18 +467,18 @@ def test_additional_titles_badge(
 
     # expect title is visible and there are additional titles for 'r2'
     expect(resource_r2_result).to_contain_text(first_title.value)
-    page.get_by_test_id("additional-titles-badge").first.scroll_into_view_if_needed()
-    expect(page.get_by_test_id("additional-titles-badge").first).to_be_visible()
+    expect(page.get_by_test_id("additional-titles-badge")).to_be_visible()
+    page.get_by_test_id("additional-titles-badge").scroll_into_view_if_needed()
     page.screenshot(path="tests_search_test_additional_titles_badge_on_visible.png")
-    expect(page.get_by_test_id("additional-titles-badge").first).to_have_text(
+    expect(page.get_by_test_id("additional-titles-badge")).to_have_text(
         build_ui_label_regex("components.titles.additional_titles")
     )
 
     # hover additional titles
-    box = page.get_by_test_id("additional-titles-badge").first.bounding_box()
+    box = page.get_by_test_id("additional-titles-badge").bounding_box()
     assert box
     page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2, steps=5)
-    page.get_by_test_id("additional-titles-badge").first.hover()
+    page.get_by_test_id("additional-titles-badge").hover()
     page.screenshot(path="tests_search_test_additional_titles_badge_on_hover.png")
 
     # check tooltip content

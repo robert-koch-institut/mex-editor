@@ -1,8 +1,7 @@
 from typing import cast
 
-from pydantic import SecretStr
+from pydantic import BaseModel, SecretStr
 
-from mex.common.models import BaseModel
 from mex.common.types import (
     AnyNestedModel,
     AnyPrimitiveType,

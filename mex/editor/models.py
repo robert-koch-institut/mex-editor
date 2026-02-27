@@ -2,11 +2,9 @@ from collections.abc import Sequence
 from importlib.resources import files
 from typing import Protocol
 
-import reflex as rx
 import yaml
-from pydantic import TypeAdapter
+from pydantic import BaseModel, TypeAdapter
 
-from mex.common.models import BaseModel
 from mex.common.types import MergedPersonIdentifier
 
 
@@ -26,7 +24,7 @@ def sequence_is_equal(
         return False  # sequences don't have same length
 
 
-class EditorValue(rx.Base):
+class EditorValue(BaseModel):
     """Model for describing atomic values in the editor."""
 
     text: str | None = None
@@ -41,20 +39,20 @@ class EditorValue(rx.Base):
         """Check if self and other are equal."""
         if isinstance(other, EditorValue):
             exclude = {"text"} if other.identifier and not other.text else set()
-            self_dict = self.dict(exclude=exclude)
-            other_dict = other.dict(exclude=exclude)
+            self_dict = self.model_dump(exclude=exclude)
+            other_dict = other.model_dump(exclude=exclude)
             return self_dict == other_dict
         return False
 
 
-class User(rx.Base):
+class User(BaseModel):
     """Info on the currently logged-in user."""
 
     name: str
     write_access: bool
 
 
-class MergedLoginPerson(rx.Base):
+class MergedLoginPerson(BaseModel):
     """Info on the currently logged-in user from the merged login endpoint."""
 
     identifier: MergedPersonIdentifier | None = None
@@ -63,7 +61,7 @@ class MergedLoginPerson(rx.Base):
     orcid_id: list[str] | None = None
 
 
-class NavItem(rx.Base):
+class NavItem(BaseModel):
     """Model for one navigation bar item."""
 
     title: str
@@ -86,7 +84,7 @@ MODEL_CONFIG_BY_STEM_TYPE = TypeAdapter(dict[str, ModelConfig]).validate_python(
 LANGUAGE_VALUE_NONE = "None"
 
 
-class ValueLabelCheckboxItem(rx.Base):
+class ValueLabelCheckboxItem(BaseModel):
     """Item for checkbox state with a value, label and check state."""
 
     value: str
@@ -94,7 +92,7 @@ class ValueLabelCheckboxItem(rx.Base):
     checked: bool
 
 
-class SearchResult(rx.Base):
+class SearchResult(BaseModel):
     """Search result preview."""
 
     identifier: str

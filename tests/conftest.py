@@ -1,3 +1,4 @@
+import logging
 import re
 from collections.abc import Generator
 from re import Pattern
@@ -8,13 +9,14 @@ import pytest
 from fastapi.testclient import TestClient
 from playwright.sync_api import Page, expect
 from pydantic import SecretStr
-from pytest import MonkeyPatch
+from pytest import LogCaptureFixture
 
 from mex.artificial.helpers import generate_artificial_extracted_items
 from mex.common.backend_api.connector import (
     BackendApiConnector,
     LDAPBackendApiConnector,
 )
+from mex.common.logging import logger
 from mex.common.models import (
     EXTRACTED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
@@ -69,47 +71,30 @@ def client() -> TestClient:
 
 
 @pytest.fixture(autouse=True)
-def settings() -> EditorSettings:
-    """Load and return the current editor settings."""
-    return EditorSettings.get()
-
-
-@pytest.fixture(autouse=True)
-def set_identity_provider(
+def settings(
+    caplog: LogCaptureFixture,
+    request: pytest.FixtureRequest,
     is_integration_test: bool,  # noqa: FBT001
-    monkeypatch: MonkeyPatch,
-) -> None:
-    """Ensure the identifier provider is set correctly for unit and int tests."""
-    # TODO(ND): clean this up after MX-1708
-    settings = EditorSettings.get()
-    if is_integration_test:
-        monkeypatch.setitem(settings.model_config, "validate_assignment", False)  # noqa: FBT003
-        monkeypatch.setattr(settings, "identity_provider", IdentityProvider.BACKEND)
-    else:
-        monkeypatch.setattr(settings, "identity_provider", IdentityProvider.MEMORY)
-
-
-@pytest.fixture(autouse=True)
-def patch_editor_user_database(
-    is_integration_test: bool,  # noqa: FBT001
-    monkeypatch: MonkeyPatch,
-    settings: EditorSettings,
-) -> None:
-    """Overwrite the user database with dummy credentials."""
-    if not is_integration_test:
-        monkeypatch.setattr(
-            settings,
-            "editor_user_database",
-            EditorUserDatabase(
+    isolate_settings: None,  # noqa: ARG001
+) -> EditorSettings:
+    """Load and return the correct editor settings."""
+    verbosity = request.config.option.verbose
+    cutoff_level = logging.INFO if verbosity >= 2 else logging.WARNING
+    with caplog.at_level(cutoff_level, logger=logger.name):
+        settings = EditorSettings.get()
+        if is_integration_test:
+            settings.identity_provider = IdentityProvider.BACKEND
+        else:
+            settings.identity_provider = IdentityProvider.MEMORY
+            settings.editor_user_database = EditorUserDatabase(
                 read={"reader": EditorUserPassword("reader_pass")},
                 write={"writer": EditorUserPassword("writer_pass")},
-            ),
-        )
+            )
+    return settings
 
 
 @pytest.fixture
-def writer_user_credentials() -> tuple[str, SecretStr]:
-    settings = EditorSettings.get()
+def writer_user_credentials(settings: EditorSettings) -> tuple[str, SecretStr]:
     for username, password in settings.editor_user_database["write"].items():
         return username, password
     msg = "No writer configured"  # pragma: no cover
@@ -365,9 +350,11 @@ def build_pagination_regex(current: int, total: int) -> Pattern[str]:
 
 def build_ui_label_regex(label_id: str) -> Pattern[str]:
     service = LocaleService.get()
-    return re.compile(
-        f"({'|'.join(re.escape(service.get_ui_label(locale.id, label_id)) for locale in service.get_available_locales())})"
+    ui_labels = (
+        re.escape(service.get_ui_label(locale.id, label_id))
+        for locale in service.get_available_locales()
     )
+    return re.compile(f"({'|'.join(ui_labels)})")
 
 
 def get_logged_in_user_id() -> MergedPersonIdentifier:

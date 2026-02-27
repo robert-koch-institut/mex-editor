@@ -2,7 +2,7 @@ import math
 from collections.abc import Generator
 from datetime import datetime
 from pathlib import Path
-from typing import Annotated, cast
+from typing import Annotated
 from zoneinfo import ZoneInfo
 
 import reflex as rx
@@ -72,13 +72,15 @@ class ConsentState(State):
     publications_current_page: Annotated[int, Field(ge=1)] = 1
     is_loading: bool = True
 
-    _consent_nav_items: list[NavItem] = [
-        NavItem(
-            title=self.label_nav_bar_consent_navitem,
-            route_ids=["/consent"],
-            raw_path="/consent",
-        ),
-    ]
+    @rx.var
+    def _consent_nav_items(self) -> list[NavItem]:
+        return [
+            NavItem(
+                title=self.label_nav_bar_consent_navitem,
+                route_ids=["/consent"],
+                raw_path="/consent",
+            ),
+        ]
 
     @rx.var
     def consent_nav_items_translated(self) -> list[NavItem]:

@@ -117,7 +117,7 @@ def index() -> rx.Component:
     return page(
         rx.vstack(
             user_data(),
-            ConsentCategoryList.create("projects", State.merged_login_person),  # type: ignore[operator]
+            ConsentCategoryList.create("projects", State.merged_login_person),
             ConsentCategoryList.create("resources", State.merged_login_person),
             ConsentCategoryList.create("publications", State.merged_login_person),
             rx.spacer(direction="column"),

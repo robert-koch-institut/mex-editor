@@ -145,7 +145,7 @@ def tab_list() -> rx.Component:
                 IngestState.aux_providers,
                 lambda provider: rx.tabs.trigger(
                     provider.dynamic_name,
-                    value=provider.static_name,
+                    value=provider.key,
                     disabled=IngestState.is_loading,
                 ),
             ),
@@ -168,7 +168,7 @@ def tab_content() -> rx.Component:
                 align="center",
                 spacing="5",
             ),
-            value=provider.static_name,
+            value=provider.key,
         ),
     )
 
@@ -180,7 +180,7 @@ def index() -> rx.Component:
             tab_list(),
             rx.spacer(),
             tab_content(),
-            default_value=f"{IngestState.current_aux_provider.dynamic_name}",
+            default_value=IngestState.current_aux_provider.key,
             on_change=[
                 IngestState.set_current_aux_provider,
                 IngestState.reset_query_string,

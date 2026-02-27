@@ -18,7 +18,7 @@ def test_login_state_login_success() -> None:
 
     assert "/" in str(list(state.login()))  # type: ignore[operator]
     assert state.user_mex
-    assert state.user_mex.dict() == {
+    assert state.user_mex.model_dump() == {
         "name": "writer",
         "write_access": True,
     }

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import reflex as rx
+from pydantic import BaseModel
 from reflex.event import EventSpec
 from requests import HTTPError
 
@@ -51,7 +52,7 @@ class FieldDescriptor:
         )
 
 
-class RefFilter(rx.Base):
+class RefFilter(BaseModel):
     """Model to filter reference fields by values."""
 
     field_descriptor_json: str = ""

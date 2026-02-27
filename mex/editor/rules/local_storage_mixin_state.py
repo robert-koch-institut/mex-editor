@@ -30,7 +30,9 @@ class LocalStorageMixinState(rx.State, mixin=True):
                 title=titles[0],
             )
 
-        draft_store = LocalDraftStorageObject.parse_raw(self.local_draft_store)
+        draft_store = LocalDraftStorageObject.model_validate_json(
+            self.local_draft_store
+        )
         return {
             key: _create_draft(value, key) for key, value in draft_store.value.items()
         }
@@ -50,7 +52,7 @@ class LocalStorageMixinState(rx.State, mixin=True):
                 fields=x.fields,
             )
 
-        edit_store = LocalEditStorageObject.parse_raw(self.local_edit_store)
+        edit_store = LocalEditStorageObject.model_validate_json(self.local_edit_store)
         return {
             key: _create_edit(value, key) for key, value in edit_store.value.items()
         }
@@ -63,29 +65,33 @@ class LocalStorageMixinState(rx.State, mixin=True):
     @rx.event
     def update_draft(self, identifier: str, draft: LocalDraft) -> None:
         """Update a LocalDraft with the given identifier."""
-        draft_store = LocalDraftStorageObject.parse_raw(self.local_draft_store)
+        draft_store = LocalDraftStorageObject.model_validate_json(
+            self.local_draft_store
+        )
         draft_store.value[identifier] = draft
-        self.local_draft_store = draft_store.json()
+        self.local_draft_store = draft_store.model_dump_json()
 
     @rx.event
     def update_edit(self, identifier: str, edit: LocalEdit) -> None:
         """Update a LocalEdit with the given identifier."""
-        edit_store = LocalEditStorageObject.parse_raw(self.local_edit_store)
+        edit_store = LocalEditStorageObject.model_validate_json(self.local_edit_store)
         edit_store.value[identifier] = edit
-        self.local_edit_store = edit_store.json()
+        self.local_edit_store = edit_store.model_dump_json()
 
     @rx.event
     def delete_draft(self, identifier: str) -> None:
         """Delete a LocalDraft with the given identifier."""
-        draft_store = LocalDraftStorageObject.parse_raw(self.local_draft_store)
+        draft_store = LocalDraftStorageObject.model_validate_json(
+            self.local_draft_store
+        )
         if identifier in draft_store.value:
             draft_store.value.pop(identifier)
-            self.local_draft_store = draft_store.json()
+            self.local_draft_store = draft_store.model_dump_json()
 
     @rx.event
     def delete_edit(self, identifier: str) -> None:
         """Delete a LocalEdit with the given identifier."""
-        edit_store = LocalEditStorageObject.parse_raw(self.local_edit_store)
+        edit_store = LocalEditStorageObject.model_validate_json(self.local_edit_store)
         if identifier in edit_store.value:
             edit_store.value.pop(identifier)
-            self.local_edit_store = edit_store.json()
+            self.local_edit_store = edit_store.model_dump_json()

@@ -30,6 +30,7 @@ class State(rx.State):
     merged_login_person: MergedLoginPerson | None = None
     target_path_after_login: str | None = None
     is_unsaved_changes_dialog_open: bool = False
+
     _nav_items: list[NavItem] = [
         NavItem(
             title="layout.nav_bar.search_navitem",
@@ -66,7 +67,7 @@ class State(rx.State):
     def _translate_nav_item(self, item: NavItem) -> NavItem:
         return NavItem(
             title=self._locale_service.get_ui_label(self.current_locale, item.title),
-            **item.dict(exclude={"title"}),
+            **item.model_dump(exclude={"title"}),
         )
 
     @rx.var

@@ -7,10 +7,7 @@ from mex.editor.component_option_helper import (
     build_pagination_for_state_options,
 )
 from mex.editor.layout import page
-from mex.editor.search.models import (
-    ReferenceFieldIdentifierFilter,
-    SearchPrimarySource,
-)
+from mex.editor.search.models import ReferenceFieldIdentifierFilter, SearchPrimarySource
 from mex.editor.search.state import SearchState, full_refresh
 from mex.editor.search_results_component import (
     SearchResultsComponentOptions,

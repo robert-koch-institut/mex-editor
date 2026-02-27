@@ -1,9 +1,9 @@
 from typing import TypedDict
 
-import reflex as rx
+from pydantic import BaseModel
 
 
-class SearchPrimarySource(rx.Base):
+class SearchPrimarySource(BaseModel):
     """Primary source filter."""
 
     identifier: str
@@ -11,14 +11,14 @@ class SearchPrimarySource(rx.Base):
     checked: bool
 
 
-class ReferenceFieldIdentifierFilter(rx.Base):
+class ReferenceFieldIdentifierFilter(BaseModel):
     """Reference field identifier for value and validation msg."""
 
     value: str
     validation_msg: str | None
 
 
-class ReferenceFieldFilter(rx.Base):
+class ReferenceFieldFilter(BaseModel):
     """Reference field filter."""
 
     identifiers: list[ReferenceFieldIdentifierFilter]

@@ -1,7 +1,7 @@
 import reflex as rx
 from reflex.event import EventType
 
-from mex.editor.layout import app_logo  # , custom_focus_script
+from mex.editor.layout import app_logo
 from mex.editor.login.state import LoginLdapState, LoginMExState, LoginState
 
 

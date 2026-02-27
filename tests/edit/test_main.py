@@ -5,7 +5,10 @@ import pytest
 from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
+from mex.common.fields import (
+    MERGEABLE_FIELDS_BY_CLASS_NAME,
+    REQUIRED_FIELDS_BY_CLASS_NAME,
+)
 from mex.common.models import (
     MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
     ActivityRuleSetRequest,
@@ -20,7 +23,6 @@ from mex.common.models import (
 )
 from mex.common.transform import ensure_prefix
 from mex.common.types import ActivityType, Identifier, Text, TextLanguage, Theme
-from mex.editor.fields import REQUIRED_FIELDS_BY_CLASS_NAME
 from mex.editor.rules.transform import get_required_mergeable_field_names
 
 

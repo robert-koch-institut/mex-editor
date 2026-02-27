@@ -3,6 +3,7 @@ import reflex as rx
 from mex.editor.consent.consent_category_list import ConsentCategoryList
 from mex.editor.consent.layout import page
 from mex.editor.consent.state import ConsentState
+from mex.editor.state import State
 
 
 def user_data() -> rx.Component:
@@ -116,9 +117,9 @@ def index() -> rx.Component:
     return page(
         rx.vstack(
             user_data(),
-            ConsentCategoryList.create("projects"),
-            ConsentCategoryList.create("resources"),
-            ConsentCategoryList.create("publications"),
+            ConsentCategoryList.create("projects", State.merged_login_person),  # type: ignore[operator]
+            ConsentCategoryList.create("resources", State.merged_login_person),
+            ConsentCategoryList.create("publications", State.merged_login_person),
             rx.spacer(direction="column"),
             rx.box(
                 consent_box(),

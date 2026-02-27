@@ -7,11 +7,11 @@ from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.editor.component_option_helper import build_pagination_options_for_mixin
+from mex.editor.component_option_helper import build_pagination_options
 from mex.editor.consent.state import ConsentState
 from mex.editor.consent.transform import add_external_links_to_results
 from mex.editor.exceptions import escalate_error
-from mex.editor.models import SearchResult
+from mex.editor.models import MergedLoginPerson, SearchResult
 from mex.editor.pagination_component import PaginationStateMixin, pagination
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.search_results_component import search_results_list
@@ -41,10 +41,11 @@ CATEGORY_CONFIG: dict[str, CategoryListConfig] = {
 }
 
 
-class ConsentCategoryList(State, rx.ComponentState, PaginationStateMixin):
+class ConsentCategoryList(rx.ComponentState, PaginationStateMixin):
     """ComponentState to show user specific items with pagination."""
 
     config: CategoryListConfig | None = None
+    merged_login_person: MergedLoginPerson | None = None
     category: str = ""
     is_loading = False
     items: list[SearchResult] = []
@@ -53,6 +54,7 @@ class ConsentCategoryList(State, rx.ComponentState, PaginationStateMixin):
     @rx.event
     def fetch_data(self) -> Generator[EventSpec | None]:
         """Fetch user-related data based on category."""
+        print("FETCH", self.category, self.merged_login_person)
         if not self.merged_login_person or not self.config:
             yield None
             return
@@ -107,9 +109,13 @@ class ConsentCategoryList(State, rx.ComponentState, PaginationStateMixin):
                         await resolve_editor_value(preview)
 
     @rx.event
-    def initialize(self, category: str) -> Generator[EventSpec | None]:
+    def initialize(
+        self, category: str, merged_login_person: MergedLoginPerson | None
+    ) -> Generator[EventSpec | None]:
         """Initialize the component state."""
         self.category = category
+        self.merged_login_person = merged_login_person
+        print("INIT", category, merged_login_person)
         config = CATEGORY_CONFIG.get(category)
         if not config:
             err_msg = f"Invalid category {category}."
@@ -130,10 +136,13 @@ class ConsentCategoryList(State, rx.ComponentState, PaginationStateMixin):
 
     @classmethod
     def get_component(
-        cls, category: Literal["resources", "publications", "projects"]
+        cls,
+        category: Literal["resources", "publications", "projects"],
+        merged_login_person: MergedLoginPerson | None,
     ) -> rx.Component:
         """Get the category list component."""
         title = getattr(ConsentState, f"label_{category}_title")
+        print("ARG", merged_login_person)
 
         return rx.fragment(
             rx.cond(
@@ -149,7 +158,7 @@ class ConsentCategoryList(State, rx.ComponentState, PaginationStateMixin):
                     ),
                     search_results_list(cls.items),
                     pagination(
-                        build_pagination_options_for_mixin(
+                        build_pagination_options(
                             cls,
                             cls.fetch_data(category),  # type:ignore[operator]
                             cls.resolve_identifiers,
@@ -162,6 +171,6 @@ class ConsentCategoryList(State, rx.ComponentState, PaginationStateMixin):
                     custom_attrs={"data-testid": f"user-{category}"},
                 ),
             ),
-            on_mount=cls.initialize(category).debounce(500),  # type:ignore[operator]
+            on_mount=cls.initialize(category, merged_login_person).debounce(500),  # type:ignore[operator]
             on_unmount=cls.cleanup,
         )

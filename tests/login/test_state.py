@@ -1,7 +1,12 @@
+import pytest
+
 from mex.editor.login.state import LoginMExState, LoginState
 from mex.editor.state import State
 
 
+@pytest.mark.skip(
+    reason="We no longer test states on their own. Tested indirect via UI tests."
+)
 def test_login_state_login_success() -> None:
     state = LoginMExState(
         parent_state=LoginState(
@@ -13,12 +18,15 @@ def test_login_state_login_success() -> None:
 
     assert "/" in str(list(state.login()))  # type: ignore[operator]
     assert state.user_mex
-    assert state.user_mex.dict() == {
+    assert state.user_mex.model_dump() == {
         "name": "writer",
         "write_access": True,
     }
 
 
+@pytest.mark.skip(
+    reason="We no longer test states on their own. Tested indirect via UI tests."
+)
 def test_login_state_login_error() -> None:
     state = LoginMExState(
         parent_state=LoginState(
@@ -34,6 +42,9 @@ def test_login_state_login_error() -> None:
     assert not state.user_mex
 
 
+@pytest.mark.skip(
+    reason="We no longer test states on their own. Tested indirect via UI tests."
+)
 def test_login_state_redirect_to_original_url() -> None:
     state = LoginMExState(
         parent_state=LoginState(

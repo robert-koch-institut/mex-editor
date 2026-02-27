@@ -85,7 +85,7 @@ def label_var[StateT: State](  # noqa: PLR0913
             return label
 
         # we know current_locale is always a dependency if inner
-        inner_deps = deps if deps else []
+        inner_deps = deps or []
         inner_deps.append("current_locale")
 
         # we never want auto_deps since we set current_locale as dep and there are no

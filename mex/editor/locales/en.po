@@ -209,6 +209,21 @@ msgstr "We are sorry, but there are no entries for '{}' :("
 msgid "search_reference_dialog.results.select_button"
 msgstr "Select"
 
+msgid "layout.nav_bar.advanced_search_navitem"
+msgstr "Advanced Search"
+
+msgid "advanced_search.reference_filter.add_value"
+msgstr "Add"
+
+msgid "advanced_search.reference_filter.title"
+msgstr "Reference filters"
+
+msgid "advanced_search.reference_filter.remove_value"
+msgstr "Remove"
+
+msgid "advanced_search.reference_filter.value_placeholder"
+msgstr "Identifier for"
+
 msgid "layout.unsaved_changes_dialog.title"
 msgstr "Logout? There are unsaved changes..."
 
@@ -226,3 +241,21 @@ msgstr "Logout anyway"
 
 msgid "layout.unsaved_changes_dialog.cancel_button"
 msgstr "Cancel"
+
+msgid "edit.reset_rules.button"
+msgstr "Reset Rules"
+
+msgid "edit.delete_rules.button"
+msgstr "Delete Item"
+
+msgid "edit.delete_rules.success_toast_title"
+msgstr "Item deleted"
+
+msgid "edit.delete_rules.success_toast_text"
+msgstr "Item successfully deleted."
+
+msgid "edit.reset_rules.success_toast_title"
+msgstr "Rules reseted"
+
+msgid "edit.reset_rules.success_toast_text"
+msgstr "Rules successfully reseted."

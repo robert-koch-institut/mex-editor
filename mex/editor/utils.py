@@ -1,3 +1,6 @@
+from collections.abc import Mapping, Sequence
+from urllib.parse import urlencode, urlparse, urlunparse
+
 from async_lru import alru_cache
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -34,3 +37,15 @@ def load_settings() -> EditorSettings:
     """Reset the settings store and fetch the editor settings."""
     SETTINGS_STORE.reset()
     return EditorSettings.get()
+
+
+def replace_url_params(
+    url: str,
+    params: Mapping[str, int | str | Sequence[int | str]],
+) -> str:
+    """Replace the parameters of a given url."""
+    current_url = urlparse(url)
+    query = urlencode(params, doseq=True)
+    # yes, `_replace` looks private but is actually official API
+    # docs.python.org/3/library/collections.html#collections.somenamedtuple
+    return urlunparse(current_url._replace(query=query))

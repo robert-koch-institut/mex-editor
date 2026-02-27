@@ -15,7 +15,6 @@ from mex.editor.models import MergedLoginPerson, SearchResult
 from mex.editor.pagination_component import PaginationStateMixin, pagination
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.search_results_component import search_results_list
-from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 
 if TYPE_CHECKING:

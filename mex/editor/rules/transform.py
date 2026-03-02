@@ -5,6 +5,7 @@ from pydantic import ValidationError
 
 from mex.common.fields import (
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
+    FINAL_FIELDS_BY_CLASS_NAME,
     LINK_FIELDS_BY_CLASS_NAME,
     MERGEABLE_FIELDS_BY_CLASS_NAME,
     MUTABLE_FIELDS_BY_CLASS_NAME,
@@ -100,6 +101,19 @@ def _transform_model_to_input_config(  # noqa: PLR0911
     editable: bool,  # noqa: FBT001
 ) -> InputConfig:
     """Determine the input type for a given field of a given model."""
+
+    print(f"________ _transform_model_to_input_config")
+    if field_name in FINAL_FIELDS_BY_CLASS_NAME[entity_type]:
+        print("IF CLAUSE______________")
+        return InputConfig(
+            editable_text=False,
+            editable_badge=False,
+            editable_identifier=False,
+            editable_href=False,
+            allow_additive=False,
+            render_textarea=False,
+        )
+
     if field_name in REFERENCE_FIELDS_BY_CLASS_NAME[entity_type]:
         return InputConfig(
             editable_identifier=editable,
@@ -155,15 +169,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             editable_text=editable,
             allow_additive=editable,
         )
-    if field_name == "identifierInPrimarySource":
-        return InputConfig(
-            editable_text=False,
-            editable_badge=False,
-            editable_identifier=False,
-            editable_href=False,
-            allow_additive=False,
-            render_textarea=False,
-        )
+
     return InputConfig()
 
 

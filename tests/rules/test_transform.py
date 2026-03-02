@@ -400,36 +400,38 @@ def test_transform_model_to_input_config(
     assert input_config == expected
 
 
-# def test_items_only_rules_not_show_identifier_in_primarysource() -> None:
-#     editor_fields = transform_models_to_fields(
-#         extracted_items=[],
-#         additive=AdditivePerson(givenName=["John"]),
-#         subtractive=SubtractivePerson(),
-#         preventive=PreventivePerson(),
-#     )
-
-#     field_names = {field.name for field in editor_fields}
-#     assert "identifierInPrimarySource" not in field_names
 
 
-# def test_extracted_item_includes_identifier_in_primary_source() -> None:
-#     extracted_item = ExtractedPerson(
-#         identifierInPrimarySource="fruit",
-#         hadPrimarySource=MergedPrimarySourceIdentifier.generate(),
-#         givenName=["Apple"],
-#         familyName=["Pear"],
-#     )
+@pytest.mark.parametrize(
+    ("extracted_items", "expected_presence"),
+    [
+        ([], False),
+        (
+            [
+                ExtractedPerson(
+                    identifierInPrimarySource="person-000",
+                    hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
+                )
+            ],
+            True, 
+        ),
+    ],
+)
+def test_id_shown_with_extracted_items(extracted_items, expected_presence) -> None:
+    editor_fields = transform_models_to_fields(
+        extracted_items=extracted_items,
+        additive=AdditivePerson(),
+        subtractive=SubtractivePerson(),
+        preventive=PreventivePerson(),
+    )
 
-#     editor_fields = transform_models_to_fields(
-#         extracted_items=[extracted_item],
-#         additive=AdditivePerson(),
-#         subtractive=SubtractivePerson(),
-#         preventive=PreventivePerson(),
-#     )
+    field_names = [field.name for field in editor_fields]
 
-#     field_names = {field.name for field in editor_fields}
-
-#     assert "identifierInPrimarySource" in field_names
+    if expected_presence:
+        assert "identifierInPrimarySource" in field_names
+    else:
+        assert "identifierInPrimarySource" not in field_names
+       # ['affiliation', 'email', 'familyName', 'fullName', 'givenName', 'isniId', 'memberOf', 'orcidId', 'supersededBy']
 
 
 @pytest.mark.parametrize(

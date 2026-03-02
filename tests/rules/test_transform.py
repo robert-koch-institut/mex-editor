@@ -401,8 +401,6 @@ def test_transform_model_to_input_config(
     assert input_config == expected
 
 
-
-
 @pytest.mark.parametrize(
     ("extracted_items", "expected_presence"),
     [
@@ -414,11 +412,13 @@ def test_transform_model_to_input_config(
                     hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
                 )
             ],
-            True, 
+            True,
         ),
     ],
 )
-def test_id_shown_with_extracted_items(extracted_items, expected_presence) -> None:
+def test_id_shown_with_extracted_items(
+    extracted_items: list[AnyExtractedModel], *, expected_presence: bool
+) -> None:
     editor_fields = transform_models_to_fields(
         extracted_items=extracted_items,
         additive=AdditivePerson(),
@@ -432,7 +432,6 @@ def test_id_shown_with_extracted_items(extracted_items, expected_presence) -> No
         assert "identifierInPrimarySource" in field_names
     else:
         assert "identifierInPrimarySource" not in field_names
-       # ['affiliation', 'email', 'familyName', 'fullName', 'givenName', 'isniId', 'memberOf', 'orcidId', 'supersededBy']
 
 
 @pytest.mark.parametrize(

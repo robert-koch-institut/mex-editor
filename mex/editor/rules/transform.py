@@ -5,7 +5,6 @@ from pydantic import ValidationError
 
 from mex.common.fields import (
     ALL_TYPES_BY_FIELDS_BY_CLASS_NAMES,
-    FINAL_FIELDS_BY_CLASS_NAME,
     LINK_FIELDS_BY_CLASS_NAME,
     MERGEABLE_FIELDS_BY_CLASS_NAME,
     MUTABLE_FIELDS_BY_CLASS_NAME,
@@ -102,10 +101,7 @@ def _transform_model_to_input_config(  # noqa: PLR0911
     editable: bool,  # noqa: FBT001
 ) -> InputConfig:
     """Determine the input type for a given field of a given model."""
-
-    print(f"________ _transform_model_to_input_config")
-    if field_name in FINAL_FIELDS_BY_CLASS_NAME[entity_type]:
-        print("IF CLAUSE______________")
+    if field_name == "identifierInPrimarySource":
         return InputConfig(
             editable_text=False,
             editable_badge=False,
@@ -207,6 +203,7 @@ def _transform_model_to_editor_primary_sources(
     """With a model and rules, attach an editor primary source to the field."""
     primary_source_id = _get_primary_source_id_from_model(model)
     primary_source_name = transform_value(primary_source_id)
+
     for field_name in type(model).model_fields:
         if field_name in fields_by_name:
             editor_values = _transform_model_values_to_editor_values(
@@ -268,7 +265,13 @@ def transform_models_to_fields(
         )
         for (field_name, entity_type) in mergeable_fields
     }
-
+    if extracted_items:
+        fields_by_name["identifierInPrimarySource"] = EditorField(
+            name="identifierInPrimarySource",
+            value_type=["str"],
+            primary_sources=[],
+            is_required=False,
+        )
     for extracted in extracted_items:
         _transform_model_to_editor_primary_sources(
             fields_by_name,

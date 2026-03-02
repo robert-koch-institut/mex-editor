@@ -84,6 +84,14 @@ MODEL_CONFIG_BY_STEM_TYPE = TypeAdapter(dict[str, ModelConfig]).validate_python(
 LANGUAGE_VALUE_NONE = "None"
 
 
+class ValueLabelCheckboxItem(BaseModel):
+    """Item for checkbox state with a value, label and check state."""
+
+    value: str
+    label: str
+    checked: bool
+
+
 class SearchResult(BaseModel):
     """Search result preview."""
 

@@ -54,7 +54,7 @@ class LocaleService:
         """
         return cast("Self", LOCALE_SERVICE_STORE.load(cls))
 
-    _editor_locale_path = cast("Path", (files("mex.editor") / "locales"))
+    _editor_locale_path = cast("Path", (files("mex.editor") / "i18n"))
     _model_locale_path = cast("Path", (files("mex.model") / "i18n"))
     _available_locales: dict[str, MExLocale] = {}
     _translations: dict[str, GNUTranslations] = {}

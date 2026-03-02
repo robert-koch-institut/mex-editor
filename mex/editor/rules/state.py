@@ -206,6 +206,7 @@ class RuleState(State, LocalStorageMixinState):
             self.stem_type = transform_models_to_stem_type(extracted_items)
         try:
             rule_set = self._get_rule_set()
+            print("RULESET", rule_set.model_dump_json())
         except HTTPError as exc:
             yield from escalate_error(
                 "backend", "error fetching rule items", exc.response.text

@@ -12,6 +12,7 @@ from mex.common.fields import (
 from mex.common.models import (
     MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
     ActivityRuleSetRequest,
+    ActivityRuleSetResponse,
     AdditiveActivity,
     AdditiveContactPoint,
     AnyExtractedModel,
@@ -38,6 +39,50 @@ def edit_page(
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
     return page
+
+
+@pytest.fixture
+def load_superseded_by_entites(extracted_activity: ExtractedActivity) -> None:
+    connector = BackendApiConnector.get()
+
+    activity_2 = ExtractedActivity(
+        abstract=[],
+        contact=extracted_activity.contact,
+        hadPrimarySource=MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
+        identifierInPrimarySource="supersededBy-1",
+        responsibleUnit=extracted_activity.responsibleUnit,
+        shortName=["A2-S1"],
+        title=[Text(value="Aktivität 2 Superseded 1", language=TextLanguage.DE)],
+    )
+
+    activity_3 = ExtractedActivity(
+        abstract=[],
+        contact=extracted_activity.contact,
+        hadPrimarySource=MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
+        identifierInPrimarySource="supersededBy-2",
+        responsibleUnit=extracted_activity.responsibleUnit,
+        shortName=["A3-S2"],
+        title=[Text(value="Aktivität 3 Superseded 2", language=TextLanguage.DE)],
+    )
+
+    connector.ingest(
+        [
+            activity_2,
+            activity_3,
+            ActivityRuleSetResponse(
+                additive=AdditiveActivity(
+                    supersededBy=extracted_activity.stableTargetId
+                ),
+                stableTargetId=activity_2.stableTargetId,
+            ),
+            ActivityRuleSetResponse(
+                additive=AdditiveActivity(
+                    supersededBy=extracted_activity.stableTargetId
+                ),
+                stableTargetId=activity_3.stableTargetId,
+            ),
+        ]
+    )  # type: ignore[type-var]
 
 
 @pytest.fixture
@@ -879,3 +924,20 @@ def test_edit_page_discard_changes_button_roundtrip(
         edit_page.get_by_test_id("additive-rule-shortName-0-text")
     ).not_to_be_visible()
     expect(discard_dialog_button).not_to_be_visible()
+
+
+@pytest.mark.integration
+def test_superseded_by_backward_visibility(
+    edit_page: Page,
+    load_superseded_by_entites: None,  # noqa: ARG001
+) -> None:
+    superseded_by_backward = edit_page.get_by_test_id("field-supersededBy-backward")
+    superseded_by_backward.is_visible()
+
+    search_results = superseded_by_backward.get_by_test_id(
+        re.compile(r"search-result-.*")
+    )
+    expect(search_results).to_have_count(2)
+
+    expect(search_results).to_contain_text("Aktivität 2 Superseded 1")
+    expect(search_results).to_contain_text("Aktivität 3 Superseded 2")

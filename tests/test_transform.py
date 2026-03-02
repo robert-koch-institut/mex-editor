@@ -2,7 +2,11 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
-from mex.common.models import AdditiveContactPoint, AnyExtractedModel
+from mex.common.models import (
+    AdditiveContactPoint,
+    AnyExtractedModel,
+    PreviewOrganizationalUnit,
+)
 from mex.common.types import (
     AccessRestriction,
     APIType,
@@ -17,6 +21,7 @@ from mex.editor.models import LANGUAGE_VALUE_NONE, EditorValue
 from mex.editor.transform import (
     transform_model_to_all_properties,
     transform_models_to_preview,
+    transform_models_to_search_results,
     transform_models_to_stem_type,
     transform_models_to_title,
     transform_value,
@@ -214,3 +219,45 @@ def test_model_to_all_properties() -> None:
     assert len(result) == 2
     assert result[0].text == "value1"
     assert result[1].text == "value2"
+
+
+def test_transform_models_to_results() -> None:
+    # test with empty list
+    assert transform_models_to_search_results([]) == []
+
+    # test with preview unit
+    unit_preview = PreviewOrganizationalUnit(
+        name=[Text(value="Unit 1", language=TextLanguage.EN)],
+        shortName=["OU1"],
+        identifier="000000000012345",
+    )
+    search_result = transform_models_to_search_results([unit_preview])
+    assert len(search_result) == 1
+    assert search_result[0].model_dump() == {
+        "identifier": "000000000012345",
+        "stem_type": "OrganizationalUnit",
+        "title": [
+            {
+                "text": "OU1",
+                "badge": LANGUAGE_VALUE_NONE,
+                "being_edited": False,
+                "href": None,
+                "identifier": None,
+                "external": False,
+                "enabled": True,
+            }
+        ],
+        "preview": [
+            {
+                "text": "Unit 1",
+                "badge": TextLanguage.EN.name,
+                "being_edited": False,
+                "href": None,
+                "identifier": None,
+                "external": False,
+                "enabled": True,
+            }
+        ],
+        "show_all_properties": False,
+        "all_properties": [],
+    }

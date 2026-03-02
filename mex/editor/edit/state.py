@@ -3,16 +3,37 @@ from urllib.parse import parse_qs, urlparse
 
 import reflex as rx
 from reflex.event import EventSpec
+from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.label_var import label_var
+from mex.editor.models import SearchResult
 from mex.editor.rules.state import RuleState
+from mex.editor.transform import transform_models_to_search_results
 
 
 class EditState(RuleState):
     """State for the edit component."""
 
     is_deleting: bool = False
+
+    @rx.var
+    def superseded_by_backward(self) -> list[SearchResult]:
+        """Load the superseding items for the current item."""
+        if self.item_id:
+            connector = BackendApiConnector.get()
+            try:
+                print("Fetching superseding items for item_id:", self.item_id)
+                return transform_models_to_search_results(
+                    connector.fetch_all_merged_items(
+                        reference_field="supersededBy",
+                        referenced_identifier=[self.item_id],
+                    )
+                )
+            except HTTPError:
+                return []
+
+        return []
 
     @rx.event
     def delete_reset(self) -> Generator[EventSpec | None]:
@@ -133,3 +154,15 @@ class EditState(RuleState):
     @label_var(label_id="edit.reset_rules.success_toast_text")
     def label_reset_rules_success_toast_text(self) -> None:
         """Label for reset_rules.success_toast_text."""
+
+    @label_var(label_id="edit.field_supersededBy.label")
+    def label_field_superseded_by_label(self) -> None:
+        """Label for field_supersededBy.label."""
+
+    @label_var(label_id="edit.field_supersededBy.description")
+    def label_field_superseded_by_description(self) -> None:
+        """Label for field_supersededBy_description."""
+
+    @label_var(label_id="edit.field_supersededBy.empty")
+    def label_field_superseded_by_empty(self) -> None:
+        """Label for field_supersededBy_empty."""

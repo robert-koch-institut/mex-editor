@@ -262,3 +262,12 @@ msgstr "Regeln zurückgesetzt"
 
 msgid "edit.reset_rules.success_toast_text"
 msgstr "Die Regeln wurden erfolgreich zurückgesetzt."
+
+msgid "edit.field_supersededBy.label"
+msgstr "Dubletten"
+
+msgid "edit.field_supersededBy.description"
+msgstr "Zeigt die Entitäten, die auf diese Entität mit dem Feld 'ersetzt durch' verweisen."
+
+msgid "edit.field_supersededBy.empty"
+msgstr "Keine Dubletten vorhanden."

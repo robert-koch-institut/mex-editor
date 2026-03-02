@@ -24,8 +24,8 @@ from mex.common.types import (
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.models import NavItem, SearchResult
-from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
+from mex.editor.transform import transform_models_to_search_results
 from mex.editor.utils import resolve_editor_value
 
 
@@ -172,7 +172,7 @@ class ConsentState(State):
             )
         else:
             self.is_loading = False
-            transformed_results = transform_models_to_results(response.items)
+            transformed_results = transform_models_to_search_results(response.items)
             if is_projects:
                 self.user_projects = transformed_results
                 self.projects_total = response.total
@@ -203,9 +203,9 @@ class ConsentState(State):
             )
         else:
             if response.total > 0:
-                self.consent_status = transform_models_to_results([response.items[0]])[
-                    0
-                ]
+                self.consent_status = transform_models_to_search_results(
+                    [response.items[0]]
+                )[0]
             else:
                 self.consent_status = None
 

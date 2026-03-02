@@ -70,7 +70,7 @@ class State(rx.State):
             **item.model_dump(exclude={"title"}),
         )
 
-    @rx.var
+    @rx.var(deps=["current_locale"])
     def nav_items_translated(self) -> list[NavItem]:
         """The Navbar items with locale sensitive label."""
         return [self._translate_nav_item(item) for item in self._nav_items]

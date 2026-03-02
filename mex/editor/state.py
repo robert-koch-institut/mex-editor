@@ -1,8 +1,10 @@
 from collections.abc import Generator, Mapping, Sequence
 from importlib.metadata import version
+from urllib.parse import urlparse, urlunparse
 
 import reflex as rx
 from reflex.event import EventSpec
+from reflex.istate.data import ReflexURL
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.models import MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
@@ -28,11 +30,17 @@ class State(rx.State):
     merged_login_person: MergedLoginPerson | None = None
     target_path_after_login: str | None = None
     is_unsaved_changes_dialog_open: bool = False
+
     _nav_items: list[NavItem] = [
         NavItem(
             title="layout.nav_bar.search_navitem",
             route_ids=["/", "/index"],
             raw_path="/",
+        ),
+        NavItem(
+            title="layout.nav_bar.advanced_search_navitem",
+            route_ids=["/advanced-search"],
+            raw_path="/advanced-search/?page=1",
         ),
         NavItem(
             title="layout.nav_bar.create_navitem",
@@ -59,13 +67,22 @@ class State(rx.State):
     def _translate_nav_item(self, item: NavItem) -> NavItem:
         return NavItem(
             title=self._locale_service.get_ui_label(self.current_locale, item.title),
-            **item.dict(exclude={"title"}),
+            **item.model_dump(exclude={"title"}),
         )
 
     @rx.var
     def nav_items_translated(self) -> list[NavItem]:
         """The Navbar items with locale sensitive label."""
         return [self._translate_nav_item(item) for item in self._nav_items]
+
+    @rx.event
+    def set_is_unsaved_changes_dialog_open(self, is_open: bool) -> None:  # noqa: FBT001
+        """Set the state of the unsaved changes dialog.
+
+        Args:
+            is_open: Whether the dialog should be open or not.
+        """
+        self.is_unsaved_changes_dialog_open = is_open
 
     @rx.event
     def change_locale(self, locale: str) -> None:
@@ -82,19 +99,28 @@ class State(rx.State):
         self.reset()  # type: ignore[no-untyped-call]
         yield rx.redirect("/")
 
+    @staticmethod
+    def _strip_frontend_path(url: ReflexURL) -> str:
+        config = rx.config.get_config()
+        parsed = urlparse(url)
+        path = parsed.path
+        if path.startswith(config.frontend_path):
+            path = path[len(config.frontend_path) :] or "/"
+        return str(urlunparse(parsed._replace(path=path)))
+
     @rx.event
     def check_mex_login(self) -> Generator[EventSpec]:
         """Check if a user is logged in."""
         if self.user_mex is None:
-            self.target_path_after_login = str(self.router.url)
-            yield rx.redirect("/login")
+            self.target_path_after_login = self._strip_frontend_path(self.router.url)
+            yield rx.redirect("/login", replace=True)
 
     @rx.event
     def check_ldap_login(self) -> Generator[EventSpec]:
         """Check if a user is logged in to ldap."""
         if self.user_ldap is None:
-            self.target_path_after_login = str(self.router.url)
-            yield rx.redirect("/login-ldap")
+            self.target_path_after_login = self._strip_frontend_path(self.router.url)
+            yield rx.redirect("/login-ldap", replace=True)
 
     def push_url_params(
         self,

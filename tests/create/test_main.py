@@ -6,7 +6,10 @@ from playwright.sync_api import Locator, Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
-from mex.common.models import AnyExtractedModel
+from mex.common.models import (
+    MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    AnyExtractedModel,
+)
 from tests.conftest import build_ui_label_regex
 
 url_regex = re.compile(r"/create/(\w+)")
@@ -70,7 +73,7 @@ def test_create_page_updates_nav_bar(create_page: Page) -> None:
     nav_bar = page.get_by_test_id("nav-bar")
     page.screenshot(path="tests_create_test_main-test_create_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
-    nav_item = nav_bar.locator(".nav-item").all()[1]
+    nav_item = nav_bar.get_by_test_id("nav-item-/create")
     expect(nav_item).to_contain_text(
         build_ui_label_regex("layout.nav_bar.create_navitem")
     )
@@ -89,7 +92,7 @@ def test_create_page_renders_heading(create_page: Page) -> None:
 def test_create_page_renders_fields(create_page: Page) -> None:
     page = create_page
     page.get_by_test_id("entity-type-select").click()
-    page.get_by_role("option", name="Resource", exact=True).click()
+    page.get_by_test_id(re.compile(r"value-label-select-item-(.+)-Resource")).click()
     page.screenshot(
         path="tests_create_test_main-test_create_page_renders_fields_select.png"
     )
@@ -104,7 +107,9 @@ def test_create_page_renders_fields(create_page: Page) -> None:
 @pytest.mark.integration
 def test_create_page_test_additive_buttons(create_page: Page) -> None:
     page = create_page
-    new_additive_button = page.get_by_test_id("new-additive-description-00000000000000")
+    new_additive_button = page.get_by_test_id(
+        f"new-additive-description-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    )
     new_additive_button.scroll_into_view_if_needed()
     page.screenshot(
         path="tests_create_test_main-test_edit_page_renders_new_additive_button.png"
@@ -127,7 +132,9 @@ def test_create_page_test_additive_buttons(create_page: Page) -> None:
 @pytest.mark.integration
 def test_create_page_submit_item(create_page: Page) -> None:
     page = create_page
-    new_additive_button = page.get_by_test_id("new-additive-title-00000000000000")
+    new_additive_button = page.get_by_test_id(
+        f"new-additive-title-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    )
     new_additive_button.scroll_into_view_if_needed()
     expect(new_additive_button).to_be_visible()
     new_additive_button.click()
@@ -169,16 +176,20 @@ def test_language_switcher(
 
     # change language and wait for reload
     lang_switcher.click()
-    create_page.screenshot(
-        path="tests_create_test_main-test_language_switcher-switcher_clicked.png"
-    )
     create_page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()
+    create_page.screenshot(
+        path=f"tests_create_test_main-test_language_switcher-switcher_clicked-{locale_id}.png"
+    )
 
     # select entity_type resource
     create_page.get_by_test_id("entity-type-select").click(timeout=30_000)
-    create_page.get_by_role("option", name="Resource", exact=True).click()
+    create_page.get_by_test_id(
+        re.compile(r"value-label-select-item-(.+)-Resource")
+    ).click()
     create_page.wait_for_timeout(20000)
-
+    create_page.screenshot(
+        path=f"tests_create_test_main-test_language_switcher-resource_selected-{locale_id}.png"
+    )
     # find the accessPlatform field label and check the text
     field_access_platform = create_page.get_by_test_id("field-accessPlatform-name")
     expect(field_access_platform).to_have_text(expected_access_platform_field_label)
@@ -191,7 +202,9 @@ def test_search_reference_dialog(
 ) -> None:
     dialog_prefix = "search-reference-dialog"
     field_contact = create_page.get_by_test_id("field-contact")
-    field_contact.get_by_test_id("new-additive-contact-00000000000000").click()
+    field_contact.get_by_test_id(
+        f"new-additive-contact-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     field_contact.get_by_test_id(f"{dialog_prefix}-button").click()
 
     query_input = create_page.get_by_test_id(f"{dialog_prefix}-query-input")
@@ -212,7 +225,9 @@ def test_search_reference_dialog(
     ).to_have_value(ou.stableTargetId)
 
     field_uic = create_page.get_by_test_id("field-unitInCharge")
-    field_uic.get_by_test_id("new-additive-unitInCharge-00000000000000").click()
+    field_uic.get_by_test_id(
+        f"new-additive-unitInCharge-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     field_uic.get_by_test_id(f"{dialog_prefix}-button").click()
     expect(search_results.locator(".search-result-card")).to_have_count(1)
     create_page.locator(".rt-DialogOverlay").click(position={"x": 10, "y": 10})
@@ -228,7 +243,9 @@ def test_create_page_test_draft_creation_on_entity_type_change(
     create_page = draft_create_page["page"]
 
     create_page.get_by_test_id("entity-type-select").click()
-    create_page.get_by_role("option", name="Resource", exact=True).click()
+    create_page.get_by_test_id(
+        re.compile(r"value-label-select-item-(.+)-Resource")
+    ).click()
 
     expect(draft_create_page["discard_dialog_button"]).to_be_visible()
     expect(draft_create_page["draft_menu_trigger"]).to_have_text("1")
@@ -242,7 +259,9 @@ def test_create_page_test_draft_creation_on_field_edit(
 ) -> None:
     create_page = draft_create_page["page"]
 
-    create_page.get_by_test_id("new-additive-title-00000000000000").click()
+    create_page.get_by_test_id(
+        f"new-additive-title-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     expect(draft_create_page["discard_dialog_button"]).to_be_visible()
     expect(draft_create_page["draft_menu_trigger"]).to_have_text("1")
     draft_create_page["draft_menu_trigger"].click()
@@ -255,7 +274,9 @@ def test_create_page_test_discard_draft(
 ) -> None:
     create_page = draft_create_page["page"]
 
-    create_page.get_by_test_id("new-additive-title-00000000000000").click()
+    create_page.get_by_test_id(
+        f"new-additive-title-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     create_page.get_by_test_id("additive-rule-title-0-text").fill(
         "Draft title for activity"
     )
@@ -280,7 +301,9 @@ def test_logout_unsaved_changes_dialog_on_draft_logout_normal(
         )
 
     # create and add contact there should be a draft
-    page.get_by_test_id("new-additive-contact-00000000000000").click()
+    page.get_by_test_id(
+        f"new-additive-contact-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     expect(page.get_by_test_id("draft-menu-trigger")).to_be_visible()
     _screenshot("changes")
 
@@ -321,7 +344,9 @@ def test_logout_unsaved_changes_dialog_on_draft(draft_create_page: DraftPage) ->
         )
 
     # create and add contact there should be a draft
-    page.get_by_test_id("new-additive-contact-00000000000000").click()
+    page.get_by_test_id(
+        f"new-additive-contact-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     expect(page.get_by_test_id("draft-menu-trigger")).to_be_visible()
     _screenshot("changes")
 
@@ -344,7 +369,9 @@ def test_create_page_test_draft_menu_item_text(
 ) -> None:
     create_page = draft_create_page["page"]
 
-    create_page.get_by_test_id("new-additive-description-00000000000000").click()
+    create_page.get_by_test_id(
+        f"new-additive-description-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     create_page.get_by_test_id("additive-rule-description-0-text").fill(
         "New Description."
     )
@@ -356,7 +383,9 @@ def test_create_page_test_draft_menu_item_text(
     expect(draft_create_page["draft_menu_item"]).to_have_text("AccessPlatform")
     # force the menu overlay to close
     create_page.mouse.click(10, 10)
-    create_page.get_by_test_id("new-additive-title-00000000000000").click()
+    create_page.get_by_test_id(
+        f"new-additive-title-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     create_page.get_by_test_id("additive-rule-title-0-text").fill(
         "Draft title for access platform"
     )

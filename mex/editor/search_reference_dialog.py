@@ -1,4 +1,5 @@
 from collections.abc import Generator, Iterable
+from typing import cast
 
 import reflex as rx
 from reflex.event import EventSpec, EventType
@@ -7,7 +8,6 @@ from requests import HTTPError
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
-from mex.editor.layout import custom_focus_script
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import SearchResult
 from mex.editor.pagination_component import (
@@ -68,15 +68,17 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
     @rx.var
     def label_user_reference_types(self) -> str:
         """Label for the reference types."""
-        # TODO(FE): PLACEHOLDER - translate reference types when doin MX-2092
-        dummy_translation = self._locale_service.get_field_label(
-            self.current_locale, "", "contact"
-        )
-        result = [
-            f"{self.current_locale}: {x} ({dummy_translation})"
+        translated = [
+            self._locale_service.get_ui_label(
+                self.current_locale, x.removeprefix("Merged")
+            )
             for x in self.user_reference_types
         ]
-        return "|".join(result)
+        return (
+            f"{', '.join(translated[:-1])}{' und ' if len(translated) > 1 else ''}{translated[-1]}"  # noqa: E501
+            if translated
+            else ""
+        )
 
     @rx.event
     def toggle_show_all_properties(self, item: SearchResult, index: int) -> None:
@@ -140,6 +142,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
             self.is_loading = False
             self.results = transform_models_to_dialog_results(response.items)
             yield SearchReferenceDialogState.set_total(response.total)  # type: ignore[operator]
+            yield SearchReferenceDialogState.resolve_identifiers()
 
 
 def search_reference_dialog(
@@ -155,10 +158,25 @@ def search_reference_dialog(
 
     def render_result() -> rx.Component:
         def render_select_button(item: SearchResult, _: int) -> rx.Component:
+            def _array_handler() -> EventType:  # type: ignore[type-arg]
+                return [
+                    x(item.identifier)
+                    for x in cast("Iterable", on_identifier_selected)  # type: ignore[type-arg]
+                ]
+
+            def _handler() -> EventType:  # type: ignore[type-arg]
+                return on_identifier_selected(item.identifier)  # type: ignore[misc, no-any-return]
+
+            inner_handler = (
+                _array_handler
+                if isinstance(on_identifier_selected, Iterable)
+                else _handler
+            )
+
             return rx.dialog.close(
                 rx.button(
                     SearchReferenceDialogState.label_results_select_button,
-                    on_click=on_identifier_selected(item.identifier),  # type: ignore[misc]
+                    on_click=inner_handler,
                     custom_attrs={
                         "data-testid": f"{component_id_prefix}-result-select-button"
                     },
@@ -200,7 +218,6 @@ def search_reference_dialog(
                 value=SearchReferenceDialogState.user_query,
                 on_change=SearchReferenceDialogState.set_user_query,
                 custom_attrs={
-                    "data-focusme": "",
                     "data-testid": f"{component_id_prefix}-query-input",
                 },
                 placeholder=SearchReferenceDialogState.label_query_placeholder,
@@ -282,7 +299,6 @@ def search_reference_dialog(
                 render_result(),
                 align="stretch",
             ),
-            custom_focus_script(),
             style=rx.Style({"max-width": "62vw !important"}),
             on_open_auto_focus=[
                 SearchReferenceDialogState.set_user_query(""),  # type: ignore[operator]

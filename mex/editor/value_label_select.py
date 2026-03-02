@@ -67,26 +67,29 @@ class ValueLabelHighLevelSelect(HighLevelSelect):
             content_props["color_scheme"] = color_scheme
             trigger_props["color_scheme"] = color_scheme
 
+        item_testid_prefix = props.pop("item_testid_prefix", "")
         label = props.pop("label", None)
+
+        def _render_item(item: ValueLabelSelectItem, item_index: int) -> rx.Component:
+            return SelectItem.create(
+                item.label,
+                value=item.value,
+                custom_attrs={
+                    "data-testid": f"{item_testid_prefix}value-label-select-item-{item_index}-{item.value}"  # noqa: E501
+                },
+            )
 
         child: list[Any] = []
         if isinstance(items, Var):
             child = [
                 rx.foreach(
                     items,
-                    lambda item: SelectItem.create(
-                        item.label,
-                        value=item.value,
-                    ),
+                    _render_item,
                 )
             ]
         else:
             child = [
-                SelectItem.create(
-                    item.label,
-                    value=item.value,
-                )
-                for item in items
+                _render_item(item, item_index) for item_index, item in enumerate(items)
             ]
 
         return SelectRoot.create(

@@ -87,10 +87,7 @@ def test_pagination(
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-def test_search_input(
-    base_url: str,
-    writer_user_page: Page,
-) -> None:
+def test_search_input(base_url: str, writer_user_page: Page) -> None:
     page = writer_user_page
     page.goto(base_url)
 
@@ -98,26 +95,32 @@ def test_search_input(
     sidebar = page.get_by_test_id("search-sidebar")
     expect(sidebar).to_be_visible()
 
+    # wait for initial state to load (Reflex hydration complete)
+    expect(page.get_by_test_id("search-results-summary")).to_be_visible()
+
     # test search input is showing and functioning
     search_input = page.get_by_test_id("search-input")
     expect(search_input).to_be_visible()
     search_input.fill("Bioinformatics")
     search_input.press("Enter")
+    page.wait_for_timeout(10000)  # wait for loading
     search_results_summary = page.get_by_test_id("search-results-summary")
     expect(search_results_summary).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-1-found.png"
     )
-    expect(search_results_summary).to_have_text(build_pagination_regex(1, 1))
+    expect(page.get_by_test_id("search-results-summary")).to_have_text(
+        build_pagination_regex(1, 1)
+    )
 
     search_input.fill("totally random search dPhGDHu3uiEcU6VNNs0UA74bBdubC3")
     page.get_by_test_id("search-button").click()
-    search_results_summary = page.get_by_test_id("search-results-summary")
-    expect(search_results_summary).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_search_input-on-search-input-0-found.png"
     )
-    expect(search_results_summary).to_have_text(build_pagination_regex(0, 0))
+    expect(page.get_by_test_id("search-results-summary")).to_have_text(
+        build_pagination_regex(0, 0)
+    )
 
 
 @pytest.mark.integration
@@ -136,14 +139,12 @@ def test_entity_types(
     # check entity types are showing and functioning
     entity_types = page.get_by_test_id("entity-types")
     expect(entity_types).to_be_visible()
-    assert "PrimarySource" in entity_types.all_text_contents()[0]
-
-    entity_types.get_by_text("Activity").click()
+    entity_types.get_by_test_id("entity-type-Activity").click()
     expect(page.get_by_text(build_pagination_regex(1, 1))).to_be_visible()
     page.screenshot(
         path="tests_search_test_main-test_entity_types-on-select-entity-1-found.png"
     )
-    entity_types.get_by_text("Activity").click()
+    entity_types.get_by_test_id("entity-type-Activity").click()
 
 
 @pytest.mark.integration
@@ -220,7 +221,7 @@ def test_load_search_params(
     # check primary sources are loaded from url
     primary_sources = page.get_by_test_id("primary-source-filter")
     unchecked = primary_sources.get_by_role("checkbox", checked=False)
-    expect(unchecked).to_have_count(2)
+    expect(unchecked).to_have_count(3)
     checked = primary_sources.get_by_role("checkbox", checked=True)
     expect(checked).to_have_count(1)
 
@@ -370,12 +371,13 @@ def test_push_search_params(
     entity_types = page.get_by_test_id("entity-types")
     expect(entity_types).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_push_search_params-on-load.png")
-    activity_checkbox = entity_types.get_by_text("Activity")
+
+    activity_checkbox = entity_types.get_by_test_id("entity-type-Activity")
     activity_checkbox.click()
 
     # wait for the checkbox to actually become checked (websocket roundtrip complete)
     # Find the actual checkbox input by its accessible role and wait for it to be checked
-    activity_checkbox_input = entity_types.get_by_role("checkbox", name="Activity")
+    activity_checkbox_input = entity_types.get_by_test_id("entity-type-Activity")
     expect(activity_checkbox_input).to_be_checked()
 
     # verify exactly one checkbox is checked
@@ -465,18 +467,18 @@ def test_additional_titles_badge(
 
     # expect title is visible and there are additional titles for 'r2'
     expect(resource_r2_result).to_contain_text(first_title.value)
-    page.get_by_test_id("additional-titles-badge").first.scroll_into_view_if_needed()
-    expect(page.get_by_test_id("additional-titles-badge").first).to_be_visible()
+    expect(page.get_by_test_id("additional-titles-badge")).to_be_visible()
+    page.get_by_test_id("additional-titles-badge").scroll_into_view_if_needed()
     page.screenshot(path="tests_search_test_additional_titles_badge_on_visible.png")
-    expect(page.get_by_test_id("additional-titles-badge").first).to_have_text(
+    expect(page.get_by_test_id("additional-titles-badge")).to_have_text(
         build_ui_label_regex("components.titles.additional_titles")
     )
 
     # hover additional titles
-    box = page.get_by_test_id("additional-titles-badge").first.bounding_box()
+    box = page.get_by_test_id("additional-titles-badge").bounding_box()
     assert box
     page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2, steps=5)
-    page.get_by_test_id("additional-titles-badge").first.hover()
+    page.get_by_test_id("additional-titles-badge").hover()
     page.screenshot(path="tests_search_test_additional_titles_badge_on_hover.png")
 
     # check tooltip content

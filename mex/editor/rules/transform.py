@@ -10,12 +10,15 @@ from mex.common.fields import (
     MERGEABLE_FIELDS_BY_CLASS_NAME,
     MUTABLE_FIELDS_BY_CLASS_NAME,
     REFERENCE_FIELDS_BY_CLASS_NAME,
+    REQUIRED_FIELDS_BY_CLASS_NAME,
     TEMPORAL_FIELDS_BY_CLASS_NAME,
+    TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES,
     TEXT_FIELDS_BY_CLASS_NAME,
     VOCABULARIES_BY_FIELDS_BY_CLASS_NAMES,
     VOCABULARY_FIELDS_BY_CLASS_NAME,
 )
 from mex.common.models import (
+    MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     RULE_SET_REQUEST_CLASSES_BY_NAME,
     AnyAdditiveModel,
@@ -37,11 +40,7 @@ from mex.common.types import (
     Text,
     TextLanguage,
 )
-from mex.editor.fields import (
-    REQUIRED_FIELDS_BY_CLASS_NAME,
-    STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME,
-    TEMPORAL_PRECISIONS_BY_FIELD_BY_CLASS_NAMES,
-)
+from mex.editor.fields import STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME
 from mex.editor.models import (
     LANGUAGE_VALUE_NONE,
     MODEL_CONFIG_BY_STEM_TYPE,
@@ -63,8 +62,10 @@ def _get_primary_source_id_from_model(
     """Given any model type, try to derive a sensible primary source identifier."""
     if isinstance(model, AnyExtractedModel):
         return MergedPrimarySourceIdentifier(model.hadPrimarySource)
-    if isinstance(model, AnyMergedModel | AnyRuleModel):
+    if isinstance(model, AnyMergedModel):
         return MEX_PRIMARY_SOURCE_STABLE_TARGET_ID
+    if isinstance(model, AnyRuleModel):
+        return MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID
     msg = (
         "Cannot get primary source ID for model. Expected ExtractedModel, "
         f"MergedModel or RuleModel, got {type(model)}."
@@ -314,7 +315,7 @@ def _transform_fields_to_additive(
             continue
         field_values = raw_rule.setdefault(field.name, [])
         for primary_source in field.primary_sources:
-            if primary_source.identifier != MEX_PRIMARY_SOURCE_STABLE_TARGET_ID:
+            if primary_source.identifier != MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID:
                 continue
             for editor_value in primary_source.editor_values:
                 additive_value = _transform_editor_value_to_model_value(

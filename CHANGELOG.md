@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - bump python to 3.14
-- use pydantic v2 BaseModel instead of rx.Base
 - renamed 'locale' folder to 'i18n'
 - change the docker build to multi-stage build
 - change primary source of rules from mex to mex-editor

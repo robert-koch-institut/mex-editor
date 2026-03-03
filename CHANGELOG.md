@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- consent page filters items based on person
+
 ### Changes
 
 - bump python to 3.14
+- consent page UI clean up
 - renamed 'locale' folder to 'i18n'
 - change the docker build to multi-stage build
 - change primary source of rules from mex to mex-editor

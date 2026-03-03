@@ -105,6 +105,9 @@ ignore = [
     "N815",    # Allow mixedCase variables in class scope (model compat)
     "RUF012",  # Allow mutable class attributes (pydantic compat)
     "SIM108",  # Allow explicit if-else instead of ternary (easier to read)
+    "TC001",   # Allow typing-only first party imports for state modules
+    "TC002",   # Allow typing-only third party imports for state modules
+    "TC003",   # Allow typing-only standard library imports for state modules
     "TD003",   # Allow TODOs without ticket link (don't punish TODO writers)
     "TRY003",  # Allow long exception message at the raise site (for pydantic)
 ]
@@ -116,11 +119,6 @@ select = ["ALL"]
 ]
 "mex/editor/types.py" = [
     "A005",     # Allow custom types module to shadow standard-library
-]
-"**/state.py" = [
-    "TC001",   # Allow typing-only first party imports for state modules
-    "TC002",   # Allow typing-only third party imports for state modules
-    "TC003",   # Allow typing-only standard library imports for state modules
 ]
 "docs/**" = [
     "INP001",   # Docs folder does not need to be a package
@@ -146,9 +144,6 @@ select = ["ALL"]
 
 [tool.ruff.lint.flake8-import-conventions.extend-aliases]
 "reflex" = "rx"
-
-[tool.ruff.lint.flake8-type-checking]
-runtime-evaluated-base-classes = ["pydantic.BaseModel", "reflex.Base", "reflex.State"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["mex", "tests"]

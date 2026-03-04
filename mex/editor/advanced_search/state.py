@@ -42,7 +42,7 @@ class FieldDescriptor:
         )
 
     @classmethod
-    def from_json(cls, json_str: str) -> "FieldDescriptor":
+    def from_json(cls, json_str: str) -> FieldDescriptor:
         """Deserialize a JSON string to a FieldDescriptor."""
         data = json.loads(json_str)
         return FieldDescriptor(

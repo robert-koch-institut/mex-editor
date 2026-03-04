@@ -9,13 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- consent page filters items based on person
+
 ### Changes
+
+- bump python to 3.14
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/0c16a6
+- consent page UI clean up
+- renamed 'locale' folder to 'i18n'
+- change the docker build to multi-stage build
+- change primary source of rules from mex to mex-editor
+- moved pytest rerun config from toml to makefile
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- fixed settings logging on startup and in tests
 
 ### Security
 
@@ -38,7 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- bump python to 3.14
 - upgrade reflex to 0.8.15
 - use pydantic v2 BaseModel instead of rx.Base
 - other rerun lib for pytest

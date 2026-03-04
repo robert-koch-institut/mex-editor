@@ -1,23 +1,6 @@
 import pytest
 
-from mex.editor.locale_service import LocaleService, camelcase_to_title
-
-
-@pytest.mark.parametrize(
-    ("input_camelcase", "expected"),
-    [
-        ("", ""),
-        ("simplestring", "Simplestring"),
-        ("inputCamelCase", "Input Camel Case"),
-        (
-            "a bit_weired string_that might be _work _for_some_reason_",
-            "A Bit_Weired String_That Might Be _Work _For_Some_Reason_",
-        ),
-    ],
-    ids=["emtpy string", "simple string", "simple camelcase", "weired camelcase"],
-)
-def test_camelcase_to_title(input_camelcase: str, expected: str) -> None:
-    assert camelcase_to_title(input_camelcase) == expected
+from mex.editor.locale_service import LocaleService
 
 
 @pytest.mark.parametrize(

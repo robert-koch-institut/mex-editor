@@ -1,4 +1,3 @@
-import nest_asyncio  # type: ignore[import-untyped]
 import pytest
 
 from mex.common.exceptions import EmptySearchResultError, MExError
@@ -10,8 +9,6 @@ from mex.editor.utils import (
     resolve_identifier,
 )
 
-nest_asyncio.apply()
-
 
 @pytest.fixture
 def anyio_backend() -> str:
@@ -20,17 +17,18 @@ def anyio_backend() -> str:
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-@pytest.mark.anyio
-async def test_resolve_identifier(
+def test_resolve_identifier(
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     dummy_primary_source = dummy_data_by_identifier_in_primary_source["ps-1"]
     assert isinstance(dummy_primary_source, ExtractedPrimarySource)
-    returned = await resolve_identifier(dummy_primary_source.stableTargetId)
+    returned = resolve_identifier(dummy_primary_source.stableTargetId)
     assert returned == dummy_primary_source.title[0].value
 
+    resolve_identifier.cache_clear()
+
     with pytest.raises(EmptySearchResultError):
-        await resolve_identifier("IdentifierDoesNotExist")
+        resolve_identifier("IdentifierDoesNotExist")
 
 
 @pytest.mark.integration

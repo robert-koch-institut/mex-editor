@@ -1,19 +1,16 @@
-from typing import TYPE_CHECKING, Any, cast
+from collections.abc import Callable
+from typing import Any, cast
 
+from reflex import Var
+
+from mex.editor.ingest.state import IngestState
 from mex.editor.pagination_component import (
     PaginationButtonOptions,
     PaginationOptions,
     PaginationPageOptions,
     PaginationStateMixin,
 )
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
-
-    from reflex import Var
-
-    from mex.editor.ingest.state import IngestState
-    from mex.editor.search.state import SearchState
+from mex.editor.search.state import SearchState
 
 
 def build_pagination_options(

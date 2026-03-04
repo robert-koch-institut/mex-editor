@@ -1,12 +1,13 @@
 from collections.abc import Generator
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal
+from typing import Literal
 
 import reflex as rx
 from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.models import AnyPreviewModel
 from mex.editor.component_option_helper import build_pagination_options
 from mex.editor.consent.state import ConsentState
 from mex.editor.consent.transform import add_external_links_to_results
@@ -16,9 +17,6 @@ from mex.editor.pagination_component import PaginationStateMixin, pagination
 from mex.editor.search.transform import transform_models_to_results
 from mex.editor.search_results_component import search_results_list
 from mex.editor.utils import resolve_editor_value
-
-if TYPE_CHECKING:
-    from mex.common.models import AnyPreviewModel
 
 
 @dataclass

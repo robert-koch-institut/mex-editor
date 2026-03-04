@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.6.0] - 2026-03-04
+
+### Added
+
 - consent page filters items based on person
 
 ### Changes
@@ -19,16 +33,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - change primary source of rules from mex to mex-editor
 - moved pytest rerun config from toml to makefile
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - fixed settings logging on startup and in tests
 - fixed separate entrypoint configuration
-
-### Security
 
 ## [1.5.1] - 2026-02-25
 

@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fixed settings logging on startup and in tests
+- fixed separate entrypoint configuration
 
 ### Security
 

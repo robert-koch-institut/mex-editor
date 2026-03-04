@@ -1,10 +1,11 @@
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Any, Literal
+from typing import Any, Literal
 from urllib.parse import parse_qs, urlparse
 
 import reflex as rx
 from pydantic import TypeAdapter, ValidationError
 from reflex.event import EventSpec
+from reflex.istate.data import RouterData
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -28,9 +29,6 @@ from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
 from mex.editor.utils import resolve_editor_value
 from mex.editor.value_label_select import ValueLabelSelectItem
-
-if TYPE_CHECKING:
-    from reflex.istate.data import RouterData
 
 
 def _build_dynamic_refresh_params(

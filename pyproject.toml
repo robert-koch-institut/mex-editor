@@ -6,14 +6,14 @@ authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
 urls = { Repository = "https://github.com/robert-koch-institut/mex-editor" }
-requires-python = ">=3.13,<3.14"
+requires-python = ">=3.14,<3.15"
 dependencies = [
     "async-lru>=2,<3",
     "babel>=2.17,<3",
     "fastapi>=0.128",
-    "mex-common>=1.16.0,<1.17",
+    "mex-common>=1.16.1,<1.17",
     "polib>=1.2,<1.3",
-    "pydantic>=2.9,<3",
+    "pydantic>=2.12,<3",
     "pyyaml>=6,<7",
     "reflex==0.8.15",
     "requests>=2.32,<3",
@@ -25,15 +25,15 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ipdb>=0.13",
-    "mex-artificial>=1",
+    "mex-artificial>=1.4",
     "mypy>=1",
     "nest-asyncio>=1",
     "pytest-cov>=6",
     "pytest-playwright>=0.7",
     "pytest-random-order>=1",
     "pytest-rerunfailures>=16.1",
-    "pytest>=8",
-    "ruff>=0.14",
+    "pytest>=9",
+    "ruff>=0.15",
     "sphinx>=9",
     "types-ldap3",
     "types-polib",
@@ -105,6 +105,9 @@ ignore = [
     "N815",    # Allow mixedCase variables in class scope (model compat)
     "RUF012",  # Allow mutable class attributes (pydantic compat)
     "SIM108",  # Allow explicit if-else instead of ternary (easier to read)
+    "TC001",   # Allow typing-only first party imports for state modules
+    "TC002",   # Allow typing-only third party imports for state modules
+    "TC003",   # Allow typing-only standard library imports for state modules
     "TD003",   # Allow TODOs without ticket link (don't punish TODO writers)
     "TRY003",  # Allow long exception message at the raise site (for pydantic)
 ]
@@ -141,6 +144,9 @@ select = ["ALL"]
 
 [tool.ruff.lint.flake8-import-conventions.extend-aliases]
 "reflex" = "rx"
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["mex", "tests"]

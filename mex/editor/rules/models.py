@@ -35,7 +35,7 @@ class EditorPrimarySource(BaseModel):
     editor_values: list[EditorValue]
     enabled: bool
 
-    def is_equal(self, other: "EqualityDetector") -> bool:
+    def is_equal(self, other: EqualityDetector) -> bool:
         """Check if self and other are equal."""
         if isinstance(other, EditorPrimarySource):
             return (
@@ -54,7 +54,7 @@ class EditorField(BaseModel):
     primary_sources: list[EditorPrimarySource]
     is_required: bool
 
-    def is_equal(self, other: "EqualityDetector") -> bool:
+    def is_equal(self, other: EqualityDetector) -> bool:
         """Check if self and other are equal."""
         if isinstance(other, EditorField):
             return self.name == other.name and sequence_is_equal(

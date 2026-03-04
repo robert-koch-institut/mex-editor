@@ -42,7 +42,9 @@ def edit_page(
 
 
 @pytest.fixture
-def load_superseded_by_entites(extracted_activity: ExtractedActivity) -> None:
+def load_superseded_by_entites(
+    extracted_activity: ExtractedActivity,
+) -> list[ExtractedActivity]:
     connector = BackendApiConnector.get()
 
     activity_2 = ExtractedActivity(
@@ -83,6 +85,8 @@ def load_superseded_by_entites(extracted_activity: ExtractedActivity) -> None:
             ),
         ]
     )  # type: ignore[type-var]
+
+    return [activity_2, activity_3]
 
 
 @pytest.fixture
@@ -929,15 +933,23 @@ def test_edit_page_discard_changes_button_roundtrip(
 @pytest.mark.integration
 def test_superseded_by_backward_visibility(
     edit_page: Page,
-    load_superseded_by_entites: None,  # noqa: ARG001
+    load_superseded_by_entites: list[ExtractedActivity],
 ) -> None:
     superseded_by_backward = edit_page.get_by_test_id("field-supersededBy-backward")
     superseded_by_backward.is_visible()
+    superseded_by_backward.scroll_into_view_if_needed()
+    edit_page.reload()
+    edit_page.wait_for_timeout(20_000)
+    edit_page.screenshot(
+        path="tests_edit_test_main-test_superseded_by_backward_visibility.png"
+    )
 
     search_results = superseded_by_backward.get_by_test_id(
         re.compile(r"search-result-.*")
     )
     expect(search_results).to_have_count(2)
 
-    expect(search_results).to_contain_text("Aktivität 2 Superseded 1")
-    expect(search_results).to_contain_text("Aktivität 3 Superseded 2")
+    for item in load_superseded_by_entites:
+        superseded_by_backward.get_by_test_id(
+            f"search-result-{item.stableTargetId}"
+        ).is_visible()

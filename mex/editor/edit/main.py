@@ -6,6 +6,8 @@ from mex.editor.layout import page
 from mex.editor.rules.main import editor_field, rule_page_header, validation_errors
 from mex.editor.rules.state import RuleState
 from mex.editor.search_results_component import (
+    SearchResultsListItemOptions,
+    SearchResultsListOptions,
     search_results_list,
 )
 
@@ -119,7 +121,14 @@ def superseding_by_backward_card() -> rx.Component:
         rx.card(
             rx.cond(
                 EditState.superseded_by_backward,
-                search_results_list(EditState.superseded_by_backward),
+                search_results_list(
+                    EditState.superseded_by_backward,
+                    SearchResultsListOptions(
+                        item_options=SearchResultsListItemOptions(
+                            enable_title_href=True
+                        )
+                    ),
+                ),
                 rx.text(EditState.label_field_superseded_by_empty),
             ),
             style=rx.Style(width="100%"),

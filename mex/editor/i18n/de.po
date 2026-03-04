@@ -6,265 +6,285 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "search.search_input.placeholder"
-msgstr "Search here..."
+msgstr "Hier Suchen..."
 
 msgid "search.entitytype_filter.title"
-msgstr "Entity Type"
+msgstr "Entitätstyp"
 
 msgid "search.reference_field_filter.field_placeholder"
-msgstr "Field to filter by"
+msgstr "Feld nachdem gefiltert wird"
 
 msgid "search.reference_filter.dynamic_tab"
-msgstr "Dynamic"
+msgstr "Dynamisch"
 
 msgid "search.reference_filter.primarysource_tab"
-msgstr "PrimarySource"
+msgstr "Primärquelle"
 
 msgid "search.result_summary.format"
-msgstr "Showing {0} of {1} items"
+msgstr "Zeige {0} von {1} Einträgen"
 
 msgid "search.reference_field_filter.placeholder"
-msgstr "Field to filter by"
+msgstr "Feld zum Filtern"
 
 msgid "search.reference_field_filter.add"
-msgstr "Add Filter"
+msgstr "Filter hinzufügen"
 
 msgid "create.title.create_new"
-msgstr "Create new"
+msgstr "Erzeugen von"
 
 msgid "edit.toggle_all"
-msgstr "Toggle all"
+msgstr "Alle umschalten"
 
 msgid "edit.discard_changes.button"
-msgstr "Discard changes"
+msgstr "Änderungen verwerfen"
 
 msgid "edit.discard_changes_dialog.title"
-msgstr "Discard changes?"
+msgstr "Änderungen wirklich verwerfen?"
 
 msgid "edit.discard_changes_dialog.description"
-msgstr "Are you sure u want to delete your changes? You are not able to revert the discarding."
+msgstr "Sind Sie sicher, dass Sie Ihre Änderungen verwerfen möchten? Es ist nicht möglich das Verwerfen der Änderungen rückgängig zu machen."
 
 msgid "edit.discard_changes_dialog.cancel_button"
-msgstr "Cancel"
+msgstr "Abbrechen"
 
 msgid "edit.discard_changes_dialog.discard_button"
-msgstr "Discard changes"
+msgstr "Änderungen verwerfen"
 
 msgid "create.discard_draft.button"
-msgstr "Discard draft"
+msgstr "Entwurf verwerfen"
 
 msgid "create.discard_draft_dialog.title"
-msgstr "Discard draft?"
+msgstr "Entwurf verwerfen?"
 
 msgid "create.discard_draft_dialog.description"
-msgstr "Are your sure to discard the draft? You are not able to revert the discarding."
+msgstr "Sind Sie sicher, dass Sie Ihren Entwurf verwerfen möchten? Es ist nicht möglich das Verwerfen des Entwurfs rückgängig zu machen."
 
 msgid "create.discard_draft_dialog.cancel_button"
-msgstr "Cancel"
+msgstr "Abbrechen"
 
 msgid "create.discard_draft_dialog.discard_button"
-msgstr "Discard draft"
+msgstr "Entwurf verwerfen"
 
 msgid "login.username"
-msgstr "Username"
+msgstr "Benutzername"
 
 msgid "login.password"
-msgstr "Password"
+msgstr "Passwort"
 
 msgid "login.button_login"
-msgstr "Login"
+msgstr "Anmelden"
 
 msgid "login.invalid_credentials"
-msgstr "Invalid credentials!"
+msgstr "Ungültige Anmeldedaten!"
 
 msgid "ingest.search.placeholder"
-msgstr "Search here..."
+msgstr "Suchtext..."
 
 msgid "ingest.button_ingest"
-msgstr "Ingest"
+msgstr "Aufnehmen"
 
 msgid "ingest.button_ingested"
-msgstr "Ingested"
+msgstr "Aufgenommen"
 
 msgid "ingest.search.result_summary_format"
-msgstr "Showing {0} of {1} items"
+msgstr "Zeige {0} von {1} Einträgen"
 
 msgid "ingest.search_info.ldap"
-msgstr "Search users by display name and contact points by email. 'Please use \"*\" as placeholder e.g. \"Muster*\".'"
+msgstr "Suchen Sie Benutzer nach ihrem Anzeigenamen und Email-Adressen. 'Sie können \"*\" als Platzhalter nutzen z.B. \"Muster*\".'"
 
 msgid "ingest.search_info.wikidata"
-msgstr "Search Wikidata by \"Concept URI\". Please paste URI e.g. \"http://www.wikidata.org/entity/Q918501\"."
+msgstr "Durchsuchen Sie Wikidata nach \"Concept URIs\". Fügen Sie einfach URI z.B. \"http://www.wikidata.org/entity/Q918501\" ein."
 
 msgid "ingest.toast_success.title"
-msgstr "Ingested"
+msgstr "Aufgenommen"
 
 msgid "ingest.toast_success.message_format"
-msgstr "{} was ingested successfully."
+msgstr "{} wurde erfolgreich aufgenommen."
 
 msgid "merge.result_summary.format"
-msgstr "Showing {0} of {1} items"
+msgstr "Zeige {0} von {1} Einträgen"
 
 msgid "merge.submit_button"
-msgstr "Submit Merge"
+msgstr "Zusammenführung einreichen"
 
 msgid "merge.search_input.placeholder"
-msgstr "Search here..."
+msgstr "Hier Suchen..."
 
 msgid "merge.search.title_format"
-msgstr "Search {0} items"
+msgstr "Suche {0} Einträge"
 
 msgid "merge.search.clear_button"
-msgstr "Clear"
+msgstr "Leeren"
 
 msgid "merge.filter_entity_type.title"
-msgstr "Filter by Entity Type"
+msgstr "Filtern nach Entitätstyp"
 
 msgid "rules.additive_rule.add_button_prefix"
-msgstr "New"
+msgstr "Hinzufügen von"
 
 msgid "rules.additive_rule.remove_button_prefix"
-msgstr "Remove"
+msgstr "Entfernen von"
 
 msgid "rules.validation_result_dialog.close_button"
-msgstr "Close"
+msgstr "Schließen"
 
 msgid "rules.validation_result_dialog.title"
-msgstr "Validation Errors"
+msgstr "Validierungsfehler"
 
 msgid "rules.save_button.format"
-msgstr "Save {0}"
+msgstr "Speichern von {0}"
 
 msgid "rules.save_button.saving_format"
-msgstr "Saving {0}..."
+msgstr "Speicher {0}..."
 
 msgid "rules.save_success_dialog.title"
-msgstr "Saved"
+msgstr "Gespeichert"
 
 msgid "rules.save_success_dialog.message_format"
-msgstr "{} was saved successfully."
+msgstr "{} wurde erfolgreich gespeichert."
+
+msgid "consent.save_success_dialog.title"
+msgstr "Gespeichert"
+
+msgid "consent.save_success_dialog.content"
+msgstr "Ihre Antwort wurde erfolgreich gespeichert."
 
 msgid "components.titles.additional_titles"
-msgstr "+ additional titles"
+msgstr "+ zusätzliche Titel"
 
 msgid "components.pagination.next_button"
-msgstr "Next"
+msgstr "Nächste"
 
 msgid "components.pagination.previous_button"
-msgstr "Previous"
+msgstr "Vorherige"
 
 msgid "layout.nav_bar.logout_button"
-msgstr "Logout"
+msgstr "Abmelden"
 
 msgid "layout.nav_bar.search_navitem"
-msgstr "Search"
+msgstr "Suchen"
 
 msgid "layout.nav_bar.create_navitem"
-msgstr "Create"
+msgstr "Erstellen"
 
 msgid "layout.nav_bar.edit_navitem"
-msgstr "Edit"
+msgstr "Bearbeiten"
 
 msgid "layout.nav_bar.merge_navitem"
-msgstr "Merge"
+msgstr "Zusammenführen"
 
 msgid "layout.nav_bar.ingest_navitem"
-msgstr "Ingest"
+msgstr "Aufnehmen"
+
+msgid "abstract.singular"
+msgstr "Kurzbeschreibung"
 
 msgid "consent.resources.title"
-msgstr "Datasources & Records"
+msgstr "Datenbestände & Datensätze"
 
 msgid "consent.projects.title"
-msgstr "Projects"
+msgstr "Projekte"
+
+msgid "consent.publications.title"
+msgstr "Publikationen"
 
 msgid "consent.user_data.loading"
-msgstr "Loading user data..."
+msgstr "Lade Kontodaten..."
 
 msgid "consent.consent_box.consent_button"
-msgstr "Consent"
+msgstr "Einwilligen"
 
 msgid "consent.consent_box.no_consent_button"
-msgstr "Denial"
+msgstr "Ablehnen"
 
 msgid "consent.consent_status.loading"
-msgstr "Loading consent status..."
+msgstr "Lade Einverständniserklärung..."
 
 msgid "consent.nav_bar.consent_navitem"
-msgstr "Informed Consent"
+msgstr "Einverständniserklärung"
 
 msgid "search_reference_dialog.title"
-msgstr "Search for references"
+msgstr "Suche nach Referenzen"
 
 msgid "search_reference_dialog.description"
-msgstr "Click on 'Select' to use select the corrosponding entry."
+msgstr "Klicken Sie anschließend auf 'Auswählen' in dem entprechenden Eintrag um diesen auszuwählen."
 
 msgid "search_reference_dialog.description.valid_types"
-msgstr "Valid entitytypes are:"
+msgstr "Gültige Referenztypen"
 
 msgid "search_reference_dialog.query.placeholder"
-msgstr "Searchtext"
+msgstr "Suchtext"
 
 msgid "search_reference_dialog.results.none_found_format"
-msgstr "We are sorry, but there are no entries for '{}' :("
+msgstr "Leider wurden keine Ergebnisse für '{}' gefunden :("
 
 msgid "search_reference_dialog.results.select_button"
-msgstr "Select"
+msgstr "Auswählen"
 
+msgid "consent.consent_status.consented_format"
+msgstr "Sie haben Ihre Einwilligung am {} erteilt."
+
+msgid "consent.consent_status.declined_format"
+msgstr "Sie haben Ihre Ablehnung am {} erteilt."
+
+msgid "consent.consent_status.no_consent"
+msgstr "Sie haben noch keine Einwilligung erteilt."
 msgid "layout.nav_bar.advanced_search_navitem"
-msgstr "Advanced Search"
+msgstr "Erweiterte Suche"
 
 msgid "advanced_search.reference_filter.add_value"
-msgstr "Add"
+msgstr "Hinzufügen"
 
 msgid "advanced_search.reference_filter.title"
-msgstr "Reference filters"
+msgstr "Referenzfilter"
 
 msgid "advanced_search.reference_filter.remove_value"
-msgstr "Remove"
+msgstr "Entferne"
 
 msgid "advanced_search.reference_filter.value_placeholder"
-msgstr "Identifier for"
+msgstr "ID für"
 
 msgid "layout.unsaved_changes_dialog.title"
-msgstr "Logout? There are unsaved changes..."
+msgstr "Abmelden? Es gibt noch ungespeicherte Änderungen..."
 
 msgid "layout.unsaved_changes_dialog.description"
-msgstr "Are you sure you want to logout? The following changes will be lost:"
+msgstr "Sind Sie sicher, dass Sie sich abmelden wollen? Die folgenden Änderungen würden verloren gehen:"
 
 msgid "layout.unsaved_changes_dialog.description_draft"
-msgstr "Draft/s"
+msgstr "Entwurf/e"
 
 msgid "layout.unsaved_changes_dialog.description_edit"
-msgstr "Edit/s"
+msgstr "Bearbeitung/en"
 
 msgid "layout.unsaved_changes_dialog.logout_button"
-msgstr "Logout anyway"
+msgstr "Trotzdem abmelden"
 
 msgid "layout.unsaved_changes_dialog.cancel_button"
-msgstr "Cancel"
+msgstr "Abbrechen"
 
 msgid "edit.reset_rules.button"
-msgstr "Reset Rules"
+msgstr "Regeln zurücksetzen"
 
 msgid "edit.delete_rules.button"
-msgstr "Delete Item"
+msgstr "Eintrag löschen"
 
 msgid "edit.delete_rules.success_toast_title"
-msgstr "Item deleted"
+msgstr "Eintrag gelöscht"
 
 msgid "edit.delete_rules.success_toast_text"
-msgstr "Item successfully deleted."
+msgstr "Der Eintrag wurde erfolgreich gelöscht."
 
 msgid "edit.reset_rules.success_toast_title"
-msgstr "Rules reseted"
+msgstr "Regeln zurückgesetzt"
 
 msgid "edit.reset_rules.success_toast_text"
-msgstr "Rules successfully reseted."
+msgstr "Die Regeln wurden erfolgreich zurückgesetzt."
 
 msgid "edit.field_supersededBy.label"
-msgstr "supersedes"
+msgstr "Dubletten"
 
 msgid "edit.field_supersededBy.description"
-msgstr "Show the entitites that references this entity by the field 'superseded by'."
+msgstr "Zeigt die Entitäten, die auf diese Entität mit dem Feld 'ersetzt durch' verweisen."
 
 msgid "edit.field_supersededBy.empty"
-msgstr "There are no supersedes items."
+msgstr "Keine Dubletten vorhanden."

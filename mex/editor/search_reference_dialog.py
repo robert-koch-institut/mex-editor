@@ -15,13 +15,13 @@ from mex.editor.pagination_component import (
     PaginationStateMixin,
     pagination,
 )
-from mex.editor.search.transform import transform_models_to_dialog_results
 from mex.editor.search_results_component import (
     SearchResultsListItemOptions,
     SearchResultsListOptions,
     search_results_list,
 )
 from mex.editor.state import State
+from mex.editor.transform import transform_models_to_search_results
 from mex.editor.utils import resolve_editor_value
 
 
@@ -140,7 +140,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
             )
         else:
             self.is_loading = False
-            self.results = transform_models_to_dialog_results(response.items)
+            self.results = transform_models_to_search_results(response.items, True)  # noqa: FBT003
             yield SearchReferenceDialogState.set_total(response.total)  # type: ignore[operator]
             yield SearchReferenceDialogState.resolve_identifiers()
 

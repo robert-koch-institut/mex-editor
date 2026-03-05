@@ -1,4 +1,4 @@
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 
 from mex.common.models import (
     AnyExtractedModel,
@@ -11,6 +11,7 @@ from mex.editor.models import (
     LANGUAGE_VALUE_NONE,
     MODEL_CONFIG_BY_STEM_TYPE,
     EditorValue,
+    SearchResult,
 )
 from mex.editor.rules.models import EditorField
 
@@ -139,11 +140,30 @@ def transform_models_to_preview(
 
 
 def transform_model_to_all_properties(
-    model: AnyExtractedModel | AnyPreviewModel,
+    model: AnyExtractedModel | AnyPreviewModel | AnyMergedModel,
 ) -> list[EditorValue]:
     """Transform all properties of a model into a list of EditorValues."""
     return [
         value
         for field_name in type(model).model_fields
         for value in transform_values(getattr(model, field_name), allow_link=False)
+    ]
+
+
+def transform_models_to_search_results(
+    models: Iterable[AnyPreviewModel | AnyExtractedModel | AnyMergedModel],
+    include_all_properties: bool = False,  # noqa: FBT001, FBT002
+) -> list[SearchResult]:
+    """Convert a list of models into a list of search result models."""
+    return [
+        SearchResult(
+            identifier=model.identifier,
+            title=transform_models_to_title([model]),
+            preview=transform_models_to_preview([model]),
+            all_properties=transform_model_to_all_properties(model)
+            if include_all_properties
+            else [],
+            stem_type=model.stemType,
+        )
+        for model in models
     ]

@@ -5,8 +5,7 @@ from pathlib import Path
 import uvicorn
 from reflex.config import environment, get_config
 from reflex.constants import Env, LogLevel
-from reflex.reflex import _init, run
-from reflex.state import reset_disk_state_manager
+from reflex.reflex import run
 from reflex.utils.build import setup_frontend_prod
 from reflex.utils.console import set_log_level
 from reflex.utils.exec import get_app_instance, run_frontend_prod
@@ -27,9 +26,6 @@ def editor_api() -> None:  # pragma: no cover
     environment.REFLEX_ENV_MODE.set(Env.PROD)
     environment.REFLEX_SKIP_COMPILE.set(True)
     environment.REFLEX_USE_GRANIAN.set(False)
-
-    # Delete the states folder if it exists.
-    reset_disk_state_manager()  # type: ignore[no-untyped-call]
 
     # Reload the config to make sure the env vars are persistent.
     get_config(reload=True)
@@ -55,9 +51,6 @@ def editor_frontend() -> None:  # pragma: no cover
     # Configure the environment.
     environment.REFLEX_ENV_MODE.set(Env.PROD)
     environment.REFLEX_CHECK_LATEST_VERSION.set(False)
-
-    # Initialize the app in the current directory.
-    _init(name="mex")
 
     # Get the app module.
     get_compiled_app()

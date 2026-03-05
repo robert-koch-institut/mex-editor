@@ -1,3 +1,7 @@
+import asyncio
+import concurrent.futures
+from collections.abc import Coroutine
+
 import pytest
 
 from mex.common.exceptions import EmptySearchResultError, MExError
@@ -10,9 +14,10 @@ from mex.editor.utils import (
 )
 
 
-@pytest.fixture
-def anyio_backend() -> str:
-    return "asyncio"
+def run_async[T](coro: Coroutine[object, object, T]) -> T:
+    """Run a coroutine in a separate thread with a fresh event loop."""
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+        return pool.submit(asyncio.run, coro).result()
 
 
 @pytest.mark.integration
@@ -33,8 +38,7 @@ def test_resolve_identifier(
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-@pytest.mark.anyio
-async def test_resolve_editor_value(
+def test_resolve_editor_value(
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     dummy_primary_source = dummy_data_by_identifier_in_primary_source["ps-1"]
@@ -46,11 +50,11 @@ async def test_resolve_editor_value(
         identifier=dummy_primary_source.stableTargetId,
         text=dummy_primary_source.title[0].value,
     )
-    await resolve_editor_value(editor_value)
+    run_async(resolve_editor_value(editor_value))
     assert editor_value == expected
 
     with pytest.raises(MExError):
-        await resolve_editor_value(EditorValue(identifier=None))
+        run_async(resolve_editor_value(EditorValue(identifier=None)))
 
 
 @pytest.mark.parametrize(

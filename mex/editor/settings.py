@@ -1,6 +1,7 @@
 from pydantic import Field
 
 from mex.common.settings import BaseSettings
+from mex.common.types import AssetsPath
 from mex.editor.types import EditorUserDatabase
 
 
@@ -37,4 +38,9 @@ class EditorSettings(BaseSettings):
         EditorUserDatabase(),
         description="Database of users.",
         validation_alias="MEX_BACKEND_API_USER_DATABASE",
+    )
+    editor_assets_dir: AssetsPath = Field(
+        AssetsPath(""),
+        description="Editor-specific assets directory, e.g. for consent markdowns.",
+        validation_alias="MEX_EDITOR_ASSETS_DIR",
     )

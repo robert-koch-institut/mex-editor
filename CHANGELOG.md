@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- make consent markdown path configurable via `MEX_EDITOR_ASSETS_DIR`
+
 ### Deprecated
 
 ### Removed

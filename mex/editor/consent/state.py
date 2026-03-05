@@ -1,6 +1,5 @@
 from collections.abc import Generator
 from datetime import datetime
-from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import reflex as rx
@@ -23,6 +22,7 @@ from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.models import NavItem, SearchResult
 from mex.editor.search.transform import transform_models_to_results
+from mex.editor.settings import EditorSettings
 from mex.editor.state import State
 
 
@@ -57,9 +57,9 @@ class ConsentState(State):
         Returns:
             The translated consent markdown.
         """
-        return Path(f"assets/consent_{self.current_locale}.md").read_text(
-            encoding="utf-8"
-        )
+        settings = EditorSettings.get()
+        path = settings.editor_assets_dir / f"consent_{self.current_locale}.md"
+        return path.read_text(encoding="utf-8")
 
     @rx.var(cache=False)
     def consent_datetime(self) -> str:

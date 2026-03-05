@@ -17,8 +17,8 @@ from mex.editor.fields import STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME
 from mex.editor.label_var import label_var
 from mex.editor.models import SearchResult
 from mex.editor.pagination_component import PaginationStateMixin
-from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
+from mex.editor.transform import transform_models_to_search_results
 from mex.editor.utils import resolve_editor_value
 from mex.editor.value_label_select import ValueLabelSelectItem
 
@@ -157,7 +157,7 @@ class AdvancedSearchState(State, PaginationStateMixin):
                 exc.response.text,
             )
         else:
-            self.search_results = transform_models_to_results(fetch_result.items)
+            self.search_results = transform_models_to_search_results(fetch_result.items)
             self.total = fetch_result.total
 
         self.is_searching = False

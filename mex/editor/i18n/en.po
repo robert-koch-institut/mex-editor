@@ -276,3 +276,12 @@ msgstr "Rules reseted"
 
 msgid "edit.reset_rules.success_toast_text"
 msgstr "Rules successfully reseted."
+
+msgid "edit.field_supersededBy.label"
+msgstr "supersedes"
+
+msgid "edit.field_supersededBy.description"
+msgstr "Show the entitites that references this entity by the field 'superseded by'."
+
+msgid "edit.field_supersededBy.empty"
+msgstr "There are no supersedes items."

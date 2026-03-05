@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- added supersededBy-backward fields in the edit page
 - consent page UI clean up
 - renamed 'locale' folder to 'i18n'
 - change the docker build to multi-stage build

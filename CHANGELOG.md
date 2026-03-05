@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - bump python to 3.14
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0c16a6
+- added supersededBy-backward fields in the edit page
 - consent page UI clean up
 - renamed 'locale' folder to 'i18n'
 - change the docker build to multi-stage build

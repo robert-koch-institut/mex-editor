@@ -21,9 +21,9 @@ from mex.common.types import (
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.models import NavItem, SearchResult
-from mex.editor.search.transform import transform_models_to_results
 from mex.editor.settings import EditorSettings
 from mex.editor.state import State
+from mex.editor.transform import transform_models_to_search_results
 
 
 class ConsentState(State):
@@ -94,9 +94,9 @@ class ConsentState(State):
             )
         else:
             if response.total > 0:
-                self.consent_status = transform_models_to_results([response.items[0]])[
-                    0
-                ]
+                self.consent_status = transform_models_to_search_results(
+                    [response.items[0]]
+                )[0]
             else:
                 self.consent_status = None
 

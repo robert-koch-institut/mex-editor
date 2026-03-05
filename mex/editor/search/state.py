@@ -25,8 +25,8 @@ from mex.editor.search.models import (
     ReferenceFieldParameters,
     SearchPrimarySource,
 )
-from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
+from mex.editor.transform import transform_models_to_search_results
 from mex.editor.utils import resolve_editor_value
 from mex.editor.value_label_select import ValueLabelSelectItem
 
@@ -325,7 +325,7 @@ class SearchState(State, PaginationStateMixin):
             )
         else:
             self.is_loading = False
-            self.results = transform_models_to_results(response.items)
+            self.results = transform_models_to_search_results(response.items)
             yield SearchState.set_total(response.total)  # type: ignore[operator]
 
     @rx.event
@@ -345,7 +345,7 @@ class SearchState(State, PaginationStateMixin):
                 "backend", "error fetching primary sources", exc.response.text
             )
         else:
-            available_primary_sources = transform_models_to_results(
+            available_primary_sources = transform_models_to_search_results(
                 primary_sources_response.items
             )
             if len(available_primary_sources) == maximum_number_of_primary_sources:

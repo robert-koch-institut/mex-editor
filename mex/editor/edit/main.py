@@ -5,6 +5,11 @@ from mex.editor.edit.state import EditState
 from mex.editor.layout import page
 from mex.editor.rules.main import editor_field, rule_page_header, validation_errors
 from mex.editor.rules.state import RuleState
+from mex.editor.search_results_component import (
+    SearchResultsListItemOptions,
+    SearchResultsListOptions,
+    search_results_list,
+)
 
 
 def edit_title() -> rx.Component:
@@ -104,6 +109,38 @@ def discard_changes_button() -> rx.Component:
     )
 
 
+def superseding_by_backward_card() -> rx.Component:
+    """Render a card to show superseding items."""
+    return rx.hstack(
+        rx.card(
+            rx.text(EditState.label_field_superseded_by_label),
+            style=rx.Style(width="25%"),
+            custom_attrs={"data-testid": "field-supersededBy-backward-name"},
+            title=EditState.label_field_superseded_by_description,
+        ),
+        rx.card(
+            rx.cond(
+                EditState.superseded_by_backward,
+                search_results_list(
+                    EditState.superseded_by_backward,
+                    SearchResultsListOptions(
+                        item_options=SearchResultsListItemOptions(
+                            enable_title_href=True
+                        )
+                    ),
+                ),
+                rx.text(EditState.label_field_superseded_by_empty),
+            ),
+            style=rx.Style(width="100%"),
+        ),
+        style=rx.Style(
+            width="100%",
+            margin="var(--space-3) 0",
+        ),
+        custom_attrs={"data-testid": "field-supersededBy-backward"},
+    )
+
+
 def index() -> rx.Component:
     """Return the index for the edit component."""
     return page(
@@ -127,6 +164,7 @@ def index() -> rx.Component:
                 RuleState.translated_fields,
                 editor_field,
             ),
+            superseding_by_backward_card(),
             validation_errors(),
             style=rx.Style(
                 width="100%",

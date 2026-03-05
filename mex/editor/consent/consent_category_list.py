@@ -14,8 +14,8 @@ from mex.editor.consent.transform import add_external_links_to_results
 from mex.editor.exceptions import escalate_error
 from mex.editor.models import MergedLoginPerson, SearchResult
 from mex.editor.pagination_component import PaginationStateMixin, pagination
-from mex.editor.search.transform import transform_models_to_results
 from mex.editor.search_results_component import search_results_list
+from mex.editor.transform import transform_models_to_search_results
 from mex.editor.utils import resolve_editor_value
 
 
@@ -88,7 +88,7 @@ class ConsentCategoryList(rx.ComponentState, PaginationStateMixin):
             )
             return
 
-        transformed_results = transform_models_to_results(all_results)
+        transformed_results = transform_models_to_search_results(all_results)
         transformed_results = add_external_links_to_results(transformed_results)
 
         self.is_loading = False

@@ -42,7 +42,7 @@ class FieldDescriptor:
         )
 
     @classmethod
-    def from_json(cls, json_str: str) -> "FieldDescriptor":
+    def from_json(cls, json_str: str) -> FieldDescriptor:
         """Deserialize a JSON string to a FieldDescriptor."""
         data = json.loads(json_str)
         return FieldDescriptor(
@@ -301,5 +301,9 @@ class AdvancedSearchState(State, PaginationStateMixin):
         """Label for reference_filter.value_placeholder."""
 
     @label_var(label_id="advanced_search.reference_filter.title")
-    def label_refrence_filter_title(self) -> None:
-        """Label for refrence_filter.title."""
+    def label_reference_filter_title(self) -> None:
+        """Label for reference_filter.title."""
+
+    @label_var(label_id="advanced_search.entitytype_filter.title")
+    def label_entitytype_filter_title(self) -> None:
+        """Label for entitytype_filter.title."""

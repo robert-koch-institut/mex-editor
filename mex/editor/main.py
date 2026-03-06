@@ -26,6 +26,7 @@ def editor_api() -> None:  # pragma: no cover
     environment.REFLEX_ENV_MODE.set(Env.PROD)
     environment.REFLEX_SKIP_COMPILE.set(True)
     environment.REFLEX_USE_GRANIAN.set(False)
+    environment.REFLEX_SSR.set(False)
 
     # Reload the config to make sure the env vars are persistent.
     get_config(reload=True)
@@ -51,6 +52,7 @@ def editor_frontend() -> None:  # pragma: no cover
     # Configure the environment.
     environment.REFLEX_ENV_MODE.set(Env.PROD)
     environment.REFLEX_CHECK_LATEST_VERSION.set(False)
+    environment.REFLEX_SSR.set(False)
 
     # Get the app module.
     get_compiled_app()
@@ -71,6 +73,7 @@ def main() -> None:  # pragma: no cover
     # Set environment variables.
     environment.REFLEX_USE_GRANIAN.set(False)
     environment.REFLEX_HOT_RELOAD_EXCLUDE_PATHS.set([Path("tests")])
+    environment.REFLEX_SSR.set(False)
 
     if "win32" in sys.platform:
         # bun cache is not working correctly on windows

@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- bump python to 3.14
+- upgrade reflex to 0.8.27
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/0c16a6
 - use dynamic primary source title for ingest tabs
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
 - change the docker build to multi-stage build
@@ -20,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 ### Removed
+
+- disable reflex ssr
+- get rid off nest-asyncio in tests
 
 ### Fixed
 

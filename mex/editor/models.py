@@ -11,7 +11,7 @@ from mex.common.types import MergedPersonIdentifier
 class EqualityDetector(Protocol):
     """Interface for checking equality without overriding __eq__."""
 
-    def is_equal(self, other: "EqualityDetector") -> bool: ...  # noqa: D102
+    def is_equal(self, other: EqualityDetector) -> bool: ...  # noqa: D102
 
 
 def sequence_is_equal(
@@ -35,7 +35,7 @@ class EditorValue(BaseModel):
     enabled: bool = True
     being_edited: bool = False
 
-    def is_equal(self, other: "EqualityDetector") -> bool:
+    def is_equal(self, other: EqualityDetector) -> bool:
         """Check if self and other are equal."""
         if isinstance(other, EditorValue):
             exclude = {"text"} if other.identifier and not other.text else set()

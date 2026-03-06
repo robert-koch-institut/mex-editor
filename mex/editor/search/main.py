@@ -28,16 +28,7 @@ def search_input() -> rx.Component:
                     max_length=100,
                     name="query_string",
                     placeholder=SearchState.label_search_input_placeholder,
-                    style=rx.Style(
-                        {
-                            "--text-field-selection-color": "",
-                            "--text-field-focus-color": "transparent",
-                            "--text-field-border-width": "calc(1px * var(--scaling))",
-                            "boxShadow": (
-                                "inset 0 0 0 var(--text-field-border-width) transparent"
-                            ),
-                        }
-                    ),
+                    width="100%",
                     tab_index=1,
                     type="text",
                     custom_attrs={"data-testid": "search-input"},
@@ -265,7 +256,7 @@ def sidebar() -> rx.Component:
         spacing="4",
         align="stretch",
         custom_attrs={"data-testid": "search-sidebar"},
-        style=rx.Style(width="25%"),
+        style=rx.Style(width="300px"),
     )
 
 

@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- disable reflex ssr
+- get rid off nest-asyncio in tests
+
 ### Fixed
 
 ### Security

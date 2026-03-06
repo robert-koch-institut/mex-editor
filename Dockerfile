@@ -2,6 +2,8 @@
 
 FROM python:3.14-trixie AS builder
 
+WORKDIR /build
+
 ENV PIP_DISABLE_PIP_VERSION_CHECK=on
 ENV PIP_NO_INPUT=on
 ENV PIP_PREFER_BINARY=on
@@ -58,7 +60,7 @@ RUN adduser \
 
 RUN chown mex:mex /app
 
-COPY --chown=mex assets /app/assets
+COPY --chown=mex assets assets
 COPY --chown=mex rxconfig.py rxconfig.py
 
 USER mex

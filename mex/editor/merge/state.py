@@ -11,8 +11,8 @@ from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.models import SearchResult, ValueLabelCheckboxItem
-from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
+from mex.editor.transform import transform_models_to_search_results
 from mex.editor.utils import resolve_editor_value
 
 
@@ -173,7 +173,7 @@ class MergeState(State):
             )
         else:
             self.is_loading = False
-            self.results_merged = transform_models_to_results(response.items)
+            self.results_merged = transform_models_to_search_results(response.items)
             self.results_count["merged"] = len(self.results_merged)
             self.total_count["merged"] = response.total
 
@@ -205,7 +205,7 @@ class MergeState(State):
             )
         else:
             self.is_loading = False
-            self.results_extracted = transform_models_to_results(response.items)
+            self.results_extracted = transform_models_to_search_results(response.items)
             self.results_count["extracted"] = len(self.results_extracted)
             self.total_count["extracted"] = response.total
 

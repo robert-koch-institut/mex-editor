@@ -29,13 +29,13 @@ jobs:
 
     services:
       neo4j:
-        image: neo4j:2025.12-community
+        image: neo4j:2026.01-community
         env:
           NEO4J_AUTH: neo4j/password
         ports:
           - 7687:7687
       backend:
-        image: ghcr.io/robert-koch-institut/mex-backend:1.6.0
+        image: ghcr.io/robert-koch-institut/mex-backend:1.7.0
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
           MEX_BACKEND_API_KEY_DATABASE: ${{ secrets.MEX_BACKEND_API_KEY_DATABASE }}
@@ -115,7 +115,7 @@ jobs:
 
       - name: Upload screenshots
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-screenshots-${{ github.run_id }}
           path: test*.png

@@ -11,9 +11,6 @@ msgstr "Hier Suchen..."
 msgid "search.entitytype_filter.title"
 msgstr "Entitätstyp"
 
-msgid "search.reference_field_filter.field_placeholder"
-msgstr "Feld nachdem gefiltert wird"
-
 msgid "search.reference_filter.dynamic_tab"
 msgstr "Dynamisch"
 
@@ -207,7 +204,7 @@ msgid "search_reference_dialog.title"
 msgstr "Suche nach Referenzen"
 
 msgid "search_reference_dialog.description"
-msgstr "Klicken Sie anschließend auf 'Auswählen' in dem entprechenden Eintrag um diesen auszuwählen."
+msgstr "Klicken Sie anschließend auf 'Auswählen' in dem entsprechenden Eintrag um diesen auszuwählen."
 
 msgid "search_reference_dialog.description.valid_types"
 msgstr "Gültige Referenztypen"
@@ -243,6 +240,9 @@ msgstr "Entferne"
 
 msgid "advanced_search.reference_filter.value_placeholder"
 msgstr "ID für"
+
+msgid "advanced_search.entitytype_filter.title"
+msgstr "Entitätstyp"
 
 msgid "layout.unsaved_changes_dialog.title"
 msgstr "Abmelden? Es gibt noch ungespeicherte Änderungen..."

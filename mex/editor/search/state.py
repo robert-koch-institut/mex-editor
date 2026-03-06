@@ -377,10 +377,6 @@ class SearchState(State, PaginationStateMixin):
     def label_entitytype_filter_title(self) -> None:
         """Label for entitytype_filter.title."""
 
-    @label_var(label_id="search.reference_field_filter.field_placeholder")
-    def label_reference_field_filter_field_placholder(self) -> None:
-        """Label for reference_field_filter.field_placeholder."""
-
     @label_var(label_id="search.reference_filter.dynamic_tab")
     def label_reference_filter_dynamic_tab(self) -> None:
         """Label for reference_filter.dynamic_tab."""

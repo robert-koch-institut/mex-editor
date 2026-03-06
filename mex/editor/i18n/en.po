@@ -9,16 +9,13 @@ msgid "search.search_input.placeholder"
 msgstr "Search here..."
 
 msgid "search.entitytype_filter.title"
-msgstr "Entity Type"
-
-msgid "search.reference_field_filter.field_placeholder"
-msgstr "Field to filter by"
+msgstr "Entity type"
 
 msgid "search.reference_filter.dynamic_tab"
 msgstr "Dynamic"
 
 msgid "search.reference_filter.primarysource_tab"
-msgstr "PrimarySource"
+msgstr "Primary pource"
 
 msgid "search.result_summary.format"
 msgstr "Showing {0} of {1} items"
@@ -27,7 +24,7 @@ msgid "search.reference_field_filter.placeholder"
 msgstr "Field to filter by"
 
 msgid "search.reference_field_filter.add"
-msgstr "Add Filter"
+msgstr "Add filter"
 
 msgid "create.title.create_new"
 msgstr "Create new"
@@ -105,7 +102,7 @@ msgid "merge.result_summary.format"
 msgstr "Showing {0} of {1} items"
 
 msgid "merge.submit_button"
-msgstr "Submit Merge"
+msgstr "Submit merge"
 
 msgid "merge.search_input.placeholder"
 msgstr "Search here..."
@@ -117,7 +114,7 @@ msgid "merge.search.clear_button"
 msgstr "Clear"
 
 msgid "merge.filter_entity_type.title"
-msgstr "Filter by Entity Type"
+msgstr "Filter by entity type"
 
 msgid "rules.additive_rule.add_button_prefix"
 msgstr "New"
@@ -129,7 +126,7 @@ msgid "rules.validation_result_dialog.close_button"
 msgstr "Close"
 
 msgid "rules.validation_result_dialog.title"
-msgstr "Validation Errors"
+msgstr "Validation errors"
 
 msgid "rules.save_button.format"
 msgstr "Save {0}"
@@ -204,13 +201,13 @@ msgid "search_reference_dialog.title"
 msgstr "Search for references"
 
 msgid "search_reference_dialog.description"
-msgstr "Click on 'Select' to use select the corrosponding entry."
+msgstr "Click on 'Select' to use select the corresponding entry."
 
 msgid "search_reference_dialog.description.valid_types"
-msgstr "Valid entitytypes are:"
+msgstr "Valid entity types are:"
 
 msgid "search_reference_dialog.query.placeholder"
-msgstr "Searchtext"
+msgstr "Search text"
 
 msgid "search_reference_dialog.results.none_found_format"
 msgstr "We are sorry, but there are no entries for '{}' :("
@@ -241,6 +238,9 @@ msgstr "Remove"
 msgid "advanced_search.reference_filter.value_placeholder"
 msgstr "Identifier for"
 
+msgid "advanced_search.entitytype_filter.title"
+msgstr "Entity type"
+
 msgid "layout.unsaved_changes_dialog.title"
 msgstr "Logout? There are unsaved changes..."
 
@@ -260,10 +260,10 @@ msgid "layout.unsaved_changes_dialog.cancel_button"
 msgstr "Cancel"
 
 msgid "edit.reset_rules.button"
-msgstr "Reset Rules"
+msgstr "Reset rules"
 
 msgid "edit.delete_rules.button"
-msgstr "Delete Item"
+msgstr "Delete item"
 
 msgid "edit.delete_rules.success_toast_title"
 msgstr "Item deleted"
@@ -272,16 +272,16 @@ msgid "edit.delete_rules.success_toast_text"
 msgstr "Item successfully deleted."
 
 msgid "edit.reset_rules.success_toast_title"
-msgstr "Rules reseted"
+msgstr "Rules reset"
 
 msgid "edit.reset_rules.success_toast_text"
-msgstr "Rules successfully reseted."
+msgstr "Rules successfully reset."
 
 msgid "edit.field_supersededBy.label"
 msgstr "supersedes"
 
 msgid "edit.field_supersededBy.description"
-msgstr "Show the entitites that references this entity by the field 'superseded by'."
+msgstr "Show the entities that references this entity by the field 'superseded by'."
 
 msgid "edit.field_supersededBy.empty"
 msgstr "There are no supersedes items."

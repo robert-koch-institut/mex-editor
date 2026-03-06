@@ -3,11 +3,11 @@ from collections.abc import Callable, Iterable
 from functools import wraps
 from typing import Any, overload
 
-from reflex.state import State
 from reflex.utils import types
 from reflex.vars.base import ComputedVar, Var, computed_var
 
 from mex.editor.locale_service import LocaleService
+from mex.editor.state import State
 
 
 @overload

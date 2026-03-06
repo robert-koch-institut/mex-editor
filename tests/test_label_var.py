@@ -1,11 +1,11 @@
 from typing import cast
 from unittest.mock import patch
 
-import reflex as rx
 from reflex.vars.base import ComputedVar
 
 from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
+from mex.editor.state import State
 
 translations = {
     "locale-1": {
@@ -23,7 +23,7 @@ def _get_text_mock(locale: str, msg_id: str) -> str:
     return translations[locale][msg_id]
 
 
-class DummyState(rx.State):
+class DummyState(State):
     current_locale: str = "locale-1"
     some_var: int = 1
 

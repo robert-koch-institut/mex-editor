@@ -1,17 +1,19 @@
 import datetime
 from collections.abc import Callable, Iterable
 from functools import wraps
-from typing import Any, overload
+from typing import TYPE_CHECKING, Any, overload
 
 from reflex.utils import types
 from reflex.vars.base import ComputedVar, Var, computed_var
 
 from mex.editor.locale_service import LocaleService
-from mex.editor.state import State
+
+if TYPE_CHECKING:
+    from mex.editor.state import State
 
 
 @overload
-def label_var[StateT: State, ReturnT](
+def label_var[StateT: "State", ReturnT](
     fget: None = None,
     label_id: str = "",
     initial_value: Any | types.Unset = types.Unset(),  # noqa: ANN401, B008
@@ -24,7 +26,7 @@ def label_var[StateT: State, ReturnT](
 
 
 @overload
-def label_var[StateT: State, ReturnT](
+def label_var[StateT: "State", ReturnT](
     fget: Callable[[StateT], ReturnT],
     label_id: str,
     initial_value: ReturnT | types.Unset = types.Unset(),  # noqa: B008
@@ -36,7 +38,7 @@ def label_var[StateT: State, ReturnT](
 ) -> ComputedVar[str]: ...
 
 
-def label_var[StateT: State](  # noqa: PLR0913
+def label_var[StateT: "State"](  # noqa: PLR0913
     fget: Callable[[StateT], Any] | None = None,  # noqa: ARG001
     label_id: str = "",
     initial_value: Any | types.Unset = types.Unset(),  # noqa: B008

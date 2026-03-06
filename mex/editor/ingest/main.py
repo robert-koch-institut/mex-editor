@@ -127,11 +127,17 @@ def search_infobox() -> rx.Component | rx.Var[Any]:
         IngestState.current_aux_provider.key,
         (
             "ldap",
-            rx.callout(IngestState.label_search_info_ldap),
+            rx.callout(
+                IngestState.label_search_info_ldap,
+                custom_attrs={"data-testid": "ingest-infobox-callout"},
+            ),
         ),
         (
             "wikidata",
-            rx.callout(IngestState.label_search_info_wikidata),
+            rx.callout(
+                IngestState.label_search_info_wikidata,
+                custom_attrs={"data-testid": "ingest-infobox-callout"},
+            ),
         ),
     )
 

@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [1.7.0] - 2026-03-06
+
+### Changes
+
 - bump python to 3.14
 - upgrade reflex to 0.8.27
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0c16a6
@@ -20,16 +32,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - change primary source of rules from mex to mex-editor
 - moved pytest rerun config from toml to makefile
 
-### Deprecated
-
 ### Removed
 
 - disable reflex ssr
 - get rid off nest-asyncio in tests
-
-### Fixed
-
-### Security
 
 ## [1.6.1] - 2026-03-05
 

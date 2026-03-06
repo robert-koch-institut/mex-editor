@@ -114,6 +114,7 @@ app.add_page(
         IngestState.refresh,
         IngestState.resolve_identifiers,
         IngestState.flag_ingested_items,
+        IngestState.resolve_primary_source_titles,
     ],
 )
 app.add_page(

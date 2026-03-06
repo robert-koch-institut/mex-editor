@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- use dynamic primary source title for ingest tabs
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
+- change the docker build to multi-stage build
+- change primary source of rules from mex to mex-editor
+- moved pytest rerun config from toml to makefile
+
 ### Deprecated
 
 ### Removed

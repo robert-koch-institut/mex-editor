@@ -1,11 +1,11 @@
 from typing import cast
 from unittest.mock import patch
 
+from reflex import State
 from reflex.vars.base import ComputedVar
 
 from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
-from mex.editor.state import State
 
 translations = {
     "locale-1": {
@@ -27,11 +27,11 @@ class DummyState(State):
     current_locale: str = "locale-1"
     some_var: int = 1
 
-    @label_var(label_id="test_id")
+    @label_var(label_id="test_id")  # type: ignore[type-var]
     def label_string_value(self) -> None:
         pass
 
-    @label_var(label_id="test_dependency_id", deps=["some_var"])
+    @label_var(label_id="test_dependency_id", deps=["some_var"])  # type: ignore[type-var]
     def label_with_dependencies(self) -> list[int]:
         return [self.some_var]
 

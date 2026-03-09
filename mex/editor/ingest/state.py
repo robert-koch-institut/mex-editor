@@ -22,8 +22,8 @@ class IngestState(State, PaginationStateMixin):
     results_transformed: list[IngestResult] = []
     results_extracted: list[AnyExtractedModel] = []
     query_string: str = ""
-    current_aux_provider: AuxProvider = AuxProvider.LDAP
     aux_providers: list[AuxProvider] = ALL_AUX_PROVIDERS
+    current_aux_provider: AuxProvider = aux_providers[0]
     is_loading: bool = True
 
     @rx.var(cache=False)
@@ -41,7 +41,10 @@ class IngestState(State, PaginationStateMixin):
     @rx.event
     def set_current_aux_provider(self, value: str) -> None:
         """Change the current aux provider."""
-        self.current_aux_provider = AuxProvider(value)
+        for provider in self.aux_providers:
+            if provider.key.value == value:
+                self.current_aux_provider = provider
+                break
 
     @rx.event
     def handle_submit(self, form_data: dict[str, Any]) -> None:
@@ -83,6 +86,12 @@ class IngestState(State, PaginationStateMixin):
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
+    @rx.event
+    def resolve_primary_source_titles(self) -> Generator[EventSpec]:
+        """Resolve the dynamic names of the aux providers."""
+        for provider in self.aux_providers:
+            yield from provider.resolve_dynamic_name()
+
     @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
@@ -116,7 +125,7 @@ class IngestState(State, PaginationStateMixin):
         try:
             response = connector.request(
                 method="GET",
-                endpoint=self.current_aux_provider,
+                endpoint=self.current_aux_provider.key.value,
                 params={
                     "q": self.query_string or None,
                     "offset": str(self.skip),
@@ -132,7 +141,7 @@ class IngestState(State, PaginationStateMixin):
             yield None
             yield from escalate_error(
                 "backend",
-                f"error fetching {self.current_aux_provider} items",
+                f"error fetching {self.current_aux_provider.static_name} items",
                 exc.response.text,
             )
         else:

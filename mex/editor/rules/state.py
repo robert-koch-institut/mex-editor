@@ -1,6 +1,6 @@
 import copy
 from collections.abc import AsyncGenerator, Generator
-from typing import Literal, cast
+from typing import TYPE_CHECKING, Literal, cast
 
 import reflex as rx
 from pydantic import ValidationError
@@ -59,6 +59,10 @@ class RuleState(State, LocalStorageMixinState):
     fields: list[EditorField] = []
     stem_type: str | None = None
     validation_messages: list[ValidationMessage] = []
+
+    if TYPE_CHECKING:
+        item_id: str
+        draft_id: str
 
     @rx.var(cache=True, deps=["fields", "_api_fields"])
     def has_changes(self) -> bool:

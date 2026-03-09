@@ -17,8 +17,8 @@ from mex.editor.fields import STRINGIFIED_TYPES_BY_FIELD_BY_CLASS_NAME
 from mex.editor.label_var import label_var
 from mex.editor.models import SearchResult
 from mex.editor.pagination_component import PaginationStateMixin
-from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
+from mex.editor.transform import transform_models_to_search_results
 from mex.editor.utils import resolve_editor_value
 from mex.editor.value_label_select import ValueLabelSelectItem
 
@@ -42,7 +42,7 @@ class FieldDescriptor:
         )
 
     @classmethod
-    def from_json(cls, json_str: str) -> "FieldDescriptor":
+    def from_json(cls, json_str: str) -> FieldDescriptor:
         """Deserialize a JSON string to a FieldDescriptor."""
         data = json.loads(json_str)
         return FieldDescriptor(
@@ -157,7 +157,7 @@ class AdvancedSearchState(State, PaginationStateMixin):
                 exc.response.text,
             )
         else:
-            self.search_results = transform_models_to_results(fetch_result.items)
+            self.search_results = transform_models_to_search_results(fetch_result.items)
             self.total = fetch_result.total
 
         self.is_searching = False
@@ -301,5 +301,9 @@ class AdvancedSearchState(State, PaginationStateMixin):
         """Label for reference_filter.value_placeholder."""
 
     @label_var(label_id="advanced_search.reference_filter.title")
-    def label_refrence_filter_title(self) -> None:
-        """Label for refrence_filter.title."""
+    def label_reference_filter_title(self) -> None:
+        """Label for reference_filter.title."""
+
+    @label_var(label_id="advanced_search.entitytype_filter.title")
+    def label_entitytype_filter_title(self) -> None:
+        """Label for entitytype_filter.title."""

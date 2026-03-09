@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, cast
+from typing import Literal, cast
 
 import reflex as rx
 
@@ -6,22 +6,22 @@ from mex.editor.components import icon_by_stem_type, render_title
 from mex.editor.create.state import CreateState
 from mex.editor.edit.state import EditState
 from mex.editor.locale_service import LocaleService
-from mex.editor.models import NavItem
+from mex.editor.models import NavItem, User
 from mex.editor.rules.models import UserDraft
 from mex.editor.rules.state import RuleState
 from mex.editor.state import State
 
-if TYPE_CHECKING:
-    from mex.editor.models import User
-
 locale_service = LocaleService.get()
 
 
-def user_button() -> rx.Component:
+def user_button(
+    user_type: Literal["user_mex", "user_ldap"] = "user_mex",
+) -> rx.Component:
     """Return a user button with an icon that indicates their access rights."""
+    user = getattr(State, user_type)
     return rx.button(
         rx.cond(
-            cast("User", State.user_mex).write_access,
+            cast("User", user).write_access,
             rx.icon("user_round_cog"),
             rx.icon("user_round"),
         ),
@@ -80,15 +80,16 @@ def unsaved_changes_dialog() -> rx.Component:
     )
 
 
-def user_menu() -> rx.Component:
+def user_menu(user_type: Literal["user_mex", "user_ldap"] = "user_mex") -> rx.Component:
     """Return a user menu with a trigger, the user's name and a logout button."""
+    user = getattr(State, user_type)
     return rx.menu.root(
         rx.menu.trigger(
-            user_button(),
+            user_button(user_type),
             custom_attrs={"data-testid": "user-menu"},
         ),
         rx.menu.content(
-            rx.menu.item(cast("User", State.user_mex).name, disabled=True),
+            rx.menu.item(cast("User", user).name, disabled=True),
             rx.menu.separator(),
             rx.menu.item(
                 State.label_nav_bar_logout_button,
@@ -217,7 +218,10 @@ def app_logo() -> rx.Component:
     )
 
 
-def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
+def nav_bar(
+    nav_items_source: list[NavItem] | None = None,
+    user_type: Literal["user_mex", "user_ldap"] = "user_mex",
+) -> rx.Component:
     """Return a navigation bar component."""
     nav_items_to_use = (
         nav_items_source if nav_items_source is not None else State.nav_items_translated
@@ -242,7 +246,7 @@ def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
                 rx.spacer(),
                 rx.hstack(
                     language_switcher(),
-                    user_menu(),
+                    user_menu(user_type),
                     rx.button(
                         rx.icon("sun_moon"),
                         variant="ghost",
@@ -276,7 +280,7 @@ def nav_bar(nav_items_source: list[NavItem] | None = None) -> rx.Component:
 
 def page(
     *children: rx.Component,
-    user_type: str = "user_mex",
+    user_type: Literal["user_mex", "user_ldap"] = "user_mex",
     nav_items_source: list[NavItem] | None = None,
 ) -> rx.Component:
     """Return a page fragment with navigation bar and given children.
@@ -287,7 +291,7 @@ def page(
         nav_items_source: Custom navigation items, if None uses default
     """
     user_check = getattr(State, user_type)
-    navbar_component = nav_bar(nav_items_source)
+    navbar_component = nav_bar(nav_items_source, user_type)
 
     page_content = [
         navbar_component,

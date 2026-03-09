@@ -3,16 +3,52 @@ from urllib.parse import parse_qs, urlparse
 
 import reflex as rx
 from reflex.event import EventSpec
+from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.logging import logger
 from mex.editor.label_var import label_var
+from mex.editor.models import SearchResult
 from mex.editor.rules.state import RuleState
+from mex.editor.transform import transform_models_to_search_results
+from mex.editor.utils import resolve_editor_value
 
 
 class EditState(RuleState):
     """State for the edit component."""
 
     is_deleting: bool = False
+
+    @rx.var
+    async def superseded_by_backward(self) -> list[SearchResult]:
+        """Load the superseding items for the current item."""
+        results: list[SearchResult] = []
+
+        if self.item_id:
+            connector = BackendApiConnector.get()
+            try:
+                results = transform_models_to_search_results(
+                    connector.fetch_all_merged_items(
+                        reference_field="supersededBy",
+                        referenced_identifier=[self.item_id],
+                    )
+                )
+
+            except HTTPError as ex:
+                logger.error(
+                    "%s - %s: %s",
+                    "backend",
+                    "error fetching superseding items using 'fetch_all_merged_items'.",
+                    ex.response.json(),
+                    exc_info=False,
+                )
+
+        for result in results:
+            for preview in result.preview:
+                if preview.identifier and not preview.text:
+                    await resolve_editor_value(preview)
+
+        return results
 
     @rx.event
     def delete_reset(self) -> Generator[EventSpec | None]:
@@ -133,3 +169,15 @@ class EditState(RuleState):
     @label_var(label_id="edit.reset_rules.success_toast_text")
     def label_reset_rules_success_toast_text(self) -> None:
         """Label for reset_rules.success_toast_text."""
+
+    @label_var(label_id="edit.field_supersededBy.label")
+    def label_field_superseded_by_label(self) -> None:
+        """Label for field_supersededBy.label."""
+
+    @label_var(label_id="edit.field_supersededBy.description")
+    def label_field_superseded_by_description(self) -> None:
+        """Label for field_supersededBy_description."""
+
+    @label_var(label_id="edit.field_supersededBy.empty")
+    def label_field_superseded_by_empty(self) -> None:
+        """Label for field_supersededBy_empty."""

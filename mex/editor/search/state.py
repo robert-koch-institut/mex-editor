@@ -1,10 +1,11 @@
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Any, Literal
+from typing import Any, Literal
 from urllib.parse import parse_qs, urlparse
 
 import reflex as rx
 from pydantic import TypeAdapter, ValidationError
 from reflex.event import EventSpec
+from reflex.istate.data import RouterData
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -24,13 +25,10 @@ from mex.editor.search.models import (
     ReferenceFieldParameters,
     SearchPrimarySource,
 )
-from mex.editor.search.transform import transform_models_to_results
 from mex.editor.state import State
+from mex.editor.transform import transform_models_to_search_results
 from mex.editor.utils import resolve_editor_value
 from mex.editor.value_label_select import ValueLabelSelectItem
-
-if TYPE_CHECKING:
-    from reflex.istate.data import RouterData
 
 
 def _build_dynamic_refresh_params(
@@ -327,7 +325,7 @@ class SearchState(State, PaginationStateMixin):
             )
         else:
             self.is_loading = False
-            self.results = transform_models_to_results(response.items)
+            self.results = transform_models_to_search_results(response.items)
             yield SearchState.set_total(response.total)  # type: ignore[operator]
 
     @rx.event
@@ -347,7 +345,7 @@ class SearchState(State, PaginationStateMixin):
                 "backend", "error fetching primary sources", exc.response.text
             )
         else:
-            available_primary_sources = transform_models_to_results(
+            available_primary_sources = transform_models_to_search_results(
                 primary_sources_response.items
             )
             if len(available_primary_sources) == maximum_number_of_primary_sources:
@@ -378,10 +376,6 @@ class SearchState(State, PaginationStateMixin):
     @label_var(label_id="search.entitytype_filter.title")
     def label_entitytype_filter_title(self) -> None:
         """Label for entitytype_filter.title."""
-
-    @label_var(label_id="search.reference_field_filter.field_placeholder")
-    def label_reference_field_filter_field_placholder(self) -> None:
-        """Label for reference_field_filter.field_placeholder."""
 
     @label_var(label_id="search.reference_filter.dynamic_tab")
     def label_reference_filter_dynamic_tab(self) -> None:

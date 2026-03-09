@@ -1,4 +1,6 @@
+from datetime import datetime
 from urllib.parse import urlsplit
+from zoneinfo import ZoneInfo
 
 import pytest
 from playwright.sync_api import Page, expect
@@ -32,6 +34,7 @@ def consent_page(
     page.goto(f"{base_url}/consent")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
+    page.wait_for_timeout(5000)
     page.screenshot(path="tests_consent_test_main-test_index-on-load.png")
     return page
 
@@ -53,9 +56,10 @@ def test_projects_and_resources(consent_page: Page) -> None:
 def test_pagination(consent_page: Page) -> None:
     page = consent_page
 
-    pagination_previous = page.get_by_test_id("resources-pagination-previous-button")
-    pagination_next = page.get_by_test_id("resources-pagination-next-button")
-    pagination_page_select = page.get_by_test_id("resources-pagination-page-select")
+    res_list = page.get_by_test_id("user-resources")
+    pagination_previous = res_list.get_by_test_id("pagination-previous-button")
+    pagination_next = res_list.get_by_test_id("pagination-next-button")
+    pagination_page_select = res_list.get_by_test_id("pagination-page-select")
 
     pagination_page_select.scroll_into_view_if_needed()
     page.screenshot(path="tests_consent_test_main_test_pagination.png")
@@ -109,6 +113,7 @@ def test_index(consent_page: Page) -> None:
 @pytest.mark.usefixtures("load_dummy_data")
 def test_submit_consent(consent_page: Page) -> None:
     page = consent_page
+    today = datetime.now(tz=ZoneInfo("Europe/Berlin")).strftime("%d.%m.%Y")
 
     page.get_by_test_id("accept-consent-button").click()
     consent_status = page.get_by_test_id("consent-status")
@@ -119,7 +124,7 @@ def test_submit_consent(consent_page: Page) -> None:
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
     expect(toast).to_have_attribute("data-type", "success")
-    expect(consent_status).to_contain_text("VALID_FOR_PROCESSING")
+    expect(consent_status).to_contain_text(f"Sie haben Ihre Einwilligung am {today}")
 
     # check if denied consent is submitted
     page.get_by_test_id("denial-consent-button").click()
@@ -127,4 +132,4 @@ def test_submit_consent(consent_page: Page) -> None:
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
     expect(toast).to_have_attribute("data-type", "success")
-    expect(consent_status).to_contain_text("INVALID_FOR_PROCESSING")
+    expect(consent_status).to_contain_text(f"Sie haben Ihre Ablehnung am {today}")

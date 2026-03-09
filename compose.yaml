@@ -4,14 +4,12 @@ services:
       context: .
     ports:
       - 8030:8030
-    environment:
-      - MEX_EDITOR_API_HOST=http://mex-editor-api:8031
     healthcheck:
       test: [ "CMD", "curl", "http://mex-editor-frontend:8030" ]
-      interval: 30s
+      interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 90s
+      start_period: 30s
     entrypoint: editor-frontend
     depends_on:
       mex-editor-api:
@@ -59,7 +57,7 @@ services:
       valkey:
         condition: service_healthy
   neo4j:
-    image: neo4j:2025.12-community
+    image: neo4j:2026.01-community
     environment:
       - NEO4J_AUTH=neo4j/password
     ports:
@@ -73,7 +71,7 @@ services:
       retries: 5
       start_period: 10s
   valkey:
-    image: valkey/valkey:9.0.0
+    image: valkey/valkey:9.0.3
     ports:
       - 6379:6379
     volumes:

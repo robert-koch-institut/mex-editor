@@ -111,7 +111,7 @@ class PaginationOptions:
     def create(
         state: PaginationStateMixin | type[PaginationStateMixin],
         on_page_change: EventType[()] | None = None,
-    ) -> "PaginationOptions":
+    ) -> PaginationOptions:
         """Create pagination options for a given state.
 
         Args:

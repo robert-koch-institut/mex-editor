@@ -50,7 +50,10 @@ def filter_entity_type() -> rx.Component:
     """Render filter entity type page."""
     return rx.card(
         rx.vstack(
-            rx.heading("Entity Types", size="3"),
+            rx.text(
+                AdvancedSearchState.label_entitytype_filter_title,
+                style=rx.Style(userSelect="none"),
+            ),
             rx.vstack(
                 rx.foreach(
                     AdvancedSearchState.all_entity_types,
@@ -191,7 +194,10 @@ def filter_references() -> rx.Component:
     return rx.card(
         rx.vstack(
             rx.hstack(
-                rx.heading(AdvancedSearchState.label_refrence_filter_title, size="3"),
+                rx.text(
+                    AdvancedSearchState.label_reference_filter_title,
+                    style=rx.Style(userSelect="none"),
+                ),
                 rx.button(
                     rx.icon("plus"),
                     on_click=AdvancedSearchState.add_ref_filter(
@@ -223,7 +229,9 @@ def sidebar() -> rx.Component:
         filter_query(),
         filter_entity_type(),
         filter_references(),
+        spacing="4",
         align="stretch",
+        custom_attrs={"data-testid": "advanced-search-sidebar"},
         style=rx.Style(flex="0 0 300px"),
     )
 

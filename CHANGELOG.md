@@ -11,18 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- update lock file
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+### Security
+
+## [1.7.1] - 2026-03-09
+
+### Changes
+
+- update lock file
+
+### Fixed
+
 - set build dir in docker file
 - fix reflex build
-
-### Security
 
 ## [1.7.0] - 2026-03-06
 

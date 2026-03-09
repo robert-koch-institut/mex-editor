@@ -13,7 +13,7 @@ from mex.editor.rules.transform import transform_models_to_fields
 
 
 def test_state_get_primary_sources_by_field_name() -> None:
-    state = RuleState()
+    state = RuleState()  # type: ignore[call-arg]
     rule_set = ContactPointRuleSetResponse(stableTargetId="someContactPoint")
     extracted_item = ExtractedContactPoint(
         email="test@foo.bar",

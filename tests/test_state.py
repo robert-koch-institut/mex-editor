@@ -7,7 +7,10 @@ from mex.editor.state import State
 
 
 def test_state_logout(monkeypatch: MonkeyPatch) -> None:
-    state = State(user_mex=User(name="Test", write_access=True))
+    state = State(
+        user_mex=User(name="Test", write_access=True),
+        parent_state=MagicMock(),
+    )
     monkeypatch.setattr(State, "_mark_dirty", MagicMock(spec=State._mark_dirty))
 
     assert state.user_mex

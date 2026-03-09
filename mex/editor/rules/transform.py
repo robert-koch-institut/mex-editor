@@ -109,6 +109,8 @@ def _transform_model_to_input_config(  # noqa: PLR0911
             editable_href=False,
             allow_additive=False,
             render_textarea=False,
+            allow_preventive=False,
+            allow_subtractive=False,
         )
 
     if field_name in REFERENCE_FIELDS_BY_CLASS_NAME[entity_type]:

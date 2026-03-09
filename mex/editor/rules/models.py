@@ -16,6 +16,8 @@ class InputConfig(BaseModel):
     editable_text: bool = False  # whether the text is editable as plain text
     allow_additive: bool = False  # whether this field belongs to an additive rule
     render_textarea: bool = False  # whether this field is rendered as a textarea
+    allow_subtractive: bool = True  # whether this field belongs to an subtractive rule
+    allow_preventive: bool = True  # whether this field belongs to an preventive rule
 
 
 class ValidationMessage(BaseModel):

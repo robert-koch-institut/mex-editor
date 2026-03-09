@@ -359,6 +359,35 @@ def test_edit_page_switch_roundtrip(
 
 
 @pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
+@pytest.mark.parametrize(
+    ("field_name", "switch_count"),
+    [
+        ("identifierInPrimarySource", 0),
+        ("website", 3),
+    ],
+)
+def test_field_switches_behavior(
+    base_url: str,
+    writer_user_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+    field_name: str,
+    switch_count: int,
+) -> None:
+    page = writer_user_page
+    item = dummy_data_by_identifier_in_primary_source["a-1"]
+
+    page.goto(f"{base_url}/item/{item.stableTargetId}")
+    expect(page.get_by_test_id("page-body")).to_be_visible()
+
+    field = page.get_by_test_id(f"field-{field_name}")
+    expect(field).to_be_visible()
+
+    switches = field.locator("[data-testid^='switch-']")
+    expect(switches).to_have_count(switch_count)
+
+
+@pytest.mark.integration
 def test_edit_page_renders_new_additive_button(edit_page: Page) -> None:
     page = edit_page
     new_additive_button = page.get_by_test_id(

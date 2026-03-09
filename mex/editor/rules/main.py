@@ -79,7 +79,7 @@ def editor_static_value(
     return rx.hstack(
         render_value(value),
         rx.cond(
-            field_name != "identifierInPrimarySource",
+            primary_source.input_config.allow_subtractive,
             editor_value_switch(
                 field_name,
                 primary_source,
@@ -367,7 +367,7 @@ def primary_source_name(
             rx.spacer(),
             rx.cond(
                 ~cast("rx.vars.BooleanVar", primary_source.input_config.allow_additive)
-                & (field_name != "identifierInPrimarySource"),
+                & (primary_source.input_config.allow_preventive),
                 primary_source_switch(
                     field_name,
                     primary_source,

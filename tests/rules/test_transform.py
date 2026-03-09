@@ -224,6 +224,8 @@ def test_transform_model_values_to_editor_values(
             InputConfig(
                 editable_text=True,
                 allow_additive=True,
+                allow_subtractive=True,
+                allow_preventive=True,
             ),
             id="string field",
         ),
@@ -246,6 +248,8 @@ def test_transform_model_values_to_editor_values(
                 editable_badge=True,
                 editable_text=True,
                 allow_additive=True,
+                allow_subtractive=True,
+                allow_preventive=True,
             ),
             id="temporal entity field",
         ),
@@ -256,6 +260,8 @@ def test_transform_model_values_to_editor_values(
             InputConfig(
                 editable_text=True,
                 allow_additive=True,
+                allow_subtractive=True,
+                allow_preventive=True,
             ),
             id="temporal or string field",
         ),
@@ -273,6 +279,8 @@ def test_transform_model_values_to_editor_values(
             InputConfig(
                 editable_identifier=True,
                 allow_additive=True,
+                allow_subtractive=True,
+                allow_preventive=True,
             ),
             id="reference field",
         ),
@@ -290,6 +298,8 @@ def test_transform_model_values_to_editor_values(
                 badge_titles=["License"],
                 editable_badge=True,
                 allow_additive=True,
+                allow_subtractive=True,
+                allow_preventive=True,
             ),
             id="vocabulary field",
         ),
@@ -312,6 +322,8 @@ def test_transform_model_values_to_editor_values(
                 editable_badge=True,
                 editable_text=True,
                 allow_additive=True,
+                allow_subtractive=True,
+                allow_preventive=True,
             ),
             id="link field",
         ),
@@ -333,6 +345,8 @@ def test_transform_model_values_to_editor_values(
                 editable_badge=True,
                 editable_text=True,
                 allow_additive=True,
+                allow_subtractive=True,
+                allow_preventive=True,
             ),
             id="text field",
         ),
@@ -355,6 +369,8 @@ def test_transform_model_values_to_editor_values(
                 editable_text=True,
                 allow_additive=True,
                 render_textarea=True,
+                allow_subtractive=True,
+                allow_preventive=True,
             ),
             id="text area field",
         ),
@@ -365,6 +381,8 @@ def test_transform_model_values_to_editor_values(
             InputConfig(
                 editable_text=True,
                 allow_additive=True,
+                allow_subtractive=True,
+                allow_preventive=True,
             ),
             id="integer field",
         ),
@@ -381,6 +399,8 @@ def test_transform_model_values_to_editor_values(
                 editable_identifier=False,
                 editable_href=False,
                 allow_additive=False,
+                allow_subtractive=False,
+                allow_preventive=False,
             ),
             id="final field identifierInPrimarySource",
         ),
@@ -402,7 +422,7 @@ def test_transform_model_to_input_config(
 
 
 @pytest.mark.parametrize(
-    ("extracted_items", "expected_presence"),
+    ("extracted_items", "is_present"),
     [
         ([], False),
         (
@@ -417,7 +437,7 @@ def test_transform_model_to_input_config(
     ],
 )
 def test_id_shown_with_extracted_items(
-    extracted_items: list[AnyExtractedModel], *, expected_presence: bool
+    extracted_items: list[AnyExtractedModel], *, is_present: bool
 ) -> None:
     editor_fields = transform_models_to_fields(
         extracted_items=extracted_items,
@@ -428,7 +448,7 @@ def test_id_shown_with_extracted_items(
 
     field_names = [field.name for field in editor_fields]
 
-    if expected_presence:
+    if is_present:
         assert "identifierInPrimarySource" in field_names
     else:
         assert "identifierInPrimarySource" not in field_names
@@ -559,8 +579,8 @@ def test_transform_models_to_fields() -> None:
         subtractive=SubtractivePerson(givenName=["Bad"]),
         preventive=PreventivePerson(memberOf=[MEX_PRIMARY_SOURCE_STABLE_TARGET_ID]),
     )
-
-    assert len(editor_fields) == len(MERGEABLE_FIELDS_BY_CLASS_NAME["MergedPerson"])
+    # identifierInPrimarySource is NOT in MERGEABLE_FIELDS_BY_CLASS_NAME and has to be added
+    assert len(editor_fields) == len(MERGEABLE_FIELDS_BY_CLASS_NAME["MergedPerson"]) + 1
     fields_by_name = {f.name: f for f in editor_fields}
     assert fields_by_name["givenName"].model_dump() == {
         "is_required": False,
@@ -588,6 +608,8 @@ def test_transform_models_to_fields() -> None:
                     "editable_text": False,
                     "allow_additive": False,
                     "render_textarea": False,
+                    "allow_subtractive": True,
+                    "allow_preventive": True,
                 },
                 "editor_values": [],
                 "enabled": True,
@@ -613,6 +635,8 @@ def test_transform_models_to_fields() -> None:
                     "editable_text": True,
                     "allow_additive": True,
                     "render_textarea": False,
+                    "allow_subtractive": True,
+                    "allow_preventive": True,
                 },
                 "editor_values": [
                     {
@@ -655,6 +679,8 @@ def test_transform_models_to_fields() -> None:
                     "editable_text": False,
                     "allow_additive": False,
                     "render_textarea": False,
+                    "allow_subtractive": True,
+                    "allow_preventive": True,
                 },
                 "editor_values": [],
                 "enabled": False,
@@ -680,6 +706,8 @@ def test_transform_models_to_fields() -> None:
                     "editable_text": False,
                     "allow_additive": True,
                     "render_textarea": False,
+                    "allow_subtractive": True,
+                    "allow_preventive": True,
                 },
                 "editor_values": [],
                 "enabled": True,

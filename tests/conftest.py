@@ -200,7 +200,6 @@ def dummy_data() -> list[AnyExtractedModel]:
         ],
         unitInCharge=[organizational_unit_1.stableTargetId],
     )
-    print(f"________PrimarySourceID {primary_source_1.identifierInPrimarySource}")
     return [
         primary_source_1,
         primary_source_2,

@@ -207,11 +207,13 @@ def test_edit_page_renders_fields(edit_page: Page) -> None:
     funding_program = page.get_by_test_id("field-fundingProgram-name")
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_fields.png")
     expect(funding_program).to_be_visible()
+    # identifierInPrimarySource is NOT in MERGEABLE_FIELDS_BY_CLASS_NAME and has to be added
     expect(page.get_by_role("row")).to_have_count(
         len(
             set(MERGEABLE_FIELDS_BY_CLASS_NAME["ExtractedActivity"])
             | set(MERGEABLE_FIELDS_BY_CLASS_NAME["AdditiveActivity"])
         )
+        + 1
     )
 
 

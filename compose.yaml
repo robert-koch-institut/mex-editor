@@ -4,14 +4,12 @@ services:
       context: .
     ports:
       - 8030:8030
-    environment:
-      - MEX_EDITOR_API_HOST=http://mex-editor-api:8031
     healthcheck:
       test: [ "CMD", "curl", "http://mex-editor-frontend:8030" ]
-      interval: 30s
+      interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 90s
+      start_period: 30s
     entrypoint: editor-frontend
     depends_on:
       mex-editor-api:

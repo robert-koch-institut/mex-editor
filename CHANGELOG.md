@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update backend version to 1.7.2 to use `/ldap?offset`
+- update lock file
+
 ### Deprecated
 
 ### Removed

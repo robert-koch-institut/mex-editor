@@ -2,18 +2,16 @@ from collections.abc import Sequence
 from importlib.resources import files
 from typing import Protocol
 
-import reflex as rx
 import yaml
-from pydantic import TypeAdapter
+from pydantic import BaseModel, TypeAdapter
 
-from mex.common.models import BaseModel
 from mex.common.types import MergedPersonIdentifier
 
 
 class EqualityDetector(Protocol):
     """Interface for checking equality without overriding __eq__."""
 
-    def is_equal(self, other: "EqualityDetector") -> bool: ...  # noqa: D102
+    def is_equal(self, other: EqualityDetector) -> bool: ...  # noqa: D102
 
 
 def sequence_is_equal(
@@ -26,7 +24,7 @@ def sequence_is_equal(
         return False  # sequences don't have same length
 
 
-class EditorValue(rx.Base):
+class EditorValue(BaseModel):
     """Model for describing atomic values in the editor."""
 
     text: str | None = None
@@ -37,24 +35,24 @@ class EditorValue(rx.Base):
     enabled: bool = True
     being_edited: bool = False
 
-    def is_equal(self, other: "EqualityDetector") -> bool:
+    def is_equal(self, other: EqualityDetector) -> bool:
         """Check if self and other are equal."""
         if isinstance(other, EditorValue):
             exclude = {"text"} if other.identifier and not other.text else set()
-            self_dict = self.dict(exclude=exclude)
-            other_dict = other.dict(exclude=exclude)
+            self_dict = self.model_dump(exclude=exclude)
+            other_dict = other.model_dump(exclude=exclude)
             return self_dict == other_dict
         return False
 
 
-class User(rx.Base):
+class User(BaseModel):
     """Info on the currently logged-in user."""
 
     name: str
     write_access: bool
 
 
-class MergedLoginPerson(rx.Base):
+class MergedLoginPerson(BaseModel):
     """Info on the currently logged-in user from the merged login endpoint."""
 
     identifier: MergedPersonIdentifier | None = None
@@ -63,13 +61,13 @@ class MergedLoginPerson(rx.Base):
     orcid_id: list[str] | None = None
 
 
-class NavItem(rx.Base):
+class NavItem(BaseModel):
     """Model for one navigation bar item."""
 
-    title: str = ""
-    path: str = "/"
-    raw_path: str = "/"
-    underline: str = "none"
+    title: str
+    route_ids: list[str]
+    raw_path: str
+    active: bool = False
 
 
 class ModelConfig(BaseModel):
@@ -86,7 +84,15 @@ MODEL_CONFIG_BY_STEM_TYPE = TypeAdapter(dict[str, ModelConfig]).validate_python(
 LANGUAGE_VALUE_NONE = "None"
 
 
-class SearchResult(rx.Base):
+class ValueLabelCheckboxItem(BaseModel):
+    """Item for checkbox state with a value, label and check state."""
+
+    value: str
+    label: str
+    checked: bool
+
+
+class SearchResult(BaseModel):
     """Search result preview."""
 
     identifier: str

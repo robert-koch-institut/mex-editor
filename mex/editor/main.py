@@ -5,12 +5,15 @@ from pathlib import Path
 import uvicorn
 from reflex.config import environment, get_config
 from reflex.constants import Env, LogLevel
-from reflex.reflex import _init, run
+from reflex.reflex import run
 from reflex.state import reset_disk_state_manager
 from reflex.utils.build import setup_frontend_prod
 from reflex.utils.console import set_log_level
 from reflex.utils.exec import get_app_instance, run_frontend_prod
-from reflex.utils.prerequisites import get_compiled_app
+from reflex.utils.prerequisites import (
+    get_compiled_app,
+    initialize_frontend_dependencies,
+)
 
 from mex.editor.logging import UVICORN_LOGGING_CONFIG
 from mex.editor.settings import EditorSettings
@@ -27,6 +30,7 @@ def editor_api() -> None:  # pragma: no cover
     environment.REFLEX_ENV_MODE.set(Env.PROD)
     environment.REFLEX_SKIP_COMPILE.set(True)
     environment.REFLEX_USE_GRANIAN.set(False)
+    environment.REFLEX_SSR.set(False)
 
     # Delete the states folder if it exists.
     reset_disk_state_manager()  # type: ignore[no-untyped-call]
@@ -55,18 +59,16 @@ def editor_frontend() -> None:  # pragma: no cover
     # Configure the environment.
     environment.REFLEX_ENV_MODE.set(Env.PROD)
     environment.REFLEX_CHECK_LATEST_VERSION.set(False)
+    environment.REFLEX_SSR.set(False)
 
-    # Initialize the app in the current directory.
-    _init(name="mex")
+    # Check that the app is initialized.
+    initialize_frontend_dependencies()  # type: ignore[no-untyped-call]
 
     # Get the app module.
     get_compiled_app()
 
     # Set up the frontend for prod mode.
-    setup_frontend_prod(
-        Path.cwd(),
-        disable_telemetry=True,
-    )
+    setup_frontend_prod(Path.cwd())
 
     # Run the frontend.
     run_frontend_prod(
@@ -80,11 +82,14 @@ def main() -> None:  # pragma: no cover
     """Start the editor api together with frontend."""
     # Set environment variables.
     environment.REFLEX_USE_GRANIAN.set(False)
+    environment.REFLEX_SSR.set(False)
+    if (tests := Path("tests")).exists():
+        environment.REFLEX_HOT_RELOAD_EXCLUDE_PATHS.set([tests])
 
     if "win32" in sys.platform:
         # bun cache is not working correctly on windows
         # https://github.com/oven-sh/bun/issues/20886
         os.environ["BUN_OPTIONS"] = "--no-cache"
 
-    # Run the editor.
+    # Run editor service.
     run.main()

@@ -1,17 +1,17 @@
 import re
+from collections.abc import Iterable
 from gettext import GNUTranslations
 from importlib.resources import files
 from io import BytesIO
-from typing import TYPE_CHECKING, Self, cast
+from pathlib import Path
+from typing import Self, cast
 
 import polib
 from babel import Locale as BabelLocale
+from pydantic import BaseModel
 
 from mex.common.context import SingleSingletonStore
-from mex.common.models import BaseModel
-
-if TYPE_CHECKING:
-    from pathlib import Path
+from mex.common.transform import camelcase_to_title
 
 LOCALE_SERVICE_STORE = SingleSingletonStore["LocaleService"]()
 
@@ -23,18 +23,9 @@ class MExLocale(BaseModel):
     label: str
     language: str
 
-
-# TODO(ND): Move this to mex-common
-def camelcase_to_title(value: str) -> str:
-    """Convert a camelcase string into title-cased words splitted by space.
-
-    Args:
-        value: The camelcase string to convert.
-
-    Returns:
-        The converted string containing title-cased words splitted by space.
-    """
-    return re.sub(r"(?<!^)(?=[A-Z])", " ", value).title()
+    def values(self) -> Iterable[str]:
+        """Expose locale values to avoid reflex bug."""
+        return self.model_dump().values()  # sigh, don't ask
 
 
 class LocaleService:
@@ -49,7 +40,7 @@ class LocaleService:
         """
         return cast("Self", LOCALE_SERVICE_STORE.load(cls))
 
-    _editor_locale_path = cast("Path", (files("mex.editor") / "locales"))
+    _editor_locale_path = cast("Path", (files("mex.editor") / "i18n"))
     _model_locale_path = cast("Path", (files("mex.model") / "i18n"))
     _available_locales: dict[str, MExLocale] = {}
     _translations: dict[str, GNUTranslations] = {}

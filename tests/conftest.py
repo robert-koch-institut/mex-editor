@@ -1,16 +1,22 @@
+import logging
 import re
 from collections.abc import Generator
 from re import Pattern
 from typing import Any, cast
+from urllib.parse import urlsplit
 
 import pytest
 from fastapi.testclient import TestClient
 from playwright.sync_api import Page, expect
 from pydantic import SecretStr
-from pytest import MonkeyPatch
+from pytest import LogCaptureFixture
 
 from mex.artificial.helpers import generate_artificial_extracted_items
-from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.backend_api.connector import (
+    BackendApiConnector,
+    LDAPBackendApiConnector,
+)
+from mex.common.logging import logger
 from mex.common.models import (
     EXTRACTED_MODEL_CLASSES_BY_NAME,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
@@ -28,6 +34,7 @@ from mex.common.types import (
     Link,
     MergedContactPointIdentifier,
     MergedOrganizationalUnitIdentifier,
+    MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
     Text,
     TextLanguage,
@@ -64,47 +71,30 @@ def client() -> TestClient:
 
 
 @pytest.fixture(autouse=True)
-def settings() -> EditorSettings:
-    """Load and return the current editor settings."""
-    return EditorSettings.get()
-
-
-@pytest.fixture(autouse=True)
-def set_identity_provider(
+def settings(
+    caplog: LogCaptureFixture,
+    request: pytest.FixtureRequest,
     is_integration_test: bool,  # noqa: FBT001
-    monkeypatch: MonkeyPatch,
-) -> None:
-    """Ensure the identifier provider is set correctly for unit and int tests."""
-    # TODO(ND): clean this up after MX-1708
-    settings = EditorSettings.get()
-    if is_integration_test:
-        monkeypatch.setitem(settings.model_config, "validate_assignment", False)  # noqa: FBT003
-        monkeypatch.setattr(settings, "identity_provider", IdentityProvider.BACKEND)
-    else:
-        monkeypatch.setattr(settings, "identity_provider", IdentityProvider.MEMORY)
-
-
-@pytest.fixture(autouse=True)
-def patch_editor_user_database(
-    is_integration_test: bool,  # noqa: FBT001
-    monkeypatch: MonkeyPatch,
-    settings: EditorSettings,
-) -> None:
-    """Overwrite the user database with dummy credentials."""
-    if not is_integration_test:
-        monkeypatch.setattr(
-            settings,
-            "editor_user_database",
-            EditorUserDatabase(
+    isolate_settings: None,  # noqa: ARG001
+) -> EditorSettings:
+    """Load and return the correct editor settings."""
+    verbosity = request.config.option.verbose
+    cutoff_level = logging.INFO if verbosity >= 2 else logging.WARNING
+    with caplog.at_level(cutoff_level, logger=logger.name):
+        settings = EditorSettings.get()
+        if is_integration_test:
+            settings.identity_provider = IdentityProvider.BACKEND
+        else:
+            settings.identity_provider = IdentityProvider.MEMORY
+            settings.editor_user_database = EditorUserDatabase(
                 read={"reader": EditorUserPassword("reader_pass")},
                 write={"writer": EditorUserPassword("writer_pass")},
-            ),
-        )
+            )
+    return settings
 
 
 @pytest.fixture
-def writer_user_credentials() -> tuple[str, SecretStr]:
-    settings = EditorSettings.get()
+def writer_user_credentials(settings: EditorSettings) -> tuple[str, SecretStr]:
     for username, password in settings.editor_user_database["write"].items():
         return username, password
     msg = "No writer configured"  # pragma: no cover
@@ -126,8 +116,8 @@ def writer_user_page(
     login_user(base_url, page, *writer_user_credentials)
     expect(page.get_by_test_id("nav-bar")).to_be_visible()
     page.set_default_navigation_timeout(50_000)
-    page.set_default_timeout(30_000)
-    expect.set_options(timeout=30_000)
+    page.set_default_timeout(35_000)
+    expect.set_options(timeout=35_000)
     return page
 
 
@@ -141,7 +131,9 @@ def flush_graph_database(is_integration_test: bool) -> None:  # noqa: FBT001
 
 
 @pytest.fixture
-def dummy_data() -> list[AnyExtractedModel]:
+def dummy_data(
+    request: pytest.FixtureRequest,
+) -> list[AnyExtractedModel]:
     """Create a set of interlinked dummy data."""
     primary_source_1 = ExtractedPrimarySource(
         hadPrimarySource=MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
@@ -170,13 +162,19 @@ def dummy_data() -> list[AnyExtractedModel]:
         name=[Text(value="Unit 1", language=TextLanguage.EN)],
         shortName=["OU1"],
     )
+    test_module = request.module.__name__
+
+    if "consent" in test_module:
+        user_id = get_logged_in_user_id()
+    else:
+        user_id = contact_point_1.stableTargetId  # type: ignore[assignment]
     activity_1 = ExtractedActivity(
         abstract=[
             Text(value="An active activity.", language=TextLanguage.EN),
             Text(value="Une activité active.", language=None),
         ],
         contact=[
-            contact_point_1.stableTargetId,
+            user_id,
             organizational_unit_1.stableTargetId,
         ],
         hadPrimarySource=primary_source_1.stableTargetId,
@@ -196,7 +194,7 @@ def dummy_data() -> list[AnyExtractedModel]:
         hadPrimarySource=primary_source_1.stableTargetId,
         identifierInPrimarySource="r-1",
         accessRestriction=AccessRestriction["OPEN"],
-        contact=[contact_point_1.stableTargetId],
+        contact=[user_id],
         theme=[Theme["BIOINFORMATICS_AND_SYSTEMS_BIOLOGY"]],
         title=[Text(value="Bioinformatics Resource 1", language=None)],
         unitInCharge=[organizational_unit_1.stableTargetId],
@@ -205,7 +203,7 @@ def dummy_data() -> list[AnyExtractedModel]:
         hadPrimarySource=primary_source_2.stableTargetId,
         identifierInPrimarySource="r-2",
         accessRestriction=AccessRestriction["OPEN"],
-        contact=[contact_point_1.stableTargetId, contact_point_2.stableTargetId],
+        contact=[user_id, contact_point_2.stableTargetId],
         theme=[Theme["PUBLIC_HEALTH"]],
         title=[
             Text(value="Some Resource with many titles 1", language=None),
@@ -270,9 +268,7 @@ def load_pagination_dummy_data(
     test_module = request.module.__name__
 
     if "consent" in test_module:
-        contact_point_1 = next(
-            x for x in dummy_data if x.identifierInPrimarySource == "cp-1"
-        )
+        user_id = get_logged_in_user_id()
         organizational_unit_1 = next(
             x for x in dummy_data if x.identifierInPrimarySource == "ou-1"
         )
@@ -287,7 +283,7 @@ def load_pagination_dummy_data(
                     contact=[
                         cast(
                             "MergedContactPointIdentifier",
-                            contact_point_1.stableTargetId,
+                            user_id,
                         )
                     ],
                     theme=[Theme["BIOINFORMATICS_AND_SYSTEMS_BIOLOGY"]],
@@ -354,6 +350,22 @@ def build_pagination_regex(current: int, total: int) -> Pattern[str]:
 
 def build_ui_label_regex(label_id: str) -> Pattern[str]:
     service = LocaleService.get()
-    return re.compile(
-        f"({'|'.join(re.escape(service.get_ui_label(locale.id, label_id)) for locale in service.get_available_locales())})"
+    ui_labels = (
+        re.escape(service.get_ui_label(locale.id, label_id))
+        for locale in service.get_available_locales()
     )
+    return re.compile(f"({'|'.join(ui_labels)})")
+
+
+def get_logged_in_user_id() -> MergedPersonIdentifier:
+    """Return the merged person identifier of the currently logged in user."""
+    settings = EditorSettings.get()
+    url = urlsplit(settings.ldap_url.get_secret_value())
+    connector = LDAPBackendApiConnector.get()
+    persons = connector.merged_person_from_login(
+        username=str(url.username), password=str(url.password)
+    )
+    if not persons:
+        msg = "No merged login person found for the logged in user."
+        raise RuntimeError(msg)
+    return persons.identifier

@@ -1,4 +1,7 @@
-from async_lru import alru_cache
+import asyncio
+from collections.abc import Mapping, Sequence
+from functools import lru_cache
+from urllib.parse import urlencode, urlparse, urlunparse
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.exceptions import EmptySearchResultError, MExError
@@ -8,8 +11,8 @@ from mex.editor.settings import EditorSettings
 from mex.editor.transform import transform_models_to_title
 
 
-@alru_cache(maxsize=5000)
-async def resolve_identifier(identifier: str) -> str:
+@lru_cache(maxsize=5000)
+def resolve_identifier(identifier: str) -> str:
     """Resolve identifiers to human readable display values."""
     # TODO(ND): use proper connector method when available (stop-gap MX-1984)
     connector = BackendApiConnector.get()
@@ -24,7 +27,9 @@ async def resolve_identifier(identifier: str) -> str:
 async def resolve_editor_value(editor_value: EditorValue) -> None:
     """Resolve editor text values to human readable display values."""
     if editor_value.identifier:
-        editor_value.text = await resolve_identifier(editor_value.identifier)
+        editor_value.text = await asyncio.to_thread(
+            resolve_identifier, editor_value.identifier
+        )
     else:
         msg = f"Cannot resolve editor value: {editor_value}"
         raise MExError(msg)
@@ -34,3 +39,15 @@ def load_settings() -> EditorSettings:
     """Reset the settings store and fetch the editor settings."""
     SETTINGS_STORE.reset()
     return EditorSettings.get()
+
+
+def replace_url_params(
+    url: str,
+    params: Mapping[str, int | str | Sequence[int | str]],
+) -> str:
+    """Replace the parameters of a given url."""
+    current_url = urlparse(url)
+    query = urlencode(params, doseq=True)
+    # yes, `_replace` looks private but is actually official API
+    # docs.python.org/3/library/collections.html#collections.somenamedtuple
+    return urlunparse(current_url._replace(query=query))

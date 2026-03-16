@@ -1,5 +1,5 @@
 from collections.abc import Generator, Iterable
-from typing import Any
+from typing import cast
 
 import reflex as rx
 from reflex.event import EventSpec, EventType
@@ -8,7 +8,6 @@ from requests import HTTPError
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
-from mex.editor.layout import custom_focus_script
 from mex.editor.locale_service import LocaleService
 from mex.editor.models import SearchResult
 from mex.editor.pagination_component import (
@@ -16,13 +15,13 @@ from mex.editor.pagination_component import (
     PaginationStateMixin,
     pagination,
 )
-from mex.editor.search.transform import transform_models_to_dialog_results
 from mex.editor.search_results_component import (
     SearchResultsListItemOptions,
     SearchResultsListOptions,
     search_results_list,
 )
 from mex.editor.state import State
+from mex.editor.transform import transform_models_to_search_results
 from mex.editor.utils import resolve_editor_value
 
 
@@ -69,15 +68,17 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
     @rx.var
     def label_user_reference_types(self) -> str:
         """Label for the reference types."""
-        # TODO(FE): PLACEHOLDER - translate reference types when doin MX-2092
-        dummy_translation = self._locale_service.get_field_label(
-            self.current_locale, "", "contact"
-        )
-        result = [
-            f"{self.current_locale}: {x} ({dummy_translation})"
+        translated = [
+            self._locale_service.get_ui_label(
+                self.current_locale, x.removeprefix("Merged")
+            )
             for x in self.user_reference_types
         ]
-        return "|".join(result)
+        return (
+            f"{', '.join(translated[:-1])}{' und ' if len(translated) > 1 else ''}{translated[-1]}"  # noqa: E501
+            if translated
+            else ""
+        )
 
     @rx.event
     def toggle_show_all_properties(self, item: SearchResult, index: int) -> None:
@@ -93,6 +94,16 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
             self.results = []
             self.reset_pagination()  # type: ignore[operator]
 
+    @rx.event
+    def set_user_query(self, value: str) -> None:
+        """Set the user query value."""
+        self.user_query = value
+
+    @rx.event
+    def set_user_reference_types(self, value: list[str]) -> None:
+        """Set the user reference type value."""
+        self.user_reference_types = value
+
     @rx.event(background=True)  # type: ignore[operator]
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
@@ -103,26 +114,14 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
                         await resolve_editor_value(value)
 
     @rx.event
-    def handle_submit(self, form_data: dict[str, Any]) -> Generator[EventSpec | None]:
-        """Handle form submit by sync values and start search."""
-        self.user_query = str(form_data.get("query", ""))
-        self.user_reference_types = [
-            value
-            for key, value in form_data.items()
-            if str(key).startswith("reference_type")
-        ]
-
-        yield SearchReferenceDialogState.search  # type: ignore[misc]
-
-    @rx.event
     def search(self) -> Generator[EventSpec | None]:
         """Search for entities by query and reference_types."""
         if self.is_loading:
             return
-        connector = BackendApiConnector.get()
 
         self.is_loading = True
         yield None
+        connector = BackendApiConnector.get()
         try:
             response = connector.fetch_preview_items(
                 query_string=self.user_query,
@@ -141,8 +140,9 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
             )
         else:
             self.is_loading = False
-            self.results = transform_models_to_dialog_results(response.items)
+            self.results = transform_models_to_search_results(response.items, True)  # noqa: FBT003
             yield SearchReferenceDialogState.set_total(response.total)  # type: ignore[operator]
+            yield SearchReferenceDialogState.resolve_identifiers()
 
 
 def search_reference_dialog(
@@ -158,10 +158,25 @@ def search_reference_dialog(
 
     def render_result() -> rx.Component:
         def render_select_button(item: SearchResult, _: int) -> rx.Component:
+            def _array_handler() -> EventType:  # type: ignore[type-arg]
+                return [
+                    x(item.identifier)
+                    for x in cast("Iterable", on_identifier_selected)  # type: ignore[type-arg]
+                ]
+
+            def _handler() -> EventType:  # type: ignore[type-arg]
+                return on_identifier_selected(item.identifier)  # type: ignore[misc, no-any-return]
+
+            inner_handler = (
+                _array_handler
+                if isinstance(on_identifier_selected, Iterable)
+                else _handler
+            )
+
             return rx.dialog.close(
                 rx.button(
                     SearchReferenceDialogState.label_results_select_button,
-                    on_click=on_identifier_selected(item.identifier),  # type: ignore[misc]
+                    on_click=inner_handler,
                     custom_attrs={
                         "data-testid": f"{component_id_prefix}-result-select-button"
                     },
@@ -197,67 +212,51 @@ def search_reference_dialog(
             ),
         )
 
-    def render_search_form() -> rx.Component:
-        return rx.fragment(
-            rx.form(
-                rx.vstack(
-                    rx.hstack(
-                        rx.hstack(
-                            rx.input(
-                                value=SearchReferenceDialogState.user_query,
-                                on_change=SearchReferenceDialogState.set_user_query,  # type: ignore[attr-defined]
-                                custom_attrs={
-                                    "data-focusme": "",
-                                    "data-testid": f"{component_id_prefix}-query-input",
-                                },
-                                placeholder=SearchReferenceDialogState.label_query_placeholder,
-                                name="query",
-                                disabled=SearchReferenceDialogState.is_loading,
-                                style=rx.Style(
-                                    flex="1",
-                                    max_width="380px",
-                                    min_width="180px",
-                                ),
-                            ),
-                            rx.button(
-                                rx.icon("search"),
-                                type="submit",
-                                variant="surface",
-                                disabled=SearchReferenceDialogState.is_loading,
-                                id=f"{component_id_prefix}-form-submit-button",
-                                custom_attrs={"data-testid": "search-button"},
-                            ),
-                            style=rx.Style(flex="1"),
-                        ),
-                        rx.spacer(),
-                        pagination(pagination_opts, style=rx.Style(flex="0")),
-                        align="stretch",
-                        justify="between",
-                        style=rx.Style(width="100%"),
-                        wrap="wrap",
-                    ),
-                    rx.el.div(
-                        rx.foreach(
-                            reference_types,
-                            lambda value, index: rx.checkbox(
-                                value,
-                                name=f"reference_type[{index}]",
-                                value=value,
-                                checked=True,
-                            ),
-                        ),
-                        style=rx.Style(display="None"),
-                    ),
+    def render_search_input_and_button() -> rx.Component:
+        return rx.hstack(
+            rx.input(
+                value=SearchReferenceDialogState.user_query,
+                on_change=SearchReferenceDialogState.set_user_query,
+                custom_attrs={
+                    "data-testid": f"{component_id_prefix}-query-input",
+                },
+                placeholder=SearchReferenceDialogState.label_query_placeholder,
+                name="query",
+                disabled=SearchReferenceDialogState.is_loading,
+                type="text",
+                style=rx.Style(
+                    flex="1",
+                    max_width="380px",
+                    min_width="180px",
                 ),
-                id=f"{component_id_prefix}-form",
-                on_submit=[
-                    SearchReferenceDialogState.handle_submit,
-                    SearchReferenceDialogState.resolve_identifiers,
-                ],
             ),
-            rx.script(
-                f"setTimeout(() => document.getElementById('{component_id_prefix}-form-submit-button').click())"  # noqa: E501
+            rx.button(
+                rx.icon("search"),
+                type="submit",
+                variant="surface",
+                disabled=SearchReferenceDialogState.is_loading,
+                custom_attrs={"data-testid": "search-button"},
             ),
+            style=rx.Style(flex="1"),
+        )
+
+    def render_search_form() -> rx.Component:
+        return rx.form(
+            rx.vstack(
+                rx.hstack(
+                    render_search_input_and_button(),
+                    rx.spacer(),
+                    pagination(pagination_opts, style=rx.Style(flex="0")),
+                    align="stretch",
+                    justify="between",
+                    style=rx.Style(width="100%"),
+                    wrap="wrap",
+                ),
+            ),
+            on_submit=[
+                SearchReferenceDialogState.search,
+                SearchReferenceDialogState.resolve_identifiers,
+            ],
         )
 
     return rx.dialog.root(
@@ -287,7 +286,7 @@ def search_reference_dialog(
                     f"{SearchReferenceDialogState.label_user_reference_types}",
                     as_="span",
                 ),
-                rx.el.br(),
+                rx.spacer(),
                 rx.text(
                     SearchReferenceDialogState.label_description,
                     as_="span",
@@ -300,8 +299,13 @@ def search_reference_dialog(
                 render_result(),
                 align="stretch",
             ),
-            custom_focus_script(),
             style=rx.Style({"max-width": "62vw !important"}),
+            on_open_auto_focus=[
+                SearchReferenceDialogState.set_user_query(""),  # type: ignore[operator]
+                SearchReferenceDialogState.set_user_reference_types(reference_types),  # type: ignore[operator]
+                SearchReferenceDialogState.search,
+                SearchReferenceDialogState.resolve_identifiers,
+            ],
         ),
         on_open_change=SearchReferenceDialogState.cleanup_state_on_dialog_close,
     )

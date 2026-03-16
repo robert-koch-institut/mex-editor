@@ -11,9 +11,6 @@ msgstr "Hier Suchen..."
 msgid "search.entitytype_filter.title"
 msgstr "Entitätstyp"
 
-msgid "search.reference_field_filter.field_placeholder"
-msgstr "Feld nachdem gefiltert wird"
-
 msgid "search.reference_filter.dynamic_tab"
 msgstr "Dynamisch"
 
@@ -143,6 +140,12 @@ msgstr "Gespeichert"
 msgid "rules.save_success_dialog.message_format"
 msgstr "{} wurde erfolgreich gespeichert."
 
+msgid "consent.save_success_dialog.title"
+msgstr "Gespeichert"
+
+msgid "consent.save_success_dialog.content"
+msgstr "Ihre Antwort wurde erfolgreich gespeichert."
+
 msgid "components.titles.additional_titles"
 msgstr "+ zusätzliche Titel"
 
@@ -179,6 +182,9 @@ msgstr "Datenbestände & Datensätze"
 msgid "consent.projects.title"
 msgstr "Projekte"
 
+msgid "consent.publications.title"
+msgstr "Publikationen"
+
 msgid "consent.user_data.loading"
 msgstr "Lade Kontodaten..."
 
@@ -198,7 +204,7 @@ msgid "search_reference_dialog.title"
 msgstr "Suche nach Referenzen"
 
 msgid "search_reference_dialog.description"
-msgstr "Klicken Sie anschließend auf 'Auswählen' in dem entprechenden Eintrag um diesen auszuwählen."
+msgstr "Klicken Sie anschließend auf 'Auswählen' in dem entsprechenden Eintrag um diesen auszuwählen."
 
 msgid "search_reference_dialog.description.valid_types"
 msgstr "Gültige Referenztypen"
@@ -211,3 +217,74 @@ msgstr "Leider wurden keine Ergebnisse für '{}' gefunden :("
 
 msgid "search_reference_dialog.results.select_button"
 msgstr "Auswählen"
+
+msgid "consent.consent_status.consented_format"
+msgstr "Sie haben Ihre Einwilligung am {} erteilt."
+
+msgid "consent.consent_status.declined_format"
+msgstr "Sie haben Ihre Ablehnung am {} erteilt."
+
+msgid "consent.consent_status.no_consent"
+msgstr "Sie haben noch keine Einwilligung erteilt."
+msgid "layout.nav_bar.advanced_search_navitem"
+msgstr "Erweiterte Suche"
+
+msgid "advanced_search.reference_filter.add_value"
+msgstr "Hinzufügen"
+
+msgid "advanced_search.reference_filter.title"
+msgstr "Referenzfilter"
+
+msgid "advanced_search.reference_filter.remove_value"
+msgstr "Entferne"
+
+msgid "advanced_search.reference_filter.value_placeholder"
+msgstr "ID für"
+
+msgid "advanced_search.entitytype_filter.title"
+msgstr "Entitätstyp"
+
+msgid "layout.unsaved_changes_dialog.title"
+msgstr "Abmelden? Es gibt noch ungespeicherte Änderungen..."
+
+msgid "layout.unsaved_changes_dialog.description"
+msgstr "Sind Sie sicher, dass Sie sich abmelden wollen? Die folgenden Änderungen würden verloren gehen:"
+
+msgid "layout.unsaved_changes_dialog.description_draft"
+msgstr "Entwurf/e"
+
+msgid "layout.unsaved_changes_dialog.description_edit"
+msgstr "Bearbeitung/en"
+
+msgid "layout.unsaved_changes_dialog.logout_button"
+msgstr "Trotzdem abmelden"
+
+msgid "layout.unsaved_changes_dialog.cancel_button"
+msgstr "Abbrechen"
+
+msgid "edit.reset_rules.button"
+msgstr "Regeln zurücksetzen"
+
+msgid "edit.delete_rules.button"
+msgstr "Eintrag löschen"
+
+msgid "edit.delete_rules.success_toast_title"
+msgstr "Eintrag gelöscht"
+
+msgid "edit.delete_rules.success_toast_text"
+msgstr "Der Eintrag wurde erfolgreich gelöscht."
+
+msgid "edit.reset_rules.success_toast_title"
+msgstr "Regeln zurückgesetzt"
+
+msgid "edit.reset_rules.success_toast_text"
+msgstr "Die Regeln wurden erfolgreich zurückgesetzt."
+
+msgid "edit.field_supersededBy.label"
+msgstr "Dubletten"
+
+msgid "edit.field_supersededBy.description"
+msgstr "Zeigt die Entitäten, die auf diese Entität mit dem Feld 'ersetzt durch' verweisen."
+
+msgid "edit.field_supersededBy.empty"
+msgstr "Keine Dubletten vorhanden."

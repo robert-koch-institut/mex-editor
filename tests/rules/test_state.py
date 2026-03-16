@@ -1,6 +1,10 @@
 import pytest
 
-from mex.common.models import ContactPointRuleSetResponse, ExtractedContactPoint
+from mex.common.models import (
+    MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
+    ContactPointRuleSetResponse,
+    ExtractedContactPoint,
+)
 from mex.common.types import MergedPrimarySourceIdentifier
 from mex.editor.models import EditorValue
 from mex.editor.rules.models import EditorPrimarySource, InputConfig
@@ -9,7 +13,7 @@ from mex.editor.rules.transform import transform_models_to_fields
 
 
 def test_state_get_primary_sources_by_field_name() -> None:
-    state = RuleState()
+    state = RuleState()  # type: ignore[call-arg]
     rule_set = ContactPointRuleSetResponse(stableTargetId="someContactPoint")
     extracted_item = ExtractedContactPoint(
         email="test@foo.bar",
@@ -41,10 +45,10 @@ def test_state_get_primary_sources_by_field_name() -> None:
         ),
         EditorPrimarySource(
             name=EditorValue(
-                identifier="00000000000000",
-                href="/item/00000000000000",
+                identifier=MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
+                href=f"/item/{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}",
             ),
-            identifier=MergedPrimarySourceIdentifier("00000000000000"),
+            identifier=MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
             input_config=InputConfig(editable_text=True, allow_additive=True),
             editor_values=[],
             enabled=True,

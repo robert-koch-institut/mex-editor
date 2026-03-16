@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +18,90 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.7.1] - 2026-03-09
+
+### Changes
+
+- update lock file
+
+### Fixed
+
+- set build dir in docker file
+- fix reflex build
+
+## [1.7.0] - 2026-03-06
+
+### Changes
+
+- bump python to 3.14
+- upgrade reflex to 0.8.27
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/0c16a6
+- use dynamic primary source title for ingest tabs
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
+- change the docker build to multi-stage build
+- change primary source of rules from mex to mex-editor
+- moved pytest rerun config from toml to makefile
+
+### Removed
+
+- disable reflex ssr
+- get rid off nest-asyncio in tests
+
+## [1.6.1] - 2026-03-05
+
+### Changes
+
+- make consent markdown path configurable via `MEX_EDITOR_ASSETS_DIR`
+
+## [1.6.0] - 2026-03-04
+
+### Added
+
+- consent page filters items based on person
+
+### Changes
+
+- added supersededBy-backward fields in the edit page
+- consent page UI clean up
+- renamed 'locale' folder to 'i18n'
+- change the docker build to multi-stage build
+- change primary source of rules from mex to mex-editor
+- moved pytest rerun config from toml to makefile
+
+### Fixed
+
+- fixed settings logging on startup and in tests
+- fixed separate entrypoint configuration
+
+## [1.5.1] - 2026-02-25
+
+### Fixed
+
+- fixed width of search and advanced-search result lists
+- fixed redirect target after login screen interception
+
+## [1.5.0] - 2026-02-24
+
+### Added
+
+- New page for advanced searching, including complex reference filter
+- Translations for entity types
+- Button on edit page to reset or delete rules
+- Warn about unsaved changes when logging out
+- pytest-retry since tests often failing on github (we belief due to low system/cpu performance in CI)
+
+### Changes
+
+- upgrade reflex to 0.8.15
+- use pydantic v2 BaseModel instead of rx.Base
+- other rerun lib for pytest
+- updated mex-common to 1.16.0
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/81bc5b
+
+### Removed
+
+- all custom scripts due to reflex docs
 
 ## [1.4.1] - 2026-02-04
 

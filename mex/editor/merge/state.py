@@ -10,9 +10,9 @@ from mex.common.models import MERGED_MODEL_CLASSES
 from mex.common.transform import ensure_prefix
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
-from mex.editor.models import SearchResult
-from mex.editor.search.transform import transform_models_to_results
+from mex.editor.models import SearchResult, ValueLabelCheckboxItem
 from mex.editor.state import State
+from mex.editor.transform import transform_models_to_search_results
 from mex.editor.utils import resolve_editor_value
 
 
@@ -45,6 +45,36 @@ class MergeState(State):
         "merged": None,
         "extracted": None,
     }
+
+    @rx.var
+    def label_entity_types_merged(self) -> list[ValueLabelCheckboxItem]:
+        """Get entity_types_merged with value, label and checked."""
+        return sorted(
+            [
+                ValueLabelCheckboxItem(
+                    label=self._locale_service.get_ui_label(self.current_locale, key),
+                    value=key,
+                    checked=self.entity_types_merged[key],
+                )
+                for key in self.entity_types_merged
+            ],
+            key=lambda x: x.label,
+        )
+
+    @rx.var
+    def label_entity_types_extracted(self) -> list[ValueLabelCheckboxItem]:
+        """Get entity_types_extracted with value, label and checked."""
+        return sorted(
+            [
+                ValueLabelCheckboxItem(
+                    label=self._locale_service.get_ui_label(self.current_locale, key),
+                    value=key,
+                    checked=self.entity_types_extracted[key],
+                )
+                for key in self.entity_types_extracted
+            ],
+            key=lambda x: x.label,
+        )
 
     @rx.event
     def select_item(self, category: Literal["merged", "extracted"], index: int) -> None:
@@ -143,7 +173,7 @@ class MergeState(State):
             )
         else:
             self.is_loading = False
-            self.results_merged = transform_models_to_results(response.items)
+            self.results_merged = transform_models_to_search_results(response.items)
             self.results_count["merged"] = len(self.results_merged)
             self.total_count["merged"] = response.total
 
@@ -175,7 +205,7 @@ class MergeState(State):
             )
         else:
             self.is_loading = False
-            self.results_extracted = transform_models_to_results(response.items)
+            self.results_extracted = transform_models_to_search_results(response.items)
             self.results_count["extracted"] = len(self.results_extracted)
             self.total_count["extracted"] = response.total
 

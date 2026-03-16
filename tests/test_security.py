@@ -1,7 +1,4 @@
-from mex.editor.security import (
-    has_read_access_mex,
-    has_write_access_mex,
-)
+from mex.editor.security import has_read_access_mex, has_write_access_mex
 
 
 def test_has_write_access_mex() -> None:

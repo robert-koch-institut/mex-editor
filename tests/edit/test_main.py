@@ -1,14 +1,22 @@
 import re
+from typing import Literal
 
 import pytest
 from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.fields import MERGEABLE_FIELDS_BY_CLASS_NAME
+from mex.common.fields import (
+    MERGEABLE_FIELDS_BY_CLASS_NAME,
+    REQUIRED_FIELDS_BY_CLASS_NAME,
+)
 from mex.common.models import (
+    MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
     ActivityRuleSetRequest,
+    ActivityRuleSetResponse,
     AdditiveActivity,
+    AdditiveContactPoint,
     AnyExtractedModel,
+    ContactPointRuleSetRequest,
     ExtractedActivity,
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
@@ -16,7 +24,6 @@ from mex.common.models import (
 )
 from mex.common.transform import ensure_prefix
 from mex.common.types import ActivityType, Identifier, Text, TextLanguage, Theme
-from mex.editor.fields import REQUIRED_FIELDS_BY_CLASS_NAME
 from mex.editor.rules.transform import get_required_mergeable_field_names
 
 
@@ -34,15 +41,135 @@ def edit_page(
     return page
 
 
+@pytest.fixture
+def load_superseded_by_entites(
+    extracted_activity: ExtractedActivity,
+) -> list[ExtractedActivity]:
+    connector = BackendApiConnector.get()
+
+    activity_2 = ExtractedActivity(
+        abstract=[],
+        contact=extracted_activity.contact,
+        hadPrimarySource=MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
+        identifierInPrimarySource="supersededBy-1",
+        responsibleUnit=extracted_activity.responsibleUnit,
+        shortName=["A2-S1"],
+        title=[Text(value="Aktivität 2 Superseded 1", language=TextLanguage.DE)],
+    )
+
+    activity_3 = ExtractedActivity(
+        abstract=[],
+        contact=extracted_activity.contact,
+        hadPrimarySource=MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
+        identifierInPrimarySource="supersededBy-2",
+        responsibleUnit=extracted_activity.responsibleUnit,
+        shortName=["A3-S2"],
+        title=[Text(value="Aktivität 3 Superseded 2", language=TextLanguage.DE)],
+    )
+
+    connector.ingest(
+        [
+            activity_2,
+            activity_3,
+            ActivityRuleSetResponse(
+                additive=AdditiveActivity(
+                    supersededBy=extracted_activity.stableTargetId
+                ),
+                stableTargetId=activity_2.stableTargetId,
+            ),
+            ActivityRuleSetResponse(
+                additive=AdditiveActivity(
+                    supersededBy=extracted_activity.stableTargetId
+                ),
+                stableTargetId=activity_3.stableTargetId,
+            ),
+        ]
+    )  # type: ignore[type-var]
+
+    return [activity_2, activity_3]
+
+
+@pytest.fixture
+def load_delete_reset_data(
+    dummy_data: list[AnyExtractedModel],
+) -> dict[Literal["delete", "reset"] | None, str]:
+    connector = BackendApiConnector.get()
+    connector.ingest(dummy_data)
+
+    delete_resp = connector.create_rule_set(
+        ContactPointRuleSetRequest(
+            additive=AdditiveContactPoint(email=["DELETE_ME@test.de"])
+        )
+    )
+    cp1: AnyExtractedModel = next(
+        x for x in dummy_data if x.identifierInPrimarySource == "cp-1"
+    )
+    connector.update_rule_set(
+        cp1.stableTargetId,
+        ContactPointRuleSetRequest(
+            additive=AdditiveContactPoint(email=["another_email@test.com"])
+        ),
+    )
+
+    ou1: AnyExtractedModel = next(
+        x for x in dummy_data if x.identifierInPrimarySource == "ou-1"
+    )
+
+    return {
+        "delete": delete_resp.stableTargetId,
+        "reset": cp1.stableTargetId,
+        None: ou1.stableTargetId,
+    }
+
+
+@pytest.mark.integration
+def test_edit_page_delete_reset_button(
+    base_url: str,
+    writer_user_page: Page,
+    load_delete_reset_data: dict[Literal["delete", "reset"] | None, str],
+) -> None:
+    page = writer_user_page
+
+    def _navigate(stable_id: str) -> None:
+        page.goto(f"{base_url}/item/{stable_id}")
+        page_body = page.get_by_test_id("page-body")
+        expect(page_body).to_be_visible()
+
+    _navigate(load_delete_reset_data[None])
+    expect(page.get_by_test_id("delete-reset-button")).not_to_be_visible()
+
+    reset_id = load_delete_reset_data["reset"]
+    _navigate(reset_id)
+    button = page.get_by_test_id("delete-reset-button")
+    expect(button).to_be_visible()
+    button.click()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_delete_reset_button-reset_clicked.png"
+    )
+    page.wait_for_url(f"{base_url}/item/{reset_id}")
+    expect(page.locator(".editor-toast")).to_be_visible()
+    expect(page.get_by_test_id("delete-reset-button")).not_to_be_visible()
+
+    delete_id = load_delete_reset_data["delete"]
+    _navigate(delete_id)
+    button = page.get_by_test_id("delete-reset-button")
+    expect(button).to_be_visible()
+    button.click()
+    page.screenshot(
+        path="tests_edit_test_main-test_edit_page_delete_reset_button-delete_clicked.png"
+    )
+    page.wait_for_url(f"{base_url}/")
+    expect(page.locator(".editor-toast")).to_be_visible()
+
+
 @pytest.mark.integration
 def test_edit_page_updates_nav_bar(edit_page: Page) -> None:
     page = edit_page
     nav_bar = page.get_by_test_id("nav-bar")
-    page.screenshot(path="tests_edit_test_main-test_edit_page_updates_nav_bar.png")
     expect(nav_bar).to_be_visible()
-    nav_item = nav_bar.locator(".nav-item").all()[2]
-    expect(nav_item).to_have_attribute("data-testid", "nav-item-/item/[identifier]")
-    expect(nav_item).to_have_class(re.compile("rt-underline-always"))
+    page.screenshot(path="tests_edit_test_main-test_edit_page_updates_nav_bar.png")
+    nav_item = nav_bar.get_by_test_id("nav-item-/item/[item_id]")
+    expect(nav_item).to_have_class(re.compile(r"(^|\s)nav-item-active(\s|$)"))
 
 
 @pytest.mark.integration
@@ -110,7 +237,7 @@ def test_edit_page_renders_primary_sources(
     expect(primary_source).to_contain_text(had_primary_source.title[0].value)
     link = primary_source.get_by_role("link")
     expect(link).to_have_attribute(
-        "href", f"/item/{extracted_activity.hadPrimarySource}/"
+        "href", f"/item/{extracted_activity.hadPrimarySource}"
     )
 
 
@@ -199,7 +326,7 @@ def test_edit_page_resolves_identifier(
     )  # resolved short name of unit
     expect(link).to_have_attribute(
         "href",
-        f"/item/{extracted_activity.contact[1]}/",  # link href
+        f"/item/{extracted_activity.contact[1]}",  # link href
     )
     expect(link).not_to_have_attribute("target", "_blank")  # internal link
 
@@ -284,7 +411,7 @@ def test_edit_page_switch_roundtrip(
 def test_edit_page_renders_new_additive_button(edit_page: Page) -> None:
     page = edit_page
     new_additive_button = page.get_by_test_id(
-        "new-additive-fundingProgram-00000000000000"
+        f"new-additive-fundingProgram-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
     )
     new_additive_button.scroll_into_view_if_needed()
     page.screenshot(
@@ -302,7 +429,7 @@ def test_edit_page_renders_new_additive_button(edit_page: Page) -> None:
 def test_edit_page_renders_remove_additive_button(edit_page: Page) -> None:
     page = edit_page
     new_additive_button = page.get_by_test_id(
-        "new-additive-fundingProgram-00000000000000"
+        f"new-additive-fundingProgram-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
     )
     new_additive_button.scroll_into_view_if_needed()
     page.screenshot(
@@ -320,7 +447,9 @@ def test_edit_page_renders_remove_additive_button(edit_page: Page) -> None:
 @pytest.mark.integration
 def test_edit_page_renders_text_input(edit_page: Page) -> None:
     page = edit_page
-    new_additive_button = page.get_by_test_id("new-additive-shortName-00000000000000")
+    new_additive_button = page.get_by_test_id(
+        f"new-additive-shortName-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    )
     new_additive_button.scroll_into_view_if_needed()
     expect(new_additive_button).to_be_visible()
     new_additive_button.click()
@@ -336,7 +465,7 @@ def test_edit_page_renders_text_input(edit_page: Page) -> None:
 def test_edit_page_renders_textarea_input(edit_page: Page) -> None:
     page = edit_page
     new_additive_button = page.get_by_test_id(
-        "new-additive-alternativeTitle-00000000000000"
+        f"new-additive-alternativeTitle-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
     )
     new_additive_button.scroll_into_view_if_needed()
     expect(new_additive_button).to_be_visible()
@@ -357,7 +486,7 @@ def test_edit_page_renders_textarea_input(edit_page: Page) -> None:
 def test_edit_page_renders_identifier_input(edit_page: Page) -> None:
     page = edit_page
     new_additive_button = page.get_by_test_id(
-        "new-additive-involvedUnit-00000000000000"
+        f"new-additive-involvedUnit-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
     )
     new_additive_button.scroll_into_view_if_needed()
     expect(new_additive_button).to_be_visible()
@@ -377,7 +506,7 @@ def test_edit_page_resolves_additive_identifier(
 ) -> None:
     page = edit_page
     new_additive_button = page.get_by_test_id(
-        "new-additive-involvedUnit-00000000000000"
+        f"new-additive-involvedUnit-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
     )
     new_additive_button.scroll_into_view_if_needed()
     expect(new_additive_button).to_be_visible()
@@ -388,7 +517,9 @@ def test_edit_page_resolves_additive_identifier(
     identifier_input = page.get_by_test_id("additive-rule-involvedUnit-0-identifier")
     expect(identifier_input).to_be_visible()
     identifier_input.fill(organizational_unit.stableTargetId)
-    edit_button = page.get_by_test_id("edit-toggle-involvedUnit-00000000000000-0")
+    edit_button = page.get_by_test_id(
+        f"edit-toggle-involvedUnit-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}-0"
+    )
     edit_button.click()
 
     # verify identifier is correctly rendered
@@ -397,9 +528,8 @@ def test_edit_page_resolves_additive_identifier(
         "link", name=organizational_unit.shortName[0].value
     )
     expect(rendered_identifier).to_have_count(1)
-    assert (
-        rendered_identifier.first.get_attribute("href")
-        == f"/item/{organizational_unit.stableTargetId}/"
+    expect(rendered_identifier.first).to_have_attribute(
+        "href", f"/item/{organizational_unit.stableTargetId}"
     )
 
     # assert raw identifier value is retained
@@ -413,7 +543,9 @@ def test_edit_page_resolves_additive_identifier(
 @pytest.mark.integration
 def test_edit_page_renders_link_input(edit_page: Page) -> None:
     page = edit_page
-    new_additive_button = page.get_by_test_id("new-additive-website-00000000000000")
+    new_additive_button = page.get_by_test_id(
+        f"new-additive-website-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    )
     new_additive_button.scroll_into_view_if_needed()
     expect(new_additive_button).to_be_visible()
     new_additive_button.click()
@@ -431,7 +563,7 @@ def test_edit_page_renders_link_input(edit_page: Page) -> None:
 def test_edit_page_renders_vocabulary_input(edit_page: Page) -> None:
     page = edit_page
     new_additive_button = page.get_by_test_id(
-        "new-additive-activityType-00000000000000"
+        f"new-additive-activityType-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
     )
     new_additive_button.scroll_into_view_if_needed()
     expect(new_additive_button).to_be_visible()
@@ -461,7 +593,9 @@ def test_edit_page_renders_vocabulary_input(edit_page: Page) -> None:
 @pytest.mark.integration
 def test_edit_page_renders_temporal_input(edit_page: Page) -> None:
     page = edit_page
-    new_additive_button = page.get_by_test_id("new-additive-end-00000000000000")
+    new_additive_button = page.get_by_test_id(
+        f"new-additive-end-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    )
     new_additive_button.scroll_into_view_if_needed()
     expect(new_additive_button).to_be_visible()
     new_additive_button.click()
@@ -490,7 +624,9 @@ def test_edit_page_additive_rule_roundtrip(
     test_id = "tests_edit_test_main-test_edit_page_additive_rule_roundtrip"
 
     # click button for new additive rule on contact field
-    new_additive_button = page.get_by_test_id("new-additive-contact-00000000000000")
+    new_additive_button = page.get_by_test_id(
+        f"new-additive-contact-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    )
     new_additive_button.scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-on_load.png")
     expect(new_additive_button).to_be_visible()
@@ -528,7 +664,9 @@ def test_edit_page_additive_rule_roundtrip(
     expect(additive_rule_rendered).to_be_visible()
 
     # click edit button
-    edit_button = page.get_by_test_id("edit-toggle-contact-00000000000000-0")
+    edit_button = page.get_by_test_id(
+        f"edit-toggle-contact-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}-0"
+    )
     edit_button.scroll_into_view_if_needed()
     page.screenshot(path=f"{test_id}-on_load.png")
     expect(edit_button).to_be_visible()
@@ -642,14 +780,16 @@ def test_toggle_all_switch(edit_page: Page) -> None:
 
 @pytest.mark.integration
 def test_edit_page_submit_button_disabled_while_submitting(edit_page: Page) -> None:
-    edit_page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    edit_page.get_by_test_id(
+        f"new-additive-alternativeTitle-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     edit_page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
         "new alternative title"
     )
     # check default state
     submit_button = edit_page.get_by_test_id("submit-button")
     initial_text = submit_button.text_content()
-    initial_text = initial_text if initial_text else ""
+    initial_text = initial_text or ""
     expect(submit_button).to_have_text(initial_text)
     expect(submit_button).not_to_be_disabled()
 
@@ -700,7 +840,7 @@ def test_edit_page_additive_add_remove_button_text_translation(
     edit_page.get_by_test_id("language-switcher").click()
     edit_page.get_by_test_id(f"language-switcher-menu-item-{locale_id}").click()
     add_alt_title_btn = edit_page.get_by_test_id(
-        f"new-additive-{field_name}-00000000000000"
+        f"new-additive-{field_name}-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
     )
     expect(add_alt_title_btn).to_have_text(re.compile(f"{expected_field_label}"))
     add_alt_title_btn.click()
@@ -718,7 +858,9 @@ def test_edit_page_discard_changes_button_roundtrip(
     expect(discard_dialog_button).not_to_be_visible()
 
     # add/remove new alternative title and check button visibility
-    edit_page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    edit_page.get_by_test_id(
+        f"new-additive-alternativeTitle-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     edit_page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
         "new added alternative title"
     )
@@ -727,7 +869,9 @@ def test_edit_page_discard_changes_button_roundtrip(
     expect(discard_dialog_button).not_to_be_visible()
 
     # add new alternative title, save and check button visibility
-    edit_page.get_by_test_id("new-additive-alternativeTitle-00000000000000").click()
+    edit_page.get_by_test_id(
+        f"new-additive-alternativeTitle-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     edit_page.get_by_test_id("additive-rule-alternativeTitle-0-text").fill(
         "new saved added alternative title"
     )
@@ -765,7 +909,9 @@ def test_edit_page_discard_changes_button_roundtrip(
     expect(discard_dialog_button).not_to_be_visible()
 
     # do changes navigate away, come back and check if changes still present, discard change
-    edit_page.get_by_test_id("new-additive-shortName-00000000000000").click()
+    edit_page.get_by_test_id(
+        f"new-additive-shortName-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"
+    ).click()
     shortname_text = edit_page.get_by_test_id("additive-rule-shortName-0-text")
     shortname_text.fill("shortNameChanges")
     # give the state some time to sync changes into local storage
@@ -782,3 +928,28 @@ def test_edit_page_discard_changes_button_roundtrip(
         edit_page.get_by_test_id("additive-rule-shortName-0-text")
     ).not_to_be_visible()
     expect(discard_dialog_button).not_to_be_visible()
+
+
+@pytest.mark.integration
+def test_superseded_by_backward_visibility(
+    edit_page: Page,
+    load_superseded_by_entites: list[ExtractedActivity],
+) -> None:
+    superseded_by_backward = edit_page.get_by_test_id("field-supersededBy-backward")
+    superseded_by_backward.is_visible()
+    superseded_by_backward.scroll_into_view_if_needed()
+    edit_page.reload()
+    edit_page.wait_for_timeout(20_000)
+    edit_page.screenshot(
+        path="tests_edit_test_main-test_superseded_by_backward_visibility.png"
+    )
+
+    search_results = superseded_by_backward.get_by_test_id(
+        re.compile(r"search-result-.*")
+    )
+    expect(search_results).to_have_count(2)
+
+    for item in load_superseded_by_entites:
+        superseded_by_backward.get_by_test_id(
+            f"search-result-{item.stableTargetId}"
+        ).is_visible()

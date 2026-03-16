@@ -3,9 +3,9 @@ from typing import Any
 import reflex as rx
 
 from mex.editor.component_option_helper import (
-    build_pagination_options,
+    build_pagination_for_state_options,
 )
-from mex.editor.ingest.models import AuxProvider, IngestResult
+from mex.editor.ingest.models import IngestResult
 from mex.editor.ingest.state import IngestState
 from mex.editor.layout import page
 from mex.editor.search_results_component import (
@@ -106,7 +106,7 @@ def search_results() -> rx.Component:
             IngestState.results_transformed,  # type: ignore[arg-type]
             SearchResultsComponentOptions(
                 summary_text=IngestState.label_search_result_summary_format,
-                pagination_options=build_pagination_options(
+                pagination_options=build_pagination_for_state_options(
                     IngestState, IngestState.flag_ingested_items
                 ),
                 list_options=SearchResultsListOptions(
@@ -124,14 +124,20 @@ def search_results() -> rx.Component:
 def search_infobox() -> rx.Component | rx.Var[Any]:
     """Render information about the specific search provider query format."""
     return rx.match(
-        IngestState.current_aux_provider,
+        IngestState.current_aux_provider.key,
         (
-            AuxProvider.LDAP,
-            rx.callout(IngestState.label_search_info_ldap),
+            "ldap",
+            rx.callout(
+                IngestState.label_search_info_ldap,
+                custom_attrs={"data-testid": "ingest-infobox-callout"},
+            ),
         ),
         (
-            AuxProvider.WIKIDATA,
-            rx.callout(IngestState.label_search_info_wikidata),
+            "wikidata",
+            rx.callout(
+                IngestState.label_search_info_wikidata,
+                custom_attrs={"data-testid": "ingest-infobox-callout"},
+            ),
         ),
     )
 
@@ -144,13 +150,13 @@ def tab_list() -> rx.Component:
             rx.foreach(
                 IngestState.aux_providers,
                 lambda provider: rx.tabs.trigger(
-                    provider,
-                    value=provider,
+                    provider.dynamic_name,
+                    value=provider.key,
                     disabled=IngestState.is_loading,
                 ),
             ),
             rx.spacer(),
-            style=rx.Style(width="calc(24em * var(--scaling))"),
+            style=rx.Style(width="calc(45em * var(--scaling))"),
         )
     )
 
@@ -168,7 +174,7 @@ def tab_content() -> rx.Component:
                 align="center",
                 spacing="5",
             ),
-            value=provider,
+            value=provider.key,
         ),
     )
 
@@ -180,7 +186,7 @@ def index() -> rx.Component:
             tab_list(),
             rx.spacer(),
             tab_content(),
-            default_value=f"{IngestState.current_aux_provider}",
+            default_value=IngestState.current_aux_provider.key,
             on_change=[
                 IngestState.set_current_aux_provider,
                 IngestState.reset_query_string,

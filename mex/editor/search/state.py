@@ -1,9 +1,11 @@
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Any, Literal
+from typing import Any, Literal
+from urllib.parse import parse_qs, urlparse
 
 import reflex as rx
 from pydantic import TypeAdapter, ValidationError
 from reflex.event import EventSpec
+from reflex.istate.data import RouterData
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
@@ -15,7 +17,7 @@ from mex.common.types import Identifier
 from mex.editor.exceptions import escalate_error
 from mex.editor.label_var import label_var
 from mex.editor.locale_service import LocaleService
-from mex.editor.models import SearchResult
+from mex.editor.models import SearchResult, ValueLabelCheckboxItem
 from mex.editor.pagination_component import PaginationStateMixin
 from mex.editor.search.models import (
     ReferenceFieldFilter,
@@ -23,13 +25,10 @@ from mex.editor.search.models import (
     ReferenceFieldParameters,
     SearchPrimarySource,
 )
-from mex.editor.search.transform import transform_models_to_results
-from mex.editor.search.value_label_select import ValueLabelSelectItem
 from mex.editor.state import State
+from mex.editor.transform import transform_models_to_search_results
 from mex.editor.utils import resolve_editor_value
-
-if TYPE_CHECKING:
-    from reflex.istate.data import RouterData
+from mex.editor.value_label_select import ValueLabelSelectItem
 
 
 def _build_dynamic_refresh_params(
@@ -74,6 +73,21 @@ class SearchState(State, PaginationStateMixin):
     )
     is_loading: bool = True
     _locale_service = LocaleService.get()
+
+    @rx.var
+    def label_entity_types(self) -> list[ValueLabelCheckboxItem]:
+        """Get entity types with value, label and checked."""
+        return sorted(
+            [
+                ValueLabelCheckboxItem(
+                    label=self._locale_service.get_ui_label(self.current_locale, key),
+                    value=key,
+                    checked=self.entity_types[key],
+                )
+                for key in self.entity_types
+            ],
+            key=lambda x: x.label,
+        )
 
     @rx.event
     def set_reference_filter_field(self, value: str) -> None:
@@ -175,17 +189,21 @@ class SearchState(State, PaginationStateMixin):
         return len(self.results)
 
     @rx.event
-    def load_search_params(self) -> None:
+    def load_search_params(self) -> Generator[EventSpec | None]:
         """Load url params into the state."""
         router: RouterData = self.get_value("router")
-        self.set_current_page(router.page.params.get("page", 1))  # type: ignore[operator]
-        self.query_string = router.page.params.get("q", "")
-        type_params = router.page.params.get("entityType", [])
+        parsed_url = urlparse(router.url)
+        params = parse_qs(parsed_url.query)
+        current_page = params["page"][0] if "page" in params else 1
+        self.set_current_page(current_page)  # type: ignore[operator]
+        yield None
+        self.query_string = " ".join(params.get("q", ""))
+        type_params = params.get("entityType", [])
         type_params = type_params if isinstance(type_params, list) else [type_params]
         self.entity_types = {
             k.stemType: k.stemType in type_params for k in MERGED_MODEL_CLASSES
         }
-        had_primary_source_params = router.page.params.get("hadPrimarySource", [])
+        had_primary_source_params = params.get("hadPrimarySource", [])
         had_primary_source_params = (
             had_primary_source_params
             if isinstance(had_primary_source_params, list)
@@ -194,22 +212,22 @@ class SearchState(State, PaginationStateMixin):
         for primary_source_identifier in had_primary_source_params:
             self.had_primary_sources[primary_source_identifier].checked = True
 
-        reference_filter_strategy = router.page.params.get(
-            "referenceFilterStrategy", "dynamic"
-        )
         self.reference_filter_strategy = (
-            reference_filter_strategy
-            if reference_filter_strategy in ["dynamic", "had_primary_source"]
+            "had_primary_source"
+            if params.get("referenceFilterStrategy") == ["had_primary_source"]
             else "dynamic"
         )
-        ref_field_identifiers = router.page.params.get("referenceIdentifier", [])
+        ref_field_identifiers = params.get("referenceIdentifier", [])
         ref_field_identifiers = (
             ref_field_identifiers
             if isinstance(ref_field_identifiers, list)
             else [ref_field_identifiers]
         )
+        reference_field = (
+            params["referenceField"][0] if "referenceField" in params else ""
+        )
         self.reference_field_filter = ReferenceFieldFilter(
-            field=router.page.params.get("referenceField", ""),
+            field=reference_field,
             identifiers=[
                 ReferenceFieldIdentifierFilter(value=x, validation_msg=None)
                 for x in ref_field_identifiers
@@ -307,7 +325,7 @@ class SearchState(State, PaginationStateMixin):
             )
         else:
             self.is_loading = False
-            self.results = transform_models_to_results(response.items)
+            self.results = transform_models_to_search_results(response.items)
             yield SearchState.set_total(response.total)  # type: ignore[operator]
 
     @rx.event
@@ -327,7 +345,7 @@ class SearchState(State, PaginationStateMixin):
                 "backend", "error fetching primary sources", exc.response.text
             )
         else:
-            available_primary_sources = transform_models_to_results(
+            available_primary_sources = transform_models_to_search_results(
                 primary_sources_response.items
             )
             if len(available_primary_sources) == maximum_number_of_primary_sources:
@@ -358,10 +376,6 @@ class SearchState(State, PaginationStateMixin):
     @label_var(label_id="search.entitytype_filter.title")
     def label_entitytype_filter_title(self) -> None:
         """Label for entitytype_filter.title."""
-
-    @label_var(label_id="search.reference_field_filter.field_placeholder")
-    def label_reference_field_filter_field_placholder(self) -> None:
-        """Label for reference_field_filter.field_placeholder."""
 
     @label_var(label_id="search.reference_filter.dynamic_tab")
     def label_reference_filter_dynamic_tab(self) -> None:

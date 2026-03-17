@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- Text is truncated/wraped based on model.yaml (edit with textarea -> wrap; otherwise truncate)
+- Layout mostly flexing now (Flexlayout)
+
 ### Deprecated
 
 ### Removed

@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 - adpdated tests because identifierInPrimarySource is not in MERGEABLE_FIELDS
 
+- Updated uv to 0.10.9
+
 ### Deprecated
 
 ### Removed

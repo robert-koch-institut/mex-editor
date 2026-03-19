@@ -110,10 +110,7 @@ def editor_additive_value(
                 ),
                 render_value(value),
             ),
-            rx.cond(
-                primary_source.input_config.editable_identifier,
-                editor_edit_button(field_name, primary_source, value, index),
-            ),
+            editor_edit_button(field_name, primary_source, value, index),
             width="100%",
         ),
         remove_additive_button(

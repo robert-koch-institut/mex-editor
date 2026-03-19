@@ -223,6 +223,10 @@ msgstr "You declined your consent on {}"
 
 msgid "consent.consent_status.no_consent"
 msgstr "You have not given consent yet."
+
+msgid "consent.consent_retraction_denial"
+msgstr "* Retracting already given consent is not allowed. Please contact mex@rki.de for assistance."
+
 msgid "layout.nav_bar.advanced_search_navitem"
 msgstr "Advanced Search"
 

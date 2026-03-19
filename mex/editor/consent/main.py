@@ -61,8 +61,33 @@ def consent_box() -> rx.Component:
                 rx.button(
                     ConsentState.label_consent_box_no_consent_button,
                     on_click=ConsentState.submit_rule_set("denial"),  # type: ignore[operator]
+                    disabled=rx.cond(
+                        ConsentState.consent_status,
+                        ConsentState.consent_status.preview[0].badge  # type: ignore [union-attr]
+                        == "VALID_FOR_PROCESSING",
+                        False,  # noqa: FBT003
+                    ),
                     custom_attrs={"data-testid": "denial-consent-button"},
                 ),
+            ),
+            rx.cond(
+                ConsentState.consent_status,
+                rx.cond(
+                    ConsentState.consent_status.preview[0].badge  # type: ignore [union-attr]
+                    == "VALID_FOR_PROCESSING",
+                    rx.text(
+                        ConsentState.label_consent_retraction_denial,
+                        style=rx.Style(
+                            fontSize="var(--font-size-1)",
+                            color="var(--gray-11)",
+                            marginTop="var(--space-2)",
+                            textAlign="center",
+                        ),
+                        custom_attrs={"data-testid": "consent-change-blocked-info"},
+                    ),
+                    rx.box(),
+                ),
+                rx.box(),
             ),
             style=rx.Style(
                 justifyContent="center",

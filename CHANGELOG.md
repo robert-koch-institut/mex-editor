@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added into InputConfig allow_subtractive and allow_preventive
 
 ### Changes
+- use merged items endpoint for consent site search
 - adpdated tests because identifierInPrimarySource is not in MERGEABLE_FIELDS
 
 - Updated uv to 0.10.9

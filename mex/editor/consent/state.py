@@ -173,6 +173,10 @@ class ConsentState(State):
         """Label for consent.consent_status.declined_format."""
         return [self.consent_datetime]
 
+    @label_var(label_id="consent.consent_retraction_denial")
+    def label_consent_retraction_denial(self) -> None:
+        """Label for consent.consent_retraction_denial."""
+
     @label_var(label_id="consent.consent_status.no_consent")
     def label_consent_status_no_consent(self) -> None:
         """Label for consent.status.no_consent."""

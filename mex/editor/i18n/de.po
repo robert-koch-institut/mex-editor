@@ -200,6 +200,9 @@ msgstr "Lade Einverständniserklärung..."
 msgid "consent.nav_bar.consent_navitem"
 msgstr "Einverständniserklärung"
 
+msgid "consent.consent_retraction_denial"
+msgstr "* Eine bereits erteilte Einwilligung kann nicht widerrufen werden. Bitte wenden Sie sich an mex@rki.de, falls Sie Unterstützung benötigen."
+
 msgid "search_reference_dialog.title"
 msgstr "Suche nach Referenzen"
 

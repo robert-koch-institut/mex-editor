@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- update compose.yaml to use latest backend version
 - update testing.yaml to use latest backend version
 - update mex-common to 1.17
 - adpdated tests because identifierInPrimarySource is not in MERGEABLE_FIELDS

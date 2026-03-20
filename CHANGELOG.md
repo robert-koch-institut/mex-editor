@@ -8,8 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- shows final fields in the mex editor
+- added manually an EditorField for identifierInPrimarySource in _transform_model_to_editor_primary_sources
+- added into InputConfig allow_subtractive and allow_preventive
 
 ### Changes
+- adpdated tests because identifierInPrimarySource is not in MERGEABLE_FIELDS
+
+- Updated uv to 0.10.9
 
 - update backend version to 1.7.2 to use `/ldap?offset`
 - update lock file

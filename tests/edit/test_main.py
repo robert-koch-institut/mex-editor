@@ -207,11 +207,13 @@ def test_edit_page_renders_fields(edit_page: Page) -> None:
     funding_program = page.get_by_test_id("field-fundingProgram-name")
     page.screenshot(path="tests_edit_test_main-test_edit_page_renders_fields.png")
     expect(funding_program).to_be_visible()
+    # identifierInPrimarySource is NOT in MERGEABLE_FIELDS_BY_CLASS_NAME and has to be added
     expect(page.get_by_role("row")).to_have_count(
         len(
             set(MERGEABLE_FIELDS_BY_CLASS_NAME["ExtractedActivity"])
             | set(MERGEABLE_FIELDS_BY_CLASS_NAME["AdditiveActivity"])
         )
+        + 1
     )
 
 
@@ -405,6 +407,35 @@ def test_edit_page_switch_roundtrip(
     expect(switch).to_have_count(1)
     expect(switch).to_be_visible()
     expect(switch).to_have_attribute("data-state", "checked")
+
+
+@pytest.mark.integration
+@pytest.mark.usefixtures("load_dummy_data")
+@pytest.mark.parametrize(
+    ("field_name", "switch_count"),
+    [
+        ("identifierInPrimarySource", 0),
+        ("website", 3),
+    ],
+)
+def test_field_switches_behavior(
+    base_url: str,
+    writer_user_page: Page,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+    field_name: str,
+    switch_count: int,
+) -> None:
+    page = writer_user_page
+    item = dummy_data_by_identifier_in_primary_source["a-1"]
+
+    page.goto(f"{base_url}/item/{item.stableTargetId}")
+    expect(page.get_by_test_id("page-body")).to_be_visible()
+
+    field = page.get_by_test_id(f"field-{field_name}")
+    expect(field).to_be_visible()
+
+    switches = field.locator("[data-testid^='switch-']")
+    expect(switches).to_have_count(switch_count)
 
 
 @pytest.mark.integration

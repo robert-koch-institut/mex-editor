@@ -16,11 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - adpdated tests because identifierInPrimarySource is not in MERGEABLE_FIELDS
-<<<<<<< renovate/uv-0.x
 - Updated uv to 0.10.11
-=======
-- Updated uv to 0.10.9
->>>>>>> main
 - Text is truncated/wraped based on model.yaml (edit with textarea -> wrap; otherwise truncate)
 - Layout mostly flexing now (Flexlayout)
 - edit_button is always visible for additives

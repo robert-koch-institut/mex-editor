@@ -57,7 +57,7 @@ services:
       valkey:
         condition: service_healthy
   neo4j:
-    image: neo4j:2026.01-community
+    image: neo4j:2026.02-community
     environment:
       - NEO4J_AUTH=neo4j/password
     ports:

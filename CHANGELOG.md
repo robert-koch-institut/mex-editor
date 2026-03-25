@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - adpdated tests because identifierInPrimarySource is not in MERGEABLE_FIELDS
 - Updated uv to 0.10.9
+- Text is truncated/wraped based on model.yaml (edit with textarea -> wrap; otherwise truncate)
+- Layout mostly flexing now (Flexlayout)
 - edit_button is always visible for additives
 - updated mex-common to 1.17
 - updated neo4j to 2026.02

@@ -13,8 +13,16 @@ from mex.editor.rules.models import (
 )
 from mex.editor.rules.state import RuleState
 from mex.editor.search_reference_dialog import search_reference_dialog
+from mex.editor.style_helper import (
+    add_component_style,
+    add_flex1,
+    flex1_style,
+    flex3_style,
+)
 
 locale_service = LocaleService.get()
+
+flex1_col_style = flex1_style | {"max_width": "25%"}
 
 
 def editor_value_switch(
@@ -77,7 +85,10 @@ def editor_static_value(
 ) -> rx.Component:
     """Render a static value with an optional subtractive rule switch."""
     return rx.hstack(
-        render_value(value),
+        render_value(
+            value,
+            rx.cond(primary_source.input_config.render_textarea, False, True),  # noqa: FBT003
+        ),
         rx.cond(
             primary_source.input_config.allow_subtractive,
             editor_value_switch(
@@ -87,6 +98,7 @@ def editor_static_value(
                 index,
             ),
         ),
+        style=flex1_style,
     )
 
 
@@ -102,16 +114,27 @@ def editor_additive_value(
         rx.hstack(
             rx.cond(
                 value.being_edited,
-                additive_rule_input(
-                    field_translation,
-                    primary_source.input_config,
-                    index,
-                    value,
+                add_flex1(
+                    additive_rule_input(
+                        field_translation,
+                        primary_source.input_config,
+                        index,
+                        value,
+                    )
                 ),
-                render_value(value),
+                add_flex1(
+                    render_value(
+                        value,
+                        rx.cond(
+                            primary_source.input_config.render_textarea,
+                            False,  # noqa: FBT003
+                            True,  # noqa: FBT003
+                        ),
+                    )
+                ),
             ),
             editor_edit_button(field_name, primary_source, value, index),
-            width="100%",
+            style=flex1_style,
         ),
         remove_additive_button(
             field_translation,
@@ -119,7 +142,7 @@ def editor_additive_value(
         ),
         custom_attrs={"data-testid": f"additive-rule-{field_name}-{index}"},
         spacing="8",
-        width="100%",
+        style=flex1_style,
     )
 
 
@@ -218,7 +241,6 @@ def identifier_input(
             style=rx.Style(
                 margin="calc(-1 * var(--space-1))",
                 width="100%",
-                flex="1",
             ),
             custom_attrs={
                 "data-testid": f"additive-rule-{field.name}-{index}-identifier"
@@ -231,7 +253,6 @@ def identifier_input(
             reference_types=field_translation.field.value_type,
             field_label=field_translation.label,
         ),
-        style=rx.Style(flex="1"),
     )
 
 
@@ -279,25 +300,24 @@ def additive_rule_input(
     return rx.hstack(
         rx.cond(
             input_config.editable_href,
-            href_input(field.name, index, value.href),
+            add_flex1(href_input(field.name, index, value.href)),
         ),
         rx.cond(
             input_config.editable_text,
             rx.cond(
                 input_config.render_textarea,
-                textarea_input(field.name, index, value.text),
-                text_input(field.name, index, value.text),
+                add_flex1(textarea_input(field.name, index, value.text)),
+                add_flex1(text_input(field.name, index, value.text)),
             ),
         ),
         rx.cond(
             input_config.editable_identifier,
-            identifier_input(field_translation, index, value.identifier),
+            add_flex1(identifier_input(field_translation, index, value.identifier)),
         ),
         rx.cond(
             input_config.editable_badge,
-            badge_input(field.name, index, input_config, value.badge),
+            add_flex1(badge_input(field.name, index, input_config, value.badge)),
         ),
-        width="100%",
     )
 
 
@@ -328,7 +348,6 @@ def editor_value_card(
         background=rx.cond(
             primary_source.enabled & value.enabled, "inherit", "var(--gray-a4)"
         ),
-        style=rx.Style(width="100%"),
         custom_attrs={
             "data-testid": f"value-{field_name}-{primary_source.identifier}-{index}"
         },
@@ -360,7 +379,7 @@ def primary_source_name(
     """Return the name of a primary source as a card with a preventive rule toggle."""
     return rx.card(
         rx.hstack(
-            render_value(primary_source.name),
+            add_flex1(render_value(primary_source.name)),
             rx.spacer(),
             rx.cond(
                 ~cast("rx.vars.BooleanVar", primary_source.input_config.allow_additive)
@@ -370,10 +389,8 @@ def primary_source_name(
                     primary_source,
                 ),
             ),
-            wrap="wrap",
         ),
         background=rx.cond(primary_source.enabled, "inherit", "var(--gray-a4)"),
-        style=rx.Style(width="33%"),
         custom_attrs={
             "data-testid": (
                 f"primary-source-{field_name}-{primary_source.identifier}-name"
@@ -405,7 +422,6 @@ def new_additive_button(
                 "data-testid": f"new-additive-{field_name}-{primary_source_identifier}"
             },
         ),
-        style=rx.Style(width="100%"),
     )
 
 
@@ -431,7 +447,7 @@ def editor_primary_source_stack(
                 primary_source.identifier,
             ),
         ),
-        style=rx.Style(width="100%"),
+        align="stretch",
     )
 
 
@@ -442,15 +458,17 @@ def editor_primary_source(
     """Return a horizontal grid of cards for editing one primary source."""
     field_name = field_translation.field.name
     return rx.hstack(
-        primary_source_name(
-            field_name,
-            primary_source,
+        add_component_style(
+            primary_source_name(
+                field_name,
+                primary_source,
+            ),
+            flex1_col_style,
         ),
-        editor_primary_source_stack(
-            field_translation,
-            primary_source,
+        add_component_style(
+            editor_primary_source_stack(field_translation, primary_source),
+            flex3_style,
         ),
-        style=rx.Style(width="100%"),
         custom_attrs={
             "data-testid": f"primary-source-{field_name}-{primary_source.identifier}",
         },
@@ -472,18 +490,15 @@ def field_name_card(
             spacing="1",
         ),
         title=field_translation.description,
-        style=rx.Style(width="25%"),
         custom_attrs={"data-testid": f"field-{field.name}-name"},
     )
 
 
-def editor_field(
-    field_translation: FieldTranslation,
-) -> rx.Component:
+def editor_field(field_translation: FieldTranslation) -> rx.Component:
     """Return a horizontal grid of cards for editing one field."""
     field = field_translation.field
     return rx.hstack(
-        field_name_card(field_translation),
+        add_component_style(field_name_card(field_translation), flex1_col_style),
         rx.vstack(
             rx.foreach(
                 field.primary_sources,
@@ -491,12 +506,10 @@ def editor_field(
                     field_translation, primary_source
                 ),
             ),
-            style=rx.Style(width="100%"),
+            align="stretch",
+            style=flex3_style,
         ),
-        style=rx.Style(
-            width="100%",
-            margin="var(--space-3) 0",
-        ),
+        style=rx.Style(margin="var(--space-3) 0"),
         custom_attrs={"data-testid": f"field-{field.name}"},
         role="row",
     )

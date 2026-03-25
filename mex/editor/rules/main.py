@@ -89,11 +89,14 @@ def editor_static_value(
             value,
             rx.cond(primary_source.input_config.render_textarea, False, True),  # noqa: FBT003
         ),
-        editor_value_switch(
-            field_name,
-            primary_source,
-            value,
-            index,
+        rx.cond(
+            primary_source.input_config.allow_subtractive,
+            editor_value_switch(
+                field_name,
+                primary_source,
+                value,
+                index,
+            ),
         ),
         style=flex1_style,
     )
@@ -382,7 +385,8 @@ def primary_source_name(
             add_flex1(render_value(primary_source.name)),
             rx.spacer(),
             rx.cond(
-                ~cast("rx.vars.BooleanVar", primary_source.input_config.allow_additive),
+                ~cast("rx.vars.BooleanVar", primary_source.input_config.allow_additive)
+                & (primary_source.input_config.allow_preventive),
                 primary_source_switch(
                     field_name,
                     primary_source,

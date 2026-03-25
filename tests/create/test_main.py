@@ -146,6 +146,10 @@ def test_create_page_submit_item(create_page: Page) -> None:
 
     submit_button = page.get_by_test_id("submit-button")
     submit_button.click()
+    page.wait_for_timeout(30_000)
+    page.screenshot(
+        path="tests_create_test_main-test_edit_page_save_item_input_submit_pressed.png"
+    )
 
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()

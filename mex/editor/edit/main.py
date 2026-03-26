@@ -3,13 +3,19 @@ import reflex as rx
 from mex.editor.components import render_value
 from mex.editor.edit.state import EditState
 from mex.editor.layout import page
-from mex.editor.rules.main import editor_field, rule_page_header, validation_errors
+from mex.editor.rules.main import (
+    editor_field,
+    flex1_col_style,
+    rule_page_header,
+    validation_errors,
+)
 from mex.editor.rules.state import RuleState
 from mex.editor.search_results_component import (
     SearchResultsListItemOptions,
     SearchResultsListOptions,
     search_results_list,
 )
+from mex.editor.style_helper import flex3_style
 
 
 def edit_title() -> rx.Component:
@@ -114,7 +120,7 @@ def superseding_by_backward_card() -> rx.Component:
     return rx.hstack(
         rx.card(
             rx.text(EditState.label_field_superseded_by_label),
-            style=rx.Style(width="25%"),
+            style=flex1_col_style,
             custom_attrs={"data-testid": "field-supersededBy-backward-name"},
             title=EditState.label_field_superseded_by_description,
         ),
@@ -131,11 +137,7 @@ def superseding_by_backward_card() -> rx.Component:
                 ),
                 rx.text(EditState.label_field_superseded_by_empty),
             ),
-            style=rx.Style(width="100%"),
-        ),
-        style=rx.Style(
-            width="100%",
-            margin="var(--space-3) 0",
+            style=flex3_style,
         ),
         custom_attrs={"data-testid": "field-supersededBy-backward"},
     )
@@ -166,9 +168,9 @@ def index() -> rx.Component:
             ),
             superseding_by_backward_card(),
             validation_errors(),
+            align="stretch",
             style=rx.Style(
-                width="100%",
-                marginTop="calc(2 * var(--space-6))",
+                flex="1", marginTop="calc(2 * var(--space-6))", overflow="auto"
             ),
         ),
     )

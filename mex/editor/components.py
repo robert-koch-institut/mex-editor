@@ -6,13 +6,16 @@ from mex.editor.models import EditorValue
 from mex.editor.state import State
 
 
-def render_value(value: EditorValue) -> rx.Component:
+def render_value(
+    value: EditorValue,
+    truncate_text: bool | rx.Var[bool] = True,  # noqa: FBT001, FBT002
+) -> rx.Component:
     """Render a single editor value."""
     return rx.hstack(
         rx.cond(
             value.href,
             render_link(value),
-            render_text(value),
+            render_text(value, truncate_text),
         ),
         rx.cond(
             value.badge,
@@ -116,20 +119,26 @@ def render_link(value: EditorValue) -> rx.Component:
     )
 
 
-def render_span(text: str | None) -> rx.Component:
+def render_span(
+    text: str | None,
+    truncate_text: bool | rx.Var[bool] = True,  # noqa: FBT001, FBT002
+) -> rx.Component:
     """Render a generic span with the given text."""
     return rx.text(
         rx.cond(text, text, ""),
         as_="span",
-        class_name="truncate",
+        class_name=rx.cond(truncate_text, "truncate", ""),
         title=rx.cond(text, text, ""),
     )
 
 
-def render_text(value: EditorValue) -> rx.Component:
+def render_text(
+    value: EditorValue,
+    truncate_text: bool | rx.Var[bool] = True,  # noqa: FBT001, FBT002
+) -> rx.Component:
     """Render an editor value as a text span."""
     return rx.skeleton(
-        render_span(value.text),
+        render_span(value.text, truncate_text),
         min_width="16ch",
         min_height="1lh",
         loading=rx.cond(value.text, False, True),  # noqa: FBT003

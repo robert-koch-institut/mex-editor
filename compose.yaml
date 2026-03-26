@@ -36,7 +36,7 @@ services:
       mex-backend:
         condition: service_healthy
   mex-backend:
-    image: ghcr.io/robert-koch-institut/mex-backend:1.6.0
+    image: ghcr.io/robert-koch-institut/mex-backend:1.7.2
     ports:
       - 8080:8080
     environment:
@@ -57,7 +57,7 @@ services:
       valkey:
         condition: service_healthy
   neo4j:
-    image: neo4j:2026.01-community
+    image: neo4j:2026.02-community
     environment:
       - NEO4J_AUTH=neo4j/password
     ports:

@@ -8,15 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- shows final fields in the mex editor
-- added manually an EditorField for identifierInPrimarySource in _transform_model_to_editor_primary_sources
-- added into InputConfig allow_subtractive and allow_preventive
 
 ### Changes
-- use merged items endpoint for consent site search
-- adpdated tests because identifierInPrimarySource is not in MERGEABLE_FIELDS
 
-- Updated uv to 0.10.9
+- use merged items endpoint for consent site search
 
 ### Deprecated
 
@@ -25,6 +20,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.8.0] - 2026-03-25
+
+### Added
+
+- shows final fields in the mex editor
+- added manually an EditorField for identifierInPrimarySource in _transform_model_to_editor_primary_sources
+- added into InputConfig allow_subtractive and allow_preventive
+
+### Changes
+
+- update mex-common to 1.17
+- update mex-backend to 1.7.2
+- adpdated tests because identifierInPrimarySource is not in MERGEABLE_FIELDS
+- Updated uv to 0.10.11
+- Text is truncated/wraped based on model.yaml (edit with textarea -> wrap; otherwise truncate)
+- Layout mostly flexing now (Flexlayout)
+- edit_button is always visible for additives
+- updated neo4j to 2026.02
 
 ## [1.7.1] - 2026-03-09
 

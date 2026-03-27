@@ -225,8 +225,7 @@ msgid "consent.consent_status.no_consent"
 msgstr "You have not given consent yet."
 
 msgid "consent.consent_retraction_denial"
-msgstr "You can withdraw your consent at any time with effect for the future. This will not affect the lawfulness of processing carried out before your withdrawal.
-To withdraw your consent, please contact us at: mex@rki.de"
+msgstr "You can withdraw your consent at any time with effect for the future. This will not affect the lawfulness of processing carried out before your withdrawal. To withdraw your consent, please contact us at: mex@rki.de"
 
 msgid "layout.nav_bar.advanced_search_navitem"
 msgstr "Advanced Search"

@@ -7,7 +7,7 @@ from reflex.event import EventSpec
 from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
-from mex.common.models import AnyPreviewModel
+from mex.common.models import AnyMergedModel
 from mex.editor.component_option_helper import build_pagination_options
 from mex.editor.consent.state import ConsentState
 from mex.editor.consent.transform import add_external_links_to_results
@@ -60,13 +60,13 @@ class ConsentCategoryList(rx.ComponentState, PaginationStateMixin):
         self.is_loading = True
         yield None
 
-        all_results: list[AnyPreviewModel] = []
+        all_results: list[AnyMergedModel] = []
         total = 0
 
         try:
             for ref_field in self.config.reference_fields:
                 # TODO(FE): use advanced search method to fetch for multiple refs
-                response = connector.fetch_preview_items(
+                response = connector.fetch_merged_items(
                     query_string=None,
                     entity_type=[self.config.entity_type],
                     skip=self.skip,

@@ -69,7 +69,7 @@ class ConsentState(State):
         timestamp_str = self.consent_status.title[0].text
         timestamp_dt = datetime.fromisoformat(str(timestamp_str))
         timestamp_local = timestamp_dt.astimezone(ZoneInfo("Europe/Berlin"))
-        return timestamp_local.strftime("%d.%m.%Y um %H:%M")
+        return timestamp_local.strftime("%d.%m.%Y %H:%M")
 
     @rx.var
     def is_consent_valid_for_processing(self) -> bool:

@@ -61,8 +61,23 @@ def consent_box() -> rx.Component:
                 rx.button(
                     ConsentState.label_consent_box_no_consent_button,
                     on_click=ConsentState.submit_rule_set("denial"),  # type: ignore[operator]
+                    disabled=ConsentState.is_consent_valid_for_processing,
                     custom_attrs={"data-testid": "denial-consent-button"},
                 ),
+            ),
+            rx.cond(
+                ConsentState.is_consent_valid_for_processing,
+                rx.text(
+                    ConsentState.label_consent_retraction_denial,
+                    style=rx.Style(
+                        fontSize="var(--font-size-1)",
+                        color="var(--gray-11)",
+                        marginTop="var(--space-2)",
+                        textAlign="center",
+                    ),
+                    custom_attrs={"data-testid": "consent-change-blocked-info"},
+                ),
+                rx.box(),
             ),
             style=rx.Style(
                 justifyContent="center",
@@ -87,7 +102,7 @@ def consent_status() -> rx.Component:
         rx.vstack(
             rx.text(ConsentState.merged_login_person.full_name, weight="bold"),  # type: ignore [union-attr]
             rx.cond(
-                ConsentState.consent_status.preview[0].badge == "VALID_FOR_PROCESSING",  # type: ignore [union-attr]
+                ConsentState.is_consent_valid_for_processing,
                 rx.text(
                     ConsentState.label_consent_status_consented_format,
                     color_scheme="green",

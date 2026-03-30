@@ -200,6 +200,9 @@ msgstr "Lade Einverständniserklärung..."
 msgid "consent.nav_bar.consent_navitem"
 msgstr "Einverständniserklärung"
 
+msgid "consent.consent_retraction_denial"
+msgstr "Sie können Ihre Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen. Der Widerruf der Einwilligung berührt nicht die Rechtmäßigkeit der bis zum Widerruf erfolgten Verarbeitung. Wenn Sie von Ihrem Widerrufsrecht Gebrauch machen möchten, können Sie uns jederzeit unter folgender E-Mail-Adresse kontaktieren: mex@rki.de"
+
 msgid "search_reference_dialog.title"
 msgstr "Suche nach Referenzen"
 

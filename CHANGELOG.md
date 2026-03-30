@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- forbid users to change their consent status from positive to negative
+
 ### Changes
 
 - use merged items endpoint for consent site search

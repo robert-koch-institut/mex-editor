@@ -71,6 +71,13 @@ class ConsentState(State):
         timestamp_local = timestamp_dt.astimezone(ZoneInfo("Europe/Berlin"))
         return timestamp_local.strftime("%d.%m.%Y %H:%M")
 
+    @rx.var
+    def is_consent_valid_for_processing(self) -> bool:
+        """Check if the consent status badge is VALID_FOR_PROCESSING."""
+        if not self.consent_status or not self.consent_status.preview:
+            return False
+        return self.consent_status.preview[0].badge == "VALID_FOR_PROCESSING"
+
     @rx.event
     def get_consent(self) -> Generator[EventSpec | None]:
         """Fetch the user's consent status."""
@@ -111,6 +118,14 @@ class ConsentState(State):
             return
 
         is_consenting = consented == "consent"
+
+        # Check if the consent status would actually change
+        if (
+            self.consent_status
+            and self.is_consent_valid_for_processing == is_consenting
+        ):
+            yield None
+            return
 
         additive_consent = AdditiveConsent(
             hasConsentStatus=(
@@ -172,6 +187,10 @@ class ConsentState(State):
     def label_consent_status_declined_format(self) -> list[str]:
         """Label for consent.consent_status.declined_format."""
         return [self.consent_datetime]
+
+    @label_var(label_id="consent.consent_retraction_denial")
+    def label_consent_retraction_denial(self) -> None:
+        """Label for consent.consent_retraction_denial."""
 
     @label_var(label_id="consent.consent_status.no_consent")
     def label_consent_status_no_consent(self) -> None:

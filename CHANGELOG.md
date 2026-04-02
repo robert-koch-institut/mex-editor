@@ -9,14 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- forbid users to change their consent status from positive to negative
-
 ### Changes
-
-- update mex-backend to 1.8
-- update mex-common to 1.18
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/43f715
-- use merged items endpoint for consent site search
 
 ### Deprecated
 
@@ -25,6 +18,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [1.9.0] - 2026-04-02
+
+### Added
+
+- forbid users to change their consent status from positive to negative
+
+### Changes
+
+- update mex-backend to 1.8
+- update mex-common to 1.18
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/43f715
+- use merged items endpoint for consent site search
 
 ## [1.8.0] - 2026-03-25
 

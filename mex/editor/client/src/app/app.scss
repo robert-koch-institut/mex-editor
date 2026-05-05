@@ -1,26 +1,44 @@
-.main {
-  font-family: sans-serif;
-  margin: 100px auto 0;
-  max-width: 600px;
+@use "../variables.scss" as vars;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.spaced > * {
-  margin: 10px;
+main {
+  margin: 0 auto;
+  width: 100%;
+  max-width: vars.$max-content-width;
+  flex: 1;
 }
 
-.image {
-  height: 200px;
-  background-size: cover;
-  background-position: center;
+footer {
+  background-color: #03284c;
+  color: #fff;
+  padding: 12px;
+
+  .footer-content {
+    margin: 0 auto;
+    width: 100%;
+    max-width: vars.$max-content-width;
+
+    display: flex;
+  }
+}
+
+.mex-greetings {
   display: inline-flex;
-}
+  gap: 0.25em;
 
-.image-root {
-  background-image: url("../assets/Wildau_Luftansicht.png");
-  aspect-ratio: 3 / 2;
-}
+  margin-left: auto;
 
-.image-sub {
-  background-image: url("../assets/sub_dir/Seestrasse_Luftaufnahme.png");
-  aspect-ratio: 3 / 2;
+  .heart {
+    display: inline-block;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-image: radial-gradient(circle at center, #ff5f6d, #b91d1d);
+  }
+
 }

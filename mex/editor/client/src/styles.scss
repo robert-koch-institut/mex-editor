@@ -8,20 +8,85 @@
 // components according to the Material 3 design spec.
 @use "@angular/material" as mat;
 
+// Initialize core styles
+@include mat.core();
+
+// Define typography (shared for both modes)
+$my-typography: (
+  brand-family: 'Roboto, "Helvetica Neue", sans-serif',
+  plain-family: 'Roboto, "Helvetica Neue", sans-serif',
+);
+
+// define the themes
+$light-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: $my-typography,
+    density: (
+      scale: 0,
+    ),
+  )
+);
+$dark-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: $my-typography,
+    density: (
+      scale: 0,
+    ),
+  )
+);
+
+// Setup box-sizing for easier layout management
 html {
-  height: 100%;
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
-      ),
-      typography: Roboto,
-      density: 0,
-    )
-  );
+  box-sizing: border-box;
 }
 
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+// Apply styles globally
+html {
+  // Default to Light Theme
+  @include mat.all-component-themes($light-theme);
+  @include mat.typography-hierarchy($light-theme);
+
+  // Apply Dark Theme when the class is present
+  &.dark-mode {
+    @include mat.all-component-colors($dark-theme);
+  }
+
+  margin: 0;
+  height: 100vh;
+
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--mat-app-background-color);
+  color: var(--mat-app-text-color);
+}
+
+body {
+  margin: 0;
+}
+
+// reset user agent styles for links
+a {
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+// include material icons
 .material-icons {
   font-family: "Material Icons";
   font-weight: normal;
@@ -36,22 +101,4 @@ html {
   direction: ltr;
   font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
-}
-
-body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
-  margin: 0;
-  height: 100%;
 }

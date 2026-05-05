@@ -1,33 +1,13 @@
-<main class="main">
-    <section>
-    <h1>{{ title() }}</h1>
-  </section>
-  <section class="spaced">
-    <button routerLink="/subpage">Go to sub page</button>
-    <button routerLink="/sub/subpage">Go to sub sub page</button>
-    <mat-slide-toggle>Toggle me! PLZ</mat-slide-toggle>
-    <button (click)="onClick()" matButton="filled"><mat-icon>favorite</mat-icon>Click me!</button>
-  </section>
-  <section>
-    <h3>Images via tag</h3>
-    <img src="Nordufer_Kirschbluete.png" height=200 alt="Nordufer Kirschbluete" />
-    <img src="sub_dir/Wernigerode_Luftaufnahme.jpg" height=200 alt="Wernigerode Luftaufnahme" />
-    <h3>Images via css</h3>
-    <div class="image image-root"></div>
-    <div class="image image-sub"></div>
-  </section>
-  <section>
-    @let data = data$ | async;
-    <h2>Backend Items ({{ data?.total ?? 0 }})</h2>
-    <ul>
-      @for (item of data?.items; track item.identifier) {
-        <li>
-          <b>{{ item.$type }}</b>: {{ item.identifier }}
-        </li>
-      } @empty {
-        <li>There are no items.</li>
-      }
-    </ul>
-  </section>
+<header>
+  <app-nav-bar-component></app-nav-bar-component>
+</header>
+
+<main>
   <router-outlet />
 </main>
+
+<footer>
+  <div class="footer-content">
+    <div class="mex-greetings">Created with <mat-icon inline class="heart">favorite</mat-icon> by MEx</div>
+  </div>
+</footer>

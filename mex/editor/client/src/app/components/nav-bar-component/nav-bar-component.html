@@ -1,0 +1,20 @@
+<mat-toolbar class="nav-bar">
+  <a routerLink="" class="brand" title="MEx - Metadata Exchange">
+    <img src="mex-logo.svg" alt="Logo MEx - Metadata Exchange" />
+  </a>
+  <div class="nav-bar-links">
+    <a class="link" routerLink="/create/resource" routerLinkActive="active">
+      Datensatz
+      <div class="activ-indicator"></div>
+    </a>
+    <a class="link" routerLink="/create/activity" routerLinkActive="active">
+      Projekt
+      <div class="activ-indicator"></div>
+    </a>
+  </div>
+  <span style="flex: 1 1 auto"></span>
+  <div class="nav-bar-controls">
+    <app-language-selector-component></app-language-selector-component>
+    <app-theme-toggle-component></app-theme-toggle-component>
+  </div>
+</mat-toolbar>

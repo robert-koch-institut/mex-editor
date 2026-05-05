@@ -1,7 +1,14 @@
 import type { Routes } from "@angular/router";
-import { Subpage } from "./subpage/subpage";
+import { StartPage } from "./pages/start-page/start-page";
+import { CreatePage } from "./pages/create-page/create-page";
 
 export const routes: Routes = [
-  { component: Subpage, path: "subpage", data: { title: "Sub Page" } },
-  { component: Subpage, path: "sub/subpage", data: { title: "EVEN MORE Sub Page" } },
+  // The root URL now renders the StartComponent directly
+  { path: '', component: StartPage },
+
+  // Create page lives at /create
+  { path: 'create/:createType', component: CreatePage },
+
+  // Optional: Redirect any unknown URLs back to the root
+  { path: '**', redirectTo: '' }
 ];

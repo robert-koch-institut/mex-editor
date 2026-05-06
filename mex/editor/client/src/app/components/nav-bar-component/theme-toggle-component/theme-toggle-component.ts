@@ -15,7 +15,7 @@ export class ThemeToggleComponent implements OnInit {
   private _document: Document = inject(DOCUMENT);
 
   isDarkMode = signal<boolean>(
-    window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches,
+    !!window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches,
   );
 
   ngOnInit(): void {

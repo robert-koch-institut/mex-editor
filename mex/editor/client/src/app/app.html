@@ -1,19 +1,22 @@
-<main class="main">
-  <h1>{{ title() }}</h1>
 
-  <p>Hello Zehra!</p>
+<header>
+  <div class="logo">
+    <span class="bracket">[</span>ng<span class="bracket">]</span> MEx Projektmanager
+  </div>
+  <nav id="topNav">
+    <a routerLink="/search" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Search</a>
+    <a routerLink="/create" routerLinkActive="active">Create</a>
+    <a routerLink="/edit" routerLinkActive="active">Edit</a>
+  </nav>
+  <div class="login-menu">
+    @if (!isLoggedIn) {
+     <button class="login-button" (click)="openLogin()">Login</button>
+    } @else {
+      <button class="login-button" (click)="logout()">Logout</button>
+    }
+  </div>
+</header>
 
-  <section>
-    @let data = data$ | async;
-    <h2>Backend Items ({{ data?.total ?? 0 }})</h2>
-    <ul>
-      @for (item of data?.items; track item.identifier) {
-        <li>
-          <b>{{ item.$type }}</b>: {{ item.identifier }}
-        </li>
-      } @empty {
-        <li>There are no items.</li>
-      }
-    </ul>
-  </section>
-</main>
+<div class="layout">
+  <router-outlet></router-outlet>
+</div>

@@ -7,6 +7,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
+import { AuthService } from "./auth";
 
 @Component({
   selector: "app-root",
@@ -26,11 +27,15 @@ export class App {
   protected readonly title = signal("mex-editor-ng");
   private loginDialog = inject(MatDialog);
   private loginSnackBar = inject(MatSnackBar);
-  isLoggedIn = false;
+  private authService = inject(AuthService);
 
   credentials = {
     username: "",
   };
+
+  get isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
 
   openLogin(): void {
     const dialogRef = this.loginDialog.open(LoginDialogComponent);
@@ -38,14 +43,14 @@ export class App {
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.success) {
         this.credentials.username = result.username;
-        this.isLoggedIn = true;
+        this.authService.login(result.username);
         this.loginSnackBar.open(`Successfully logged in as ${result.username}.`, "Close", { duration: 3000 });
       }
     });
   }
 
   logout(): void {
-    this.isLoggedIn = false;
+    this.authService.logout();
     this.credentials.username = "";
   }
 

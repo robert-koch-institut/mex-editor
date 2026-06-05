@@ -1,12 +1,21 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
+import { MatIconModule } from "@angular/material/icon";
+import { AuthService } from "../auth";
 
 @Component({
 	selector: "app-edit-page",
 	standalone: true,
+  imports: [MatIconModule],
 	template: `
 		<main class="main">
 			<h1>Edit</h1>
-			<p>This page is ready for your edit form.</p>
+			@if (authService.isLoggedIn()) {
+        <p>This page is ready for your edit form.</p>
+      }
+      @else {
+        <p>Please log in to edit items.</p>
+        <mat-icon aria-hidden="false" fontIcon="lock"></mat-icon>
+      }
 		</main>
 	`,
 	styles: [
@@ -17,4 +26,6 @@ import { Component } from "@angular/core";
 		`,
 	],
 })
-export class EditPageComponent {}
+export class EditPageComponent {
+  authService = inject(AuthService);
+}

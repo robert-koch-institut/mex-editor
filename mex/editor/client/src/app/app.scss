@@ -111,6 +111,20 @@
   padding: 5px;
 }
 
+.project-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: all 0.2s ease;
+
+  &:hover {
+    .item-card {
+      box-shadow: 0 4px 12px rgba(91, 138, 245, 0.3);
+      transform: translateY(-2px);
+    }
+  }
+}
+
 
 
   /* LAYOUT */
@@ -223,9 +237,10 @@
   .tag-orange { border-color: var(--accent3); color: var(--accent3); background: rgba(245,133,91,0.08); }
 
   /* SECTIONS */
-  .section {
+  section {
     margin-bottom: 3rem;
   }
+
   h2 {
     font-size: 1.5rem;
     font-weight: 700;

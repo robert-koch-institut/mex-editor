@@ -3,13 +3,15 @@ import { ActivatedRoute, RouterLink, RouterOutlet } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
 import { MatListModule } from "@angular/material/list";
+import { MatButtonModule } from "@angular/material/button";
 import type { Project } from "../models/project.model";
 import { DummyDataService } from "../services/dummy-data.service";
+import { AuthService } from "../auth";
 
 @Component({
   selector: "app-project-detail",
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatListModule, RouterLink, RouterOutlet],
+  imports: [CommonModule, MatCardModule, MatListModule, MatButtonModule, RouterLink, RouterOutlet],
   template: `
     <div class="page-project-detail">
       <div class="project-main">
@@ -26,6 +28,13 @@ import { DummyDataService } from "../services/dummy-data.service";
             <mat-card-content>
               <p>{{ project.beschreibung }}</p>
             </mat-card-content>
+            <mat-card-actions align="end">
+              @if (authService.isLoggedIn()) {
+                <button mat-raised-button color="primary" [routerLink]="['/edit', project.id]">
+                  Edit Project
+                </button>
+              }
+            </mat-card-actions>
           </mat-card>
 
           <mat-card>
@@ -44,7 +53,7 @@ import { DummyDataService } from "../services/dummy-data.service";
             </mat-list>
           </mat-card>
         } @else {
-          <p>Projekt nicht gefunden</p>
+          <p>Project not found</p>
         }
       </div>
 
@@ -103,6 +112,7 @@ import { DummyDataService } from "../services/dummy-data.service";
 export class ProjectDetailComponent {
   private route = inject(ActivatedRoute);
   private dummyDataService = inject(DummyDataService);
+  authService = inject(AuthService);
 
   project: Project | undefined;
 

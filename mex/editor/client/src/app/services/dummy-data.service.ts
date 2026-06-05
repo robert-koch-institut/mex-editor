@@ -42,4 +42,19 @@ export class DummyDataService {
   getMitarbeiterById(mitarbeiterId: string): Mitarbeiter | undefined {
     return this.dummyMitarbeiter.find((m) => m.id === mitarbeiterId);
   }
+
+  getAvailableMitarbeiter(): Mitarbeiter[] {
+    return this.dummyMitarbeiter;
+  }
+
+  addProject(project: Project): void {
+    this.dummyProjects.push(project);
+  }
+
+  updateProject(updatedProject: Project): void {
+    const index = this.dummyProjects.findIndex((p) => p.id === updatedProject.id);
+    if (index !== -1) {
+      this.dummyProjects[index] = updatedProject;
+    }
+  }
 }

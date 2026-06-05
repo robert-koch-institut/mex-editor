@@ -24,6 +24,10 @@ export const routes: Routes = [
     component: EditPageComponent,
   },
   {
+    path: "edit/:id",
+    component: EditPageComponent,
+  },
+  {
     path: "projekte/:id",
     component: ProjectDetailComponent,
     children: [

@@ -122,28 +122,25 @@ class AdvancedSearchState(State, PaginationStateMixin):
     def search(self) -> Generator[EventSpec | None]:
         """Perform the search with the current filters."""
         entity_type = [ensure_prefix(x, "Merged") for x in self.entity_types]
-
         skip = self.limit * (self.current_page - 1)
-
-        # TODO(FE): rework when updated fetch method is here
-        ref = self.refs[0] if self.refs else None
-        ref_field = (
-            FieldDescriptor.from_json(ref.field_descriptor_json).field
-            if ref and ref.values
-            else None
-        )
-        ref_values = ref.values if ref and ref.values else None
+        references = [
+            {
+                "field": FieldDescriptor.from_json(x.field_descriptor_json).field,
+                "identifiers": x.values,
+            }
+            for x in self.refs
+            if x.values
+        ]
 
         self.is_searching = True
         yield None
 
         connector = BackendApiConnector.get()
         try:
-            fetch_result = connector.fetch_preview_items(
+            fetch_result = connector.search_preview_items(
                 query_string=self.query or None,
                 entity_type=entity_type,
-                referenced_identifier=ref_values,
-                reference_field=ref_field,
+                references=references,
                 skip=skip,
                 limit=self.limit,
             )

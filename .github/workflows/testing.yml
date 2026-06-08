@@ -35,7 +35,7 @@ jobs:
         ports:
           - 7687:7687
       backend:
-        image: ghcr.io/robert-koch-institut/mex-backend:1.8.0
+        image: ghcr.io/robert-koch-institut/mex-backend:3.0.0@83a25c9c4d5d2ce3e741288a5a3e0f0dde26f501
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
           MEX_BACKEND_API_KEY_DATABASE: ${{ secrets.MEX_BACKEND_API_KEY_DATABASE }}

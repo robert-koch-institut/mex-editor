@@ -1,9 +1,13 @@
+import json
 import os
 import subprocess
 import sys
 from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+import polib
+import requests
 
 from mex.editor.settings import EditorSettings
 
@@ -141,3 +145,56 @@ def install_and_build() -> None:
     """Install dependencies and build the angular frontend."""
     install()
     build()
+
+
+def convert_model_po_to_json() -> None:
+    """Convert .po files to .json files."""
+    languages = ["de", "en"]
+    mex_model_i18n_url = "https://raw.githubusercontent.com/robert-koch-institut/mex-model/main/mex/model/i18n"
+    target_dir = CLIENT / "public" / "i18n"
+
+    for lang in languages:
+        r = requests.get(f"{mex_model_i18n_url}/{lang}.po", timeout=30)
+        r.raise_for_status()
+
+        po = polib.pofile(r.text)  # Validate the .po file
+
+        messages = {}
+        for entry in po:
+            if not entry.msgid:
+                print(f"⚠️ Skipping entry with empty msgid in {lang}.po")
+                continue
+
+            if entry.msgid_plural:
+                icu_msg = f"{{count, plural, one {{{entry.msgstr_plural[0]}}} other {{{entry.msgstr_plural[1]}}}}}"  # noqa: E501
+                key = (
+                    entry.msgid_plural.replace(".plural", "")
+                    if not entry.msgctxt
+                    else f"{entry.msgctxt}.{entry.msgid_plural.replace('.plural', '')}"
+                )
+
+                if key in messages:
+                    print(f"⚠️ Duplicate key {key} in {lang}.po")
+
+                messages[key] = icu_msg
+            else:
+                key = (
+                    entry.msgid.replace(".singular", "")
+                    if not entry.msgctxt
+                    else f"{entry.msgctxt}:{entry.msgid.replace('.singular', '')}"
+                )
+
+                if key in messages:
+                    print(f"⚠️ Duplicate key {key} in {lang}.po")
+
+                messages[key] = entry.msgstr
+
+        # messages = {create_translation_key(entry): entry.msgstr for entry in po if entry.msgid}
+
+        json_file = target_dir / f"{lang}.json"
+
+        Path.mkdir(json_file.parent, exist_ok=True)
+        with Path.open(json_file, "w", encoding="utf-8") as f:
+            json.dump(messages, f, ensure_ascii=False, indent=2, sort_keys=True)
+
+        print(f"✅ JSON saved to {json_file}")

@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/robert-koch-institut/mex-template",
-  "commit": "dd987e6cc7f1bcb7298b4e7aecd5055de15458bb",
+  "commit": "26afa85ef969fa8385019c932f32d6b7b452b142",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -8,7 +8,7 @@
       "short_summary": "Metadata editor web application.",
       "long_summary": "The `mex-editor` is a browser application that allows creating and editing rules to non-destructively manipulate metadata. This can be used to enrich data with manual input or insert new data from scratch.",
       "_template": "https://github.com/robert-koch-institut/mex-template",
-      "_commit": "dd987e6cc7f1bcb7298b4e7aecd5055de15458bb"
+      "_commit": "26afa85ef969fa8385019c932f32d6b7b452b142"
     }
   },
   "directory": null

@@ -30,7 +30,6 @@ describe("NavBarComponent", () => {
   });
 
   it("should add active class to links", async () => {
-    // const compiled = fixture.nativeElement as HTMLElement;
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl('/create/resource', CreatePage);
     let activeLinks = fixture.nativeElement.querySelectorAll(".link.active")

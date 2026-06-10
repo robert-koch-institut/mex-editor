@@ -10,29 +10,34 @@ from mex.editor.rules.main import (
 )
 from mex.editor.rules.models import FieldTranslation
 from mex.editor.rules.state import RuleState
+from mex.editor.style_helper import add_component_style, flex1_style, flex3_style
 from mex.editor.value_label_select import value_label_select
+
+flex1_col_style = flex1_style | {"max_width": "25%"}
 
 
 def editor_field(field_translation: FieldTranslation) -> rx.Component:
     """Return a horizontal grid of cards for editing one field."""
     field = field_translation.field
     return rx.hstack(
-        field_name_card(field_translation),
+        add_component_style(field_name_card(field_translation), flex1_col_style),
         rx.vstack(
             rx.foreach(
                 field.primary_sources,
                 lambda primary_source: rx.hstack(
-                    editor_primary_source_stack(
-                        field_translation,
-                        primary_source,
+                    add_component_style(
+                        editor_primary_source_stack(
+                            field_translation,
+                            primary_source,
+                        ),
+                        flex1_style,
                     ),
-                    style=rx.Style(width="100%"),
                 ),
             ),
-            style=rx.Style(width="100%"),
+            align="stretch",
+            style=flex3_style,
         ),
         style=rx.Style(
-            width="100%",
             margin="var(--space-3) 0",
         ),
         custom_attrs={"data-testid": f"field-{field.name}"},
@@ -125,7 +130,9 @@ def index() -> rx.Component:
                 editor_field,
             ),
             validation_errors(),
+            align="stretch",
             style=rx.Style(
+                flex="1",
                 width="100%",
                 marginTop="calc(2 * var(--space-6))",
             ),

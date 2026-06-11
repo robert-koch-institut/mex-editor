@@ -10,10 +10,13 @@ from mex.editor.rules.main import (
 )
 from mex.editor.rules.models import FieldTranslation
 from mex.editor.rules.state import RuleState
-from mex.editor.style_helper import add_component_style, flex1_style, flex3_style
+from mex.editor.style_helper import (
+    add_component_style,
+    flex1_col_style,
+    flex1_style,
+    flex3_style,
+)
 from mex.editor.value_label_select import value_label_select
-
-flex1_col_style = flex1_style | {"max_width": "25%"}
 
 
 def editor_field(field_translation: FieldTranslation) -> rx.Component:

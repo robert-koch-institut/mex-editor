@@ -1,39 +1,39 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "editor-api-debug",
-            "type": "shell",
-            "command": "uv run debugpy --listen 5678 --wait-for-client --log-to-stderr -m mex.editor.main --startup api",
-            "isBackground": true,
-            "problemMatcher": {
-                "pattern": {
-                    "regexp": "^$",
-                    "file": 1,
-                    "location": 2,
-                    "message": 3
-                },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": ".",
-                    "endsPattern": "wait_for_client()"
-                }
-            }
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "editor-api-debug",
+      "type": "shell",
+      "command": "uv run debugpy --listen 5678 --wait-for-client --log-to-stderr -m mex.editor.main --startup api",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^$",
+          "file": 1,
+          "location": 2,
+          "message": 3
         },
-        {
-            "label": "angular-dev",
-            "type": "shell",
-            "command": "uv run exec-npx ng serve",
-            "isBackground": true,
-            "problemMatcher": {
-                "owner": "typescript",
-                "pattern": "$tsc",
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "Building...",
-                    "endsPattern": "Application bundle generation complete."
-                }
-            }
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".",
+          "endsPattern": "wait_for_client()"
         }
-    ]
+      }
+    },
+    {
+      "label": "angular-dev",
+      "type": "shell",
+      "command": "uv run exec-npx ng serve",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Building...",
+          "endsPattern": "Application bundle generation complete."
+        }
+      }
+    },
+  ]
 }

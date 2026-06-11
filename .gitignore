@@ -151,3 +151,4 @@ schema.json
 storage/
 tmp*/
 work/
+activate.ps1

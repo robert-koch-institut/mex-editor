@@ -19,7 +19,7 @@
       "webRoot": "${workspaceFolder}/mex/editor/client",
       "preLaunchTask": "angular-dev",
       "sourceMaps": true
-    }
+    },
   ],
   "compounds": [
     {

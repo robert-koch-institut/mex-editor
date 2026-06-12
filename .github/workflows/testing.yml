@@ -29,13 +29,13 @@ jobs:
       contents: read
     services:
       neo4j:
-        image: neo4j:2026.02-community
+        image: neo4j:2026.02-community@sha256:09c2b7ce2f7a9b7c230669d7a50c0c8fcd548d1891e701cf11685e7afdebbaf4
         env:
           NEO4J_AUTH: neo4j/password
         ports:
           - 7687:7687
       backend:
-        image: ghcr.io/robert-koch-institut/mex-backend:3.0.0
+        image: ghcr.io/robert-koch-institut/mex-backend:3.0.0@sha256:914246aee54d764cb0115510ffe5114e56747021f48724ea1ff515f80a4c092a
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
           MEX_BACKEND_API_KEY_DATABASE: ${{ secrets.MEX_BACKEND_API_KEY_DATABASE }}

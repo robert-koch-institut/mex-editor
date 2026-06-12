@@ -5,7 +5,6 @@ from mex.editor.edit.state import EditState
 from mex.editor.layout import page
 from mex.editor.rules.main import (
     editor_field,
-    flex1_col_style,
     rule_page_header,
     validation_errors,
 )
@@ -15,7 +14,7 @@ from mex.editor.search_results_component import (
     SearchResultsListOptions,
     search_results_list,
 )
-from mex.editor.style_helper import flex3_style
+from mex.editor.style_helper import flex1_col_style, flex3_style
 
 
 def edit_title() -> rx.Component:

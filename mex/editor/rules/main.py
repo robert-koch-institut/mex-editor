@@ -16,13 +16,12 @@ from mex.editor.search_reference_dialog import search_reference_dialog
 from mex.editor.style_helper import (
     add_component_style,
     add_flex1,
+    flex1_col_style,
     flex1_style,
     flex3_style,
 )
 
 locale_service = LocaleService.get()
-
-flex1_col_style = flex1_style | {"max_width": "25%"}
 
 
 def editor_value_switch(

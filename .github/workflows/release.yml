@@ -85,6 +85,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write  # Required for cosign signing
 
     steps:
       - name: Checkout repo
@@ -120,30 +121,11 @@ jobs:
         with:
           cosign-release: 'v2.4.1'
 
-      - name: Sign docker images
+      - name: Sign Docker image keyless
         env:
-          IMAGE: ghcr.io/${{ github.repository }}
-          DIGEST: ${{ steps.push_step.outputs.digest }}
-          BASE64_PRIV_KEY: ${{ secrets.MEX_SIGNING_KEY }}
-          COSIGN_PASSWORD: ""
-          BASE64_PUB_KEY: ${{ vars.MEX_SIGNING_PUB }}
-          COSIGN_DOCKER_MEDIA_TYPES: 1
+          IMAGE: ghcr.io/${{ github.repository }}@${{ steps.push_step.outputs.digest }}
         run: |
-          set -e # exit on first error
-
-          # signing
-          echo "Signing Image: ${IMAGE}@${DIGEST}"
-          export COSIGN_PRIVATE_KEY=$(echo "$BASE64_PRIV_KEY" | base64 --decode)
-          cosign sign --yes --registry-referrers-mode=legacy --key env://COSIGN_PRIVATE_KEY ${IMAGE}@${DIGEST}
-          echo "Signature generated successfully"
-
-          # smoke test
-          echo "Verifying signature"
-          trap 'rm -f temp_ssh_id.pub cosign.pub' EXIT
-          echo "$BASE64_PUB_KEY" | base64 --decode > temp_ssh_id.pub
-          ssh-keygen -e -m PKCS8 -f temp_ssh_id.pub > cosign.pub
-          cosign verify --key cosign.pub "${IMAGE}@${DIGEST}"
-          echo "Signature verified successfully"
+          cosign sign --yes "$IMAGE"
 
   distribute:
     runs-on: ubuntu-latest

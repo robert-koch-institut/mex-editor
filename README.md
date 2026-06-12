@@ -114,6 +114,13 @@ If u're using VSCode u can use the predefined launch configuration.
 - run directly using docker `make run`
 - start with docker compose `make start`
 
+### Container verification
+
+Images released to GHCR are signed using [cosign](https://github.com/sigstore/cosign).
+
+To verify an image manually:
+`cosign verify --certificate-identity-regexp "https://github.com/robert-koch-institut/editor" --certificate-oidc-issuer "https://token.actions.githubusercontent.com" ghcr.io/robert-koch-institut/editor:<tag>`
+
 ## Commands
 
 - run `uv run {command} --help` to print instructions

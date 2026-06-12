@@ -61,6 +61,19 @@
             ]
         },
         {
+            "description": "Group all non-major npm updates into a single PR",
+            "groupName": "npm non-major",
+            "matchCurrentVersion": "!/^0/",
+            "matchManagers": [
+                "npm"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "patch",
+                "pin"
+            ]
+        },
+        {
             "description": "Immediately apply updates of mex packages in dedicated PR",
             "groupName": null,
             "matchPackageNames": [

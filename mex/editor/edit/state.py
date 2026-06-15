@@ -7,6 +7,7 @@ from requests import HTTPError
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import logger
+from mex.common.types import PublishingTarget
 from mex.editor.label_var import label_var
 from mex.editor.models import SearchResult
 from mex.editor.rules.state import RuleState
@@ -54,10 +55,11 @@ class EditState(RuleState):
     def toggle_publish_target(self, publish_target_id: str) -> None:
         """Toggle the given publish target by id."""
         if self.workflow_rule:
+            target = PublishingTarget(publish_target_id)
             if publish_target_id in self.workflow_rule.forbiddenPublishingTarget:
-                self.workflow_rule.forbiddenPublishingTarget.remove(publish_target_id)
+                self.workflow_rule.forbiddenPublishingTarget.remove(target)
             else:
-                self.workflow_rule.forbiddenPublishingTarget.append(publish_target_id)
+                self.workflow_rule.forbiddenPublishingTarget.append(target)
 
     @rx.event
     def delete_reset(self) -> Generator[EventSpec | None]:

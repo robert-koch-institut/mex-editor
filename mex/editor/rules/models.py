@@ -65,6 +65,14 @@ class EditorField(BaseModel):
         return False
 
 
+class PublishTarget(BaseModel):
+    """Model for publish targets with label and enable state."""
+
+    identifier: str
+    label: str
+    enabled: bool
+
+
 class FieldTranslation(BaseModel):
     """Wraps an editor field to add translated label and description."""
 

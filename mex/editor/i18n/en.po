@@ -289,3 +289,6 @@ msgstr "Show the entities that references this entity by the field 'superseded b
 
 msgid "edit.field_supersededBy.empty"
 msgstr "There are no supersedes items."
+
+msgid "edit.publish_targets"
+msgstr "Publish on/in"

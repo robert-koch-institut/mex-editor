@@ -51,6 +51,15 @@ class EditState(RuleState):
         return results
 
     @rx.event
+    def toggle_publish_target(self, publish_target_id: str) -> None:
+        """Toggle the given publish target by id."""
+        if self.workflow_rule:
+            if publish_target_id in self.workflow_rule.forbiddenPublishingTarget:
+                self.workflow_rule.forbiddenPublishingTarget.remove(publish_target_id)
+            else:
+                self.workflow_rule.forbiddenPublishingTarget.append(publish_target_id)
+
+    @rx.event
     def delete_reset(self) -> Generator[EventSpec | None]:
         """Call the delete or reset function."""
         self.is_deleting = True
@@ -94,37 +103,9 @@ class EditState(RuleState):
             if event := self.push_url_params(params):
                 yield event
 
-    @rx.var(cache=False)
-    def any_primary_source_or_editor_value_enabled(self) -> bool:
-        """Determine if any primary source or editor value is enabled.
-
-        Returns:
-            Return true if any primary source or editor value is enabled,
-            otherwise false.
-        """
-        return any(
-            ps.enabled or any(value.enabled for value in ps.editor_values)
-            for field in self.fields
-            for ps in field.primary_sources
-        )
-
-    @rx.event
-    def toggle_all_primary_source_and_editor_values(
-        self,
-    ) -> Generator[EventSpec]:
-        """Toggle all primary source and editor values."""
-        any_enabled = self.any_primary_source_or_editor_value_enabled
-        new_state = not any_enabled
-        for field in self.fields:
-            for ps in field.primary_sources:
-                ps.enabled = new_state
-                for value in ps.editor_values:
-                    value.enabled = new_state
-        yield RuleState.update_local_state  # type: ignore[misc]
-
-    @label_var(label_id="edit.toggle_all")
-    def label_toggle_all(self) -> None:
-        """Label for toggle_all."""
+    @label_var(label_id="edit.publish_targets")
+    def label_publish_targets(self) -> None:
+        """Label for publish_targets."""
 
     @label_var(label_id="edit.discard_changes.button")
     def label_discard_changes_button(self) -> None:

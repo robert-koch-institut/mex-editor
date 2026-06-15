@@ -29,9 +29,6 @@ msgstr "Add filter"
 msgid "create.title.create_new"
 msgstr "Create new"
 
-msgid "edit.toggle_all"
-msgstr "Toggle all"
-
 msgid "edit.discard_changes.button"
 msgstr "Discard changes"
 

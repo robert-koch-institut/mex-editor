@@ -29,9 +29,6 @@ msgstr "Filter hinzufügen"
 msgid "create.title.create_new"
 msgstr "Erzeugen von"
 
-msgid "edit.toggle_all"
-msgstr "Alle umschalten"
-
 msgid "edit.discard_changes.button"
 msgstr "Änderungen verwerfen"
 

@@ -990,12 +990,6 @@ def test_edit_page_discard_changes_button_roundtrip(
     ).click()
     expect(discard_dialog_button).not_to_be_visible()
 
-    # toogle all and check button visibility
-    edit_page.get_by_test_id("toggle-all-switch").click()
-    expect(discard_dialog_button).to_be_visible()
-    edit_page.get_by_test_id("toggle-all-switch").click()
-    expect(discard_dialog_button).not_to_be_visible()
-
     # do changes navigate away, come back and check if changes still present, discard change
     edit_page.get_by_test_id(
         f"new-additive-shortName-{MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID}"

@@ -21,7 +21,9 @@
     "strict": true,
     "target": "ES2022"
   },
-  "files": [],
+  "files": [
+    "transloco.config.ts"
+  ],
   "references": [
     {
       "path": "./tsconfig.app.json"

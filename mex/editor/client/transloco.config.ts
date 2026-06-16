@@ -1,4 +1,4 @@
-import { TranslocoGlobalConfig } from "@jsverse/transloco-utils";
+import type { TranslocoGlobalConfig } from "@jsverse/transloco-utils";
 
 const config: TranslocoGlobalConfig = {
   rootTranslationsPath: "public/i18n/",

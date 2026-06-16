@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "outDir": "./out-tsc/spec",
     "types": [
       "vitest/globals"
@@ -8,6 +9,7 @@
   "extends": "./tsconfig.json",
   "include": [
     "src/test-providers.ts",
+    "src/**/*.routes.ts",
     "src/**/*.d.ts",
     "src/**/*.spec.ts"
   ]

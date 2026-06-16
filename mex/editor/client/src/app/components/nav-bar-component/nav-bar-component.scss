@@ -8,7 +8,7 @@
   .nav-bar-links {
     display: flex;
     margin-left: 24px;
-    gap: 12px;
+    gap: 16px;
 
     .link {
       position: relative;
@@ -34,7 +34,7 @@
 
   .nav-bar-controls {
     display: flex;
-    gap: 12px;
+    gap: 16px;
     align-items: center;
   }
 }

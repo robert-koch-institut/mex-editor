@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import polib
 import requests
 
+from mex.common.logging import logger
 from mex.editor.settings import EditorSettings
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -157,12 +158,14 @@ def convert_model_po_to_json() -> None:
         r = requests.get(f"{mex_model_i18n_url}/{lang}.po", timeout=30)
         r.raise_for_status()
 
+        json_file = target_dir / f"model/{lang}.json"
+        logger.info(f"Starting to convert {lang}.po to {json_file}...")
         po = polib.pofile(r.text)  # Validate the .po file
 
         messages = {}
         for entry in po:
             if not entry.msgid:
-                print(f"⚠️ Skipping entry with empty msgid in {lang}.po")
+                logger.warning(f"⚠️ Skipping entry with empty msgid in {lang}.po")
                 continue
 
             if entry.msgid_plural:
@@ -174,7 +177,7 @@ def convert_model_po_to_json() -> None:
                 )
 
                 if key in messages:
-                    print(f"⚠️ Duplicate key {key} in {lang}.po")
+                    logger.warning(f"⚠️ Duplicate key {key} in {lang}.po")
 
                 messages[key] = icu_msg
             else:
@@ -185,16 +188,12 @@ def convert_model_po_to_json() -> None:
                 )
 
                 if key in messages:
-                    print(f"⚠️ Duplicate key {key} in {lang}.po")
+                    logger.warning(f"⚠️ Duplicate key {key} in {lang}.po")
 
                 messages[key] = entry.msgstr
-
-        # messages = {create_translation_key(entry): entry.msgstr for entry in po if entry.msgid}
-
-        json_file = target_dir / f"{lang}.json"
 
         Path.mkdir(json_file.parent, exist_ok=True)
         with Path.open(json_file, "w", encoding="utf-8") as f:
             json.dump(messages, f, ensure_ascii=False, indent=2, sort_keys=True)
 
-        print(f"✅ JSON saved to {json_file}")
+        logger.info(f"✅ JSON for '{lang}' saved to {json_file}")

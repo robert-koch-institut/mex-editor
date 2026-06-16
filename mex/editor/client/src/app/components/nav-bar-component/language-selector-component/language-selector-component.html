@@ -1,4 +1,5 @@
-<mat-select class="language-selector" placeholder="Language" [value]="currentLanguage()" (selectionChange)="changeLanguage($event.value)" panelWidth="100px">
-  <mat-option value="de">DE</mat-option>
-  <mat-option value="en">EN</mat-option>
+<mat-select class="language-selector" placeholder="Language" [value]="currentLanguage$ | async" (selectionChange)="changeLanguage($event.value)" panelWidth="200px">
+  @for (lang of availableLanguages; track lang.id) {
+    <mat-option [value]="lang.id">{{ lang.label }}</mat-option>
+  }
 </mat-select>

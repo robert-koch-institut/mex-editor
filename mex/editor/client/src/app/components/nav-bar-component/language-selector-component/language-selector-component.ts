@@ -1,18 +1,25 @@
-import { Component, signal } from "@angular/core";
+import { AsyncPipe } from "@angular/common";
+import { Component, inject } from "@angular/core";
 import { MatSelectModule } from "@angular/material/select";
+import type { LangDefinition} from "@jsverse/transloco";
+import { TranslocoService } from "@jsverse/transloco";
 
 @Component({
   selector: "app-language-selector-component",
-  imports: [MatSelectModule],
+  imports: [MatSelectModule, AsyncPipe],
   templateUrl: "./language-selector-component.html",
   styleUrl: "./language-selector-component.scss",
 })
 export class LanguageSelectorComponent {
-  currentLanguage = signal("de");
+  transloco = inject(TranslocoService);
+  get currentLanguage$() {
+    return this.transloco.langChanges$;
+  }
+  get availableLanguages() {
+    return this.transloco.getAvailableLangs() as LangDefinition[];
+  }
 
   changeLanguage(language: string) {
-    this.currentLanguage.set(language);
-    // eslint-disable-next-line no-console
-    console.log("Language changed to:", language);
+    this.transloco.setActiveLang(language);
   }
 }

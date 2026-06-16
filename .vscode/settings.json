@@ -12,15 +12,16 @@
   "python.autoComplete.extraPaths": ["${workspaceFolder}/.venv/lib"],
   "python.analysis.extraPaths": ["${workspaceFolder}/.venv/lib"],
   "python.analysis.exclude": [
-    "${workspaceFolder}/.mypy_cache",
-    "${workspaceFolder}/.pytest_cache",
-    "${workspaceFolder}/.venv"
+    ".mypy_cache",
+    ".pytest_cache",
+    ".venv",
+    "**/__pycache__",
+    "**/__snapshots__",
+    "**/node_modules",
+    "**/.*"
   ],
   "python.testing.pytestArgs": ["-s"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
-  "python.testing.pytestPath": "${workspaceFolder}/.venv/scripts/pytest",
-  "ruff.path": ["ruff"],
-  "ruff.importStrategy": "useBundled",
-  "ruff.nativeServer": "on"
+  "python.testing.pytestPath": "${workspaceFolder}/.venv/scripts/pytest"
 }

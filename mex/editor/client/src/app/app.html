@@ -1,13 +1,16 @@
-<header>
-  <app-nav-bar-component></app-nav-bar-component>
-</header>
+<ng-container>
+  <header>
+    <app-nav-bar-component></app-nav-bar-component>
+  </header>
 
-<main>
-  <router-outlet />
-</main>
+  <main>
+    <router-outlet />
+  </main>
 
-<footer>
-  <div class="footer-content">
-    <div class="mex-greetings">Created with <mat-icon inline class="heart">favorite</mat-icon> by MEx</div>
-  </div>
-</footer>
+  <footer>
+    <div class="footer-content">
+      <div class="mex-greetings" transloco="app.footer.greetings">
+      </div>
+    </div>
+  </footer>
+</ng-container>

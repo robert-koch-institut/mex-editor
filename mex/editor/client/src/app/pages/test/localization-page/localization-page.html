@@ -1,0 +1,9 @@
+<ng-container *transloco="let t">
+  <h1 data-testid="headline">{{ t("test.headline") }}</h1>
+  <div data-testid="date">{{ date | translocoDate }}</div>
+  <div data-testid="datetime">{{ datetime | translocoDate: { dateStyle: "medium",  timeStyle: "medium" } }}</div>
+  <div data-testid="decimal">{{ decimal | translocoDecimal }}</div>
+  <div data-testid="money">{{ money | translocoCurrency }}</div>
+  <div data-testid="singular">{{ t("test.icuMessageFormat", {count: 1}) }}</div>
+  <div data-testid="plural">{{ t("test.icuMessageFormat", {count: 3}) }}</div>
+</ng-container>

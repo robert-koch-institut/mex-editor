@@ -10,12 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial Layout with header (including theme switcher and language switcher with noop) and footer
+- Localization with Transloco and script to create model .po to .json files
 - vitest/ui for better dev experience
 
 ### Changes
 
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/dd987e
 - renovate: group non-major npm updates into a single PR
 
 ### Deprecated

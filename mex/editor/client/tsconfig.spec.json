@@ -9,6 +9,7 @@
   "extends": "./tsconfig.json",
   "include": [
     "src/test-providers.ts",
+    "src/**/transloco.ts",
     "src/**/*.routes.ts",
     "src/**/*.d.ts",
     "src/**/*.spec.ts"

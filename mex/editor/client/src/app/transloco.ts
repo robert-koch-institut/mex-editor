@@ -20,7 +20,7 @@ class TranslocoHttpLoader implements TranslocoLoader {
   }
 }
 
-const translocoConfig = {
+export const translocoConfig = {
   availableLangs: [
     { id: "de", label: "Deutsch" },
     { id: "en", label: "English" },
@@ -91,5 +91,6 @@ export function getTranslocoTestingModule(options: TranslocoTestingOptions = {})
   });
   testModule.providers?.push(translocoLocaleProvider);
   testModule.providers?.push(translocoMessageformatProvider);
+  testModule.providers?.push(translocoPersistLangProvider);
   return testModule;
 }

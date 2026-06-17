@@ -13,7 +13,6 @@ describe("App", () => {
   let component: App;
   let fixture: ComponentFixture<App>;
   let transloco: TranslocoService;
-  // let location: Location;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -43,7 +42,6 @@ describe("App", () => {
   })
 
   it("should update url language query param when language changes", async () => {
-
     for (const lang of translocoConfig.availableLangs) {
       transloco.setActiveLang(lang.id);
       await fixture.whenStable()
@@ -54,9 +52,7 @@ describe("App", () => {
 
   it("should change the app language when i navigate with ?language=<lang>", async () => {
     const harness = await RouterTestingHarness.create();
-
     for (const lang of translocoConfig.availableLangs) {
-      // Navigate to a URL containing query parameters
       await harness.navigateByUrl(`/?language=${lang.id}`);
       harness.fixture.detectChanges();
       await harness.fixture.whenStable();

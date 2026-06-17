@@ -4,14 +4,15 @@ import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
 import { provideRouter } from "@angular/router";
 import { App } from "./app";
-import { getTranslocoTestingModule, translocoConfig } from "./transloco";
+import { getTranslocoTestingModule, translocoConfig, LANGUAGE_QUERY_PARAM } from "./transloco";
 import { TranslocoService } from "@jsverse/transloco";
 import { Location } from "@angular/common";
 import { RouterTestingHarness } from "@angular/router/testing";
 
 describe("App", () => {
-  let app: App;
+  let component: App;
   let fixture: ComponentFixture<App>;
+  let transloco: TranslocoService;
   // let location: Location;
 
   beforeEach(async () => {
@@ -20,33 +21,35 @@ describe("App", () => {
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 
+    transloco = TestBed.inject(TranslocoService);
     fixture = TestBed.createComponent(App);
-    app = fixture.componentInstance;
+    component = fixture.componentInstance;
     await fixture.whenStable();
   });
 
   function getUrlLanguage(): string | null {
     const location = TestBed.inject(Location);
     const urlParams = new URLSearchParams(location.path());
-    return urlParams.get("language");
+    return urlParams.get(LANGUAGE_QUERY_PARAM);
   }
 
   it("should create the app", () => {
-    expect(app).toBeTruthy();
+    expect(component).toBeTruthy();
   });
 
-  it("should update language query param in current url", () => {
-    const transloco = TestBed.inject(TranslocoService);
+  it("should have default language active and no lanuage query param", () => {
+    expect(getUrlLanguage()).toBe(null)
+    expect(transloco.getActiveLang()).toBe(translocoConfig.defaultLang)
+  })
+
+  it("should update url language query param when language changes", async () => {
 
     for (const lang of translocoConfig.availableLangs) {
       transloco.setActiveLang(lang.id);
-      fixture.detectChanges()
+      await fixture.whenStable()
+
       expect(getUrlLanguage()).toBe(lang.id);
     }
-  });
-
-  it("should add default language to url query params", () => {
-    expect(getUrlLanguage()).toBe(translocoConfig.defaultLang);
   });
 
   it("should change the app language when i navigate with ?language=<lang>", async () => {
@@ -57,9 +60,7 @@ describe("App", () => {
       await harness.navigateByUrl(`/?language=${lang.id}`);
       harness.fixture.detectChanges();
       await harness.fixture.whenStable();
-      await fixture.whenStable()
 
-      const transloco = TestBed.inject(TranslocoService);
       expect(transloco.getActiveLang()).toBe(lang.id)
     }
   });

@@ -5,9 +5,11 @@ import { provideTranslocoLocale } from "@jsverse/transloco-locale";
 import { provideTranslocoMessageformat } from "@jsverse/transloco-messageformat";
 import { HttpClient } from "@angular/common/http";
 import { combineLatest, map } from "rxjs";
+import type { GetLangParams } from "@jsverse/transloco-persist-lang";
+import { provideTranslocoPersistLang } from "@jsverse/transloco-persist-lang";
 
 @Injectable({ providedIn: "root" })
-export class TranslocoHttpLoader implements TranslocoLoader {
+class TranslocoHttpLoader implements TranslocoLoader {
   private http = inject(HttpClient);
 
   getTranslation(lang: string) {
@@ -18,7 +20,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
   }
 }
 
-export const translocoConfig = {
+const translocoConfig = {
   availableLangs: [
     { id: "de", label: "Deutsch" },
     { id: "en", label: "English" },
@@ -27,7 +29,7 @@ export const translocoConfig = {
   reRenderOnLangChange: true,
 };
 
-export const translocoLocaleProvider = provideTranslocoLocale({
+const translocoLocaleProvider = provideTranslocoLocale({
   langToLocaleMapping: {
     de: "de-DE",
     en: "en-US",
@@ -39,7 +41,20 @@ export const translocoLocaleProvider = provideTranslocoLocale({
     "en-US": "USD",
   },
 });
-export const translocoMessageformatProvider = provideTranslocoMessageformat();
+const translocoMessageformatProvider = provideTranslocoMessageformat();
+
+export function getLangFn({ defaultLang }: GetLangParams) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlLang = urlParams.get("language");
+
+  // Return URL lang if present, otherwise default
+  return urlLang || defaultLang;
+}
+
+const translocoPersistLangProvider = provideTranslocoPersistLang({
+  getLangFn,
+  storage: { useValue: localStorage }, // Also save to localStorage as backup
+});
 
 export const translocoProviders = [
   provideTransloco({
@@ -52,6 +67,7 @@ export const translocoProviders = [
   }),
   translocoLocaleProvider,
   translocoMessageformatProvider,
+  translocoPersistLangProvider,
 ];
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -73,7 +89,7 @@ export function getTranslocoTestingModule(options: TranslocoTestingOptions = {})
     preloadLangs: true,
     ...options,
   });
-  testModule.providers?.push(translocoLocaleProvider)
-  testModule.providers?.push(translocoMessageformatProvider)
+  testModule.providers?.push(translocoLocaleProvider);
+  testModule.providers?.push(translocoMessageformatProvider);
   return testModule;
 }

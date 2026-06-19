@@ -605,8 +605,8 @@ wheels = [
 
 [[package]]
 name = "mex-common"
-version = "2.0.1"
-source = { editable = "../mex-common" }
+version = "2.1.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "backoff" },
     { name = "click" },
@@ -623,43 +623,10 @@ dependencies = [
     { name = "requests" },
     { name = "tabulate" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "backoff", specifier = ">=2,<3" },
-    { name = "click", specifier = ">=8,<9" },
-    { name = "langdetect", specifier = ">=1,<2" },
-    { name = "ldap3", specifier = ">=2,<3" },
-    { name = "mex-model", specifier = ">=4.10,<4.11" },
-    { name = "networkx", specifier = ">=3" },
-    { name = "numpy", specifier = ">=2,<3" },
-    { name = "pandas", specifier = ">=3,<4" },
-    { name = "pyarrow", specifier = ">=24,<25" },
-    { name = "pydantic", specifier = ">=2,<3" },
-    { name = "pydantic-settings", specifier = ">=2.14,<2.15" },
-    { name = "pytz", specifier = ">=2025" },
-    { name = "requests", specifier = ">=2,<3" },
-    { name = "tabulate", specifier = ">=0.9" },
+sdist = { url = "https://files.pythonhosted.org/packages/8f/c4/ae3361acd2f215c19576307058f74d6693ae6f3cc6afea701f9d87b95262/mex_common-2.1.0.tar.gz", hash = "sha256:ca375b93b84f5c2d8b10c60ba99567e8f49ace2c190302245385a05abe782812", size = 91635, upload-time = "2026-06-17T09:51:35.034Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/94/fb/6ffa72aaf35cc9fc723f8fcbdf79c9fd28c6353614d291607f61e9b4b691/mex_common-2.1.0-py3-none-any.whl", hash = "sha256:5848ea78a4a75f4bb8d12ff3d1a30b653a527a2c9be581acef9b814bb89afb97", size = 139158, upload-time = "2026-06-17T09:51:32.958Z" },
 ]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "ipdb", specifier = ">=0.13" },
-    { name = "mypy", specifier = ">=1" },
-    { name = "pandas-stubs" },
-    { name = "pytest", specifier = ">=8" },
-    { name = "pytest-cov", specifier = ">=6" },
-    { name = "pytest-random-order", specifier = ">=1" },
-    { name = "pytest-xdist", specifier = ">=3" },
-    { name = "ruff", specifier = ">=0.15" },
-    { name = "sphinx", specifier = ">=9" },
-    { name = "types-ldap3" },
-    { name = "types-networkx" },
-    { name = "types-pytz" },
-    { name = "types-requests" },
-    { name = "types-tabulate" },
-]
-fuzzing = [{ name = "mex-artificial", specifier = ">=2" }]
 
 [[package]]
 name = "mex-editor"
@@ -701,7 +668,7 @@ dev = [
 requires-dist = [
     { name = "babel", specifier = ">=2.18,<3" },
     { name = "fastapi", specifier = ">=0.135" },
-    { name = "mex-common", editable = "../mex-common" },
+    { name = "mex-common", specifier = ">=2.1,<2.2" },
     { name = "polib", specifier = ">=1.2,<1.3" },
     { name = "pydantic", specifier = ">=2.12,<3" },
     { name = "pyyaml", specifier = ">=6,<7" },

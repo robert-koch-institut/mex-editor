@@ -1,9 +1,10 @@
+import json
 import os
 import subprocess
 import sys
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from mex.editor.settings import EditorSettings
 
@@ -116,9 +117,22 @@ def npx() -> None:
         raise SystemExit(exc.returncode) from None
 
 
+def read_npm_version_from_package_json() -> str | None:
+    """Reads the npm version from package.json['packageManager']."""
+    with Path.open(CLIENT / "package.json", encoding="utf-8") as package_json_file:
+        package_json = json.load(package_json_file)
+        if "packageManager" in package_json:
+            pack_man = cast("str", package_json["packageManager"])
+            return pack_man.replace("npm@", "")
+    return None
+
+
 def install() -> None:
     """Install nodeenv and npm dependencies."""
-    exec_py(["nodeenv", f"{NODE_VIRTUAL_ENV}", "--force"])
+    npm_version = read_npm_version_from_package_json()
+    if npm_version:
+        npm_args = ["--npm", npm_version, "--with-npm"]
+    exec_py(["nodeenv", f"{NODE_VIRTUAL_ENV}", "--force", *npm_args])
     exec_npm(["clean-install"])
 
 

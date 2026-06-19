@@ -6,6 +6,9 @@ flex1_style = rx.Style(flex="1", min_height="0", min_width="0")
 flex3_style = rx.Style(flex="3", min_height="0", min_width="0")
 
 
+flex1_col_style = flex1_style | {"max_width": "25%"}
+
+
 def add_component_style(
     component: rx.Component, style: rx.Style | dict[str, Any]
 ) -> rx.Component:

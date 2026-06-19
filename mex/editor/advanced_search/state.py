@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from reflex.event import EventSpec
 from requests import HTTPError
 
-from mex.common.backend_api.connector import BackendApiConnector
+from mex.common.backend_api.connector import BackendApiConnector, ReferenceFilter
 from mex.common.fields import REFERENCE_FIELDS_BY_CLASS_NAME
 from mex.common.models import MERGED_MODEL_CLASSES
 from mex.common.transform import ensure_prefix
@@ -124,10 +124,10 @@ class AdvancedSearchState(State, PaginationStateMixin):
         entity_type = [ensure_prefix(x, "Merged") for x in self.entity_types]
         skip = self.limit * (self.current_page - 1)
         references = [
-            {
-                "field": FieldDescriptor.from_json(x.field_descriptor_json).field,
-                "identifiers": x.values,
-            }
+            ReferenceFilter(
+                field=FieldDescriptor.from_json(x.field_descriptor_json).field,
+                identifiers=x.values,
+            )
             for x in self.refs
             if x.values
         ]

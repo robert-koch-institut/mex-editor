@@ -4,12 +4,18 @@ from collections.abc import Iterable
 import pytest
 from playwright.sync_api import Page, expect
 
+from mex.common.backend_api.connector import (
+    BackendApiConnector,
+)
 from mex.common.fields import (
     REFERENCE_FIELDS_BY_CLASS_NAME,
 )
 from mex.common.models import (
     MERGED_MODEL_CLASSES,
     MERGED_MODEL_CLASSES_BY_NAME,
+    ActivityRuleSetResponse,
+    AdditiveActivity,
+    AnyExtractedModel,
     AnyMergedModel,
     ExtractedActivity,
     MergedPrimarySource,
@@ -173,4 +179,98 @@ def test_reference_filter_field_dependency(
     expect(select_options).to_have_count(len(unique_ref_fields_with_label))
 
 
-# TODO(FE): Add tests for reference filter with multiple fields when backend method is there
+@pytest.mark.integration
+def test_reference_filter_combinations(
+    advanced_search_page: Page, extracted_activity: ExtractedActivity
+) -> None:
+    page = advanced_search_page
+
+    # Add shared contact
+    page.get_by_test_id("add-reference-filter-button").click()
+    page.get_by_test_id("ref-filter-0-field").click()
+
+    page.get_by_test_id(
+        re.compile(
+            r"ref-filter-value-label-select-item-(.+)-(.*)\"field\":\s*\"contact\"(.*)"
+        )
+    ).click()
+    page.get_by_test_id("ref-filter-0-add-value").click()
+    page.get_by_test_id("filter-ref-0-value-0-value").fill(
+        extracted_activity.contact[0]
+    )
+    expect(page.get_by_test_id(search_result_item_regex)).to_have_count(3)
+    _make_screenshot(page, "test_reference_filter_combinations_filter_contact_set")
+
+    # Add unique responsibleUnit
+    page.get_by_test_id("add-reference-filter-button").click()
+    page.get_by_test_id("ref-filter-1-field").click()
+
+    page.get_by_test_id(
+        re.compile(
+            r"ref-filter-value-label-select-item-(.+)-(.*)\"field\":\s*\"responsibleUnit\"(.*)"
+        )
+    ).click()
+    page.get_by_test_id("ref-filter-1-add-value").click()
+    page.get_by_test_id("filter-ref-1-value-0-value").fill(
+        extracted_activity.responsibleUnit[0]
+    )
+    expect(page.get_by_test_id(search_result_item_regex)).to_have_count(1)
+    _make_screenshot(
+        page, "test_reference_filter_combinations_filter_contact_responsibleUnit_set"
+    )
+
+
+@pytest.mark.integration
+def test_reference_filter_combinations_with_editor_added_involved_unit(
+    advanced_search_page: Page,
+    extracted_activity: ExtractedActivity,
+    dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
+) -> None:
+    page = advanced_search_page
+    ou1_id = dummy_data_by_identifier_in_primary_source["ou-1"].stableTargetId
+
+    # Add involvedUnit to Activity1
+    connector = BackendApiConnector.get()
+    rules = ActivityRuleSetResponse(
+        stableTargetId=extracted_activity.stableTargetId,
+        additive=AdditiveActivity(involvedUnit=[ou1_id]),
+    )
+    connector.ingest([rules])
+
+    # Add shared contact
+    page.get_by_test_id("add-reference-filter-button").click()
+    page.get_by_test_id("ref-filter-0-field").click()
+
+    page.get_by_test_id(
+        re.compile(
+            r"ref-filter-value-label-select-item-(.+)-(.*)\"field\":\s*\"contact\"(.*)"
+        )
+    ).click()
+    page.get_by_test_id("ref-filter-0-add-value").click()
+    page.get_by_test_id("filter-ref-0-value-0-value").fill(
+        extracted_activity.contact[0]
+    )
+    page.wait_for_timeout(5000)
+    _make_screenshot(
+        page,
+        "test_reference_filter_combinations_with_editor_added_involved_unit_contact_set",
+    )
+    expect(page.get_by_test_id(search_result_item_regex)).to_have_count(3)
+
+    # Add unique responsibleUnit
+    page.get_by_test_id("add-reference-filter-button").click()
+    page.get_by_test_id("ref-filter-1-field").click()
+
+    page.get_by_test_id(
+        re.compile(
+            r"ref-filter-value-label-select-item-(.+)-(.*)\"field\":\s*\"involvedUnit\"(.*)"
+        )
+    ).click()
+    page.get_by_test_id("ref-filter-1-add-value").click()
+    page.get_by_test_id("filter-ref-1-value-0-value").fill(ou1_id)
+    page.wait_for_timeout(5000)
+    _make_screenshot(
+        page,
+        "test_reference_filter_combinations_with_editor_added_involved_unit_contact_involvedUnit_set",
+    )
+    expect(page.get_by_test_id(search_result_item_regex)).to_have_count(1)

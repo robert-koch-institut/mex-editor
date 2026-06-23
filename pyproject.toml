@@ -14,7 +14,7 @@ dependencies = [
     "fastapi>=0.137.1,<0.138",
     "mex-common>=1.19.0,<1.20",
     "nodeenv>=1.10.0,<2",
-    "requests>=2.33.0,<2.34",
+    "requests>=2.34.2,<2.35",
     "uvicorn>=0.42.0,<1",
 ]
 

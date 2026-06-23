@@ -96,7 +96,7 @@ components of the MEx project are open-sourced under the same license as well.
 Images released to GHCR are signed using [cosign](https://github.com/sigstore/cosign).
 
 To verify an image manually:
-`cosign verify --certificate-identity-regexp "https://github.com/robert-koch-institut/editor" --certificate-oidc-issuer "https://token.actions.githubusercontent.com" ghcr.io/robert-koch-institut/editor:<tag>`
+`cosign verify --certificate-identity-regexp "https://github.com/robert-koch-institut/mex-editor/.github/workflows/release.yml@refs/heads/main" --certificate-oidc-issuer "https://token.actions.githubusercontent.com" ghcr.io/robert-koch-institut/mex-editor:<tag>`
 
 ## Commands
 

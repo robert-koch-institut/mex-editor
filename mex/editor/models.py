@@ -5,6 +5,7 @@ from typing import Protocol
 import yaml
 from pydantic import BaseModel, TypeAdapter
 
+from mex.common.assets import get_assets_connector
 from mex.common.types import MergedPersonIdentifier
 
 
@@ -79,7 +80,7 @@ class ModelConfig(BaseModel):
 
 
 MODEL_CONFIG_BY_STEM_TYPE = TypeAdapter(dict[str, ModelConfig]).validate_python(
-    yaml.safe_load(files("mex.editor").joinpath("models.yaml").open())
+    yaml.safe_load(get_assets_connector().load_file(files("mex.editor").joinpath("models.yaml")).decode('utf-8'))
 )
 LANGUAGE_VALUE_NONE = "None"
 

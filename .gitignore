@@ -134,6 +134,9 @@ typings
 # SQLite databases
 *.db
 
+# Typedoc documentation
+**/client/docs/
+
 # MEx specific
 .aws/
 .invenio.private

@@ -3,8 +3,12 @@ Documentation
 
 The editor enables anyone to create and edit entities in a simple and fast way.
 
-.. toctree::
-    :maxdepth: 2
-    :glob:
+.. raw:: html
 
-    source/*
+   <a href="./_static/index.html" target="_blank" rel="noopener noreferrer">Frontend Docs</a>
+
+.. toctree::
+  :maxdepth: 2
+  :glob:
+
+  source/*

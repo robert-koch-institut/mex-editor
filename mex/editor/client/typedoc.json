@@ -1,0 +1,14 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPointStrategy": "expand",
+  "entryPoints": [
+    "./src/"
+  ],
+  "exclude": [
+    "**/*+(.spec|.e2e).ts"
+  ],
+  "plugin": [
+    "typedoc-plugin-missing-exports"
+  ],
+  "readme": "./docs.md"
+}

@@ -1,11 +1,9 @@
 Documentation
 =============
 
-The editor enables anyone to create and edit entities in a simple and fast way.
+The editor enables anyone to create and edit entities in a simple and fast way. This documentation covers **only** the python code.
 
-.. raw:: html
-
-   <a href="./_static/index.html" target="_blank" rel="noopener noreferrer">Frontend Docs</a>
+To see the angular documentation click `here <./_static/index.html>`_
 
 .. toctree::
   :maxdepth: 2

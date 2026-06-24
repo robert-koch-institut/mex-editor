@@ -7,7 +7,6 @@
   },
   "extends": "./tsconfig.json",
   "include": [
-    "src/test-providers.ts",
     "src/**/*.d.ts",
     "src/**/*.spec.ts"
   ]

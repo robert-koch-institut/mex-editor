@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from functools import lru_cache
 from typing import cast
 
@@ -20,6 +21,7 @@ from mex.common.models import (
     MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
     MEX_PRIMARY_SOURCE_STABLE_TARGET_ID,
     RULE_SET_REQUEST_CLASSES_BY_NAME,
+    WORKFLOW_MODEL_CLASSES_BY_NAME,
     AnyAdditiveModel,
     AnyExtractedModel,
     AnyMergedModel,
@@ -27,6 +29,7 @@ from mex.common.models import (
     AnyRuleModel,
     AnyRuleSetRequest,
     AnySubtractiveModel,
+    AnyWorkflowModel,
 )
 from mex.common.transform import ensure_postfix, ensure_prefix
 from mex.common.types import (
@@ -35,6 +38,7 @@ from mex.common.types import (
     Link,
     LinkLanguage,
     MergedPrimarySourceIdentifier,
+    PublishingTarget,
     TemporalEntityPrecision,
     Text,
     TextLanguage,
@@ -49,6 +53,7 @@ from mex.editor.rules.models import (
     EditorField,
     EditorPrimarySource,
     InputConfig,
+    PublishTarget,
     ValidationMessage,
 )
 from mex.editor.transform import ensure_list, transform_value
@@ -453,3 +458,35 @@ def transform_validation_error_to_messages(
         )
         for error in error.errors()
     ]
+
+
+def tranform_workflow_to_publish_targets(
+    workflow: AnyWorkflowModel | None,
+) -> list[PublishTarget]:
+    """Transform workflow to publish targets."""
+    return [
+        PublishTarget(
+            label=item.name,
+            identifier=item.value,
+            enabled=item.value not in workflow.forbiddenPublishingTarget
+            if workflow
+            else True,
+        )
+        for item in PublishingTarget
+    ]
+
+
+def transform_publish_targets_to_workflow(
+    stem_type: str, publish_targets: Sequence[PublishTarget]
+) -> AnyWorkflowModel:
+    """Transform publish targets to a workflow for specific stem type."""
+    cls = WORKFLOW_MODEL_CLASSES_BY_NAME[f"Workflow{stem_type}"]
+    return cls.model_validate(
+        {
+            "forbiddenPublishingTarget": [
+                PublishingTarget(target.identifier)
+                for target in publish_targets
+                if not target.enabled
+            ]
+        }
+    )

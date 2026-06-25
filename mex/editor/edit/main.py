@@ -8,6 +8,7 @@ from mex.editor.rules.main import (
     rule_page_header,
     validation_errors,
 )
+from mex.editor.rules.models import PublishTarget
 from mex.editor.rules.state import RuleState
 from mex.editor.search_results_component import (
     SearchResultsListItemOptions,
@@ -31,16 +32,27 @@ def edit_title() -> rx.Component:
     )
 
 
-def toggle_all_switch() -> rx.Component:
-    """Render a switch to toggle all primary source and values."""
-    return rx.hstack(
-        EditState.label_toggle_all,
+def render_publish_target_switch(item: PublishTarget) -> rx.Component:
+    """Render a publish target as switch and label."""
+    return rx.center(
+        rx.text(item.label.title(), style={"margin-right": ".5em"}),
         rx.switch(
-            checked=EditState.any_primary_source_or_editor_value_enabled,
-            on_change=EditState.toggle_all_primary_source_and_editor_values,
-            color_scheme="jade",
-            custom_attrs={"data-testid": "toggle-all-switch"},
+            checked=item.enabled,
+            on_change=EditState.toggle_publish_target(item.identifier),  # type: ignore[operator]
         ),
+        custom_attrs={"data-testid": f"publish-target-{item.identifier}"},
+    )
+
+
+def render_publish_target() -> rx.Component:
+    """Render switches to turn on/off publish targets."""
+    return rx.hstack(
+        rx.text.strong(EditState.label_publish_targets),
+        rx.el.div(
+            rx.foreach(EditState.publish_targets, render_publish_target_switch),
+            style={"display": "grid", "grid-template-columns": "1fr 1fr"},
+        ),
+        custom_attrs={"data-testid": "publish-targets"},
     )
 
 
@@ -154,12 +166,10 @@ def index() -> rx.Component:
             ),
             rx.hstack(
                 rx.spacer(),
+                render_publish_target(),
                 delete_reset_button(),
-                toggle_all_switch(),
-                align="center",
-                style=rx.Style(
-                    width="100%",
-                ),
+                align="stretch",
+                justify="start",
             ),
             rx.foreach(
                 RuleState.translated_fields,

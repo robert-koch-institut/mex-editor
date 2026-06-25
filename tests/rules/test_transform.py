@@ -17,6 +17,7 @@ from mex.common.models import (
     AnyPreventiveModel,
     AnyRuleModel,
     AnySubtractiveModel,
+    AnyWorkflowModel,
     ExtractedContactPoint,
     ExtractedPerson,
     ExtractedResource,
@@ -26,6 +27,7 @@ from mex.common.models import (
     SubtractiveActivity,
     SubtractiveConsent,
     SubtractivePerson,
+    WorkflowContactPoint,
 )
 from mex.common.models.person import EmailStr
 from mex.common.types import (
@@ -41,6 +43,7 @@ from mex.common.types import (
     MergedContactPointIdentifier,
     MergedPersonIdentifier,
     MergedPrimarySourceIdentifier,
+    PublishingTarget,
     Text,
     TextLanguage,
     Theme,
@@ -52,6 +55,7 @@ from mex.editor.rules.models import (
     EditorField,
     EditorPrimarySource,
     InputConfig,
+    PublishTarget,
     ValidationMessage,
 )
 from mex.editor.rules.transform import (
@@ -64,8 +68,10 @@ from mex.editor.rules.transform import (
     _transform_model_to_input_config,
     _transform_model_values_to_editor_values,
     get_required_mergeable_field_names,
+    tranform_workflow_to_publish_targets,
     transform_fields_to_rule_set,
     transform_models_to_fields,
+    transform_publish_targets_to_workflow,
     transform_validation_error_to_messages,
 )
 
@@ -1124,3 +1130,84 @@ def test_get_required_field_names(
 ) -> None:
     required = get_required_mergeable_field_names(model)
     assert expected == required
+
+
+@pytest.mark.parametrize(
+    ("workflow", "stem_type", "targets"),
+    [
+        (
+            WorkflowContactPoint(
+                forbiddenPublishingTarget=[
+                    PublishingTarget.INVENIO,
+                    PublishingTarget.DATENKOMPASS,
+                ]
+            ),
+            "ContactPoint",
+            [
+                PublishTarget(
+                    identifier=PublishingTarget.INVENIO.value,
+                    label=PublishingTarget.INVENIO.name,
+                    enabled=False,
+                ),
+                PublishTarget(
+                    identifier=PublishingTarget.DATENKOMPASS.value,
+                    label=PublishingTarget.DATENKOMPASS.name,
+                    enabled=False,
+                ),
+            ],
+        ),
+        (
+            WorkflowContactPoint(
+                forbiddenPublishingTarget=[
+                    PublishingTarget.INVENIO,
+                ]
+            ),
+            "ContactPoint",
+            [
+                PublishTarget(
+                    identifier=PublishingTarget.INVENIO.value,
+                    label=PublishingTarget.INVENIO.name,
+                    enabled=False,
+                ),
+                PublishTarget(
+                    identifier=PublishingTarget.DATENKOMPASS.value,
+                    label=PublishingTarget.DATENKOMPASS.name,
+                    enabled=True,
+                ),
+            ],
+        ),
+        (
+            WorkflowContactPoint(forbiddenPublishingTarget=[]),
+            "ContactPoint",
+            [
+                PublishTarget(
+                    identifier=PublishingTarget.INVENIO.value,
+                    label=PublishingTarget.INVENIO.name,
+                    enabled=True,
+                ),
+                PublishTarget(
+                    identifier=PublishingTarget.DATENKOMPASS.value,
+                    label=PublishingTarget.DATENKOMPASS.name,
+                    enabled=True,
+                ),
+            ],
+        ),
+    ],
+)
+def test_workflow_to_publish_targets_and_vice_versa(
+    workflow: AnyWorkflowModel | None, stem_type: str, targets: list[PublishTarget]
+) -> None:
+    assert tranform_workflow_to_publish_targets(workflow) == targets
+    assert transform_publish_targets_to_workflow(stem_type, targets) == workflow
+
+
+def test_no_workflow_to_all_publish_targets_enabled() -> None:
+    expected_targets = [
+        PublishTarget(
+            identifier=target.value,
+            label=target.name,
+            enabled=True,
+        )
+        for target in PublishingTarget
+    ]
+    assert tranform_workflow_to_publish_targets(None) == expected_targets

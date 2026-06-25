@@ -1,5 +1,9 @@
+
 import { Component, input } from "@angular/core";
 
+/**
+ * Page to create an {@link app/models/activity.Activity | Activity} or {@link app/models/resource.Resource | Resource}.
+ */
 @Component({
   selector: "app-create-page",
   imports: [],
@@ -7,6 +11,11 @@ import { Component, input } from "@angular/core";
   styleUrl: "./create-page.scss",
 })
 export class CreatePage {
-  createType = input<string>();
 
+  /**
+   * Current entity type to create.
+   * @remarks Get read from the URL queryParam "createType".
+   * @see {@link app/app.config.routerProvider} for more informations.
+   */
+  createType = input<string>();
 }

@@ -7,8 +7,6 @@
   "exclude": [
     "**/*+(.spec|.e2e).ts"
   ],
-  "plugin": [
-    "typedoc-plugin-missing-exports"
-  ],
-  "readme": "./docs.md"
+  "readme": "./docs.md",
+  "treatValidationWarningsAsErrors": false
 }

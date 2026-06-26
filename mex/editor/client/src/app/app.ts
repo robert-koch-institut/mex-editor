@@ -3,7 +3,9 @@ import { MatIcon } from "@angular/material/icon";
 import { RouterOutlet } from "@angular/router";
 import { NavBarComponent } from "./components/nav-bar-component/nav-bar-component";
 
-
+/**
+ * The EntryPoint-Component for the angular app.
+ */
 @Component({
   selector: "app-root",
   imports: [

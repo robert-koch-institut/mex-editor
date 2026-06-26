@@ -129,21 +129,7 @@ def read_npm_version_from_package_json() -> str | None:
 
 def install() -> None:
     """Install nodeenv and npm dependencies."""
-    npm_version = read_npm_version_from_package_json()
-    if not npm_version:
-        msg = "Unable to install nodeenv without npm_version. Ensure 'packageManager'"
-        "exists in 'package.json'."
-        raise ValueError(msg)
-    exec_py(
-        [
-            "nodeenv",
-            f"{NODE_VIRTUAL_ENV}",
-            "--force",
-            "--npm",
-            npm_version,
-            "--with-npm",
-        ]
-    )
+    exec_py(["nodeenv", f"{NODE_VIRTUAL_ENV}", "--force"])
     exec_npm(["clean-install"])
 
 

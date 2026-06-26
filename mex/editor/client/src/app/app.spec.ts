@@ -36,7 +36,7 @@ describe("App", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should have default language active and no lanuage query param", () => {
+  it("should have default language active and no language query param", () => {
     expect(getUrlLanguage()).toBe(null)
     expect(transloco.getActiveLang()).toBe(translocoConfig.defaultLang)
   })

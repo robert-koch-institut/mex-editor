@@ -9,8 +9,15 @@ import type { GetLangParams } from "@jsverse/transloco-persist-lang";
 import { provideTranslocoPersistLang } from "@jsverse/transloco-persist-lang";
 import { NavigationEnd, Router } from "@angular/router";
 
-export const LANGUAGE_QUERY_PARAM  = "language"
+/**
+ * Name of the language query param.
+ */
+export const LANGUAGE_QUERY_PARAM = "language";
 
+/**
+ * TranslocoLoader using HTTP to load translation jsons.
+ * @see {@link https://jsverse.gitbook.io/transloco/getting-started/installation#transloco-loader}
+ */
 @Injectable({ providedIn: "root" })
 class TranslocoHttpLoader implements TranslocoLoader {
   private http = inject(HttpClient);
@@ -23,6 +30,9 @@ class TranslocoHttpLoader implements TranslocoLoader {
   }
 }
 
+/**
+ * Base config for transloco.
+ */
 export const translocoConfig = {
   availableLangs: [
     { id: "de", label: "Deutsch" },
@@ -32,6 +42,11 @@ export const translocoConfig = {
   reRenderOnLangChange: true,
 };
 
+/**
+ * Transloco locale provider to use pipes that depend on the active language,
+ * including mappings for lang to locale and locale to currency.
+ * @see {@link https://jsverse.gitbook.io/transloco/plugins-and-extensions/locale-l10n#setup}
+ */
 const translocoLocaleProvider = provideTranslocoLocale({
   langToLocaleMapping: {
     de: "de-DE",
@@ -46,6 +61,10 @@ const translocoLocaleProvider = provideTranslocoLocale({
 });
 const translocoMessageformatProvider = provideTranslocoMessageformat();
 
+/**
+ * Factory to create a transloco storage for {@link LANGUAGE_QUERY_PARAM} query param.
+ * @returns transloco storage for {@link } query param.
+ */
 function queryParamStorage() {
   const router = inject(Router);
   return {
@@ -53,28 +72,47 @@ function queryParamStorage() {
       return router.routerState.snapshot.root.queryParamMap.get(LANGUAGE_QUERY_PARAM);
     },
     setItem(_key: string, value: string): void {
-      router.navigate([], { queryParams: { [LANGUAGE_QUERY_PARAM]: value }, queryParamsHandling: "merge" });
+      router.navigate([], {
+        queryParams: { [LANGUAGE_QUERY_PARAM]: value },
+        queryParamsHandling: "merge",
+      });
     },
     removeItem(_key: string): void {
-      router.navigate([], { queryParams: { [LANGUAGE_QUERY_PARAM]: null }, queryParamsHandling: "merge" });
+      router.navigate([], {
+        queryParams: { [LANGUAGE_QUERY_PARAM]: null },
+        queryParamsHandling: "merge",
+      });
     },
   };
 }
 
+/**
+ * Function to determin the default language on startup for transloco.
+ * Checks if the {@link LANGUAGE_QUERY_PARAM} QueryParam is present in the url and parses it or using the default language.
+ * @param param0 transloco default language.
+ * @returns The determined default language for transloco.
+ */
 export function getLangFn({ defaultLang }: GetLangParams) {
   const urlParams = new URLSearchParams(window.location.search);
   const urlLang = urlParams.get(LANGUAGE_QUERY_PARAM);
 
-  // Return URL lang if present, otherwise default
+  // Return URL language if present, otherwise default
   return urlLang || defaultLang;
 }
 
+/**
+ * PersitentLangProvider using QueryParams.
+ * @see {@link https://jsverse.gitbook.io/transloco/plugins-and-extensions/persist-lang}
+ */
 const translocoPersistLangProvider = provideTranslocoPersistLang({
   getLangFn,
-  storage: { useFactory: queryParamStorage }, // Also save to localStorage as backup
+  storage: { useFactory: queryParamStorage },
 });
 
-
+/**
+ * Factory for creating an app initializer that syncs url changes that include the {@link LANGUAGE_QUERY_PARAM} QueryParam with the {@link @jsverse/transloco.TranslocoService} and sets it active language.
+ * @returns An app initializer that syncs language url query param with
+ */
 export function provideQueryParamTranslocoSync() {
   return provideAppInitializer(() => {
     const router = inject(Router);
@@ -97,13 +135,12 @@ export function provideQueryParamTranslocoSync() {
   });
 }
 
-const queryParamSyncProvider = provideQueryParamTranslocoSync()
+const queryParamSyncProvider = provideQueryParamTranslocoSync();
 
 export const translocoProviders = [
   provideTransloco({
     config: {
       ...translocoConfig,
-      // Remove this option if your application doesn't support changing language in runtime.
       prodMode: !isDevMode(),
     },
     loader: TranslocoHttpLoader,
@@ -111,7 +148,7 @@ export const translocoProviders = [
   translocoLocaleProvider,
   translocoMessageformatProvider,
   translocoPersistLangProvider,
-  queryParamSyncProvider
+  queryParamSyncProvider,
 ];
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -126,6 +163,11 @@ const en = {
 };
 /* eslint-enable @typescript-eslint/naming-convention */
 
+/**
+ * Creates the transloco testing module include all necessary providers.
+ * @param options addition option for testing purposes.
+ * @returns transloco testing module including all necessary providers.
+ */
 export function getTranslocoTestingModule(options: TranslocoTestingOptions = {}) {
   const testModule = TranslocoTestingModule.forRoot({
     langs: { de, en },

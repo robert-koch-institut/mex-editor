@@ -3,11 +3,11 @@ import os
 import subprocess
 import sys
 from contextlib import contextmanager
+from importlib.resources import files
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import polib
-import requests
 
 from mex.common.logging import logger
 from mex.editor.settings import EditorSettings
@@ -151,16 +151,14 @@ def install_and_build() -> None:
 def convert_model_po_to_json() -> None:
     """Convert .po files to .json files."""
     languages = ["de", "en"]
-    mex_model_i18n_url = "https://raw.githubusercontent.com/robert-koch-institut/mex-model/main/mex/model/i18n"
+
+    model_locale_path = cast("Path", (files("mex.model") / "i18n"))
     target_dir = CLIENT / "public" / "i18n"
 
     for lang in languages:
-        r = requests.get(f"{mex_model_i18n_url}/{lang}.po", timeout=30)
-        r.raise_for_status()
-
         json_file = target_dir / f"model/{lang}.json"
         logger.info(f"Starting to convert {lang}.po to {json_file}...")
-        po = polib.pofile(r.text)  # Validate the .po file
+        po = polib.pofile(model_locale_path / f"{lang}.po")
 
         messages = {}
         for entry in po:
@@ -184,7 +182,7 @@ def convert_model_po_to_json() -> None:
                 key = (
                     entry.msgid.replace(".singular", "")
                     if not entry.msgctxt
-                    else f"{entry.msgctxt}:{entry.msgid.replace('.singular', '')}"
+                    else f"{entry.msgctxt}.{entry.msgid.replace('.singular', '')}"
                 )
 
                 if key in messages:
@@ -192,7 +190,7 @@ def convert_model_po_to_json() -> None:
 
                 messages[key] = entry.msgstr
 
-        Path.mkdir(json_file.parent, exist_ok=True)
+        Path.mkdir(json_file.parent, exist_ok=True, parents=True)
         with Path.open(json_file, "w", encoding="utf-8") as f:
             json.dump(messages, f, ensure_ascii=False, indent=2, sort_keys=True)
 

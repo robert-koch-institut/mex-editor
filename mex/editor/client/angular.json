@@ -33,6 +33,11 @@
                 }
               ],
               "outputHashing": "all"
+            },
+            "unit-tests": {
+              "polyfills": [
+                "@angular/compiler"
+              ]
             }
           },
           "defaultConfiguration": "production",
@@ -78,7 +83,8 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "providersFile": "src/test-providers.spec.ts"
+            "buildTarget": "mex-editor:build:unit-tests",
+            "providersFile": "src/test-providers.ts"
           }
         }
       },

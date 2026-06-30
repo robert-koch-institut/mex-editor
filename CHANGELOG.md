@@ -11,21 +11,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- replaced switch to toggle all primary sources with new workflow publish targets
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/11612b
-- updated mex.common to version 2.0
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+### Security
+
+## [2.0.0] - 2026-06-30
+
+### Changes
+
+- replaced switch to toggle all primary sources with new workflow publish targets
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/11612b
+- updated mex.common to version 2.0
+
+### Fixed
+
 - fix consent test submit failing
 - fix cookiecutter permissions
 - fix layout on create page
-
-### Security
 
 ## [1.9.0] - 2026-04-02
 

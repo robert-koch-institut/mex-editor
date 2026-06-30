@@ -61,6 +61,22 @@
             ]
         },
         {
+            "description": "Group Angular updates in one PR",
+            "groupName": "all non-major Angular packages",
+            "matchDepTypes": [
+                "dependencies",
+                "devDependencies"
+            ],
+            "matchPackageNames": [
+                "/^@angular/",
+                "@schematics/angular"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "patch"
+            ]
+        },
+        {
             "description": "Group all non-major npm updates into a single PR",
             "groupName": "npm non-major",
             "matchCurrentVersion": "!/^0/",

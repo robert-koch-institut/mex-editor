@@ -4,7 +4,7 @@
     {
       "label": "editor-api-debug",
       "type": "shell",
-      "command": "uv run debugpy --listen 5678 --wait-for-client --log-to-stderr -m mex.editor.main --startup api",
+      "command": "uv run debugpy --listen 0.0.0.0:5678 --wait-for-client --log-to-stderr -m mex.editor.main --startup api",
       "isBackground": true,
       "problemMatcher": {
         "pattern": {

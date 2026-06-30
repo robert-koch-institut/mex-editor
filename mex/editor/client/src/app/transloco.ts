@@ -1,4 +1,4 @@
-import { inject, Injectable, isDevMode, provideAppInitializer } from "@angular/core";
+import { inject, Injectable, isDevMode, provideAppInitializer, /* Renderer2 */ } from "@angular/core";
 import type { Translation, TranslocoLoader, TranslocoTestingOptions } from "@jsverse/transloco";
 import { provideTransloco, TranslocoService, TranslocoTestingModule } from "@jsverse/transloco";
 import { provideTranslocoLocale } from "@jsverse/transloco-locale";
@@ -63,7 +63,7 @@ const translocoMessageformatProvider = provideTranslocoMessageformat();
 
 /**
  * Factory to create a transloco storage for {@link LANGUAGE_QUERY_PARAM} query param.
- * @returns transloco storage for {@link } query param.
+ * @returns transloco storage {@link https://jsverse.gitbook.io/transloco/plugins-and-extensions/persist-translations} for query param.
  */
 function queryParamStorage() {
   const router = inject(Router);
@@ -82,6 +82,46 @@ function queryParamStorage() {
         queryParams: { [LANGUAGE_QUERY_PARAM]: null },
         queryParamsHandling: "merge",
       });
+    },
+  };
+}
+
+/**
+ * Factory to create a transloco storage for html language attribute.
+ * @returns transloco storage {@link https://jsverse.gitbook.io/transloco/plugins-and-extensions/persist-translations} for html language attribute.
+ */
+function htmlLangAttributeStorage() {
+  return {
+    getItem(_key: string): string | null {
+      return document.documentElement.getAttribute("lang")
+    },
+    setItem(_key: string, value: string): void {
+      document.documentElement.setAttribute("lang", value);
+    },
+    removeItem(_key: string): void {
+      document.documentElement.removeAttribute("lang");
+    },
+  };
+}
+
+/**
+ * Factory that creates a combinated transloco storage for query param and html lang attribute.
+ * @returns Combined query param and html lang attribute storage.
+ */
+function mexEditorTranslocoStorage() {
+  const queryStorage = queryParamStorage();
+  const htmlStorage = htmlLangAttributeStorage();
+  return {
+    getItem(_key: string): string | null {
+      return queryStorage.getItem(_key);
+    },
+    setItem(_key: string, value: string): void {
+      htmlStorage.setItem(_key, value);
+      queryStorage.setItem(_key, value);
+    },
+    removeItem(_key: string): void {
+      htmlStorage.removeItem(_key);
+      queryStorage.removeItem(_key);
     },
   };
 }
@@ -106,7 +146,7 @@ export function getLangFn({ defaultLang }: GetLangParams) {
  */
 const translocoPersistLangProvider = provideTranslocoPersistLang({
   getLangFn,
-  storage: { useFactory: queryParamStorage },
+  storage: { useFactory: mexEditorTranslocoStorage },
 });
 
 /**

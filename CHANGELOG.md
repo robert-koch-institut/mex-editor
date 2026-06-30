@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix consent test submit failing
 - fix cookiecutter permissions
 - fix layout on create page
 

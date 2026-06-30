@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Literal
 
 import pytest
-from starlette.routing import Mount, Route
+from starlette.routing import Mount
 
 from mex.editor.main import create_fastapi
 
@@ -24,10 +24,12 @@ def test_create_fastapi(
     expect_static: bool,  # noqa: FBT001
 ) -> None:
     app = create_fastapi(startup)
-    route_paths = [r.path for r in app.routes if isinstance(r, Route)]
     mount_paths = [r.path for r in app.routes if isinstance(r, Mount)]
-    assert ("/api/v0/backend/{path:path}" in route_paths) == expect_api
     assert ("" in mount_paths) == expect_static
+    included_routers = [
+        x for r in app.routes if (x := getattr(r, "original_router", None))
+    ]
+    assert (len(included_routers) == 2) == expect_api  # backend and system
 
 
 @pytest.mark.parametrize(

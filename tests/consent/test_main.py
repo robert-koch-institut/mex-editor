@@ -122,6 +122,7 @@ def test_submit_consent(consent_page: Page) -> None:
     # check if denied consent is submitted
     denial_button = page.get_by_test_id("denial-consent-button")
     denial_button.click()
+    page.wait_for_timeout(10_000)
     page.screenshot(path="tests_consent_test_main-test_submit_consent_invalid.png")
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
@@ -130,6 +131,7 @@ def test_submit_consent(consent_page: Page) -> None:
 
     # check if given consent is submitted
     page.get_by_test_id("accept-consent-button").click()
+    page.wait_for_timeout(10_000)
     page.screenshot(path="tests_consent_test_main-test_submit_consent_valid.png")
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()

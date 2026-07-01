@@ -29,7 +29,7 @@ jobs:
       contents: read
     services:
       neo4j:
-        image: neo4j:2026.04-community@sha256:7d8d70f78c0c55830a162e6ae212799649b0cfd349dbfe413aab8124f7cabf1b
+        image: neo4j:2026.05-community@sha256:b91a6fa7b1d88eb0702847f53eaa4d07781a6d480b0c5a5bba413af5856e9604
         env:
           NEO4J_AUTH: neo4j/password
         ports:
@@ -64,7 +64,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Cache environment
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         env:
           cache-name: cache-environment
         with:
@@ -94,7 +94,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Setup python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: 3.14
 

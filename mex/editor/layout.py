@@ -52,7 +52,7 @@ def unsaved_changes_dialog() -> rx.Component:
                     rx.button(
                         State.label_unsaved_changes_dialog_logout_button,
                         on_click=State.logout,
-                        color_scheme="red",
+                        color_scheme="tomato",
                         variant="solid",
                         custom_attrs={
                             "data-testid": "unsaved-changes-dialog-logout-button"
@@ -201,9 +201,17 @@ def app_logo() -> rx.Component:
             rx.hstack(
                 rx.icon("circuit-board", size=28),
                 rx.heading(
-                    "MEx Admin Editor",
+                    "MEx Editor",
                     weight="medium",
                     style=rx.Style(userSelect="none"),
+                ),
+                rx.badge(
+                    "Admin",
+                    radius="large",
+                    variant="outline",
+                    color_scheme="blue",
+                    size="1",
+                    style=rx.Style(userSelect="none", margin="0 -1ch"),
                 ),
                 custom_attrs={"data-testid": "app-logo"},
             )

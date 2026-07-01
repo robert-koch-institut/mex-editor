@@ -149,7 +149,7 @@ def render_badge(text: str | None) -> rx.Component:
     """Render a generic badge with the given text."""
     return rx.badge(
         text,
-        radius="large",
+        radius="medium",
         variant="soft",
         color_scheme="gray",
         style=rx.Style(margin="auto 0"),

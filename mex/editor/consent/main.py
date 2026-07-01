@@ -105,11 +105,11 @@ def consent_status() -> rx.Component:
                 ConsentState.is_consent_valid_for_processing,
                 rx.text(
                     ConsentState.label_consent_status_consented_format,
-                    color_scheme="green",
+                    color_scheme="jade",
                 ),
                 rx.text(
                     ConsentState.label_consent_status_declined_format,
-                    color_scheme="red",
+                    color_scheme="tomato",
                 ),
             ),
             style=rx.Style(

@@ -6,7 +6,7 @@ Metadata editor web application.
 [![cve-scan](https://github.com/robert-koch-institut/mex-editor/actions/workflows/cve-scan.yml/badge.svg)](https://github.com/robert-koch-institut/mex-editor/actions/workflows/cve-scan.yml)
 [![documentation](https://github.com/robert-koch-institut/mex-editor/actions/workflows/documentation.yml/badge.svg)](https://robert-koch-institut.github.io/mex-editor)
 [![linting](https://github.com/robert-koch-institut/mex-editor/actions/workflows/linting.yml/badge.svg)](https://github.com/robert-koch-institut/mex-editor/actions/workflows/linting.yml)
-[![opencode](https://github.com/robert-koch-institut/mex-editor/actions/workflows/opencode.yml/badge.svg)](https://gitlab.opencode.de/robert-koch-institut/mex/mex-editor)
+[![open-code](https://github.com/robert-koch-institut/mex-editor/actions/workflows/open-code.yml/badge.svg)](https://gitlab.opencode.de/robert-koch-institut/mex/mex-editor)
 [![testing](https://github.com/robert-koch-institut/mex-editor/actions/workflows/testing.yml/badge.svg)](https://github.com/robert-koch-institut/mex-editor/actions/workflows/testing.yml)
 
 ## Project
@@ -90,13 +90,6 @@ components of the MEx project are open-sourced under the same license as well.
 - build image with `make image`
 - run directly using docker `make run`
 - start with docker compose `make start`
-
-### Container verification
-
-Images released to GHCR are signed using [cosign](https://github.com/sigstore/cosign).
-
-To verify an image manually:
-`cosign verify --certificate-identity-regexp "https://github.com/robert-koch-institut/mex-editor/.github/workflows/release.yml@refs/heads/main" --certificate-oidc-issuer "https://token.actions.githubusercontent.com" ghcr.io/robert-koch-institut/mex-editor:<tag>`
 
 ## Commands
 

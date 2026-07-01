@@ -44,6 +44,7 @@ wheel:
 image:
 	# build the docker image
 	@ echo building docker image mex-editor:${LATEST}; \
+	export DOCKER_BUILDKIT=1; \
 	docker build \
 		--tag rki/mex-editor:${LATEST} \
 		--tag rki/mex-editor:latest .; \

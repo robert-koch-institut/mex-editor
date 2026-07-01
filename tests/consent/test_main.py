@@ -119,6 +119,13 @@ def test_submit_consent(consent_page: Page) -> None:
     consent_status = page.get_by_test_id("consent-status")
     consent_status.scroll_into_view_if_needed()
 
+    # wait for the acceptance to be fully submitted before submitting a denial,
+    # otherwise the two requests race and the slower response overwrites the status
+    toast = page.locator(".editor-toast").first
+    expect(toast).to_be_visible()
+    expect(toast).to_have_attribute("data-type", "success")
+    expect(consent_status).to_contain_text(f"Sie haben Ihre Einwilligung am {today}")
+
     # check if denied consent is submitted
     denial_button = page.get_by_test_id("denial-consent-button")
     denial_button.click()

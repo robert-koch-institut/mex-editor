@@ -11,9 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- updated mex.common to version 3.0
 - uses new backend endpoint for advanced reference filtering
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
-- updated mex.common to version 2.0
 - change title to MEx Admin Editor to soft-launch admin renaming
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.3.0
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47

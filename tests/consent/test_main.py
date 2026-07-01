@@ -115,27 +115,19 @@ def test_submit_consent(consent_page: Page) -> None:
     page = consent_page
     today = datetime.now(tz=ZoneInfo("Europe/Berlin")).strftime("%d.%m.%Y")
 
-    page.get_by_test_id("accept-consent-button").click()
     consent_status = page.get_by_test_id("consent-status")
     consent_status.scroll_into_view_if_needed()
 
-    # wait for the acceptance to be fully submitted before submitting a denial,
-    # otherwise the two requests race and the slower response overwrites the status
-    toast = page.locator(".editor-toast").first
-    expect(toast).to_be_visible()
-    expect(toast).to_have_attribute("data-type", "success")
-    expect(consent_status).to_contain_text(f"Sie haben Ihre Einwilligung am {today}")
-
-    # check if denied consent is submitted
+    # submit the denial first: once positive consent is valid, retraction is
+    # prohibited and the denial button becomes disabled, so it has to be tested
+    # before consent is given
     denial_button = page.get_by_test_id("denial-consent-button")
     denial_button.click()
     page.screenshot(path="tests_consent_test_main-test_submit_consent_invalid.png")
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
     expect(toast).to_have_attribute("data-type", "success")
-    expect(page.get_by_test_id("consent-status")).to_contain_text(
-        f"Sie haben Ihre Ablehnung am {today}"
-    )
+    expect(consent_status).to_contain_text(f"Sie haben Ihre Ablehnung am {today}")
 
     # check if given consent is submitted
     page.get_by_test_id("accept-consent-button").click()

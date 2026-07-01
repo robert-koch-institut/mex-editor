@@ -1,13 +1,13 @@
 {
   "checkout": null,
-  "commit": "11612bf1151a5d537ecf660e70135c2e9f79d350",
+  "commit": "0d8c4782a38f66faeaa24cc853c191cc624a9dff",
   "context": {
     "cookiecutter": {
       "project_name": "editor",
       "short_summary": "The editor enables anyone to create and edit entities in a simple and fast way.",
       "long_summary": "The editor is a web application for the MEx metadata catalog built with a FastAPI backend and an Angular frontend. It provides a user-friendly interface for creating, editing and managing metadata entities, making research data at RKI findable, accessible and reusable.",
       "_template": "https://github.com/robert-koch-institut/mex-template",
-      "_commit": "11612bf1151a5d537ecf660e70135c2e9f79d350"
+      "_commit": "0d8c4782a38f66faeaa24cc853c191cc624a9dff"
     }
   },
   "directory": null,

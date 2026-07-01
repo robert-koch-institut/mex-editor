@@ -11,14 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- updated mex-backend to 4.0
-- updated mex.common to version 3.0
-- uses new backend endpoint for advanced reference filtering
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
-- change title to MEx Admin Editor to soft-launch admin renaming
-- new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.3.0
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
-
 ### Deprecated
 
 ### Removed
@@ -26,6 +18,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [3.0.0] - 2026-07-01
+
+### Changes
+
+- updated mex-backend to 4.0
+- updated mex.common to version 3.0
+- uses new backend endpoint for advanced reference filtering
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
+- change title to MEx Admin Editor to soft-launch admin renaming
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.3.0
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
 
 ## [2.0.0] - 2026-06-30
 

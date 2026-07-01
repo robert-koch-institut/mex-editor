@@ -201,7 +201,7 @@ def app_logo() -> rx.Component:
             rx.hstack(
                 rx.icon("circuit-board", size=28),
                 rx.heading(
-                    "MEx Admin",
+                    "MEx Admin Editor",
                     weight="medium",
                     style=rx.Style(userSelect="none"),
                 ),

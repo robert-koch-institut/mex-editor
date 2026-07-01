@@ -201,7 +201,7 @@ def app_logo() -> rx.Component:
             rx.hstack(
                 rx.icon("circuit-board", size=28),
                 rx.heading(
-                    "MEx Editor",
+                    "MEx Admin Editor",
                     weight="medium",
                     style=rx.Style(userSelect="none"),
                 ),
@@ -316,6 +316,7 @@ def page(
                 {
                     "--app-max-width": "calc(1480px * var(--scaling))",
                     "--app-min-width": "calc(800px * var(--scaling))",
+                    "width": "100%",
                 }
             ),
         ),

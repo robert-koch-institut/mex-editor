@@ -29,13 +29,13 @@ jobs:
       contents: read
     services:
       neo4j:
-        image: neo4j:2026.04-community@sha256:7d8d70f78c0c55830a162e6ae212799649b0cfd349dbfe413aab8124f7cabf1b
+        image: neo4j:2026.05-community@sha256:b91a6fa7b1d88eb0702847f53eaa4d07781a6d480b0c5a5bba413af5856e9604
         env:
           NEO4J_AUTH: neo4j/password
         ports:
           - 7687:7687
       backend:
-        image: ghcr.io/robert-koch-institut/mex-backend:3.0.0@sha256:914246aee54d764cb0115510ffe5114e56747021f48724ea1ff515f80a4c092a
+        image: ghcr.io/robert-koch-institut/mex-backend:3.1.1@sha256:e285753262c05de2583f9b77f53f80b2f5b6d4173084b0c10a40046577e27e12
         env:
           MEX_BACKEND_API_USER_DATABASE: ${{ secrets.MEX_BACKEND_API_USER_DATABASE }}
           MEX_BACKEND_API_KEY_DATABASE: ${{ secrets.MEX_BACKEND_API_KEY_DATABASE }}
@@ -49,12 +49,12 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 1
 
       - name: Cache requirements
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         env:
           cache-name: cache-requirements
         with:
@@ -64,7 +64,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Cache environment
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         env:
           cache-name: cache-environment
         with:
@@ -74,7 +74,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Cache playwright
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         env:
           cache-name: cache-playwright
         with:
@@ -84,7 +84,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Cache reflex
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         env:
           cache-name: cache-reflex
         with:
@@ -94,7 +94,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Setup python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: 3.14
 

@@ -17,6 +17,7 @@ from mex.common.models import (
     AnyExtractedModel,
     AnyRuleSetRequest,
     AnyRuleSetResponse,
+    AnyWorkflowModel,
 )
 from mex.common.transform import ensure_postfix
 from mex.common.types import Identifier, Validation
@@ -31,11 +32,14 @@ from mex.editor.rules.models import (
     FieldTranslation,
     LocalDraft,
     LocalEdit,
+    PublishTarget,
     ValidationMessage,
 )
 from mex.editor.rules.transform import (
+    tranform_workflow_to_publish_targets,
     transform_fields_to_rule_set,
     transform_models_to_fields,
+    transform_publish_targets_to_workflow,
     transform_validation_error_to_messages,
 )
 from mex.editor.state import State
@@ -59,6 +63,7 @@ class RuleState(State, LocalStorageMixinState):
     fields: list[EditorField] = []
     stem_type: str | None = None
     validation_messages: list[ValidationMessage] = []
+    workflow_rule: AnyWorkflowModel | None = None
 
     if TYPE_CHECKING:
         item_id: str
@@ -76,6 +81,11 @@ class RuleState(State, LocalStorageMixinState):
         api_fields: list[EditorField] = self.get_value("_api_fields")
 
         return not sequence_is_equal(fields, api_fields)
+
+    @rx.var
+    def publish_targets(self) -> list[PublishTarget]:
+        """Get a list of publish targets with enable state."""
+        return tranform_workflow_to_publish_targets(self.workflow_rule)
 
     @rx.event
     def update_local_state(self) -> None:
@@ -218,6 +228,7 @@ class RuleState(State, LocalStorageMixinState):
 
         if rule_set and self.item_id:
             self.stem_type = transform_models_to_stem_type([rule_set.additive])
+            self.workflow_rule = rule_set.workflow
 
         if self.item_id:
             preview = create_merged_item(
@@ -269,6 +280,9 @@ class RuleState(State, LocalStorageMixinState):
             return
         try:
             rule_set_request = transform_fields_to_rule_set(self.stem_type, self.fields)
+            rule_set_request.workflow = transform_publish_targets_to_workflow(
+                self.stem_type, self.publish_targets
+            )
         except ValidationError as exc:
             self.validation_messages = transform_validation_error_to_messages(exc)
             return

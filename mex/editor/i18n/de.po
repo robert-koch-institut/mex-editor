@@ -29,9 +29,6 @@ msgstr "Filter hinzufügen"
 msgid "create.title.create_new"
 msgstr "Erzeugen von"
 
-msgid "edit.toggle_all"
-msgstr "Alle umschalten"
-
 msgid "edit.discard_changes.button"
 msgstr "Änderungen verwerfen"
 
@@ -291,3 +288,6 @@ msgstr "Zeigt die Entitäten, die auf diese Entität mit dem Feld 'ersetzt durch
 
 msgid "edit.field_supersededBy.empty"
 msgstr "Keine Dubletten vorhanden."
+
+msgid "edit.publish_targets"
+msgstr "Publizieren auf/in"

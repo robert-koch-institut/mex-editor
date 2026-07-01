@@ -11,9 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- uses new backend endpoint for advanced reference filtering
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
 - updated mex.common to version 2.0
-- uses new backend endpoint for advanced reference filtering
+- change title to MEx Admin Editor to soft-launch admin renaming
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.3.0
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
 
 ### Deprecated
 
@@ -21,10 +24,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [2.0.0] - 2026-06-30
+
+### Changes
+
+- replaced switch to toggle all primary sources with new workflow publish targets
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/11612b
+- updated mex.common to version 2.0
+
+### Fixed
+
+- fix consent test submit failing
 - fix cookiecutter permissions
 - fix layout on create page
-
-### Security
 
 ## [1.9.0] - 2026-04-02
 
@@ -51,10 +65,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - update mex-common to 1.17
 - update mex-backend to 1.7.2
-- adpdated tests because identifierInPrimarySource is not in MERGEABLE_FIELDS
+- adapted tests because identifierInPrimarySource is not in MERGEABLE_FIELDS
 - Updated uv to 0.10.11
-- Text is truncated/wraped based on model.yaml (edit with textarea -> wrap; otherwise truncate)
-- Layout mostly flexing now (Flexlayout)
+- Text is truncated/wrapped based on model.yaml (edit with textarea -> wrap; otherwise truncate)
+- Layout mostly flexing now (flex layout)
 - edit_button is always visible for additives
 - updated neo4j to 2026.02
 

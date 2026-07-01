@@ -126,7 +126,9 @@ def test_submit_consent(consent_page: Page) -> None:
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
     expect(toast).to_have_attribute("data-type", "success")
-    expect(consent_status).to_contain_text(f"Sie haben Ihre Ablehnung am {today}")
+    expect(page.get_by_test_id("consent-status")).to_contain_text(
+        f"Sie haben Ihre Ablehnung am {today}"
+    )
 
     # check if given consent is submitted
     page.get_by_test_id("accept-consent-button").click()
@@ -134,7 +136,9 @@ def test_submit_consent(consent_page: Page) -> None:
     toast = page.locator(".editor-toast").first
     expect(toast).to_be_visible()
     expect(toast).to_have_attribute("data-type", "success")
-    expect(consent_status).to_contain_text(f"Sie haben Ihre Einwilligung am {today}")
+    expect(page.get_by_test_id("consent-status")).to_contain_text(
+        f"Sie haben Ihre Einwilligung am {today}"
+    )
 
     # check if denial button is disabled after positive consent
     expect(denial_button).to_be_disabled()

@@ -21,9 +21,17 @@ from mex.common.models import (
     ExtractedOrganizationalUnit,
     ExtractedPrimarySource,
     SubtractiveActivity,
+    WorkflowActivity,
 )
 from mex.common.transform import ensure_prefix
-from mex.common.types import ActivityType, Identifier, Text, TextLanguage, Theme
+from mex.common.types import (
+    ActivityType,
+    Identifier,
+    PublishingTarget,
+    Text,
+    TextLanguage,
+    Theme,
+)
 from mex.editor.rules.transform import get_required_mergeable_field_names
 
 
@@ -784,29 +792,78 @@ def test_required_fields_red_asterisk(
             expect(asterisk).to_have_count(0)
 
 
-@pytest.mark.integration
-def test_toggle_all_switch(edit_page: Page) -> None:
-    page = edit_page
-
-    expect(page.get_by_test_id("toggle-all-switch")).to_be_checked()
-    page.get_by_test_id("toggle-all-switch").click()
-    expect(page.get_by_test_id("toggle-all-switch")).not_to_be_checked()
-    page.screenshot(path="tests_edit_test_main-test_toggle_all_switch-clicked.png")
-
-    last_switch = None
-    all_switches = page.get_by_role("switch").all()
-
-    for switch in all_switches:
-        expect(switch).not_to_be_checked()
-        last_switch = switch
-
-    assert last_switch
-    last_switch.click()
-    last_switch.screenshot(
-        path="tests_edit_test_main-test_toggle_all_last-switch-click.png"
+@pytest.fixture
+def workflow_forbidden_invenio(extracted_activity: ExtractedActivity) -> None:
+    connector = BackendApiConnector.get()
+    connector.ingest(
+        [
+            ActivityRuleSetResponse(
+                stableTargetId=extracted_activity.stableTargetId,
+                workflow=WorkflowActivity(
+                    forbiddenPublishingTarget=[PublishingTarget.INVENIO]
+                ),
+            )
+        ]
     )
 
-    expect(page.get_by_test_id("toggle-all-switch")).to_be_checked()
+
+@pytest.mark.integration
+def test_all_publish_targets_rendered(edit_page: Page) -> None:
+    for target in PublishingTarget:
+        expect(
+            edit_page.get_by_test_id(f"publish-target-{target.value}")
+        ).to_be_visible()
+
+
+@pytest.mark.integration
+def test_no_invenio_publish_target_to_publish_invenio(
+    edit_page: Page,
+    extracted_activity: ExtractedActivity,
+    workflow_forbidden_invenio: None,  # noqa: ARG001
+) -> None:
+    page = edit_page
+
+    # wait for fields(rule is loaded when fields are)
+    expect(page.get_by_test_id("field-abstract")).to_be_visible()
+    page.screenshot(
+        path="tests_edit_test_no_invenio_publish_target_to_publish_invenio.png"
+    )
+
+    expect(page.get_by_test_id("publish-targets")).to_be_visible()
+    expect(
+        page.get_by_test_id(
+            f"publish-target-{PublishingTarget.INVENIO.value}"
+        ).get_by_role("switch")
+    ).not_to_be_checked()
+    expect(
+        page.get_by_test_id(
+            f"publish-target-{PublishingTarget.DATENKOMPASS.value}"
+        ).get_by_role("switch")
+    ).to_be_checked()
+
+    page.get_by_test_id(f"publish-target-{PublishingTarget.INVENIO.value}").get_by_role(
+        "switch"
+    ).click()
+
+    page.screenshot(
+        path="tests_edit_test_no_invenio_publish_target_to_publish_invenio_clicked.png"
+    )
+    page.get_by_test_id("submit-button").click()
+    toast = page.locator(".editor-toast").first
+    expect(toast).to_be_visible()
+    expect(toast).to_have_attribute("data-type", "success")
+
+    expect(
+        page.get_by_test_id(
+            f"publish-target-{PublishingTarget.INVENIO.value}"
+        ).get_by_role("switch")
+    ).to_be_checked()
+    page.screenshot(
+        path="tests_edit_test_no_invenio_publish_target_to_publish_invenio_saved.png"
+    )
+
+    rule_set = BackendApiConnector.get().get_rule_set(extracted_activity.stableTargetId)
+    assert rule_set.workflow.forbiddenPublishingTarget == []
 
 
 @pytest.mark.integration
@@ -931,12 +988,6 @@ def test_edit_page_discard_changes_button_roundtrip(
     edit_page.get_by_test_id(
         f"switch-abstract-{extracted_activity.hadPrimarySource}"
     ).click()
-    expect(discard_dialog_button).not_to_be_visible()
-
-    # toogle all and check button visibility
-    edit_page.get_by_test_id("toggle-all-switch").click()
-    expect(discard_dialog_button).to_be_visible()
-    edit_page.get_by_test_id("toggle-all-switch").click()
     expect(discard_dialog_button).not_to_be_visible()
 
     # do changes navigate away, come back and check if changes still present, discard change

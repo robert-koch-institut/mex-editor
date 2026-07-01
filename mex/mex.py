@@ -37,7 +37,7 @@ app = rx.App(
 app.add_page(
     search_index,
     route="/",
-    title="MEx Editor | Search",
+    title="MEx Admin Editor | Search",
     on_load=[
         State.check_mex_login,
         State.load_nav,
@@ -50,7 +50,7 @@ app.add_page(
 app.add_page(
     advanced_search_index,
     route="/advanced-search",
-    title="MEx Editor | Advanced Search",
+    title="MEx Admin Editor | Advanced Search",
     on_load=[
         State.check_mex_login,
         State.load_nav,
@@ -61,7 +61,7 @@ app.add_page(
 app.add_page(
     merge_index,
     route="/merge",
-    title="MEx Editor | Merge",
+    title="MEx Admin Editor | Merge",
     on_load=[
         State.check_mex_login,
         State.load_nav,
@@ -72,7 +72,7 @@ app.add_page(
 app.add_page(
     create_index,
     route="/create/[draft_id]",
-    title="MEx Editor | Create",
+    title="MEx Admin Editor | Create",
     on_load=[
         State.check_mex_login,
         State.load_nav,
@@ -83,7 +83,7 @@ app.add_page(
 app.add_page(
     create_index,
     route="/create",
-    title="MEx Editor | Create",
+    title="MEx Admin Editor | Create",
     on_load=[
         State.check_mex_login,
         State.load_nav,
@@ -95,7 +95,7 @@ app.add_page(
 app.add_page(
     edit_index,
     route="/item/[item_id]",
-    title="MEx Editor | Edit",
+    title="MEx Admin Editor | Edit",
     on_load=[
         State.check_mex_login,
         State.load_nav,
@@ -107,7 +107,7 @@ app.add_page(
 app.add_page(
     ingest_index,
     route="/ingest",
-    title="MEx Editor | Ingest",
+    title="MEx Admin Editor | Ingest",
     on_load=[
         State.check_mex_login,
         State.load_nav,
@@ -120,12 +120,12 @@ app.add_page(
 app.add_page(
     login_mex_index,
     route="/login",
-    title="MEx Editor | Login",
+    title="MEx Admin Editor | Login",
 )
 app.add_page(
     login_ldap_index,
     route="/login-ldap",
-    title="MEx Editor | Login",
+    title="MEx Admin Editor | Login",
 )
 app.add_page(
     consent_index,

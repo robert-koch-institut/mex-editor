@@ -47,7 +47,9 @@ def entity_type_filter(category: Literal["merged", "extracted"]) -> rx.Component
     """Render checkboxes for filtering the search results by entity type."""
     return rx.card(
         rx.text(
-            MergeState.label_filter_entity_type_title, margin_bottom="0.5em", size="1"
+            MergeState.label_filter_entity_type_title,
+            margin_bottom="0.5em",
+            size="1",
         ),
         rx.scroll_area(
             rx.flex(

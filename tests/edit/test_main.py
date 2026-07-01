@@ -763,6 +763,7 @@ def test_required_fields_red_asterisk(
         "involvedUnit",
         "isPartOfActivity",
         "publication",
+        "relatedActivity",
         "shortName",
         "start",
         "succeeds",
@@ -999,8 +1000,9 @@ def test_edit_page_discard_changes_button_roundtrip(
     # give the state some time to sync changes into local storage
     edit_page.wait_for_timeout(1_000)
     navigate_back_url = edit_page.url
-    edit_page.goto("https://www.webseite.de")
-    expect(edit_page.get_by_text("webseite.de")).to_be_visible()
+    # navigate away with a full page unload (no network needed), then come back
+    edit_page.goto("about:blank")
+    assert edit_page.url == "about:blank"
     edit_page.goto(navigate_back_url, wait_until="load")
     expect(discard_dialog_button).to_be_visible()
     expect(shortname_text).to_have_value("shortNameChanges")

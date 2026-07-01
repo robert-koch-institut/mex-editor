@@ -6,6 +6,7 @@ from mex.editor.layout import page
 from mex.editor.rules.main import (
     editor_field,
     rule_page_header,
+    submit_button,
     validation_errors,
 )
 from mex.editor.rules.models import PublishTarget
@@ -46,13 +47,21 @@ def render_publish_target_switch(item: PublishTarget) -> rx.Component:
 
 def render_publish_target() -> rx.Component:
     """Render switches to turn on/off publish targets."""
-    return rx.hstack(
-        rx.text.strong(EditState.label_publish_targets),
-        rx.el.div(
-            rx.foreach(EditState.publish_targets, render_publish_target_switch),
-            style={"display": "grid", "grid-template-columns": "1fr 1fr"},
+    return rx.card(
+        rx.hstack(
+            rx.text.strong(EditState.label_publish_targets),
+            rx.el.div(
+                rx.foreach(EditState.publish_targets, render_publish_target_switch),
+                style={"display": "grid", "grid-template-columns": "1fr 1fr"},
+            ),
+            align="center",
+            height="100%",
+            custom_attrs={"data-testid": "publish-targets"},
         ),
-        custom_attrs={"data-testid": "publish-targets"},
+        style=rx.Style(
+            padding="var(--space-1) var(--space-4)",
+            margin="var(--line-height-1) 0",
+        ),
     )
 
 
@@ -70,8 +79,10 @@ def delete_reset_button() -> rx.Component:
             ),
             disabled=EditState.is_deleting,
             on_click=EditState.delete_reset,
-            color_scheme="red",
-            variant="solid",
+            size="3",
+            color_scheme="tomato",
+            variant="outline",
+            style=rx.Style(margin="var(--line-height-1) 0"),
             custom_attrs={"data-testid": "delete-reset-button"},
         ),
     )
@@ -85,7 +96,10 @@ def discard_changes_button() -> rx.Component:
             rx.alert_dialog.trigger(
                 rx.button(
                     EditState.label_discard_changes_button,
+                    size="3",
                     color_scheme="tomato",
+                    variant="surface",
+                    style=rx.Style(margin="var(--line-height-1) 0"),
                 ),
                 custom_attrs={"data-testid": "discard-changes-dialog-button"},
             ),
@@ -159,15 +173,14 @@ def index() -> rx.Component:
     return page(
         rx.vstack(
             rule_page_header(
-                rx.hstack(
-                    edit_title(),
-                    discard_changes_button(),
-                )
+                edit_title(),
             ),
             rx.hstack(
                 rx.spacer(),
                 render_publish_target(),
                 delete_reset_button(),
+                discard_changes_button(),
+                submit_button(),
                 align="stretch",
                 justify="start",
             ),
@@ -179,7 +192,9 @@ def index() -> rx.Component:
             validation_errors(),
             align="stretch",
             style=rx.Style(
-                flex="1", marginTop="calc(2 * var(--space-6))", overflow="auto"
+                flex="1",
+                marginTop="calc(2 * var(--space-6))",
+                overflow="auto",
             ),
         ),
     )

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- updated mex-backend to 4.0
+- updated mex.common to version 3.0
+- uses new backend endpoint for advanced reference filtering
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/1d816d
 - change title to MEx Admin Editor to soft-launch admin renaming
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.3.0
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
@@ -62,10 +66,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - update mex-common to 1.17
 - update mex-backend to 1.7.2
-- adpdated tests because identifierInPrimarySource is not in MERGEABLE_FIELDS
+- adapted tests because identifierInPrimarySource is not in MERGEABLE_FIELDS
 - Updated uv to 0.10.11
-- Text is truncated/wraped based on model.yaml (edit with textarea -> wrap; otherwise truncate)
-- Layout mostly flexing now (Flexlayout)
+- Text is truncated/wrapped based on model.yaml (edit with textarea -> wrap; otherwise truncate)
+- Layout mostly flexing now (flex layout)
 - edit_button is always visible for additives
 - updated neo4j to 2026.02
 

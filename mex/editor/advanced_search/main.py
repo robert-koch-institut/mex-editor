@@ -117,7 +117,7 @@ def ref_filter_value(
                 width="1rem",
             ),
             variant="soft",
-            color_scheme="red",
+            color_scheme="tomato",
             size="1",
             on_click=[
                 AdvancedSearchState.remove_ref_filter_value(index, val_index),  # type: ignore[operator]

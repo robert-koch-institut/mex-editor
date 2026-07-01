@@ -6,6 +6,7 @@ from mex.editor.rules.main import (
     editor_primary_source_stack,
     field_name_card,
     rule_page_header,
+    submit_button,
     validation_errors,
 )
 from mex.editor.rules.models import FieldTranslation
@@ -79,6 +80,7 @@ def discard_draft_button() -> rx.Component:
                 rx.button(
                     CreateState.label_discard_draft_button,
                     color_scheme="tomato",
+                    variant="surface",
                 ),
                 custom_attrs={"data-testid": "discard-draft-dialog-button"},
             ),
@@ -123,10 +125,14 @@ def index() -> rx.Component:
     return page(
         rx.vstack(
             rule_page_header(
-                rx.fragment(
-                    create_title(),
-                    discard_draft_button(),
-                )
+                create_title(),
+            ),
+            rx.hstack(
+                rx.spacer(),
+                discard_draft_button(),
+                submit_button(),
+                align="stretch",
+                justify="start",
             ),
             rx.foreach(
                 RuleState.translated_fields,

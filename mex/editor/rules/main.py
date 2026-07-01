@@ -37,7 +37,7 @@ def editor_value_switch(
         custom_attrs={
             "data-testid": f"switch-{field_name}-{primary_source.identifier}-{index}"
         },
-        color_scheme=rx.cond(primary_source.enabled, "jade", "gray"),
+        color_scheme=rx.cond(primary_source.enabled, "blue", "gray"),
     )
 
 
@@ -277,7 +277,7 @@ def badge_input(
                 ),
                 size="1",
                 variant="soft",
-                radius="large",
+                radius="medium",
                 color_scheme="gray",
                 on_change=RuleState.set_badge_value(field_name, index),  # type: ignore[operator]
                 custom_attrs={
@@ -367,7 +367,7 @@ def primary_source_switch(
         custom_attrs={
             "data-testid": f"switch-{field_name}-{primary_source.identifier}"
         },
-        color_scheme="jade",
+        color_scheme="blue",
     )
 
 
@@ -588,11 +588,6 @@ def rule_page_header(title: rx.Component) -> rx.Component:
             style=rx.Style(margin="auto 0"),
         ),
         title,
-        rx.spacer(),
-        rx.cond(
-            RuleState.stem_type,
-            submit_button(),
-        ),
         style=rx.Style(
             alignItems="baseline",
             backdropFilter="var(--backdrop-filter-panel)",

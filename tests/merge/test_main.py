@@ -221,11 +221,13 @@ def test_additional_titles_badge(
     expect(resource_r2_result).to_contain_text(first_title.value)
     additional_title_badge = page.get_by_test_id("additional-titles-badge").first
     expect(additional_title_badge).to_be_visible()
-    additional_title_badge.scroll_into_view_if_needed()
-    page.screenshot(path="tests_search_test_additional_titles_badge_on_visible.png")
+    # wait for the (re-rendering) result card to settle before scrolling, so the
+    # non-retrying scroll action does not act on a detached element
     expect(additional_title_badge).to_have_text(
         build_ui_label_regex("components.titles.additional_titles")
     )
+    additional_title_badge.scroll_into_view_if_needed()
+    page.screenshot(path="tests_search_test_additional_titles_badge_on_visible.png")
 
     # hover additional titles
     box = additional_title_badge.bounding_box()

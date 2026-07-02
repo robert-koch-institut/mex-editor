@@ -21,6 +21,9 @@
     "@vitest/ui": "4.1.9",
     "angular-eslint": "21.4.0",
     "eslint": "10.6.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsdoc": "^63.0.10",
+    "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-security": "4.0.1",
     "jsdom": "29.1.1",
     "prettier": "3.9.4",
@@ -33,7 +36,7 @@
   "private": true,
   "scripts": {
     "build": "ng build --configuration production",
-    "lint": "ng lint",
+    "lint": "ngc -p tsconfig.app.json --noEmit && ng lint",
     "ng": "ng",
     "start": "ng serve",
     "test": "ng test --watch false",

@@ -1,4 +1,4 @@
-import type { OnInit} from "@angular/core";
+import type { OnInit } from "@angular/core";
 import { Renderer2 } from "@angular/core";
 import { Component, DOCUMENT, inject, signal } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";

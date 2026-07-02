@@ -16,11 +16,7 @@ interface PaginatedPreviewItems {
 
 @Component({
   selector: "app-start-page",
-  imports: [
-    RouterLink,
-    AsyncPipe,
-    MatButton,
-  ],
+  imports: [RouterLink, AsyncPipe, MatButton],
   templateUrl: "./start-page.html",
   styleUrl: "./start-page.scss",
 })
@@ -33,5 +29,4 @@ export class StartPage {
   onClick() {
     console.warn("CLICKED");
   }
-
 }

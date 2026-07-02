@@ -1,11 +1,39 @@
-<form (submit)="onSubmit($event)" [formRoot]="resourceForm">
+<form (submit)="onSubmit()" [formRoot]="resourceForm">
   <mat-form-field appearance="outline">
     <mat-label>Title</mat-label>
     <input matInput placeholder="Enter title" [formField]="resourceForm.title" />
     @for (error of resourceForm.title().errors(); track error) {
-      <mat-error> {{ error.kind }} | {{error.message}} </mat-error>
+      <mat-error> {{ error.kind }} | {{ error.message }} </mat-error>
     }
   </mat-form-field>
 
-  <button type="submit">Submit</button>
+  <mat-form-field appearance="outline">
+    <mat-label>General Type</mat-label>
+    <mat-select multiple [formField]="resourceForm.resourceTypeGeneral">
+      @for (option of resourceTypeGeneralOptions(); track option.id) {
+        <mat-option [value]="option.id">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Creation Method</mat-label>
+    <mat-select multiple [formField]="resourceForm.resourceCreationMethod">
+      @for (option of resourceCreationMethodOptions(); track option.id) {
+        <mat-option [value]="option.id">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Accrual Periodicity</mat-label>
+    <mat-select [formField]="resourceForm.accrualPeriodicity">
+      <mat-option [value]="null">None</mat-option>
+      @for (option of accrualPeriodicityOptions(); track option.id) {
+        <mat-option [value]="option.id">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <button matButton="filled" type="submit">Submit</button>
 </form>

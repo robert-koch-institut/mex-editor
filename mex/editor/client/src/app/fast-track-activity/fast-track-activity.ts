@@ -1,26 +1,14 @@
 import { Component, signal } from "@angular/core";
 import { form, minLength, required, FormField, FormRoot } from "@angular/forms/signals";
+import { MatButton } from "@angular/material/button";
 import { MatInput } from "@angular/material/input";
 import { MatFormField, MatLabel, MatError } from "@angular/material/select";
 
-interface CreateContactPointModel {
-  $type: "CreateContactPointModel";
-  email: string;
-}
-interface CreatePersonModel {
-  $type: "CreatePersonModel";
-  firstName: number;
-  lastName: number;
-}
-type CreateContactModel = CreateContactPointModel | CreatePersonModel;
-interface FastTrackActivityModel {
-  title: string;
-  contact: (string | CreateContactModel)[];
-}
+import type { FastTrackActivityModel } from "./fast-track-activity.types";
 
 @Component({
   selector: "mex-fast-track-activity",
-  imports: [FormField, MatFormField, MatLabel, MatError, MatInput, MatError, FormRoot],
+  imports: [FormField, MatFormField, MatLabel, MatError, MatInput, MatError, FormRoot, MatButton],
   templateUrl: "./fast-track-activity.html",
   styleUrl: "./fast-track-activity.scss",
 })
@@ -35,8 +23,8 @@ export class FastTrackActivity {
     minLength(schema.title, 3, { message: "Title must be at least 3 characters long" });
   });
 
-  onSubmit($event: SubmitEvent) {
+  onSubmit() {
     // eslint-disable-next-line no-console
-    console.log("Submitted", $event, this.model());
+    console.log("Submitted", this.model());
   }
 }

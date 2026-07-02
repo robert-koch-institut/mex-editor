@@ -5,8 +5,11 @@ import { NavBar } from "./nav-bar";
 import { provideRouter } from "@angular/router";
 import { routes } from "../app.routes";
 import { RouterTestingHarness } from "@angular/router/testing";
-import { CreatePage } from "../pages/create-page/create-page";
-import { StartPage } from "../pages/start-page/start-page";
+import { provideHttpClient, withXhr } from "@angular/common/http";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
+import { StartPage } from "../start-page/start-page";
+import { FastTrackResource } from "../fast-track-resource/fast-track-resource";
+import { FastTrackActivity } from "../fast-track-activity/fast-track-activity";
 
 describe("NavBarComponent", () => {
   let component: NavBar;
@@ -15,9 +18,7 @@ describe("NavBarComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [NavBar],
-      providers: [
-        provideRouter(routes)
-      ]
+      providers: [provideRouter(routes), provideHttpClient(withXhr()), provideHttpClientTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NavBar);
@@ -31,17 +32,16 @@ describe("NavBarComponent", () => {
 
   it("should add active class to links", async () => {
     const harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl('/create/resource', CreatePage);
-    let activeLinks = fixture.nativeElement.querySelectorAll(".link.active")
+    await harness.navigateByUrl("/create/resource", FastTrackResource);
+    let activeLinks = fixture.nativeElement.querySelectorAll(".link.active");
     expect(activeLinks.length).toBe(1);
 
-    await harness.navigateByUrl('/create/activity', CreatePage);
-    activeLinks = fixture.nativeElement.querySelectorAll(".link.active")
+    await harness.navigateByUrl("/create/activity", FastTrackActivity);
+    activeLinks = fixture.nativeElement.querySelectorAll(".link.active");
     expect(activeLinks.length).toBe(1);
 
-    await harness.navigateByUrl('/', StartPage);
-    activeLinks = fixture.nativeElement.querySelectorAll(".link.active")
+    await harness.navigateByUrl("/", StartPage);
+    activeLinks = fixture.nativeElement.querySelectorAll(".link.active");
     expect(activeLinks.length).toBe(0);
   });
-
 });

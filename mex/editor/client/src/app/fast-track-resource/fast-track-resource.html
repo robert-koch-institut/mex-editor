@@ -1,8 +1,8 @@
-<form (submit)="onSubmit($event)" [formRoot]="activityForm">
+<form (submit)="onSubmit($event)" [formRoot]="resourceForm">
   <mat-form-field appearance="outline">
     <mat-label>Title</mat-label>
-    <input matInput placeholder="Enter title" [formField]="activityForm.title" />
-    @for (error of activityForm.title().errors(); track error) {
+    <input matInput placeholder="Enter title" [formField]="resourceForm.title" />
+    @for (error of resourceForm.title().errors(); track error) {
       <mat-error> {{ error.kind }} | {{error.message}} </mat-error>
     }
   </mat-form-field>

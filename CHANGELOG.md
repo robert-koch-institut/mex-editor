@@ -11,12 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Layout with header (including theme switcher and language switcher with noop) and footer
 - vitest/ui for better dev experience
+- renovate rule for angular
 
 ### Changes
 
 - updated angular to 22.0.4
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
 - alot of manual package updates to help renovatebot
-- updated template to https://github.com/robert-koch-institut/mex-template/commit/11612b
 - updated node to 24.15.0
 - updated angular to 21.2.17
 - renovate: group non-major npm updates into a single PR

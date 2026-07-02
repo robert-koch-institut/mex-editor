@@ -2,12 +2,12 @@ import { Component, signal } from "@angular/core";
 import { MatSelectModule } from "@angular/material/select";
 
 @Component({
-  selector: "app-language-selector-component",
+  selector: "mex-language-selector",
   imports: [MatSelectModule],
-  templateUrl: "./language-selector-component.html",
-  styleUrl: "./language-selector-component.scss",
+  templateUrl: "./language-selector.html",
+  styleUrl: "./language-selector.scss",
 })
-export class LanguageSelectorComponent {
+export class LanguageSelector {
   currentLanguage = signal("de");
 
   changeLanguage(language: string) {

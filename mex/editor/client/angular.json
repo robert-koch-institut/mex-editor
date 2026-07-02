@@ -82,7 +82,7 @@
           }
         }
       },
-      "prefix": "app",
+      "prefix": "mex",
       "projectType": "application",
       "root": "",
       "schematics": {

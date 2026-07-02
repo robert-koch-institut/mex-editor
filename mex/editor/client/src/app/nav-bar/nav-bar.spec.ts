@@ -1,26 +1,26 @@
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
 
-import { NavBarComponent } from "./nav-bar-component";
+import { NavBar } from "./nav-bar";
 import { provideRouter } from "@angular/router";
-import { routes } from "../../app.routes";
+import { routes } from "../app.routes";
 import { RouterTestingHarness } from "@angular/router/testing";
-import { CreatePage } from "../../pages/create-page/create-page";
-import { StartPage } from "../../pages/start-page/start-page";
+import { CreatePage } from "../pages/create-page/create-page";
+import { StartPage } from "../pages/start-page/start-page";
 
 describe("NavBarComponent", () => {
-  let component: NavBarComponent;
-  let fixture: ComponentFixture<NavBarComponent>;
+  let component: NavBar;
+  let fixture: ComponentFixture<NavBar>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NavBarComponent],
+      imports: [NavBar],
       providers: [
         provideRouter(routes)
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(NavBarComponent);
+    fixture = TestBed.createComponent(NavBar);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

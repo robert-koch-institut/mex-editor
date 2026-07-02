@@ -15,7 +15,7 @@ interface PaginatedPreviewItems {
 }
 
 @Component({
-  selector: "app-start-page",
+  selector: "mex-start-page",
   imports: [
     RouterLink,
     AsyncPipe,

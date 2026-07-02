@@ -1,16 +1,16 @@
-import type { OnInit} from "@angular/core";
+import type { OnInit } from "@angular/core";
 import { Renderer2 } from "@angular/core";
 import { Component, DOCUMENT, inject, signal } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 
 @Component({
-  selector: "app-theme-toggle-component",
+  selector: "mex-theme-toggle",
   imports: [MatButtonModule, MatIconModule],
-  templateUrl: "./theme-toggle-component.html",
-  styleUrl: "./theme-toggle-component.scss",
+  templateUrl: "./theme-toggle.html",
+  styleUrl: "./theme-toggle.scss",
 })
-export class ThemeToggleComponent implements OnInit {
+export class ThemeToggle implements OnInit {
   private _renderer = inject(Renderer2);
   private _document: Document = inject(DOCUMENT);
 

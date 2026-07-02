@@ -15,11 +15,13 @@ module.exports = defineConfig([
       angular.configs.tsRecommended,
     ],
     plugins: {
+      // @ts-ignore
       security,
     },
     languageOptions: {
       parserOptions: {
         projectService: true,
+        // @ts-ignore
         tsconfigRootDir: __dirname,
       },
     },
@@ -31,7 +33,7 @@ module.exports = defineConfig([
         "error",
         {
           type: "attribute",
-          prefix: "app",
+          prefix: "mex",
           style: "camelCase",
         },
       ],
@@ -39,7 +41,7 @@ module.exports = defineConfig([
         "error",
         {
           type: "element",
-          prefix: "app",
+          prefix: "mex",
           style: "kebab-case",
         },
       ],

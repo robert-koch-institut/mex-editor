@@ -1,18 +1,18 @@
 import type { ComponentFixture} from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
 
-import { CreatePage } from "./create-page";
+import { FastTrackActivity } from "./fast-track-activity";
 
-describe("CreatePage", () => {
-  let component: CreatePage;
-  let fixture: ComponentFixture<CreatePage>;
+describe("FastTrackActivity", () => {
+  let component: FastTrackActivity;
+  let fixture: ComponentFixture<FastTrackActivity>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreatePage],
+      imports: [FastTrackActivity],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CreatePage);
+    fixture = TestBed.createComponent(FastTrackActivity);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

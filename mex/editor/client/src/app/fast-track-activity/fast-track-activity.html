@@ -1,1 +1,11 @@
-<p>fast-track-activity works!</p>
+<form (submit)="onSubmit($event)">
+  <mat-form-field appearance="outline">
+    <mat-label>Title</mat-label>
+    <input matInput placeholder="Enter title" [formField]="activityForm.title" />
+    @for (error of activityForm.title().errors(); track error) {
+      <mat-error> {{ error.kind }} | {{error.message}} </mat-error>
+    }
+  </mat-form-field>
+
+  <button type="submit">Log In</button>
+</form>

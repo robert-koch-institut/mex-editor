@@ -1,14 +1,14 @@
 import { TestBed } from "@angular/core/testing";
 
-import { VocabularyService } from "./vocabulary.service";
-import type { Concept } from "./vocabulary.types";
+import { VocabularySearchService } from "./vocabulary-search.service";
+import type { Concept } from "./vocabulary-search.types";
 
-describe("VocabularyService", () => {
-  let service: VocabularyService;
+describe("VocabularySearchService", () => {
+  let service: VocabularySearchService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(VocabularyService);
+    service = TestBed.inject(VocabularySearchService);
   });
 
   it("should be created", () => {

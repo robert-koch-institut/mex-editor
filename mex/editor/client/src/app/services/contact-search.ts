@@ -9,10 +9,10 @@ export interface SearchContact {
 @Service()
 export class ContactSearch {
   private readonly data: SearchContact[] = [
-    { id: "p1", $type: "person", label: "Anna Müller" },
-    { id: "p2", $type: "person", label: "Bernd Koch" },
-    { id: "m1", $type: "mail", label: "Robert Koch Institut" },
-    { id: "m2", $type: "mail", label: "Charité Berlin" },
+    { id: "1LhqzR0vmWAfFl52h1U06", $type: "person", label: "Anna Müller" },
+    // { id: "p2", $type: "person", label: "Bernd Koch" },
+    // { id: "m1", $type: "mail", label: "Robert Koch Institut" },
+    // { id: "m2", $type: "mail", label: "Charité Berlin" },
     // …
   ];
 

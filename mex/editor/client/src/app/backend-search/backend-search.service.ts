@@ -1,7 +1,7 @@
 import { httpResource } from "@angular/common/http";
 import { Injectable, type Signal } from "@angular/core";
 
-import type { PaginatedItemsContainer } from "../vocabulary/vocabulary.types";
+import type { PaginatedItemsContainer } from "../vocabulary-search/vocabulary-search.types";
 import type { PreviewOrganizationalUnit, Text, UnitOption } from "./backend-search.types";
 
 @Injectable({ providedIn: "root" })

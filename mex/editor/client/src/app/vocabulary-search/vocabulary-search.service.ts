@@ -1,10 +1,10 @@
 import { httpResource } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 
-import type { Concept, PaginatedItemsContainer, VocabularyOption } from "./vocabulary.types";
+import type { Concept, PaginatedItemsContainer, VocabularyOption } from "./vocabulary-search.types";
 
 @Injectable({ providedIn: "root" })
-export class VocabularyService {
+export class VocabularySearchService {
   /**
    * Fetch a vocabulary by its name as a reactive resource.
    *

@@ -10,13 +10,14 @@ import { debounceTime } from "rxjs";
 
 import { BackendSearchService } from "../backend-search/backend-search.service";
 import type { UnitOption } from "../backend-search/backend-search.types";
-import { VocabularyService } from "../vocabulary/vocabulary.service";
+import { VocabularySearchService } from "../vocabulary-search/vocabulary-search.service";
 import { MatButton } from "@angular/material/button";
 
 import type { FastTrackResourceModel } from "./fast-track-resource.types";
 
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { ContactList } from "./contact-list/contact-list";
+import { ResourceSubmission } from "./resource-submission";
 
 @Component({
   selector: "mex-fast-track-resource",
@@ -44,7 +45,8 @@ import { ContactList } from "./contact-list/contact-list";
   styleUrl: "./fast-track-resource.scss",
 })
 export class FastTrackResource {
-  private vocabularyService = inject(VocabularyService);
+  private resourceSubmissionService = inject(ResourceSubmission);
+  private vocabularySearchService = inject(VocabularySearchService);
   private search = inject(BackendSearchService);
 
   model = signal<FastTrackResourceModel>({
@@ -65,26 +67,26 @@ export class FastTrackResource {
     required(schema.unitInCharge, { message: "Need a unit in charge" });
   });
 
-  theme = this.vocabularyService.getVocabulary("theme");
+  theme = this.vocabularySearchService.getVocabulary("theme");
 
-  themeOptions = computed(() => this.vocabularyService.toOptions(this.theme.value().items));
+  themeOptions = computed(() => this.vocabularySearchService.toOptions(this.theme.value().items));
 
-  resourceCreationMethod = this.vocabularyService.getVocabulary("resource-creation-method");
+  resourceCreationMethod = this.vocabularySearchService.getVocabulary("resource-creation-method");
 
   resourceCreationMethodOptions = computed(() =>
-    this.vocabularyService.toOptions(this.resourceCreationMethod.value().items),
+    this.vocabularySearchService.toOptions(this.resourceCreationMethod.value().items),
   );
 
-  accrualPeriodicity = this.vocabularyService.getVocabulary("frequency");
+  accrualPeriodicity = this.vocabularySearchService.getVocabulary("frequency");
 
   accrualPeriodicityOptions = computed(() =>
-    this.vocabularyService.toOptions(this.accrualPeriodicity.value().items),
+    this.vocabularySearchService.toOptions(this.accrualPeriodicity.value().items),
   );
 
-  accessRestriction = this.vocabularyService.getVocabulary("access-restriction");
+  accessRestriction = this.vocabularySearchService.getVocabulary("access-restriction");
 
   accessRestrictionOptions = computed(() =>
-    this.vocabularyService.toOptions(this.accessRestriction.value().items),
+    this.vocabularySearchService.toOptions(this.accessRestriction.value().items),
   );
 
   /** Raw search input for the "unit in charge" field, debounced before it hits the backend. */
@@ -136,7 +138,9 @@ export class FastTrackResource {
   }
 
   onSubmit() {
-    // eslint-disable-next-line no-console
-    console.log("Submitted", this.model());
+    this.resourceSubmissionService.submit(this.model).subscribe((result) => {
+      // eslint-disable-next-line no-console
+      console.log("Submitted", this.model(), result.stableTargetId);
+    });
   }
 }

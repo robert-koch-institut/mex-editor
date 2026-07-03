@@ -80,10 +80,10 @@
     @for (contact of resourceForm.contacts; let i = $index; track i) {
       <div class="horizontal-list">
         <mex-contact-list [formField]="contact" style="flex: 1"></mex-contact-list>
-        <button mat-button (click)="deleteContact(i)">x</button>
+        <button type="button" mat-button (click)="deleteContact(i)">x</button>
       </div>
     }
-    <button mat-button (click)="addContact()">Add Contact</button>
+    <button type="button" mat-button (click)="addContact()">Add Contact</button>
   </div>
 
   <button matButton="filled" type="submit">Submit</button>

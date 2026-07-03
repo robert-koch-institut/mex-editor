@@ -1,9 +1,11 @@
 import { LiveAnnouncer } from "@angular/cdk/a11y";
 import { Component, inject, signal } from "@angular/core";
-import { form, minDate, minLength, required, validate, FormField } from "@angular/forms/signals";
+import { form, minDate, minLength, required, validate, FormField, FormRoot } from "@angular/forms/signals";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormField, MatLabel, MatError, MatHint } from "@angular/material/select";
+import { Component, signal } from "@angular/core";
+import { MatButton } from "@angular/material/button";
 import { MatInput } from "@angular/material/input";
 import { MatButton } from "@angular/material/button";
 import { MatChipsModule } from "@angular/material/chips";
@@ -11,6 +13,8 @@ import type { MatChipInputEvent } from "@angular/material/chips";
 import { MatIconModule } from "@angular/material/icon";
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+
+import type { FastTrackActivityModel } from "./fast-track-activity.types";
 
 interface CreateContactPointModel {
   $type: "CreateContactPointModel";
@@ -39,6 +43,7 @@ interface KeywordDict {
   imports: [
     MatButton,
     FormField,
+    FormRoot,
     MatFormField,
     MatFormFieldModule,
     MatDatepickerModule,
@@ -53,6 +58,7 @@ interface KeywordDict {
     MatChipsModule,
     MatIconModule,
   ],
+
   templateUrl: "./fast-track-activity.html",
   styleUrl: "./fast-track-activity.scss",
 })
@@ -135,8 +141,8 @@ export class FastTrackActivity {
       this.announcer.announce(`removed ${keyword} from reactive form`);
     }
   }
-
-  onSubmit($event: SubmitEvent) {
-    console.warn("Submitted", $event, this.model());
+  onSubmit() {
+    // eslint-disable-next-line no-console
+    console.log("Submitted", this.model());
   }
 }

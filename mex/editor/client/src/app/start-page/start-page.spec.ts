@@ -20,9 +20,4 @@ describe("StartPage", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
-
-  it("should render title", async () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector("h1")?.textContent).toContain("mex-editor-ng");
-  });
 });

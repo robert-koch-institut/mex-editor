@@ -13,6 +13,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from mex.common.logging import logger
 from mex.editor.api.backend import router as backend_router
 from mex.editor.api.system import router as system_router
+from mex.editor.api.vocabulary import router as vocabulary_router
 from mex.editor.frontend import STATIC_DIR, npm_watch
 from mex.editor.logging import UVICORN_LOGGING_CONFIG
 from mex.editor.settings import EditorSettings
@@ -73,6 +74,7 @@ def create_fastapi(
     if startup in ["api", "both"]:
         app.include_router(backend_router, prefix="/api/v0")
         app.include_router(system_router, prefix="/api/v0")
+        app.include_router(vocabulary_router, prefix="/api/v0")
     if startup in ["frontend", "both"]:
         app.mount(
             "/",

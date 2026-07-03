@@ -1,6 +1,16 @@
 .nav-bar {
   background-color: #005eb7;
 
+  // The navbar background is always blue, so keep the foreground light in every
+  // theme (otherwise light mode renders dark text/icons on the blue background).
+  color: #fff;
+  --mat-toolbar-container-text-color: #fff;
+  --mat-icon-button-icon-color: #fff;
+  --mat-select-enabled-trigger-text-color: #fff;
+  --mat-select-placeholder-text-color: #fff;
+  --mat-select-enabled-arrow-color: #fff;
+  --mat-select-focused-arrow-color: #fff;
+
   .brand > img {
     vertical-align: middle;
   }
@@ -8,14 +18,16 @@
   .nav-bar-links {
     display: flex;
     margin-left: 24px;
+    font-weight: lighter;
     gap: 12px;
 
     .link {
       position: relative;
-      .activ-indicator {
+
+      .active-indicator {
         display: none;
         width: 100%;
-        height: 2px;
+        height: 1px;
         position: absolute;
         background-color: currentColor;
         bottom: -4px;
@@ -23,9 +35,9 @@
       }
 
       &.active {
-        font-weight: bold;
+        font-weight: normal;
 
-        .activ-indicator {
+        .active-indicator {
           display: block;
         }
       }

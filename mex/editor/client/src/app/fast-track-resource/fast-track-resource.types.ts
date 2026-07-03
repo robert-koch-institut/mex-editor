@@ -4,4 +4,5 @@ export interface FastTrackResourceModel {
   resourceCreationMethod: string[];
   accrualPeriodicity: string | null;
   accessRestriction: string;
+  unitInCharge: string[];
 }

@@ -9,6 +9,7 @@
 
   <mat-form-field appearance="outline">
     <mat-label>General Theme</mat-label>
+
     <mat-select multiple [formField]="resourceForm.theme">
       @for (option of themeOptions(); track option.id) {
         <mat-option [value]="option.id">{{ option.label }}</mat-option>
@@ -48,6 +49,31 @@
     @for (error of resourceForm.accessRestriction().errors(); track error) {
       <mat-error> {{ error.kind }} | {{ error.message }} </mat-error>
     }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Unit in Charge</mat-label>
+    <mat-chip-grid #unitChips>
+      @for (id of model().unitInCharge; track id) {
+        <mat-chip-row (removed)="removeUnit(id)">
+          {{ unitLabel(id) }}
+          <button matChipRemove type="button"><mat-icon>cancel</mat-icon></button>
+        </mat-chip-row>
+      }
+    </mat-chip-grid>
+    <input
+      matInput
+      placeholder="Search units…"
+      [matChipInputFor]="unitChips"
+      [matAutocomplete]="unitAuto"
+      [value]="unitInChargeQuery()"
+      (input)="unitInChargeQuery.set($any($event.target).value)"
+    />
+    <mat-autocomplete #unitAuto (optionSelected)="addUnit($event.option.value)">
+      @for (option of unitInChargeOptions(); track option.id) {
+        <mat-option [value]="option">{{ option.label }}</mat-option>
+      }
+    </mat-autocomplete>
   </mat-form-field>
 
   <button matButton="filled" type="submit">Submit</button>

@@ -30,6 +30,12 @@ describe("FastTrackResource", () => {
     ]) {
       httpTesting.expectOne(`api/v0/vocabulary/${vocabulary}`).flush({ items: [], total: 0 });
     }
+    // The "unit in charge" field fires a backend search on init (empty query).
+    for (const request of httpTesting.match((r) =>
+      r.url.startsWith("api/v0/backend/preview-item"),
+    )) {
+      request.flush({ items: [], total: 0 });
+    }
     await fixture.whenStable();
   });
 

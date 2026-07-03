@@ -22,7 +22,12 @@ describe("FastTrackResource", () => {
     // Kick off the vocabulary httpResources and satisfy their pending requests
     // so the fixture can stabilize.
     fixture.detectChanges();
-    for (const vocabulary of ["resource-type-general", "resource-creation-method", "frequency"]) {
+    for (const vocabulary of [
+      "theme",
+      "resource-creation-method",
+      "frequency",
+      "access-restriction",
+    ]) {
       httpTesting.expectOne(`api/v0/vocabulary/${vocabulary}`).flush({ items: [], total: 0 });
     }
     await fixture.whenStable();

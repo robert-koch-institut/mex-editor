@@ -30,21 +30,22 @@ export class FastTrackResource {
 
   model = signal<FastTrackResourceModel>({
     title: "",
-    resourceTypeGeneral: [],
+    theme: [],
     resourceCreationMethod: [],
     accrualPeriodicity: null,
+    accessRestriction: "",
   });
 
   resourceForm = form(this.model, (schema) => {
     required(schema.title, { message: "Title is required" });
     minLength(schema.title, 3, { message: "Title must be at least 3 characters long" });
+    minLength(schema.theme, 1, { message: "At least one theme is required" });
+    required(schema.accessRestriction, { message: "Access restriction is required" });
   });
 
-  resourceTypeGeneral = this.vocabularyService.getVocabulary("resource-type-general");
+  theme = this.vocabularyService.getVocabulary("theme");
 
-  resourceTypeGeneralOptions = computed(() =>
-    this.vocabularyService.toOptions(this.resourceTypeGeneral.value().items),
-  );
+  themeOptions = computed(() => this.vocabularyService.toOptions(this.theme.value().items));
 
   resourceCreationMethod = this.vocabularyService.getVocabulary("resource-creation-method");
 
@@ -56,6 +57,12 @@ export class FastTrackResource {
 
   accrualPeriodicityOptions = computed(() =>
     this.vocabularyService.toOptions(this.accrualPeriodicity.value().items),
+  );
+
+  accessRestriction = this.vocabularyService.getVocabulary("access-restriction");
+
+  accessRestrictionOptions = computed(() =>
+    this.vocabularyService.toOptions(this.accessRestriction.value().items),
   );
 
   onSubmit() {

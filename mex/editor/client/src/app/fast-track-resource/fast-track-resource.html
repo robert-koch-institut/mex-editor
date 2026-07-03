@@ -8,12 +8,15 @@
   </mat-form-field>
 
   <mat-form-field appearance="outline">
-    <mat-label>General Type</mat-label>
-    <mat-select multiple [formField]="resourceForm.resourceTypeGeneral">
-      @for (option of resourceTypeGeneralOptions(); track option.id) {
+    <mat-label>General Theme</mat-label>
+    <mat-select multiple [formField]="resourceForm.theme">
+      @for (option of themeOptions(); track option.id) {
         <mat-option [value]="option.id">{{ option.label }}</mat-option>
       }
     </mat-select>
+    @for (error of resourceForm.theme().errors(); track error) {
+      <mat-error> {{ error.kind }} | {{ error.message }} </mat-error>
+    }
   </mat-form-field>
 
   <mat-form-field appearance="outline">
@@ -33,6 +36,18 @@
         <mat-option [value]="option.id">{{ option.label }}</mat-option>
       }
     </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Access Restriction</mat-label>
+    <mat-select [formField]="resourceForm.accessRestriction">
+      @for (option of accessRestrictionOptions(); track option.id) {
+        <mat-option [value]="option.id">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+    @for (error of resourceForm.accessRestriction().errors(); track error) {
+      <mat-error> {{ error.kind }} | {{ error.message }} </mat-error>
+    }
   </mat-form-field>
 
   <button matButton="filled" type="submit">Submit</button>

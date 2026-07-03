@@ -30,8 +30,8 @@ interface FastTrackActivityModel {
   keywords: KeywordDict;
 }
 interface KeywordDict {
-  german: [string | null];
-  english: [string | null];
+  german: string[];
+  english: string[];
 }
 
 @Component({
@@ -64,7 +64,7 @@ export class FastTrackActivity {
     contact: [""],
     startDate: null,
     endDate: null,
-    keywords: { german: [null], english: [null] }
+    keywords: { german: [], english: [] }
   });
 
   activityForm = form(this.model, (schema) => {

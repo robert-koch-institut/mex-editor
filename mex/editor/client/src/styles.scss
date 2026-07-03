@@ -2,6 +2,7 @@
 @use "@fontsource/roboto/400" as *;
 @use "@fontsource/roboto/500" as *;
 @use "@fontsource/material-icons" as *;
+@use "sass:map";
 
 // Include theming for Angular Material with `mat.theme()`.
 // This Sass mixin will define CSS variables that are used for styling Angular Material
@@ -61,10 +62,12 @@ html {
   // Default to Light Theme
   @include mat.all-component-themes($light-theme);
   @include mat.typography-hierarchy($light-theme);
+  @include mat.system-level-colors($light-theme);
 
   // Apply Dark Theme when the class is present
   &.dark-mode {
     @include mat.all-component-colors($dark-theme);
+    @include mat.system-level-colors($dark-theme);
   }
 
   margin: 0;

@@ -15,19 +15,23 @@ import { MatButton } from "@angular/material/button";
 
 import type { FastTrackResourceModel } from "./fast-track-resource.types";
 
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { ContactList } from "./contact-list/contact-list";
+
 @Component({
   selector: "mex-fast-track-resource",
   imports: [
+    ContactList,
     FormField,
     FormRoot,
     MatAutocomplete,
+    MatAutocompleteModule,
     MatAutocompleteTrigger,
     MatButton,
     MatChipGrid,
     MatChipInput,
     MatChipRemove,
     MatChipRow,
-    MatError,
     MatError,
     MatFormField,
     MatIcon,
@@ -50,6 +54,7 @@ export class FastTrackResource {
     accrualPeriodicity: null,
     accessRestriction: "",
     unitInCharge: [],
+    contacts: [""],
   });
 
   resourceForm = form(this.model, (schema) => {
@@ -116,6 +121,18 @@ export class FastTrackResource {
       ...model,
       unitInCharge: model.unitInCharge.filter((unitId) => unitId !== id),
     }));
+  }
+
+  deleteContact(index: number) {
+    this.model.update((m) => {
+      return { ...m, contacts: m.contacts.filter((_, i) => i !== index) };
+    });
+  }
+
+  addContact() {
+    this.model.update((m) => {
+      return { ...m, contacts: [...m.contacts, ""] };
+    });
   }
 
   onSubmit() {

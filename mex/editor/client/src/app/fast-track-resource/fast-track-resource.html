@@ -1,5 +1,5 @@
-<form (submit)="onSubmit()" [formRoot]="resourceForm">
-  <mat-form-field appearance="outline">
+<form (submit)="onSubmit()" [formRoot]="resourceForm" style="width: 100%">
+  <mat-form-field appearance="outline" style="width: 100%">
     <mat-label>Title</mat-label>
     <input matInput placeholder="Enter title" [formField]="resourceForm.title" />
     @for (error of resourceForm.title().errors(); track error) {
@@ -75,6 +75,16 @@
       }
     </mat-autocomplete>
   </mat-form-field>
+
+  <div class="vertical-list">
+    @for (contact of resourceForm.contacts; let i = $index; track i) {
+      <div class="horizontal-list">
+        <mex-contact-list [formField]="contact" style="flex: 1"></mex-contact-list>
+        <button mat-button (click)="deleteContact(i)">x</button>
+      </div>
+    }
+    <button mat-button (click)="addContact()">Add Contact</button>
+  </div>
 
   <button matButton="filled" type="submit">Submit</button>
 </form>

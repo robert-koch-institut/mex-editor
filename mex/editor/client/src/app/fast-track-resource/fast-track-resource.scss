@@ -10,3 +10,13 @@ mat-form-field {
   width: 100%;
   max-width: 32rem;
 }
+
+.vertical-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.horizontal-list {
+  display: flex;
+  flex-direction: row;
+}

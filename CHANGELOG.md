@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fix search page styling
-
 ### Security
+
+## [3.0.1] - 2026-07-06
+
+### Fixed
+
+- fix search page styling
 
 ## [3.0.0] - 2026-07-01
 

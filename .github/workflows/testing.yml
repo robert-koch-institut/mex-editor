@@ -29,7 +29,7 @@ jobs:
       contents: read
     services:
       neo4j:
-        image: neo4j:2026.05-community@sha256:b91a6fa7b1d88eb0702847f53eaa4d07781a6d480b0c5a5bba413af5856e9604
+        image: neo4j:2026.05-community@sha256:6c162e2432f861f2c4e3da77a6ba478e7f10e2160b870541f85294532bc6ff5f
         env:
           NEO4J_AUTH: neo4j/password
         ports:
@@ -54,7 +54,7 @@ jobs:
           fetch-depth: 1
 
       - name: Cache requirements
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         env:
           cache-name: cache-requirements
         with:
@@ -64,7 +64,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Cache environment
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         env:
           cache-name: cache-environment
         with:
@@ -74,7 +74,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Cache playwright
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         env:
           cache-name: cache-playwright
         with:
@@ -84,7 +84,7 @@ jobs:
             ${{ env.cache-name }}-
 
       - name: Cache reflex
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         env:
           cache-name: cache-reflex
         with:

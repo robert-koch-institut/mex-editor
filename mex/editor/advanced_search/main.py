@@ -276,7 +276,7 @@ def index() -> rx.Component:
         rx.hstack(
             sidebar(),
             search_results(),
-            align="stretch",
-            style=rx.Style(flex="1"),
+            style=rx.Style(width="100%"),
+            custom_attrs={"data-testid": "search-body"},
         )
     )

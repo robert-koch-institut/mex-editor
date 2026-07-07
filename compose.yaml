@@ -20,7 +20,7 @@ services:
       - mex-editor-ng
 
   mex-backend:
-    image: ghcr.io/robert-koch-institut/mex-backend:1.8.0
+    image: ghcr.io/robert-koch-institut/mex-backend:4.0.1
     ports:
       - 8080:8080
     environment:
@@ -42,7 +42,7 @@ services:
         condition: service_healthy
 
   neo4j:
-    image: neo4j:2026.02-community
+    image: neo4j:2026.05-community
     environment:
       - NEO4J_AUTH=neo4j/password
     ports:
@@ -57,7 +57,7 @@ services:
       start_period: 10s
 
   valkey:
-    image: valkey/valkey:9.0.3
+    image: valkey/valkey:9.1.0
     ports:
       - 6379:6379
     volumes:

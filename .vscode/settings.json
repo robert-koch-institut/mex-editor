@@ -23,5 +23,8 @@
   "python.testing.pytestArgs": ["-s"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
-  "python.testing.pytestPath": "${workspaceFolder}/.venv/scripts/pytest"
+  "python.testing.pytestPath": "${workspaceFolder}/.venv/scripts/pytest",
+  "ruff.importStrategy": "useBundled",
+  "ruff.nativeServer": "on",
+  "mypy.runUsingActiveInterpreter": true
 }

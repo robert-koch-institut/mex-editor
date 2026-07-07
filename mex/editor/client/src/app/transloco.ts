@@ -1,6 +1,11 @@
-import { inject, Injectable, isDevMode, provideAppInitializer, /* Renderer2 */ } from "@angular/core";
-import type { Translation, TranslocoLoader, TranslocoTestingOptions } from "@jsverse/transloco";
-import { provideTransloco, TranslocoService, TranslocoTestingModule } from "@jsverse/transloco";
+import {
+  inject,
+  Injectable,
+  isDevMode,
+  provideAppInitializer /* Renderer2 */,
+} from "@angular/core";
+import type { Translation, TranslocoLoader } from "@jsverse/transloco";
+import { provideTransloco, TranslocoService } from "@jsverse/transloco";
 import { provideTranslocoLocale } from "@jsverse/transloco-locale";
 import { provideTranslocoMessageformat } from "@jsverse/transloco-messageformat";
 import { HttpClient } from "@angular/common/http";
@@ -24,7 +29,7 @@ class TranslocoHttpLoader implements TranslocoLoader {
 
   getTranslation(lang: string) {
     return combineLatest([
-      this.http.get<Translation>(`/i18n/model/${lang}.json`),
+      this.http.get<Translation>(`api/v0/i18n/${lang}`),
       this.http.get<Translation>(`/i18n/${lang}.json`),
     ]).pipe(map(([model, app]) => ({ ...model, ...app })));
   }
@@ -63,7 +68,7 @@ const translocoMessageformatProvider = provideTranslocoMessageformat();
 
 /**
  * Factory to create a transloco storage for {@link LANGUAGE_QUERY_PARAM} query param.
- * @returns transloco storage {@link https://jsverse.gitbook.io/transloco/plugins-and-extensions/persist-translations} for query param.
+ * @returns transloco storage {@link https://jsverse.gitbook.io/transloco/plugins-and-extensions/persist-lang} for query param.
  */
 function queryParamStorage() {
   const router = inject(Router);
@@ -88,12 +93,12 @@ function queryParamStorage() {
 
 /**
  * Factory to create a transloco storage for html language attribute.
- * @returns transloco storage {@link https://jsverse.gitbook.io/transloco/plugins-and-extensions/persist-translations} for html language attribute.
+ * @returns transloco storage {@link https://jsverse.gitbook.io/transloco/plugins-and-extensions/persist-lang} for html language attribute.
  */
 function htmlLangAttributeStorage() {
   return {
     getItem(_key: string): string | null {
-      return document.documentElement.getAttribute("lang")
+      return document.documentElement.getAttribute("lang");
     },
     setItem(_key: string, value: string): void {
       document.documentElement.setAttribute("lang", value);
@@ -113,15 +118,17 @@ function mexEditorTranslocoStorage() {
   const htmlStorage = htmlLangAttributeStorage();
   return {
     getItem(_key: string): string | null {
-      return queryStorage.getItem(_key);
+      return queryStorage.getItem(_key) ?? localStorage.getItem(_key);
     },
     setItem(_key: string, value: string): void {
       htmlStorage.setItem(_key, value);
       queryStorage.setItem(_key, value);
+      localStorage.setItem(_key, value);
     },
     removeItem(_key: string): void {
       htmlStorage.removeItem(_key);
       queryStorage.removeItem(_key);
+      localStorage.removeItem(_key);
     },
   };
 }
@@ -132,12 +139,12 @@ function mexEditorTranslocoStorage() {
  * @param param0 transloco default language.
  * @returns The determined default language for transloco.
  */
-export function getLangFn({ defaultLang }: GetLangParams) {
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlLang = urlParams.get(LANGUAGE_QUERY_PARAM);
+export function getLangFn({ cachedLang, defaultLang }: GetLangParams) {
+  // const urlParams = new URLSearchParams(window.location.search);
+  // const urlLang = urlParams.get(LANGUAGE_QUERY_PARAM);
 
   // Return URL language if present, otherwise default
-  return urlLang || defaultLang;
+  return cachedLang || defaultLang;
 }
 
 /**
@@ -147,6 +154,7 @@ export function getLangFn({ defaultLang }: GetLangParams) {
 const translocoPersistLangProvider = provideTranslocoPersistLang({
   getLangFn,
   storage: { useFactory: mexEditorTranslocoStorage },
+  storageKey: "mex_editor_language",
 });
 
 /**
@@ -190,34 +198,3 @@ export const translocoProviders = [
   translocoPersistLangProvider,
   queryParamSyncProvider,
 ];
-
-/* eslint-disable @typescript-eslint/naming-convention */
-const de = {
-  "test.headline": "Titelzeile",
-  "test.icuMessageFormat": "{count, plural, one {EINER} other {VIELE}}",
-};
-
-const en = {
-  "test.headline": "Headline",
-  "test.icuMessageFormat": "{count, plural, one {ONE} other {MANY}}",
-};
-/* eslint-enable @typescript-eslint/naming-convention */
-
-/**
- * Creates the transloco testing module include all necessary providers.
- * @param options addition option for testing purposes.
- * @returns transloco testing module including all necessary providers.
- */
-export function getTranslocoTestingModule(options: TranslocoTestingOptions = {}) {
-  const testModule = TranslocoTestingModule.forRoot({
-    langs: { de, en },
-    translocoConfig,
-    preloadLangs: true,
-    ...options,
-  });
-  testModule.providers?.push(translocoLocaleProvider);
-  testModule.providers?.push(translocoMessageformatProvider);
-  testModule.providers?.push(translocoPersistLangProvider);
-  testModule.providers?.push(queryParamSyncProvider);
-  return testModule;
-}

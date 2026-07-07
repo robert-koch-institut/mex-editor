@@ -1,15 +1,10 @@
-import json
 import os
 import subprocess
 import sys
 from contextlib import contextmanager
-from importlib.resources import files
 from pathlib import Path
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
-import polib
-
-from mex.common.logging import logger
 from mex.editor.settings import EditorSettings
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -146,52 +141,3 @@ def install_and_build() -> None:
     """Install dependencies and build the angular frontend."""
     install()
     build()
-
-
-def convert_model_po_to_json() -> None:
-    """Convert .po files to .json files."""
-    languages = ["de", "en"]
-
-    model_locale_path = cast("Path", (files("mex.model") / "i18n"))
-    target_dir = CLIENT / "public" / "i18n"
-
-    for lang in languages:
-        json_file = target_dir / f"model/{lang}.json"
-        logger.info(f"Starting to convert {lang}.po to {json_file}...")
-        po = polib.pofile(model_locale_path / f"{lang}.po")
-
-        messages = {}
-        for entry in po:
-            if not entry.msgid:
-                logger.warning(f"⚠️ Skipping entry with empty msgid in {lang}.po")
-                continue
-
-            if entry.msgid_plural:
-                icu_msg = f"{{count, plural, one {{{entry.msgstr_plural[0]}}} other {{{entry.msgstr_plural[1]}}}}}"  # noqa: E501
-                key = (
-                    entry.msgid_plural.replace(".plural", "")
-                    if not entry.msgctxt
-                    else f"{entry.msgctxt}.{entry.msgid_plural.replace('.plural', '')}"
-                )
-
-                if key in messages:
-                    logger.warning(f"⚠️ Duplicate key {key} in {lang}.po")
-
-                messages[key] = icu_msg
-            else:
-                key = (
-                    entry.msgid.replace(".singular", "")
-                    if not entry.msgctxt
-                    else f"{entry.msgctxt}.{entry.msgid.replace('.singular', '')}"
-                )
-
-                if key in messages:
-                    logger.warning(f"⚠️ Duplicate key {key} in {lang}.po")
-
-                messages[key] = entry.msgstr
-
-        Path.mkdir(json_file.parent, exist_ok=True, parents=True)
-        with Path.open(json_file, "w", encoding="utf-8") as f:
-            json.dump(messages, f, ensure_ascii=False, indent=2, sort_keys=True)
-
-        logger.info(f"✅ JSON for '{lang}' saved to {json_file}")

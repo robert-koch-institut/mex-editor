@@ -13,7 +13,7 @@ function isProbablyCode(text) {
     const ast = parse(trimmed, { errorOnUnknownASTType: false, loc: false, range: false });
     return ast.body.length > 0;
   } catch {
-    // Unable to pase to code -> normal comment
+    // Unable to parse to code -> normal comment
     return false;
   }
 }

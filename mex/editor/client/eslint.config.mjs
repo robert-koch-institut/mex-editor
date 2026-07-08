@@ -6,11 +6,10 @@ import angular from "angular-eslint";
 import security from "eslint-plugin-security";
 import noCommentedOutCode from "./eslint-rules/no-commented-out-code.mjs";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
-import jsdoc from "eslint-plugin-jsdoc";
-
-// export default
+import typedocPlugin from "eslint-plugin-typedoc";
 
 const config = defineConfig([
+  typedocPlugin.configs.recommended,
   {
     files: ["**/*.ts"],
     extends: [
@@ -35,6 +34,8 @@ const config = defineConfig([
     rules: {
       "prettier/prettier": ["error", { endOfLine: "auto" }],
       "local/no-commented-out-code": "warn",
+      // // TODO(FE): remove/change when eslit-angular got an update @see {@link https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-on-push-component-change-detection.md#rationale}
+      // "@angular-eslint/prefer-on-push-component-change-detection": ["warn"],
       "@angular-eslint/directive-selector": [
         "error",
         {
@@ -116,9 +117,4 @@ const config = defineConfig([
   },
 ]);
 
-export default [
-  jsdoc.configs['flat/contents-typescript-error'],
-  jsdoc.configs['flat/logical-typescript-error'],
-  jsdoc.configs['flat/stylistic-typescript-error'],
-  ...config
-];
+export default config;

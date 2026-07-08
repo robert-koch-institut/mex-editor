@@ -24,16 +24,15 @@ from mex.common.models import (
 from mex.common.models.organization import MergedOrganization
 from mex.common.models.person import MergedPerson
 from mex.common.transform import ensure_prefix
+from tests.conftest import PageLoader
 
 
 @pytest.fixture
 def advanced_search_page(
-    base_url: str,
-    writer_user_page: Page,
+    reader_user_page: PageLoader,
     load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
-    page = writer_user_page
-    page.goto(f"{base_url}/advanced-search")
+    page = reader_user_page("/advanced-search")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
     return page

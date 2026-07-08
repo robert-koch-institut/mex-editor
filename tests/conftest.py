@@ -1,6 +1,7 @@
 import logging
 import re
-from collections.abc import Generator
+from collections.abc import Callable
+from functools import partial
 from re import Pattern
 from typing import Any, cast
 from urllib.parse import urlsplit
@@ -11,7 +12,9 @@ from playwright.sync_api import Page, expect
 from pydantic import SecretStr
 from pytest import LogCaptureFixture
 
-from mex.artificial.helpers import generate_artificial_extracted_items
+from mex.artificial.helpers import (
+    create_artificial_extracted_items,
+)
 from mex.common.backend_api.connector import (
     BackendApiConnector,
     LDAPBackendApiConnector,
@@ -47,6 +50,8 @@ from mex.editor.settings import EditorSettings
 from mex.editor.types import EditorUserDatabase, EditorUserPassword
 
 pytest_plugins = ("mex.common.testing.plugin",)
+
+PageLoader = Callable[[str], Page]
 
 
 @pytest.fixture(scope="session")
@@ -94,6 +99,14 @@ def settings(
 
 
 @pytest.fixture
+def reader_user_credentials(settings: EditorSettings) -> tuple[str, SecretStr]:
+    for username, password in settings.editor_user_database["read"].items():
+        return username, password
+    msg = "No reader configured"  # pragma: no cover
+    raise RuntimeError(msg)  # pragma: no cover
+
+
+@pytest.fixture
 def writer_user_credentials(settings: EditorSettings) -> tuple[str, SecretStr]:
     for username, password in settings.editor_user_database["write"].items():
         return username, password
@@ -101,24 +114,35 @@ def writer_user_credentials(settings: EditorSettings) -> tuple[str, SecretStr]:
     raise RuntimeError(msg)  # pragma: no cover
 
 
-def login_user(base_url: str, page: Page, username: str, password: SecretStr) -> Page:
-    page.goto(base_url)
-    page.get_by_test_id("input-username").fill(username)
-    page.get_by_test_id("input-password").fill(password.get_secret_value())
+def _prepare_page(
+    page: Page,
+    base_url: str,
+    credentials: tuple[str, SecretStr],
+    path: str,
+) -> Page:
+    page.goto(f"{base_url}/{path}")
+    page.get_by_test_id("input-username").fill(credentials[0])
+    page.get_by_test_id("input-password").fill(credentials[1].get_secret_value())
     page.get_by_test_id("login-button").click()
+    expect(page.get_by_test_id("nav-bar")).to_be_visible()
+    page.set_default_navigation_timeout(50_000)
+    page.set_default_timeout(30_000)
+    expect.set_options(timeout=30_000)
     return page
 
 
 @pytest.fixture
 def writer_user_page(
     page: Page, writer_user_credentials: tuple[str, SecretStr], base_url: str
-) -> Page:
-    login_user(base_url, page, *writer_user_credentials)
-    expect(page.get_by_test_id("nav-bar")).to_be_visible()
-    page.set_default_navigation_timeout(50_000)
-    page.set_default_timeout(35_000)
-    expect.set_options(timeout=35_000)
-    return page
+) -> PageLoader:
+    return partial(_prepare_page, page, base_url, writer_user_credentials)
+
+
+@pytest.fixture
+def reader_user_page(
+    page: Page, reader_user_credentials: tuple[str, SecretStr], base_url: str
+) -> PageLoader:
+    return partial(_prepare_page, page, base_url, reader_user_credentials)
 
 
 @pytest.fixture(autouse=True)
@@ -325,21 +349,18 @@ def extracted_activity(
 
 
 @pytest.fixture
-def artificial_extracted_items() -> Generator[AnyExtractedModel]:
-    return generate_artificial_extracted_items(
-        locale="de_DE",
-        seed=42,
-        chattiness=16,
-        stem_types=list(EXTRACTED_MODEL_CLASSES_BY_NAME),
-    )
-
-
-@pytest.fixture
 def load_artificial_extracted_items(
     artificial_extracted_items: list[AnyExtractedModel],
 ) -> list[AnyExtractedModel]:
     """Ingest artificial data into the graph."""
     connector = BackendApiConnector.get()
+    artificial_extracted_items = create_artificial_extracted_items(
+        locale="de_DE",
+        seed=42,
+        chattiness=16,
+        stem_types=list(EXTRACTED_MODEL_CLASSES_BY_NAME),
+        count=1000,
+    )
     connector.ingest(artificial_extracted_items)
     return artificial_extracted_items
 

@@ -8,18 +8,25 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
 )
-from tests.conftest import build_pagination_regex, build_ui_label_regex
+from tests.conftest import PageLoader, build_pagination_regex, build_ui_label_regex
+
+
+@pytest.fixture
+def search_page(
+    reader_user_page: PageLoader,
+) -> Page:
+    page = reader_user_page("")
+    page_body = page.get_by_test_id("page-body")
+    expect(page_body).to_be_visible()
+    return page
 
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-def test_index(
-    base_url: str, writer_user_page: Page, extracted_activity: ExtractedActivity
-) -> None:
-    page = writer_user_page
+def test_index(search_page: Page, extracted_activity: ExtractedActivity) -> None:
+    page = search_page
 
     # load page and establish section is visible
-    page.goto(base_url)
     component = page.get_by_test_id("search-results-component")
     expect(component).to_be_visible()
     page.screenshot(path="tests_search_test_main-test_index-on-load.png")
@@ -44,12 +51,8 @@ def test_index(
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_pagination_dummy_data")
-def test_pagination(
-    base_url: str,
-    writer_user_page: Page,
-) -> None:
-    page = writer_user_page
-    page.goto(base_url)
+def test_pagination(search_page: Page) -> None:
+    page = search_page
 
     pagination_previous = page.get_by_test_id("pagination-previous-button")
     pagination_next = page.get_by_test_id("pagination-next-button")
@@ -87,9 +90,8 @@ def test_pagination(
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-def test_search_input(base_url: str, writer_user_page: Page) -> None:
-    page = writer_user_page
-    page.goto(base_url)
+def test_search_input(search_page: Page) -> None:
+    page = search_page
 
     # check sidebar is showing
     sidebar = page.get_by_test_id("search-sidebar")
@@ -125,12 +127,8 @@ def test_search_input(base_url: str, writer_user_page: Page) -> None:
 
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
-def test_entity_types(
-    base_url: str,
-    writer_user_page: Page,
-) -> None:
-    page = writer_user_page
-    page.goto(base_url)
+def test_entity_types(search_page: Page) -> None:
+    page = search_page
 
     # check sidebar is showing
     sidebar = page.get_by_test_id("search-sidebar")
@@ -150,12 +148,10 @@ def test_entity_types(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_had_primary_sources(
-    base_url: str,
-    writer_user_page: Page,
+    search_page: Page,
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
-    page = writer_user_page
-    page.goto(base_url)
+    page = search_page
 
     extracted_primary_source_one = dummy_data_by_identifier_in_primary_source["ps-1"]
     assert isinstance(extracted_primary_source_one, ExtractedPrimarySource)
@@ -192,11 +188,12 @@ def test_had_primary_sources(
 @pytest.mark.usefixtures("load_dummy_data")
 def test_load_search_params(
     base_url: str,
-    writer_user_page: Page,
+    search_page: Page,
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
-    page = writer_user_page
+    page = search_page
     expected_model = dummy_data_by_identifier_in_primary_source["cp-2"]
+
     page.goto(
         f"{base_url}?q=help&page=1&entityType=ContactPoint&entityType=Consent"
         f"&hadPrimarySource={expected_model.hadPrimarySource}&referenceFilterStrategy=had_primary_source"
@@ -227,13 +224,8 @@ def test_load_search_params(
 
 
 @pytest.mark.integration
-def test_reference_filter_fields_for_entity_type(
-    base_url: str,
-    writer_user_page: Page,
-) -> None:
-    page = writer_user_page
-    page.goto(base_url)
-    page.wait_for_selector("[data-testid='page-body']")
+def test_reference_filter_fields_for_entity_type(search_page: Page) -> None:
+    page = search_page
 
     hps_tab = page.get_by_test_id("reference-filter-strategy-had-primary-source-tab")
     hps_tab.click()
@@ -296,11 +288,11 @@ def test_reference_filter_fields_for_entity_type(
 )
 @pytest.mark.integration
 def test_reference_filter_field_translation(
-    base_url: str, writer_user_page: Page, locale_id: str, expected_items: list[str]
+    search_page: Page,
+    locale_id: str,
+    expected_items: list[str],
 ) -> None:
-    page = writer_user_page
-    page.goto(base_url)
-    page.wait_for_selector("[data-testid='page-body']")
+    page = search_page
 
     # switch language to specified locale
     lang_switcher = page.get_by_test_id("language-switcher")
@@ -316,12 +308,10 @@ def test_reference_filter_field_translation(
 @pytest.mark.integration
 @pytest.mark.usefixtures("load_dummy_data")
 def test_reference_filter(
-    base_url: str,
-    writer_user_page: Page,
+    search_page: Page,
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
-    page = writer_user_page
-    page.goto(base_url)
+    page = search_page
 
     contact = dummy_data_by_identifier_in_primary_source["cp-1"]
 
@@ -356,10 +346,11 @@ def test_reference_filter(
 @pytest.mark.usefixtures("load_dummy_data")
 def test_push_search_params(
     base_url: str,
-    writer_user_page: Page,
+    search_page: Page,
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
-    page = writer_user_page
+    page = search_page
+
     primary_source = dummy_data_by_identifier_in_primary_source["ps-1"]
     assert type(primary_source) is ExtractedPrimarySource
 
@@ -449,11 +440,11 @@ def test_push_search_params(
 @pytest.mark.usefixtures("load_dummy_data")
 def test_additional_titles_badge(
     base_url: str,
-    writer_user_page: Page,
+    search_page: Page,
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
 ) -> None:
     # search for resources
-    page = writer_user_page
+    page = search_page
     page.goto(f"{base_url}?entityType=Resource")
 
     resource_r2 = dummy_data_by_identifier_in_primary_source["r-2"]

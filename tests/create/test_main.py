@@ -10,19 +10,17 @@ from mex.common.models import (
     MEX_EDITOR_PRIMARY_SOURCE_STABLE_TARGET_ID,
     AnyExtractedModel,
 )
-from tests.conftest import build_ui_label_regex
+from tests.conftest import PageLoader, build_ui_label_regex
 
 url_regex = re.compile(r"/create/(\w+)")
 
 
 @pytest.fixture
 def create_page(
-    base_url: str,
-    writer_user_page: Page,
+    writer_user_page: PageLoader,
     load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
-    page = writer_user_page
-    page.goto(f"{base_url}/create")
+    page = writer_user_page("create")
     expect(page).to_have_url(url_regex)
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()

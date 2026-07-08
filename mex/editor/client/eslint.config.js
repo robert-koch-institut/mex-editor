@@ -29,8 +29,6 @@ const config = defineConfig([
     languageOptions: {
       parserOptions: {
         projectService: true,
-        // @ts-ignore
-        // tsconfigRootDir: __dirname,
       },
     },
     processor: angular.processInlineTemplates,

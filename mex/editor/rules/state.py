@@ -36,11 +36,11 @@ from mex.editor.rules.models import (
     ValidationMessage,
 )
 from mex.editor.rules.transform import (
-    tranform_workflow_to_publish_targets,
     transform_fields_to_rule_set,
     transform_models_to_fields,
     transform_publish_targets_to_workflow,
     transform_validation_error_to_messages,
+    transform_workflow_to_publish_targets,
 )
 from mex.editor.state import State
 from mex.editor.transform import (
@@ -85,7 +85,7 @@ class RuleState(State, LocalStorageMixinState):
     @rx.var
     def publish_targets(self) -> list[PublishTarget]:
         """Get a list of publish targets with enable state."""
-        return tranform_workflow_to_publish_targets(self.workflow_rule)
+        return transform_workflow_to_publish_targets(self.workflow_rule)
 
     @rx.event
     def update_local_state(self) -> None:

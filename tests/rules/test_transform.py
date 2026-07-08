@@ -68,11 +68,11 @@ from mex.editor.rules.transform import (
     _transform_model_to_input_config,
     _transform_model_values_to_editor_values,
     get_required_mergeable_field_names,
-    tranform_workflow_to_publish_targets,
     transform_fields_to_rule_set,
     transform_models_to_fields,
     transform_publish_targets_to_workflow,
     transform_validation_error_to_messages,
+    transform_workflow_to_publish_targets,
 )
 
 
@@ -1197,7 +1197,7 @@ def test_get_required_field_names(
 def test_workflow_to_publish_targets_and_vice_versa(
     workflow: AnyWorkflowModel | None, stem_type: str, targets: list[PublishTarget]
 ) -> None:
-    assert tranform_workflow_to_publish_targets(workflow) == targets
+    assert transform_workflow_to_publish_targets(workflow) == targets
     assert transform_publish_targets_to_workflow(stem_type, targets) == workflow
 
 
@@ -1210,4 +1210,4 @@ def test_no_workflow_to_all_publish_targets_enabled() -> None:
         )
         for target in PublishingTarget
     ]
-    assert tranform_workflow_to_publish_targets(None) == expected_targets
+    assert transform_workflow_to_publish_targets(None) == expected_targets

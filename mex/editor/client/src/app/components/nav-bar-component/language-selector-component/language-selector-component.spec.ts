@@ -2,7 +2,7 @@ import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
 
 import { LanguageSelectorComponent } from "./language-selector-component";
-import { getTranslocoTestingModule, translocoConfig } from "../../../transloco";
+import { translocoConfig } from "../../../transloco";
 import { TranslocoService } from "@jsverse/transloco";
 
 describe("LanguageSelectorComponent", () => {
@@ -11,7 +11,7 @@ describe("LanguageSelectorComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LanguageSelectorComponent, getTranslocoTestingModule()],
+      imports: [LanguageSelectorComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LanguageSelectorComponent);
@@ -36,7 +36,7 @@ describe("LanguageSelectorComponent", () => {
 
     const transloco = TestBed.inject(TranslocoService);
     transloco.setActiveLang("en");
-    fixture.detectChanges()
+    fixture.detectChanges();
 
     expectCurrentLanguageLabelRendersCorrectly();
   });

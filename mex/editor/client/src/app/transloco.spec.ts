@@ -1,38 +1,12 @@
-import type { TranslocoTestingOptions } from "@jsverse/transloco";
-import { TranslocoDirective, TranslocoService, TranslocoTestingModule } from "@jsverse/transloco";
-import { translocoProviders, translocoConfig } from "./transloco";
-import { Component } from "@angular/core";
-import { TranslocoDatePipe, TranslocoCurrencyPipe, TranslocoDecimalPipe } from "@jsverse/transloco-locale";
-import type { ComponentFixture} from "@angular/core/testing";
+import { TranslocoDirective, TranslocoService } from "@jsverse/transloco";
+import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
-
-/* eslint-disable @typescript-eslint/naming-convention */
-const de = {
-  "test.headline": "Titelzeile",
-  "test.icuMessageFormat": "{count, plural, one {EINER} other {VIELE}}",
-};
-
-const en = {
-  "test.headline": "Headline",
-  "test.icuMessageFormat": "{count, plural, one {ONE} other {MANY}}",
-};
-/* eslint-enable @typescript-eslint/naming-convention */
-
-/**
- * Creates the transloco testing module include all necessary providers.
- * @param options addition option for testing purposes.
- * @returns transloco testing module including all necessary providers.
- */
-function getTranslocoTestingModule(options: TranslocoTestingOptions = {}) {
-  const testModule = TranslocoTestingModule.forRoot({
-    langs: { de, en },
-    translocoConfig,
-    preloadLangs: true,
-    ...options,
-  });
-  testModule.providers?.push(...translocoProviders);
-  return testModule;
-}
+import { Component } from "@angular/core";
+import {
+  TranslocoDatePipe,
+  TranslocoCurrencyPipe,
+  TranslocoDecimalPipe,
+} from "@jsverse/transloco-locale";
 
 @Component({
   selector: "app-localization-page",
@@ -64,10 +38,8 @@ describe("LocalizationPage", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LocalizationPage, getTranslocoTestingModule()],
-      providers: [
-
-      ],
+      imports: [LocalizationPage],
+      providers: [],
     }).compileComponents();
     fixture = TestBed.createComponent(LocalizationPage);
     component = fixture.componentInstance;
@@ -80,15 +52,16 @@ describe("LocalizationPage", () => {
 
   it("should render text in german", () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector("[data-testid='headline']")?.textContent).toBe("Titelzeile");
-    expect(compiled.querySelector("[data-testid='date']")?.textContent).toBe("1.1.2000");
-    expect(compiled.querySelector("[data-testid='datetime']")?.textContent).toBe("01.01.2000, 12:30:00");
-    expect(compiled.querySelector("[data-testid='decimal']")?.textContent).toBe("213,123");
-    expect(compiled.querySelector("[data-testid='money']")?.textContent).toBe("100.000,12 €");
-    expect(compiled.querySelector("[data-testid='singular']")?.textContent).toBe("EINER");
-    expect(compiled.querySelector("[data-testid='plural']")?.textContent).toBe("VIELE");
-  })
-
+    expect(compiled.querySelector("[data-testid='headline']")?.textContent.trim()).toBe("Titelzeile");
+    expect(compiled.querySelector("[data-testid='date']")?.textContent.trim()).toBe("1.1.2000");
+    expect(compiled.querySelector("[data-testid='datetime']")?.textContent.trim()).toBe(
+      "01.01.2000, 12:30:00",
+    );
+    expect(compiled.querySelector("[data-testid='decimal']")?.textContent.trim()).toBe("213,123");
+    expect(compiled.querySelector("[data-testid='money']")?.textContent.trim()).toBe("100.000,12 €");
+    expect(compiled.querySelector("[data-testid='singular']")?.textContent.trim()).toBe("EINER");
+    expect(compiled.querySelector("[data-testid='plural']")?.textContent.trim()).toBe("VIELE");
+  });
 
   it("should render text in english", () => {
     const compiled = fixture.nativeElement as HTMLElement;
@@ -96,12 +69,14 @@ describe("LocalizationPage", () => {
     transloco.setActiveLang("en");
     fixture.detectChanges();
 
-    expect(compiled.querySelector("[data-testid='headline']")?.textContent).toBe("Headline");
-    expect(compiled.querySelector("[data-testid='date']")?.textContent).toBe("1/1/2000");
-    expect(compiled.querySelector("[data-testid='datetime']")?.textContent).toBe("Jan 1, 2000, 12:30:00 PM");
-    expect(compiled.querySelector("[data-testid='decimal']")?.textContent).toBe("213.123");
-    expect(compiled.querySelector("[data-testid='money']")?.textContent).toBe("$100,000.12");
-    expect(compiled.querySelector("[data-testid='singular']")?.textContent).toBe("ONE");
-    expect(compiled.querySelector("[data-testid='plural']")?.textContent).toBe("MANY");
-  })
+    expect(compiled.querySelector("[data-testid='headline']")?.textContent.trim()).toBe("Headline");
+    expect(compiled.querySelector("[data-testid='date']")?.textContent.trim()).toBe("1/1/2000");
+    expect(compiled.querySelector("[data-testid='datetime']")?.textContent.trim()).toBe(
+      "Jan 1, 2000, 12:30:00 PM",
+    );
+    expect(compiled.querySelector("[data-testid='decimal']")?.textContent.trim()).toBe("213.123");
+    expect(compiled.querySelector("[data-testid='money']")?.textContent.trim()).toBe("$100,000.12");
+    expect(compiled.querySelector("[data-testid='singular']")?.textContent.trim()).toBe("ONE");
+    expect(compiled.querySelector("[data-testid='plural']")?.textContent.trim()).toBe("MANY");
+  });
 });

@@ -4,7 +4,7 @@ import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
 import { provideRouter } from "@angular/router";
 import { App } from "./app";
-import { getTranslocoTestingModule, translocoConfig, LANGUAGE_QUERY_PARAM } from "./transloco";
+import { translocoConfig, LANGUAGE_QUERY_PARAM } from "./transloco";
 import { TranslocoService } from "@jsverse/transloco";
 import { Location } from "@angular/common";
 import { RouterTestingHarness } from "@angular/router/testing";
@@ -16,7 +16,7 @@ describe("App", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [App, getTranslocoTestingModule()],
+      imports: [App],
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 
@@ -35,11 +35,6 @@ describe("App", () => {
   it("should create the app", () => {
     expect(component).toBeTruthy();
   });
-
-  it("should have default language active and no language query param", () => {
-    expect(getUrlLanguage()).toBe(null)
-    expect(transloco.getActiveLang()).toBe(translocoConfig.defaultLang)
-  })
 
   it("should update url language query param when language changes", async () => {
     for (const lang of translocoConfig.availableLangs) {

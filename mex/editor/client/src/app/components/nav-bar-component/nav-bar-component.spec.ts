@@ -7,7 +7,6 @@ import { routes } from "../../app.routes";
 import { RouterTestingHarness } from "@angular/router/testing";
 import { CreatePage } from "../../pages/create-page/create-page";
 import { StartPage } from "../../pages/start-page/start-page";
-import { getTranslocoTestingModule } from "../../transloco";
 
 describe("NavBarComponent", () => {
   let component: NavBarComponent;
@@ -15,7 +14,7 @@ describe("NavBarComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NavBarComponent, getTranslocoTestingModule()],
+      imports: [NavBarComponent],
       providers: [
         provideRouter(routes)
       ]
@@ -33,6 +32,7 @@ describe("NavBarComponent", () => {
   it("should add active class to links", async () => {
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl('/create/resource', CreatePage);
+
     let activeLinks = fixture.nativeElement.querySelectorAll(".link.active")
     expect(activeLinks.length).toBe(1);
 

@@ -1,7 +1,19 @@
 import reflex as rx
 
-from mex.editor.consent.state import ConsentState
 from mex.editor.layout import page as shared_page
+
+
+def consent_logo() -> rx.Component:
+    """Return the consent logo with icon and label."""
+    return rx.hstack(
+        rx.icon("shield-check", size=28),
+        rx.heading(
+            "MEx Consent",
+            weight="medium",
+            style=rx.Style(userSelect="none"),
+        ),
+        custom_attrs={"data-testid": "app-logo"},
+    )
 
 
 def page(*children: rx.Component) -> rx.Component:
@@ -9,5 +21,6 @@ def page(*children: rx.Component) -> rx.Component:
     return shared_page(
         *children,
         user_type="user_ldap",
-        nav_items_source=ConsentState.consent_nav_items_translated,  # type: ignore[arg-type]
+        nav_items_source=[],
+        logo_factory=consent_logo,
     )

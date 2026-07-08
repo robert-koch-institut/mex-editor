@@ -1,6 +1,9 @@
+from collections.abc import Callable
+
 import reflex as rx
 from reflex.event import EventType
 
+from mex.editor.consent.layout import consent_logo
 from mex.editor.layout import app_logo
 from mex.editor.login.state import LoginLdapState, LoginMExState, LoginState
 
@@ -60,13 +63,16 @@ def login_button() -> rx.Component:
     )
 
 
-def login_form(login_callback: EventType[()]) -> rx.Component:
+def login_form(
+    login_callback: EventType[()],
+    logo_factory: Callable[[], rx.Component] = app_logo,
+) -> rx.Component:
     """Return a login form."""
     return rx.center(
         rx.card(
             rx.vstack(
                 rx.hstack(
-                    app_logo(),
+                    logo_factory(),
                     rx.spacer(spacing="4"),
                     rx.button(
                         rx.icon("sun_moon"),
@@ -100,9 +106,9 @@ def login_form(login_callback: EventType[()]) -> rx.Component:
 
 def ldap_login() -> rx.Component:
     """Return the index for the login component."""
-    return login_form(LoginLdapState.login)
+    return login_form(LoginLdapState.login, consent_logo)
 
 
 def mex_login() -> rx.Component:
     """Return the index for the login component."""
-    return login_form(LoginMExState.login)
+    return login_form(LoginMExState.login, app_logo)

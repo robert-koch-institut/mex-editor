@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from typing import Literal, cast
 
 import reflex as rx
@@ -229,10 +230,26 @@ def app_logo() -> rx.Component:
 def nav_bar(
     nav_items_source: list[NavItem] | None = None,
     user_type: Literal["user_mex", "user_ldap"] = "user_mex",
+    logo_factory: Callable[[], rx.Component] = app_logo,
 ) -> rx.Component:
     """Return a navigation bar component."""
     nav_items_to_use = (
         nav_items_source if nav_items_source is not None else State.nav_items_translated
+    )
+    nav_items_section: rx.Component = (
+        rx.fragment()
+        if isinstance(nav_items_to_use, list) and not nav_items_to_use
+        else rx.cond(
+            nav_items_to_use,
+            rx.fragment(
+                rx.divider(orientation="vertical", size="2"),
+                rx.hstack(
+                    rx.foreach(nav_items_to_use, nav_link),
+                    justify="start",
+                    spacing="4",
+                ),
+            ),
+        )
     )
     return rx.vstack(
         rx.box(
@@ -244,13 +261,8 @@ def nav_bar(
         ),
         rx.card(
             rx.hstack(
-                app_logo(),
-                rx.divider(orientation="vertical", size="2"),
-                rx.hstack(
-                    rx.foreach(nav_items_to_use, nav_link),
-                    justify="start",
-                    spacing="4",
-                ),
+                logo_factory(),
+                nav_items_section,
                 rx.spacer(),
                 rx.hstack(
                     language_switcher(),
@@ -290,6 +302,7 @@ def page(
     *children: rx.Component,
     user_type: Literal["user_mex", "user_ldap"] = "user_mex",
     nav_items_source: list[NavItem] | None = None,
+    logo_factory: Callable[[], rx.Component] = app_logo,
 ) -> rx.Component:
     """Return a page fragment with navigation bar and given children.
 
@@ -297,9 +310,10 @@ def page(
         *children: Components to render in the page body
         user_type: State attribute to check for user login
         nav_items_source: Custom navigation items, if None uses default
+        logo_factory: Function that returns a logo component
     """
     user_check = getattr(State, user_type)
-    navbar_component = nav_bar(nav_items_source, user_type)
+    navbar_component = nav_bar(nav_items_source, user_type, logo_factory)
 
     page_content = [
         navbar_component,

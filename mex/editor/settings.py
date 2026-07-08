@@ -37,7 +37,7 @@ class EditorSettings(BaseSettings):
     editor_user_database: EditorUserDatabase = Field(
         EditorUserDatabase(),
         description="Database of users.",
-        validation_alias="MEX_EDITOR_USER_DATABASE",
+        validation_alias="MEX_BACKEND_API_USER_DATABASE",
     )
     editor_assets_dir: AssetsPath = Field(
         AssetsPath(""),

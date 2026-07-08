@@ -104,7 +104,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
         """Set the user reference type value."""
         self.user_reference_types = value
 
-    @rx.event(background=True)  # type: ignore[operator]
+    @rx.event(background=True)
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results:
@@ -142,7 +142,7 @@ class SearchReferenceDialogState(State, PaginationStateMixin):
             self.is_loading = False
             self.results = transform_models_to_search_results(response.items, True)  # noqa: FBT003
             yield SearchReferenceDialogState.set_total(response.total)  # type: ignore[operator]
-            yield SearchReferenceDialogState.resolve_identifiers()
+            yield SearchReferenceDialogState.resolve_identifiers()  # type: ignore[misc]
 
 
 def search_reference_dialog(

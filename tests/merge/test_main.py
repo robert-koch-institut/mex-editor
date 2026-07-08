@@ -6,15 +6,18 @@ from mex.common.models import (
     ExtractedContactPoint,
     ExtractedResource,
 )
-from tests.conftest import PageLoader, build_pagination_regex, build_ui_label_regex
+from tests.conftest import build_pagination_regex, build_ui_label_regex
 
 
 @pytest.fixture
-def merge_page(writer_user_page: PageLoader) -> Page:
-    page = writer_user_page("merge")
+def merge_page(
+    base_url: str,
+    writer_user_page: Page,
+) -> Page:
+    page = writer_user_page
+    page.goto(f"{base_url}/merge")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
-    page.screenshot(path="tests_merge_items_test_main-test_index-on-load.png")
     return page
 
 

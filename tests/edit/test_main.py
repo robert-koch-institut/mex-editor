@@ -33,16 +33,17 @@ from mex.common.types import (
     Theme,
 )
 from mex.editor.rules.transform import get_required_mergeable_field_names
-from tests.conftest import PageLoader
 
 
 @pytest.fixture
 def edit_page(
-    writer_user_page: PageLoader,
+    base_url: str,
+    writer_user_page: Page,
     extracted_activity: ExtractedActivity,
     load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
-    page = writer_user_page(f"item/{extracted_activity.stableTargetId}")
+    page = writer_user_page
+    page.goto(f"{base_url}/item/{extracted_activity.stableTargetId}")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
     return page
@@ -132,13 +133,13 @@ def load_delete_reset_data(
 @pytest.mark.integration
 def test_edit_page_delete_reset_button(
     base_url: str,
-    writer_user_page: PageLoader,
+    writer_user_page: Page,
     load_delete_reset_data: dict[Literal["delete", "reset"] | None, str],
 ) -> None:
-    page = writer_user_page(f"item/{load_delete_reset_data[None]}")
+    page = writer_user_page
 
-    def _navigate(identifier: str) -> None:
-        page.goto(f"{base_url}/item/{identifier}")
+    def _navigate(stable_id: str) -> None:
+        page.goto(f"{base_url}/item/{stable_id}")
         page_body = page.get_by_test_id("page-body")
         expect(page_body).to_be_visible()
 
@@ -426,15 +427,16 @@ def test_edit_page_switch_roundtrip(
     ],
 )
 def test_field_switches_behavior(
-    writer_user_page: PageLoader,
+    base_url: str,
+    writer_user_page: Page,
     dummy_data_by_identifier_in_primary_source: dict[str, AnyExtractedModel],
     field_name: str,
     switch_count: int,
 ) -> None:
+    page = writer_user_page
     item = dummy_data_by_identifier_in_primary_source["a-1"]
 
-    page = writer_user_page(f"item/{item.stableTargetId}")
-
+    page.goto(f"{base_url}/item/{item.stableTargetId}")
     expect(page.get_by_test_id("page-body")).to_be_visible()
 
     field = page.get_by_test_id(f"field-{field_name}")

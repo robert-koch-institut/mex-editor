@@ -136,7 +136,7 @@ class RuleState(State, LocalStorageMixinState):
             ]
         return []
 
-    @rx.event(background=True)  # type: ignore[operator]
+    @rx.event(background=True)
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for field in self.fields:

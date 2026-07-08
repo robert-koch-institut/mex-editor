@@ -3,12 +3,13 @@ from playwright.sync_api import Page, expect
 
 from mex.common.backend_api.connector import BackendApiConnector
 from mex.editor.ingest.models import ALL_AUX_PROVIDERS, AuxProviderKey
-from tests.conftest import PageLoader, build_pagination_regex, build_ui_label_regex
+from tests.conftest import build_pagination_regex, build_ui_label_regex
 
 
 @pytest.fixture
-def ingest_page(writer_user_page: PageLoader) -> Page:
-    page = writer_user_page("ingest")
+def ingest_page(base_url: str, writer_user_page: Page) -> Page:
+    page = writer_user_page
+    page.goto(f"{base_url}/ingest")
     section = page.get_by_test_id("aux-tab-section")
     expect(section).to_be_visible()
     return page

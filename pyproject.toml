@@ -24,7 +24,6 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ipdb>=0.13",
-    "mex-artificial>=3",
     "mypy>=1",
     "pytest-cov>=6",
     "pytest-playwright>=0.7",
@@ -72,8 +71,9 @@ addopts = [
     "--cov-branch",
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--capture=no", # https://github.com/pytest-dev/pytest/issues/2064#issuecomment-421812955
-    "--random-order-bucket=global",
+    "--random-order-bucket=module",
 ]
+console_output_style = "progress-even-when-capture-no"
 markers = [
     "integration: mark a test as integration test",
     "requires_rki_infrastructure: mark a test as requiring rki infrastructure"

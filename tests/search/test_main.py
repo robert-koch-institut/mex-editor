@@ -8,14 +8,16 @@ from mex.common.models import (
     ExtractedPrimarySource,
     ExtractedResource,
 )
-from tests.conftest import PageLoader, build_pagination_regex, build_ui_label_regex
+from tests.conftest import build_pagination_regex, build_ui_label_regex
 
 
 @pytest.fixture
 def search_page(
-    reader_user_page: PageLoader,
+    base_url: str,
+    reader_user_page: Page,
 ) -> Page:
-    page = reader_user_page("")
+    page = reader_user_page
+    page.goto(base_url)
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()
     return page

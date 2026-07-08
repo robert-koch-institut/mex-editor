@@ -12,9 +12,7 @@ from playwright.sync_api import Page, expect
 from pydantic import SecretStr
 from pytest import LogCaptureFixture
 
-from mex.artificial.helpers import (
-    create_artificial_extracted_items,
-)
+from mex.artificial.helpers import create_artificial_extracted_items
 from mex.common.backend_api.connector import (
     BackendApiConnector,
     LDAPBackendApiConnector,

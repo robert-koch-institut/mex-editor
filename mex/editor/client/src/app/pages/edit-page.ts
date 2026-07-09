@@ -1,8 +1,6 @@
 import { Component, inject } from "@angular/core";
 import type { OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import type { FormGroup } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
@@ -14,13 +12,15 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { type Project, type Mitarbeiter } from "../models/project.model";
 import { DummyDataService } from "../services/dummy-data.service";
+import { ProjectFormComponent } from "../components/project-form.component";
+import { projectToFormValue, selectedMitarbeiterFromIds, type ProjectFormValue } from "../models/project-form.model";
 
 @Component({
   selector: "app-edit-page",
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
+    ProjectFormComponent,
     MatCardModule,
     MatButtonModule,
     MatFormFieldModule,
@@ -34,71 +34,18 @@ import { DummyDataService } from "../services/dummy-data.service";
     <main class="main">
       <h1>Edit Project</h1>
       @if (project) {
-        <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="edit-form">
-          <mat-card>
-            <mat-card-title>{{ project.name }}</mat-card-title>
-            <mat-card-content>
-              <!-- Project Name -->
-              <mat-form-field appearance="outline" class="form-field">
-                <mat-label>Project Name</mat-label>
-                <input matInput formControlName="name" />
-                @if (projectForm.get('name')?.hasError('required')) {
-                  <mat-error>Project name is required</mat-error>
-                }
-              </mat-form-field>
-
-              <!-- Description -->
-              <mat-form-field appearance="outline" class="form-field">
-                <mat-label>Description</mat-label>
-                <textarea matInput formControlName="beschreibung" rows="4"></textarea>
-                @if (projectForm.get('beschreibung')?.hasError('required')) {
-                  <mat-error>Description is required</mat-error>
-                }
-              </mat-form-field>
-
-              <!-- Start Date -->
-              <mat-form-field appearance="outline" class="form-field">
-                <mat-label>Start Date</mat-label>
-                <input matInput [matDatepicker]="startPicker" formControlName="startdatum" />
-                <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
-                <mat-datepicker #startPicker></mat-datepicker>
-                @if (projectForm.get('startdatum')?.hasError('required')) {
-                  <mat-error>Start date is required</mat-error>
-                }
-              </mat-form-field>
-
-              <!-- End Date -->
-              <mat-form-field appearance="outline" class="form-field">
-                <mat-label>End Date</mat-label>
-                <input matInput [matDatepicker]="endPicker" formControlName="enddatum" />
-                <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
-                <mat-datepicker #endPicker></mat-datepicker>
-                @if (projectForm.get('enddatum')?.hasError('required')) {
-                  <mat-error>End date is required</mat-error>
-                }
-              </mat-form-field>
-
-              <!-- Employees Selection -->
-              <mat-form-field appearance="outline" class="form-field">
-                <mat-label>Employees</mat-label>
-                <mat-select formControlName="mitarbeiter" multiple>
-                  @for (emp of availableMitarbeiter; track emp.id) {
-                    <mat-option [value]="emp">
-                      {{ emp.vorname }} {{ emp.nachname }}
-                    </mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-            </mat-card-content>
-
-            <mat-card-actions align="end">
-              <button mat-button type="button" (click)="onCancel()">Cancel</button>
-              <button mat-flat-button color="primary" type="submit" [disabled]="projectForm.invalid">
-                Save Changes
-              </button>
-            </mat-card-actions>
-          </mat-card>
-        </form>
+        @if (projectFormValue) {
+          <app-project-form
+            title="Edit Project"
+            submitLabel="Save Changes"
+            secondaryLabel="Cancel"
+            secondaryAction="cancel"
+            [availableMitarbeiter]="availableMitarbeiter"
+            [initialValue]="projectFormValue"
+            (save)="onSubmit($event)"
+            (secondary)="onCancel()"
+          ></app-project-form>
+        }
       } @else {
         <p>Please select a project from the search tab to edit.</p>
       }
@@ -162,23 +109,12 @@ export class EditPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private dummyDataService = inject(DummyDataService);
-  private fb = inject(FormBuilder);
   private snackBar = inject(MatSnackBar);
 
-  projectForm: FormGroup;
   project: Project | undefined;
+  projectFormValue: ProjectFormValue | undefined;
   availableMitarbeiter: Mitarbeiter[] = [];
   projectId = "";
-
-  constructor() {
-    this.projectForm = this.fb.group({
-      name: ["", [Validators.required, Validators.minLength(3)]],
-      beschreibung: ["", [Validators.required, Validators.minLength(5)]],
-      startdatum: ["", Validators.required],
-      enddatum: ["", Validators.required],
-      mitarbeiter: [[]],
-    });
-  }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -186,43 +122,38 @@ export class EditPageComponent implements OnInit {
       this.project = this.dummyDataService.getProjectById(this.projectId);
 
       if (this.project) {
-        // Pre-populate form with project data
-        this.projectForm.patchValue({
-          name: this.project.name,
-          beschreibung: this.project.beschreibung,
-          startdatum: this.project.startdatum,
-          enddatum: this.project.enddatum,
-          mitarbeiter: this.project.mitarbeiter,
-        });
+        this.projectFormValue = projectToFormValue(this.project);
       }
     });
 
     this.availableMitarbeiter = this.dummyDataService.getAvailableMitarbeiter();
   }
 
-  onSubmit(): void {
-    if (this.projectForm.valid && this.project) {
-      const updatedProject: Project = {
-        ...this.project,
-        name: this.projectForm.get("name")?.value,
-        beschreibung: this.projectForm.get("beschreibung")?.value,
-        startdatum: new Date(this.projectForm.get("startdatum")?.value),
-        enddatum: new Date(this.projectForm.get("enddatum")?.value),
-        mitarbeiter: this.projectForm.get("mitarbeiter")?.value || [],
-      };
-
-      // Update project in dummy data service
-      this.dummyDataService.updateProject(updatedProject);
-
-      this.snackBar.open(`Project "${updatedProject.name}" updated successfully!`, "Close", {
-        duration: 3000,
-        horizontalPosition: "end",
-        verticalPosition: "top",
-      });
-
-      // Navigate back to project detail
-      this.router.navigate(["/projekte", this.projectId]);
+  onSubmit(formValue: ProjectFormValue): void {
+    if (!this.project) {
+      return;
     }
+
+    const updatedProject: Project = {
+      ...this.project,
+      name: formValue.name,
+      beschreibung: formValue.beschreibung,
+      startdatum: new Date(formValue.startdatum ?? new Date()),
+      enddatum: new Date(formValue.enddatum ?? new Date()),
+      mitarbeiter: selectedMitarbeiterFromIds(formValue.mitarbeiterIds, this.availableMitarbeiter),
+    };
+
+    // Update project in dummy data service
+    this.dummyDataService.updateProject(updatedProject);
+
+    this.snackBar.open(`Project "${updatedProject.name}" updated successfully!`, "Close", {
+      duration: 3000,
+      horizontalPosition: "end",
+      verticalPosition: "top",
+    });
+
+    // Navigate back to project detail
+    this.router.navigate(["/projekte", this.projectId]);
   }
 
   onCancel(): void {

@@ -91,6 +91,7 @@ def settings(
     return settings
 
 
+@pytest.fixture
 def reader_user_credentials(settings: EditorSettings) -> tuple[str, SecretStr]:
     for username, password in settings.editor_user_database["read"].items():
         return username, password
@@ -98,6 +99,7 @@ def reader_user_credentials(settings: EditorSettings) -> tuple[str, SecretStr]:
     raise RuntimeError(msg)  # pragma: no cover
 
 
+@pytest.fixture
 def writer_user_credentials(settings: EditorSettings) -> tuple[str, SecretStr]:
     for username, password in settings.editor_user_database["write"].items():
         return username, password

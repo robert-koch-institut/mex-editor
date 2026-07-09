@@ -453,14 +453,14 @@ def transform_validation_error_to_messages(
     return [
         ValidationMessage(
             field_name="→".join(str(loc) for loc in error["loc"][1:]),
-            message=error["msg"],
-            input=error["input"],
+            message=str(error["msg"]),
+            input=str(error["input"]),
         )
         for error in error.errors()
     ]
 
 
-def tranform_workflow_to_publish_targets(
+def transform_workflow_to_publish_targets(
     workflow: AnyWorkflowModel | None,
 ) -> list[PublishTarget]:
     """Transform workflow to publish targets."""

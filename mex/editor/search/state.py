@@ -281,7 +281,7 @@ class SearchState(State, PaginationStateMixin):
         """Scroll the page to the top."""
         yield rx.call_script("window.scrollTo({top: 0, behavior: 'smooth'});")
 
-    @rx.event(background=True)  # type: ignore[operator]
+    @rx.event(background=True)
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results:

@@ -125,7 +125,7 @@ class MergeState(State):
             )
             self.results_extracted = []
 
-    @rx.event(background=True)  # type: ignore[operator]
+    @rx.event(background=True)
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result_list in (self.results_merged, self.results_extracted):

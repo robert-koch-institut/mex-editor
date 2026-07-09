@@ -29,10 +29,10 @@ from mex.common.transform import ensure_prefix
 @pytest.fixture
 def advanced_search_page(
     base_url: str,
-    writer_user_page: Page,
+    reader_user_page: Page,
     load_dummy_data: None,  # noqa: ARG001
 ) -> Page:
-    page = writer_user_page
+    page = reader_user_page
     page.goto(f"{base_url}/advanced-search")
     page_body = page.get_by_test_id("page-body")
     expect(page_body).to_be_visible()

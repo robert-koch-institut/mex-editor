@@ -92,7 +92,7 @@ class IngestState(State, PaginationStateMixin):
         for provider in self.aux_providers:
             yield from provider.resolve_dynamic_name()
 
-    @rx.event(background=True)  # type: ignore[operator]
+    @rx.event(background=True)
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.results_transformed:
@@ -101,7 +101,7 @@ class IngestState(State, PaginationStateMixin):
                     async with self:
                         await resolve_editor_value(value)
 
-    @rx.event(background=True)  # type: ignore[operator]
+    @rx.event(background=True)
     async def flag_ingested_items(self) -> None:
         """Check and flag, if any result is already ingested into backend."""
         connector = BackendApiConnector.get()

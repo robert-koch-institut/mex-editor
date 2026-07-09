@@ -159,7 +159,7 @@ class AdvancedSearchState(State, PaginationStateMixin):
 
         self.is_searching = False
 
-    @rx.event(background=True)  # type: ignore[operator]
+    @rx.event(background=True)
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human readable display values."""
         for result in self.search_results:

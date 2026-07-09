@@ -10,28 +10,37 @@ def user_data() -> rx.Component:
     """Render the user data section with name and email."""
     return rx.cond(
         ConsentState.merged_login_person,
-        rx.vstack(
-            rx.text(
-                ConsentState.merged_login_person.full_name,  # type: ignore  [union-attr]
-                style=rx.Style(
-                    fontWeight="var(--font-weight-bold)",
-                    fontSize="var(--font-size-6)",
-                ),
+        rx.hstack(
+            rx.icon(
+                "circle-user",
+                size=64,
+                style=rx.Style(color="var(--accent-10)"),
             ),
-            rx.text(
-                ConsentState.merged_login_person.email,  # type: ignore [union-attr]
-                style=rx.Style(
-                    color="var(--gray-12)",
+            rx.vstack(
+                rx.text(
+                    ConsentState.merged_login_person.full_name,  # type: ignore  [union-attr]
+                    style=rx.Style(
+                        fontWeight="var(--font-weight-bold)",
+                        fontSize="var(--font-size-6)",
+                    ),
                 ),
-            ),
-            rx.text(
-                ConsentState.merged_login_person.orcid_id,  # type: ignore [union-attr]
-                style=rx.Style(
-                    color="var(--gray-12)",
+                rx.text(
+                    ConsentState.merged_login_person.email,  # type: ignore [union-attr]
+                    style=rx.Style(
+                        color="var(--gray-12)",
+                    ),
                 ),
+                rx.text(
+                    ConsentState.merged_login_person.orcid_id,  # type: ignore [union-attr]
+                    style=rx.Style(
+                        color="var(--gray-12)",
+                    ),
+                ),
+                spacing="0",
             ),
+            align="center",
+            spacing="4",
             style=rx.Style(
-                textAlign="center",
                 marginBottom="var(--space-4)",
             ),
             custom_attrs={"data-testid": "user-data"},
@@ -47,49 +56,42 @@ def consent_box() -> rx.Component:
     """Render the consent box with text and buttons."""
     return rx.card(
         rx.vstack(
-            rx.markdown(
-                ConsentState.consent_md,
-                style=rx.Style({"fontSize": "var(--font-size-2)"}),
-            ),
+            rx.markdown(ConsentState.consent_md),
+            consent_status(),
             rx.hstack(
                 rx.button(
                     ConsentState.label_consent_box_consent_button,
                     on_click=ConsentState.submit_rule_set("consent"),  # type: ignore[operator]
+                    disabled=ConsentState.is_consent_valid_for_processing,
                     custom_attrs={"data-testid": "accept-consent-button"},
                 ),
                 rx.spacer(),
                 rx.button(
                     ConsentState.label_consent_box_no_consent_button,
                     on_click=ConsentState.submit_rule_set("denial"),  # type: ignore[operator]
-                    disabled=ConsentState.is_consent_valid_for_processing,
+                    disabled=ConsentState.consent_status.bool(),  # type: ignore[union-attr]
                     custom_attrs={"data-testid": "denial-consent-button"},
                 ),
+                style=rx.Style(padding="var(--space-4) 0"),
             ),
             rx.cond(
                 ConsentState.is_consent_valid_for_processing,
                 rx.text(
                     ConsentState.label_consent_retraction_denial,
                     style=rx.Style(
-                        fontSize="var(--font-size-1)",
                         color="var(--gray-11)",
-                        marginTop="var(--space-2)",
-                        textAlign="center",
                     ),
                     custom_attrs={"data-testid": "consent-change-blocked-info"},
                 ),
-                rx.box(),
             ),
             style=rx.Style(
-                justifyContent="center",
                 display="flex",
                 width="100%",
-                align="center",
-                justify="center",
             ),
         ),
         style=rx.Style(
             backgroundColor="var(--accent-3)",
-            padding="16px",
+            padding="var(--space-4)",
         ),
         custom_attrs={"data-testid": "consent-box"},
     )
@@ -97,10 +99,10 @@ def consent_box() -> rx.Component:
 
 def consent_status() -> rx.Component:
     """Render the current consent status for the user."""
-    return rx.cond(
-        ConsentState.consent_status,
-        rx.vstack(
-            rx.text(ConsentState.merged_login_person.full_name, weight="bold"),  # type: ignore [union-attr]
+    return rx.hstack(
+        rx.text(f"{ConsentState.merged_login_person.full_name}:"),  # type: ignore[union-attr]
+        rx.cond(
+            ConsentState.consent_status,
             rx.cond(
                 ConsentState.is_consent_valid_for_processing,
                 rx.text(
@@ -112,18 +114,12 @@ def consent_status() -> rx.Component:
                     color_scheme="tomato",
                 ),
             ),
-            style=rx.Style(
-                width="100%",
-                align="center",
-                justify="center",
+            rx.text(
+                ConsentState.label_consent_status_no_consent,
+                color_scheme="gray",
             ),
-            custom_attrs={"data-testid": "consent-status"},
         ),
-        rx.text(
-            ConsentState.label_consent_status_no_consent,
-            custom_attrs={"data-testid": "consent-status"},
-            color_scheme="gray",
-        ),
+        custom_attrs={"data-testid": "consent-status"},
     )
 
 
@@ -144,7 +140,6 @@ def index() -> rx.Component:
                     width="100%",
                 ),
             ),
-            consent_status(),
             style=rx.Style(
                 width="100%",
                 align="center",

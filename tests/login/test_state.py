@@ -11,7 +11,7 @@ def test_login_state_login_success() -> None:
     state = LoginMExState(
         parent_state=LoginState(
             username="writer",
-            password="writer_pass",  # noqa: S106
+            password="write_pw",  # noqa: S106
             parent_state=State(target_path_after_login="/some-url/"),
         ),
     )  # type: ignore[call-arg]
@@ -49,7 +49,7 @@ def test_login_state_redirect_to_original_url() -> None:
     state = LoginMExState(
         parent_state=LoginState(
             username="writer",
-            password="writer_pass",  # noqa: S106
+            password="write_pw",  # noqa: S106
             parent_state=State(target_path_after_login="/some-url/"),
         ),
     )  # type: ignore[call-arg]

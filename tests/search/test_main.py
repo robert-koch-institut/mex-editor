@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from playwright.sync_api import Page, expect
 
@@ -320,7 +322,7 @@ def test_reference_filter(
     # open select
     page.get_by_test_id("reference-field-filter-field").click()
     # click concat option
-    page.get_by_role("option", name=r"(Kontakt|Contact)").click()
+    page.get_by_role("option", name=re.compile(r"Kontakt|Contact")).click()
     # add invalid field
     page.get_by_test_id("reference-field-filter-add-id").click()
     page.get_by_test_id("reference-field-filter-id-0").fill("invalidIdentifier!")

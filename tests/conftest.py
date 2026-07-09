@@ -1,5 +1,6 @@
 import logging
 import re
+from collections.abc import Generator
 from re import Pattern
 from typing import Any, cast
 from urllib.parse import urlsplit
@@ -125,18 +126,22 @@ def _prepare_page(
     return page
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def writer_user_page(
     browser: Browser, writer_user_credentials: tuple[str, SecretStr], base_url: str
-) -> Page:
-    return _prepare_page(browser, base_url, writer_user_credentials)
+) -> Generator[Page]:
+    page = _prepare_page(browser, base_url, writer_user_credentials)
+    yield page
+    page.close()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def reader_user_page(
     browser: Browser, reader_user_credentials: tuple[str, SecretStr], base_url: str
-) -> Page:
-    return _prepare_page(browser, base_url, reader_user_credentials)
+) -> Generator[Page]:
+    page = _prepare_page(browser, base_url, reader_user_credentials)
+    yield page
+    page.close()
 
 
 @pytest.fixture
@@ -258,8 +263,8 @@ def dummy_data_by_stable_target_id(
 
 @pytest.fixture
 def load_dummy_data(
-    dummy_data: list[AnyExtractedModel],
     flush_graph_database: None,  # noqa: ARG001
+    dummy_data: list[AnyExtractedModel],
 ) -> None:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
@@ -268,8 +273,8 @@ def load_dummy_data(
 
 @pytest.fixture
 def load_pagination_dummy_data(
-    dummy_data: list[AnyExtractedModel],
     flush_graph_database: None,  # noqa: ARG001
+    dummy_data: list[AnyExtractedModel],
     request: pytest.FixtureRequest,
 ) -> None:
     """Ingest dummy data into the backend with dynamic model types based on test context."""

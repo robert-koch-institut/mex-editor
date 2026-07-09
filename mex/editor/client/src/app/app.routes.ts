@@ -4,6 +4,7 @@ import { SearchPageComponent } from "./pages/search-page";
 import { EditPageComponent } from "./pages/edit-page";
 import { ProjectDetailComponent } from "./pages/project-detail";
 import { MitarbeiterDetailComponent } from "./pages/mitarbeiter-detail";
+import { authGuard } from "./auth-guard";
 
 export const routes: Routes = [
   {
@@ -18,14 +19,17 @@ export const routes: Routes = [
   {
     path: "create",
     component: CreatePageComponent,
+    canActivate: [authGuard],
   },
   {
     path: "edit",
     component: EditPageComponent,
+    canActivate: [authGuard],
   },
   {
     path: "edit/:id",
     component: EditPageComponent,
+    canActivate: [authGuard],
   },
   {
     path: "projekte/:id",

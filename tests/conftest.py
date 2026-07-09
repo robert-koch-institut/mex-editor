@@ -142,7 +142,7 @@ def reader_user_page(
     page.close()
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def flush_graph_database(is_integration_test: bool) -> None:  # noqa: FBT001
     """Flush the graph database before every integration test."""
     if is_integration_test:

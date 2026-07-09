@@ -95,7 +95,7 @@ class ConsentCategoryList(rx.ComponentState, PaginationStateMixin):
         self.set_total(total)  # type:ignore[operator]
         self.items = transformed_results
 
-    @rx.event(background=True)  # type: ignore[operator]
+    @rx.event(background=True)
     async def resolve_identifiers(self) -> None:
         """Resolve identifiers to human-readable display values."""
         for result in self.items:

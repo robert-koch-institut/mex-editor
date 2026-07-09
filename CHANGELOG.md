@@ -11,19 +11,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- BREAKING: use MEX_EDITOR_USER_DATABASE instead of MEX_BACKEND_API_USER_DATABASE
-- polish styling of consent page and ldap login page
-- test search pages with appropriate reader user permissions
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
-- disable buttons on consent page when clicking would have no effect
-
 ### Security
+
+## [3.1.0] - 2026-07-09
+
+### Changes
+
+- BREAKING: use MEX_EDITOR_USER_DATABASE instead of MEX_BACKEND_API_USER_DATABASE
+- polish styling of consent page and ldap login page
+- test search pages with appropriate reader user permissions
+
+### Fixed
+
+- disable buttons on consent page when clicking would have no effect
 
 ## [3.0.1] - 2026-07-06
 

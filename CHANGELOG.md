@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial Layout with header (including theme switcher and language switcher with noop) and footer
 - vitest/ui for better dev experience
 - renovate rule for angular
+- more linting rules
+  - no commented out code
+  - no unused imports in component (checked against template)
+  - exported members must be documented
 
 ### Changes
 

@@ -34,8 +34,6 @@ const config = defineConfig([
     rules: {
       "prettier/prettier": ["error", { endOfLine: "auto" }],
       "local/no-commented-out-code": "warn",
-      // // TODO(FE): remove/change when eslit-angular got an update @see {@link https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-on-push-component-change-detection.md#rationale}
-      // "@angular-eslint/prefer-on-push-component-change-detection": ["warn"],
       "@angular-eslint/directive-selector": [
         "error",
         {

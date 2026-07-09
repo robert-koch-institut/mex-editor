@@ -44,7 +44,6 @@ install-frontend = "mex.editor.frontend:install"
 build-frontend = "mex.editor.frontend:build"
 install-and-build-frontend = "mex.editor.frontend:install_and_build"
 test-frontend = "mex.editor.testing:run"
-convert-model-po-to-json = "mex.editor.frontend:convert_model_po_to_json"
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"

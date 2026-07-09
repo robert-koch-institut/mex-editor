@@ -22,7 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - disable buttons on consent page when clicking would have no effect
-- speed up test suite by avoiding superfluous page loads
 
 ### Security
 

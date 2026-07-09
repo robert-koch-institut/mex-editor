@@ -7,7 +7,7 @@ from urllib.parse import urlsplit
 
 import pytest
 from fastapi.testclient import TestClient
-from playwright.sync_api import Browser, Page, expect
+from playwright.sync_api import Page, expect
 from pydantic import SecretStr
 from pytest import LogCaptureFixture
 
@@ -91,30 +91,26 @@ def settings(
     return settings
 
 
-@pytest.fixture(scope="session")
-def reader_user_credentials() -> tuple[str, SecretStr]:
-    for username, password in EditorSettings.get().editor_user_database["read"].items():
+def reader_user_credentials(settings: EditorSettings) -> tuple[str, SecretStr]:
+    for username, password in settings.editor_user_database["read"].items():
         return username, password
     msg = "No reader configured"  # pragma: no cover
     raise RuntimeError(msg)  # pragma: no cover
 
 
-@pytest.fixture(scope="session")
-def writer_user_credentials() -> tuple[str, SecretStr]:
-    for username, password in (
-        EditorSettings.get().editor_user_database["write"].items()
-    ):
+def writer_user_credentials(settings: EditorSettings) -> tuple[str, SecretStr]:
+    for username, password in settings.editor_user_database["write"].items():
         return username, password
     msg = "No writer configured"  # pragma: no cover
     raise RuntimeError(msg)  # pragma: no cover
 
 
-def _prepare_page(
-    browser: Browser,
+def prepare_page(
+    page: Page,
     base_url: str,
     credentials: tuple[str, SecretStr],
 ) -> Page:
-    page = browser.new_page()
+    """Prepare a for an integration test by performing a login and setting timeouts."""
     page.goto(base_url)
     page.get_by_test_id("input-username").fill(credentials[0])
     page.get_by_test_id("input-password").fill(credentials[1].get_secret_value())
@@ -128,18 +124,20 @@ def _prepare_page(
 
 @pytest.fixture
 def writer_user_page(
-    browser: Browser, writer_user_credentials: tuple[str, SecretStr], base_url: str
+    page: Page, writer_user_credentials: tuple[str, SecretStr], base_url: str
 ) -> Generator[Page]:
-    page = _prepare_page(browser, base_url, writer_user_credentials)
+    """Return a page with a logged in writer user context."""
+    page = prepare_page(page, base_url, writer_user_credentials)
     yield page
     page.close()
 
 
 @pytest.fixture
 def reader_user_page(
-    browser: Browser, reader_user_credentials: tuple[str, SecretStr], base_url: str
+    page: Page, reader_user_credentials: tuple[str, SecretStr], base_url: str
 ) -> Generator[Page]:
-    page = _prepare_page(browser, base_url, reader_user_credentials)
+    """Return a page with a logged in reader user context."""
+    page = prepare_page(page, base_url, reader_user_credentials)
     yield page
     page.close()
 
@@ -263,8 +261,8 @@ def dummy_data_by_stable_target_id(
 
 @pytest.fixture
 def load_dummy_data(
-    flush_graph_database: None,  # noqa: ARG001
     dummy_data: list[AnyExtractedModel],
+    flush_graph_database: None,  # noqa: ARG001
 ) -> None:
     """Ingest dummy data into the backend."""
     connector = BackendApiConnector.get()
@@ -273,8 +271,8 @@ def load_dummy_data(
 
 @pytest.fixture
 def load_pagination_dummy_data(
-    flush_graph_database: None,  # noqa: ARG001
     dummy_data: list[AnyExtractedModel],
+    flush_graph_database: None,  # noqa: ARG001
     request: pytest.FixtureRequest,
 ) -> None:
     """Ingest dummy data into the backend with dynamic model types based on test context."""

@@ -71,7 +71,7 @@ addopts = [
     "--cov-branch",
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--capture=no", # https://github.com/pytest-dev/pytest/issues/2064#issuecomment-421812955
-    "--random-order-bucket=module",
+    "--random-order-bucket=global",
 ]
 console_output_style = "progress-even-when-capture-no"
 markers = [

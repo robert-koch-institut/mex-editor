@@ -148,6 +148,11 @@ export class SearchPageComponent implements OnInit {
 		dialogRef.afterClosed().subscribe((result) => {
 			if (result?.success) {
 				this.authService.login(result.username);
+
+				const redirectURL = this.route.snapshot.queryParamMap.get("redirectURL");
+				if (redirectURL?.startsWith("/")) {
+					void this.router.navigateByUrl(redirectURL);
+				}
 			}
 		});
 	}

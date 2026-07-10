@@ -39,7 +39,7 @@ describe("App", () => {
   it("should update url language query param when language changes", async () => {
     for (const lang of translocoConfig.availableLangs) {
       transloco.setActiveLang(lang.id);
-      await fixture.whenStable()
+      await fixture.whenStable();
 
       expect(getUrlLanguage()).toBe(lang.id);
     }
@@ -52,7 +52,7 @@ describe("App", () => {
       harness.fixture.detectChanges();
       await harness.fixture.whenStable();
 
-      expect(transloco.getActiveLang()).toBe(lang.id)
+      expect(transloco.getActiveLang()).toBe(lang.id);
     }
   });
 });

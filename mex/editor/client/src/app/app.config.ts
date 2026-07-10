@@ -6,12 +6,14 @@ import { provideRouter, withComponentInputBinding } from "@angular/router";
 import { routes } from "./app.routes";
 import { translocoProviders } from "./transloco";
 
+/**
+ * Config for application.
+ */
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(),
-    ...translocoProviders,
     provideHttpClient(withXhr()),
+    ...translocoProviders,
   ],
 };

@@ -6,6 +6,9 @@ import { MatSelectModule } from "@angular/material/select";
 import { LanguageSelectorComponent } from "./language-selector-component/language-selector-component";
 import { TranslocoDirective } from "@jsverse/transloco";
 
+/**
+ * Component to render the nav-bar for the app.
+ */
 @Component({
   selector: "app-nav-bar-component",
   imports: [
@@ -15,7 +18,7 @@ import { TranslocoDirective } from "@jsverse/transloco";
     RouterLink,
     RouterLinkActive,
     MatSelectModule,
-    TranslocoDirective
+    TranslocoDirective,
   ],
   templateUrl: "./nav-bar-component.html",
   styleUrl: "./nav-bar-component.scss",

@@ -1,9 +1,4 @@
-import {
-  inject,
-  Injectable,
-  isDevMode,
-  provideAppInitializer /* Renderer2 */,
-} from "@angular/core";
+import { inject, Injectable, isDevMode, provideAppInitializer } from "@angular/core";
 import type { Translation, TranslocoLoader } from "@jsverse/transloco";
 import { provideTransloco, TranslocoService } from "@jsverse/transloco";
 import { provideTranslocoLocale } from "@jsverse/transloco-locale";
@@ -185,6 +180,9 @@ export function provideQueryParamTranslocoSync() {
 
 const queryParamSyncProvider = provideQueryParamTranslocoSync();
 
+/**
+ * All providers to use transloco as main translation framework.
+ */
 export const translocoProviders = [
   provideTransloco({
     config: {

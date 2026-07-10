@@ -5,6 +5,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { TranslocoPipe } from "@jsverse/transloco";
 
+/**
+ * Component to toggle the current theme between dark and light mode.
+ */
 @Component({
   selector: "app-theme-toggle-component",
   imports: [MatButtonModule, MatIconModule, TranslocoPipe],

@@ -1,4 +1,3 @@
-
 import { Component, input } from "@angular/core";
 
 /**
@@ -11,7 +10,6 @@ import { Component, input } from "@angular/core";
   styleUrl: "./create-page.scss",
 })
 export class CreatePage {
-
   /**
    * Current entity type to create.
    * @remarks Get read from the URL queryParam "createType".

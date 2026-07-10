@@ -37,6 +37,7 @@
   "private": true,
   "scripts": {
     "build": "ng build --configuration production",
+    "docs": "typedoc",
     "lint": "ng lint --max-warnings 0",
     "ng": "ng",
     "start": "ng serve",

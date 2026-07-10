@@ -6,6 +6,8 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
+import click
+
 from mex.editor.settings import EditorSettings
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -131,6 +133,20 @@ def install() -> None:
     """Install nodeenv and npm dependencies."""
     exec_py(["nodeenv", f"{NODE_VIRTUAL_ENV}", "--force"])
     exec_npm(["clean-install"])
+
+
+@click.command()
+@click.option(
+    "--output",
+    type=click.Path(dir_okay=True, file_okay=False, resolve_path=True, path_type=Path),
+    required=False,
+    default=None,
+    help="Path to the target output dir (optional).",
+)
+def generate_docs(output: Path | None) -> None:
+    """Generates the docs under the given output path."""
+    args = ["--", "--out", output.as_posix()] if output else []
+    exec_npm(["run", "docs", *args])
 
 
 def build() -> None:

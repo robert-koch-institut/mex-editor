@@ -3,10 +3,11 @@ import { Renderer2 } from "@angular/core";
 import { Component, DOCUMENT, inject, signal } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
+import { TranslocoPipe } from "@jsverse/transloco";
 
 @Component({
   selector: "app-theme-toggle-component",
-  imports: [MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule, TranslocoPipe],
   templateUrl: "./theme-toggle-component.html",
   styleUrl: "./theme-toggle-component.scss",
 })

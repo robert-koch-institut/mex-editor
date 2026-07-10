@@ -1,19 +1,12 @@
 import { AsyncPipe } from "@angular/common";
-import { HttpClient } from "@angular/common/http";
 import { Component, inject, signal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
+import { BackendProxyService } from "../../services/backend-proxy-service";
 
-interface PreviewItem {
-  identifier: string;
-  $type: string;
-}
-
-interface PaginatedPreviewItems {
-  items: PreviewItem[];
-  total: number;
-}
-
+/**
+ * Startpage including a welcome and navigation to create page.
+ */
 @Component({
   selector: "app-start-page",
   imports: [RouterLink, AsyncPipe, MatButton],
@@ -22,11 +15,8 @@ interface PaginatedPreviewItems {
 })
 export class StartPage {
   protected readonly title = signal("mex-editor-ng");
-  private http = inject(HttpClient);
+  protected readonly backendProxy = inject(BackendProxyService);
 
-  data$ = this.http.get<PaginatedPreviewItems>("api/v0/backend/preview-item");
-
-  onClick() {
-    console.warn("CLICKED");
-  }
+  /** Data to showcase preview items from backend proxy. */
+  data$ = this.backendProxy.getPreviewItems();
 }

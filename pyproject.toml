@@ -22,7 +22,9 @@ dependencies = [
 dev = [
     "debugpy>=1.8.20",
     "ipdb>=0.13",
+    "mex-model>=5.0,<5.1",
     "mypy>=1",
+    "polib>=1.2.0",
     "pytest-cov>=6",
     "pytest-random-order>=1",
     "pytest-xdist>=3",
@@ -30,6 +32,7 @@ dev = [
     "ruff>=0.15",
     "sphinx>=9",
     "starlette[full]>=1.0.0",
+    "types-polib>=1.2.0.20260518",
     "types-requests",
 ]
 
@@ -41,6 +44,7 @@ install-frontend = "mex.editor.frontend:install"
 build-frontend = "mex.editor.frontend:build"
 install-and-build-frontend = "mex.editor.frontend:install_and_build"
 test-frontend = "mex.editor.testing:run"
+generate-frontend-docs = "mex.editor.frontend:generate_docs"
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"

@@ -29,6 +29,7 @@ describe("NavBarComponent", () => {
 
   it("should add active class to links", async () => {
     const harness = await RouterTestingHarness.create();
+
     await harness.navigateByUrl("/create/resource", CreatePage);
     let activeLinks = fixture.nativeElement.querySelectorAll(".link.active");
     expect(activeLinks.length).toBe(1);

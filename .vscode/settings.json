@@ -12,13 +12,13 @@
   "python.autoComplete.extraPaths": ["${workspaceFolder}/.venv/lib"],
   "python.analysis.extraPaths": ["${workspaceFolder}/.venv/lib"],
   "python.analysis.exclude": [
-    "${workspaceFolder}/.mypy_cache",
-    "${workspaceFolder}/.pytest_cache",
-    "${workspaceFolder}/.venv",
-    "**/node_modules",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".venv",
     "**/__pycache__",
-    "**/.*",
-    ".venv"
+    "**/__snapshots__",
+    "**/node_modules",
+    "**/.*"
   ],
   "python.testing.pytestArgs": ["-s"],
   "python.testing.unittestEnabled": false,
@@ -26,5 +26,6 @@
   "python.testing.pytestPath": "${workspaceFolder}/.venv/scripts/pytest",
   "ruff.importStrategy": "useBundled",
   "ruff.nativeServer": "on",
-  "eslint.nodePath": "${workspaceFolder}/mex/editor/client/node_modules"
+  "eslint.nodePath": "${workspaceFolder}/mex/editor/client/node_modules",
+  "mypy.runUsingActiveInterpreter": true
 }

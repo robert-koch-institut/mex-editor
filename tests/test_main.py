@@ -29,7 +29,7 @@ def test_create_fastapi(
     included_routers = [
         x for r in app.routes if (x := getattr(r, "original_router", None))
     ]
-    assert (len(included_routers) == 2) == expect_api  # backend and system
+    assert (len(included_routers) == 3) == expect_api  # backend and system
 
 
 @pytest.mark.parametrize(

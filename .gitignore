@@ -131,6 +131,9 @@ out-tsc
 testem.log
 typings
 
+# vitest
+*.snap
+
 # SQLite databases
 *.db
 

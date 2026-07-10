@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "outDir": "./out-tsc/spec",
     "types": [
       "vitest/globals"
@@ -7,6 +8,8 @@
   },
   "extends": "./tsconfig.json",
   "include": [
+    "src/**/transloco.ts",
+    "src/**/*.routes.ts",
     "src/**/*.d.ts",
     "src/**/*.spec.ts",
     "src/test-providers.ts"

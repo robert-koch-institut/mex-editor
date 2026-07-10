@@ -35,6 +35,7 @@
               "outputHashing": "all"
             },
             "unit-tests": {
+              "optimization": false,
               "polyfills": [
                 "@angular/compiler"
               ]

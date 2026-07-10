@@ -15,7 +15,7 @@ module.exports = defineConfig([
       angular.configs.tsRecommended,
     ],
     plugins: {
-      security,
+      security
     },
     languageOptions: {
       parserOptions: {

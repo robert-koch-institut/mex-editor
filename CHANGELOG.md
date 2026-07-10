@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial Layout with header (including theme switcher and language switcher with noop) and footer
+- Localization with Transloco and script to create model .po to .json files
 - vitest/ui for better dev experience
 - renovate rule for angular
 

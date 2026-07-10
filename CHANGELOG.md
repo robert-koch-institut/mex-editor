@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.3.0
 - updated angular to 22.0.4
+- updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
 - alot of manual package updates to help renovatebot
 - updated node to 24.15.0
 - updated angular to 21.2.17

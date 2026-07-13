@@ -11,5 +11,6 @@
     "includeFolders": true
   },
   "readme": "./docs.md",
-  "treatValidationWarningsAsErrors": true
+  "treatValidationWarningsAsErrors": true,
+  "tsconfig": "./tsconfig.app.json"
 }

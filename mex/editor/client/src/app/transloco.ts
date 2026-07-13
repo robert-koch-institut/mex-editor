@@ -158,7 +158,9 @@ const translocoPersistLangProvider = provideTranslocoPersistLang({
 });
 
 /**
- * Factory for creating an app initializer that syncs url changes that include the {@link LANGUAGE_QUERY_PARAM} QueryParam with the {@link @jsverse/transloco.TranslocoService} and sets it active language.
+ * Factory for creating an app initializer that syncs url changes that include the {@link LANGUAGE_QUERY_PARAM} QueryParam
+ * with the {@link https://jsverse.gitbook.io/transloco/core-concepts/language-api#setactivelang | TranslocoService} and sets
+ * it active language.
  * @returns An app initializer that syncs language url query param with
  */
 export function provideQueryParamTranslocoSync() {

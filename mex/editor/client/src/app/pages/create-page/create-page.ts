@@ -14,8 +14,7 @@ export class CreatePage {
 
   /**
    * Current entity type to create.
-   * @remarks Get read from the URL queryParam "createType".
-   * @see {@link "app/app.config".routerProvider | routerProvider} for more informations.
+   * @remarks Reads from the URL queryParam "createType".
    */
   createType = input<string>();
 }

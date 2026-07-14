@@ -14,11 +14,11 @@ import { NavigationEnd, Router } from "@angular/router";
  */
 export const LANGUAGE_QUERY_PARAM = "language";
 
+@Injectable({ providedIn: "root" })
 /**
  * TranslocoLoader using HTTP to load translation jsons.
- * @see {@link https://jsverse.gitbook.io/transloco/getting-started/installation#transloco-loader}
+ * @see https://jsverse.gitbook.io/transloco/getting-started/installation#transloco-loader
  */
-@Injectable({ providedIn: "root" })
 class TranslocoHttpLoader implements TranslocoLoader {
   private http = inject(HttpClient);
 
@@ -45,7 +45,7 @@ export const translocoConfig = {
 /**
  * Transloco locale provider to use pipes that depend on the active language,
  * including mappings for lang to locale and locale to currency.
- * @see {@link https://jsverse.gitbook.io/transloco/plugins-and-extensions/locale-l10n#setup}
+ * @see https://jsverse.gitbook.io/transloco/plugins-and-extensions/locale-l10n#setup
  */
 const translocoLocaleProvider = provideTranslocoLocale({
   langToLocaleMapping: {
@@ -133,18 +133,16 @@ function mexEditorTranslocoStorage() {
  * Checks if the {@link LANGUAGE_QUERY_PARAM} QueryParam is present in the url and parses it or using the default language.
  * @param param0 transloco default language.
  * @returns The determined default language for transloco.
+ * @see https://jsverse.gitbook.io/transloco/plugins-and-extensions/persist-lang
  */
 export function getLangFn({ cachedLang, defaultLang }: GetLangParams) {
-  // const urlParams = new URLSearchParams(window.location.search);
-  // const urlLang = urlParams.get(LANGUAGE_QUERY_PARAM);
-
   // Return URL language if present, otherwise default
   return cachedLang || defaultLang;
 }
 
 /**
  * PersitentLangProvider using QueryParams.
- * @see {@link https://jsverse.gitbook.io/transloco/plugins-and-extensions/persist-lang}
+ * @see https://jsverse.gitbook.io/transloco/plugins-and-extensions/persist-lang
  */
 const translocoPersistLangProvider = provideTranslocoPersistLang({
   getLangFn,
@@ -153,8 +151,10 @@ const translocoPersistLangProvider = provideTranslocoPersistLang({
 });
 
 /**
- * Factory for creating an app initializer that syncs url changes that include the {@link LANGUAGE_QUERY_PARAM} QueryParam with the {@link @jsverse/transloco.TranslocoService} and sets it active language.
- * @returns An app initializer that syncs language url query param with
+ * Factory for creating an app initializer that syncs url changes that include the {@link LANGUAGE_QUERY_PARAM} QueryParam
+ * with the {@link https://jsverse.gitbook.io/transloco/core-concepts/language-api#setactivelang | TranslocoService} and sets
+ * it active language.
+ * @returns An app initializer that syncs language url query param with current active language.
  */
 export function provideQueryParamTranslocoSync() {
   return provideAppInitializer(() => {

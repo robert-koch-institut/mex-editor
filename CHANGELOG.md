@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Tests fail if python tests dont complete successful
+- TsDoc generation were not working due to merge failures
 
 ### Security
 

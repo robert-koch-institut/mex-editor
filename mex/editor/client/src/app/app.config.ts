@@ -12,8 +12,8 @@ import { translocoProviders } from "./transloco";
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withXhr()),
+    provideRouter(routes, withComponentInputBinding()),
     ...translocoProviders,
   ],
 };

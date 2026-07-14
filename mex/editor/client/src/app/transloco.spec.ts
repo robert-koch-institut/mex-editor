@@ -25,7 +25,7 @@ import {
     </ng-container>
   `,
 })
-export class LocalizationPage {
+class LocalizationPage {
   date = new Date(2000, 0, 1); // 01.01.2000
   datetime = new Date(2000, 0, 1, 12, 30); // 01.01.2000 12:30
   decimal = 213.12345;

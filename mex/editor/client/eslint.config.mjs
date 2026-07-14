@@ -9,7 +9,16 @@ import prettierRecommended from "eslint-plugin-prettier/recommended";
 import typedocPlugin from "eslint-plugin-typedoc";
 
 const config = defineConfig([
-  typedocPlugin.configs.recommended,
+  {
+    ...typedocPlugin.configs.recommended,
+    settings: {
+      typedoc: {
+        // Weist den Linter an, Decorators als Teil des nachfolgenden Knotens zu betrachten
+        ignoreDecorators: true,
+      },
+      // ignoreDecorators: true,
+    },
+  },
   {
     files: ["**/*.ts"],
     extends: [

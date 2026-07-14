@@ -4,15 +4,15 @@ import { MatSelectModule } from "@angular/material/select";
 import type { LangDefinition } from "@jsverse/transloco";
 import { TranslocoService } from "@jsverse/transloco";
 
-/**
- * Component to switch the current active language.
- */
 @Component({
   selector: "app-language-selector-component",
   imports: [MatSelectModule, AsyncPipe],
   templateUrl: "./language-selector-component.html",
   styleUrl: "./language-selector-component.scss",
 })
+/**
+ * Component to switch the current active language.
+ */
 export class LanguageSelectorComponent {
   transloco = inject(TranslocoService);
   get currentLanguage$() {

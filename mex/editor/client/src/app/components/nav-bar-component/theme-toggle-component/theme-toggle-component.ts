@@ -1,4 +1,4 @@
-import type { OnInit} from "@angular/core";
+import type { OnInit } from "@angular/core";
 import { Renderer2 } from "@angular/core";
 import { Component, DOCUMENT, inject, signal } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
@@ -11,6 +11,9 @@ import { TranslocoPipe } from "@jsverse/transloco";
   templateUrl: "./theme-toggle-component.html",
   styleUrl: "./theme-toggle-component.scss",
 })
+/**
+ * Component to toggle the current theme between dark and light mode.
+ */
 export class ThemeToggleComponent implements OnInit {
   private _renderer = inject(Renderer2);
   private _document: Document = inject(DOCUMENT);

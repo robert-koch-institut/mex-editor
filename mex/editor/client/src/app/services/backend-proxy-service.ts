@@ -18,12 +18,12 @@ export interface PaginatedItemContainer<T> {
   total: number;
 }
 
-/**
- * A service to read items from the mex.backend using the fastapi backend proxy endpoint.
- */
 @Injectable({
   providedIn: "root",
 })
+/**
+ * A service to read items from the mex.backend using the fastapi backend proxy endpoint.
+ */
 export class BackendProxyService {
   private _http = inject(HttpClient);
 

@@ -1,32 +1,48 @@
 // @ts-check
-const eslint = require("@eslint/js");
-const { defineConfig } = require("eslint/config");
-const tseslint = require("typescript-eslint");
-const angular = require("angular-eslint");
-const security = require("eslint-plugin-security");
+import eslint from "@eslint/js";
+import { defineConfig } from "eslint/config";
+import tseslint from "typescript-eslint";
+import angular from "angular-eslint";
+import security from "eslint-plugin-security";
+import noCommentedOutCode from "./eslint-rules/no-commented-out-code.mjs";
+import prettierRecommended from "eslint-plugin-prettier/recommended";
+import typedocPlugin from "eslint-plugin-typedoc";
 
-module.exports = defineConfig([
+const config = defineConfig([
+  {
+    ...typedocPlugin.configs.recommended,
+    settings: {
+      typedoc: {
+        // Weist den Linter an, Decorators als Teil des nachfolgenden Knotens zu betrachten
+        ignoreDecorators: true,
+      },
+      // ignoreDecorators: true,
+    },
+  },
   {
     files: ["**/*.ts"],
     extends: [
+      prettierRecommended,
       eslint.configs.recommended,
       tseslint.configs.recommended,
       tseslint.configs.stylistic,
       angular.configs.tsRecommended,
     ],
     plugins: {
-      security
+      // @ts-ignore
+      security,
+      // @ts-ignore
+      local: { rules: { "no-commented-out-code": noCommentedOutCode } },
     },
     languageOptions: {
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: __dirname,
       },
     },
     processor: angular.processInlineTemplates,
     rules: {
-      // TODO(FE): remove/change when eslit-angular got an update @see {@link https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-on-push-component-change-detection.md#rationale}
-      "@angular-eslint/prefer-on-push-component-change-detection": ["warn"],
+      "prettier/prettier": ["error", { endOfLine: "auto" }],
+      "local/no-commented-out-code": "warn",
       "@angular-eslint/directive-selector": [
         "error",
         {
@@ -97,7 +113,15 @@ module.exports = defineConfig([
   },
   {
     files: ["**/*.html"],
-    extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
-    rules: {},
+    extends: [
+      prettierRecommended,
+      angular.configs.templateRecommended,
+      angular.configs.templateAccessibility,
+    ],
+    rules: {
+      "prettier/prettier": ["error", { endOfLine: "auto" }],
+    },
   },
 ]);
+
+export default config;

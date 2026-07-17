@@ -25,7 +25,7 @@ import {
     </ng-container>
   `,
 })
-export class LocalizationPage {
+class LocalizationPage {
   date = new Date(2000, 0, 1); // 01.01.2000
   datetime = new Date(2000, 0, 1, 12, 30); // 01.01.2000 12:30
   decimal = 213.12345;
@@ -52,13 +52,17 @@ describe("LocalizationPage", () => {
 
   it("should render text in german", () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector("[data-testid='headline']")?.textContent.trim()).toBe("Titelzeile");
+    expect(compiled.querySelector("[data-testid='headline']")?.textContent.trim()).toBe(
+      "Titelzeile",
+    );
     expect(compiled.querySelector("[data-testid='date']")?.textContent.trim()).toBe("1.1.2000");
     expect(compiled.querySelector("[data-testid='datetime']")?.textContent.trim()).toBe(
       "01.01.2000, 12:30:00",
     );
     expect(compiled.querySelector("[data-testid='decimal']")?.textContent.trim()).toBe("213,123");
-    expect(compiled.querySelector("[data-testid='money']")?.textContent.trim()).toBe("100.000,12 €");
+    expect(compiled.querySelector("[data-testid='money']")?.textContent.trim()).toBe(
+      "100.000,12 €",
+    );
     expect(compiled.querySelector("[data-testid='singular']")?.textContent.trim()).toBe("EINER");
     expect(compiled.querySelector("[data-testid='plural']")?.textContent.trim()).toBe("VIELE");
   });

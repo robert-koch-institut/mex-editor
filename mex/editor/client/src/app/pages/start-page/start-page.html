@@ -12,7 +12,8 @@
   <ul>
     @for (item of data?.items; track item.identifier) {
       <li>
-        <b>{{ item.$type }}</b>: {{ item.identifier }}
+        <b>{{ item.$type }}</b
+        >: {{ item.identifier }}
       </li>
     } @empty {
       <li>There are no items.</li>

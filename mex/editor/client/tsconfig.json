@@ -1,6 +1,11 @@
 {
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
+    "extendedDiagnostics": {
+      "checks": {
+        "unusedStandaloneImports": "error"
+      }
+    },
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true

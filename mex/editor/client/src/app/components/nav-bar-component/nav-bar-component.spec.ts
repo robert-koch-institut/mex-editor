@@ -15,9 +15,7 @@ describe("NavBarComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [NavBarComponent],
-      providers: [
-        provideRouter(routes)
-      ]
+      providers: [provideRouter(routes)],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NavBarComponent);
@@ -31,18 +29,17 @@ describe("NavBarComponent", () => {
 
   it("should add active class to links", async () => {
     const harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl('/create/resource', CreatePage);
 
-    let activeLinks = fixture.nativeElement.querySelectorAll(".link.active")
+    await harness.navigateByUrl("/create/resource", CreatePage);
+    let activeLinks = fixture.nativeElement.querySelectorAll(".link.active");
     expect(activeLinks.length).toBe(1);
 
-    await harness.navigateByUrl('/create/activity', CreatePage);
-    activeLinks = fixture.nativeElement.querySelectorAll(".link.active")
+    await harness.navigateByUrl("/create/activity", CreatePage);
+    activeLinks = fixture.nativeElement.querySelectorAll(".link.active");
     expect(activeLinks.length).toBe(1);
 
-    await harness.navigateByUrl('/', StartPage);
-    activeLinks = fixture.nativeElement.querySelectorAll(".link.active")
+    await harness.navigateByUrl("/", StartPage);
+    activeLinks = fixture.nativeElement.querySelectorAll(".link.active");
     expect(activeLinks.length).toBe(0);
   });
-
 });

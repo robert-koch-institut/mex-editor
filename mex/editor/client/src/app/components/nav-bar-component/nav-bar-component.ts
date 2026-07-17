@@ -15,9 +15,12 @@ import { TranslocoDirective } from "@jsverse/transloco";
     RouterLink,
     RouterLinkActive,
     MatSelectModule,
-    TranslocoDirective
+    TranslocoDirective,
   ],
   templateUrl: "./nav-bar-component.html",
   styleUrl: "./nav-bar-component.scss",
 })
+/**
+ * Component to render the nav-bar for the app.
+ */
 export class NavBarComponent {}

@@ -4,7 +4,6 @@ import { provideRouter } from "@angular/router";
 import { TranslocoTestingModule } from "@jsverse/transloco";
 import { translocoConfig, translocoProviders } from "./app/transloco";
 
-
 /* eslint-disable @typescript-eslint/naming-convention */
 const de = {
   "test.headline": "Titelzeile",

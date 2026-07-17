@@ -7,6 +7,9 @@ import type { FastTrackResourceModel } from "./fast-track-resource.types";
 import type { CreateMail, CreatePerson } from "./create-contact";
 
 @Injectable({ providedIn: "root" })
+/**
+ * Service to submit FastTrackResourceModels.
+ */
 export class ResourceSubmission {
   private http = inject(HttpClient);
 

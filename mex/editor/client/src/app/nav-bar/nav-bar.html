@@ -1,14 +1,14 @@
-<mat-toolbar class="nav-bar">
+<mat-toolbar class="nav-bar" *transloco="let t">
   <a routerLink="" class="brand" title="MEx - Metadata Exchange">
     <img src="mex-logo.svg" alt="Logo MEx - Metadata Exchange" />
   </a>
   <div class="nav-bar-links">
     <a class="link" routerLink="/create/resource" routerLinkActive="active">
-      Datasource
+      {{ t("Resource") }}
       <div class="active-indicator"></div>
     </a>
     <a class="link" routerLink="/create/activity" routerLinkActive="active">
-      Project
+      {{ t("Activity") }}
       <div class="active-indicator"></div>
     </a>
   </div>

@@ -5,8 +5,6 @@ import { NavBar } from "./nav-bar";
 import { provideRouter } from "@angular/router";
 import { routes } from "../app.routes";
 import { RouterTestingHarness } from "@angular/router/testing";
-import { provideHttpClient, withXhr } from "@angular/common/http";
-import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { StartPage } from "../start-page/start-page";
 import { FastTrackResource } from "../fast-track-resource/fast-track-resource";
 import { FastTrackActivity } from "../fast-track-activity/fast-track-activity";
@@ -18,7 +16,7 @@ describe("NavBarComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [NavBar],
-      providers: [provideRouter(routes), provideHttpClient(withXhr()), provideHttpClientTesting()],
+      providers: [provideRouter(routes)],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NavBar);

@@ -8,6 +8,9 @@ import { email, form, FormField, FormRoot, required } from "@angular/forms/signa
 import type { CreateMail } from "../create-contact";
 import { type CreatePerson } from "../create-contact";
 
+/**
+ * Model to share data between create contact dialog and data.
+ */
 export interface CreateContactDialogData {
   selectedTab?: "person" | "mail";
   searchValue: string;
@@ -28,6 +31,9 @@ export interface CreateContactDialogData {
   templateUrl: "./create-contact-dialog.html",
   styleUrl: "./create-contact-dialog.scss",
 })
+/**
+ * Dialog to create a person or a mail contact.
+ */
 export class CreateContactDialog {
   readonly tabs = ["person", "mail"] as const;
   readonly data = inject<CreateContactDialogData>(MAT_DIALOG_DATA);

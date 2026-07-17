@@ -8,6 +8,7 @@
     }
   },
   "compilerOptions": {
+    "composite": true,
     "outDir": "./out-tsc/app",
     "types": []
   },

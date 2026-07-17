@@ -8,5 +8,7 @@ import { RouterLink } from "@angular/router";
   templateUrl: "./start-page.html",
   styleUrl: "./start-page.scss",
 })
-export class StartPage {
-}
+/**
+ * StartPage for the app.
+ */
+export class StartPage {}

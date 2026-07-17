@@ -12,7 +12,7 @@ def test_list_vocabularies(client: TestClient) -> None:
     names = response.json()
     assert isinstance(names, list)
     assert "bibliographic-resource-type" in names
-    assert len(names) == 17
+    assert len(names) == 18
 
 
 def test_get_vocabulary(client: TestClient) -> None:

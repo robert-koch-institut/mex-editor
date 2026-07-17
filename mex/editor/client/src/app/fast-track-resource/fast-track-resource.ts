@@ -8,9 +8,8 @@ import { MatFormField, MatLabel, MatError, MatInput } from "@angular/material/in
 import { MatSelect, MatOption } from "@angular/material/select";
 import { debounceTime } from "rxjs";
 
-import { BackendSearchService } from "../backend-search/backend-search.service";
-import type { UnitOption } from "../backend-search/backend-search.types";
-import { VocabularySearchService } from "../vocabulary-search/vocabulary-search.service";
+import { BackendProxy } from "../shared/backend-proxy.service";
+import { VocabularySearch } from "./vocabulary-search.service";
 import { MatButton } from "@angular/material/button";
 
 import type { FastTrackResourceModel } from "./fast-track-resource.types";
@@ -18,6 +17,9 @@ import type { FastTrackResourceModel } from "./fast-track-resource.types";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { ContactList } from "./contact-list/contact-list";
 import { ResourceSubmission } from "./resource-submission";
+import type { Text } from "../shared/models/text";
+import type { Concept } from "./vocabulary-search.types";
+import type { PreviewOrganizationalUnit } from "../shared/models";
 
 @Component({
   selector: "mex-fast-track-resource",
@@ -44,10 +46,13 @@ import { ResourceSubmission } from "./resource-submission";
   templateUrl: "./fast-track-resource.html",
   styleUrl: "./fast-track-resource.scss",
 })
+/**
+ * Page to create a resource the fast way.
+ */
 export class FastTrackResource {
   private resourceSubmissionService = inject(ResourceSubmission);
-  private vocabularySearchService = inject(VocabularySearchService);
-  private search = inject(BackendSearchService);
+  private vocabularySearchService = inject(VocabularySearch);
+  private search = inject(BackendProxy);
 
   model = signal<FastTrackResourceModel>({
     title: "",
@@ -67,27 +72,15 @@ export class FastTrackResource {
     required(schema.unitInCharge, { message: "Need a unit in charge" });
   });
 
-  theme = this.vocabularySearchService.getVocabulary("theme");
+  private vocabularyItemsAsOptions(name: string) {
+    const vocab = this.vocabularySearchService.getVocabulary(name);
+    return computed(() => FastTrackResource.toOptions(vocab.value().items));
+  }
 
-  themeOptions = computed(() => this.vocabularySearchService.toOptions(this.theme.value().items));
-
-  resourceCreationMethod = this.vocabularySearchService.getVocabulary("resource-creation-method");
-
-  resourceCreationMethodOptions = computed(() =>
-    this.vocabularySearchService.toOptions(this.resourceCreationMethod.value().items),
-  );
-
-  accrualPeriodicity = this.vocabularySearchService.getVocabulary("frequency");
-
-  accrualPeriodicityOptions = computed(() =>
-    this.vocabularySearchService.toOptions(this.accrualPeriodicity.value().items),
-  );
-
-  accessRestriction = this.vocabularySearchService.getVocabulary("access-restriction");
-
-  accessRestrictionOptions = computed(() =>
-    this.vocabularySearchService.toOptions(this.accessRestriction.value().items),
-  );
+  themeOptions = this.vocabularyItemsAsOptions("theme");
+  resourceCreationMethodOptions = this.vocabularyItemsAsOptions("resource-creation-method");
+  accrualPeriodicityOptions = this.vocabularyItemsAsOptions("frequency");
+  accessRestrictionOptions = this.vocabularyItemsAsOptions("access-restriction");
 
   /** Raw search input for the "unit in charge" field, debounced before it hits the backend. */
   unitInChargeQuery = signal("");
@@ -99,16 +92,37 @@ export class FastTrackResource {
 
   unitInChargeUnits = this.search.searchUnits(this.unitInChargeQueryDebounced);
 
-  unitInChargeOptions = computed(() => this.search.toOptions(this.unitInChargeUnits.value().items));
+  unitInChargeOptions = computed(() =>
+    FastTrackResource.toOptions(this.unitInChargeUnits.value().items),
+  );
 
   /** Caches labels for selected unit ids so chips can render names, not identifiers. */
   private unitLabels = new Map<string, string>();
+
+  /** Map concepts to selectable options, preferring the German label. */
+  static toOptions(
+    concepts: Concept[] | PreviewOrganizationalUnit[],
+  ): { id: string; label: string }[] {
+    return concepts.map((concept) => {
+      if ("$type" in concept) {
+        const displayName = (name: Text[]): string => {
+          const german = name.find((text) => text.language === "de");
+          return german?.value ?? name[0]?.value ?? "";
+        };
+        return { id: concept.identifier, label: displayName(concept.name) || concept.identifier };
+      }
+      return {
+        id: concept.identifier,
+        label: concept.prefLabel.de ?? concept.prefLabel.en ?? concept.identifier,
+      };
+    });
+  }
 
   unitLabel(id: string): string {
     return this.unitLabels.get(id) ?? id;
   }
 
-  addUnit(option: UnitOption) {
+  addUnit(option: { id: string; label: string }) {
     this.unitLabels.set(option.id, option.label);
     this.model.update((model) =>
       model.unitInCharge.includes(option.id)

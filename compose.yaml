@@ -20,7 +20,7 @@ services:
       - mex-editor-ng
 
   mex-backend:
-    image: ghcr.io/robert-koch-institut/mex-backend:4.0.1
+    image: ghcr.io/robert-koch-institut/mex-backend:4.0.3
     ports:
       - 8080:8080
     environment:

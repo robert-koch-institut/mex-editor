@@ -1,6 +1,9 @@
-import type { SearchContact } from "../services/contact-search";
+import type { SearchContact } from "./contact-search";
 import type { CreateContact } from "./create-contact";
 
+/**
+ * Model for the Ressource fast track creation page.
+ */
 export interface FastTrackResourceModel {
   title: string;
   theme: string[];

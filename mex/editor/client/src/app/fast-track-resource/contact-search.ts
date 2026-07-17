@@ -1,5 +1,8 @@
 import { Service } from "@angular/core";
 
+/**
+ * Model for found contacts.
+ */
 export interface SearchContact {
   $type: "person" | "mail";
   id: string;
@@ -7,6 +10,9 @@ export interface SearchContact {
 }
 
 @Service()
+/**
+ * A service to search for contacts.
+ */
 export class ContactSearch {
   private readonly data: SearchContact[] = [
     { id: "1LhqzR0vmWAfFl52h1U06", $type: "person", label: "Anna Müller" },

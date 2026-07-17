@@ -3,13 +3,17 @@ import { Renderer2 } from "@angular/core";
 import { Component, DOCUMENT, inject, signal } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
+import { TranslocoPipe } from "@jsverse/transloco";
 
 @Component({
   selector: "mex-theme-toggle",
-  imports: [MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule, TranslocoPipe],
   templateUrl: "./theme-toggle.html",
   styleUrl: "./theme-toggle.scss",
 })
+/**
+ * Component to toggle the current theme between dark and light mode.
+ */
 export class ThemeToggle implements OnInit {
   private _renderer = inject(Renderer2);
   private _document: Document = inject(DOCUMENT);

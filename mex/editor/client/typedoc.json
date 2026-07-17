@@ -1,0 +1,16 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPointStrategy": "expand",
+  "entryPoints": [
+    "./src"
+  ],
+  "exclude": [
+    "**/*+(.spec|.e2e).ts"
+  ],
+  "navigation": {
+    "includeFolders": true
+  },
+  "readme": "./docs.md",
+  "treatValidationWarningsAsErrors": true,
+  "tsconfig": "./tsconfig.app.json"
+}

@@ -11,10 +11,10 @@
     placeholder="Type a name…"
   />
   <button matIconButton matSuffix type="button" (click)="showPersons.set(!showPersons())">
-    <mat-icon>{{showPersons() ? 'person' : 'person_off'}}</mat-icon>
+    <mat-icon>{{ showPersons() ? "person" : "person_off" }}</mat-icon>
   </button>
   <button matIconButton matSuffix type="button" (click)="showOrgs.set(!showOrgs())">
-    <mat-icon>{{showOrgs() ? 'mail' : 'mail_off'}}</mat-icon>
+    <mat-icon>{{ showOrgs() ? "mail" : "mail_off" }}</mat-icon>
   </button>
 
   <mat-autocomplete
@@ -24,13 +24,15 @@
   >
     @for (item of searchResults(); track item) {
       <mat-option [value]="item">
-        <mat-icon class="entity-icon">{{ item.$type === 'mail' ? 'mail' : 'person' }}</mat-icon>
+        <mat-icon class="entity-icon">{{ item.$type === "mail" ? "mail" : "person" }}</mat-icon>
         <span class="entity-label">{{ item.label }}</span>
       </mat-option>
     }
 
     @if (typeof currentValue === "string") {
-      <mat-option (onSelectionChange)="openDialog()" value="">Neuen Eintrag für "{{ currentValue }}" anlegen...</mat-option>
+      <mat-option (onSelectionChange)="openDialog()" value="">
+        Neuen Eintrag für "{{ currentValue }}" anlegen...
+      </mat-option>
     }
   </mat-autocomplete>
 </mat-form-field>

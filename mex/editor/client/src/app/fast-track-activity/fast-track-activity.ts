@@ -1,20 +1,24 @@
 import { LiveAnnouncer } from "@angular/cdk/a11y";
 import { Component, inject, signal } from "@angular/core";
-import { form, minDate, minLength, required, validate, FormField, FormRoot } from "@angular/forms/signals";
+import {
+  form,
+  minDate,
+  minLength,
+  required,
+  validate,
+  FormField,
+  FormRoot,
+} from "@angular/forms/signals";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormField, MatLabel, MatError, MatHint } from "@angular/material/select";
-import { Component, signal } from "@angular/core";
-import { MatButton } from "@angular/material/button";
 import { MatInput } from "@angular/material/input";
 import { MatButton } from "@angular/material/button";
 import { MatChipsModule } from "@angular/material/chips";
 import type { MatChipInputEvent } from "@angular/material/chips";
 import { MatIconModule } from "@angular/material/icon";
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-
-import type { FastTrackActivityModel } from "./fast-track-activity.types";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 interface CreateContactPointModel {
   $type: "CreateContactPointModel";
@@ -62,6 +66,9 @@ interface KeywordDict {
   templateUrl: "./fast-track-activity.html",
   styleUrl: "./fast-track-activity.scss",
 })
+/**
+ * Page to create an activity in a fast way.
+ */
 export class FastTrackActivity {
   private readonly announcer = inject(LiveAnnouncer);
 
@@ -70,7 +77,7 @@ export class FastTrackActivity {
     contact: [""],
     startDate: null,
     endDate: null,
-    keywords: { german: [], english: [] }
+    keywords: { german: [], english: [] },
   });
 
   activityForm = form(this.model, (schema) => {
@@ -114,21 +121,23 @@ export class FastTrackActivity {
     });
   });
 
-  addKeyword(event: MatChipInputEvent, language: 'german' | 'english'): void {
+  addKeyword(event: MatChipInputEvent, language: "german" | "english"): void {
     const value = (event.value || "").trim();
 
     if (value) {
-      this.model.update(
-        (current) => {
-          const keywords = {...current.keywords, [language]: [...current.keywords[language], value] };
-          return {...current, keywords}}
-      )
+      this.model.update((current) => {
+        const keywords = {
+          ...current.keywords,
+          [language]: [...current.keywords[language], value],
+        };
+        return { ...current, keywords };
+      });
     }
 
     event.chipInput?.clear();
   }
 
-  removeKeyword(keyword: string, language: 'german' | 'english'): void {
+  removeKeyword(keyword: string, language: "german" | "english"): void {
     const keywords = this.model().keywords[language];
     const index = keywords.lastIndexOf(keyword);
 
@@ -136,7 +145,7 @@ export class FastTrackActivity {
       const nextKeywords = [...keywords.slice(0, index), ...keywords.slice(index + 1)];
       this.model.update((current) => ({
         ...current,
-        keywords: { ...current.keywords, [language]: nextKeywords }
+        keywords: { ...current.keywords, [language]: nextKeywords },
       }));
       this.announcer.announce(`removed ${keyword} from reactive form`);
     }

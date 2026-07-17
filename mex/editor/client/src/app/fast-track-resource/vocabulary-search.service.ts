@@ -1,10 +1,14 @@
 import { httpResource } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 
-import type { Concept, PaginatedItemsContainer, VocabularyOption } from "./vocabulary-search.types";
+import type { Concept } from "./vocabulary-search.types";
+import type { PaginatedItemsContainer } from "../shared/models/paginated-items-container";
 
 @Injectable({ providedIn: "root" })
-export class VocabularySearchService {
+/**
+ * Service to serach for vocabularies.
+ */
+export class VocabularySearch {
   /**
    * Fetch a vocabulary by its name as a reactive resource.
    *
@@ -18,11 +22,11 @@ export class VocabularySearchService {
     });
   }
 
-  /** Map concepts to selectable options, preferring the German label. */
-  toOptions(concepts: Concept[]): VocabularyOption[] {
-    return concepts.map((concept) => ({
-      id: concept.identifier,
-      label: concept.prefLabel.de ?? concept.prefLabel.en ?? concept.identifier,
-    }));
-  }
+  // /** Map concepts to selectable options, preferring the German label. */
+  // toOptions(concepts: Concept[]): VocabularyOption[] {
+  //   return concepts.map((concept) => ({
+  //     id: concept.identifier,
+  //     label: concept.prefLabel.de ?? concept.prefLabel.en ?? concept.identifier,
+  //   }));
+  // }
 }

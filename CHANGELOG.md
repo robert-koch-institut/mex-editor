@@ -10,9 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial Layout with header (including theme switcher and language switcher with noop) and footer
+- Localization with Transloco and script to create model .po to .json files
 - vitest/ui for better dev experience
+- typedoc to generate typescript documentation
+- docs to typescript components
 - renovate rule for angular
 - fasttrack create resource contact: control to create and search contacts
+- more linting rules
+  - no commented out code
+  - no unused imports in component (checked against template)
+  - exported members must be documented
 
 ### Changes
 
@@ -31,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Tests fail if python tests dont complete successful
+- TsDoc generation were not working due to merge failures
 
 ### Security
 

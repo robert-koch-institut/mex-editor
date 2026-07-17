@@ -54,7 +54,7 @@ and reusable.
 
 ### Client
 
-The client is build with angular and lifes in `/mex/editor/client`. The directory is an isolated Node environment managed by `nodeenv`. To install node packages u can use `uv run exec-npm install <packagename>`. To exec angular specfic commands u can use `uv run exec-ng add <schematic>`.
+The client is build with angular and lifes in `/mex/editor/client`. The directory is an isolated Node environment managed by `nodeenv`. To install node packages u can use `uv run exec-npm install <packagename>`. To exec angular specfic commands u can use `uv run exec-npx ng add <schematic>`.
 
 Images have two locations depending on the usage:
 - css: store images in `client/src/assets` and use relative code path to images `url("../assets/image.png")` to ensure basehref sass compiling is working correctly

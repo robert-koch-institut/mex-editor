@@ -1,10 +1,9 @@
 import { Component, computed, inject, model, output } from "@angular/core";
-import type { SearchContact } from "../../services/contact-search";
-import { ContactSearch } from "../../services/contact-search";
+import type { SearchContact } from "../contact-search";
+import { ContactSearch } from "../contact-search";
 import { MatFormField, MatInput, MatInputModule, MatLabel } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-// import type { FieldTree } from "@angular/forms/signals";
 import { FormField, type FormValueControl } from "@angular/forms/signals";
 import { FormsModule } from "@angular/forms";
 import { MatChipsModule } from "@angular/material/chips";
@@ -32,18 +31,15 @@ import { CreateContactDialog } from "../create-contact-dialog/create-contact-dia
   styleUrl: "./contact-list.scss",
   hostDirectives: [{ directive: FormField, inputs: ["formField"] }],
 })
+/**
+ * Component to create contact entites person or mail.
+ */
 export class ContactList implements FormValueControl<CreateContact | SearchContact | string> {
   private readonly searchService = inject(ContactSearch);
   private readonly dialog = inject(MatDialog);
 
-  // readonly formField = input.required<FieldTree<SearchEntity | string>>();
-
-  // ── Signal Forms contract ─────────────────────────────────────
-  // FormValueControl requires `value` to be a model() signal.
-  // [formField] will bind the parent form field's value to this.
   readonly value = model<CreateContact | SearchContact | string>("");
 
-  // Signals the blur event so debounce('blur') works in schema.
   readonly touch = output<void>();
 
   // Optional state inputs (FormUiControl) — add as needed:

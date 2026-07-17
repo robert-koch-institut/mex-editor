@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, input, Input, Output } from "@angular/core";
 import { signal } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -31,7 +31,7 @@ import { EmployeeMultiSelectComponent } from "./employee-multiselect.component";
   template: `
     <form class="project-form" [formRoot]="projectForm" (submit)="submitForm($event)">
       <mat-card>
-        <mat-card-title>{{ title }}</mat-card-title>
+        <mat-card-title>{{ title() }}</mat-card-title>
         <mat-card-content>
           <div class="form-grid">
           <mat-form-field appearance="outline" class="form-field">
@@ -84,9 +84,9 @@ import { EmployeeMultiSelectComponent } from "./employee-multiselect.component";
         </mat-card-content>
 
         <mat-card-actions align="end">
-          <button mat-button type="button" (click)="handleSecondaryAction()">{{ secondaryLabel }}</button>
+          <button mat-button type="button" (click)="handleSecondaryAction()">{{ secondaryLabel() }}</button>
           <button mat-flat-button color="primary" type="submit" [disabled]="projectForm().invalid()">
-            {{ submitLabel }}
+            {{ submitLabel() }}
           </button>
         </mat-card-actions>
       </mat-card>
@@ -150,18 +150,17 @@ import { EmployeeMultiSelectComponent } from "./employee-multiselect.component";
   ],
 })
 export class ProjectFormComponent {
-  @Input() title = "New Project";
-  @Input() submitLabel = "Submit";
-  @Input() secondaryLabel = "Reset";
-  @Input() secondaryAction: "reset" | "cancel" = "reset";
+  title = input("New Project");
+  submitLabel = input("Submit");
+  secondaryLabel = input("Reset");
+  secondaryAction = input<"reset" | "cancel">("reset");
+  @Input() availableMitarbeiter: readonly Mitarbeiter[] = [];
 
   @Input()
   set initialValue(value: ProjectFormValue | null | undefined) {
     this.initialProjectValue = value ?? createEmptyProjectFormValue();
     this.projectModel.set(this.initialProjectValue);
   }
-
-  @Input() availableMitarbeiter: readonly Mitarbeiter[] = [];
 
   @Output() save = new EventEmitter<ProjectFormValue>();
   @Output() secondary = new EventEmitter<void>();
@@ -184,7 +183,7 @@ export class ProjectFormComponent {
   }
 
   handleSecondaryAction(): void {
-    if (this.secondaryAction === "cancel") {
+    if (this.secondaryAction() === "cancel") {
       this.secondary.emit();
       return;
     }

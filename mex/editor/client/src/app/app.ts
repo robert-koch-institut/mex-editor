@@ -87,6 +87,7 @@ export class App {
   `,
 })
 export class LoginDialogComponent {
+  //allows the component to close dialog and pass data back to caller
   private dialogRef = inject(MatDialogRef<LoginDialogComponent>);
 
   username = "";

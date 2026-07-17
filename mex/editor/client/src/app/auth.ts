@@ -1,6 +1,8 @@
 import { Injectable } from "@angular/core";
 import { signal } from "@angular/core";
 
+// stores login state for whole app
+
 @Injectable({
   providedIn: "root",
 })

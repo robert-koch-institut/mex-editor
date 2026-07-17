@@ -1,15 +1,11 @@
 import { AsyncPipe, DatePipe } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
 import { Component, inject } from "@angular/core";
-import type { OnInit } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
 import { MatCardModule } from "@angular/material/card";
 import { MatListModule } from "@angular/material/list";
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import { AuthService } from "../auth";
+import { RouterLink } from "@angular/router";
 import { DummyDataService } from "../services/dummy-data.service";
 import type { Project } from "../models/project.model";
-import { LoginDialogComponent } from "../app";
 
 interface PreviewItem {
 	identifier: string;
@@ -99,61 +95,19 @@ interface PaginatedPreviewItems {
 	`,
 	styleUrl: "../app.scss",
 })
-export class SearchPageComponent implements OnInit {
+export class SearchPageComponent {
 	private http = inject(HttpClient);
-	private route = inject(ActivatedRoute);
-	private router = inject(Router);
-	private loginDialog = inject(MatDialog);
-	private authService = inject(AuthService);
 	private dummyDataService = inject(DummyDataService);
 
 	data$ = this.http.get<PaginatedPreviewItems>("api/v0/backend/preview-item");
 	projects: Project[] = [];
 	expandedItem: string | null = null;
-	private loginHintHandled = false;
 
 	constructor() {
 		this.projects = this.dummyDataService.getProjects();
 	}
 
-	ngOnInit(): void {
-		this.route.queryParamMap.subscribe((queryParams) => {
-			if (queryParams.get("loginRequired") !== "1") {
-				this.loginHintHandled = false;
-				return;
-			}
-
-			if (this.loginHintHandled) {
-				return;
-			}
-
-			this.loginHintHandled = true;
-			this.openLoginDialog();
-			void this.router.navigate([], {
-				relativeTo: this.route,
-				queryParams: { loginRequired: null },
-				queryParamsHandling: "merge",
-				replaceUrl: true,
-			});
-		});
-	}
-
 	toggleItem(identifier: string): void {
 		this.expandedItem = this.expandedItem === identifier ? null : identifier;
-	}
-
-	private openLoginDialog(): void {
-		const dialogRef = this.loginDialog.open(LoginDialogComponent);
-
-		dialogRef.afterClosed().subscribe((result) => {
-			if (result?.success) {
-				this.authService.login(result.username);
-
-				const redirectURL = this.route.snapshot.queryParamMap.get("redirectURL");
-				if (redirectURL?.startsWith("/")) {
-					void this.router.navigateByUrl(redirectURL);
-				}
-			}
-		});
 	}
 }

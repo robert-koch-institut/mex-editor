@@ -58,6 +58,7 @@ show_error_codes = true
 strict = true
 plugins = ["pydantic.mypy"]
 
+
 [tool.pydantic-mypy]
 warn_untyped_fields = true
 

@@ -67,6 +67,9 @@ describe("LocalizationPage", () => {
     expect(compiled.querySelector("[data-testid='money']")?.textContent.trim()).toBe(
       "100.000,12 €",
     );
+    expect(compiled.querySelector("[data-testid='money']")?.textContent.trim()).toBe(
+      "100.000,12 €",
+    );
     expect(compiled.querySelector("[data-testid='singular']")?.textContent.trim()).toBe("EINER");
     expect(compiled.querySelector("[data-testid='plural']")?.textContent.trim()).toBe("VIELE");
   });

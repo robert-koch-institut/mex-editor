@@ -1,6 +1,7 @@
 import type { Routes } from "@angular/router";
-import { StartPage } from "./pages/start-page/start-page";
-import { CreatePage } from "./pages/create-page/create-page";
+import { StartPage } from "./start-page/start-page";
+import { FastTrackActivity } from "./fast-track-activity/fast-track-activity";
+import { FastTrackResource } from "./fast-track-resource/fast-track-resource";
 
 /**
  * All registered Routes for the app.
@@ -9,8 +10,8 @@ export const routes: Routes = [
   // The root URL now renders the StartComponent directly
   { path: "", component: StartPage },
 
-  // Create page lives at /create
-  { path: "create/:createType", component: CreatePage },
+  { path: "create/activity", component: FastTrackActivity },
+  { path: "create/resource", component: FastTrackResource },
 
   // Optional: Redirect any unknown URLs back to the root
   { path: "**", redirectTo: "" },

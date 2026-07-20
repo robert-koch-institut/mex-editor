@@ -47,7 +47,7 @@ const config = defineConfig([
         "error",
         {
           type: "attribute",
-          prefix: "app",
+          prefix: "mex",
           style: "camelCase",
         },
       ],
@@ -55,7 +55,7 @@ const config = defineConfig([
         "error",
         {
           type: "element",
-          prefix: "app",
+          prefix: "mex",
           style: "kebab-case",
         },
       ],
@@ -96,7 +96,7 @@ const config = defineConfig([
       complexity: ["error", 12],
       "max-params": ["error", 5],
       "max-statements": ["error", 50],
-      "max-lines-per-function": ["error", 100],
+      "max-lines-per-function": ["error", { max: 100, skipBlankLines: true, skipComments: true }],
       // ruff N801-N818 naming (JS-flavored)
       "@typescript-eslint/naming-convention": [
         "error",

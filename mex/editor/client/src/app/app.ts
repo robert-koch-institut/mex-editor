@@ -1,11 +1,11 @@
 import { Component } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { NavBarComponent } from "./components/nav-bar-component/nav-bar-component";
+import { NavBar } from "./nav-bar/nav-bar";
 import { TranslocoDirective } from "@jsverse/transloco";
 
 @Component({
-  selector: "app-root",
-  imports: [RouterOutlet, NavBarComponent, TranslocoDirective],
+  selector: "mex-root",
+  imports: [RouterOutlet, NavBar, TranslocoDirective],
   templateUrl: "./app.html",
   styleUrl: "./app.scss",
 })

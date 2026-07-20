@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - typedoc to generate typescript documentation
 - docs to typescript components
 - renovate rule for angular
+- fasttrack create resource page with hackathon cleaned-up results
 - more linting rules
   - no commented out code
   - no unused imports in component (checked against template)

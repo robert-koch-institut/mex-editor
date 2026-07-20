@@ -1,0 +1,9 @@
+.spaced {
+  display: flex;
+  justify-content: center;
+  padding-top: 30vh;
+}
+
+.spaced > * {
+  margin: 10px;
+}

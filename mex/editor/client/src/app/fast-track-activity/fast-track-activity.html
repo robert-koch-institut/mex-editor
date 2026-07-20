@@ -1,0 +1,93 @@
+<form [formRoot]="activityForm" (submit)="onSubmit()">
+  <mat-form-field>
+    <mat-label>Title</mat-label>
+    <input matInput placeholder="Enter title" [formField]="activityForm.title" />
+    @for (error of activityForm.title().errors(); track error) {
+      <mat-error> {{ error.kind }} | {{ error.message }} </mat-error>
+    }
+  </mat-form-field>
+  <div class="date-fields">
+    <mat-form-field>
+      <mat-label>Start Date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="startPicker"
+        [max]="activityForm.endDate().value()"
+        [formField]="activityForm.startDate"
+      />
+      <mat-hint>DD/MM/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker />
+      @for (error of activityForm.startDate().errors(); track error) {
+        <mat-error> {{ error.kind }} | {{ error.message }} </mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>End Date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="endPicker"
+        [min]="activityForm.startDate().value()"
+        [formField]="activityForm.endDate"
+      />
+      <mat-hint>DD/MM/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker />
+      @for (error of activityForm.endDate().errors(); track error) {
+        <mat-error> {{ error.kind }} | {{ error.message }} </mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="keywords-ger">
+    <mat-form-field>
+      <mat-label>keywords</mat-label>
+      <mat-chip-grid
+        #germanChipGrid
+        aria-label="Deutsche Stichwörter eingeben"
+        [formField]="activityForm.keywords.german"
+      >
+        @for (keyword of activityForm.keywords.german().value(); track keyword) {
+          <mat-chip-row (removed)="removeKeyword(keyword ?? '', 'german')">
+            {{ keyword }}
+            <button matChipRemove [attr.aria-label]="'remove reactive form' + keyword">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        }
+      </mat-chip-grid>
+      <input
+        placeholder="New keyword..."
+        [matChipInputFor]="germanChipGrid"
+        (matChipInputTokenEnd)="addKeyword($event, 'german')"
+      />
+    </mat-form-field>
+    <mat-chip>DEUTSCH</mat-chip>
+  </div>
+  <div class="keywords-en">
+    <mat-form-field>
+      <mat-label>keywords</mat-label>
+      <mat-chip-grid
+        #englishChipGrid
+        aria-label="Enter english keywords"
+        [formField]="activityForm.keywords.english"
+      >
+        @for (keyword of activityForm.keywords.english().value(); track keyword) {
+          <mat-chip-row (removed)="removeKeyword(keyword ?? '', 'english')">
+            {{ keyword }}
+            <button matChipRemove [attr.aria-label]="'remove reactive form' + keyword">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        }
+      </mat-chip-grid>
+      <input
+        placeholder="New keyword..."
+        [matChipInputFor]="englishChipGrid"
+        (matChipInputTokenEnd)="addKeyword($event, 'english')"
+      />
+    </mat-form-field>
+    <mat-chip>ENGLISH</mat-chip>
+  </div>
+
+  <button matButton type="submit">Submit</button>
+</form>

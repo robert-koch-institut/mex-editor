@@ -14,6 +14,7 @@ from mex.common.logging import logger
 from mex.editor.api.backend import router as backend_router
 from mex.editor.api.i18n import router as i18n_router
 from mex.editor.api.system import router as system_router
+from mex.editor.api.vocabulary import router as vocabulary_router
 from mex.editor.frontend import STATIC_DIR, npm_watch
 from mex.editor.logging import UVICORN_LOGGING_CONFIG
 from mex.editor.settings import EditorSettings
@@ -78,6 +79,7 @@ def create_fastapi(
         app.include_router(backend_router, prefix=API_PREFIX)
         app.include_router(system_router, prefix=API_PREFIX)
         app.include_router(i18n_router, prefix=API_PREFIX)
+        app.include_router(vocabulary_router, prefix=API_PREFIX)
     if startup in ["frontend", "both"]:
         app.mount(
             "/",

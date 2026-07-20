@@ -9,7 +9,7 @@ import {
 } from "@jsverse/transloco-locale";
 
 @Component({
-  selector: "app-localization-page",
+  selector: "mex-localization-page",
   imports: [TranslocoDirective, TranslocoDatePipe, TranslocoCurrencyPipe, TranslocoDecimalPipe],
   template: `
     <ng-container *transloco="let t">
@@ -52,6 +52,10 @@ describe("LocalizationPage", () => {
 
   it("should render text in german", () => {
     const compiled = fixture.nativeElement as HTMLElement;
+    const transloco = TestBed.inject(TranslocoService);
+    transloco.setActiveLang("de");
+    fixture.detectChanges();
+
     expect(compiled.querySelector("[data-testid='headline']")?.textContent.trim()).toBe(
       "Titelzeile",
     );
@@ -60,6 +64,9 @@ describe("LocalizationPage", () => {
       "01.01.2000, 12:30:00",
     );
     expect(compiled.querySelector("[data-testid='decimal']")?.textContent.trim()).toBe("213,123");
+    expect(compiled.querySelector("[data-testid='money']")?.textContent.trim()).toBe(
+      "100.000,12 €",
+    );
     expect(compiled.querySelector("[data-testid='money']")?.textContent.trim()).toBe(
       "100.000,12 €",
     );

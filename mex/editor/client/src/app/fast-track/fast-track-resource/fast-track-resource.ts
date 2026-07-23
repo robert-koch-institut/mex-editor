@@ -1,60 +1,29 @@
-import { Component, computed, inject, Injectable, signal } from "@angular/core";
+import { Component, computed, inject, signal } from "@angular/core";
 import { disabled, form, FormField, FormRoot, minLength, required } from "@angular/forms/signals";
 import { MatFormField, MatInput } from "@angular/material/input";
 import { MatSelect, MatOption, MatPrefix, MatSuffix } from "@angular/material/select";
 
-import { ConceptOptions } from "./concept-options.service";
+import { ConceptOptions } from "../../shared/concept-options.service";
 import { MatButton } from "@angular/material/button";
 
 import type { FastTrackResourceModel } from "./fast-track-resource.types";
 
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { ContactList } from "./contact-list/contact-list";
-import { ResourceSubmission } from "./resource-submission";
 import {
   translateSignal,
   TranslocoDirective,
   TranslocoPipe,
   TranslocoService,
 } from "@jsverse/transloco";
-import { Fieldset } from "./fieldset/fieldset";
+import { Fieldset } from "../fieldset/fieldset";
 import { MatIcon } from "@angular/material/icon";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { provideLuxonDateAdapter } from "@angular/material-luxon-adapter";
-import type { MatDateFormats } from "@angular/material/core";
 import { MAT_DATE_FORMATS } from "@angular/material/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatFormFieldModule } from "@angular/material/form-field";
-
-@Injectable()
-/**
- * DynamicDateFormats API documentation.
- */
-export class DynamicLuxonFormats implements MatDateFormats {
-  private dateAdapter = inject(TranslocoService);
-
-  // Das Parse-Format (wichtig für manuelle Tastatureingaben des Users)
-  get parse() {
-    const locale = this.dateAdapter.getActiveLang();
-    return {
-      dateInput: locale === "de" ? "dd.MM.yyyy" : "MM/dd/yyyy",
-    };
-  }
-
-  // Das Anzeige-Format im Inputfeld und Kalender-Labels
-  get display() {
-    const locale = this.dateAdapter.getActiveLang();
-    const isDe = locale === "de";
-    return {
-      dateInput: isDe ? "dd.MM.yyyy" : "MM/dd/yyyy",
-      monthYearLabel: isDe ? "MMM yyyy" : "MMM yyyy",
-      dateA11yLabel: "LL",
-      monthYearA11yLabel: "MMMM yyyy",
-    };
-  }
-}
 
 @Component({
   selector: "mex-fast-track-resource",
@@ -79,10 +48,6 @@ export class DynamicLuxonFormats implements MatDateFormats {
     MatChipsModule,
     MatFormFieldModule,
   ],
-  providers: [
-    provideLuxonDateAdapter(),
-    { provide: MAT_DATE_FORMATS, useFactory: () => new DynamicLuxonFormats() },
-  ],
   templateUrl: "./fast-track-resource.html",
   styleUrl: "./fast-track-resource.scss",
 })
@@ -90,7 +55,6 @@ export class DynamicLuxonFormats implements MatDateFormats {
  * Page to create a resource the fast way.
  */
 export class FastTrackResource {
-  private resourceSubmissionService = inject(ResourceSubmission);
   private translocoService = inject(TranslocoService);
   protected conceptOptions = inject(ConceptOptions);
   protected dateFormtConfig = inject(MAT_DATE_FORMATS);
@@ -100,8 +64,8 @@ export class FastTrackResource {
     this.translocoService.langChanges$.pipe(takeUntilDestroyed()).subscribe(() =>
       this.model.update((x) => ({
         ...x,
-        start: x.start ? new Date(x.start) : null,
-        end: x.end ? new Date(x.end) : null,
+        start: x.start ? x.start.plus(0) : null,
+        end: x.end ? x.end.plus(0) : null,
       })),
     );
   }
@@ -178,9 +142,7 @@ export class FastTrackResource {
   }
 
   onSubmit() {
-    this.resourceSubmissionService.submit(this.model).subscribe((result) => {
-      // eslint-disable-next-line no-console
-      console.log("Submitted", this.model(), result.stableTargetId);
-    });
+    // eslint-disable-next-line no-console
+    console.log("FastTrackResource::onSubmit", this.resourceForm(), this.model());
   }
 }

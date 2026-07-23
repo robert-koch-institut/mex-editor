@@ -1,13 +1,13 @@
 import { TestBed } from "@angular/core/testing";
 
-import { ConceptOptions } from "./concept-options.service";
+import { ResourceSubmission } from "./resource-submission";
 
-describe("VocabularySearchService", () => {
-  let service: ConceptOptions;
+describe("ResourceSubmission", () => {
+  let service: ResourceSubmission;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ConceptOptions);
+    service = TestBed.inject(ResourceSubmission);
   });
 
   it("should be created", () => {

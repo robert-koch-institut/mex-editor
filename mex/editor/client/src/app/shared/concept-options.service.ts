@@ -1,8 +1,7 @@
 import { httpResource } from "@angular/common/http";
 import { computed, inject, Injectable } from "@angular/core";
 
-import type { BilingualText, Concept } from "./concept-options.types";
-import type { PaginatedItemsContainer } from "../shared/models/paginated-items-container";
+import type { PaginatedItemsContainer } from "./models/paginated-items-container";
 import { TranslocoService } from "@jsverse/transloco";
 
 @Injectable({ providedIn: "root" })
@@ -15,7 +14,7 @@ export class ConceptOptions {
   themeOptions = this.buildConceptOptions("theme");
   resourceTypeGeneralOptions = this.buildConceptOptions("resource-type-general");
   resourceCreationMethodOptions = this.buildConceptOptions("resource-creation-method");
-  accrualPeriodicityOptions = this.buildConceptOptions("frequency");
+  frequencyOptions = this.buildConceptOptions("frequency");
   accessRestrictionOptions = this.buildConceptOptions("access-restriction");
 
   private getConceptLabel(concept: Concept, currentLang: string) {
@@ -51,4 +50,23 @@ export class ConceptOptions {
       return this.conceptsToOptions(vocab.items, currentLang);
     });
   }
+}
+
+/**
+ * Model for mex.common BilingualText
+ */
+interface BilingualText {
+  de?: string | null;
+  en?: string | null;
+}
+
+/**
+ * Model for mex.common Concept.
+ */
+interface Concept {
+  identifier: string;
+  inScheme: string;
+  prefLabel: BilingualText;
+  altLabel: BilingualText[];
+  definition?: BilingualText | null;
 }

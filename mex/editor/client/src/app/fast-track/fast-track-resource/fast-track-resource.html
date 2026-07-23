@@ -150,7 +150,7 @@
           [placeholder]="'select.placeholder' | transloco"
         >
           <mat-option [value]="null">None</mat-option>
-          @for (option of conceptOptions.accrualPeriodicityOptions(); track option.id) {
+          @for (option of conceptOptions.frequencyOptions(); track option.id) {
             <mat-option [value]="option.id">{{ option.label }}</mat-option>
           }
         </mat-select>

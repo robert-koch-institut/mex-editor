@@ -1,3 +1,4 @@
+import type { DateTime } from "luxon";
 import type { SearchContact } from "./contact-search";
 import type { CreateContact } from "./create-contact";
 
@@ -14,8 +15,8 @@ export interface FastTrackResourceModel {
   accrualPeriodicity: string | null;
   unitInCharge: string[];
   contacts: (CreateContact | SearchContact | string)[];
-  start: Date | null;
-  end: Date | null;
+  start: DateTime | null;
+  end: DateTime | null;
   hasLegalBasis: string;
   provenance: string;
   rights: string;

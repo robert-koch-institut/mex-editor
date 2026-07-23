@@ -3,16 +3,19 @@ import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { provideRouter } from "@angular/router";
 import { TranslocoTestingModule } from "@jsverse/transloco";
 import { translocoConfig, translocoProviders } from "./app/transloco";
+import { materialDefaultOptionProviders } from "./app/app.config";
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const de = {
   "test.headline": "Titelzeile",
   "test.icuMessageFormat": "{count, plural, one {EINER} other {VIELE}}",
+  "test.fieldset.label": "deutsches label",
 };
 
 const en = {
   "test.headline": "Headline",
   "test.icuMessageFormat": "{count, plural, one {ONE} other {MANY}}",
+  "test.fieldset.label": "english label",
 };
 /* eslint-enable @typescript-eslint/naming-convention */
 
@@ -28,6 +31,7 @@ const testProviders = [
     preloadLangs: true,
   }).providers,
   rest,
+  materialDefaultOptionProviders,
 ];
 
 export default testProviders;

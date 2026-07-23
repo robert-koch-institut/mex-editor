@@ -14,9 +14,6 @@ describe("FastTrackResource", () => {
 
     fixture = TestBed.createComponent(FastTrackResource);
     component = fixture.componentInstance;
-    // Kick off the vocabulary httpResources and satisfy their pending requests
-    // so the fixture can stabilize.
-    fixture.detectChanges();
     await fixture.whenStable();
   });
 

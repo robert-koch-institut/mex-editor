@@ -2,22 +2,87 @@ import { TestBed } from "@angular/core/testing";
 
 import { ConceptOptions } from "./concept-options.service";
 import { HttpTestingController } from "@angular/common/http/testing";
+import { TranslocoService } from "@jsverse/transloco";
+import { ApplicationRef } from "@angular/core";
 
 describe("ConceptOptions", () => {
-  let service: ConceptOptions;
-  let httpTesting: HttpTestingController;
+  let httpMock: HttpTestingController;
+  let transloco: TranslocoService;
+
+  const vocabularyNames = [
+    "theme",
+    "resource-type-general",
+    "resource-creation-method",
+    "frequency",
+    "access-restriction",
+  ];
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(ConceptOptions);
-    httpTesting = TestBed.inject(HttpTestingController);
+    TestBed.configureTestingModule({
+      providers: [ConceptOptions],
+    });
+
+    httpMock = TestBed.inject(HttpTestingController);
+    transloco = TestBed.inject(TranslocoService);
+    transloco.setActiveLang("de");
   });
 
-  afterEach(() => {
-    httpTesting.verify();
+  // catches duplicate/unexpected requests that expectOne alone wouldn't
+  afterEach(() => httpMock.verify());
+
+  it("requests every vocabulary endpoint exactly once, across multiple injections", () => {
+    const a = TestBed.inject(ConceptOptions);
+    const b = TestBed.inject(ConceptOptions); // providedIn: 'root' -> same instance
+    expect(a).toBe(b);
+
+    TestBed.tick(); // fires the effects behind each httpResource
+
+    for (const name of vocabularyNames) {
+      httpMock.expectOne(`api/v0/vocabulary/${name}`).flush({ items: [], total: 0 });
+    }
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
+  it("relabels options when the active language changes, without re-fetching", async () => {
+    const service = TestBed.inject(ConceptOptions);
+    TestBed.tick();
+
+    httpMock.expectOne("api/v0/vocabulary/theme").flush({
+      items: [
+        {
+          identifier: "1",
+          inScheme: "x",
+          prefLabel: { de: "Bevölkerung", en: "Population" },
+          altLabel: [],
+        },
+        {
+          identifier: "2",
+          inScheme: "x",
+          prefLabel: { de: "Gesundheit", en: "Health" },
+          altLabel: [],
+        },
+      ],
+      total: 2,
+    });
+    for (const name of vocabularyNames.filter((n) => n !== "theme")) {
+      httpMock.expectOne(`api/v0/vocabulary/${name}`).flush({ items: [], total: 0 });
+    }
+
+    await TestBed.inject(ApplicationRef).whenStable();
+
+    expect(service.themeOptions()).toEqual([
+      { id: "1", label: "Bevölkerung" },
+      { id: "2", label: "Gesundheit" },
+    ]);
+
+    transloco.setActiveLang("en");
+
+    // computed() is pull-based, so no tick/whenStable needed — reading it recomputes synchronously
+    expect(service.themeOptions()).toEqual([
+      { id: "2", label: "Health" },
+      { id: "1", label: "Population" },
+    ]);
+
+    // httpMock.verify() in afterEach will fail this test if the language
+    // change had triggered any additional request — which it shouldn't.
   });
 });

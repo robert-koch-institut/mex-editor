@@ -1,4 +1,24 @@
 {
-  "app.footer.greetings": "Erstellt mit ❤️ von MEx",
-  "app.header.navigation.themeToggle": "Umschalten helles/dunkles Erscheinungsbild"
+  "app": {
+    "footer.greetings": "Erstellt mit ❤️ von MEx",
+    "header.navigation.themeToggle": "Umschalten helles/dunkles Erscheinungsbild"
+  },
+  "categories": {
+    "desired": "Erwünscht",
+    "optional": "Optional",
+    "required": "Pflicht"
+  },
+  "fasttrack": {
+    "resource": {
+      "fields": {
+        "keywords.de": "{{keyword}} - Deutsch",
+        "keywords.en": "{{keyword}} - Englisch",
+        "rights.prefill": "vorausfüllen",
+        "rights.prefill.text": "Gesundheitsdaten sind besonders sensibel und haben einen hohen Schutzbedarf. Da es sich dabei oftmals um personenbezogene Daten handelt, welche durch die DSGVO (Datenschutzgrundverordnung) geschützt sind, können sie nicht ohne weiteres frei zur Verfügung gestellt werden. Eine Weitergabe und Verarbeitung dieser Daten ist daher prinzipiell zunächst ausgeschlossen, kann aber unter bestimmten Voraussetzungen und Bedingungen möglich sein. Ob und in welcher Form Daten zur Verfügung gestellt werden können, unterliegt daher einer Einzelfallprüfung. Um die Bearbeitung zu vereinfachen, sollten bei der ersten Kontaktaufnahme folgende Informationen enthalten sein: antragstellende Person und Institution, Name und Kennung des Datensatzes, Verwendungszweck mit kurzer Beschreibung des Forschungsvorhabens und bis wann der Datensatz benötigt wird.",
+        "title.placeholder": "Bitte den Titel eingeben"
+      },
+      "headline": "{{Resource}} erstellen"
+    }
+  },
+  "select.placeholder": "Bitte auswählen"
 }

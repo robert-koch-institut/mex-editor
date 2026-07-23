@@ -6,10 +6,21 @@ import type { CreateContact } from "./create-contact";
  */
 export interface FastTrackResourceModel {
   title: string;
+  description: string;
   theme: string[];
+  resourceTypeGeneral: string[];
+  spatial: string[];
   resourceCreationMethod: string[];
   accrualPeriodicity: string | null;
-  accessRestriction: string;
   unitInCharge: string[];
   contacts: (CreateContact | SearchContact | string)[];
+  start: Date | null;
+  end: Date | null;
+  hasLegalBasis: string;
+  provenance: string;
+  rights: string;
+  keywords: {
+    en: string[];
+    de: string[];
+  };
 }

@@ -1,0 +1,25 @@
+@let state = formState();
+<div class="label">
+  @if (showCategoryLabel()) {
+    {{ label() }} - {{ categoryLabel() }}
+  } @else {
+    {{ label() }}
+  }
+</div>
+@let desc = description();
+@if (desc) {
+  <div class="description">{{ desc }}</div>
+}
+
+<ng-content></ng-content>
+
+@if (state) {
+  @let errors = state.errors();
+  @if (errors && errors.length > 0 && state.touched()) {
+    <div class="error-container">
+      @for (err of errors; track err.message) {
+        <div class="error">{{ err.kind }} | {{ err.message }}</div>
+      }
+    </div>
+  }
+}

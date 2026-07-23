@@ -5,7 +5,7 @@ import { TestBed } from "@angular/core/testing";
 
 import { FastTrackResource } from "./fast-track-resource";
 import type { PreviewOrganizationalUnit } from "../shared/models";
-import type { Concept } from "./vocabulary-search.types";
+import type { Concept } from "./concept-options.types";
 
 describe("FastTrackResource", () => {
   let component: FastTrackResource;

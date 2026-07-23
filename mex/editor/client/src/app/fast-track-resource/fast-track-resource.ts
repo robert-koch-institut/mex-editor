@@ -1,15 +1,9 @@
-import { Component, computed, inject, signal } from "@angular/core";
-import { toObservable, toSignal } from "@angular/core/rxjs-interop";
-import { form, FormField, FormRoot, minLength, required } from "@angular/forms/signals";
-import { MatAutocomplete, MatAutocompleteTrigger } from "@angular/material/autocomplete";
-import { MatChipGrid, MatChipRow, MatChipRemove, MatChipInput } from "@angular/material/chips";
-import { MatIcon } from "@angular/material/icon";
-import { MatFormField, MatLabel, MatError, MatInput } from "@angular/material/input";
-import { MatSelect, MatOption } from "@angular/material/select";
-import { debounceTime } from "rxjs";
+import { Component, computed, inject, Injectable, signal } from "@angular/core";
+import { disabled, form, FormField, FormRoot, minLength, required } from "@angular/forms/signals";
+import { MatFormField, MatInput } from "@angular/material/input";
+import { MatSelect, MatOption, MatPrefix, MatSuffix } from "@angular/material/select";
 
-import { BackendProxy } from "../shared/backend-proxy.service";
-import { VocabularySearch } from "./vocabulary-search.service";
+import { ConceptOptions } from "./concept-options.service";
 import { MatButton } from "@angular/material/button";
 
 import type { FastTrackResourceModel } from "./fast-track-resource.types";
@@ -17,9 +11,50 @@ import type { FastTrackResourceModel } from "./fast-track-resource.types";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { ContactList } from "./contact-list/contact-list";
 import { ResourceSubmission } from "./resource-submission";
-import type { Text } from "../shared/models/text";
-import type { Concept } from "./vocabulary-search.types";
-import type { PreviewOrganizationalUnit } from "../shared/models";
+import {
+  translateSignal,
+  TranslocoDirective,
+  TranslocoPipe,
+  TranslocoService,
+} from "@jsverse/transloco";
+import { Fieldset } from "./fieldset/fieldset";
+import { MatIcon } from "@angular/material/icon";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { provideLuxonDateAdapter } from "@angular/material-luxon-adapter";
+import type { MatDateFormats } from "@angular/material/core";
+import { MAT_DATE_FORMATS } from "@angular/material/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatFormFieldModule } from "@angular/material/form-field";
+
+@Injectable()
+/**
+ * DynamicDateFormats API documentation.
+ */
+export class DynamicLuxonFormats implements MatDateFormats {
+  private dateAdapter = inject(TranslocoService);
+
+  // Das Parse-Format (wichtig für manuelle Tastatureingaben des Users)
+  get parse() {
+    const locale = this.dateAdapter.getActiveLang();
+    return {
+      dateInput: locale === "de" ? "dd.MM.yyyy" : "MM/dd/yyyy",
+    };
+  }
+
+  // Das Anzeige-Format im Inputfeld und Kalender-Labels
+  get display() {
+    const locale = this.dateAdapter.getActiveLang();
+    const isDe = locale === "de";
+    return {
+      dateInput: isDe ? "dd.MM.yyyy" : "MM/dd/yyyy",
+      monthYearLabel: isDe ? "MMM yyyy" : "MMM yyyy",
+      dateA11yLabel: "LL",
+      monthYearA11yLabel: "MMMM yyyy",
+    };
+  }
+}
 
 @Component({
   selector: "mex-fast-track-resource",
@@ -27,21 +62,26 @@ import type { PreviewOrganizationalUnit } from "../shared/models";
     ContactList,
     FormField,
     FormRoot,
-    MatAutocomplete,
     MatAutocompleteModule,
-    MatAutocompleteTrigger,
     MatButton,
-    MatChipGrid,
-    MatChipInput,
-    MatChipRemove,
-    MatChipRow,
-    MatError,
     MatFormField,
-    MatIcon,
     MatInput,
-    MatLabel,
     MatOption,
     MatSelect,
+    TranslocoDirective,
+    TranslocoPipe,
+    Fieldset,
+    MatIcon,
+    MatPrefix,
+    MatSuffix,
+    MatDatepickerModule,
+    MatSlideToggle,
+    MatChipsModule,
+    MatFormFieldModule,
+  ],
+  providers: [
+    provideLuxonDateAdapter(),
+    { provide: MAT_DATE_FORMATS, useFactory: () => new DynamicLuxonFormats() },
   ],
   templateUrl: "./fast-track-resource.html",
   styleUrl: "./fast-track-resource.scss",
@@ -51,92 +91,61 @@ import type { PreviewOrganizationalUnit } from "../shared/models";
  */
 export class FastTrackResource {
   private resourceSubmissionService = inject(ResourceSubmission);
-  private vocabularySearchService = inject(VocabularySearch);
-  private search = inject(BackendProxy);
+  private translocoService = inject(TranslocoService);
+  protected conceptOptions = inject(ConceptOptions);
+  protected dateFormtConfig = inject(MAT_DATE_FORMATS);
+
+  constructor() {
+    // rewrite dates to refresh ui and render dates based on localization.
+    this.translocoService.langChanges$.pipe(takeUntilDestroyed()).subscribe(() =>
+      this.model.update((x) => ({
+        ...x,
+        start: x.start ? new Date(x.start) : null,
+        end: x.end ? new Date(x.end) : null,
+      })),
+    );
+  }
+
+  prefillRightsText = translateSignal("fasttrack.resource.fields.rights.prefill.text");
+  isRightsPrefilled = computed(() => this.model().rights === this.prefillRightsText());
 
   model = signal<FastTrackResourceModel>({
     title: "",
+    description: "",
     theme: [],
+    resourceTypeGeneral: [],
+    spatial: [],
     resourceCreationMethod: [],
-    accrualPeriodicity: null,
-    accessRestriction: "",
+    accrualPeriodicity: "",
     unitInCharge: [],
     contacts: [""],
+    start: null,
+    end: null,
+    hasLegalBasis: "",
+    provenance: "",
+    rights: "",
+    keywords: {
+      de: [],
+      en: [],
+    },
   });
 
   resourceForm = form(this.model, (schema) => {
     required(schema.title, { message: "Title is required" });
     minLength(schema.title, 3, { message: "Title must be at least 3 characters long" });
     minLength(schema.theme, 1, { message: "At least one theme is required" });
-    required(schema.accessRestriction, { message: "Access restriction is required" });
     required(schema.unitInCharge, { message: "Need a unit in charge" });
+    required(schema.resourceCreationMethod, { message: "Method is required!" });
+    minLength(schema.resourceCreationMethod, 1, { message: "At least one is required!" });
+
+    disabled(schema.rights, { when: () => this.isRightsPrefilled() });
   });
 
-  private vocabularyItemsAsOptions(name: string) {
-    const vocab = this.vocabularySearchService.getVocabulary(name);
-    return computed(() => FastTrackResource.toOptions(vocab.value().items));
-  }
-
-  themeOptions = this.vocabularyItemsAsOptions("theme");
-  resourceCreationMethodOptions = this.vocabularyItemsAsOptions("resource-creation-method");
-  accrualPeriodicityOptions = this.vocabularyItemsAsOptions("frequency");
-  accessRestrictionOptions = this.vocabularyItemsAsOptions("access-restriction");
-
-  /** Raw search input for the "unit in charge" field, debounced before it hits the backend. */
-  unitInChargeQuery = signal("");
-
-  private unitInChargeQueryDebounced = toSignal(
-    toObservable(this.unitInChargeQuery).pipe(debounceTime(250)),
-    { initialValue: "" },
-  );
-
-  unitInChargeUnits = this.search.searchUnits(this.unitInChargeQueryDebounced);
-
-  unitInChargeOptions = computed(() =>
-    FastTrackResource.toOptions(this.unitInChargeUnits.value().items),
-  );
-
-  /** Caches labels for selected unit ids so chips can render names, not identifiers. */
-  private unitLabels = new Map<string, string>();
-
-  /** Map concepts to selectable options, preferring the German label. */
-  static toOptions(
-    concepts: Concept[] | PreviewOrganizationalUnit[],
-  ): { id: string; label: string }[] {
-    return concepts.map((concept) => {
-      if ("$type" in concept) {
-        const displayName = (name: Text[]): string => {
-          const german = name.find((text) => text.language === "de");
-          return german?.value ?? name[0]?.value ?? "";
-        };
-        return { id: concept.identifier, label: displayName(concept.name) || concept.identifier };
-      }
-      return {
-        id: concept.identifier,
-        label: concept.prefLabel.de ?? concept.prefLabel.en ?? concept.identifier,
-      };
+  prefillRights(fill: boolean) {
+    this.model.update((x) => {
+      const text = fill ? this.prefillRightsText() : "";
+      return { ...x, rights: text };
     });
-  }
-
-  unitLabel(id: string): string {
-    return this.unitLabels.get(id) ?? id;
-  }
-
-  addUnit(option: { id: string; label: string }) {
-    this.unitLabels.set(option.id, option.label);
-    this.model.update((model) =>
-      model.unitInCharge.includes(option.id)
-        ? model
-        : { ...model, unitInCharge: [...model.unitInCharge, option.id] },
-    );
-    this.unitInChargeQuery.set("");
-  }
-
-  removeUnit(id: string) {
-    this.model.update((model) => ({
-      ...model,
-      unitInCharge: model.unitInCharge.filter((unitId) => unitId !== id),
-    }));
   }
 
   deleteContact(index: number) {
@@ -148,6 +157,23 @@ export class FastTrackResource {
   addContact() {
     this.model.update((m) => {
       return { ...m, contacts: [...m.contacts, ""] };
+    });
+  }
+
+  addKeyword(lang: keyof FastTrackResourceModel["keywords"], keyword: string) {
+    this.model.update((x) => {
+      const unique = new Set([...x.keywords[lang], keyword]);
+      x.keywords[lang] = [...unique.values()];
+      return x;
+    });
+  }
+
+  removeKeyword(lang: keyof FastTrackResourceModel["keywords"], keyword: string) {
+    this.model.update((x) => {
+      const unique = new Set(x.keywords[lang]);
+      unique.delete(keyword);
+      x.keywords[lang] = [...unique.values()];
+      return x;
     });
   }
 

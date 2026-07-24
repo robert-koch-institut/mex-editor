@@ -10,10 +10,12 @@ describe("FastTrackResource", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FastTrackResource],
+      providers: [],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FastTrackResource);
     component = fixture.componentInstance;
+
     await fixture.whenStable();
   });
 

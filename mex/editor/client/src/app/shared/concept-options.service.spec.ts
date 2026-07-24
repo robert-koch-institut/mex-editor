@@ -76,13 +76,9 @@ describe("ConceptOptions", () => {
 
     transloco.setActiveLang("en");
 
-    // computed() is pull-based, so no tick/whenStable needed — reading it recomputes synchronously
     expect(service.themeOptions()).toEqual([
       { id: "2", label: "Health" },
       { id: "1", label: "Population" },
     ]);
-
-    // httpMock.verify() in afterEach will fail this test if the language
-    // change had triggered any additional request — which it shouldn't.
   });
 });

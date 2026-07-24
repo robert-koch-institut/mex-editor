@@ -8,6 +8,7 @@ import { combineLatest, filter, map } from "rxjs";
 import type { GetLangParams } from "@jsverse/transloco-persist-lang";
 import { provideTranslocoPersistLang } from "@jsverse/transloco-persist-lang";
 import { NavigationEnd, Router } from "@angular/router";
+import { DateAdapter } from "@angular/material/core";
 
 /**
  * Name of the language query param.
@@ -160,6 +161,7 @@ export function provideQueryParamTranslocoSync() {
   return provideAppInitializer(() => {
     const router = inject(Router);
     const transloco = inject(TranslocoService);
+    const dateAdapter = inject(DateAdapter);
 
     // 1. URL -> activeLang
     // Fires on every completed navigation, including the initial one.
@@ -175,6 +177,14 @@ export function provideQueryParamTranslocoSync() {
           transloco.setActiveLang(urlLang);
         }
       });
+
+    transloco.langChanges$.subscribe((lang) => {
+      // eslint-disable-next-line no-console
+      console.log(`Language changed to: ${lang}`);
+
+      // Example action: Sync Angular Material DateAdapter locale
+      dateAdapter.setLocale(lang);
+    });
   });
 }
 

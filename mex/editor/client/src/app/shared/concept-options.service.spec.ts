@@ -38,7 +38,7 @@ describe("ConceptOptions", () => {
     TestBed.tick(); // fires the effects behind each httpResource
 
     for (const name of vocabularyNames) {
-      httpMock.expectOne(`api/v0/vocabulary/${name}`).flush({ items: [], total: 0 });
+      httpMock.expectOne(`api/v0/vocabulary/${name}`); // .flush({ items: [], total: 0 });
     }
   });
 

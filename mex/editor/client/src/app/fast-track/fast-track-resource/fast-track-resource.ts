@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { disabled, form, FormField, FormRoot, minLength, required } from "@angular/forms/signals";
 import { MatFormField, MatInput } from "@angular/material/input";
 import { MatSelect, MatOption, MatPrefix, MatSuffix } from "@angular/material/select";
@@ -19,11 +19,11 @@ import {
 import { Fieldset } from "../fieldset/fieldset";
 import { MatIcon } from "@angular/material/icon";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MAT_DATE_FORMATS } from "@angular/material/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { MAT_DATE_FORMATS } from "@angular/material/core";
 
 @Component({
   selector: "mex-fast-track-resource",
@@ -57,7 +57,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 export class FastTrackResource {
   private translocoService = inject(TranslocoService);
   protected conceptOptions = inject(ConceptOptions);
-  protected dateFormtConfig = inject(MAT_DATE_FORMATS);
+  protected dateFormats = inject(MAT_DATE_FORMATS);
 
   constructor() {
     // rewrite dates to refresh ui and render dates based on localization.
@@ -71,7 +71,7 @@ export class FastTrackResource {
   }
 
   prefillRightsText = translateSignal("fasttrack.resource.fields.rights.prefill.text");
-  isRightsPrefilled = computed(() => this.model().rights === this.prefillRightsText());
+  isPrefillChecked = signal(false);
 
   model = signal<FastTrackResourceModel>({
     title: "",
@@ -102,12 +102,14 @@ export class FastTrackResource {
     required(schema.resourceCreationMethod, { message: "Method is required!" });
     minLength(schema.resourceCreationMethod, 1, { message: "At least one is required!" });
 
-    disabled(schema.rights, { when: () => this.isRightsPrefilled() });
+    disabled(schema.rights, { when: this.isPrefillChecked });
   });
 
   prefillRights(fill: boolean) {
     this.model.update((x) => {
-      const text = fill ? this.prefillRightsText() : "";
+      const text = fill
+        ? this.translocoService.translate("fasttrack.resource.fields.rights.prefill.text")
+        : "";
       return { ...x, rights: text };
     });
   }
@@ -127,8 +129,13 @@ export class FastTrackResource {
   addKeyword(lang: keyof FastTrackResourceModel["keywords"], keyword: string) {
     this.model.update((x) => {
       const unique = new Set([...x.keywords[lang], keyword]);
-      x.keywords[lang] = [...unique.values()];
-      return x;
+      return {
+        ...x,
+        keywords: {
+          ...x.keywords,
+          [lang]: [...unique.values()],
+        },
+      };
     });
   }
 
@@ -136,8 +143,10 @@ export class FastTrackResource {
     this.model.update((x) => {
       const unique = new Set(x.keywords[lang]);
       unique.delete(keyword);
-      x.keywords[lang] = [...unique.values()];
-      return x;
+      return {
+        ...x,
+        keywords: { ...x.keywords, [lang]: [...unique.values()] },
+      };
     });
   }
 

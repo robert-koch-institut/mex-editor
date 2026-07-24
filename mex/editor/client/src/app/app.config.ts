@@ -6,7 +6,10 @@ import { provideRouter, withComponentInputBinding } from "@angular/router";
 import { routes } from "./app.routes";
 import { translocoProviders } from "./transloco";
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
-import { provideLuxonDateAdapter } from "@angular/material-luxon-adapter";
+import {
+  MAT_LUXON_DATE_ADAPTER_OPTIONS,
+  provideLuxonDateAdapter,
+} from "@angular/material-luxon-adapter";
 import type { MatDateFormats } from "@angular/material/core";
 import { MAT_DATE_FORMATS } from "@angular/material/core";
 import { TranslocoService } from "@jsverse/transloco";
@@ -41,8 +44,9 @@ class DynamicLuxonFormats implements MatDateFormats {
  */
 export const materialDefaultOptionProviders: (Provider | EnvironmentProviders)[] = [
   { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: "dynamic" } },
-  { provide: MAT_DATE_FORMATS, useFactory: () => new DynamicLuxonFormats() },
   provideLuxonDateAdapter(),
+  { provide: MAT_LUXON_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
+  { provide: MAT_DATE_FORMATS, useFactory: () => new DynamicLuxonFormats() },
 ];
 
 /**

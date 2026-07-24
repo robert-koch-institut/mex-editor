@@ -4,8 +4,8 @@
     "header.navigation.themeToggle": "Umschalten helles/dunkles Erscheinungsbild"
   },
   "categories": {
-    "desired": "Erwünscht",
     "optional": "Optional",
+    "recommended": "Empfohlen",
     "required": "Pflicht"
   },
   "fasttrack": {

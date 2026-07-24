@@ -4,9 +4,9 @@
     "header.navigation.themeToggle": "Toggle light/dark theme"
   },
   "categories": {
-    "desired": "desired",
     "optional": "optional",
-    "required": "required"
+    "recommended": "recommended",
+    "required": "mandatory"
   },
   "fasttrack": {
     "resource": {

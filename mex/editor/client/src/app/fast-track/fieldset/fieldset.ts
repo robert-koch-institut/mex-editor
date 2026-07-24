@@ -1,5 +1,5 @@
-import { Component, computed, inject, input } from "@angular/core";
-import type { FieldTree } from "@angular/forms/signals";
+import { Component, computed, HostBinding, inject, input } from "@angular/core";
+import { type FieldTree } from "@angular/forms/signals";
 import { TranslocoService } from "@jsverse/transloco";
 
 @Component({
@@ -16,9 +16,18 @@ export class Fieldset<T> {
 
   labelKey = input.required<string>();
   label = computed(() => this._transloco.translate(this.labelKey()));
+  private dataTestidSig = computed(() => {
+    const state = this.formState();
+    return state ? `fieldset-${state.name().split(".").at(-1)}` : null;
+  });
+
+  @HostBinding("attr.data-testid")
+  get dataTestId() {
+    return this.dataTestidSig();
+  }
 
   showCategoryLabel = input(true);
-  category = input<"required" | "optional" | "desired">("optional");
+  category = input<"required" | "optional" | "recommended">("optional");
   categoryLabel = computed(() => this._transloco.translate(`categories.${this.category()}`));
 
   formField = input<FieldTree<T>>();

@@ -174,7 +174,7 @@
               [matDatepicker]="startPicker"
               [max]="resourceForm.end().value()"
               [formField]="resourceForm.start"
-              [placeholder]="dateFormtConfig.parse.dateInput"
+              [placeholder]="dateFormats.parse.dateInput"
             />
             <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
             <mat-datepicker #startPicker />
@@ -192,7 +192,7 @@
               [matDatepicker]="endPicker"
               [min]="resourceForm.start().value()"
               [formField]="resourceForm.end"
-              [placeholder]="dateFormtConfig.parse.dateInput"
+              [placeholder]="dateFormats.parse.dateInput"
             />
             <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
             <mat-datepicker #endPicker />
@@ -284,7 +284,10 @@
       labelKey="Resource.rights"
       class="two-column-item"
     >
-      <mat-slide-toggle [checked]="isRightsPrefilled()" (change)="prefillRights($event.checked)">
+      <mat-slide-toggle
+        [checked]="isPrefillChecked()"
+        (change)="isPrefillChecked.set($event.checked); prefillRights($event.checked)"
+      >
         {{ t("fasttrack.resource.fields.rights.prefill") }}
       </mat-slide-toggle>
       <mat-form-field>

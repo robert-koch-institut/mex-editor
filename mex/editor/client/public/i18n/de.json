@@ -20,5 +20,6 @@
       "headline": "{{Resource}} erstellen"
     }
   },
+  "input.placeholder": "Bitte ausfüllen",
   "select.placeholder": "Bitte auswählen"
 }

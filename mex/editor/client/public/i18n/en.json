@@ -20,5 +20,6 @@
       "headline": "Create {{Resource}}"
     }
   },
+  "input.placeholder": "Please fillout",
   "select.placeholder": "Please select"
 }

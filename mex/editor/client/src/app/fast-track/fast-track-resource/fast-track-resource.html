@@ -115,7 +115,11 @@
       class="one-column-item"
     >
       <mat-form-field>
-        <input matInput value="TODO!!!" style="color: red" />
+        <input
+          matInput
+          [formField]="resourceForm.spatial"
+          [placeholder]="'input.placeholder' | transloco"
+        />
       </mat-form-field>
     </mex-fieldset>
 

@@ -39,28 +39,40 @@
       </div>
     </mex-fieldset>
 
-    <mex-fieldset labelKey="creator" class="one-column-item">
+    <mex-fieldset [formField]="resourceForm.creator" labelKey="creator" class="one-column-item">
       <mat-form-field>
         <mat-icon matPrefix>search</mat-icon>
         <mat-select [placeholder]="'Resource.creator.description' | transloco"></mat-select>
       </mat-form-field>
     </mex-fieldset>
 
-    <mex-fieldset labelKey="Resource.contributor" class="one-column-item">
+    <mex-fieldset
+      [formField]="resourceForm.contributor"
+      labelKey="Resource.contributor"
+      class="one-column-item"
+    >
       <mat-form-field>
         <mat-icon matPrefix>search</mat-icon>
         <mat-select [placeholder]="'Resource.contributor.description' | transloco"></mat-select>
       </mat-form-field>
     </mex-fieldset>
 
-    <mex-fieldset labelKey="unitInCharge" class="one-column-item">
+    <mex-fieldset
+      [formField]="resourceForm.unitInCharge"
+      labelKey="unitInCharge"
+      class="one-column-item"
+    >
       <mat-form-field>
         <mat-icon matPrefix>search</mat-icon>
         <mat-select [placeholder]="'unitInCharge.description' | transloco"></mat-select>
       </mat-form-field>
     </mex-fieldset>
 
-    <mex-fieldset labelKey="contributingUnit" class="one-column-item">
+    <mex-fieldset
+      [formField]="resourceForm.contributingUnit"
+      labelKey="contributingUnit"
+      class="one-column-item"
+    >
       <mat-form-field>
         <mat-icon matPrefix>search</mat-icon>
         <mat-select
@@ -81,6 +93,7 @@
           multiple
           [formField]="resourceForm.theme"
           [placeholder]="'select.placeholder' | transloco"
+          data-testid="theme-select"
         >
           @for (option of conceptOptions.themeOptions(); track option.id) {
             <mat-option [value]="option.id">{{ option.label }}</mat-option>
@@ -100,6 +113,7 @@
           multiple
           [formField]="resourceForm.resourceTypeGeneral"
           [placeholder]="'select.placeholder' | transloco"
+          data-testid="resourceTypeGeneral-select"
         >
           @for (option of conceptOptions.resourceTypeGeneralOptions(); track option.id) {
             <mat-option [value]="option.id">{{ option.label }}</mat-option>
@@ -134,6 +148,7 @@
           multiple
           [formField]="resourceForm.resourceCreationMethod"
           [placeholder]="'select.placeholder' | transloco"
+          data-testid="resourceCreationMethod-select"
         >
           @for (option of conceptOptions.resourceCreationMethodOptions(); track option.id) {
             <mat-option [value]="option.id">{{ option.label }}</mat-option>
@@ -152,6 +167,7 @@
         <mat-select
           [formField]="resourceForm.accrualPeriodicity"
           [placeholder]="'select.placeholder' | transloco"
+          data-testid="frequency-select"
         >
           <mat-option [value]="null">None</mat-option>
           @for (option of conceptOptions.frequencyOptions(); track option.id) {
@@ -205,7 +221,11 @@
       </div>
     </mex-fieldset>
 
-    <mex-fieldset labelKey="fasttrack.resource.fields.keywords.de" class="two-column-item">
+    <mex-fieldset
+      [formField]="resourceForm.keywords.de"
+      labelKey="fasttrack.resource.fields.keywords.de"
+      class="two-column-item"
+    >
       <mat-form-field>
         <mat-chip-grid
           #keywordGermanChips
@@ -229,7 +249,11 @@
       </mat-form-field>
     </mex-fieldset>
 
-    <mex-fieldset labelKey="fasttrack.resource.fields.keywords.en" class="two-column-item">
+    <mex-fieldset
+      [formField]="resourceForm.keywords.en"
+      labelKey="fasttrack.resource.fields.keywords.en"
+      class="two-column-item"
+    >
       <mat-form-field>
         <mat-chip-grid
           #keywordEnglishChips

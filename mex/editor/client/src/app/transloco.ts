@@ -163,8 +163,6 @@ export function provideQueryParamTranslocoSync() {
     const transloco = inject(TranslocoService);
     const dateAdapter = inject(DateAdapter);
 
-    // 1. URL -> activeLang
-    // Fires on every completed navigation, including the initial one.
     router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe(() => {
@@ -179,10 +177,6 @@ export function provideQueryParamTranslocoSync() {
       });
 
     transloco.langChanges$.subscribe((lang) => {
-      // eslint-disable-next-line no-console
-      console.log(`Language changed to: ${lang}`);
-
-      // Example action: Sync Angular Material DateAdapter locale
       dateAdapter.setLocale(lang);
     });
   });

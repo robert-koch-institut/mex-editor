@@ -12,8 +12,6 @@ export interface FastTrackResourceModel {
   resourceTypeGeneral: string[];
   resourceCreationMethod: string[];
   accrualPeriodicity: string | null;
-  unitInCharge: string[];
-  contacts: (CreateContact | SearchContact | string)[];
   spatial: string;
   start: DateTime | null;
   end: DateTime | null;
@@ -24,4 +22,10 @@ export interface FastTrackResourceModel {
     en: string[];
     de: string[];
   };
+  // TODO(fe): not done
+  unitInCharge: string[];
+  contacts: (CreateContact | SearchContact | string)[];
+  creator: string[];
+  contributor: string[];
+  contributingUnit: string[];
 }

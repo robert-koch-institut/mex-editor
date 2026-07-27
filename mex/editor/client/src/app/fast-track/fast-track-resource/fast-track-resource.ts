@@ -81,8 +81,6 @@ export class FastTrackResource {
     spatial: "",
     resourceCreationMethod: [],
     accrualPeriodicity: "",
-    unitInCharge: [],
-    contacts: [""],
     start: null,
     end: null,
     hasLegalBasis: "",
@@ -92,6 +90,12 @@ export class FastTrackResource {
       de: [],
       en: [],
     },
+    // TODO(fe): not working
+    unitInCharge: [],
+    contacts: [""],
+    creator: [],
+    contributingUnit: [],
+    contributor: [],
   });
 
   resourceForm = form(this.model, (schema) => {

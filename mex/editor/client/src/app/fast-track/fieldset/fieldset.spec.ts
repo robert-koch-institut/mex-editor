@@ -7,32 +7,44 @@ import { By } from "@angular/platform-browser";
 import { TranslocoService } from "@jsverse/transloco";
 import type { FieldTree } from "@angular/forms/signals";
 
+/**
+ * Builds a minimal fake FieldTree: `formField` is itself a callable that
+ * returns a FieldState-like object exposing `.errors()` / `.touched()`
+ * signals, matching what `fieldset.html` reads (`state.errors()`,
+ * `state.touched()`, `err.kind`, `err.message`).
+ */
+function fakeFormField(state: { errors?: { kind: string; message: string }[]; touched?: boolean }) {
+  const fieldState = {
+    name: () => "",
+    errors: () => state.errors ?? [],
+    touched: () => state.touched ?? false,
+  };
+  return (() => fieldState) as unknown as FieldTree<unknown>;
+}
+
 // eslint-disable-next-line max-lines-per-function
 describe("Fieldset", () => {
   let fixture: ComponentFixture<Fieldset<unknown>>;
 
-  function fakeFormField(state: {
-    errors?: { kind: string; message: string }[];
-    touched?: boolean;
-  }) {
-    const fieldState = {
-      errors: () => state.errors ?? [],
-      touched: () => state.touched ?? false,
-    };
-    return (() => fieldState) as unknown as FieldTree<unknown>;
-  }
-
   beforeEach(async () => {
+    // Relies on the project's own (globally provided) TranslocoService —
+    // no override/import here — and only replaces `translate()` with an
+    // identity stub, so label()/categoryLabel()/description() just echo
+    // the key back and assertions don't depend on real translation files.
     await TestBed.configureTestingModule({
       imports: [Fieldset],
-      providers: [
-        // Identity stub: label()/categoryLabel()/description() just echo the
-        // key back, so assertions don't depend on real translation files.
-        { provide: TranslocoService, useValue: { translate: (key: string) => key } },
-      ],
     }).compileComponents();
 
+    const translocoService = TestBed.inject(TranslocoService);
+    vi.spyOn(translocoService, "translate").mockImplementation((key: string | string[]) =>
+      typeof key === "string" ? key : key[0],
+    );
+
     fixture = TestBed.createComponent(Fieldset);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   function setInputs(
@@ -180,12 +192,14 @@ describe("Fieldset content projection", () => {
   })
   class Host {}
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("projects content passed between the component tags", async () => {
     await TestBed.configureTestingModule({
       imports: [Host],
-      providers: [{ provide: TranslocoService, useValue: { translate: (key: string) => key } }],
     }).compileComponents();
-
     const hostFixture = TestBed.createComponent(Host);
     hostFixture.detectChanges();
 

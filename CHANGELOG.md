@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fixed base_href typo in settings literal
+- fixed documentation pipeline and added missing doc strings
 
 ### Security
 

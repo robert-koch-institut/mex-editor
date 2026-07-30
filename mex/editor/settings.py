@@ -23,7 +23,7 @@ class EditorSettings(BaseSettings):
         description="Port that the server should listen on.",
         validation_alias="MEX_EDITOR__PORT",
     )
-    base_href: Literal["/", "/editorg/"] = Field(
+    base_href: Literal["/", "/editor/"] = Field(
         "/",
         validation_alias="MEX_EDITOR__BASE_HREF",
     )

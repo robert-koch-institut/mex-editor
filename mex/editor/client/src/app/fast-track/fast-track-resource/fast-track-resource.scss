@@ -1,3 +1,5 @@
+@use "../../../breakpoints.scss" as bp;
+
 .vertical-list {
   display: flex;
   flex-direction: column;
@@ -27,4 +29,14 @@
 
 .keyword-chips:has(mat-chip-row) {
   margin-bottom: 8px;
+}
+
+@include bp.up-to-small {
+  .two-column-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .two-column-item {
+    grid-column: span 1;
+  }
 }

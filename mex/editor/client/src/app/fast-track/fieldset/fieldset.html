@@ -1,14 +1,14 @@
 @let state = formState();
 <div class="label">
   @if (showCategoryLabel()) {
-    {{ label() }} - {{ categoryLabel() }}
+    {{ labelKey() | transloco }} - {{ categoryKey() | transloco }}
   } @else {
-    {{ label() }}
+    {{ labelKey() | transloco }}
   }
 </div>
-@let desc = description();
-@if (desc) {
-  <div class="description">{{ desc }}</div>
+@let descKey = descriptionKey();
+@if (descKey) {
+  <div class="description">{{ descKey | transloco }}</div>
 }
 
 <ng-content></ng-content>

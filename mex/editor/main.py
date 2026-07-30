@@ -65,7 +65,7 @@ def create_fastapi(
     """Create and configure the FastAPI application."""
     settings = EditorSettings.get()
     app = FastAPI(
-        title="mex-editor-ng",
+        title="mex-editor",
         lifespan=dev_lifespan if mode == "dev" else None,
         root_path="" if settings.base_href == "/" else settings.base_href.rstrip("/"),
     )
@@ -108,7 +108,7 @@ def main(
     startup: Literal["api", "frontend", "both"] = "both",
     dev: bool = False,
 ) -> None:  # pragma: no cover
-    """Start the mex-editor-ng api."""
+    """Start the mex-editor api."""
     settings = EditorSettings.get()
     app = create_fastapi(startup, "dev" if dev else None)
     uvicorn.run(
@@ -117,7 +117,7 @@ def main(
         port=settings.port,
         root_path="" if settings.base_href == "/" else settings.base_href.rstrip("/"),
         log_config=UVICORN_LOGGING_CONFIG,
-        headers=[("server", "mex-editor-ng")],
+        headers=[("server", "mex-editor")],
     )
 
 

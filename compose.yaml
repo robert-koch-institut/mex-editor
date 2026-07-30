@@ -1,9 +1,9 @@
 services:
-  mex-editor-ng:
+  mex-editor:
     build: .
-    image: mex-editor-ng:local
+    image: mex-editor:local
     environment:
-      MEX_EDITOR__BASE_HREF: "/editor-ng/"
+      MEX_EDITOR__BASE_HREF: "/editor/"
       MEX_BACKEND_API_KEY: "write_key"
       MEX_BACKEND_API_URL: "http://mex-backend:8080/"
     depends_on:
@@ -17,7 +17,7 @@ services:
     volumes:
       - ./httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
     depends_on:
-      - mex-editor-ng
+      - mex-editor
 
   mex-backend:
     image: ghcr.io/robert-koch-institut/mex-backend:4.0.3

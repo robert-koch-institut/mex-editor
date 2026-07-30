@@ -580,7 +580,7 @@ wheels = [
 
 [[package]]
 name = "mex-editor"
-version = "3.9.9"
+version = "4.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "backoff" },

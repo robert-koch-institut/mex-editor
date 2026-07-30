@@ -11,18 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- advance version to keep up with mex-admin and avoid confusions between the two
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+### Security
+
+## [4.0.0] - 2026-07-30
+
+### Changes
+
+- advance version to keep up with mex-admin and avoid confusions between the two
+
+### Fixed
+
 - fixed base_href typo in settings literal
 - fixed documentation pipeline and added missing doc strings
-
-### Security
 
 ## [0.1.0] - 2026-07-30
 

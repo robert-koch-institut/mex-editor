@@ -1,6 +1,6 @@
 [project]
 name = "mex-editor"
-version = "3.9.9"
+version = "4.0.0"
 description = "The editor enables anyone to create and edit entities in a simple and fast way."
 authors = [{ name = "MEx Team", email = "mex@rki.de" }]
 readme = { file = "README.md", content-type = "text/markdown" }

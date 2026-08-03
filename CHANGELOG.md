@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- move polib dependency from dev to main dependencies
-
 ### Security
+
+## [4.0.1] - 2026-08-03
+
+### Fixed
+
+- move polib dependency from dev to main dependencies
 
 ## [4.0.0] - 2026-07-30
 

@@ -15,6 +15,10 @@
   <span style="flex: 1 1 auto"></span>
   <div class="nav-bar-controls">
     <mex-language-selector></mex-language-selector>
-    <mex-theme-toggle></mex-theme-toggle>
+    <span class="nav-bar-user">username@rki.de</span>
+    <button class="nav-bar-logout" type="button" aria-label="Logout">
+      {{ t("Logout") }}
+      <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+    </button>
   </div>
 </mat-toolbar>

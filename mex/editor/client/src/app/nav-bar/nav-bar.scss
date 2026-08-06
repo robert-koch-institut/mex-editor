@@ -1,15 +1,15 @@
 .nav-bar {
-  background-color: #005eb7;
+  background-color: var(--mat-sys-primary-container);
 
-  // The navbar background is always blue, so keep the foreground light in every
-  // theme (otherwise light mode renders dark text/icons on the blue background).
-  color: #fff;
-  --mat-toolbar-container-text-color: #fff;
-  --mat-icon-button-icon-color: #fff;
-  --mat-select-enabled-trigger-text-color: #fff;
-  --mat-select-placeholder-text-color: #fff;
-  --mat-select-enabled-arrow-color: #fff;
-  --mat-select-focused-arrow-color: #fff;
+  // The navbar background is always a theme primary surface, so keep the foreground
+  // color readable by using its on-primary token.
+  color: var(  --mat-sys-on-primary);
+  --mat-toolbar-container-text-color: var(  --mat-sys-on-primary);
+  --mat-icon-button-icon-color: var(  --mat-sys-on-primary);
+  --mat-select-enabled-trigger-text-color: var(  --mat-sys-on-primary);
+  --mat-select-placeholder-text-color: var(  --mat-sys-on-primary);
+  --mat-select-enabled-arrow-color: var(  --mat-sys-on-primary);
+  --mat-select-focused-arrow-color: var(  --mat-sys-on-primary);
 
   .brand > img {
     vertical-align: middle;
@@ -46,7 +46,30 @@
 
   .nav-bar-controls {
     display: flex;
-    gap: 12px;
+    gap: 15px;
     align-items: center;
+  }
+
+  .nav-bar-user {
+    font-size: 0.8rem;
+    opacity: 0.9;
+    margin-left: 4rem;
+  }
+
+  .nav-bar-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--mat-sys-secondary-container);
+    border: 0px solid currentColor;
+    color: inherit;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+
+  .nav-bar-logout:hover {
+    opacity: 0.9;
   }
 }

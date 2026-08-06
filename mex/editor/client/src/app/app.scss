@@ -14,8 +14,8 @@ main {
 }
 
 footer {
-  background-color: #03284c;
-  color: #fff;
+  background-color: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface);
   padding: 12px;
 
   .footer-content {

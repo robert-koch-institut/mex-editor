@@ -13,4 +13,4 @@ router = APIRouter()
 )
 def check_system_status() -> VersionStatus:
     """Check that the server is healthy and responsive."""
-    return VersionStatus(status="ok", version=version("mex-editor-ng"))
+    return VersionStatus(status="ok", version=version("mex-editor"))

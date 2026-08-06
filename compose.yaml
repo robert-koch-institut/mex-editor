@@ -1,9 +1,9 @@
 services:
-  mex-editor-ng:
+  mex-editor:
     build: .
-    image: mex-editor-ng:local
+    image: mex-editor:local
     environment:
-      MEX_EDITOR__BASE_HREF: "/editor-ng/"
+      MEX_EDITOR__BASE_HREF: "/editor/"
       MEX_BACKEND_API_KEY: "write_key"
       MEX_BACKEND_API_URL: "http://mex-backend:8080/"
     depends_on:
@@ -17,10 +17,10 @@ services:
     volumes:
       - ./httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
     depends_on:
-      - mex-editor-ng
+      - mex-editor
 
   mex-backend:
-    image: ghcr.io/robert-koch-institut/mex-backend:4.0.3
+    image: ghcr.io/robert-koch-institut/mex-backend:4.2.2
     ports:
       - 8080:8080
     environment:
@@ -42,7 +42,7 @@ services:
         condition: service_healthy
 
   neo4j:
-    image: neo4j:2026.05-community
+    image: neo4j:2026.06-community
     environment:
       - NEO4J_AUTH=neo4j/password
     ports:
@@ -57,7 +57,7 @@ services:
       start_period: 10s
 
   valkey:
-    image: valkey/valkey:9.1.0
+    image: valkey/valkey:9.1.1
     ports:
       - 6379:6379
     volumes:

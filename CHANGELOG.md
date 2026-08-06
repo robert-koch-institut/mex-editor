@@ -9,6 +9,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [4.0.2] - 2026-08-05
+
+### Fixed
+
+- fix transloco translation path to be relative, not absolute
+
+## [4.0.1] - 2026-08-03
+
+### Fixed
+
+- move polib dependency from dev to main dependencies
+
+## [4.0.0] - 2026-07-30
+
+### Changes
+
+- advance version to keep up with mex-admin and avoid confusions between the two
+
+### Fixed
+
+- fixed base_href typo in settings literal
+- fixed documentation pipeline and added missing doc strings
+
+## [0.1.0] - 2026-07-30
+
+### Added
+
 - Initial Layout with header (including theme switcher and language switcher with noop) and footer
 - Localization with Transloco and script to create model .po to .json files
 - vitest/ui for better dev experience
@@ -23,24 +60,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- BREAKING: renamed from mex-editor-ng to mex-editor
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.3.0
 - updated angular to 22.0.4
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47
-- alot of manual package updates to help renovatebot
+- a lot of manual package updates to help renovatebot
 - updated node to 24.15.0
 - updated angular to 21.2.17
 - renovate: group non-major npm updates into a single PR
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
-- Tests fail if python tests dont complete successful
+- Tests fail if python tests don't complete successful
 - TsDoc generation were not working due to merge failures
-
-### Security
 
 ## [0.0.4] - 2026-04-28
 
@@ -74,5 +106,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/af9ddc
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/172aac
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/43f715
-
-### Security

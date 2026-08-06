@@ -37,7 +37,7 @@
     "vitest": "4.1.9"
   },
   "name": "mex-editor",
-  "packageManager": "npm@11.17.0",
+  "packageManager": "npm@12.0.2",
   "private": true,
   "scripts": {
     "build": "ng build --configuration production",

@@ -1,8 +1,9 @@
 import { Component } from "@angular/core";
 import { MatToolbar } from "@angular/material/toolbar";
-import { ThemeToggle } from "./theme-toggle/theme-toggle";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { MatSelectModule } from "@angular/material/select";
+import { MatIcon } from "@angular/material/icon";
+import { MatButton } from "@angular/material/button";
 import { LanguageSelector } from "./language-selector/language-selector";
 import { TranslocoDirective } from "@jsverse/transloco";
 
@@ -11,10 +12,11 @@ import { TranslocoDirective } from "@jsverse/transloco";
   imports: [
     MatToolbar,
     LanguageSelector,
-    ThemeToggle,
     RouterLink,
     RouterLinkActive,
     MatSelectModule,
+    MatIcon,
+    MatButton,
     TranslocoDirective,
   ],
   templateUrl: "./nav-bar.html",

@@ -130,6 +130,7 @@ npm-debug.log
 out-tsc
 testem.log
 typings
+theme-export/
 
 # vitest
 *.snap

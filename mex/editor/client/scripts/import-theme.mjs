@@ -1,4 +1,5 @@
-// scripts/import-theme.mjs
+
+// write script so it transforms the variable names to match actual usage? currently missmatched
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname } from 'node:path';
 
@@ -17,6 +18,7 @@ const output = input
   .replace(/--md-sys-color-([a-z0-9-]+):/g, '--mat-sys-$1:')
   .replace(/^[^{]+\{/, ':root {'); // replace whatever the top selector is, not just ".light"
 
+// script won't fail if src/styles/ doesn't exist yet
 mkdirSync(dirname(OUTPUT), { recursive: true });
 writeFileSync(OUTPUT, output);
 

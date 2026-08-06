@@ -47,6 +47,7 @@
     "start": "ng serve",
     "test": "ng test --watch false",
     "test-ui": "ng test --ui",
+    "theme:import": "node scripts/import-theme.mjs",
     "watch": "ng build --watch --configuration development"
   },
   "version": "4.0.2"

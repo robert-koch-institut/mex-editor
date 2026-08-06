@@ -1,19 +1,19 @@
 @let state = formState();
 <div class="label">
   @if (showCategoryLabel()) {
-    {{ label() }} - {{ categoryLabel() }}
+    {{ labelKey() | transloco: labelParam() ?? {} }} - {{ categoryKey() | transloco }}
   } @else {
-    {{ label() }}
+    {{ labelKey() | transloco }}
   }
 </div>
-@let desc = description();
-@if (desc) {
-  <div class="description">{{ desc }}</div>
+@let descKey = descriptionKey();
+@if (descKey) {
+  <div class="description">{{ descKey | transloco }}</div>
 }
 
 <ng-content></ng-content>
 
-@if (state && state.touched()) {
+@if (state && (showErrorWithoutTouch() || state.touched())) {
   @let errors = state.errors();
   @if (errors && errors.length > 0) {
     <div class="error-container">

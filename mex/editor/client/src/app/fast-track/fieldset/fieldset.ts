@@ -1,10 +1,10 @@
-import { Component, computed, HostBinding, inject, input } from "@angular/core";
+import { Component, computed, HostBinding, input } from "@angular/core";
 import { type FieldTree } from "@angular/forms/signals";
-import { TranslocoService } from "@jsverse/transloco";
+import { TranslocoPipe } from "@jsverse/transloco";
 
 @Component({
   selector: "mex-fieldset",
-  imports: [],
+  imports: [TranslocoPipe],
   templateUrl: "./fieldset.html",
   styleUrl: "./fieldset.scss",
 })
@@ -12,10 +12,6 @@ import { TranslocoService } from "@jsverse/transloco";
  * Component to wrap controls with label, description and errors.
  */
 export class Fieldset<T> {
-  private _transloco = inject(TranslocoService);
-
-  labelKey = input.required<string>();
-  label = computed(() => this._transloco.translate(this.labelKey()));
   private dataTestidSig = computed(() => {
     const state = this.formState();
     return state ? `fieldset-${state.name().split(".").at(-1)}` : null;
@@ -26,19 +22,19 @@ export class Fieldset<T> {
     return this.dataTestidSig();
   }
 
+  labelKey = input.required<string>();
+  labelParam = input<Record<string, unknown>>();
+  descriptionKey = input<string>();
+
   showCategoryLabel = input(true);
   category = input<"required" | "optional" | "recommended">("optional");
-  categoryLabel = computed(() => this._transloco.translate(`categories.${this.category()}`));
+  categoryKey = computed(() => `categories.${this.category()}`);
+
+  showErrorWithoutTouch = input(false);
 
   formField = input<FieldTree<T>>();
   formState = computed(() => {
     const formField = this.formField();
     return formField ? formField() : null;
-  });
-
-  descriptionKey = input<string>();
-  description = computed(() => {
-    const key = this.descriptionKey();
-    return key ? this._transloco.translate(key) : undefined;
   });
 }

@@ -5,7 +5,7 @@ import { TranslocoTestingModule } from "@jsverse/transloco";
 import { translocoConfig, translocoProviders } from "./app/transloco";
 import { materialDefaultOptionProviders } from "./app/app.config";
 import { signal } from "@angular/core";
-import { ConceptOptions } from "./app/shared/concept-options.service";
+import { ConceptLookups } from "./app/shared/concept-lookups.service";
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const de = {
@@ -35,7 +35,7 @@ const testProviders = [
   rest,
   materialDefaultOptionProviders,
   {
-    provide: ConceptOptions,
+    provide: ConceptLookups,
     useValue: {
       themeOptions: signal([
         { id: "theme-1", label: "1. Theme" },

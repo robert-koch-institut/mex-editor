@@ -1,18 +1,18 @@
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
 
-import { ContactList } from "./contact-list";
+import { CreateContactPointForm } from "./create-contact-point-form";
 
-describe("ContactList", () => {
-  let component: ContactList;
-  let fixture: ComponentFixture<ContactList>;
+describe("CreateContactPointForm", () => {
+  let component: CreateContactPointForm;
+  let fixture: ComponentFixture<CreateContactPointForm>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ContactList],
+      imports: [CreateContactPointForm],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ContactList);
+    fixture = TestBed.createComponent(CreateContactPointForm);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

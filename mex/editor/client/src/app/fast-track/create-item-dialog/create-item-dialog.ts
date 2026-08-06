@@ -1,0 +1,84 @@
+import { Component, inject, signal } from "@angular/core";
+import { MatButton } from "@angular/material/button";
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
+import { MatTabsModule } from "@angular/material/tabs";
+import { TranslocoPipe } from "@jsverse/transloco";
+import { CreatePersonForm } from "./create-person-form/create-person-form";
+import type { CreateContactPoint, CreatePerson } from "../../shared/models";
+import { CreateContactPointForm } from "./create-contact-point-form/create-contact-point-form";
+import { CommonModule } from "@angular/common";
+
+/**
+ * Model to pass data to {@link CreateItemDialog}.
+ */
+export interface CreateItemDialogData {
+  initialSelectedTab?: CreateItemDialog["tabs"][number]["$type"];
+  allowedTypes?: ("Person" | "ContactPoint")[];
+  inputText?: string;
+}
+
+interface CreateItemFormData {
+  isValid: boolean;
+  data: CreatePerson | CreateContactPoint;
+}
+/**
+ * Model for result of {@link CreateItemDialog}.
+ */
+export type CreateItemDialogResult = CreatePerson | CreateContactPoint | null;
+
+@Component({
+  selector: "mex-create-item-dialog",
+  imports: [
+    MatTabsModule,
+    MatButton,
+    MatDialogModule,
+    TranslocoPipe,
+    CreatePersonForm,
+    CreateContactPointForm,
+    CommonModule,
+  ],
+  templateUrl: "./create-item-dialog.html",
+  styleUrl: "./create-item-dialog.scss",
+  host: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    "(keydown.enter)": "closeDialogIfValidData()",
+  },
+})
+/**
+ * Dialog to create items. Supported items are {@link CreatePerson}, {@link CreateContactPoint}
+ */
+export class CreateItemDialog {
+  private dialogRef = inject(MatDialogRef);
+  readonly personTab = {
+    $type: "Person" as const,
+    data: undefined as CreatePerson | undefined,
+    isValid: false,
+  };
+  readonly contactPointTab = {
+    $type: "ContactPoint" as const,
+    data: undefined as CreateContactPoint | undefined,
+    isValid: false,
+  };
+
+  private _getTabTypes() {
+    return [this.personTab.$type, this.contactPointTab.$type];
+  }
+
+  readonly data = inject<CreateItemDialogData>(MAT_DIALOG_DATA);
+
+  readonly tabs = [this.personTab, this.contactPointTab].filter((x) =>
+    (this.data.allowedTypes ?? this._getTabTypes()).includes(x.$type),
+  );
+  readonly formData = signal<CreateItemFormData | null>(null);
+
+  selectedTabIndex = signal<number>(
+    this.tabs.findIndex((x) => x.$type == (this.data.initialSelectedTab ?? "Person")),
+  );
+
+  closeDialogIfValidData() {
+    const selectedTabContent = this.tabs[this.selectedTabIndex()];
+    if (selectedTabContent.isValid) {
+      this.dialogRef.close(selectedTabContent.data);
+    }
+  }
+}

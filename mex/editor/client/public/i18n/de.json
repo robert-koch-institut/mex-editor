@@ -8,6 +8,11 @@
     "recommended": "Empfohlen",
     "required": "Pflicht"
   },
+  "create-item-dialog.cancel-button.label": "Abrrechen",
+  "create-item-dialog.description": "Erstellen Sie einen neuen Eintrag, indem Sie alle erforderlichen Felder ausfüllen und anschließend auf \"{{create-item-dialog.save-button.label}}\" drücken, um den Eintrag anzulegen.",
+  "create-item-dialog.loading": "Lade Einträge...",
+  "create-item-dialog.save-button.label": "Eintrag Speichern",
+  "create-item-dialog.title": "Neuen Eintrag anlegen",
   "fasttrack": {
     "resource": {
       "fields": {
@@ -21,5 +26,15 @@
     }
   },
   "input.placeholder": "Bitte ausfüllen",
+  "reference-select": {
+    "placeholder.empty": "Tippen um zu Filtern, Sie können \"*\" als Platzhalter benutzen",
+    "placeholder.validTypes": "Suche nach {value}",
+    "search-result": {
+      "createNew": "Neuen Eintrag für \"{query}\" anlegen...",
+      "empty": "Keine Ergebnisse für \"{query}\" gefunden.",
+      "label": "Suchergebnisse ({count} von {total})",
+      "loading": "Lade Ergebnisse..."
+    }
+  },
   "select.placeholder": "Bitte auswählen"
 }

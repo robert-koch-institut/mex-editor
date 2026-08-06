@@ -3,13 +3,12 @@ import { disabled, form, FormField, FormRoot, minLength, required } from "@angul
 import { MatFormField, MatInput } from "@angular/material/input";
 import { MatSelect, MatOption, MatPrefix, MatSuffix } from "@angular/material/select";
 
-import { ConceptOptions } from "../../shared/concept-options.service";
+import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { MatButton } from "@angular/material/button";
 
 import type { FastTrackResourceModel } from "./fast-track-resource.types";
 
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { ContactList } from "./contact-list/contact-list";
 import {
   translateSignal,
   TranslocoDirective,
@@ -24,11 +23,11 @@ import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MAT_DATE_FORMATS } from "@angular/material/core";
+import { ReferenceSelect } from "../reference-select/reference-select";
 
 @Component({
   selector: "mex-fast-track-resource",
   imports: [
-    ContactList,
     FormField,
     FormRoot,
     MatAutocompleteModule,
@@ -47,6 +46,7 @@ import { MAT_DATE_FORMATS } from "@angular/material/core";
     MatSlideToggle,
     MatChipsModule,
     MatFormFieldModule,
+    ReferenceSelect,
   ],
   templateUrl: "./fast-track-resource.html",
   styleUrl: "./fast-track-resource.scss",
@@ -56,7 +56,7 @@ import { MAT_DATE_FORMATS } from "@angular/material/core";
  */
 export class FastTrackResource {
   private translocoService = inject(TranslocoService);
-  protected conceptOptions = inject(ConceptOptions);
+  protected conceptOptions = inject(ConceptLookups);
   protected dateFormats = inject(MAT_DATE_FORMATS);
 
   constructor() {
@@ -90,9 +90,8 @@ export class FastTrackResource {
       de: [],
       en: [],
     },
-    // TODO(fe): not working
     unitInCharge: [],
-    contacts: [""],
+    contacts: [],
     creator: [],
     contributingUnit: [],
     contributor: [],
@@ -115,18 +114,6 @@ export class FastTrackResource {
         ? this.translocoService.translate("fasttrack.resource.fields.rights.prefill.text")
         : "";
       return { ...x, rights: text };
-    });
-  }
-
-  deleteContact(index: number) {
-    this.model.update((m) => {
-      return { ...m, contacts: m.contacts.filter((_, i) => i !== index) };
-    });
-  }
-
-  addContact() {
-    this.model.update((m) => {
-      return { ...m, contacts: [...m.contacts, ""] };
     });
   }
 

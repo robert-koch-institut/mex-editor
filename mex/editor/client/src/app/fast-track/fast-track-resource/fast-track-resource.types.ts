@@ -1,6 +1,6 @@
 import type { DateTime } from "luxon";
-import type { SearchContact } from "./contact-search";
-import type { CreateContact } from "./create-contact";
+import type { PreviewOrganizationalUnit } from "../../shared/models/organizational-unit";
+import type { CreateOrPreviewContactPoint, CreateOrPreviewPerson } from "../../shared/models";
 
 /**
  * Model for the Ressource fast track creation page.
@@ -22,10 +22,9 @@ export interface FastTrackResourceModel {
     en: string[];
     de: string[];
   };
-  // TODO(fe): not done
-  unitInCharge: string[];
-  contacts: (CreateContact | SearchContact | string)[];
-  creator: string[];
-  contributor: string[];
-  contributingUnit: string[];
+  unitInCharge: PreviewOrganizationalUnit[];
+  contributingUnit: PreviewOrganizationalUnit[];
+  creator: CreateOrPreviewPerson[];
+  contributor: CreateOrPreviewPerson[];
+  contacts: (CreateOrPreviewPerson | CreateOrPreviewContactPoint | PreviewOrganizationalUnit)[];
 }

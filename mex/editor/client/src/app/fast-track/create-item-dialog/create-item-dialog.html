@@ -1,0 +1,48 @@
+<h2 mat-dialog-title>{{ "create-item-dialog.title" | transloco }}</h2>
+@let selectedTabContent = tabs[selectedTabIndex()];
+<mat-dialog-content class="dialog-content">
+  <p class="dialog-description">
+    {{ "create-item-dialog.description" | transloco }}
+  </p>
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex()"
+    (selectedIndexChange)="selectedTabIndex.set($event)"
+    [ngClass]="{ 'hide-tab-header': tabs.length === 1 }"
+  >
+    @for (tab of tabs; track tab.$type) {
+      <mat-tab [label]="tab.$type | transloco">
+        <div class="tab-content">
+          @switch (tab.$type) {
+            @case ("Person") {
+              <mex-create-person-form
+                [inputText]="data.inputText"
+                [(data)]="tab.data"
+                [(isValid)]="tab.isValid"
+              ></mex-create-person-form>
+            }
+            @case ("ContactPoint") {
+              <mex-create-contact-point-form
+                [inputText]="data.inputText"
+                [(data)]="tab.data"
+                [(isValid)]="tab.isValid"
+              ></mex-create-contact-point-form>
+            }
+          }
+        </div>
+      </mat-tab>
+    }
+  </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button matButton [mat-dialog-close]>
+    {{ "create-item-dialog.cancel-button.label" | transloco }}
+  </button>
+  <button
+    matButton
+    #saveButton
+    [disabled]="!selectedTabContent.isValid"
+    [mat-dialog-close]="selectedTabContent.data"
+  >
+    {{ "create-item-dialog.save-button.label" | transloco }}
+  </button>
+</mat-dialog-actions>

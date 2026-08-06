@@ -1,11 +1,11 @@
 import { TestBed } from "@angular/core/testing";
 
-import { ConceptOptions } from "./concept-options.service";
+import { ConceptLookups } from "./concept-lookups.service";
 import { HttpTestingController } from "@angular/common/http/testing";
 import { TranslocoService } from "@jsverse/transloco";
 import { ApplicationRef } from "@angular/core";
 
-describe("ConceptOptions", () => {
+describe("ConceptLookups", () => {
   let httpMock: HttpTestingController;
   let transloco: TranslocoService;
 
@@ -19,7 +19,7 @@ describe("ConceptOptions", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ConceptOptions],
+      providers: [ConceptLookups],
     });
 
     httpMock = TestBed.inject(HttpTestingController);
@@ -31,8 +31,8 @@ describe("ConceptOptions", () => {
   afterEach(() => httpMock.verify());
 
   it("requests every vocabulary endpoint exactly once, across multiple injections", () => {
-    const a = TestBed.inject(ConceptOptions);
-    const b = TestBed.inject(ConceptOptions); // providedIn: 'root' -> same instance
+    const a = TestBed.inject(ConceptLookups);
+    const b = TestBed.inject(ConceptLookups); // providedIn: 'root' -> same instance
     expect(a).toBe(b);
 
     TestBed.tick(); // fires the effects behind each httpResource
@@ -43,7 +43,7 @@ describe("ConceptOptions", () => {
   });
 
   it("relabels options when the active language changes, without re-fetching", async () => {
-    const service = TestBed.inject(ConceptOptions);
+    const service = TestBed.inject(ConceptLookups);
     TestBed.tick();
 
     httpMock.expectOne("api/v0/vocabulary/theme").flush({

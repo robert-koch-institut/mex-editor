@@ -1,6 +1,18 @@
 import type { DateTime } from "luxon";
 import type { PreviewOrganizationalUnit } from "../../shared/models/organizational-unit";
-import type { CreateOrPreviewContactPoint, CreateOrPreviewPerson } from "../../shared/models";
+import type { PreviewContactPoint } from "../../shared/models/contact-point";
+import type { CreatePerson, CreateContactPoint } from "../../shared/models/create-item";
+import type { PreviewPerson } from "../../shared/models/person";
+
+/**
+ * UnionType for CreatePerson and PreviewPerson.
+ */
+export type CreateOrPreviewPerson = PreviewPerson | CreatePerson;
+
+/**
+ * UnionType for CreateContactPoint and PreviewContactPoint.
+ */
+export type CreateOrPreviewContactPoint = PreviewContactPoint | CreateContactPoint;
 
 /**
  * Model for the Ressource fast track creation page.

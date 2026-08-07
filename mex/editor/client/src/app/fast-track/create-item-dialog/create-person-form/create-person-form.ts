@@ -1,9 +1,9 @@
 import { Component, effect, input, linkedSignal, model } from "@angular/core";
-import type { CreatePerson } from "../../../shared/models";
 import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { MatFormField } from "@angular/material/select";
 import { MatInput } from "@angular/material/input";
 import { Fieldset } from "../../fieldset/fieldset";
+import type { CreatePerson } from "../../../shared/models/create-item";
 
 @Component({
   selector: "mex-create-person-form",

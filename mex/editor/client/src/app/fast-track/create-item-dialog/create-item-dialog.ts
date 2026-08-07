@@ -4,9 +4,9 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/materia
 import { MatTabsModule } from "@angular/material/tabs";
 import { TranslocoPipe } from "@jsverse/transloco";
 import { CreatePersonForm } from "./create-person-form/create-person-form";
-import type { CreateContactPoint, CreatePerson } from "../../shared/models";
 import { CreateContactPointForm } from "./create-contact-point-form/create-contact-point-form";
 import { CommonModule } from "@angular/common";
+import type { CreatePerson, CreateContactPoint } from "../../shared/models/create-item";
 
 /**
  * Model to pass data to {@link CreateItemDialog}.

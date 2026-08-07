@@ -6,7 +6,7 @@ import { MatSelect, MatOption, MatPrefix, MatSuffix } from "@angular/material/se
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { MatButton } from "@angular/material/button";
 
-import type { FastTrackResourceModel } from "./fast-track-resource.types";
+import type { FastTrackResourceModel } from "./fast-track-resource.models";
 
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import {

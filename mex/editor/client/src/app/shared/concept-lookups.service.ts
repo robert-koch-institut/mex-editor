@@ -3,7 +3,7 @@ import { computed, inject, Injectable } from "@angular/core";
 
 import type { PaginatedItemsContainer } from "./models/paginated-items-container";
 import { TranslocoService } from "@jsverse/transloco";
-import type { Concept } from "./models";
+import type { Concept } from "./models/concept";
 import { ToLookupPipe } from "./to-lookup-pipe";
 
 @Injectable({ providedIn: "root" })

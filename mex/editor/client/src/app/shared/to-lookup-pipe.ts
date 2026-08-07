@@ -1,8 +1,10 @@
 import type { PipeTransform } from "@angular/core";
 import { Pipe } from "@angular/core";
-import type { Concept } from "./models";
-import { isCreateItem, type CreateItem, type PreviewItem } from "./models";
 import { ToLabelPipe } from "./to-label-pipe";
+import type { PreviewItem } from "./models";
+import type { Concept } from "./models/concept";
+import type { CreateItem } from "./models/create-item";
+import { isCreateItem } from "./models/create-item";
 
 /**
  * Data as Lookup containing id and label.

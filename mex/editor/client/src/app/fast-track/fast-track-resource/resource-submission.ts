@@ -3,8 +3,8 @@ import type { Signal } from "@angular/core";
 import { inject, Injectable } from "@angular/core";
 import { combineLatest, map, switchMap, type Observable } from "rxjs";
 
-import type { FastTrackResourceModel } from "./fast-track-resource.types";
-import type { CreateContactPoint, CreatePerson } from "../../shared/models";
+import type { FastTrackResourceModel } from "./fast-track-resource.models";
+import type { CreateContactPoint, CreatePerson } from "../../shared/models/create-item";
 
 @Injectable({ providedIn: "root" })
 /**

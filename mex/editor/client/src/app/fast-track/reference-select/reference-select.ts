@@ -16,7 +16,6 @@ import type { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatInput, MatInputModule } from "@angular/material/input";
 import { TypeToIconNamePipe } from "../../shared/type-to-icon-name-pipe";
-import { isCreateItem, type CreateItem, type PreviewItem } from "../../shared/models";
 import { FormField, type FormValueControl } from "@angular/forms/signals";
 import { MatCheckbox } from "@angular/material/checkbox";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -39,6 +38,9 @@ import type {
 } from "../create-item-dialog/create-item-dialog";
 import { CreateItemDialog } from "../create-item-dialog/create-item-dialog";
 import { ToLabelPipe } from "../../shared/to-label-pipe";
+import type { PreviewItem } from "../../shared/models";
+import type { CreateItem } from "../../shared/models/create-item";
+import { isCreateItem } from "../../shared/models/create-item";
 
 /**
  * Type for valid reference select types.

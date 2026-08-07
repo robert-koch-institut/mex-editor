@@ -1,9 +1,9 @@
 import { Component, effect, input, linkedSignal, model } from "@angular/core";
-import type { CreateContactPoint } from "../../../shared/models";
 import { form, FormField, FormRoot, required, email } from "@angular/forms/signals";
 import { MatInput } from "@angular/material/input";
 import { MatFormField } from "@angular/material/select";
 import { Fieldset } from "../../fieldset/fieldset";
+import type { CreateContactPoint } from "../../../shared/models/create-item";
 
 @Component({
   selector: "mex-create-contact-point-form",

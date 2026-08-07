@@ -1,4 +1,26 @@
 {
-  "app.footer.greetings": "Created with ❤️ by MEx",
-  "app.header.navigation.themeToggle": "Toggle light/dark theme"
+  "app": {
+    "footer.greetings": "Created with ❤️ by MEx",
+    "header.navigation.themeToggle": "Toggle light/dark theme"
+  },
+  "categories": {
+    "optional": "optional",
+    "recommended": "recommended",
+    "required": "mandatory"
+  },
+  "fasttrack": {
+    "resource": {
+      "fields": {
+        "keywords.de": "{{keyword}} - German",
+        "keywords.en": "{{keyword}} - English",
+        "rights.prefill": "prefill",
+        "rights.prefill.text": "Health data is particularly sensitive and requires a high level of protection. As this often involves personal data protected by the GDPR (General Data Protection Regulation), it cannot simply be made freely available. The disclosure and processing of this data is therefore, in principle, ruled out initially, but may be possible under certain conditions and circumstances. Whether and in what form data can be made available is therefore subject to a case-by-case assessment. To facilitate the processing of your request, the following information should be included when you first make contact: the applicant and their institution, the name and identifier of the dataset, the intended use along with a brief description of the research project, and the date by which the dataset is required.",
+        "title.placeholder": "Please add a title"
+      },
+      "headline": "Create {{Resource}}"
+    }
+  },
+  "input.placeholder": "Please fillout",
+  "select.none-option": "Keine",
+  "select.placeholder": "Please select"
 }

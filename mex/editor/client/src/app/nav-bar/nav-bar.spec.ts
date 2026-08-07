@@ -6,8 +6,8 @@ import { provideRouter } from "@angular/router";
 import { routes } from "../app.routes";
 import { RouterTestingHarness } from "@angular/router/testing";
 import { StartPage } from "../start-page/start-page";
-import { FastTrackResource } from "../fast-track-resource/fast-track-resource";
-import { FastTrackActivity } from "../fast-track-activity/fast-track-activity";
+import { FastTrackResource } from "../fast-track/fast-track-resource/fast-track-resource";
+import { FastTrackActivity } from "../fast-track/fast-track-activity/fast-track-activity";
 
 describe("NavBarComponent", () => {
   let component: NavBar;

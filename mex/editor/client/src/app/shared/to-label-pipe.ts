@@ -27,6 +27,7 @@ export class ToLabelPipe implements PipeTransform {
       null
     );
   }
+
   private pickLabel(values: string | string[] | Text[]): string | null {
     if (typeof values === "string") return values;
     if (values.length === 0) return null;
@@ -36,6 +37,7 @@ export class ToLabelPipe implements PipeTransform {
     }
     return (values as Text[]).filter((x) => x.value).at(0)?.value ?? null;
   }
+
   private firstLabelOf(values: (string | string[] | Text[] | undefined)[], lang: string) {
     for (const array of values.filter((x) => !!x) as (string | string[] | Text[])[]) {
       const label = this.pickLabelByLang(array, lang) ?? this.pickLabel(array);
@@ -67,7 +69,12 @@ export class ToLabelPipe implements PipeTransform {
       return undefined;
     };
     return (
-      getTextLabel(concept.prefLabel) || concept.altLabel.map(getTextLabel)[0] || concept.identifier
+      getTextLabel(concept.prefLabel) ||
+      concept.altLabel
+        .map(getTextLabel)
+        .filter((x) => !!x)
+        .at(0) ||
+      concept.identifier
     );
   }
 

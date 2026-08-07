@@ -1,0 +1,22 @@
+.dialog-content {
+  width: 560px;
+  height: 360px;
+}
+
+.hide-tab-header {
+  ::ng-deep {
+    mat-tab-header {
+      display: none;
+    }
+  }
+}
+
+.tab-content {
+  padding: 8px 8px 0px 8px;
+}
+
+.hide-tab-header {
+  .tab-content {
+    padding: 0 8px;
+  }
+}

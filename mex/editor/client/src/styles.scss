@@ -1,7 +1,7 @@
 @use "@fontsource/roboto/300" as *;
 @use "@fontsource/roboto/400" as *;
 @use "@fontsource/roboto/500" as *;
-@use "@fontsource/material-icons" as *;
+@use "@fontsource-variable/material-symbols-rounded";
 @use "sass:map";
 
 // Include theming for Angular Material with `mat.theme()`.
@@ -11,6 +11,7 @@
 
 // Initialize core styles
 @include mat.core();
+
 
 // Define typography (shared for both modes)
 $my-typography: (
@@ -91,7 +92,7 @@ a {
 
 // include material icons
 .material-icons {
-  font-family: "Material Icons";
+  font-family: "Material Symbols Rounded Variable";
   font-weight: normal;
   font-style: normal;
   font-size: 24px;

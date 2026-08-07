@@ -16,23 +16,23 @@ import { TranslocoService } from "@jsverse/transloco";
 
 @Injectable()
 class DynamicLuxonFormats implements MatDateFormats {
-  private dateAdapter = inject(TranslocoService);
+  private translocoService = inject(TranslocoService);
 
-  // Das Parse-Format (wichtig für manuelle Tastatureingaben des Users)
+  // parse format (used for user input e.g. in date picker)
   get parse() {
-    const locale = this.dateAdapter.getActiveLang();
+    const locale = this.translocoService.getActiveLang();
     return {
       dateInput: locale === "de" ? "dd.MM.yyyy" : "MM/dd/yyyy",
     };
   }
 
-  // Das Anzeige-Format im Inputfeld und Kalender-Labels
+  // Format to display dates
   get display() {
-    const locale = this.dateAdapter.getActiveLang();
+    const locale = this.translocoService.getActiveLang();
     const isDe = locale === "de";
     return {
       dateInput: isDe ? "dd.MM.yyyy" : "MM/dd/yyyy",
-      monthYearLabel: isDe ? "MMM yyyy" : "MMM yyyy",
+      monthYearLabel: "MMM yyyy",
       dateA11yLabel: "LL",
       monthYearA11yLabel: "MMMM yyyy",
     };

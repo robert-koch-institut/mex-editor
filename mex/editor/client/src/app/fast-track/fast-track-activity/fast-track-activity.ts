@@ -20,24 +20,39 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 
-interface CreateContactPointModel {
+/**
+ * Model for a contact point that is created inline with the activity.
+ */
+export interface CreateContactPointModel {
   $type: "CreateContactPointModel";
   email: string;
 }
-interface CreatePersonModel {
+/**
+ * Model for a person that is created inline with the activity.
+ */
+export interface CreatePersonModel {
   $type: "CreatePersonModel";
   firstname: number;
   lastname: number;
 }
-type CreateContactModel = CreateContactPointModel | CreatePersonModel;
-interface FastTrackActivityModel {
+/**
+ * Union of the contact types that can be created inline with the activity.
+ */
+export type CreateContactModel = CreateContactPointModel | CreatePersonModel;
+/**
+ * Model backing the fast-track activity form.
+ */
+export interface FastTrackActivityModel {
   title: string;
   contact: (string | CreateContactModel)[];
   startDate: Date | null;
   endDate: Date | null;
   keywords: KeywordDict;
 }
-interface KeywordDict {
+/**
+ * Keywords of an activity, grouped by language.
+ */
+export interface KeywordDict {
   german: string[];
   english: string[];
 }

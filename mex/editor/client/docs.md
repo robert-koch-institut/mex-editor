@@ -2,7 +2,7 @@
 
 > A simple and fast way to create and edit resources and activities — built for basic users, i.e. employees, not metadata specialists.
 
-This documentation covers the **technical building blocks** of the MEx Editor frontend: components, classes, interfaces, services and modules. If you're looking for installation or usage instructions instead, see the project [README](https://github.com/robert-koch-institut/mex-editor-ng/blob/main/README.md).
+This documentation covers the **technical building blocks** of the MEx Editor frontend: components, classes, interfaces, services and modules. If you're looking for installation or usage instructions instead, see the project [README](https://github.com/robert-koch-institut/mex-editor/blob/main/README.md).
 
 ### Why this editor exists
 
@@ -124,4 +124,4 @@ Keep docstrings close to the code they describe — most of this reference is ge
 
 ---
 
-**Contact:** mex@rki.de · **License:** [MIT](https://github.com/robert-koch-institut/mex-editor-ng/blob/main/LICENSE)
+**Contact:** mex@rki.de · **License:** [MIT](https://github.com/robert-koch-institut/mex-editor/blob/main/LICENSE)

@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 
 import { ConceptOptions } from "../../shared/concept-options.service";
 
-describe("VocabularySearchService", () => {
+describe("ConceptOptions", () => {
   let service: ConceptOptions;
 
   beforeEach(() => {

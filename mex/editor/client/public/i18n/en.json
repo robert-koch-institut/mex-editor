@@ -36,5 +36,6 @@
       "loading": "Loading results..."
     }
   },
+  "select.none-option": "Keine",
   "select.placeholder": "Please select"
 }

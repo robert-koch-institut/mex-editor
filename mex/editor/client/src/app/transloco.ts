@@ -26,7 +26,7 @@ class TranslocoHttpLoader implements TranslocoLoader {
   getTranslation(lang: string) {
     return combineLatest([
       this.http.get<Translation>(`api/v0/i18n/${lang}`),
-      this.http.get<Translation>(`/i18n/${lang}.json`),
+      this.http.get<Translation>(`i18n/${lang}.json`),
     ]).pipe(map(([model, app]) => ({ ...model, ...app })));
   }
 }

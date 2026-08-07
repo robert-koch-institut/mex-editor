@@ -7,5 +7,5 @@ exclude_patterns = ["source/frontend_client_docs/**"]
 napoleon_google_docstring = True
 napoleon_include_init_with_doc = True
 napoleon_include_private_with_doc = True
-project = "mex-editor-ng"
+project = "mex-editor"
 templates_path = ["."]

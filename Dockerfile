@@ -16,14 +16,14 @@ RUN uv export --no-dev --no-editable | uv pip install --system --no-deps -r -
 
 RUN install-frontend
 RUN MEX_EDITOR__CLIENT_DIR="/build/dist" MEX_EDITOR__BASE_HREF="/"        build-frontend
-RUN MEX_EDITOR__CLIENT_DIR="/build/dist" MEX_EDITOR__BASE_HREF="/editor-ng/" build-frontend
+RUN MEX_EDITOR__CLIENT_DIR="/build/dist" MEX_EDITOR__BASE_HREF="/editor/" build-frontend
 
 FROM python:3.14-slim
 
 LABEL org.opencontainers.image.authors="mex@rki.de"
 LABEL org.opencontainers.image.description="The editor enables anyone to create and edit entities in a simple and fast way."
 LABEL org.opencontainers.image.licenses="MIT"
-LABEL org.opencontainers.image.url="https://github.com/robert-koch-institut/mex-editor-ng"
+LABEL org.opencontainers.image.url="https://github.com/robert-koch-institut/mex-editor"
 LABEL org.opencontainers.image.vendor="robert-koch-institut"
 
 ENV PYTHONUNBUFFERED=1

@@ -21,5 +21,6 @@
     }
   },
   "input.placeholder": "Bitte ausfüllen",
+  "select.none-option": "Keine",
   "select.placeholder": "Bitte auswählen"
 }

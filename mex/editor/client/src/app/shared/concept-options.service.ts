@@ -26,7 +26,12 @@ export class ConceptOptions {
       return undefined;
     };
     return (
-      getTextLabel(concept.prefLabel) || concept.altLabel.map(getTextLabel)[0] || concept.identifier
+      getTextLabel(concept.prefLabel) ||
+      concept.altLabel
+        .map(getTextLabel)
+        .filter((x) => !!x)
+        .at(0) ||
+      concept.identifier
     );
   }
 

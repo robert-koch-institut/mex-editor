@@ -169,7 +169,7 @@
           [placeholder]="'select.placeholder' | transloco"
           data-testid="frequency-select"
         >
-          <mat-option [value]="null">None</mat-option>
+          <mat-option [value]="null">{{ t("select.none-option") }}</mat-option>
           @for (option of conceptOptions.frequencyOptions(); track option.id) {
             <mat-option [value]="option.id">{{ option.label }}</mat-option>
           }

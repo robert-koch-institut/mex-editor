@@ -21,5 +21,6 @@
     }
   },
   "input.placeholder": "Please fillout",
+  "select.none-option": "Keine",
   "select.placeholder": "Please select"
 }

@@ -12,7 +12,7 @@ import type { CreatePerson, CreateContactPoint } from "../../shared/models/creat
  * Model to pass data to {@link CreateItemDialog}.
  */
 export interface CreateItemDialogData {
-  initialSelectedTab?: CreateItemDialog["tabs"][number]["$type"];
+  initialSelectedTab?: "Person" | "ContactPoint";
   allowedTypes?: ("Person" | "ContactPoint")[];
   inputText?: string;
 }
@@ -60,23 +60,23 @@ export class CreateItemDialog {
     isValid: false,
   };
 
-  private _getTabTypes() {
-    return [this.personTab.$type, this.contactPointTab.$type];
-  }
+  private readonly _tabs = [this.personTab, this.contactPointTab];
 
   readonly data = inject<CreateItemDialogData>(MAT_DIALOG_DATA);
 
-  readonly tabs = [this.personTab, this.contactPointTab].filter((x) =>
-    (this.data.allowedTypes ?? this._getTabTypes()).includes(x.$type),
+  readonly tabs = signal(
+    this._tabs.filter((x) =>
+      (this.data.allowedTypes ?? this._tabs.map((t) => t.$type)).includes(x.$type),
+    ),
   );
   readonly formData = signal<CreateItemFormData | null>(null);
 
-  selectedTabIndex = signal<number>(
-    this.tabs.findIndex((x) => x.$type == (this.data.initialSelectedTab ?? "Person")),
+  selectedTabIndex = signal(
+    this.tabs().findIndex((x) => x.$type == (this.data.initialSelectedTab ?? "Person")),
   );
 
   closeDialogIfValidData() {
-    const selectedTabContent = this.tabs[this.selectedTabIndex()];
+    const selectedTabContent = this.tabs()[this.selectedTabIndex()];
     if (selectedTabContent.isValid) {
       this.dialogRef.close(selectedTabContent.data);
     }

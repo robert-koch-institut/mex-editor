@@ -4,6 +4,7 @@ import { ConceptLookups } from "./concept-lookups.service";
 import { HttpTestingController } from "@angular/common/http/testing";
 import { TranslocoService } from "@jsverse/transloco";
 import { ApplicationRef } from "@angular/core";
+import type { Lookup } from "./to-lookup-pipe";
 
 describe("ConceptLookups", () => {
   let httpMock: HttpTestingController;
@@ -68,15 +69,20 @@ describe("ConceptLookups", () => {
     }
 
     await TestBed.inject(ApplicationRef).whenStable();
+    const trimData = (x: Lookup<unknown>) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { data, ...rest } = x;
+      return rest;
+    };
 
-    expect(service.themeOptions()).toEqual([
+    expect(service.themeOptions().map(trimData)).toEqual([
       { id: "1", label: "Bevölkerung" },
       { id: "2", label: "Gesundheit" },
     ]);
 
     transloco.setActiveLang("en");
 
-    expect(service.themeOptions()).toEqual([
+    expect(service.themeOptions().map(trimData)).toEqual([
       { id: "2", label: "Health" },
       { id: "1", label: "Population" },
     ]);

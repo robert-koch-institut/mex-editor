@@ -76,7 +76,9 @@ export type ReferenceSelectTypes = "Person" | "ContactPoint" | "OrganizationalUn
 /**
  * Component to search and/or create a reference entity.
  */
-export class ReferenceSelect<T extends PreviewItem | CreateItem> implements FormValueControl<T[]> {
+export class ReferenceSelect<
+  T extends PreviewItem | CreateItem = PreviewItem | CreateItem,
+> implements FormValueControl<T[]> {
   protected readonly transloco = inject(TranslocoService);
   private readonly labelPipe = new ToLabelPipe();
   private readonly dialog = inject(MatDialog);

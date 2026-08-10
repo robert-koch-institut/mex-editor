@@ -1,5 +1,6 @@
 <h2 mat-dialog-title>{{ "create-item-dialog.title" | transloco }}</h2>
-@let selectedTabContent = tabs[selectedTabIndex()];
+@let ts = tabs();
+@let selectedTabContent = ts[selectedTabIndex()];
 <mat-dialog-content class="dialog-content">
   <p class="dialog-description">
     {{ "create-item-dialog.description" | transloco }}
@@ -9,7 +10,7 @@
     (selectedIndexChange)="selectedTabIndex.set($event)"
     [ngClass]="{ 'hide-tab-header': tabs.length === 1 }"
   >
-    @for (tab of tabs; track tab.$type) {
+    @for (tab of ts; track tab.$type) {
       <mat-tab [label]="tab.$type | transloco">
         <div class="tab-content">
           @switch (tab.$type) {

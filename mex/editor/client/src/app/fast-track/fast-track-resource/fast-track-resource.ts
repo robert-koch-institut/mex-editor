@@ -9,12 +9,7 @@ import { MatButton } from "@angular/material/button";
 import type { FastTrackResourceModel } from "./fast-track-resource.models";
 
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import {
-  translateSignal,
-  TranslocoDirective,
-  TranslocoPipe,
-  TranslocoService,
-} from "@jsverse/transloco";
+import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 import { Fieldset } from "../fieldset/fieldset";
 import { MatIcon } from "@angular/material/icon";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -70,9 +65,7 @@ export class FastTrackResource {
     );
   }
 
-  prefillRightsText = translateSignal("fasttrack.resource.fields.rights.prefill.text");
   isPrefillChecked = signal(false);
-
   model = signal<FastTrackResourceModel>({
     title: "",
     description: "",

@@ -20,21 +20,21 @@
       "preLaunchTask": "angular-dev",
       "sourceMaps": true
     },
-      {
+    {
       "name": "angular-dev[firefox]",
       "type": "firefox",
       "request": "launch",
       "url": "http://localhost:4200",
       "webRoot": "${workspaceFolder}/mex/editor/client",
       "preLaunchTask": "angular-dev"
-    },
+    }
   ],
   "compounds": [
     {
       "name": "Run Editor (debug-edge)",
       "configurations": ["editor-api-debug", "angular-dev[edge]"]
     },
-     {
+    {
       "name": "Run Editor (debug-firefox)",
       "configurations": ["editor-api-debug", "angular-dev[firefox]"]
     }

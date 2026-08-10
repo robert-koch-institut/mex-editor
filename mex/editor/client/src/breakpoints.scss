@@ -1,0 +1,53 @@
+// Spiegelt @angular/cdk/layout Breakpoints (breakpoints.ts) 1:1.
+// CDK-Konstanten sind zur Laufzeit in TS, hier als SCSS-Pendant für Media Queries.
+// Bei CDK-Update abgleichen: https://github.com/angular/components/blob/main/src/cdk/layout/breakpoints.ts
+
+$breakpoint-xsmall-max: 599.98px;
+
+$breakpoint-small-min: 600px;
+$breakpoint-small-max: 959.98px;
+
+$breakpoint-medium-min: 960px;
+$breakpoint-medium-max: 1279.98px;
+
+$breakpoint-large-min: 1280px;
+$breakpoint-large-max: 1919.98px;
+
+$breakpoint-xlarge-min: 1920px;
+
+@mixin xsmall {
+  @media (max-width: $breakpoint-xsmall-max) {
+    @content;
+  }
+}
+
+@mixin small {
+  @media (min-width: $breakpoint-small-min) and (max-width: $breakpoint-small-max) {
+    @content;
+  }
+}
+
+@mixin medium {
+  @media (min-width: $breakpoint-medium-min) and (max-width: $breakpoint-medium-max) {
+    @content;
+  }
+}
+
+@mixin large {
+  @media (min-width: $breakpoint-large-min) and (max-width: $breakpoint-large-max) {
+    @content;
+  }
+}
+
+@mixin xlarge {
+  @media (min-width: $breakpoint-xlarge-min) {
+    @content;
+  }
+}
+
+// Convenience: bis inkl. small
+@mixin up-to-small {
+  @media (max-width: $breakpoint-small-max) {
+    @content;
+  }
+}

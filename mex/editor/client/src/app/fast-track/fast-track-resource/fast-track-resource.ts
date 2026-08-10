@@ -2,12 +2,9 @@ import { Component, inject, signal } from "@angular/core";
 import { disabled, form, FormField, FormRoot, minLength, required } from "@angular/forms/signals";
 import { MatFormField, MatInput } from "@angular/material/input";
 import { MatSelect, MatOption, MatPrefix, MatSuffix } from "@angular/material/select";
-
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { MatButton } from "@angular/material/button";
-
 import type { FastTrackResourceModel } from "./fast-track-resource.models";
-
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 import { Fieldset } from "../fieldset/fieldset";

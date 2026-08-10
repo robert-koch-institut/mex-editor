@@ -1,0 +1,22 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  mex-fieldset & {
+    .label {
+      font-weight: normal;
+    }
+  }
+}
+
+.label {
+  font-weight: bold;
+}
+.description {
+  font-style: italic;
+}
+
+.error-container {
+  color: red;
+}

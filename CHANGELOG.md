@@ -12,11 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.5.0
+- renovate config changes for better angular experience
+  - trying renovate dependency dashboard and check usage
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- manually fixed renovatebot lock file stuff
 
 ### Security
 
@@ -53,7 +58,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - typedoc to generate typescript documentation
 - docs to typescript components
 - renovate rule for angular
-- fasttrack create resource page with hackathon cleaned-up results
+- fasttrack create resource page
+  - including basic fields only
+- mex-fieldset component to mimic look of kernUx fieldset
 - more linting rules
   - no commented out code
   - no unused imports in component (checked against template)

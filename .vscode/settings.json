@@ -27,4 +27,5 @@
   "ruff.importStrategy": "useBundled",
   "ruff.nativeServer": "on",
   "eslint.nodePath": "${workspaceFolder}/mex/editor/client/node_modules",
+  "mypy.runUsingActiveInterpreter": true
 }

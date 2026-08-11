@@ -34,7 +34,7 @@ export class ResourceSubmission {
       switchMap((x) =>
         this.http.post<{ stableTargetId: string }>("api/v0/backend/rule-set", {
           additive: {
-            accessRestriction: resource.accessRestriction,
+            // accessRestriction: resource.accessRestriction,
             contact: x,
             theme: resource.theme,
             title: resource.title,

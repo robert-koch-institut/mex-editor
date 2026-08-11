@@ -8,7 +8,7 @@
   <mat-tab-group
     [selectedIndex]="selectedTabIndex()"
     (selectedIndexChange)="selectedTabIndex.set($event)"
-    [ngClass]="{ 'hide-tab-header': tabs.length === 1 }"
+    [ngClass]="{ 'hide-tab-header': ts.length === 1 }"
   >
     @for (tab of ts; track tab.$type) {
       <mat-tab [label]="tab.$type | transloco">

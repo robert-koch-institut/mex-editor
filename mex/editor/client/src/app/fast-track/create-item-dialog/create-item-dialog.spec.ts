@@ -52,6 +52,14 @@ describe("CreateItemDialog", () => {
     expect(component.tabs().map((t) => t.$type)).toEqual(["Person", "ContactPoint"]);
   });
 
+  it("hides the tab header if there is only one allowed type", () => {
+    const { component, fixture } = setup({ allowedTypes: ["Person"] });
+    expect(component.tabs().length).toEqual(1);
+    fixture.debugElement.queryAll(By.css(".mat-tab-header")).forEach((header) => {
+      header.nativeElement.style.display = "none";
+    });
+  });
+
   it("restricts the tabs to allowedTypes when provided", () => {
     const { component } = setup({ allowedTypes: ["Person"] });
     expect(component.tabs().map((t) => t.$type)).toEqual(["Person"]);

@@ -56,7 +56,6 @@ context = 5
 [tool.mypy]
 show_error_codes = true
 strict = true
-follow_imports = "silent"
 plugins = ["pydantic.mypy"]
 
 [tool.pydantic-mypy]
@@ -104,6 +103,7 @@ ignore = [
     "TRY003",  # Allow long exception message at the raise site (for pydantic)
 ]
 select = ["ALL"]
+
 
 [tool.ruff.lint.per-file-ignores]
 "docs/**" = [

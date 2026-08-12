@@ -10,9 +10,8 @@
     #trigger="matAutocompleteTrigger"
     [value]="isInputFocused() ? query : ''"
     (input)="searchQuery.set($event.target.value)"
-    (blur)="touch.emit()"
     (focus)="isInputFocused.set(true)"
-    (blur)="isInputFocused.set(false)"
+    (blur)="isInputFocused.set(false); touch.emit()"
     [matAutocomplete]="auto"
     [placeholder]="this.emptyPlaceholderLabel()"
   />
@@ -53,8 +52,9 @@
       >
         <ng-container>
           @if (searchResult.isLoading()) {
-            <mat-option disabled>{{ "create-item-dialog.loading" | transloco }}</mat-option>
-          } @else {
+            <mat-option disabled>{{
+              "reference-select.search-result.loading" | transloco
+            }}</mat-option>
             @for (item of result?.items; track item.identifier) {
               <mat-option
                 (onSelectionChange)="addValue($any(item)); input.focus(); openPanelDelayed(trigger)"

@@ -56,7 +56,7 @@ describe("CreateItemDialog", () => {
     const { component, fixture } = setup({ allowedTypes: ["Person"] });
     expect(component.tabs().length).toEqual(1);
     fixture.debugElement.queryAll(By.css(".mat-tab-header")).forEach((header) => {
-      header.nativeElement.style.display = "none";
+      expect(header.nativeElement.style.display).toBe("none");
     });
   });
 

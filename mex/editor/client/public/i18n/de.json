@@ -8,7 +8,7 @@
     "recommended": "Empfohlen",
     "required": "Pflicht"
   },
-  "create-item-dialog.cancel-button.label": "Abrrechen",
+  "create-item-dialog.cancel-button.label": "Abbrechen",
   "create-item-dialog.description": "Erstellen Sie einen neuen Eintrag, indem Sie alle erforderlichen Felder ausfüllen und anschließend auf \"{{create-item-dialog.save-button.label}}\" drücken, um den Eintrag anzulegen.",
   "create-item-dialog.loading": "Lade Einträge...",
   "create-item-dialog.save-button.label": "Eintrag Speichern",

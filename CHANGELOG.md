@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - renovate config changes for better angular experience
   - trying renovate dependency dashboard and check usage
+- pipes for typeToIconName, toLabel and toLookup
+- new control fasttrack reference-select that allows to search for existing entites or create them.
 
 ### Deprecated
 
@@ -40,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- ConceptOptions renamed to ConecptLookups and now use the new ToLookupPipe (which uses the LabelPipe, moved all lookup and label creation to spefic pipes).
+- Grouped everything into fasttrack folder to meet the feature approach. Some components might be moved to shared
 - advance version to keep up with mex-admin and avoid confusions between the two
 
 ### Fixed
@@ -64,14 +68,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - no commented out code
   - no unused imports in component (checked against template)
   - exported members must be documented
-- pipes for typeToIconName, toLabel and toLookup
-- new control fasttrack reference-select that allows to search for existing entites or create them.
 
 ### Changes
 
 - BREAKING: renamed from mex-editor-ng to mex-editor
-- ConceptOptions now use the new ToLookupPipe (which uses the LabelPipe, moved all lookup and label creation to spefic pipes).
-- Grouped everything into fasttrack folder to meat the feature approach. Some components might be moved to shared
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.3.0
 - updated angular to 22.0.4
 - updated template to https://github.com/robert-koch-institut/mex-template/commit/0d8c47

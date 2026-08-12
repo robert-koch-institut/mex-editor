@@ -19,8 +19,8 @@ export class CreatePersonForm {
   readonly inputText = input<string>();
   readonly isValid = model<boolean>();
 
-  protected readonly formModel = linkedSignal<CreatePerson>(() =>
-    this.createEmptyPerson(this.inputText() ?? ""),
+  protected readonly formModel = linkedSignal<CreatePerson>(
+    () => this.data() ?? this.createEmptyCreatePerson(this.inputText() ?? ""),
   );
 
   protected readonly personForm = form(this.formModel, (schema) => {
@@ -36,7 +36,7 @@ export class CreatePersonForm {
     });
   }
 
-  private createEmptyPerson(inputText: string): CreatePerson {
+  private createEmptyCreatePerson(inputText: string): CreatePerson {
     let givenName = "";
     let familyName = "";
     if (inputText) {

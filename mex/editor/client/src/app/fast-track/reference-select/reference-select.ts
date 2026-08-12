@@ -4,13 +4,14 @@ import {
   debounced,
   inject,
   input,
+  linkedSignal,
   model,
   output,
   signal,
 } from "@angular/core";
 import { httpResource } from "@angular/common/http";
-import { MatFormField, MatLabel, MatOptgroup, MatOption } from "@angular/material/select";
-import { MatIcon, MatIconModule } from "@angular/material/icon";
+import { MatLabel, MatOptgroup, MatOption } from "@angular/material/select";
+import { MatIconModule } from "@angular/material/icon";
 import type { PaginatedItemsContainer } from "../../shared/models/paginated-items-container";
 import type { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
@@ -50,12 +51,10 @@ export type ReferenceSelectTypes = "Person" | "ContactPoint" | "OrganizationalUn
 @Component({
   selector: "mex-reference-select",
   imports: [
-    MatIcon,
     MatOption,
     MatOptgroup,
     MatCheckbox,
     TypeToIconNamePipe,
-    MatFormField,
     MatLabel,
     MatIconModule,
     MatAutocompleteModule,
@@ -95,7 +94,7 @@ export class ReferenceSelect<
   protected readonly isInputFocused = signal(false);
 
   protected readonly searchQuery = signal("");
-  protected readonly searchEntityTypes = signal(this.validEntityTypes());
+  protected readonly searchEntityTypes = linkedSignal(() => this.validEntityTypes());
 
   protected readonly labelPlaceholderParam = computed(() => ({
     value: this.validEntityTypeLabels(),

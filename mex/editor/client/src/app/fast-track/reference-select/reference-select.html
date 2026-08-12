@@ -46,7 +46,7 @@
         [label]="
           t('reference-select.search-result.label', {
             count: result?.items?.length ?? 0,
-            total: result?.total,
+            total: result?.total ?? 0,
           })
         "
       >

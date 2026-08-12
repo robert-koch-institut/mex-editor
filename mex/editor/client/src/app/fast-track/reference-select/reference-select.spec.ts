@@ -60,9 +60,6 @@ describe("ReferenceSelect", () => {
 
   it("restricts the search entity types to validEntityTypes when given", async () => {
     fixture.componentRef.setInput("validEntityTypes", ["Person"]);
-    // searchEntityTypes defaults from validEntityTypes at construction time,
-    // so re-sync it explicitly the way toggleSearchEntityType would.
-    component["searchEntityTypes"].set(["Person"]);
     component["searchQuery"].set("jane");
     await vi.advanceTimersByTimeAsync(250);
     fixture.detectChanges();

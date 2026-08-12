@@ -55,6 +55,7 @@
             <mat-option disabled>{{
               "reference-select.search-result.loading" | transloco
             }}</mat-option>
+          } @else {
             @for (item of result?.items; track item.identifier) {
               <mat-option
                 (onSelectionChange)="addValue($any(item)); input.focus(); openPanelDelayed(trigger)"

@@ -139,7 +139,7 @@ describe("ToLabelPipe", () => {
     });
   });
 
-  it("throws when no label can be derived from any field", () => {
+  it("return the type and identifier when no label can be derived from any field", () => {
     const unit = {
       $type: "PreviewOrganizationalUnit" as const,
       identifier: "unit-1",
@@ -147,6 +147,6 @@ describe("ToLabelPipe", () => {
       name: [],
       alternativeName: [],
     };
-    expect(() => pipe.transform(unit, "de")).toThrow();
+    expect(() => pipe.transform(unit, "de")).toBe("PreviewOrganizationalUnit | unit-1");
   });
 });

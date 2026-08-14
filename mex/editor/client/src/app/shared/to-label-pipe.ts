@@ -68,7 +68,7 @@ export class ToLabelPipe implements PipeTransform {
       if (key in text && text[key]) {
         return text[key];
       }
-      return undefined;
+      return null;
     };
     return (
       getTextLabel(concept.prefLabel) ||
@@ -81,7 +81,7 @@ export class ToLabelPipe implements PipeTransform {
   }
 
   private defaultPreviewItemLabel(item: PreviewItem) {
-    return `${item.$type} | ${item.identifier}`;
+    return `${item.$type.replace(/^Preview/, "")} | ${item.identifier}`;
   }
 
   private defaultCreateItemLabel(item: CreateItem) {

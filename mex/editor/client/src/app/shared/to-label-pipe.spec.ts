@@ -147,6 +147,6 @@ describe("ToLabelPipe", () => {
       name: [],
       alternativeName: [],
     };
-    expect(() => pipe.transform(unit, "de")).toBe("PreviewOrganizationalUnit | unit-1");
+    expect(pipe.transform(unit, "de")).toBe("OrganizationalUnit | unit-1");
   });
 });

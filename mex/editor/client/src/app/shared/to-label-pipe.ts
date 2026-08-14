@@ -17,7 +17,10 @@ import type { Text } from "./models/shared";
  * Transforms objects to labels.
  */
 export class ToLabelPipe implements PipeTransform {
-  private transloco = inject(TranslocoService);
+  private transloco: TranslocoService;
+  constructor() {
+    this.transloco = inject(TranslocoService);
+  }
 
   private pickLabelByLang(values: string | string[] | Text[], lang: string): string | null {
     if (typeof values === "string") return values;

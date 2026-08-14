@@ -23,14 +23,4 @@ export interface Text {
 export type TextLanguage = "de" | "en" | "fr" | "es" | "ru";
 
 /** The theme type. */
-export type Theme =
-  | "https://mex.rki.de/item/theme-1"
-  | "https://mex.rki.de/item/theme-11"
-  | "https://mex.rki.de/item/theme-20"
-  | "https://mex.rki.de/item/theme-21"
-  | "https://mex.rki.de/item/theme-22"
-  | "https://mex.rki.de/item/theme-23"
-  | "https://mex.rki.de/item/theme-24"
-  | "https://mex.rki.de/item/theme-25"
-  | "https://mex.rki.de/item/theme-36"
-  | "https://mex.rki.de/item/theme-37";
+export type Theme = "https://mex.rki.de/item/theme-1" | "https://mex.rki.de/item/theme-11" | "https://mex.rki.de/item/theme-20" | "https://mex.rki.de/item/theme-21" | "https://mex.rki.de/item/theme-22" | "https://mex.rki.de/item/theme-23" | "https://mex.rki.de/item/theme-24" | "https://mex.rki.de/item/theme-25" | "https://mex.rki.de/item/theme-36" | "https://mex.rki.de/item/theme-37";

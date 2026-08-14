@@ -45,6 +45,7 @@ build-frontend = "mex.editor.frontend:build"
 install-and-build-frontend = "mex.editor.frontend:install_and_build"
 test-frontend = "mex.editor.testing:run"
 generate-frontend-docs = "mex.editor.frontend:generate_docs"
+generate-all-from-python = "mex.editor.code_gen.generate_all_entities:main"
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"
@@ -78,6 +79,7 @@ markers = "integration: mark a test as integration test"
 fix = true
 line-length = 88
 show-fixes = true
+extend-exclude = ["mex/editor/code_gen/**/*.*"]
 
 [tool.ruff.format]
 docstring-code-format = true

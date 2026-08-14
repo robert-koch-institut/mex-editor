@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 import type { DateTime } from "luxon";
 import type { PreviewOrganizationalUnit } from "../../shared/models/organizational-unit";
 import type { PreviewContactPoint } from "../../shared/models/contact-point";
 import type { CreatePerson, CreateContactPoint } from "../../shared/models/create-item";
 import type { PreviewPerson } from "../../shared/models/person";
+import z from "zod";
+import { AdditiveResourceSchema } from "../../shared/zod-test/resource/additive-resource";
 
 /**
  * UnionType for CreatePerson and PreviewPerson.
@@ -40,3 +44,10 @@ export interface FastTrackResourceModel {
   contributor: CreateOrPreviewPerson[];
   contacts: (CreateOrPreviewPerson | CreateOrPreviewContactPoint | PreviewOrganizationalUnit)[];
 }
+
+/**
+ * Schema for FasttrackResourceModel
+ */
+export const FastTrackResourceModelSchema = z.object({
+  title: AdditiveResourceSchema.shape.title.unwrap().element,
+});

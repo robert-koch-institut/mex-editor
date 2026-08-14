@@ -1,6 +1,6 @@
 import type { PipeTransform } from "@angular/core";
 import { Pipe } from "@angular/core";
-import type { Text } from "./models/shared";
+import type { Text } from "./models";
 import type { PreviewOrganizationalUnit } from "./models/organizational-unit";
 import type { PreviewPerson } from "./models/person";
 import type { PreviewContactPoint } from "./models/contact-point";

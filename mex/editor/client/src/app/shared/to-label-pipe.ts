@@ -1,5 +1,6 @@
 import type { PipeTransform } from "@angular/core";
-import { Pipe } from "@angular/core";
+import { inject, Pipe } from "@angular/core";
+import { TranslocoService } from "@jsverse/transloco";
 
 import type { PreviewItem } from "./models";
 import type { BilingualText, Concept } from "./models/concept";
@@ -16,6 +17,8 @@ import type { Text } from "./models/shared";
  * Transforms objects to labels.
  */
 export class ToLabelPipe implements PipeTransform {
+  private transloco = inject(TranslocoService);
+
   private pickLabelByLang(values: string | string[] | Text[], lang: string): string | null {
     if (typeof values === "string") return values;
     if (values.length === 0) return null;
@@ -80,6 +83,14 @@ export class ToLabelPipe implements PipeTransform {
     );
   }
 
+  private defaultPreviewItemLabel(item: PreviewItem) {
+    return `${item.$type} | ${item.identifier}`;
+  }
+
+  private defaultCreateItemLabel(item: CreateItem, lang: string) {
+    return this.transloco.translate(item.$type.replace(/^Create/, ""), {}, lang);
+  }
+
   transform(value: Concept | PreviewItem | CreateItem, lang: string): string {
     let label: null | string = null;
     if (!("$type" in value)) {
@@ -87,24 +98,21 @@ export class ToLabelPipe implements PipeTransform {
     } else {
       switch (value.$type) {
         case "PreviewOrganizationalUnit":
-          label = this.orgUnitToLabel(value, lang);
+          label = this.orgUnitToLabel(value, lang) ?? this.defaultPreviewItemLabel(value);
           break;
         case "PreviewPerson":
-          label = this.personToLabel(value, lang);
+          label = this.personToLabel(value, lang) ?? this.defaultPreviewItemLabel(value);
           break;
         case "PreviewContactPoint":
-          label = this.contactPointToLabel(value, lang);
+          label = this.contactPointToLabel(value, lang) ?? this.defaultPreviewItemLabel(value);
           break;
         case "CreateContactPoint":
-          label = this.firstLabelOf([`⋆ ${value.email}`], lang);
+          label = `⋆ ${this.firstLabelOf([value.email], lang) ?? this.defaultCreateItemLabel(value, lang)}`;
           break;
         case "CreatePerson":
-          label = this.firstLabelOf([`⋆ ${value.givenName} ${value.familyName}`], lang);
+          label = `⋆ ${this.firstLabelOf([`${value.givenName} ${value.familyName}`.trim()], lang) ?? this.defaultCreateItemLabel(value, lang)}`;
           break;
       }
-    }
-    if (!label) {
-      throw new Error("Cant create label for", { cause: { value, lang } });
     }
     return label;
   }

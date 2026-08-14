@@ -1,9 +1,9 @@
+import { HttpTestingController } from "@angular/common/http/testing";
+import { ApplicationRef } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
+import { TranslocoService } from "@jsverse/transloco";
 
 import { ConceptLookups } from "./concept-lookups.service";
-import { HttpTestingController } from "@angular/common/http/testing";
-import { TranslocoService } from "@jsverse/transloco";
-import { ApplicationRef } from "@angular/core";
 import type { Lookup } from "./to-lookup-pipe";
 
 describe("ConceptLookups", () => {

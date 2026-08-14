@@ -1,10 +1,10 @@
 import { httpResource } from "@angular/common/http";
 import { computed, inject, Injectable } from "@angular/core";
-
-import type { PaginatedItemsContainer } from "./models/paginated-items-container";
 import { TranslocoService } from "@jsverse/transloco";
-import { ToLookupPipe } from "./to-lookup-pipe";
+
 import type { Concept } from "./models/concept";
+import type { PaginatedItemsContainer } from "./models/paginated-items-container";
+import { ToLookupPipe } from "./to-lookup-pipe";
 
 @Injectable({ providedIn: "root" })
 /**

@@ -2,23 +2,23 @@ import { LiveAnnouncer } from "@angular/cdk/a11y";
 import { Component, inject, signal } from "@angular/core";
 import {
   form,
+  FormField,
+  FormRoot,
   minDate,
   minLength,
   required,
   validate,
-  FormField,
-  FormRoot,
 } from "@angular/forms/signals";
+import { MatButton } from "@angular/material/button";
+import type { MatChipInputEvent } from "@angular/material/chips";
+import { MatChipsModule } from "@angular/material/chips";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MatFormField, MatLabel, MatError, MatHint } from "@angular/material/select";
-import { MatInput } from "@angular/material/input";
-import { MatButton } from "@angular/material/button";
-import { MatChipsModule } from "@angular/material/chips";
-import type { MatChipInputEvent } from "@angular/material/chips";
-import { MatIconModule } from "@angular/material/icon";
-import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInput } from "@angular/material/input";
+import { MatInputModule } from "@angular/material/input";
+import { MatError, MatFormField, MatHint, MatLabel } from "@angular/material/select";
 
 /**
  * Model for a contact point that is created inline with the activity.
@@ -60,22 +60,22 @@ export interface KeywordDict {
 @Component({
   selector: "mex-fast-track-activity",
   imports: [
-    MatButton,
     FormField,
     FormRoot,
+    MatButton,
+    MatChipsModule,
+    MatDatepickerModule,
+    MatDatepickerModule,
+    MatError,
     MatFormField,
     MatFormFieldModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatLabel,
-    MatError,
+    MatHint,
+    MatIconModule,
     MatInput,
     MatInputModule,
-    MatDatepickerModule,
+    MatLabel,
     MatNativeDateModule,
-    MatHint,
-    MatChipsModule,
-    MatIconModule,
+    MatNativeDateModule,
   ],
 
   templateUrl: "./fast-track-activity.html",

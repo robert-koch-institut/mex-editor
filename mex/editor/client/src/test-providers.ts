@@ -1,11 +1,12 @@
 import { provideHttpClient, withXhr } from "@angular/common/http";
 import { provideHttpClientTesting } from "@angular/common/http/testing";
+import { signal } from "@angular/core";
 import { provideRouter } from "@angular/router";
 import { TranslocoTestingModule } from "@jsverse/transloco";
-import { translocoConfig, translocoProviders } from "./app/transloco";
+
 import { materialDefaultOptionProviders } from "./app/app.config";
-import { signal } from "@angular/core";
 import { ConceptLookups } from "./app/shared/concept-lookups.service";
+import { translocoConfig, translocoProviders } from "./app/transloco";
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const de = {

@@ -1,44 +1,44 @@
 import { Component, inject, signal } from "@angular/core";
-import { disabled, form, FormField, FormRoot, minLength, required } from "@angular/forms/signals";
-import { MatFormField, MatInput } from "@angular/material/input";
-import { MatSelect, MatOption, MatPrefix, MatSuffix } from "@angular/material/select";
-import { ConceptLookups } from "../../shared/concept-lookups.service";
-import { MatButton } from "@angular/material/button";
-import type { FastTrackResourceModel } from "./fast-track-resource.models";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
-import { Fieldset } from "../fieldset/fieldset";
-import { MatIcon } from "@angular/material/icon";
-import { MatDatepickerModule } from "@angular/material/datepicker";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { disabled, form, FormField, FormRoot, minLength, required } from "@angular/forms/signals";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatButton } from "@angular/material/button";
 import { MatChipsModule } from "@angular/material/chips";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { MAT_DATE_FORMATS } from "@angular/material/core";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIcon } from "@angular/material/icon";
+import { MatInput } from "@angular/material/input";
+import { MatOption, MatPrefix, MatSelect, MatSuffix } from "@angular/material/select";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
+
+import { ConceptLookups } from "../../shared/concept-lookups.service";
+import { Fieldset } from "../fieldset/fieldset";
 import { ReferenceSelect } from "../reference-select/reference-select";
+import type { FastTrackResourceModel } from "./fast-track-resource.models";
 
 @Component({
   selector: "mex-fast-track-resource",
   imports: [
+    Fieldset,
     FormField,
     FormRoot,
     MatAutocompleteModule,
     MatButton,
-    MatFormField,
+    MatChipsModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatIcon,
     MatInput,
     MatOption,
+    MatPrefix,
     MatSelect,
+    MatSlideToggle,
+    MatSuffix,
+    ReferenceSelect,
     TranslocoDirective,
     TranslocoPipe,
-    Fieldset,
-    MatIcon,
-    MatPrefix,
-    MatSuffix,
-    MatDatepickerModule,
-    MatSlideToggle,
-    MatChipsModule,
-    MatFormFieldModule,
-    ReferenceSelect,
   ],
   templateUrl: "./fast-track-resource.html",
   styleUrl: "./fast-track-resource.scss",

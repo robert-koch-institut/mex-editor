@@ -1,11 +1,11 @@
+import { HttpTestingController } from "@angular/common/http/testing";
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
-
-import { ReferenceSelect } from "./reference-select";
-import { HttpTestingController } from "@angular/common/http/testing";
 import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
+
 import { CreateItemDialog } from "../create-item-dialog/create-item-dialog";
+import { ReferenceSelect } from "./reference-select";
 
 // eslint-disable-next-line max-lines-per-function
 describe("ReferenceSelect", () => {

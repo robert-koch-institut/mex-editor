@@ -1,12 +1,13 @@
 import type { PipeTransform } from "@angular/core";
 import { Pipe } from "@angular/core";
-import type { Text } from "./models/shared";
+
+import type { PreviewItem } from "./models";
+import type { BilingualText, Concept } from "./models/concept";
+import type { PreviewContactPoint } from "./models/contact-point";
+import type { CreateItem } from "./models/create-item";
 import type { PreviewOrganizationalUnit } from "./models/organizational-unit";
 import type { PreviewPerson } from "./models/person";
-import type { PreviewContactPoint } from "./models/contact-point";
-import type { PreviewItem } from "./models";
-import type { CreateItem } from "./models/create-item";
-import type { BilingualText, Concept } from "./models/concept";
+import type { Text } from "./models/shared";
 
 @Pipe({
   name: "toLabel",

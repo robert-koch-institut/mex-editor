@@ -1,20 +1,21 @@
 import { Component } from "@angular/core";
-import { MatToolbar } from "@angular/material/toolbar";
-import { ThemeToggle } from "./theme-toggle/theme-toggle";
-import { RouterLink, RouterLinkActive } from "@angular/router";
 import { MatSelectModule } from "@angular/material/select";
-import { LanguageSelector } from "./language-selector/language-selector";
+import { MatToolbar } from "@angular/material/toolbar";
+import { RouterLink, RouterLinkActive } from "@angular/router";
 import { TranslocoDirective } from "@jsverse/transloco";
+
+import { LanguageSelector } from "./language-selector/language-selector";
+import { ThemeToggle } from "./theme-toggle/theme-toggle";
 
 @Component({
   selector: "mex-nav-bar",
   imports: [
-    MatToolbar,
     LanguageSelector,
-    ThemeToggle,
+    MatSelectModule,
+    MatToolbar,
     RouterLink,
     RouterLinkActive,
-    MatSelectModule,
+    ThemeToggle,
     TranslocoDirective,
   ],
   templateUrl: "./nav-bar.html",

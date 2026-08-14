@@ -7,6 +7,8 @@ import security from "eslint-plugin-security";
 import noCommentedOutCode from "./eslint-rules/no-commented-out-code.mjs";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
 import typedocPlugin from "eslint-plugin-typedoc";
+import importSortPlugin from "eslint-plugin-simple-import-sort";
+import perfectionist from "eslint-plugin-perfectionist";
 
 const config = defineConfig([
   {
@@ -33,6 +35,8 @@ const config = defineConfig([
       security,
       // @ts-ignore
       local: { rules: { "no-commented-out-code": noCommentedOutCode } },
+      "simple-import-sort": importSortPlugin,
+      perfectionist,
     },
     languageOptions: {
       parserOptions: {
@@ -41,6 +45,23 @@ const config = defineConfig([
     },
     processor: angular.processInlineTemplates,
     rules: {
+      "perfectionist/sort-arrays": [
+        "error",
+        {
+          type: "alphabetical",
+          order: "asc",
+          useConfigurationIf: {
+            matchesAstSelector:
+              'Decorator[expression.callee.name="Component"] Property[key.name="imports"] ArrayExpression',
+          },
+        },
+        {
+          type: "unsorted", // fallback: don't touch other arrays
+          useConfigurationIf: {},
+        },
+      ],
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
       "prettier/prettier": ["error", { endOfLine: "auto" }],
       "local/no-commented-out-code": "warn",
       "@angular-eslint/directive-selector": [

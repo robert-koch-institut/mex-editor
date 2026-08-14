@@ -1,3 +1,4 @@
+import { httpResource } from "@angular/common/http";
 import {
   Component,
   computed,
@@ -9,20 +10,19 @@ import {
   output,
   signal,
 } from "@angular/core";
-import { httpResource } from "@angular/common/http";
-import { MatLabel, MatOptgroup, MatOption } from "@angular/material/select";
-import { MatIconModule } from "@angular/material/icon";
-import type { PaginatedItemsContainer } from "../../shared/models/paginated-items-container";
+import { toObservable, toSignal } from "@angular/core/rxjs-interop";
+import { FormsModule } from "@angular/forms";
+import { FormField, type FormValueControl } from "@angular/forms/signals";
 import type { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatInput, MatInputModule } from "@angular/material/input";
-import { TypeToIconNamePipe } from "../../shared/type-to-icon-name-pipe";
-import { FormField, type FormValueControl } from "@angular/forms/signals";
-import { MatCheckbox } from "@angular/material/checkbox";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatButtonModule } from "@angular/material/button";
+import { MatCheckbox } from "@angular/material/checkbox";
 import { MatChipsModule } from "@angular/material/chips";
-import { FormsModule } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInput, MatInputModule } from "@angular/material/input";
+import { MatLabel, MatOptgroup, MatOption } from "@angular/material/select";
 import {
   translateObjectSignal,
   TranslocoDirective,
@@ -31,17 +31,18 @@ import {
 } from "@jsverse/transloco";
 import { translateSignal } from "@jsverse/transloco";
 import { combineLatest, map, switchMap } from "rxjs";
-import { toObservable, toSignal } from "@angular/core/rxjs-interop";
-import { MatDialog } from "@angular/material/dialog";
+
+import type { PreviewItem } from "../../shared/models";
+import type { CreateItem } from "../../shared/models/create-item";
+import { isCreateItem } from "../../shared/models/create-item";
+import type { PaginatedItemsContainer } from "../../shared/models/paginated-items-container";
+import { ToLabelPipe } from "../../shared/to-label-pipe";
+import { TypeToIconNamePipe } from "../../shared/type-to-icon-name-pipe";
 import type {
   CreateItemDialogData,
   CreateItemDialogResult,
 } from "../create-item-dialog/create-item-dialog";
 import { CreateItemDialog } from "../create-item-dialog/create-item-dialog";
-import { ToLabelPipe } from "../../shared/to-label-pipe";
-import type { PreviewItem } from "../../shared/models";
-import type { CreateItem } from "../../shared/models/create-item";
-import { isCreateItem } from "../../shared/models/create-item";
 
 /**
  * Type for valid reference select types.
@@ -51,22 +52,22 @@ export type ReferenceSelectTypes = "Person" | "ContactPoint" | "OrganizationalUn
 @Component({
   selector: "mex-reference-select",
   imports: [
-    MatOption,
-    MatOptgroup,
-    MatCheckbox,
-    TypeToIconNamePipe,
-    MatLabel,
-    MatIconModule,
-    MatAutocompleteModule,
-    MatInput,
     FormsModule,
-    MatChipsModule,
+    MatAutocompleteModule,
     MatButtonModule,
+    MatCheckbox,
+    MatChipsModule,
     MatFormFieldModule,
+    MatIconModule,
+    MatInput,
     MatInputModule,
+    MatLabel,
+    MatOptgroup,
+    MatOption,
     ToLabelPipe,
     TranslocoDirective,
     TranslocoPipe,
+    TypeToIconNamePipe,
   ],
   templateUrl: "./reference-select.html",
   styleUrl: "./reference-select.scss",

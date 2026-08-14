@@ -1,10 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import type { Signal } from "@angular/core";
 import { inject, Injectable } from "@angular/core";
-import { combineLatest, map, switchMap, type Observable } from "rxjs";
+import { combineLatest, map, type Observable, switchMap } from "rxjs";
 
-import type { FastTrackResourceModel } from "./fast-track-resource.models";
 import type { CreateContactPoint, CreatePerson } from "../../shared/models/create-item";
+import type { FastTrackResourceModel } from "./fast-track-resource.models";
 
 @Injectable({ providedIn: "root" })
 /**

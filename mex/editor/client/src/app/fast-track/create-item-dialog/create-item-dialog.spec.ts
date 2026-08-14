@@ -1,11 +1,12 @@
+import { Component, input, model } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { By } from "@angular/platform-browser";
+
+import { CreateContactPointForm } from "./create-contact-point-form/create-contact-point-form";
 import type { CreateItemDialogData } from "./create-item-dialog";
 import { CreateItemDialog } from "./create-item-dialog";
-import { Component, input, model } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { CreateContactPointForm } from "./create-contact-point-form/create-contact-point-form";
 import { CreatePersonForm } from "./create-person-form/create-person-form";
-import { By } from "@angular/platform-browser";
 
 @Component({ selector: "mex-create-person-form", standalone: true, template: `` })
 class FakeCreatePersonForm {

@@ -1,12 +1,13 @@
+import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { MatTabsModule } from "@angular/material/tabs";
 import { TranslocoPipe } from "@jsverse/transloco";
-import { CreatePersonForm } from "./create-person-form/create-person-form";
+
+import type { CreateContactPoint, CreatePerson } from "../../shared/models/create-item";
 import { CreateContactPointForm } from "./create-contact-point-form/create-contact-point-form";
-import { CommonModule } from "@angular/common";
-import type { CreatePerson, CreateContactPoint } from "../../shared/models/create-item";
+import { CreatePersonForm } from "./create-person-form/create-person-form";
 
 /**
  * Model to pass data to {@link CreateItemDialog}.
@@ -29,13 +30,13 @@ export type CreateItemDialogResult = CreatePerson | CreateContactPoint | null;
 @Component({
   selector: "mex-create-item-dialog",
   imports: [
-    MatTabsModule,
+    CommonModule,
+    CreateContactPointForm,
+    CreatePersonForm,
     MatButton,
     MatDialogModule,
+    MatTabsModule,
     TranslocoPipe,
-    CreatePersonForm,
-    CreateContactPointForm,
-    CommonModule,
   ],
   templateUrl: "./create-item-dialog.html",
   styleUrl: "./create-item-dialog.scss",

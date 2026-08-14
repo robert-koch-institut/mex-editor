@@ -1,19 +1,20 @@
+import { type HarnessLoader, TestKey } from "@angular/cdk/testing";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
-import { FastTrackResource } from "./fast-track-resource";
-import { TestKey, type HarnessLoader } from "@angular/cdk/testing";
-import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
+import { MatChipInputHarness } from "@angular/material/chips/testing";
+import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { MatSlideToggleHarness } from "@angular/material/slide-toggle/testing";
 import { By } from "@angular/platform-browser";
 import { TranslocoService } from "@jsverse/transloco";
-import { Fieldset } from "../fieldset/fieldset";
-import { MatChipInputHarness } from "@angular/material/chips/testing";
-import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing";
+
 import { ConceptLookups } from "../../shared/concept-lookups.service";
-import { ReferenceSelect } from "../reference-select/reference-select";
-import type { CreateItem } from "../../shared/models/create-item";
 import type { PreviewItem } from "../../shared/models";
+import type { CreateItem } from "../../shared/models/create-item";
+import { Fieldset } from "../fieldset/fieldset";
+import { ReferenceSelect } from "../reference-select/reference-select";
+import { FastTrackResource } from "./fast-track-resource";
 
 const conceptOptionsStub = {
   themeOptions: () => [{ id: "theme-1", label: "Theme 1" }],

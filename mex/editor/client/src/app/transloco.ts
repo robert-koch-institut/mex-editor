@@ -1,14 +1,14 @@
+import { HttpClient } from "@angular/common/http";
 import { inject, Injectable, isDevMode, provideAppInitializer } from "@angular/core";
+import { DateAdapter } from "@angular/material/core";
+import { NavigationEnd, Router } from "@angular/router";
 import type { Translation, TranslocoLoader } from "@jsverse/transloco";
 import { provideTransloco, TranslocoService } from "@jsverse/transloco";
 import { provideTranslocoLocale } from "@jsverse/transloco-locale";
 import { provideTranslocoMessageformat } from "@jsverse/transloco-messageformat";
-import { HttpClient } from "@angular/common/http";
-import { combineLatest, filter, map } from "rxjs";
 import type { GetLangParams } from "@jsverse/transloco-persist-lang";
 import { provideTranslocoPersistLang } from "@jsverse/transloco-persist-lang";
-import { NavigationEnd, Router } from "@angular/router";
-import { DateAdapter } from "@angular/material/core";
+import { combineLatest, filter, map } from "rxjs";
 
 /**
  * Name of the language query param.

@@ -6,7 +6,7 @@ import { TranslocoService } from "@jsverse/transloco";
 
 @Component({
   selector: "mex-language-selector",
-  imports: [MatSelectModule, AsyncPipe],
+  imports: [AsyncPipe, MatSelectModule],
   templateUrl: "./language-selector.html",
   styleUrl: "./language-selector.scss",
 })

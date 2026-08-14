@@ -1,11 +1,11 @@
+import { Component } from "@angular/core";
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
-
-import { Fieldset } from "./fieldset";
-import { Component } from "@angular/core";
+import type { FieldTree } from "@angular/forms/signals";
 import { By } from "@angular/platform-browser";
 import { TranslocoService } from "@jsverse/transloco";
-import type { FieldTree } from "@angular/forms/signals";
+
+import { Fieldset } from "./fieldset";
 
 /**
  * Builds a minimal fake FieldTree: `formField` is itself a callable that

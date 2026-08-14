@@ -480,10 +480,13 @@ export interface WorkflowResource {
 }
 
 /** The access restriction type. */
-export type AccessRestriction = "https://mex.rki.de/item/access-restriction-1" | "https://mex.rki.de/item/access-restriction-2";
+export type AccessRestriction =
+  "https://mex.rki.de/item/access-restriction-1" | "https://mex.rki.de/item/access-restriction-2";
 
 /** Whether the resource is anonymized/pseudonymized. */
-export type AnonymizationPseudonymization = "https://mex.rki.de/item/anonymization-pseudonymization-1" | "https://mex.rki.de/item/anonymization-pseudonymization-2";
+export type AnonymizationPseudonymization =
+  | "https://mex.rki.de/item/anonymization-pseudonymization-1"
+  | "https://mex.rki.de/item/anonymization-pseudonymization-2";
 
 /** All fields for a valid resource except for provenance. */
 export interface BaseResource {
@@ -608,25 +611,84 @@ export interface BaseResource {
 }
 
 /** Type for state of data processing. */
-export type DataProcessingState = "https://mex.rki.de/item/data-processing-state-1" | "https://mex.rki.de/item/data-processing-state-2" | "https://mex.rki.de/item/data-processing-state-3" | "https://mex.rki.de/item/data-processing-state-4" | "https://mex.rki.de/item/data-processing-state-5";
+export type DataProcessingState =
+  | "https://mex.rki.de/item/data-processing-state-1"
+  | "https://mex.rki.de/item/data-processing-state-2"
+  | "https://mex.rki.de/item/data-processing-state-3"
+  | "https://mex.rki.de/item/data-processing-state-4"
+  | "https://mex.rki.de/item/data-processing-state-5";
 
 /** Frequency type. */
-export type Frequency = "https://mex.rki.de/item/frequency-1" | "https://mex.rki.de/item/frequency-2" | "https://mex.rki.de/item/frequency-3" | "https://mex.rki.de/item/frequency-4" | "https://mex.rki.de/item/frequency-5" | "https://mex.rki.de/item/frequency-6" | "https://mex.rki.de/item/frequency-7" | "https://mex.rki.de/item/frequency-8" | "https://mex.rki.de/item/frequency-9" | "https://mex.rki.de/item/frequency-10" | "https://mex.rki.de/item/frequency-11" | "https://mex.rki.de/item/frequency-12" | "https://mex.rki.de/item/frequency-13" | "https://mex.rki.de/item/frequency-14" | "https://mex.rki.de/item/frequency-15" | "https://mex.rki.de/item/frequency-16" | "https://mex.rki.de/item/frequency-17";
+export type Frequency =
+  | "https://mex.rki.de/item/frequency-1"
+  | "https://mex.rki.de/item/frequency-2"
+  | "https://mex.rki.de/item/frequency-3"
+  | "https://mex.rki.de/item/frequency-4"
+  | "https://mex.rki.de/item/frequency-5"
+  | "https://mex.rki.de/item/frequency-6"
+  | "https://mex.rki.de/item/frequency-7"
+  | "https://mex.rki.de/item/frequency-8"
+  | "https://mex.rki.de/item/frequency-9"
+  | "https://mex.rki.de/item/frequency-10"
+  | "https://mex.rki.de/item/frequency-11"
+  | "https://mex.rki.de/item/frequency-12"
+  | "https://mex.rki.de/item/frequency-13"
+  | "https://mex.rki.de/item/frequency-14"
+  | "https://mex.rki.de/item/frequency-15"
+  | "https://mex.rki.de/item/frequency-16"
+  | "https://mex.rki.de/item/frequency-17";
 
 /** Type for health category. */
-export type HealthCategory = "https://mex.rki.de/item/health-category-1" | "https://mex.rki.de/item/health-category-2" | "https://mex.rki.de/item/health-category-3" | "https://mex.rki.de/item/health-category-4" | "https://mex.rki.de/item/health-category-5" | "https://mex.rki.de/item/health-category-6" | "https://mex.rki.de/item/health-category-7" | "https://mex.rki.de/item/health-category-8" | "https://mex.rki.de/item/health-category-9" | "https://mex.rki.de/item/health-category-10" | "https://mex.rki.de/item/health-category-11" | "https://mex.rki.de/item/health-category-12" | "https://mex.rki.de/item/health-category-13" | "https://mex.rki.de/item/health-category-14" | "https://mex.rki.de/item/health-category-15" | "https://mex.rki.de/item/health-category-16" | "https://mex.rki.de/item/health-category-17";
+export type HealthCategory =
+  | "https://mex.rki.de/item/health-category-1"
+  | "https://mex.rki.de/item/health-category-2"
+  | "https://mex.rki.de/item/health-category-3"
+  | "https://mex.rki.de/item/health-category-4"
+  | "https://mex.rki.de/item/health-category-5"
+  | "https://mex.rki.de/item/health-category-6"
+  | "https://mex.rki.de/item/health-category-7"
+  | "https://mex.rki.de/item/health-category-8"
+  | "https://mex.rki.de/item/health-category-9"
+  | "https://mex.rki.de/item/health-category-10"
+  | "https://mex.rki.de/item/health-category-11"
+  | "https://mex.rki.de/item/health-category-12"
+  | "https://mex.rki.de/item/health-category-13"
+  | "https://mex.rki.de/item/health-category-14"
+  | "https://mex.rki.de/item/health-category-15"
+  | "https://mex.rki.de/item/health-category-16"
+  | "https://mex.rki.de/item/health-category-17";
 
 /** Language type. */
-export type Language = "https://mex.rki.de/item/language-1" | "https://mex.rki.de/item/language-2" | "https://mex.rki.de/item/language-3" | "https://mex.rki.de/item/language-4" | "https://mex.rki.de/item/language-5";
+export type Language =
+  | "https://mex.rki.de/item/language-1"
+  | "https://mex.rki.de/item/language-2"
+  | "https://mex.rki.de/item/language-3"
+  | "https://mex.rki.de/item/language-4"
+  | "https://mex.rki.de/item/language-5";
 
 /** License type. */
 export type License = "https://mex.rki.de/item/license-1";
 
 /** Classification of personal data. */
-export type PersonalData = "https://mex.rki.de/item/personal-data-1" | "https://mex.rki.de/item/personal-data-2";
+export type PersonalData =
+  "https://mex.rki.de/item/personal-data-1" | "https://mex.rki.de/item/personal-data-2";
 
 /** The creation method of a resource. */
-export type ResourceCreationMethod = "https://mex.rki.de/item/resource-creation-method-1" | "https://mex.rki.de/item/resource-creation-method-2" | "https://mex.rki.de/item/resource-creation-method-3" | "https://mex.rki.de/item/resource-creation-method-4" | "https://mex.rki.de/item/resource-creation-method-5" | "https://mex.rki.de/item/resource-creation-method-6" | "https://mex.rki.de/item/resource-creation-method-7";
+export type ResourceCreationMethod =
+  | "https://mex.rki.de/item/resource-creation-method-1"
+  | "https://mex.rki.de/item/resource-creation-method-2"
+  | "https://mex.rki.de/item/resource-creation-method-3"
+  | "https://mex.rki.de/item/resource-creation-method-4"
+  | "https://mex.rki.de/item/resource-creation-method-5"
+  | "https://mex.rki.de/item/resource-creation-method-6"
+  | "https://mex.rki.de/item/resource-creation-method-7";
 
 /** The general type of a resource. */
-export type ResourceTypeGeneral = "https://mex.rki.de/item/resource-type-general-2" | "https://mex.rki.de/item/resource-type-general-13" | "https://mex.rki.de/item/resource-type-general-14" | "https://mex.rki.de/item/resource-type-general-15" | "https://mex.rki.de/item/resource-type-general-16" | "https://mex.rki.de/item/resource-type-general-17" | "https://mex.rki.de/item/resource-type-general-18";
+export type ResourceTypeGeneral =
+  | "https://mex.rki.de/item/resource-type-general-2"
+  | "https://mex.rki.de/item/resource-type-general-13"
+  | "https://mex.rki.de/item/resource-type-general-14"
+  | "https://mex.rki.de/item/resource-type-general-15"
+  | "https://mex.rki.de/item/resource-type-general-16"
+  | "https://mex.rki.de/item/resource-type-general-17"
+  | "https://mex.rki.de/item/resource-type-general-18";

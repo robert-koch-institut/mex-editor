@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import type { DateTime } from "luxon";
-import type { PreviewOrganizationalUnit } from "../../shared/models/organizational-unit";
-import type { PreviewContactPoint } from "../../shared/models/contact-point";
-import type { CreatePerson, CreateContactPoint } from "../../shared/models/create-item";
-import type { PreviewPerson } from "../../shared/models/person";
 import z from "zod";
+
+import type { PreviewContactPoint } from "../../shared/models/contact-point";
+import type { CreateContactPoint, CreatePerson } from "../../shared/models/create-item";
+import type { PreviewOrganizationalUnit } from "../../shared/models/organizational-unit";
+import type { PreviewPerson } from "../../shared/models/person";
 import { AdditiveResourceSchema } from "../../shared/zod-test/resource/additive-resource";
 
 /**

@@ -1,8 +1,8 @@
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
+import { By } from "@angular/platform-browser";
 
 import { CreatePersonForm } from "./create-person-form";
-import { By } from "@angular/platform-browser";
 
 function setNativeValue(
   fixture: ComponentFixture<unknown>,

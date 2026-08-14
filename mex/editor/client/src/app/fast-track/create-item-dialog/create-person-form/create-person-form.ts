@@ -1,13 +1,14 @@
 import { Component, effect, input, linkedSignal, model } from "@angular/core";
 import { form, FormField, FormRoot, required } from "@angular/forms/signals";
-import { MatFormField } from "@angular/material/select";
 import { MatInput } from "@angular/material/input";
-import { Fieldset } from "../../fieldset/fieldset";
+import { MatFormField } from "@angular/material/select";
+
 import type { CreatePerson } from "../../../shared/models/create-item";
+import { Fieldset } from "../../fieldset/fieldset";
 
 @Component({
   selector: "mex-create-person-form",
-  imports: [MatFormField, MatInput, FormField, FormRoot, Fieldset],
+  imports: [Fieldset, FormField, FormRoot, MatFormField, MatInput],
   templateUrl: "./create-person-form.html",
   styleUrl: "./create-person-form.scss",
 })

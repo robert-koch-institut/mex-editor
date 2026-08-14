@@ -1,12 +1,13 @@
 import type { PipeTransform } from "@angular/core";
 import { Pipe } from "@angular/core";
-import type { Text } from "./models";
+
+import type { PreviewItem } from "./models";
+import type { BilingualText, Concept } from "./models/concept";
+import type { PreviewContactPoint } from "./models/contact-point";
+import type { CreateItem } from "./models/create-item";
 import type { PreviewOrganizationalUnit } from "./models/organizational-unit";
 import type { PreviewPerson } from "./models/person";
-import type { PreviewContactPoint } from "./models/contact-point";
-import type { PreviewItem } from "./models";
-import type { CreateItem } from "./models/create-item";
-import type { BilingualText, Concept } from "./models/concept";
+import type { Text } from "./models/shared";
 
 @Pipe({
   name: "toLabel",
@@ -67,7 +68,7 @@ export class ToLabelPipe implements PipeTransform {
       if (key in text && text[key]) {
         return text[key];
       }
-      return undefined;
+      return null;
     };
     return (
       getTextLabel(concept.prefLabel) ||
@@ -79,32 +80,30 @@ export class ToLabelPipe implements PipeTransform {
     );
   }
 
+  private defaultPreviewItemLabel(item: PreviewItem) {
+    return `${item.$type.replace(/^Preview/, "")} | ${item.identifier}`;
+  }
+
+  private defaultCreateItemLabel(item: CreateItem) {
+    return item.$type.replace(/^Create/, "");
+  }
+
   transform(value: Concept | PreviewItem | CreateItem, lang: string): string {
-    let label: null | string = null;
     if (!("$type" in value)) {
-      label = this.getConceptLabel(value, lang);
-    } else {
-      switch (value.$type) {
-        case "PreviewOrganizationalUnit":
-          label = this.orgUnitToLabel(value, lang);
-          break;
-        case "PreviewPerson":
-          label = this.personToLabel(value, lang);
-          break;
-        case "PreviewContactPoint":
-          label = this.contactPointToLabel(value, lang);
-          break;
-        case "CreateContactPoint":
-          label = this.firstLabelOf([`⋆ ${value.email}`], lang);
-          break;
-        case "CreatePerson":
-          label = this.firstLabelOf([`⋆ ${value.givenName} ${value.familyName}`], lang);
-          break;
-      }
+      return this.getConceptLabel(value, lang);
     }
-    if (!label) {
-      throw new Error("Cant create label for", { cause: { value, lang } });
+
+    switch (value.$type) {
+      case "PreviewOrganizationalUnit":
+        return this.orgUnitToLabel(value, lang) ?? this.defaultPreviewItemLabel(value);
+      case "PreviewPerson":
+        return this.personToLabel(value, lang) ?? this.defaultPreviewItemLabel(value);
+      case "PreviewContactPoint":
+        return this.contactPointToLabel(value, lang) ?? this.defaultPreviewItemLabel(value);
+      case "CreateContactPoint":
+        return `⋆ ${this.firstLabelOf([value.email], lang) ?? this.defaultCreateItemLabel(value)}`;
+      case "CreatePerson":
+        return `⋆ ${this.firstLabelOf([`${value.givenName} ${value.familyName}`.trim()], lang) ?? this.defaultCreateItemLabel(value)}`;
     }
-    return label;
   }
 }

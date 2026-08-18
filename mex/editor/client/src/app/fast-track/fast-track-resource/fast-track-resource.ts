@@ -1,52 +1,44 @@
 import { Component, inject, signal } from "@angular/core";
-import { disabled, form, FormField, FormRoot, minLength, required } from "@angular/forms/signals";
-import { MatFormField, MatInput } from "@angular/material/input";
-import { MatSelect, MatOption, MatPrefix, MatSuffix } from "@angular/material/select";
-
-import { ConceptOptions } from "../../shared/concept-options.service";
-import { MatButton } from "@angular/material/button";
-
-import type { FastTrackResourceModel } from "./fast-track-resource.types";
-
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { ContactList } from "./contact-list/contact-list";
-import {
-  translateSignal,
-  TranslocoDirective,
-  TranslocoPipe,
-  TranslocoService,
-} from "@jsverse/transloco";
-import { Fieldset } from "../fieldset/fieldset";
-import { MatIcon } from "@angular/material/icon";
-import { MatDatepickerModule } from "@angular/material/datepicker";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { disabled, form, FormField, FormRoot, minLength, required } from "@angular/forms/signals";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatButton } from "@angular/material/button";
 import { MatChipsModule } from "@angular/material/chips";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { MAT_DATE_FORMATS } from "@angular/material/core";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIcon } from "@angular/material/icon";
+import { MatInput } from "@angular/material/input";
+import { MatOption, MatPrefix, MatSelect, MatSuffix } from "@angular/material/select";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
+
+import { ConceptLookups } from "../../shared/concept-lookups.service";
+import { Fieldset } from "../fieldset/fieldset";
+import { ReferenceSelect } from "../reference-select/reference-select";
+import type { FastTrackResourceModel } from "./fast-track-resource.models";
 
 @Component({
   selector: "mex-fast-track-resource",
   imports: [
-    ContactList,
+    Fieldset,
     FormField,
     FormRoot,
     MatAutocompleteModule,
     MatButton,
-    MatFormField,
+    MatChipsModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatIcon,
     MatInput,
     MatOption,
+    MatPrefix,
     MatSelect,
+    MatSlideToggle,
+    MatSuffix,
+    ReferenceSelect,
     TranslocoDirective,
     TranslocoPipe,
-    Fieldset,
-    MatIcon,
-    MatPrefix,
-    MatSuffix,
-    MatDatepickerModule,
-    MatSlideToggle,
-    MatChipsModule,
-    MatFormFieldModule,
   ],
   templateUrl: "./fast-track-resource.html",
   styleUrl: "./fast-track-resource.scss",
@@ -56,7 +48,7 @@ import { MAT_DATE_FORMATS } from "@angular/material/core";
  */
 export class FastTrackResource {
   private translocoService = inject(TranslocoService);
-  protected conceptOptions = inject(ConceptOptions);
+  protected conceptOptions = inject(ConceptLookups);
   protected dateFormats = inject(MAT_DATE_FORMATS);
 
   constructor() {
@@ -70,9 +62,7 @@ export class FastTrackResource {
     );
   }
 
-  prefillRightsText = translateSignal("fasttrack.resource.fields.rights.prefill.text");
   isPrefillChecked = signal(false);
-
   model = signal<FastTrackResourceModel>({
     title: "",
     description: "",
@@ -90,9 +80,8 @@ export class FastTrackResource {
       de: [],
       en: [],
     },
-    // TODO(fe): not working
     unitInCharge: [],
-    contacts: [""],
+    contacts: [],
     creator: [],
     contributingUnit: [],
     contributor: [],
@@ -115,18 +104,6 @@ export class FastTrackResource {
         ? this.translocoService.translate("fasttrack.resource.fields.rights.prefill.text")
         : "";
       return { ...x, rights: text };
-    });
-  }
-
-  deleteContact(index: number) {
-    this.model.update((m) => {
-      return { ...m, contacts: m.contacts.filter((_, i) => i !== index) };
-    });
-  }
-
-  addContact() {
-    this.model.update((m) => {
-      return { ...m, contacts: [...m.contacts, ""] };
     });
   }
 

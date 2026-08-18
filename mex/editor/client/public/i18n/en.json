@@ -8,6 +8,11 @@
     "recommended": "recommended",
     "required": "mandatory"
   },
+  "create-item-dialog.cancel-button.label": "Cancel",
+  "create-item-dialog.description": "Create a new entry by filling out all required fields and press \"{{create-item-dialog.save-button.label}}\" afterwards to create the entry.",
+  "create-item-dialog.loading": "Loading entries...",
+  "create-item-dialog.save-button.label": "Create entry",
+  "create-item-dialog.title": "Create new entry",
   "fasttrack": {
     "resource": {
       "fields": {
@@ -21,6 +26,16 @@
     }
   },
   "input.placeholder": "Please fillout",
-  "select.none-option": "Keine",
+  "reference-select": {
+    "placeholder.empty": "Type to filter, you can use \"*\" as a placeholder",
+    "placeholder.validTypes": "Search for {value}",
+    "search-result": {
+      "createNew": "Create new entry for \"{query}\"...",
+      "empty": "No search results for \"{query}\" found.",
+      "label": "Search results ({count} of {total})",
+      "loading": "Loading results..."
+    }
+  },
+  "select.none-option": "None",
   "select.placeholder": "Please select"
 }

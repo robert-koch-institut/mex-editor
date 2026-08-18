@@ -1,11 +1,12 @@
-import { TestBed } from "@angular/core/testing";
-
-import { ConceptOptions } from "./concept-options.service";
 import { HttpTestingController } from "@angular/common/http/testing";
-import { TranslocoService } from "@jsverse/transloco";
 import { ApplicationRef } from "@angular/core";
+import { TestBed } from "@angular/core/testing";
+import { TranslocoService } from "@jsverse/transloco";
 
-describe("ConceptOptions", () => {
+import { ConceptLookups } from "./concept-lookups.service";
+import type { Lookup } from "./to-lookup-pipe";
+
+describe("ConceptLookups", () => {
   let httpMock: HttpTestingController;
   let transloco: TranslocoService;
 
@@ -19,7 +20,7 @@ describe("ConceptOptions", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ConceptOptions],
+      providers: [ConceptLookups],
     });
 
     httpMock = TestBed.inject(HttpTestingController);
@@ -31,8 +32,8 @@ describe("ConceptOptions", () => {
   afterEach(() => httpMock.verify());
 
   it("requests every vocabulary endpoint exactly once, across multiple injections", () => {
-    const a = TestBed.inject(ConceptOptions);
-    const b = TestBed.inject(ConceptOptions); // providedIn: 'root' -> same instance
+    const a = TestBed.inject(ConceptLookups);
+    const b = TestBed.inject(ConceptLookups); // providedIn: 'root' -> same instance
     expect(a).toBe(b);
 
     TestBed.tick(); // fires the effects behind each httpResource
@@ -43,7 +44,7 @@ describe("ConceptOptions", () => {
   });
 
   it("relabels options when the active language changes, without re-fetching", async () => {
-    const service = TestBed.inject(ConceptOptions);
+    const service = TestBed.inject(ConceptLookups);
     TestBed.tick();
 
     httpMock.expectOne("api/v0/vocabulary/theme").flush({
@@ -68,15 +69,20 @@ describe("ConceptOptions", () => {
     }
 
     await TestBed.inject(ApplicationRef).whenStable();
+    const trimData = (x: Lookup<unknown>) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { data, ...rest } = x;
+      return rest;
+    };
 
-    expect(service.themeOptions()).toEqual([
+    expect(service.themeOptions().map(trimData)).toEqual([
       { id: "1", label: "Bevölkerung" },
       { id: "2", label: "Gesundheit" },
     ]);
 
     transloco.setActiveLang("en");
 
-    expect(service.themeOptions()).toEqual([
+    expect(service.themeOptions().map(trimData)).toEqual([
       { id: "2", label: "Health" },
       { id: "1", label: "Population" },
     ]);

@@ -1,18 +1,18 @@
 import { provideHttpClient, withXhr } from "@angular/common/http";
 import type { ApplicationConfig, EnvironmentProviders, Provider } from "@angular/core";
 import { inject, Injectable, provideBrowserGlobalErrorListeners } from "@angular/core";
-import { provideRouter, withComponentInputBinding } from "@angular/router";
-
-import { routes } from "./app.routes";
-import { translocoProviders } from "./transloco";
+import type { MatDateFormats } from "@angular/material/core";
+import { MAT_DATE_FORMATS } from "@angular/material/core";
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
 import {
   MAT_LUXON_DATE_ADAPTER_OPTIONS,
   provideLuxonDateAdapter,
 } from "@angular/material-luxon-adapter";
-import type { MatDateFormats } from "@angular/material/core";
-import { MAT_DATE_FORMATS } from "@angular/material/core";
+import { provideRouter, withComponentInputBinding } from "@angular/router";
 import { TranslocoService } from "@jsverse/transloco";
+
+import { routes } from "./app.routes";
+import { translocoProviders } from "./transloco";
 
 @Injectable()
 class DynamicLuxonFormats implements MatDateFormats {

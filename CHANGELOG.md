@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.5.0
 - renovate config changes for better angular experience
   - trying renovate dependency dashboard and check usage
+- pipes for typeToIconName, toLabel and toLookup
+- new control fasttrack reference-select that allows to search for existing entites or create them.
+- ConceptOptions renamed to ConecptLookups and now use the new ToLookupPipe (which uses the LabelPipe, moved all lookup and label creation to spefic pipes).
+- Grouped everything into fasttrack folder to meet the feature approach. Some components might be moved to shared
+- added sorting linters for imports in typescript files and angular component import parameter
 
 ### Deprecated
 

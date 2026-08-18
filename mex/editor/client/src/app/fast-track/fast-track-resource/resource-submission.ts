@@ -1,10 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import type { Signal } from "@angular/core";
 import { inject, Injectable } from "@angular/core";
-import { combineLatest, map, of, switchMap, type Observable } from "rxjs";
+import { combineLatest, map, type Observable, switchMap } from "rxjs";
 
-import type { FastTrackResourceModel } from "./fast-track-resource.types";
-import type { CreateMail, CreatePerson } from "./create-contact";
+import type { CreateContactPoint, CreatePerson } from "../../shared/models/create-item";
+import type { FastTrackResourceModel } from "./fast-track-resource.models";
 
 @Injectable({ providedIn: "root" })
 /**
@@ -16,19 +16,6 @@ export class ResourceSubmission {
   submit(model: Signal<FastTrackResourceModel>): Observable<{ stableTargetId: string }> {
     const resource = model();
     const contactIds: Observable<string>[] = [];
-
-    for (const element of resource.contacts) {
-      if (typeof element == "string") continue;
-      if ("$createtype" in element) {
-        if (element.$createtype == "mail") {
-          contactIds.push(this.submitContactPoint(element));
-        } else {
-          contactIds.push(this.submitPerson(element));
-        }
-      } else {
-        contactIds.push(of(element.id));
-      }
-    }
 
     return combineLatest(contactIds).pipe(
       switchMap((x) =>
@@ -47,7 +34,7 @@ export class ResourceSubmission {
     );
   }
 
-  submitContactPoint(element: CreateMail): Observable<string> {
+  submitContactPoint(element: CreateContactPoint): Observable<string> {
     return this.http
       .post<{ stableTargetId: string }>("api/v0/backend/rule-set", {
         additive: {
@@ -63,8 +50,8 @@ export class ResourceSubmission {
     return this.http
       .post<{ stableTargetId: string }>("api/v0/backend/rule-set", {
         additive: {
-          givenName: [element.firstname],
-          familyName: [element.lastname],
+          givenName: [element.givenName],
+          familyName: [element.familyName],
           entityType: "AdditivePerson",
         },
         entityType: "PersonRuleSetRequest",

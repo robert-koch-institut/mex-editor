@@ -4,7 +4,7 @@ import { RouterLink } from "@angular/router";
 
 @Component({
   selector: "mex-start-page",
-  imports: [RouterLink, MatButton],
+  imports: [MatButton, RouterLink],
   templateUrl: "./start-page.html",
   styleUrl: "./start-page.scss",
 })

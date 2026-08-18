@@ -23,11 +23,14 @@ export class Fieldset<T> {
   }
 
   labelKey = input.required<string>();
+  labelParam = input<Record<string, unknown>>();
   descriptionKey = input<string>();
 
   showCategoryLabel = input(true);
   category = input<"required" | "optional" | "recommended">("optional");
   categoryKey = computed(() => `categories.${this.category()}`);
+
+  showErrorWithoutTouch = input(false);
 
   formField = input<FieldTree<T>>();
   formState = computed(() => {

@@ -1,0 +1,17 @@
+:host {
+  width: 100%;
+  display: flex;
+}
+
+mat-form-field {
+  width: 100%;
+  ::ng-deep {
+    label {
+      width: 100%;
+
+      &.mdc-floating-label--float-above {
+        width: unset;
+      }
+    }
+  }
+}

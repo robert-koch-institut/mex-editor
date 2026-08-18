@@ -27,58 +27,69 @@
       </mat-form-field>
     </mex-fieldset>
 
-    <mex-fieldset [formField]="resourceForm.contacts" labelKey="contact" class="one-column-item">
-      <div class="vertical-list">
-        @for (contact of resourceForm.contacts; let i = $index; track i) {
-          <div class="horizontal-list">
-            <mex-contact-list [formField]="contact" style="flex: 1"></mex-contact-list>
-            <button type="button" mat-button (click)="deleteContact(i)">x</button>
-          </div>
-        }
-        <button type="button" mat-button (click)="addContact()">Add Contact</button>
-      </div>
+    <mex-fieldset
+      [formField]="resourceForm.contacts"
+      labelKey="contact"
+      descriptionKey="Resource.contact.description"
+      class="one-column-item"
+    >
+      <mex-reference-select
+        [formField]="resourceForm.contacts"
+        [isCreationEnabled]="true"
+      ></mex-reference-select>
     </mex-fieldset>
 
-    <mex-fieldset [formField]="resourceForm.creator" labelKey="creator" class="one-column-item">
-      <mat-form-field>
-        <mat-icon matPrefix>search</mat-icon>
-        <mat-select [placeholder]="'Resource.creator.description' | transloco"></mat-select>
-      </mat-form-field>
+    <mex-fieldset
+      [formField]="resourceForm.creator"
+      labelKey="creator"
+      descriptionKey="Resource.creator.description"
+      class="one-column-item"
+    >
+      <mex-reference-select
+        [formField]="resourceForm.creator"
+        [validEntityTypes]="['Person']"
+        [isCreationEnabled]="true"
+      >
+      </mex-reference-select>
     </mex-fieldset>
 
     <mex-fieldset
       [formField]="resourceForm.contributor"
       labelKey="Resource.contributor"
+      descriptionKey="Resource.contributor.description"
       class="one-column-item"
     >
-      <mat-form-field>
-        <mat-icon matPrefix>search</mat-icon>
-        <mat-select [placeholder]="'Resource.contributor.description' | transloco"></mat-select>
-      </mat-form-field>
+      <mex-reference-select
+        [formField]="resourceForm.contributor"
+        [validEntityTypes]="['Person']"
+        [isCreationEnabled]="true"
+      >
+      </mex-reference-select>
     </mex-fieldset>
 
     <mex-fieldset
       [formField]="resourceForm.unitInCharge"
       labelKey="unitInCharge"
+      descriptionKey="unitInCharge.description"
       class="one-column-item"
     >
-      <mat-form-field>
-        <mat-icon matPrefix>search</mat-icon>
-        <mat-select [placeholder]="'unitInCharge.description' | transloco"></mat-select>
-      </mat-form-field>
+      <mex-reference-select
+        [formField]="resourceForm.unitInCharge"
+        [validEntityTypes]="['OrganizationalUnit']"
+      ></mex-reference-select>
     </mex-fieldset>
 
     <mex-fieldset
       [formField]="resourceForm.contributingUnit"
       labelKey="contributingUnit"
+      descriptionKey="Resource.contributingUnit.description"
       class="one-column-item"
     >
-      <mat-form-field>
-        <mat-icon matPrefix>search</mat-icon>
-        <mat-select
-          [placeholder]="'Resource.contributingUnit.description' | transloco"
-        ></mat-select>
-      </mat-form-field>
+      <mex-reference-select
+        [formField]="resourceForm.contributingUnit"
+        [validEntityTypes]="['OrganizationalUnit']"
+      >
+      </mex-reference-select>
     </mex-fieldset>
 
     <mex-fieldset

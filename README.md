@@ -6,6 +6,7 @@ The editor enables anyone to create and edit entities in a simple and fast way.
 [![cve-scan](https://github.com/robert-koch-institut/mex-editor/actions/workflows/cve-scan.yml/badge.svg)](https://github.com/robert-koch-institut/mex-editor/actions/workflows/cve-scan.yml)
 [![documentation](https://github.com/robert-koch-institut/mex-editor/actions/workflows/documentation.yml/badge.svg)](https://robert-koch-institut.github.io/mex-editor)
 [![linting](https://github.com/robert-koch-institut/mex-editor/actions/workflows/linting.yml/badge.svg)](https://github.com/robert-koch-institut/mex-editor/actions/workflows/linting.yml)
+[![opencode](https://github.com/robert-koch-institut/mex-editor/actions/workflows/opencode.yml/badge.svg)](https://gitlab.opencode.de/robert-koch-institut/mex/mex-editor)
 [![testing](https://github.com/robert-koch-institut/mex-editor/actions/workflows/testing.yml/badge.svg)](https://github.com/robert-koch-institut/mex-editor/actions/workflows/testing.yml)
 
 ## Project

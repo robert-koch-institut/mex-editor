@@ -24,7 +24,7 @@
     "@angular/compiler-cli": "22.1.1",
     "@eslint/js": "10.0.1",
     "@types/luxon": "^3.7.2",
-    "@vitest/ui": "4.1.10",
+    "@vitest/ui": "4.1.11",
     "angular-eslint": "^22.0.0",
     "eslint": "10.8.1",
     "eslint-config-prettier": "^10.1.8",
@@ -38,7 +38,7 @@
     "typedoc": "^0.28.20",
     "typescript": "6.0.3",
     "typescript-eslint": "8.67.0",
-    "vitest": "4.1.10"
+    "vitest": "4.1.11"
   },
   "name": "mex-editor",
   "packageManager": "npm@11.19.0",

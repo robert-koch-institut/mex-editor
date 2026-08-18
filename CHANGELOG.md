@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [4.1.0] - 2026-08-18
+
+### Changes
+
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.5.0
 - renovate config changes for better angular experience
   - trying renovate dependency dashboard and check usage
@@ -21,15 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added sorting linters for imports in typescript files and angular component import parameter
 - updated dependencies
 
-### Deprecated
-
-### Removed
-
 ### Fixed
 
 - manually fixed renovatebot lock file stuff
-
-### Security
 
 ## [4.0.2] - 2026-08-05
 

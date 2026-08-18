@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ConceptOptions renamed to ConecptLookups and now use the new ToLookupPipe (which uses the LabelPipe, moved all lookup and label creation to spefic pipes).
 - Grouped everything into fasttrack folder to meet the feature approach. Some components might be moved to shared
 - added sorting linters for imports in typescript files and angular component import parameter
+- updated dependencies
 
 ### Deprecated
 

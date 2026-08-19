@@ -6,7 +6,7 @@ The editor enables anyone to create and edit entities in a simple and fast way. 
 To see the angular documentation click `here <./_static/index.html>`_
 
 .. toctree::
-  :maxdepth: 2
-  :glob:
+    :maxdepth: 2
+    :glob:
 
-  source/*
+    source/*

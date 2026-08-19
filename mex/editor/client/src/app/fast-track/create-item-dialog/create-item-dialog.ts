@@ -18,10 +18,14 @@ export interface CreateItemDialogData {
   inputText?: string;
 }
 
-interface CreateItemFormData {
+/**
+ * Model for the form data collected by {@link CreateItemDialog}.
+ */
+export interface CreateItemFormData {
   isValid: boolean;
   data: CreatePerson | CreateContactPoint;
 }
+
 /**
  * Model for result of {@link CreateItemDialog}.
  */

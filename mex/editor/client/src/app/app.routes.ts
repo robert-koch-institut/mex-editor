@@ -2,8 +2,8 @@ import type { Routes } from "@angular/router";
 
 import { FastTrackActivity } from "./fast-track/fast-track-activity/fast-track-activity";
 import { FastTrackResource } from "./fast-track/fast-track-resource/fast-track-resource";
-import { StartPage } from "./start-page/start-page";
 import { FigmaTestPage } from "./figma-test-page/figma-test-page";
+import { StartPage } from "./start-page/start-page";
 
 /**
  * All registered Routes for the app.

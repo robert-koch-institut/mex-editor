@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- removed leading / in reference-select search result fetching
 - align linting workflow with mex-template
 
 ### Security

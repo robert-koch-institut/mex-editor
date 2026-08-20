@@ -48,7 +48,7 @@ describe("ReferenceSelect", () => {
     fixture.detectChanges();
 
     const req = httpMock.expectOne(
-      (r) => r.url === "/api/v0/backend/preview-item" && r.params.get("q") === "jane",
+      (r) => r.url === "api/v0/backend/preview-item" && r.params.get("q") === "jane",
     );
     expect(req.request.params.getAll("entityType")).toEqual([
       "MergedPerson",
@@ -64,7 +64,7 @@ describe("ReferenceSelect", () => {
     await vi.advanceTimersByTimeAsync(250);
     fixture.detectChanges();
 
-    const req = httpMock.expectOne((r) => r.url === "/api/v0/backend/preview-item");
+    const req = httpMock.expectOne((r) => r.url === "api/v0/backend/preview-item");
     expect(req.request.params.getAll("entityType")).toEqual(["MergedPerson"]);
     req.flush({ items: [], total: 0 });
   });

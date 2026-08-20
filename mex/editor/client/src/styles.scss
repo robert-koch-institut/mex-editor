@@ -66,13 +66,26 @@ body {
 .mat-mdc-text-field {
   --mat-select-focused-arrow-color: var(--mat-sys-primary);
   --mat-select-enabled-arrow-color: var(--mat-sys-primary);
-  --mat-checkbox-selected-focus-icon-color:var(--mat-sys-surface-variant);
-  --mat-checkbox-focus-indicator-color:var(--mat-sys-surface-variant);
   --mat-checkbox-selected-icon-color: var(--mat-sys-primary);
   --mat-switch-selected-handle-color: var(--mat-sys-secondary-fixed);
   --mat-button-toggle-selected-state-background-color: var(--mat-sys-primary);
   --mat-button-toggle-selected-state-text-color: var(--mat-sys-on-primary);
-  --mat-button-toggle-hover-state-background-color: var(--mat-sys-surface-variant);
+  --mat-sys-hover-state-layer-opacity: 0.08;
+}
+
+/* Mini FAB button hover*/
+button[matMiniFab]:hover{
+  color: var(--mat-sys-primary);
+}
+
+/* Filled buttons */
+button[matButton]:hover {
+  color: var(--mat-sys-primary);
+}
+
+/* Select panel pop up and options */
+.mat-mdc-select-panel{
+  background-color: var(--mat-sys-surface-variant) !important;
 }
 
 h1,

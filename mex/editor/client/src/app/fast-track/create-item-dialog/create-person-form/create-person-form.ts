@@ -1,9 +1,9 @@
 import { Component, effect, input, linkedSignal, model } from "@angular/core";
-import { form, FormField, FormRoot, required } from "@angular/forms/signals";
+import { form, FormField, FormRoot, validateStandardSchema } from "@angular/forms/signals";
 import { MatInput } from "@angular/material/input";
 import { MatFormField } from "@angular/material/select";
 
-import type { CreatePerson } from "../../../shared/models/create-item";
+import { type CreatePerson, CreatePersonSchema } from "../../../shared/models/create-item";
 import { Fieldset } from "../../fieldset/fieldset";
 
 @Component({
@@ -25,8 +25,7 @@ export class CreatePersonForm {
   );
 
   protected readonly personForm = form(this.formModel, (schema) => {
-    required(schema.givenName);
-    required(schema.familyName);
+    validateStandardSchema(schema, CreatePersonSchema);
   });
 
   constructor() {

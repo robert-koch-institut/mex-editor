@@ -1,126 +1,92 @@
 # mex_form_codegen
 
-Generates TypeScript from mex-common pydantic models: interfaces, Angular
-Signal Forms validators, and (experimental) Zod schemas. Resolves fields
-from the real Python type annotations (`pytypes.py`), not
-`model.model_json_schema()` — the two disagree often enough (`Literal`
-discriminators, `VocabularyEnum`, `TemporalEntity`) that trusting the
-schema produced subtly wrong output.
+Generates real Zod schemas (validation + inferred TypeScript types, in one
+place) from mex-common pydantic models, for Angular Signal Forms. Resolves
+fields from the actual Python type annotations (`pytypes.py`), not
+`model.model_json_schema()`, since the two disagree for enough fields
+(`Literal` discriminators, `VocabularyEnum`, `TemporalEntity`) to matter.
+
+One generator, one file (`generate.py`), flat output, no plugin machinery.
 
 ## Setup
 
 ```bash
-pip install mex-common --break-system-packages   # or your project's venv
+pip install mex-common --break-system-packages
 ```
 
-No other dependencies — no Jinja, no npm packages needed to *run* this.
-(The generated code imports `@angular/forms/signals` / `zod` at the
-TypeScript/npm level, in whatever project you copy the output into.)
-
-## Running it
+## Run
 
 ```python
 from mex.common.models import ExtractedActivity, MergedActivity, ActivityRuleSetResponse
-from mex_form_codegen import Bundle, generate_typescript_interfaces, generate_angular_signal_form_validators
+from mex_form_codegen import Bundle, generate_zod_schemas
 
 bundles = [Bundle(name="Activity", models=[ExtractedActivity, MergedActivity, ActivityRuleSetResponse])]
-
-generate_typescript_interfaces(bundles, "out")            # out/model/...
-generate_angular_signal_form_validators(bundles, "out")   # out/validation/...
+generate_zod_schemas(bundles, "out")
 ```
 
-Or see `examples/generate_all_entities.py` for the full six-entity set
-(Resource, Activity, Person, ContactPoint, OrganizationalUnit,
-Organization) — run it directly:
+Or `python examples/generate_all_entities.py` for the full six-entity set.
+Re-running after a model change just overwrites everything -- every file
+has an `// AUTO-GENERATED ... do not edit by hand.` header, nothing
+incremental.
 
-```bash
-python examples/generate_all_entities.py
+## Output layout
+
+Flat, kebab-case filenames, no subfolders:
+
+```
+shared.ts        # patterns + schemas for defs used by >1 bundle
+form-schemas.ts   # Angular Signal Forms adapters + one FormSchema export per entity
+{bundle-name}.ts   # everything that bundle owns: requested root models +
+                    # whatever they need internally (bases, enums, rule sub-models)
 ```
 
-**Re-running after a model change**: just run it again. Every file is
-regenerated from scratch each time (there's a `// AUTO-GENERATED ... do
-not edit by hand.` header, and every file ends in `.generated.ts` so it's
-easy to `.gitignore` or wire into a pre-build step). There's nothing
-incremental to worry about — no stale state, no manual merge.
+Every field matches its source pydantic model strictly -- no relaxations
+(a reference to another model requires that model's schema, not a bare
+string). Every file starts with `/* eslint-disable
+@typescript-eslint/naming-convention */` (needed for names like `$type`)
+and every export has a `/** ... */` doc comment. Declarations within a
+file are topologically sorted (`const` isn't hoisted in JS -- a forward
+reference throws at runtime, not just a lint warning).
+
+## Using the generated schemas in Angular Signal Forms
+
+```ts
+import { extractedActivityFormSchema } from "./form-schemas";
+const activityForm = form(activitySignal, extractedActivityFormSchema);
+```
+
+`form-schemas.ts` holds two adapters plus one `...FormSchema` export per
+entity, kept separate so the bundle files stay pure Zod:
+
+- `validateWithZod(path, zodSchema)` -- runs a Zod schema against a
+  Signal Forms field path, reports Zod issues as Signal Forms errors.
+- `zodFormSchema(zodSchema)` -- wraps that for `schema<T>(...)`.
 
 ## Adding a bundle
-
-A `Bundle` is just a name + a list of pydantic model classes:
 
 ```python
 Bundle(name="Person", models=[ExtractedPerson, MergedPerson, PersonRuleSetResponse])
 ```
 
-Any type referenced by more than one bundle (e.g. `Text`, `Link`) is
-automatically deduplicated into a shared file instead of being repeated
-per bundle — nothing to configure.
+A type referenced by more than one bundle is auto-deduplicated into
+`shared.ts`.
 
-## Output layout
+## Testing
 
-File and folder names are kebab-case (Angular's default convention) --
-exported TS symbols inside stay PascalCase/camelCase as usual.
+`tests/test_codegen.py` -- pure Python, no external tools.
 
-```
-model/
-  shared.generated.ts          # types used by >1 bundle
-  {bundle-name}.generated.ts    # that bundle's own types
-validation/
-  shared.generated.ts           # validators + patterns for shared types
-  {bundle-name}/
-    {entity-model}.generated.ts  # one file per *requested* model (extracted-x, merged-x, ...)
-    support.generated.ts         # everything else that bundle needs internally
-                                  # (factored-out base classes, enums, rule sub-models)
-zod/                            # same shape as validation/, from the Zod generator
-```
-
-Only the models you actually pass in `Bundle.models` get their own file.
-Everything else the bundle needs (a shared base class two of your models
-extend, an enum a field uses, ...) is collected into one `support.generated.ts`
-per bundle — kept off the “one file per entity” list on purpose.
-
-## Adding a new generator
-
-A generator is a class with one method. It receives the `SchemaIndex`
-already built from your bundles (every model/enum resolved once, shared
-vs. bundle-owned already worked out) — it doesn't need to touch pydantic
-at all.
-
-```python
-from pathlib import Path
-from mex_form_codegen import Generator, run_generators, TypeScriptInterfaceGenerator
-
-class MyGenerator(Generator):
-    name = "my-format"
-
-    def generate(self, index, bundles, output_dir: Path) -> list[Path]:
-        written = []
-        for def_name, entry in index.defs.items():
-            ...  # entry is a ModelDef or EnumDef, see schema_collect.py
-        return written
-
-run_generators(bundles, "out", [TypeScriptInterfaceGenerator(), MyGenerator()])
-```
-
-See `generators/zod.py` for a complete example (an experimental generator
-that ships real Zod schemas, not just types) and `generators/base.py` for
-the shared `import_specifier()` helper if your generator also lays output
-out in folders and needs relative imports between them.
+`tests/test_cross_validation.py` -- generates real schemas and runs the
+exact same data through both `Model.model_validate(...)` and
+`{Model}Schema.safeParse(...)` (via `npx tsx`), asserting they agree.
+Needs a one-time `cd tests/js && npm install`; skipped automatically if
+that's not set up.
 
 ## Module map
 
 | File | What it does |
 |---|---|
-| `bundle.py` | `Bundle` — a name + list of pydantic models |
-| `pytypes.py` | Resolves a pydantic annotation into a small type IR (object ref, enum ref, list, union, scalar, literal) |
-| `schema_collect.py` | Walks a bundle's models via `pytypes`, builds the `SchemaIndex` (every def, which bundle(s) use it, factored-out shared bases) |
-| `patterns.py` | Dedupes regex patterns into named constants (`identifierPattern`, `emailPattern`, ...) |
-| `ts_types.py` | IR → TS interfaces / type aliases |
-| `ts_validators.py` | IR → Angular Signal Forms validator functions |
-| `ts_zod.py` | IR → Zod schemas (experimental) |
-| `ts_writer.py` | Plain-Python string builders used by the above (no templating engine) |
-| `generators/` | `Generator` base class + the three built-in generators |
-
-All of the above is written compactly, not for human readability — it's
-meant to be read alongside this README and edited directly rather than
-treated as a black box. The code it *outputs* is the part that should
-stay readable, since that's what ends up in your Angular project.
+| `bundle.py` | `Bundle` -- a name + list of pydantic models |
+| `pytypes.py` | Resolves a pydantic annotation into a small type IR |
+| `schema_collect.py` | Builds the `SchemaIndex` from a bundle list |
+| `patterns.py` | Dedupes regex patterns into named constants |
+| `generate.py` | Type IR -> Zod schemas, file layout, `generate_zod_schemas()` |

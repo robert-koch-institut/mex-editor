@@ -1,19 +1,35 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+import z from "zod";
+
+import { AdditiveContactPointSchema } from "./generated/contact-point";
+import { AdditivePersonSchema } from "./generated/person";
+
 /**
- * Model to store data for person creation.
+ * Schema for CreatePerson.
  */
-export interface CreatePerson {
-  $type: "CreatePerson";
-  familyName: string;
-  givenName: string;
-}
+export const CreatePersonSchema = z.object({
+  $type: z.literal("CreatePerson"),
+  familyName: AdditivePersonSchema.shape.familyName.unwrap().element.nonempty(),
+  givenName: AdditivePersonSchema.shape.givenName.unwrap().element.nonempty(),
+});
 
 /**
  * Model to store data for person creation.
  */
-export interface CreateContactPoint {
-  $type: "CreateContactPoint";
-  email: string;
-}
+export type CreatePerson = z.infer<typeof CreatePersonSchema>;
+
+/**
+ * Schema for CreateContactPoint.
+ */
+export const CreateContactPointSchema = z.object({
+  $type: z.literal("CreateContactPoint"),
+  email: AdditiveContactPointSchema.shape.email.unwrap().element.nonempty(),
+});
+
+/**
+ * Model to store data for person creation.
+ */
+export type CreateContactPoint = z.infer<typeof CreateContactPointSchema>;
 
 /**
  * UnionType for creatable items.

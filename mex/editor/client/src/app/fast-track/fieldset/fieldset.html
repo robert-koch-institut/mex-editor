@@ -1,9 +1,10 @@
 @let state = formState();
 <div class="label">
+  @let label = labelKey() | transloco: labelParam() ?? {};
   @if (showCategoryLabel()) {
-    {{ labelKey() | transloco: labelParam() ?? {} }} - {{ categoryKey() | transloco }}
+    {{ label }} - {{ categoryKey() | transloco }}
   } @else {
-    {{ labelKey() | transloco }}
+    {{ label }}
   }
 </div>
 @let descKey = descriptionKey();
@@ -13,12 +14,20 @@
 
 <ng-content></ng-content>
 
-@if (state && (showErrorWithoutTouch() || state.touched())) {
+@if (state && state.invalid() && (showErrorWithoutTouch() || state.touched())) {
   @let errors = state.errors();
   @if (errors && errors.length > 0) {
     <div class="error-container">
       @for (err of errors; track err.message) {
-        <div class="error">{{ err.kind }} | {{ err.message }}</div>
+        <div class="error">
+          <!-- @if (err.kind === "matDatepickerParse") {
+            Invalid input. Format is xxx
+          } @else {} -->
+          {{
+            err.message
+              | transloco: { field: label, ...$any(err)?.issue, ...$any(err).issue?.params }
+          }}
+        </div>
       }
     </div>
   }

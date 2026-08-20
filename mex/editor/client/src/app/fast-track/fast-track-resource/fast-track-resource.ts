@@ -1,6 +1,11 @@
 import { Component, inject, signal } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { disabled, form, FormField, FormRoot, minLength, required } from "@angular/forms/signals";
+import {
+  disabled,
+  form,
+  FormField,
+  FormRoot,
+  validateStandardSchema,
+} from "@angular/forms/signals";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButton } from "@angular/material/button";
 import { MatChipsModule } from "@angular/material/chips";
@@ -9,18 +14,24 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
-import { MatOption, MatPrefix, MatSelect, MatSuffix } from "@angular/material/select";
+import { MatOption, MatPrefix, MatSelect } from "@angular/material/select";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
+import type { DateTime } from "luxon";
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
+import { Datepicker } from "../datepicker/datepicker";
 import { Fieldset } from "../fieldset/fieldset";
 import { ReferenceSelect } from "../reference-select/reference-select";
-import type { FastTrackResourceModel } from "./fast-track-resource.models";
+import {
+  type FastTrackResourceModel,
+  FastTrackResourceModelSchema,
+} from "./fast-track-resource.models";
 
 @Component({
   selector: "mex-fast-track-resource",
   imports: [
+    Datepicker,
     Fieldset,
     FormField,
     FormRoot,
@@ -35,7 +46,6 @@ import type { FastTrackResourceModel } from "./fast-track-resource.models";
     MatPrefix,
     MatSelect,
     MatSlideToggle,
-    MatSuffix,
     ReferenceSelect,
     TranslocoDirective,
     TranslocoPipe,
@@ -51,17 +61,6 @@ export class FastTrackResource {
   protected conceptOptions = inject(ConceptLookups);
   protected dateFormats = inject(MAT_DATE_FORMATS);
 
-  constructor() {
-    // rewrite dates to refresh ui and render dates based on localization.
-    this.translocoService.langChanges$.pipe(takeUntilDestroyed()).subscribe(() =>
-      this.model.update((x) => ({
-        ...x,
-        start: x.start ? x.start.plus(0) : null,
-        end: x.end ? x.end.plus(0) : null,
-      })),
-    );
-  }
-
   isPrefillChecked = signal(false);
   model = signal<FastTrackResourceModel>({
     title: "",
@@ -70,8 +69,8 @@ export class FastTrackResource {
     resourceTypeGeneral: [],
     spatial: "",
     resourceCreationMethod: [],
-    accrualPeriodicity: "",
-    start: null,
+    accrualPeriodicity: null,
+    start: null as unknown as DateTime,
     end: null,
     hasLegalBasis: "",
     provenance: "",
@@ -81,20 +80,14 @@ export class FastTrackResource {
       en: [],
     },
     unitInCharge: [],
-    contacts: [],
+    contact: [],
     creator: [],
     contributingUnit: [],
     contributor: [],
   });
 
   resourceForm = form(this.model, (schema) => {
-    required(schema.title, { message: "Title is required" });
-    minLength(schema.title, 3, { message: "Title must be at least 3 characters long" });
-    minLength(schema.theme, 1, { message: "At least one theme is required" });
-    required(schema.unitInCharge, { message: "Need a unit in charge" });
-    required(schema.resourceCreationMethod, { message: "Method is required!" });
-    minLength(schema.resourceCreationMethod, 1, { message: "At least one is required!" });
-
+    validateStandardSchema(schema, FastTrackResourceModelSchema);
     disabled(schema.rights, { when: this.isPrefillChecked });
   });
 
@@ -108,16 +101,18 @@ export class FastTrackResource {
   }
 
   addKeyword(lang: keyof FastTrackResourceModel["keywords"], keyword: string) {
-    this.model.update((x) => {
-      const unique = new Set([...x.keywords[lang], keyword]);
-      return {
-        ...x,
-        keywords: {
-          ...x.keywords,
-          [lang]: [...unique.values()],
-        },
-      };
-    });
+    if (keyword) {
+      this.model.update((x) => {
+        const unique = new Set([...x.keywords[lang], keyword]);
+        return {
+          ...x,
+          keywords: {
+            ...x.keywords,
+            [lang]: [...unique.values()],
+          },
+        };
+      });
+    }
   }
 
   removeKeyword(lang: keyof FastTrackResourceModel["keywords"], keyword: string) {

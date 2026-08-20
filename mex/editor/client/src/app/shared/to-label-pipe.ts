@@ -3,11 +3,11 @@ import { Pipe } from "@angular/core";
 
 import type { PreviewItem } from "./models";
 import type { BilingualText, Concept } from "./models/concept";
-import type { PreviewContactPoint } from "./models/contact-point";
 import type { CreateItem } from "./models/create-item";
-import type { PreviewOrganizationalUnit } from "./models/organizational-unit";
-import type { PreviewPerson } from "./models/person";
-import type { Text } from "./models/shared";
+import type { PreviewContactPoint } from "./models/generated/contact-point";
+import type { PreviewOrganizationalUnit } from "./models/generated/organizational-unit";
+import type { PreviewPerson } from "./models/generated/person";
+import type { Text } from "./models/generated/shared";
 
 @Pipe({
   name: "toLabel",
@@ -40,7 +40,7 @@ export class ToLabelPipe implements PipeTransform {
     return (values as Text[]).filter((x) => x.value).at(0)?.value ?? null;
   }
 
-  private firstLabelOf(values: (string | string[] | Text[] | undefined)[], lang: string) {
+  private firstLabelOf(values: (string | string[] | Text | Text[] | undefined)[], lang: string) {
     for (const array of values.filter((x) => !!x) as (string | string[] | Text[])[]) {
       const label = this.pickLabelByLang(array, lang) ?? this.pickLabel(array);
       if (label) {
@@ -51,7 +51,14 @@ export class ToLabelPipe implements PipeTransform {
   }
 
   private orgUnitToLabel(value: PreviewOrganizationalUnit, lang: string) {
-    return this.firstLabelOf([value.shortName, value.name, value.alternativeName], lang);
+    return this.firstLabelOf(
+      [
+        value.shortName as string | string[] | Text | Text[] | undefined,
+        value.name as string | string[] | Text | Text[] | undefined,
+        value.alternativeName as string | string[] | Text | Text[] | undefined,
+      ],
+      lang,
+    );
   }
 
   private personToLabel(value: PreviewPerson, lang: string) {

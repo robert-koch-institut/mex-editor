@@ -13,6 +13,7 @@
   "create-item-dialog.loading": "Lade Einträge...",
   "create-item-dialog.save-button.label": "Eintrag Speichern",
   "create-item-dialog.title": "Neuen Eintrag anlegen",
+  "datepicker.validation.parse": "Bitte Format {{format}} nutzen",
   "fasttrack": {
     "resource": {
       "fields": {
@@ -30,12 +31,44 @@
     "placeholder.empty": "Tippen um zu Filtern, Sie können \"*\" als Platzhalter benutzen",
     "placeholder.validTypes": "Suche nach {value}",
     "search-result": {
-      "createNew": "Neuen Eintrag für \"{query}\" anlegen...",
-      "empty": "Keine Ergebnisse für \"{query}\" gefunden.",
-      "label": "Suchergebnisse ({count} von {total})",
+      "createNew": "Neuen Eintrag für \"{{query}}\" anlegen...",
+      "empty": "Keine Ergebnisse für \"{{query}}\" gefunden.",
+      "label": "Suchergebnisse ({{count}} von {{total}})",
       "loading": "Lade Ergebnisse..."
     }
   },
   "select.none-option": "Keine",
-  "select.placeholder": "Bitte auswählen"
+  "select.placeholder": "Bitte auswählen",
+  "validation": {
+    "custom": "{{field}} ist ungültig",
+    "generic": "{{field}} ist ungültig",
+    "invalidElement": "{{field}} enthält einen ungültigen Eintrag",
+    "invalidFormat": {
+      "email": "{{field}} muss eine gültige E-Mail-Adresse sein",
+      "ends_with": "{{field}} muss mit \"{{pattern}}\" enden",
+      "includes": "{{field}} muss \"{{pattern}}\" enthalten",
+      "jwt": "{{field}} muss ein gültiges JWT sein",
+      "regex": "{{field}} hat ein ungültiges Format",
+      "starts_with": "{{field}} muss mit \"{{pattern}}\" beginnen",
+      "url": "{{field}} muss eine gültige URL sein",
+      "uuid": "{{field}} muss eine gültige UUID sein"
+    },
+    "invalidKey": "{{field}} enthält einen ungültigen Schlüssel",
+    "invalidType": "{{field}} hat einen ungültigen Typ",
+    "invalidUnion": "{{field}} entspricht keinem der erlaubten Formate",
+    "invalidValue": "{{field}} muss einer der erlaubten Werte sein",
+    "max": "{{field}} darf höchstens {{maximum}} sein",
+    "maxDate": "{{field}} muss am oder vor dem {{maximum}} liegen",
+    "maxItems": "{{field}} darf höchstens {maximum, plural, =1 {einen Eintrag} other {{maximum} Einträge}} enthalten",
+    "maxLength": "{{field}} darf höchstens {minimum, plural, =1 {ein Zeichen} other {{minimum} Zeichen}} lang sein",
+    "min": "{{field}} muss mindestens {{minimum}} sein",
+    "minDate": "{{field}} muss am oder nach dem {{minimum}} liegen",
+    "minItems": "{{field}} muss mindestens {minimum, plural, =1 {einen Eintrag} other {{minimum} Einträge}} enthalten",
+    "minLength": "{{field}} muss mindestens {minimum, plural, =1 {ein Zeichen} other {{minimum} Zeichen}} lang sein",
+    "notMultipleOf": "{{field}} muss ein Vielfaches von {{divisor}} sein",
+    "required": "{{field}} muss angegeben werden",
+    "tooBig": "{{field}} ist zu groß",
+    "tooSmall": "{{field}} ist zu klein",
+    "unrecognizedKeys": "{{field}} enthält unbekannte Schlüssel"
+  }
 }

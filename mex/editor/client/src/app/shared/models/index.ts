@@ -1,6 +1,6 @@
-import type { PreviewContactPoint } from "./contact-point";
-import type { PreviewOrganizationalUnit } from "./organizational-unit";
-import type { PreviewPerson } from "./person";
+import type { PreviewContactPoint } from "./generated/contact-point";
+import type { PreviewOrganizationalUnit } from "./generated/organizational-unit";
+import type { PreviewPerson } from "./generated/person";
 
 /**
  * UnionType for all preview items.

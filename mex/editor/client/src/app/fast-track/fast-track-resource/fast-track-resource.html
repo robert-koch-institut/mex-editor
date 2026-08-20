@@ -1,6 +1,23 @@
 <ng-container *transloco="let t">
   <h1>{{ t("fasttrack.resource.headline") }}</h1>
 
+  @let form = resourceForm();
+  <div>
+    FORM IS VALID? {{ form.valid() }} <br />
+    <h4>Errors:</h4>
+    <ul>
+      @for (error of form.errorSummary(); track error) {
+        <li>
+          <!-- Ein Klick fokussiert automatisch das richtige Input-Feld im DOM -->
+          <a href="#" (click)="$event.preventDefault(); error.fieldTree().focusBoundControl()">
+            {{ error.fieldTree().name() }} | {{ error.kind }} |
+            {{ error.message }}
+          </a>
+        </li>
+      }
+    </ul>
+  </div>
+
   <form [formRoot]="resourceForm" (submit)="onSubmit()" class="two-column-layout">
     <mex-fieldset [formField]="resourceForm.title" labelKey="title" class="one-column-item">
       <mat-form-field>
@@ -28,13 +45,13 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.contacts"
+      [formField]="resourceForm.contact"
       labelKey="contact"
       descriptionKey="Resource.contact.description"
       class="one-column-item"
     >
       <mex-reference-select
-        [formField]="resourceForm.contacts"
+        [formField]="resourceForm.contact"
         [isCreationEnabled]="true"
       ></mex-reference-select>
     </mex-fieldset>
@@ -180,7 +197,7 @@
           [placeholder]="'select.placeholder' | transloco"
           data-testid="frequency-select"
         >
-          <mat-option [value]="null">{{ t("select.none-option") }}</mat-option>
+          <!-- <mat-option [value]="null">{{ t("select.none-option") }}</mat-option> -->
           @for (option of conceptOptions.frequencyOptions(); track option.id) {
             <mat-option [value]="option.id">{{ option.label }}</mat-option>
           }
@@ -199,7 +216,11 @@
           labelKey="Resource.start"
           class="one-column-item"
         >
-          <mat-form-field>
+          <mex-datepicker
+            [formField]="resourceForm.start"
+            [maxDate]="resourceForm.end().value()"
+          ></mex-datepicker>
+          <!-- <mat-form-field>
             <input
               matInput
               [matDatepicker]="startPicker"
@@ -209,7 +230,7 @@
             />
             <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
             <mat-datepicker #startPicker />
-          </mat-form-field>
+          </mat-form-field> -->
         </mex-fieldset>
 
         <mex-fieldset
@@ -217,7 +238,11 @@
           labelKey="Resource.end"
           class="one-column-item"
         >
-          <mat-form-field>
+          <mex-datepicker
+            [formField]="resourceForm.end"
+            [minDate]="resourceForm.start().value()"
+          ></mex-datepicker>
+          <!-- <mat-form-field>
             <input
               matInput
               [matDatepicker]="endPicker"
@@ -227,7 +252,7 @@
             />
             <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
             <mat-datepicker #endPicker />
-          </mat-form-field>
+          </mat-form-field> -->
         </mex-fieldset>
       </div>
     </mex-fieldset>

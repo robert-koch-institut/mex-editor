@@ -25,7 +25,7 @@ document explains how to pull in a new export whenever the design changes.
 ## Running the import
 
 ```powershell
-uv run python mex/editor/client/scripts/import-theme.py <path to input file> <path to output file>
+uv run python mex/editor/client/scripts/import_theme.py <path to input file> <path to output file>
 ```
 
 ## Where things live
@@ -33,7 +33,7 @@ uv run python mex/editor/client/scripts/import-theme.py <path to input file> <pa
 ```
 mex/editor/client/
 ├── scripts/
-│   └── import-theme.py      # conversion script
+│   └── import_theme.py      # conversion script
 ├── src/
 │   ├── styles.scss           # base Angular Material theme
 │   └── theme-tokens.css      # generated — committed to git

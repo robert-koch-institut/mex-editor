@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import logging
 import re
 import sys
@@ -26,7 +24,7 @@ def main(argv: list[str]) -> int:
 
     if not input_path.exists():
         logger.error("Input file not found: %s", input_path)
-        logger.error("Usage: python scripts/import-theme.py <input.css> <output.css>")
+        logger.error("Usage: python scripts/import_theme.py <input.css> <output.css>")
         return 1
 
     text = input_path.read_text(encoding="utf-8")

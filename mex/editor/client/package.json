@@ -53,5 +53,5 @@
     "test-ui": "ng test --ui",
     "watch": "ng build --watch --configuration development"
   },
-  "version": "4.1.0"
+  "version": "4.1.1"
 }

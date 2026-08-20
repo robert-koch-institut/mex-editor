@@ -1,0 +1,344 @@
+<ng-container *transloco="let t">
+  <h1>{{ t("fasttrack.resource.headline") }}</h1>
+
+  <form [formRoot]="resourceForm" (submit)="onSubmit()" class="two-column-layout">
+    <mex-fieldset [formField]="resourceForm.title" labelKey="title" class="one-column-item">
+      <mat-form-field>
+        <input
+          matInput
+          [formField]="resourceForm.title"
+          [attr.placeholder]="'fasttrack.resource.fields.title.placeholder' | transloco"
+        />
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.description"
+      labelKey="description"
+      class="two-column-item"
+    >
+      <mat-form-field>
+        <textarea
+          matInput
+          [formField]="resourceForm.description"
+          [rows]="4"
+          [attr.placeholder]="'Resource.description.description' | transloco"
+        ></textarea>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.contacts"
+      labelKey="contact"
+      descriptionKey="Resource.contact.description"
+      class="one-column-item"
+    >
+      <mex-reference-select
+        [formField]="resourceForm.contacts"
+        [isCreationEnabled]="true"
+      ></mex-reference-select>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.creator"
+      labelKey="creator"
+      descriptionKey="Resource.creator.description"
+      class="one-column-item"
+    >
+      <mex-reference-select
+        [formField]="resourceForm.creator"
+        [validEntityTypes]="['Person']"
+        [isCreationEnabled]="true"
+      >
+      </mex-reference-select>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.contributor"
+      labelKey="Resource.contributor"
+      descriptionKey="Resource.contributor.description"
+      class="one-column-item"
+    >
+      <mex-reference-select
+        [formField]="resourceForm.contributor"
+        [validEntityTypes]="['Person']"
+        [isCreationEnabled]="true"
+      >
+      </mex-reference-select>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.unitInCharge"
+      labelKey="unitInCharge"
+      descriptionKey="unitInCharge.description"
+      class="one-column-item"
+    >
+      <mex-reference-select
+        [formField]="resourceForm.unitInCharge"
+        [validEntityTypes]="['OrganizationalUnit']"
+      ></mex-reference-select>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.contributingUnit"
+      labelKey="contributingUnit"
+      descriptionKey="Resource.contributingUnit.description"
+      class="one-column-item"
+    >
+      <mex-reference-select
+        [formField]="resourceForm.contributingUnit"
+        [validEntityTypes]="['OrganizationalUnit']"
+      >
+      </mex-reference-select>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.theme"
+      labelKey="theme"
+      descriptionKey="Resource.theme.description"
+      class="one-column-item"
+    >
+      <mat-form-field>
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-select
+          multiple
+          [formField]="resourceForm.theme"
+          [placeholder]="'select.placeholder' | transloco"
+          data-testid="theme-select"
+        >
+          @for (option of conceptOptions.themeOptions(); track option.id) {
+            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.resourceTypeGeneral"
+      labelKey="Resource.resourceTypeGeneral"
+      descriptionKey="Resource.resourceTypeGeneral.description"
+      class="one-column-item"
+    >
+      <mat-form-field>
+        <mat-select
+          multiple
+          [formField]="resourceForm.resourceTypeGeneral"
+          [placeholder]="'select.placeholder' | transloco"
+          data-testid="resourceTypeGeneral-select"
+        >
+          @for (option of conceptOptions.resourceTypeGeneralOptions(); track option.id) {
+            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.spatial"
+      labelKey="Resource.spatial"
+      descriptionKey="Resource.spatial.description"
+      class="one-column-item"
+    >
+      <mat-form-field>
+        <input
+          matInput
+          [formField]="resourceForm.spatial"
+          [placeholder]="'input.placeholder' | transloco"
+        />
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.resourceCreationMethod"
+      labelKey="Resource.resourceCreationMethod"
+      descriptionKey="Resource.resourceCreationMethod.description"
+      class="one-column-item"
+    >
+      <mat-form-field>
+        <mat-select
+          multiple
+          [formField]="resourceForm.resourceCreationMethod"
+          [placeholder]="'select.placeholder' | transloco"
+          data-testid="resourceCreationMethod-select"
+        >
+          @for (option of conceptOptions.resourceCreationMethodOptions(); track option.id) {
+            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.accrualPeriodicity"
+      labelKey="Resource.accrualPeriodicity"
+      descriptionKey="Resource.accrualPeriodicity.description"
+      class="one-column-item"
+    >
+      <mat-form-field class="one-column-item">
+        <mat-select
+          [formField]="resourceForm.accrualPeriodicity"
+          [placeholder]="'select.placeholder' | transloco"
+          data-testid="frequency-select"
+        >
+          <mat-option [value]="null">{{ t("select.none-option") }}</mat-option>
+          @for (option of conceptOptions.frequencyOptions(); track option.id) {
+            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      labelKey="Resource.temporal"
+      descriptionKey="Resource.temporal.description"
+      class="one-column-item"
+    >
+      <div class="two-column-layout">
+        <mex-fieldset
+          [formField]="resourceForm.start"
+          labelKey="Resource.start"
+          class="one-column-item"
+        >
+          <mat-form-field>
+            <input
+              matInput
+              [matDatepicker]="startPicker"
+              [max]="resourceForm.end().value()"
+              [formField]="resourceForm.start"
+              [placeholder]="dateFormats.parse.dateInput"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker />
+          </mat-form-field>
+        </mex-fieldset>
+
+        <mex-fieldset
+          [formField]="resourceForm.end"
+          labelKey="Resource.end"
+          class="one-column-item"
+        >
+          <mat-form-field>
+            <input
+              matInput
+              [matDatepicker]="endPicker"
+              [min]="resourceForm.start().value()"
+              [formField]="resourceForm.end"
+              [placeholder]="dateFormats.parse.dateInput"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker />
+          </mat-form-field>
+        </mex-fieldset>
+      </div>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.keywords.de"
+      labelKey="fasttrack.resource.fields.keywords.de"
+      class="two-column-item"
+    >
+      <mat-form-field>
+        <mat-chip-grid
+          #keywordGermanChips
+          [formField]="resourceForm.keywords.de"
+          class="keyword-chips"
+        >
+          @for (keyword of resourceForm.keywords().value().de; track keyword) {
+            <mat-chip-row (removed)="removeKeyword('de', keyword)">
+              {{ keyword }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          }
+        </mat-chip-grid>
+        <input
+          [matChipInputFor]="keywordGermanChips"
+          (matChipInputTokenEnd)="addKeyword('de', $event.value); $event.chipInput.clear()"
+          [placeholder]="'Resource.keyword.description' | transloco"
+        />
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.keywords.en"
+      labelKey="fasttrack.resource.fields.keywords.en"
+      class="two-column-item"
+    >
+      <mat-form-field>
+        <mat-chip-grid
+          #keywordEnglishChips
+          [formField]="resourceForm.keywords.en"
+          class="keyword-chips"
+        >
+          @for (keyword of resourceForm.keywords().value().en; track keyword) {
+            <mat-chip-row (removed)="removeKeyword('en', keyword)">
+              {{ keyword }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          }
+        </mat-chip-grid>
+        <input
+          [matChipInputFor]="keywordEnglishChips"
+          (matChipInputTokenEnd)="addKeyword('en', $event.value); $event.chipInput.clear()"
+          [placeholder]="'Resource.keyword.description' | transloco"
+        />
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.hasLegalBasis"
+      labelKey="Resource.hasLegalBasis"
+      class="two-column-item"
+    >
+      <mat-form-field>
+        <textarea
+          matInput
+          [formField]="resourceForm.hasLegalBasis"
+          [rows]="3"
+          [attr.placeholder]="'Resource.hasLegalBasis.description' | transloco"
+        ></textarea>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.provenance"
+      labelKey="Resource.provenance"
+      class="two-column-item"
+    >
+      <mat-form-field>
+        <textarea
+          matInput
+          [formField]="resourceForm.provenance"
+          [rows]="3"
+          [attr.placeholder]="'Resource.provenance.description' | transloco"
+        ></textarea>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="resourceForm.rights"
+      labelKey="Resource.rights"
+      class="two-column-item"
+    >
+      <mat-slide-toggle
+        [checked]="isPrefillChecked()"
+        (change)="isPrefillChecked.set($event.checked); prefillRights($event.checked)"
+      >
+        {{ t("fasttrack.resource.fields.rights.prefill") }}
+      </mat-slide-toggle>
+      <mat-form-field>
+        <textarea
+          matInput
+          [formField]="resourceForm.rights"
+          [rows]="6"
+          [attr.placeholder]="'Resource.rights.description' | transloco"
+        ></textarea>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <button matButton="filled" type="submit">Submit</button>
+  </form>
+</ng-container>

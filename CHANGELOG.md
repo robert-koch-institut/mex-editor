@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - application of material theme import from figma
+- added github workflow to sync to opencode
 
 ### Changes
 
@@ -19,7 +20,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- align linting workflow with mex-template
+
 ### Security
+
+## [4.1.0] - 2026-08-18
+
+### Changes
+
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/1.5.0
+- renovate config changes for better angular experience
+  - trying renovate dependency dashboard and check usage
+- pipes for typeToIconName, toLabel and toLookup
+- new control fasttrack reference-select that allows to search for existing entites or create them.
+- ConceptOptions renamed to ConecptLookups and now use the new ToLookupPipe (which uses the LabelPipe, moved all lookup and label creation to spefic pipes).
+- Grouped everything into fasttrack folder to meet the feature approach. Some components might be moved to shared
+- added sorting linters for imports in typescript files and angular component import parameter
+- updated dependencies
+
+### Fixed
+
+- manually fixed renovatebot lock file stuff
 
 ## [4.0.2] - 2026-08-05
 
@@ -54,7 +75,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - typedoc to generate typescript documentation
 - docs to typescript components
 - renovate rule for angular
-- fasttrack create resource page with hackathon cleaned-up results
+- fasttrack create resource page
+  - including basic fields only
+- mex-fieldset component to mimic look of kernUx fieldset
 - more linting rules
   - no commented out code
   - no unused imports in component (checked against template)

@@ -1,0 +1,83 @@
+@let val = value();
+@let query = searchQuery();
+<mat-form-field *transloco="let t">
+  <mat-label> {{ label() }}</mat-label>
+  <mat-icon matPrefix>search</mat-icon>
+
+  <input
+    matInput
+    #input
+    #trigger="matAutocompleteTrigger"
+    [value]="isInputFocused() ? query : ''"
+    (input)="searchQuery.set($event.target.value)"
+    (focus)="isInputFocused.set(true)"
+    (blur)="isInputFocused.set(false); touch.emit()"
+    [matAutocomplete]="auto"
+    [placeholder]="this.emptyPlaceholderLabel()"
+  />
+  @let validEntTypes = validEntityTypes();
+  @if (validEntTypes.length > 1) {
+    <ng-container matSuffix>
+      @let searchEnTypes = searchEntityTypes();
+      @for (validType of validEntTypes; track validType) {
+        <button matIconButton type="button" (click)="toggleSearchEntityType(validType)">
+          <mat-icon [title]="validType | transloco">
+            {{
+              validType
+                | typeToIconName: { suffix: searchEnTypes.includes(validType) ? "" : "_off" }
+            }}
+          </mat-icon>
+        </button>
+      }
+    </ng-container>
+  }
+
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+    @for (item of val; track item) {
+      <mat-option (onSelectionChange)="removeValue(item)">
+        <mat-checkbox [checked]="true" (change)="removeValue(item)"></mat-checkbox>
+        <mat-icon [inline]="true">{{ item.$type | typeToIconName }}</mat-icon>
+        {{ item | toLabel: transloco.activeLang() }}
+      </mat-option>
+    }
+    @if (query !== "") {
+      @let result = searchResult.value();
+      <mat-optgroup
+        [label]="
+          t('reference-select.search-result.label', {
+            count: result?.items?.length ?? 0,
+            total: result?.total ?? 0,
+          })
+        "
+      >
+        <ng-container>
+          @if (searchResult.isLoading()) {
+            <mat-option disabled>{{
+              "reference-select.search-result.loading" | transloco
+            }}</mat-option>
+          } @else {
+            @for (item of result?.items; track item.identifier) {
+              <mat-option
+                (onSelectionChange)="addValue($any(item)); input.focus(); openPanelDelayed(trigger)"
+              >
+                <mat-icon [inline]="true">
+                  {{ item.$type | typeToIconName }}
+                </mat-icon>
+                {{ item | toLabel: transloco.activeLang() }}
+              </mat-option>
+            } @empty {
+              <mat-option disabled>
+                {{ t("reference-select.search-result.empty", { query }) }}
+              </mat-option>
+            }
+          }
+        </ng-container>
+      </mat-optgroup>
+      @if (isCreationEnabled()) {
+        <mat-option #opt (onSelectionChange)="showCreateDialog()">{{
+          t("reference-select.search-result.createNew", { query: searchQuery() })
+        }}</mat-option>
+      }
+    }
+  </mat-autocomplete>
+</mat-form-field>

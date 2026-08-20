@@ -1,13 +1,14 @@
+import { Location } from "@angular/common";
 import { provideHttpClient } from "@angular/common/http";
 import { provideHttpClientTesting } from "@angular/common/http/testing";
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
 import { provideRouter } from "@angular/router";
-import { App } from "./app";
-import { translocoConfig, LANGUAGE_QUERY_PARAM } from "./transloco";
-import { TranslocoService } from "@jsverse/transloco";
-import { Location } from "@angular/common";
 import { RouterTestingHarness } from "@angular/router/testing";
+import { TranslocoService } from "@jsverse/transloco";
+
+import { App } from "./app";
+import { LANGUAGE_QUERY_PARAM, translocoConfig } from "./transloco";
 
 describe("App", () => {
   let component: App;

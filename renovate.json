@@ -1,5 +1,6 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "dependencyDashboard": true,
     "enabledManagers": [
         "docker-compose",
         "dockerfile",
@@ -32,8 +33,9 @@
             "minimumReleaseAgeBehaviour": "timestamp-optional"
         },
         {
-            "description": "Pin GitHub Actions to SHA digests for supply chain security",
+            "description": "Pin GitHub Actions and compose images to SHA digests for supply chain security",
             "matchManagers": [
+                "docker-compose",
                 "github-actions"
             ],
             "pinDigests": true
@@ -61,22 +63,6 @@
             ]
         },
         {
-            "description": "Group Angular updates in one PR",
-            "groupName": "all non-major Angular packages",
-            "matchDepTypes": [
-                "dependencies",
-                "devDependencies"
-            ],
-            "matchPackageNames": [
-                "/^@angular/",
-                "@schematics/angular"
-            ],
-            "matchUpdateTypes": [
-                "minor",
-                "patch"
-            ]
-        },
-        {
             "description": "Group all non-major npm updates into a single PR",
             "groupName": "npm non-major",
             "matchCurrentVersion": "!/^0/",
@@ -87,6 +73,42 @@
                 "minor",
                 "patch",
                 "pin"
+            ]
+        },
+        {
+            "description": "Group Angular + TypeScript non-major updates into a single PR (needs to configure after the npm non-major rule)",
+            "groupName": "all non-major Angular packages",
+            "matchDepTypes": [
+                "dependencies",
+                "devDependencies"
+            ],
+            "matchPackageNames": [
+                "/^@angular/",
+                "@schematics/angular",
+                "@angular-eslint/*",
+                "angular-eslint",
+                "typescript"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "patch"
+            ]
+        },
+        {
+            "description": "TypeScript-Major only manually with Angular-Major",
+            "enabled": false,
+            "matchPackageNames": [
+                "typescript"
+            ],
+            "matchUpdateTypes": [
+                "major"
+            ]
+        },
+        {
+            "description": "npm-CLI-Version managed by nodeenv",
+            "enabled": false,
+            "matchPackageNames": [
+                "npm"
             ]
         },
         {

@@ -1,13 +1,13 @@
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
-
-import { NavBar } from "./nav-bar";
 import { provideRouter } from "@angular/router";
-import { routes } from "../app.routes";
 import { RouterTestingHarness } from "@angular/router/testing";
+
+import { routes } from "../app.routes";
+import { FastTrackActivity } from "../fast-track/fast-track-activity/fast-track-activity";
+import { FastTrackResource } from "../fast-track/fast-track-resource/fast-track-resource";
 import { StartPage } from "../start-page/start-page";
-import { FastTrackResource } from "../fast-track-resource/fast-track-resource";
-import { FastTrackActivity } from "../fast-track-activity/fast-track-activity";
+import { NavBar } from "./nav-bar";
 
 describe("NavBarComponent", () => {
   let component: NavBar;

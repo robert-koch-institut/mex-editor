@@ -1,0 +1,12 @@
+<form [formRoot]="contactPointForm">
+  <mex-fieldset
+    labelKey="email"
+    [labelParam]="{ count: 1 }"
+    [formField]="contactPointForm.email"
+    [showErrorWithoutTouch]="true"
+  >
+    <mat-form-field>
+      <input matInput [formField]="contactPointForm.email" class="focus-me" />
+    </mat-form-field>
+  </mex-fieldset>
+</form>

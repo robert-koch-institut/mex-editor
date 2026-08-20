@@ -24,21 +24,8 @@ $light-theme: mat.define-theme(
   (
     color: (
       theme-type: light,
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: $my-typography,
-    density: (
-      scale: 0,
-    ),
-  )
-);
-$dark-theme: mat.define-theme(
-  (
-    color: (
-      theme-type: dark,
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
+      primary: mat.$green-palette,
+      tertiary: mat.$red-palette,
     ),
     typography: $my-typography,
     density: (
@@ -47,40 +34,69 @@ $dark-theme: mat.define-theme(
   )
 );
 
-// Setup box-sizing for easier layout management
 html {
   box-sizing: border-box;
 }
-
-*,
-*:before,
-*:after {
+*, *:before, *:after {
   box-sizing: inherit;
 }
 
-// Apply styles globally
 html {
-  // Default to Light Theme
-  @include mat.all-component-themes($light-theme);
-  @include mat.typography-hierarchy($light-theme);
-  @include mat.system-level-colors($light-theme);
-
-  // Apply Dark Theme when the class is present
-  &.dark-mode {
-    @include mat.all-component-colors($dark-theme);
-    @include mat.system-level-colors($dark-theme);
-  }
+  // Structural styles only — no color generation from the palette theme
+  @include mat.all-component-typographies($light-theme);
+  @include mat.all-component-densities($light-theme);
 
   margin: 0;
   height: 100vh;
-
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-color: var(--mat-app-background-color);
-  color: var(--mat-app-text-color);
 }
+
 
 body {
   margin: 0;
+  background-color: var(--mat-sys-background);
+  color: var(--mat-sys-on-background);
+}
+
+
+.mat-mdc-checkbox,
+.mat-mdc-radio,
+.mat-mdc-slide-toggle,
+.mat-button-toggle,
+.mat-form-field,
+.mat-mdc-select,
+.mat-mdc-text-field {
+  --mat-select-focused-arrow-color: var(--mat-sys-primary);
+  --mat-select-enabled-arrow-color: var(--mat-sys-primary);
+  --mat-checkbox-selected-icon-color: var(--mat-sys-primary);
+  --mat-switch-selected-handle-color: var(--mat-sys-secondary-fixed);
+  --mat-button-toggle-selected-state-background-color: var(--mat-sys-primary);
+  --mat-button-toggle-selected-state-text-color: var(--mat-sys-on-primary);
+  --mat-sys-hover-state-layer-opacity: 0.08;
+}
+
+/* Mini FAB button hover*/
+button[matMiniFab]:hover{
+  color: var(--mat-sys-primary);
+}
+
+/* Filled buttons */
+button[matButton]:hover {
+  color: var(--mat-sys-primary);
+}
+
+/* Select panel pop up and options */
+.mat-mdc-select-panel{
+  background-color: var(--mat-sys-surface-variant) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--mat-sys-primary-container);
 }
 
 // reset user agent styles for links

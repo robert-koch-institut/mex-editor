@@ -1,7 +1,6 @@
 {
   "app": {
-    "footer.greetings": "Erstellt mit ❤️ von MEx",
-    "header.navigation.themeToggle": "Umschalten helles/dunkles Erscheinungsbild"
+    "footer.greetings": "Erstellt mit ❤️ von MEx"
   },
   "categories": {
     "optional": "Optional",

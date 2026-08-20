@@ -52,7 +52,8 @@
             "browser": "src/main.ts",
             "inlineStyleLanguage": "scss",
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/theme-tokens.css"
             ],
             "tsConfig": "tsconfig.app.json"
           }

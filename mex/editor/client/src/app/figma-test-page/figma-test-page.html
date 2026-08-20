@@ -1,0 +1,32 @@
+<section class="spaced">
+  <h2>Figma Test Page</h2>
+  <button matButton="filled">Test Button</button>
+
+  <button matMiniFab>
+    <mat-icon>add</mat-icon>
+  </button>
+
+  <mat-checkbox>Option 1</mat-checkbox>
+  <mat-checkbox>Option 2</mat-checkbox>
+
+  <mat-slide-toggle>Slide me!</mat-slide-toggle>
+
+  <mat-button-toggle-group>
+    <mat-button-toggle value="left">Left</mat-button-toggle>
+    <mat-button-toggle value="right">Right</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <mat-form-field>
+    <mat-label>Textfield</mat-label>
+    <input matInput />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>State</mat-label>
+    <mat-select [ngModel]="value()" (ngModelChange)="value.set($event)">
+      @for (option of options; track option) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</section>

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- application of material theme import from figma
 - added github workflow to sync to opencode
 
 ### Changes

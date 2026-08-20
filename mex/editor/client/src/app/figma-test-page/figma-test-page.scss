@@ -1,0 +1,13 @@
+.spaced {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; // omit if you want them full-width instead
+  gap: 16px;
+  padding: 16px;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+}
+
+.spaced > * {
+  margin: 10px;
+}

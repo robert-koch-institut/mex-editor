@@ -1,7 +1,6 @@
 {
   "app": {
-    "footer.greetings": "Created with ❤️ by MEx",
-    "header.navigation.themeToggle": "Toggle light/dark theme"
+    "footer.greetings": "Created with ❤️ by MEx"
   },
   "categories": {
     "optional": "optional",

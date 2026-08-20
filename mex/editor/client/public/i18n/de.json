@@ -1,4 +1,41 @@
 {
-  "app.footer.greetings": "Erstellt mit ❤️ von MEx",
-  "app.header.navigation.themeToggle": "Umschalten helles/dunkles Erscheinungsbild"
+  "app": {
+    "footer.greetings": "Erstellt mit ❤️ von MEx",
+    "header.navigation.themeToggle": "Umschalten helles/dunkles Erscheinungsbild"
+  },
+  "categories": {
+    "optional": "Optional",
+    "recommended": "Empfohlen",
+    "required": "Pflicht"
+  },
+  "create-item-dialog.cancel-button.label": "Abbrechen",
+  "create-item-dialog.description": "Erstellen Sie einen neuen Eintrag, indem Sie alle erforderlichen Felder ausfüllen und anschließend auf \"{{create-item-dialog.save-button.label}}\" drücken, um den Eintrag anzulegen.",
+  "create-item-dialog.loading": "Lade Einträge...",
+  "create-item-dialog.save-button.label": "Eintrag Speichern",
+  "create-item-dialog.title": "Neuen Eintrag anlegen",
+  "fasttrack": {
+    "resource": {
+      "fields": {
+        "keywords.de": "{{keyword}} - Deutsch",
+        "keywords.en": "{{keyword}} - Englisch",
+        "rights.prefill": "vorausfüllen",
+        "rights.prefill.text": "Gesundheitsdaten sind besonders sensibel und haben einen hohen Schutzbedarf. Da es sich dabei oftmals um personenbezogene Daten handelt, welche durch die DSGVO (Datenschutzgrundverordnung) geschützt sind, können sie nicht ohne weiteres frei zur Verfügung gestellt werden. Eine Weitergabe und Verarbeitung dieser Daten ist daher prinzipiell zunächst ausgeschlossen, kann aber unter bestimmten Voraussetzungen und Bedingungen möglich sein. Ob und in welcher Form Daten zur Verfügung gestellt werden können, unterliegt daher einer Einzelfallprüfung. Um die Bearbeitung zu vereinfachen, sollten bei der ersten Kontaktaufnahme folgende Informationen enthalten sein: antragstellende Person und Institution, Name und Kennung des Datensatzes, Verwendungszweck mit kurzer Beschreibung des Forschungsvorhabens und bis wann der Datensatz benötigt wird.",
+        "title.placeholder": "Bitte den Titel eingeben"
+      },
+      "headline": "{{Resource}} erstellen"
+    }
+  },
+  "input.placeholder": "Bitte ausfüllen",
+  "reference-select": {
+    "placeholder.empty": "Tippen um zu Filtern, Sie können \"*\" als Platzhalter benutzen",
+    "placeholder.validTypes": "Suche nach {value}",
+    "search-result": {
+      "createNew": "Neuen Eintrag für \"{query}\" anlegen...",
+      "empty": "Keine Ergebnisse für \"{query}\" gefunden.",
+      "label": "Suchergebnisse ({count} von {total})",
+      "loading": "Lade Ergebnisse..."
+    }
+  },
+  "select.none-option": "Keine",
+  "select.placeholder": "Bitte auswählen"
 }

@@ -1,13 +1,14 @@
+import { HttpClient } from "@angular/common/http";
 import { inject, Injectable, isDevMode, provideAppInitializer } from "@angular/core";
+import { DateAdapter } from "@angular/material/core";
+import { NavigationEnd, Router } from "@angular/router";
 import type { Translation, TranslocoLoader } from "@jsverse/transloco";
 import { provideTransloco, TranslocoService } from "@jsverse/transloco";
 import { provideTranslocoLocale } from "@jsverse/transloco-locale";
 import { provideTranslocoMessageformat } from "@jsverse/transloco-messageformat";
-import { HttpClient } from "@angular/common/http";
-import { combineLatest, filter, map } from "rxjs";
 import type { GetLangParams } from "@jsverse/transloco-persist-lang";
 import { provideTranslocoPersistLang } from "@jsverse/transloco-persist-lang";
-import { NavigationEnd, Router } from "@angular/router";
+import { combineLatest, filter, map } from "rxjs";
 
 /**
  * Name of the language query param.
@@ -160,9 +161,8 @@ export function provideQueryParamTranslocoSync() {
   return provideAppInitializer(() => {
     const router = inject(Router);
     const transloco = inject(TranslocoService);
+    const dateAdapter = inject(DateAdapter);
 
-    // 1. URL -> activeLang
-    // Fires on every completed navigation, including the initial one.
     router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe(() => {
@@ -175,6 +175,10 @@ export function provideQueryParamTranslocoSync() {
           transloco.setActiveLang(urlLang);
         }
       });
+
+    transloco.langChanges$.subscribe((lang) => {
+      dateAdapter.setLocale(lang);
+    });
   });
 }
 

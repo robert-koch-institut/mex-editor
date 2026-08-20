@@ -1,16 +1,16 @@
-import { TranslocoDirective, TranslocoService } from "@jsverse/transloco";
+import { Component } from "@angular/core";
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
-import { Component } from "@angular/core";
+import { TranslocoDirective, TranslocoService } from "@jsverse/transloco";
 import {
-  TranslocoDatePipe,
   TranslocoCurrencyPipe,
+  TranslocoDatePipe,
   TranslocoDecimalPipe,
 } from "@jsverse/transloco-locale";
 
 @Component({
   selector: "mex-localization-page",
-  imports: [TranslocoDirective, TranslocoDatePipe, TranslocoCurrencyPipe, TranslocoDecimalPipe],
+  imports: [TranslocoCurrencyPipe, TranslocoDatePipe, TranslocoDecimalPipe, TranslocoDirective],
   template: `
     <ng-container *transloco="let t">
       <h1 data-testid="headline">{{ t("test.headline") }}</h1>

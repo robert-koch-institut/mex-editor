@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- added github workflow to sync to opencode
-
 ### Changes
 
 ### Deprecated
@@ -19,10 +17,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+### Security
+
+## [4.1.1] - 2026-08-20
+
+### Added
+
+- added github workflow to sync to opencode
+
+### Fixed
+
 - removed leading / in reference-select search result fetching
 - align linting workflow with mex-template
-
-### Security
 
 ## [4.1.0] - 2026-08-18
 

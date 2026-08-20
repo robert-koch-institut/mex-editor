@@ -126,7 +126,7 @@ export class ReferenceSelect<
     }
 
     return {
-      url: "/api/v0/backend/preview-item",
+      url: "api/v0/backend/preview-item",
       params,
     };
   });

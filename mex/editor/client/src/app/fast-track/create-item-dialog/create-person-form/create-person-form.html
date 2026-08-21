@@ -3,6 +3,7 @@
     labelKey="Person.givenName"
     [formField]="personForm.givenName"
     [showErrorWithoutTouch]="true"
+    [category]="personSchema.shape.givenName | fieldCategory"
   >
     <mat-form-field>
       <input matInput [formField]="personForm.givenName" class="focus-me" />
@@ -13,6 +14,7 @@
     labelKey="Person.familyName"
     [formField]="personForm.familyName"
     [showErrorWithoutTouch]="true"
+    [category]="personSchema.shape.familyName | fieldCategory"
   >
     <mat-form-field>
       <input matInput [formField]="personForm.familyName" />

@@ -5,9 +5,10 @@
     [matDatepicker]="picker"
     [min]="minDate()"
     [max]="maxDate()"
+    [disabled]="disabled()"
+    [readonly]="readonly()"
     [formField]="dateForm"
     [errorStateMatcher]="customErrorMatcher"
-    ()
     (blur)="touch.emit()"
     [placeholder]="dateFormats.parse.dateInput"
   />

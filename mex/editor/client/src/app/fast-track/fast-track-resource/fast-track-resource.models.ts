@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-
 import { DateTime } from "luxon";
 import z from "zod";
 
@@ -7,7 +6,12 @@ import { CreateContactPointSchema, CreatePersonSchema } from "../../shared/model
 import { PreviewContactPointSchema } from "../../shared/models/generated/contact-point";
 import { PreviewOrganizationalUnitSchema } from "../../shared/models/generated/organizational-unit";
 import { PreviewPersonSchema } from "../../shared/models/generated/person";
-import { MergedResourceSchema } from "../../shared/models/generated/resource";
+import {
+  // FrequencySchema,
+  MergedResourceSchema,
+  ResourceTypeGeneralSchema,
+} from "../../shared/models/generated/resource";
+import { ThemeSchema } from "../../shared/models/generated/shared";
 
 /**
  * Schema for UnionType for CreatePerson and PreviewPerson
@@ -74,10 +78,7 @@ export const FastTrackResourceModelSchema = z.object({
     de: MergedResourceSchema.shape.keyword.unwrap().element.shape.value.array().nonempty(),
   }),
   resourceCreationMethod: MergedResourceSchema.shape.resourceCreationMethod.unwrap().nonempty(),
-  accrualPeriodicity: MergedResourceSchema.shape.accrualPeriodicity
-    .unwrap()
-    .nullable()
-    .refine((x) => x ?? false, { message: "validation.required" }),
+  accrualPeriodicity: MergedResourceSchema.shape.accrualPeriodicity.unwrap().unwrap(),
   provenance: MergedResourceSchema.shape.provenance.unwrap().element.shape.value,
   rights: MergedResourceSchema.shape.rights.unwrap().element.shape.value,
 
@@ -85,12 +86,12 @@ export const FastTrackResourceModelSchema = z.object({
   creator: CreateOrPreviewPersonSchema.array(),
   contributor: CreateOrPreviewPersonSchema.array(),
   contributingUnit: PreviewOrganizationalUnitSchema.array(),
-  spatial: MergedResourceSchema.shape.spatial.unwrap().element.shape.value,
-  hasLegalBasis: MergedResourceSchema.shape.hasLegalBasis.unwrap().element.shape.value,
-  start: luxonDateTimeSchema(),
+  spatial: z.string(),
+  hasLegalBasis: z.string(),
+  start: luxonDateTimeNullabeSchema(),
   end: luxonDateTimeNullabeSchema(),
-  resourceTypeGeneral: MergedResourceSchema.shape.resourceTypeGeneral.unwrap(),
-  theme: MergedResourceSchema.shape.theme,
+  resourceTypeGeneral: ResourceTypeGeneralSchema.array(),
+  theme: ThemeSchema.array(),
 });
 
 /**

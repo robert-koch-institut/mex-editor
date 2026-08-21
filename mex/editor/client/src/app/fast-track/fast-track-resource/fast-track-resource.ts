@@ -20,6 +20,8 @@ import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/tr
 import type { DateTime } from "luxon";
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
+import { FieldCategoryPipe } from "../../shared/field-category-pipe";
+import type { Frequency } from "../../shared/models/generated/resource";
 import { Datepicker } from "../datepicker/datepicker";
 import { Fieldset } from "../fieldset/fieldset";
 import { ReferenceSelect } from "../reference-select/reference-select";
@@ -32,6 +34,7 @@ import {
   selector: "mex-fast-track-resource",
   imports: [
     Datepicker,
+    FieldCategoryPipe,
     Fieldset,
     FormField,
     FormRoot,
@@ -61,6 +64,8 @@ export class FastTrackResource {
   protected conceptOptions = inject(ConceptLookups);
   protected dateFormats = inject(MAT_DATE_FORMATS);
 
+  resourceSchema = FastTrackResourceModelSchema;
+
   isPrefillChecked = signal(false);
   model = signal<FastTrackResourceModel>({
     title: "",
@@ -69,7 +74,7 @@ export class FastTrackResource {
     resourceTypeGeneral: [],
     spatial: "",
     resourceCreationMethod: [],
-    accrualPeriodicity: null,
+    accrualPeriodicity: null as unknown as Frequency,
     start: null as unknown as DateTime,
     end: null,
     hasLegalBasis: "",
@@ -101,6 +106,7 @@ export class FastTrackResource {
   }
 
   addKeyword(lang: keyof FastTrackResourceModel["keywords"], keyword: string) {
+    keyword = keyword.trim();
     if (keyword) {
       this.model.update((x) => {
         const unique = new Set([...x.keywords[lang], keyword]);

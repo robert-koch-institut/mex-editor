@@ -8,7 +8,6 @@
     <ul>
       @for (error of form.errorSummary(); track error) {
         <li>
-          <!-- Ein Klick fokussiert automatisch das richtige Input-Feld im DOM -->
           <a href="#" (click)="$event.preventDefault(); error.fieldTree().focusBoundControl()">
             {{ error.fieldTree().name() }} | {{ error.kind }} |
             {{ error.message }}
@@ -19,7 +18,12 @@
   </div>
 
   <form [formRoot]="resourceForm" (submit)="onSubmit()" class="two-column-layout">
-    <mex-fieldset [formField]="resourceForm.title" labelKey="title" class="one-column-item">
+    <mex-fieldset
+      [formField]="resourceForm.title"
+      labelKey="title"
+      class="one-column-item"
+      [category]="resourceSchema.shape.title | fieldCategory"
+    >
       <mat-form-field>
         <input
           matInput
@@ -33,6 +37,7 @@
       [formField]="resourceForm.description"
       labelKey="description"
       class="two-column-item"
+      [category]="resourceSchema.shape.description | fieldCategory"
     >
       <mat-form-field>
         <textarea
@@ -49,6 +54,7 @@
       labelKey="contact"
       descriptionKey="Resource.contact.description"
       class="one-column-item"
+      [category]="resourceSchema.shape.contact | fieldCategory"
     >
       <mex-reference-select
         [formField]="resourceForm.contact"
@@ -61,6 +67,7 @@
       labelKey="creator"
       descriptionKey="Resource.creator.description"
       class="one-column-item"
+      [category]="resourceSchema.shape.creator | fieldCategory"
     >
       <mex-reference-select
         [formField]="resourceForm.creator"
@@ -75,6 +82,7 @@
       labelKey="Resource.contributor"
       descriptionKey="Resource.contributor.description"
       class="one-column-item"
+      [category]="resourceSchema.shape.contributor | fieldCategory"
     >
       <mex-reference-select
         [formField]="resourceForm.contributor"
@@ -89,6 +97,7 @@
       labelKey="unitInCharge"
       descriptionKey="unitInCharge.description"
       class="one-column-item"
+      [category]="resourceSchema.shape.unitInCharge | fieldCategory"
     >
       <mex-reference-select
         [formField]="resourceForm.unitInCharge"
@@ -101,6 +110,7 @@
       labelKey="contributingUnit"
       descriptionKey="Resource.contributingUnit.description"
       class="one-column-item"
+      [category]="resourceSchema.shape.contributingUnit | fieldCategory"
     >
       <mex-reference-select
         [formField]="resourceForm.contributingUnit"
@@ -114,6 +124,7 @@
       labelKey="theme"
       descriptionKey="Resource.theme.description"
       class="one-column-item"
+      [category]="resourceSchema.shape.theme | fieldCategory"
     >
       <mat-form-field>
         <mat-icon matPrefix>search</mat-icon>
@@ -135,6 +146,7 @@
       labelKey="Resource.resourceTypeGeneral"
       descriptionKey="Resource.resourceTypeGeneral.description"
       class="one-column-item"
+      [category]="resourceSchema.shape.resourceTypeGeneral | fieldCategory"
     >
       <mat-form-field>
         <mat-select
@@ -155,6 +167,7 @@
       labelKey="Resource.spatial"
       descriptionKey="Resource.spatial.description"
       class="one-column-item"
+      [category]="resourceSchema.shape.spatial | fieldCategory"
     >
       <mat-form-field>
         <input
@@ -170,6 +183,7 @@
       labelKey="Resource.resourceCreationMethod"
       descriptionKey="Resource.resourceCreationMethod.description"
       class="one-column-item"
+      [category]="resourceSchema.shape.resourceCreationMethod | fieldCategory"
     >
       <mat-form-field>
         <mat-select
@@ -190,6 +204,7 @@
       labelKey="Resource.accrualPeriodicity"
       descriptionKey="Resource.accrualPeriodicity.description"
       class="one-column-item"
+      [category]="resourceSchema.shape.accrualPeriodicity | fieldCategory"
     >
       <mat-form-field class="one-column-item">
         <mat-select
@@ -209,50 +224,32 @@
       labelKey="Resource.temporal"
       descriptionKey="Resource.temporal.description"
       class="one-column-item"
+      category="optional"
+      [showCategoryLabel]="false"
     >
       <div class="two-column-layout">
         <mex-fieldset
           [formField]="resourceForm.start"
           labelKey="Resource.start"
           class="one-column-item"
+          [category]="resourceSchema.shape.start | fieldCategory"
         >
           <mex-datepicker
             [formField]="resourceForm.start"
             [maxDate]="resourceForm.end().value()"
           ></mex-datepicker>
-          <!-- <mat-form-field>
-            <input
-              matInput
-              [matDatepicker]="startPicker"
-              [max]="resourceForm.end().value()"
-              [formField]="resourceForm.start"
-              [placeholder]="dateFormats.parse.dateInput"
-            />
-            <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
-            <mat-datepicker #startPicker />
-          </mat-form-field> -->
         </mex-fieldset>
 
         <mex-fieldset
           [formField]="resourceForm.end"
           labelKey="Resource.end"
           class="one-column-item"
+          [category]="resourceSchema.shape.end | fieldCategory"
         >
           <mex-datepicker
             [formField]="resourceForm.end"
             [minDate]="resourceForm.start().value()"
           ></mex-datepicker>
-          <!-- <mat-form-field>
-            <input
-              matInput
-              [matDatepicker]="endPicker"
-              [min]="resourceForm.start().value()"
-              [formField]="resourceForm.end"
-              [placeholder]="dateFormats.parse.dateInput"
-            />
-            <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
-            <mat-datepicker #endPicker />
-          </mat-form-field> -->
         </mex-fieldset>
       </div>
     </mex-fieldset>
@@ -261,6 +258,7 @@
       [formField]="resourceForm.keywords.de"
       labelKey="fasttrack.resource.fields.keywords.de"
       class="two-column-item"
+      [category]="resourceSchema.shape.keywords.shape.de | fieldCategory"
     >
       <mat-form-field>
         <mat-chip-grid
@@ -289,6 +287,7 @@
       [formField]="resourceForm.keywords.en"
       labelKey="fasttrack.resource.fields.keywords.en"
       class="two-column-item"
+      [category]="resourceSchema.shape.keywords.shape.en | fieldCategory"
     >
       <mat-form-field>
         <mat-chip-grid
@@ -317,6 +316,7 @@
       [formField]="resourceForm.hasLegalBasis"
       labelKey="Resource.hasLegalBasis"
       class="two-column-item"
+      [category]="resourceSchema.shape.hasLegalBasis | fieldCategory"
     >
       <mat-form-field>
         <textarea
@@ -332,6 +332,7 @@
       [formField]="resourceForm.provenance"
       labelKey="Resource.provenance"
       class="two-column-item"
+      [category]="resourceSchema.shape.provenance | fieldCategory"
     >
       <mat-form-field>
         <textarea
@@ -347,6 +348,7 @@
       [formField]="resourceForm.rights"
       labelKey="Resource.rights"
       class="two-column-item"
+      [category]="resourceSchema.shape.rights | fieldCategory"
     >
       <mat-slide-toggle
         [checked]="isPrefillChecked()"

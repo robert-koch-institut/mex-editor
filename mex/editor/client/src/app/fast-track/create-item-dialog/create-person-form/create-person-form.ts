@@ -3,12 +3,13 @@ import { form, FormField, FormRoot, validateStandardSchema } from "@angular/form
 import { MatInput } from "@angular/material/input";
 import { MatFormField } from "@angular/material/select";
 
+import { FieldCategoryPipe } from "../../../shared/field-category-pipe";
 import { type CreatePerson, CreatePersonSchema } from "../../../shared/models/create-item";
 import { Fieldset } from "../../fieldset/fieldset";
 
 @Component({
   selector: "mex-create-person-form",
-  imports: [Fieldset, FormField, FormRoot, MatFormField, MatInput],
+  imports: [FieldCategoryPipe, Fieldset, FormField, FormRoot, MatFormField, MatInput],
   templateUrl: "./create-person-form.html",
   styleUrl: "./create-person-form.scss",
 })
@@ -23,7 +24,7 @@ export class CreatePersonForm {
   protected readonly formModel = linkedSignal<CreatePerson>(
     () => this.data() ?? this.createEmptyCreatePerson(this.inputText() ?? ""),
   );
-
+  personSchema = CreatePersonSchema;
   protected readonly personForm = form(this.formModel, (schema) => {
     validateStandardSchema(schema, CreatePersonSchema);
   });

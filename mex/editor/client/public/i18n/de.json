@@ -42,6 +42,8 @@
   "validation": {
     "custom": "{{field}} ist ungültig",
     "generic": "{{field}} ist ungültig",
+    "innerArrayError": "{{field}} {{position}}. Eintrag",
+    "innerObjectError": "{{field}} - {{property}}",
     "invalidElement": "{{field}} enthält einen ungültigen Eintrag",
     "invalidFormat": {
       "email": "{{field}} muss eine gültige E-Mail-Adresse sein",

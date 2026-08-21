@@ -3,6 +3,7 @@ import { form, FormField, FormRoot, validateStandardSchema } from "@angular/form
 import { MatInput } from "@angular/material/input";
 import { MatFormField } from "@angular/material/select";
 
+import { FieldCategoryPipe } from "../../../shared/field-category-pipe";
 import {
   type CreateContactPoint,
   CreateContactPointSchema,
@@ -11,7 +12,7 @@ import { Fieldset } from "../../fieldset/fieldset";
 
 @Component({
   selector: "mex-create-contact-point-form",
-  imports: [Fieldset, FormField, FormRoot, MatFormField, MatInput],
+  imports: [FieldCategoryPipe, Fieldset, FormField, FormRoot, MatFormField, MatInput],
   templateUrl: "./create-contact-point-form.html",
   styleUrl: "./create-contact-point-form.scss",
 })
@@ -26,6 +27,8 @@ export class CreateContactPointForm {
   protected readonly formModel = linkedSignal<CreateContactPoint>(
     () => this.data() ?? this.createEmptyCreateContactPoint(this.inputText() ?? ""),
   );
+
+  contactPointSchema = CreateContactPointSchema;
 
   protected readonly contactPointForm = form(this.formModel, (schema) => {
     validateStandardSchema(schema, CreateContactPointSchema);

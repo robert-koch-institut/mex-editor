@@ -88,6 +88,8 @@ export class Datepicker implements FormValueControl<DateTime | null> {
   protected translocoService = inject(TranslocoService);
 
   readonly value = model<DateTime<boolean> | null>(null);
+  readonly disabled = input<boolean>(false);
+  readonly readonly = input<boolean>(false);
   readonly touch = output<void>();
 
   readonly minDate = input<DateTime | null>(null);
@@ -98,7 +100,7 @@ export class Datepicker implements FormValueControl<DateTime | null> {
   dateAdapter = inject(DateAdapter<DateTime>);
   dateInput = viewChild.required("dateInput", {
     read: ElementRef<HTMLInputElement>,
-  });
+  }) as Signal<ElementRef<HTMLInputElement>>;
   customErrorMatcher = new ImmediateErrorStateMatcher(
     this.dateInput,
     this.dateAdapter,
@@ -110,5 +112,9 @@ export class Datepicker implements FormValueControl<DateTime | null> {
     this.translocoService.langChanges$
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.dateForm().value.update((x) => (x == null ? null : x.plus(0))));
+  }
+
+  focus(): void {
+    this.dateInput().nativeElement.focus();
   }
 }

@@ -254,7 +254,7 @@ describe("FastTrackResource", () => {
     });
   });
 
-  describe("reference fields (contacts, creator, contributor, unitInCharge, contributingUnit)", () => {
+  describe("reference fields (contact, creator, contributor, unitInCharge, contributingUnit)", () => {
     it("captures selected contacts", () => {
       const contact = {
         $type: "PreviewContactPoint" as const,
@@ -263,7 +263,7 @@ describe("FastTrackResource", () => {
       };
       referenceSelectIn(fixture, "contacts").value.set([contact]);
       fixture.detectChanges();
-      expect(component.model().contacts).toEqual([contact]);
+      expect(component.model().contact).toEqual([contact]);
     });
 
     it("captures selected creators", () => {
@@ -409,7 +409,7 @@ describe("FastTrackResource", () => {
       const model = component.model();
       expect(model.title).toBe("Sentinel surveillance data");
       expect(model.description).toBe("A resource description");
-      expect(model.contacts).toEqual([contact]);
+      expect(model.contact).toEqual([contact]);
       expect(model.creator).toEqual([creator]);
       expect(model.contributor).toEqual([contributor]);
       expect(model.unitInCharge).toEqual([unitInCharge]);

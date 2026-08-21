@@ -15,17 +15,27 @@
 <ng-content></ng-content>
 
 @if (state && state.invalid() && (showErrorWithoutTouch() || state.touched())) {
-  @let errors = state.errors();
+  @let errors = state.errorSummary();
   @if (errors && errors.length > 0) {
     <div class="error-container">
-      @for (err of errors; track err.message) {
+      @for (err of errors; track $index) {
         <div class="error">
-          <!-- @if (err.kind === "matDatepickerParse") {
-            Invalid input. Format is xxx
-          } @else {} -->
+          <!-- @let errorKey = err.fieldTree().keyInParent();
+          @let isInnerError = errorKey !== state.keyInParent(); -->
+          @let errorFieldLabel = getErrorFieldLabel(state, err, label);
+          <!-- isInnerError
+              ? state.value() instanceof Array
+                ? ("validation.innerArrayError" | transloco: { field: "", position: errorKey + 1 })
+                : ("validation.innerObjectError" | transloco: { field: "", property: errorKey })
+              : label; -->
           {{
             err.message
-              | transloco: { field: label, ...$any(err)?.issue, ...$any(err).issue?.params }
+              | transloco
+                : {
+                    field: errorFieldLabel,
+                    ...$any(err)?.issue,
+                    ...$any(err).issue?.params,
+                  }
           }}
         </div>
       }

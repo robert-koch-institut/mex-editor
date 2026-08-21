@@ -8,6 +8,8 @@
     matInput
     #input
     #trigger="matAutocompleteTrigger"
+    [disabled]="disabled()"
+    [readonly]="readonly()"
     [value]="isInputFocused() ? query : ''"
     (input)="searchQuery.set($event.target.value)"
     (focus)="isInputFocused.set(true)"
@@ -20,7 +22,12 @@
     <ng-container matSuffix>
       @let searchEnTypes = searchEntityTypes();
       @for (validType of validEntTypes; track validType) {
-        <button matIconButton type="button" (click)="toggleSearchEntityType(validType)">
+        <button
+          matIconButton
+          type="button"
+          (click)="toggleSearchEntityType(validType)"
+          [disabled]="disabled()"
+        >
           <mat-icon [title]="validType | transloco">
             {{
               validType

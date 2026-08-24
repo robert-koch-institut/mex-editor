@@ -1,22 +1,6 @@
 <ng-container *transloco="let t">
   <h1>{{ t("fasttrack.resource.headline") }}</h1>
 
-  @let form = resourceForm();
-  <div>
-    FORM IS VALID? {{ form.valid() }} <br />
-    <h4>Errors:</h4>
-    <ul>
-      @for (error of form.errorSummary(); track error) {
-        <li>
-          <a href="#" (click)="$event.preventDefault(); error.fieldTree().focusBoundControl()">
-            {{ error.fieldTree().name() }} | {{ error.kind }} |
-            {{ error.message }}
-          </a>
-        </li>
-      }
-    </ul>
-  </div>
-
   <form [formRoot]="resourceForm" (submit)="onSubmit()" class="two-column-layout">
     <mex-fieldset
       [formField]="resourceForm.title"

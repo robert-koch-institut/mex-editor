@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { DateTime } from "luxon";
 import z from "zod";
 
 import { CreateContactPointSchema, CreatePersonSchema } from "../../shared/models/create-item";
@@ -12,6 +11,7 @@ import {
   ResourceTypeGeneralSchema,
 } from "../../shared/models/generated/resource";
 import { ThemeSchema } from "../../shared/models/generated/shared";
+import { luxonDateTimeNullabeSchema } from "../../shared/models/zod-types";
 
 /**
  * Schema for UnionType for CreatePerson and PreviewPerson
@@ -35,28 +35,6 @@ export const CreateOrPreviewContactPointSchema = z.union([
  * UnionType for CreateContactPoint and PreviewContactPoint.
  */
 export type CreateOrPreviewContactPoint = z.infer<typeof CreateOrPreviewContactPointSchema>;
-
-/**
- * LuxonDateTime as zod type.
- */
-export const luxonDateTimeSchema = () =>
-  z
-    .custom<DateTime>((val) => DateTime.isDateTime(val), {
-      error: "validation.required", // null/undefined → leeres Feld
-    })
-    .refine((val) => val.isValid, {
-      error: "validation.invalidDate", // Instanz vorhanden, aber Parse fehlgeschlagen
-    });
-
-/**
- * LuxonDateTime and nullable as zod type.
- */
-export const luxonDateTimeNullabeSchema = () =>
-  z
-    .custom<DateTime | null>((val) => val == null || DateTime.isDateTime(val), {
-      error: "validation.invalidDate", // null/undefined → leeres Feld
-    })
-    .nullable();
 
 /**
  * Schema for FasttrackResourceModel

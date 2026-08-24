@@ -9,7 +9,6 @@ import {
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButton } from "@angular/material/button";
 import { MatChipsModule } from "@angular/material/chips";
-import { MAT_DATE_FORMATS } from "@angular/material/core";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
@@ -60,11 +59,9 @@ import {
  * Page to create a resource the fast way.
  */
 export class FastTrackResource {
-  private translocoService = inject(TranslocoService);
-  protected conceptOptions = inject(ConceptLookups);
-  protected dateFormats = inject(MAT_DATE_FORMATS);
-
-  resourceSchema = FastTrackResourceModelSchema;
+  private readonly translocoService = inject(TranslocoService);
+  protected readonly conceptOptions = inject(ConceptLookups);
+  protected readonly resourceSchema = FastTrackResourceModelSchema;
 
   isPrefillChecked = signal(false);
   model = signal<FastTrackResourceModel>({
@@ -90,7 +87,6 @@ export class FastTrackResource {
     contributingUnit: [],
     contributor: [],
   });
-
   resourceForm = form(this.model, (schema) => {
     validateStandardSchema(schema, FastTrackResourceModelSchema);
     disabled(schema.rights, { when: this.isPrefillChecked });

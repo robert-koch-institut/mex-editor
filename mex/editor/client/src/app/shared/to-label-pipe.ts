@@ -16,32 +16,32 @@ import type { Text } from "./models/generated/shared";
  * Transforms objects to labels.
  */
 export class ToLabelPipe implements PipeTransform {
-  private pickLabelByLang(values: string | string[] | Text[], lang: string): string | null {
-    if (typeof values === "string") return values;
-    if (values.length === 0) return null;
-    const item = values.at(0);
+  private pickLabelByLang(values: string | string[] | Text | Text[], lang: string): string | null {
+    const valueArray = Array.isArray(values) ? values : [values];
+    if (valueArray.length === 0) return null;
+    const item = valueArray.at(0);
     if (typeof item == "string") {
-      return (values as string[]).filter((x) => !!x).at(0) ?? null;
+      return (valueArray as string[]).filter((x) => !!x).at(0) ?? null;
     }
     return (
-      (values as Text[]).filter((x) => x.language === lang).at(0)?.value ??
-      (values as Text[]).filter((x) => !x.language).at(0)?.value ??
+      (valueArray as Text[]).filter((x) => x.language === lang).at(0)?.value ??
+      (valueArray as Text[]).filter((x) => !x.language).at(0)?.value ??
       null
     );
   }
 
-  private pickLabel(values: string | string[] | Text[]): string | null {
-    if (typeof values === "string") return values;
-    if (values.length === 0) return null;
-    const item = values.at(0);
+  private pickLabel(values: string | string[] | Text | Text[]): string | null {
+    const valueArray = Array.isArray(values) ? values : [values];
+    if (valueArray.length === 0) return null;
+    const item = valueArray.at(0);
     if (typeof item == "string") {
-      return (values as string[]).filter((x) => !!x).at(0) ?? null;
+      return (valueArray as string[]).filter((x) => !!x).at(0) ?? null;
     }
-    return (values as Text[]).filter((x) => x.value).at(0)?.value ?? null;
+    return (valueArray as Text[]).filter((x) => x.value).at(0)?.value ?? null;
   }
 
   private firstLabelOf(values: (string | string[] | Text | Text[] | undefined)[], lang: string) {
-    for (const array of values.filter((x) => !!x) as (string | string[] | Text[])[]) {
+    for (const array of values.filter((x) => !!x) as (string | string[] | Text | Text[])[]) {
       const label = this.pickLabelByLang(array, lang) ?? this.pickLabel(array);
       if (label) {
         return label;

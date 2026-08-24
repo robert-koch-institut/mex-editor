@@ -24,7 +24,7 @@ export class CreatePersonForm {
   protected readonly formModel = linkedSignal<CreatePerson>(
     () => this.data() ?? this.createEmptyCreatePerson(this.inputText() ?? ""),
   );
-  personSchema = CreatePersonSchema;
+  protected readonly personSchema = CreatePersonSchema;
   protected readonly personForm = form(this.formModel, (schema) => {
     validateStandardSchema(schema, CreatePersonSchema);
   });

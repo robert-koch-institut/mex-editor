@@ -28,7 +28,7 @@ export class CreateContactPointForm {
     () => this.data() ?? this.createEmptyCreateContactPoint(this.inputText() ?? ""),
   );
 
-  contactPointSchema = CreateContactPointSchema;
+  protected readonly contactPointSchema = CreateContactPointSchema;
 
   protected readonly contactPointForm = form(this.formModel, (schema) => {
     validateStandardSchema(schema, CreateContactPointSchema);

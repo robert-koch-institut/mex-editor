@@ -20,14 +20,7 @@
     <div class="error-container">
       @for (err of errors; track $index) {
         <div class="error">
-          <!-- @let errorKey = err.fieldTree().keyInParent();
-          @let isInnerError = errorKey !== state.keyInParent(); -->
           @let errorFieldLabel = getErrorFieldLabel(state, err, label);
-          <!-- isInnerError
-              ? state.value() instanceof Array
-                ? ("validation.innerArrayError" | transloco: { field: "", position: errorKey + 1 })
-                : ("validation.innerObjectError" | transloco: { field: "", property: errorKey })
-              : label; -->
           {{
             err.message
               | transloco

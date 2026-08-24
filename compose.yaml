@@ -11,7 +11,7 @@ services:
         condition: service_healthy
 
   httpd:
-    image: httpd:2.4
+    image: httpd:2.4@sha256:2920ed8587277d6aa8ea785e143e970835057123dc7bf1199d102c60c80a73bb
     ports:
       - "8000:80"
     volumes:
@@ -20,7 +20,7 @@ services:
       - mex-editor
 
   mex-backend:
-    image: ghcr.io/robert-koch-institut/mex-backend:4.2.2
+    image: ghcr.io/robert-koch-institut/mex-backend:4.3.0@sha256:2bf56266af2cda657c995ef315b713c1feed3bfaed136cda87e7bf11cdde0127
     ports:
       - 8080:8080
     environment:
@@ -42,7 +42,7 @@ services:
         condition: service_healthy
 
   neo4j:
-    image: neo4j:2026.07-community
+    image: neo4j:2026.07-community@sha256:6ea87e9f43d1cf6c6a00a709d05aab626c9a5128aded8673804d087c0232434e
     environment:
       - NEO4J_AUTH=neo4j/password
     ports:
@@ -57,7 +57,7 @@ services:
       start_period: 10s
 
   valkey:
-    image: valkey/valkey:9.1.1
+    image: valkey/valkey:9.1.1@sha256:3acc0687f2a2e1091fae6450d7842dd658c941338cf0a873ddd9e14b9e4ea4dd
     ports:
       - 6379:6379
     volumes:

@@ -1,13 +1,46 @@
-import { Component, computed, HostBinding, inject, input } from "@angular/core";
+import type { PipeTransform } from "@angular/core";
+import { Component, computed, HostBinding, inject, input, Pipe } from "@angular/core";
 import type { FieldState, ValidationError } from "@angular/forms/signals";
 import { type FieldTree } from "@angular/forms/signals";
 import { TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 
 import type { FieldCategory } from "../../shared/models";
 
+@Pipe({
+  name: "fieldErrorLabel",
+})
+/**
+ * Transforms field errors to human readable text.
+ */
+class FieldErrorLabel implements PipeTransform {
+  private transloco = inject(TranslocoService);
+  transform(
+    value: ValidationError.WithFieldTree,
+    state: FieldState<unknown>,
+    originalLabel: string,
+  ) {
+    const errorKey = value.fieldTree().keyInParent();
+    const isInnerError = errorKey !== state.keyInParent();
+    if (isInnerError) {
+      if (state.value() instanceof Array) {
+        return this.transloco.translate("validation.innerArrayError", {
+          field: originalLabel,
+          position: (typeof errorKey == "string" ? parseInt(errorKey) : errorKey) + 1,
+        });
+      }
+      return this.transloco.translate("validation.innerObjectError", {
+        field: originalLabel,
+        property: errorKey,
+      });
+    }
+
+    return originalLabel;
+  }
+}
+
 @Component({
   selector: "mex-fieldset",
-  imports: [TranslocoPipe],
+  imports: [FieldErrorLabel, TranslocoPipe],
   templateUrl: "./fieldset.html",
   styleUrl: "./fieldset.scss",
 })
@@ -25,7 +58,6 @@ export class Fieldset<T> {
     return this.dataTestidSig();
   }
 
-  private transloco = inject(TranslocoService);
   labelKey = input.required<string>();
   labelParam = input<Record<string, unknown>>();
   descriptionKey = input<string>();
@@ -41,27 +73,4 @@ export class Fieldset<T> {
     const formField = this.formField();
     return formField ? formField() : null;
   });
-
-  getErrorFieldLabel(
-    state: FieldState<unknown>,
-    error: ValidationError.WithFieldTree,
-    originalLabel: string,
-  ) {
-    const errorKey = error.fieldTree().keyInParent();
-    const isInnerError = errorKey !== state.keyInParent();
-    if (isInnerError) {
-      if (state.value() instanceof Array) {
-        return this.transloco.translate("validation.innerArrayError", {
-          field: originalLabel,
-          position: (typeof errorKey == "string" ? parseInt(errorKey) : errorKey) + 1,
-        });
-      }
-      return this.transloco.translate("validation.innerObjectError", {
-        field: originalLabel,
-        property: errorKey,
-      });
-    }
-
-    return originalLabel;
-  }
 }

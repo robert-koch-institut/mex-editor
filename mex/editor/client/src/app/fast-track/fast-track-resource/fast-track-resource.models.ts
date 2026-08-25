@@ -6,11 +6,11 @@ import { PreviewContactPointSchema } from "../../shared/models/generated/contact
 import { PreviewOrganizationalUnitSchema } from "../../shared/models/generated/organizational-unit";
 import { PreviewPersonSchema } from "../../shared/models/generated/person";
 import {
-  // FrequencySchema,
-  MergedResourceSchema,
+  FrequencySchema,
+  ResourceCreationMethodSchema,
   ResourceTypeGeneralSchema,
 } from "../../shared/models/generated/resource";
-import { ThemeSchema } from "../../shared/models/generated/shared";
+import { TextSchema, ThemeSchema } from "../../shared/models/generated/shared";
 import { luxonDateTimeNullabeSchema } from "../../shared/models/zod-types";
 
 /**
@@ -40,8 +40,9 @@ export type CreateOrPreviewContactPoint = z.infer<typeof CreateOrPreviewContactP
  * Schema for FasttrackResourceModel
  */
 export const FastTrackResourceModelSchema = z.object({
-  title: MergedResourceSchema.shape.title.element.shape.value,
-  description: MergedResourceSchema.shape.description.unwrap().element.shape.value,
+  // required fields
+  title: TextSchema.shape.value.nonempty(),
+  description: TextSchema.shape.value.nonempty(),
   contact: z
     .union([
       CreateOrPreviewPersonSchema,
@@ -52,13 +53,13 @@ export const FastTrackResourceModelSchema = z.object({
     .nonempty(),
   unitInCharge: PreviewOrganizationalUnitSchema.array().nonempty(),
   keywords: z.object({
-    en: MergedResourceSchema.shape.keyword.unwrap().element.shape.value.array().nonempty(),
-    de: MergedResourceSchema.shape.keyword.unwrap().element.shape.value.array().nonempty(),
+    en: TextSchema.shape.value.array().nonempty(),
+    de: TextSchema.shape.value.array().nonempty(),
   }),
-  resourceCreationMethod: MergedResourceSchema.shape.resourceCreationMethod.unwrap().nonempty(),
-  accrualPeriodicity: MergedResourceSchema.shape.accrualPeriodicity.unwrap().unwrap(),
-  provenance: MergedResourceSchema.shape.provenance.unwrap().element.shape.value,
-  rights: MergedResourceSchema.shape.rights.unwrap().element.shape.value,
+  resourceCreationMethod: ResourceCreationMethodSchema.array().nonempty(),
+  accrualPeriodicity: FrequencySchema.nonoptional(),
+  provenance: TextSchema.shape.value.nonempty(),
+  rights: TextSchema.shape.value.nonempty(),
 
   // recommended fields
   creator: CreateOrPreviewPersonSchema.array(),

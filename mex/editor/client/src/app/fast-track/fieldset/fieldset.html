@@ -19,13 +19,13 @@
   @if (errors && errors.length > 0) {
     <div class="error-container">
       @for (err of errors; track $index) {
+        @let errorLabel = err | fieldErrorLabel: state : label;
         <div class="error">
-          @let errorFieldLabel = getErrorFieldLabel(state, err, label);
           {{
             err.message
               | transloco
                 : {
-                    field: errorFieldLabel,
+                    field: errorLabel,
                     ...$any(err)?.issue,
                     ...$any(err).issue?.params,
                   }

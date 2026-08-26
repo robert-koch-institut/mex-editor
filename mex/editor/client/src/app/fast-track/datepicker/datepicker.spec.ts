@@ -1,9 +1,6 @@
-import type { ElementRef } from "@angular/core";
-import { signal } from "@angular/core";
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
-import type { FieldState, FormField } from "@angular/forms/signals";
-import type { MatDateFormats } from "@angular/material/core";
+import type { FieldTree } from "@angular/forms/signals";
 import { provideLuxonDateAdapter } from "@angular/material-luxon-adapter";
 import { By } from "@angular/platform-browser";
 import { TranslocoService } from "@jsverse/transloco";
@@ -12,11 +9,13 @@ import { vi } from "vitest";
 
 import { Datepicker, ImmediateErrorStateMatcher } from "./datepicker";
 
-/*
- * Assumption: Luxon date adapter (`.plus(0)` on the value in the
- * langChanges$ subscription is a Luxon DateTime method) — same assumption
- * used throughout this test suite.
- */
+function fakeFieldTree(state: { errors?: unknown[]; touched?: boolean } = {}) {
+  const fieldState = {
+    errors: () => state.errors ?? [],
+    touched: () => state.touched ?? false,
+  };
+  return (() => fieldState) as unknown as FieldTree<unknown>;
+}
 
 function setNativeValue(
   fixture: ComponentFixture<unknown>,
@@ -25,6 +24,7 @@ function setNativeValue(
 ) {
   input.value = value;
   input.dispatchEvent(new Event("input"));
+  input.dispatchEvent(new Event("blur"));
   fixture.detectChanges();
 }
 
@@ -41,6 +41,11 @@ describe("Datepicker", () => {
 
     fixture = TestBed.createComponent(Datepicker);
     component = fixture.componentInstance;
+
+    // Required host-directive input -- must be set before the first
+    // detectChanges(), see the file-level comment above.
+    fixture.componentRef.setInput("formField", fakeFieldTree());
+
     fixture.detectChanges();
   });
 
@@ -50,9 +55,7 @@ describe("Datepicker", () => {
 
   it("parses a typed date into the value", () => {
     const input = fixture.debugElement.query(By.css("input")).nativeElement as HTMLInputElement;
-    setNativeValue(fixture, input, "1/1/2026");
-    input.dispatchEvent(new Event("blur"));
-    fixture.detectChanges();
+    setNativeValue(fixture, input, "01.01.2026");
 
     expect(component.value()?.isValid).toBe(true);
     expect(component.value()?.toISODate()).toBe("2026-01-01");
@@ -61,8 +64,6 @@ describe("Datepicker", () => {
   it("flags a parse error and shows the hint for unparsable text", () => {
     const input = fixture.debugElement.query(By.css("input")).nativeElement as HTMLInputElement;
     setNativeValue(fixture, input, "not a date");
-    input.dispatchEvent(new Event("blur"));
-    fixture.detectChanges();
 
     expect(component.customErrorMatcher.hasParseError()).toBe(true);
     expect(fixture.debugElement.query(By.css(".error-hint"))).not.toBeNull();
@@ -71,8 +72,6 @@ describe("Datepicker", () => {
   it("does not flag a parse error when the input is empty", () => {
     const input = fixture.debugElement.query(By.css("input")).nativeElement as HTMLInputElement;
     setNativeValue(fixture, input, "");
-    input.dispatchEvent(new Event("blur"));
-    fixture.detectChanges();
 
     expect(component.customErrorMatcher.hasParseError()).toBe(false);
     expect(fixture.debugElement.query(By.css(".error-hint"))).toBeNull();
@@ -81,12 +80,10 @@ describe("Datepicker", () => {
   it("clears the parse error once a previously-invalid value becomes valid", () => {
     const input = fixture.debugElement.query(By.css("input")).nativeElement as HTMLInputElement;
     setNativeValue(fixture, input, "not a date");
-    input.dispatchEvent(new Event("blur"));
     fixture.detectChanges();
     expect(component.customErrorMatcher.hasParseError()).toBe(true);
 
-    setNativeValue(fixture, input, "1/1/2026");
-    input.dispatchEvent(new Event("blur"));
+    setNativeValue(fixture, input, "01.01.2026");
     fixture.detectChanges();
 
     expect(component.customErrorMatcher.hasParseError()).toBe(false);
@@ -108,7 +105,7 @@ describe("Datepicker", () => {
     expect(input.readOnly).toBe(true);
   });
 
-  it("reflects minDate/maxDate inputs (shallow check — binding only, not enforced-range behavior)", () => {
+  it("reflects minDate/maxDate inputs (shallow check -- binding only, not enforced-range behavior)", () => {
     const min = DateTime.fromISO("2020-01-01");
     const max = DateTime.fromISO("2030-01-01");
     fixture.componentRef.setInput("minDate", min);
@@ -159,30 +156,57 @@ describe("Datepicker", () => {
 
     expect(component.value()).toBeNull();
   });
+
+  describe("parent form field errors (via the hostDirectives-forwarded formField)", () => {
+    it("does not report a parent error when the forwarded field has no errors", () => {
+      // beforeEach already sets an empty-errors fakeFieldTree()
+      expect(component.customErrorMatcher.hasParentError()).toBe(false);
+    });
+
+    it("reports a parent error once the forwarded field has errors and is touched", () => {
+      fixture.componentRef.setInput(
+        "formField",
+        fakeFieldTree({ errors: [{ kind: "required", message: "Required" }], touched: true }),
+      );
+      fixture.detectChanges();
+
+      // isSignalErrorState only runs (and updates hasParentError) when
+      // something actually calls it -- Material's error-state machinery
+      // does this via isErrorState() during change detection, but to keep
+      // this test independent of exactly when Material triggers that,
+      // call it directly the same way isErrorState() does.
+      component.customErrorMatcher.isErrorState(null, null);
+
+      expect(component.customErrorMatcher.hasParentError()).toBe(true);
+    });
+  });
 });
 
 describe("ImmediateErrorStateMatcher", () => {
-  // Tested in isolation, no Angular machinery needed — the class only
+  // Tested in isolation, no Angular machinery needed -- the class only
   // depends on a few plain function/object shapes.
   function fakeDateAdapter(parseResult: { isValid: boolean } | null) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return { parse: () => parseResult } as any;
   }
 
-  function fakeFormField(errors: unknown[]) {
-    return { errors: () => errors } as unknown as FormField<unknown>;
+  function fakeParentFormField(errors: unknown[]) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return { errors: () => errors } as any;
   }
 
   function fakeInputElement(value: string) {
-    return signal({ nativeElement: { value } } as unknown as ElementRef<HTMLInputElement>);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (() => ({ nativeElement: { value } })) as any;
   }
 
   it("reports a parse error for non-empty, unparsable text", () => {
     const matcher = new ImmediateErrorStateMatcher(
       fakeInputElement("not a date"),
       fakeDateAdapter(null),
-      { parse: { dateInput: "D" } } as unknown as MatDateFormats,
-      fakeFormField([]),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { parse: { dateInput: "D" } } as any,
+      fakeParentFormField([]),
     );
 
     expect(matcher.isSignalErrorState(null)).toBe(true);
@@ -193,8 +217,9 @@ describe("ImmediateErrorStateMatcher", () => {
     const matcher = new ImmediateErrorStateMatcher(
       fakeInputElement(""),
       fakeDateAdapter(null),
-      { parse: { dateInput: "D" } } as unknown as MatDateFormats,
-      fakeFormField([]),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { parse: { dateInput: "D" } } as any,
+      fakeParentFormField([]),
     );
 
     expect(matcher.isSignalErrorState(null)).toBe(false);
@@ -205,8 +230,9 @@ describe("ImmediateErrorStateMatcher", () => {
     const matcher = new ImmediateErrorStateMatcher(
       fakeInputElement("1/1/2026"),
       fakeDateAdapter({ isValid: true }),
-      { parse: { dateInput: "D" } } as unknown as MatDateFormats,
-      fakeFormField([]),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { parse: { dateInput: "D" } } as any,
+      fakeParentFormField([]),
     );
 
     expect(matcher.isSignalErrorState(null)).toBe(false);
@@ -217,10 +243,12 @@ describe("ImmediateErrorStateMatcher", () => {
     const matcher = new ImmediateErrorStateMatcher(
       fakeInputElement(""),
       fakeDateAdapter(null),
-      { parse: { dateInput: "D" } } as unknown as MatDateFormats,
-      fakeFormField([{ kind: "required", message: "Required" }]),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { parse: { dateInput: "D" } } as any,
+      fakeParentFormField([{ kind: "required", message: "Required" }]),
     );
-    const touchedField = () => ({ touched: () => true }) as unknown as FieldState<unknown>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const touchedField = (() => ({ touched: () => true })) as any;
 
     expect(matcher.isSignalErrorState(touchedField)).toBe(true);
     expect(matcher.hasParentError()).toBe(true);
@@ -230,10 +258,12 @@ describe("ImmediateErrorStateMatcher", () => {
     const matcher = new ImmediateErrorStateMatcher(
       fakeInputElement(""),
       fakeDateAdapter(null),
-      { parse: { dateInput: "D" } } as unknown as MatDateFormats,
-      fakeFormField([{ kind: "required", message: "Required" }]),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { parse: { dateInput: "D" } } as any,
+      fakeParentFormField([{ kind: "required", message: "Required" }]),
     );
-    const untouchedField = () => ({ touched: () => false }) as unknown as FieldState<unknown>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const untouchedField = (() => ({ touched: () => false })) as any;
 
     expect(matcher.isSignalErrorState(untouchedField)).toBe(false);
     expect(matcher.hasParentError()).toBe(false);
@@ -243,8 +273,9 @@ describe("ImmediateErrorStateMatcher", () => {
     const matcher = new ImmediateErrorStateMatcher(
       fakeInputElement(""),
       fakeDateAdapter(null),
-      { parse: { dateInput: "D" } } as unknown as MatDateFormats,
-      fakeFormField([{ kind: "required", message: "Required" }]),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { parse: { dateInput: "D" } } as any,
+      fakeParentFormField([{ kind: "required", message: "Required" }]),
     );
 
     expect(matcher.isErrorState(null, null)).toBe(true);

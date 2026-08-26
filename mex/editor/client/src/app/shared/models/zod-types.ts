@@ -14,7 +14,7 @@ export const luxonDateTimeSchema = () =>
     });
 
 /**
- * LuxonDateTime and nullable as zod type.
+ * Nullable LuxonDateTime as zod type.
  */
 export const luxonDateTimeNullabeSchema = () =>
   z

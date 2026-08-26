@@ -1,16 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import z from "zod";
 
-import { AdditiveContactPointSchema } from "./generated/contact-point";
-import { AdditivePersonSchema } from "./generated/person";
-
 /**
  * Schema for CreatePerson.
  */
 export const CreatePersonSchema = z.object({
   $type: z.literal("CreatePerson"),
-  familyName: AdditivePersonSchema.shape.familyName.unwrap().element.nonempty(),
-  givenName: AdditivePersonSchema.shape.givenName.unwrap().element.nonempty(),
+  familyName: z.string().nonempty(),
+  givenName: z.string().nonempty(),
 });
 
 /**
@@ -23,7 +20,7 @@ export type CreatePerson = z.infer<typeof CreatePersonSchema>;
  */
 export const CreateContactPointSchema = z.object({
   $type: z.literal("CreateContactPoint"),
-  email: AdditiveContactPointSchema.shape.email.unwrap().element.nonempty(),
+  email: z.string().nonempty(),
 });
 
 /**

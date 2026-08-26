@@ -7,9 +7,12 @@ import {
   provideBrowserGlobalErrorListeners,
 } from "@angular/core";
 import type { MatDateFormats } from "@angular/material/core";
-import { DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
+import { MAT_DATE_FORMATS } from "@angular/material/core";
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
-import { LuxonDateAdapter, MAT_LUXON_DATE_ADAPTER_OPTIONS } from "@angular/material-luxon-adapter";
+import {
+  MAT_LUXON_DATE_ADAPTER_OPTIONS,
+  provideLuxonDateAdapter,
+} from "@angular/material-luxon-adapter";
 import { provideRouter, withComponentInputBinding } from "@angular/router";
 import { TranslocoService } from "@jsverse/transloco";
 import z from "zod";
@@ -46,11 +49,8 @@ class DynamicLuxonFormats implements MatDateFormats {
  * Providers for mex specific angular material default options.
  */
 export const materialDefaultOptionProviders: (Provider | EnvironmentProviders)[] = [
+  provideLuxonDateAdapter(),
   { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: "dynamic" } },
-  {
-    provide: DateAdapter,
-    useClass: LuxonDateAdapter,
-  },
   { provide: MAT_LUXON_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
   { provide: MAT_DATE_FORMATS, useFactory: () => new DynamicLuxonFormats() },
 ];

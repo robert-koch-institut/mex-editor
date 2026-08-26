@@ -43,7 +43,7 @@
     "custom": "{{field}} is invalid",
     "generic": "{{field}} is invalid",
     "innerArrayError": "{{field}} {position, plural, =1 {1st} =2 {2nd} =3 {3rd} other {{position}th}} entry",
-    "innerObjectError": "{{field}} - {{property}}",
+    "innerObjectError": "{{field}} - {{{{property}}}}",
     "invalidElement": "{{field}} contains an invalid entry",
     "invalidFormat": {
       "email": "{{field}} must be a valid email address",

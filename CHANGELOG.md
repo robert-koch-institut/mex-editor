@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fasttrack-resource form with validation
 - fieldsets category is now required and no longer optional
 
+- set exact version for neo4j:2026.07.1
+
 ### Deprecated
 
 ### Removed

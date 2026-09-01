@@ -1,43 +1,79 @@
-import type { DateTime } from "luxon";
+/* eslint-disable @typescript-eslint/naming-convention */
+import z from "zod";
 
-import type { PreviewContactPoint } from "../../shared/models/contact-point";
-import type { CreateContactPoint, CreatePerson } from "../../shared/models/create-item";
-import type { PreviewOrganizationalUnit } from "../../shared/models/organizational-unit";
-import type { PreviewPerson } from "../../shared/models/person";
+import { CreateContactPointSchema, CreatePersonSchema } from "../../shared/models/create-item";
+import { PreviewContactPointSchema } from "../../shared/models/generated/contact-point";
+import { PreviewOrganizationalUnitSchema } from "../../shared/models/generated/organizational-unit";
+import { PreviewPersonSchema } from "../../shared/models/generated/person";
+import {
+  FrequencySchema,
+  ResourceCreationMethodSchema,
+  ResourceTypeGeneralSchema,
+} from "../../shared/models/generated/resource";
+import { TextSchema, ThemeSchema } from "../../shared/models/generated/shared";
+import { luxonDateTimeNullabeSchema } from "../../shared/models/zod-types";
+
+/**
+ * Schema for UnionType for CreatePerson and PreviewPerson
+ */
+export const CreateOrPreviewPersonSchema = z.union([PreviewPersonSchema, CreatePersonSchema]);
 
 /**
  * UnionType for CreatePerson and PreviewPerson.
  */
-export type CreateOrPreviewPerson = PreviewPerson | CreatePerson;
+export type CreateOrPreviewPerson = z.infer<typeof CreateOrPreviewPersonSchema>;
+
+/**
+ * Schema for UnionType for CreateContactPoint and PreviewContactPoint.
+ */
+export const CreateOrPreviewContactPointSchema = z.union([
+  PreviewContactPointSchema,
+  CreateContactPointSchema,
+]);
 
 /**
  * UnionType for CreateContactPoint and PreviewContactPoint.
  */
-export type CreateOrPreviewContactPoint = PreviewContactPoint | CreateContactPoint;
+export type CreateOrPreviewContactPoint = z.infer<typeof CreateOrPreviewContactPointSchema>;
+
+/**
+ * Schema for FasttrackResourceModel
+ */
+export const FastTrackResourceModelSchema = z.object({
+  // required fields
+  title: TextSchema.shape.value.nonempty(),
+  description: TextSchema.shape.value.nonempty(),
+  contact: z
+    .union([
+      CreateOrPreviewPersonSchema,
+      CreateOrPreviewContactPointSchema,
+      PreviewOrganizationalUnitSchema,
+    ])
+    .array()
+    .nonempty(),
+  unitInCharge: PreviewOrganizationalUnitSchema.array().nonempty(),
+  keywords: z.object({
+    en: TextSchema.shape.value.array().nonempty(),
+    de: TextSchema.shape.value.array().nonempty(),
+  }),
+  resourceCreationMethod: ResourceCreationMethodSchema.array().nonempty(),
+  accrualPeriodicity: FrequencySchema.nonoptional(),
+  provenance: TextSchema.shape.value.nonempty(),
+  rights: TextSchema.shape.value.nonempty(),
+
+  // recommended fields
+  creator: CreateOrPreviewPersonSchema.array(),
+  contributor: CreateOrPreviewPersonSchema.array(),
+  contributingUnit: PreviewOrganizationalUnitSchema.array(),
+  spatial: z.string(),
+  hasLegalBasis: z.string(),
+  start: luxonDateTimeNullabeSchema(),
+  end: luxonDateTimeNullabeSchema(),
+  resourceTypeGeneral: ResourceTypeGeneralSchema.array(),
+  theme: ThemeSchema.array(),
+});
 
 /**
  * Model for the Ressource fast track creation page.
  */
-export interface FastTrackResourceModel {
-  title: string;
-  description: string;
-  theme: string[];
-  resourceTypeGeneral: string[];
-  resourceCreationMethod: string[];
-  accrualPeriodicity: string | null;
-  spatial: string;
-  start: DateTime | null;
-  end: DateTime | null;
-  hasLegalBasis: string;
-  provenance: string;
-  rights: string;
-  keywords: {
-    en: string[];
-    de: string[];
-  };
-  unitInCharge: PreviewOrganizationalUnit[];
-  contributingUnit: PreviewOrganizationalUnit[];
-  creator: CreateOrPreviewPerson[];
-  contributor: CreateOrPreviewPerson[];
-  contacts: (CreateOrPreviewPerson | CreateOrPreviewContactPoint | PreviewOrganizationalUnit)[];
-}
+export type FastTrackResourceModel = z.infer<typeof FastTrackResourceModelSchema>;

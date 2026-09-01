@@ -44,6 +44,7 @@ build-frontend = "mex.editor.frontend:build"
 install-and-build-frontend = "mex.editor.frontend:install_and_build"
 test-frontend = "mex.editor.testing:run"
 generate-frontend-docs = "mex.editor.frontend:generate_docs"
+generate-ts-models = "mex.editor.code_gen.main:main"
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"
@@ -77,6 +78,7 @@ markers = "integration: mark a test as integration test"
 fix = true
 line-length = 88
 show-fixes = true
+extend-exclude = ["mex/editor/code_gen/**/*.*"]
 
 [tool.ruff.format]
 docstring-code-format = true
@@ -102,6 +104,7 @@ ignore = [
     "TRY003",  # Allow long exception message at the raise site (for pydantic)
 ]
 select = ["ALL"]
+
 
 [tool.ruff.lint.per-file-ignores]
 "docs/**" = [

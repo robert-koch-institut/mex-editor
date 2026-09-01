@@ -13,6 +13,7 @@
   "create-item-dialog.loading": "Loading entries...",
   "create-item-dialog.save-button.label": "Create entry",
   "create-item-dialog.title": "Create new entry",
+  "datepicker.validation.parse": "Please use format {{format}}",
   "fasttrack": {
     "resource": {
       "fields": {
@@ -28,14 +29,48 @@
   "input.placeholder": "Please fillout",
   "reference-select": {
     "placeholder.empty": "Type to filter, you can use \"*\" as a placeholder",
-    "placeholder.validTypes": "Search for {value}",
+    "placeholder.validTypes": "Search for {{value}}",
     "search-result": {
-      "createNew": "Create new entry for \"{query}\"...",
-      "empty": "No search results for \"{query}\" found.",
-      "label": "Search results ({count} of {total})",
+      "createNew": "Create new entry for \"{{query}}\"...",
+      "empty": "No search results for \"{{query}}\" found.",
+      "label": "Search results ({{count}} of {{total}})",
       "loading": "Loading results..."
     }
   },
   "select.none-option": "None",
-  "select.placeholder": "Please select"
+  "select.placeholder": "Please select",
+  "validation": {
+    "custom": "{{field}} is invalid",
+    "generic": "{{field}} is invalid",
+    "innerArrayError": "{{field}} {position, plural, =1 {1st} =2 {2nd} =3 {3rd} other {{position}th}} entry",
+    "innerObjectError": "{{field}} - {{{{property}}}}",
+    "invalidElement": "{{field}} contains an invalid entry",
+    "invalidFormat": {
+      "email": "{{field}} must be a valid email address",
+      "ends_with": "{{field}} must end with \"{{pattern}}\"",
+      "includes": "{{field}} must include \"{{pattern}}\"",
+      "jwt": "{{field}} must be a valid JWT",
+      "regex": "{{field}} has an invalid format",
+      "starts_with": "{{field}} must start with \"{{pattern}}\"",
+      "url": "{{field}} must be a valid URL",
+      "uuid": "{{field}} must be a valid UUID"
+    },
+    "invalidKey": "{{field}} contains an invalid key",
+    "invalidType": "{{field}} has an invalid type",
+    "invalidUnion": "{{field}} does not match any of the allowed formats",
+    "invalidValue": "{{field}} must be one of the allowed values",
+    "max": "{{field}} must be at most {{maximum}}",
+    "maxDate": "{{field}} must be on or before {{maximum}}",
+    "maxItems": "{{field}} must contain at most {maximum, plural, =1 {one item} other {{maximum} items}}",
+    "maxLength": "{{field}} must be at most {maximum, plural, =1 {one character} other {{maximum} characters}} long",
+    "min": "{{field}} must be at least {{minimum}}",
+    "minDate": "{{field}} must be on or after {{minimum}}",
+    "minItems": "{{field}} must contain at least {minimum, plural, =1 {one item} other {{minimum} items}}",
+    "minLength": "{{field}} must be at least {minimum, plural, =1 {one character} other {{minimum} characters}} long",
+    "notMultipleOf": "{{field}} must be a multiple of {{divisor}}",
+    "required": "{{field}} must be provided",
+    "tooBig": "{{field}} is too large",
+    "tooSmall": "{{field}} is too small",
+    "unrecognizedKeys": "{{field}} contains unrecognized keys"
+  }
 }

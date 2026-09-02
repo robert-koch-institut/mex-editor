@@ -11,7 +11,7 @@ services:
         condition: service_healthy
 
   httpd:
-    image: httpd:2.4@sha256:2920ed8587277d6aa8ea785e143e970835057123dc7bf1199d102c60c80a73bb
+    image: httpd:2.4@sha256:979c38c2228d28c2edfd45c6e27dcee1c7b4a101a5526721ae8ece454e89e99e
     ports:
       - "8000:80"
     volumes:

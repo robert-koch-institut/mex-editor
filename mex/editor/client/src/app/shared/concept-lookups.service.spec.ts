@@ -39,7 +39,7 @@ describe("ConceptLookups", () => {
     TestBed.tick(); // fires the effects behind each httpResource
 
     for (const name of vocabularyNames) {
-      httpMock.expectOne(`api/v0/vocabulary/${name}`); // .flush([]);
+      httpMock.expectOne(`api/v0/vocabulary/${name}`); // .flush({ items: [], total: 0 });
     }
   });
 
@@ -47,20 +47,23 @@ describe("ConceptLookups", () => {
     const service = TestBed.inject(ConceptLookups);
     TestBed.tick();
 
-    httpMock.expectOne("api/v0/vocabulary/theme").flush([
-      {
-        identifier: "1",
-        prefLabel: { de: "Bevölkerung", en: "Population" },
-        altLabel: [],
-      },
-      {
-        identifier: "2",
-        prefLabel: { de: "Gesundheit", en: "Health" },
-        altLabel: [],
-      },
-    ]);
+    httpMock.expectOne("api/v0/vocabulary/theme").flush({
+      items: [
+        {
+          identifier: "1",
+          prefLabel: { de: "Bevölkerung", en: "Population" },
+          altLabel: [],
+        },
+        {
+          identifier: "2",
+          prefLabel: { de: "Gesundheit", en: "Health" },
+          altLabel: [],
+        },
+      ],
+      total: 2,
+    });
     for (const name of vocabularyNames.filter((n) => n !== "theme")) {
-      httpMock.expectOne(`api/v0/vocabulary/${name}`).flush([]);
+      httpMock.expectOne(`api/v0/vocabulary/${name}`).flush({ items: [], total: 0 });
     }
 
     await TestBed.inject(ApplicationRef).whenStable();

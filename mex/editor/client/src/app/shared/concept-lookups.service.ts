@@ -3,6 +3,7 @@ import { computed, inject, Injectable } from "@angular/core";
 import { TranslocoService } from "@jsverse/transloco";
 
 import type { Concept } from "./models/concept";
+import type { PaginatedItemsContainer } from "./models/paginated-items-container";
 import { ToLookupPipe } from "./to-lookup-pipe";
 
 @Injectable({ providedIn: "root" })
@@ -20,13 +21,14 @@ export class ConceptLookups {
   accessRestrictionOptions = this.buildConceptOptions("access-restriction");
 
   private buildConceptOptions(name: string) {
-    const vocabReq = httpResource<Concept[]>(() => `api/v0/vocabulary/${name}`, {
-      defaultValue: [],
-    });
+    const vocabReq = httpResource<PaginatedItemsContainer<Concept>>(
+      () => `api/v0/vocabulary/${name}`,
+      { defaultValue: { items: [], total: 0 } },
+    );
     return computed(() => {
       const vocab = vocabReq.value();
       const currentLang = this.transloco.activeLang();
-      const lookups = vocab.map((x) => this.lookupPipe.transform(x, currentLang));
+      const lookups = vocab.items.map((x) => this.lookupPipe.transform(x, currentLang));
       return lookups.sort((a, b) => a.label.localeCompare(b.label));
     });
   }

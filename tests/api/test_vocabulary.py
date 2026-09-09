@@ -9,9 +9,10 @@ if TYPE_CHECKING:
 def test_get_vocabulary(client: TestClient) -> None:
     response = client.get("/api/v0/vocabulary/bibliographic-resource-type")
     assert response.status_code == status.HTTP_200_OK, response.text
-    concepts = response.json()
-    assert concepts
-    assert concepts[0] == {
+    container = response.json()
+    assert set(container) == {"items", "total"}
+    assert container["total"] == len(container["items"])
+    assert container["items"][0] == {
         "identifier": "https://mex.rki.de/item/bibliographic-resource-type-1",
         "prefLabel": {"de": "Buch", "en": "Book"},
         "altLabel": [{"de": "Monografie", "en": "Monograph"}],

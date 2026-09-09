@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from starlette import status
 
+from mex.common.models import PaginatedItemsContainer
 from mex.model import VOCABULARY_JSON_BY_NAME
 
 router = APIRouter()
@@ -32,11 +33,11 @@ _CONCEPTS_BY_SLUG = {
     "/vocabulary/{name}",
     tags=["vocabulary"],
 )
-def get_vocabulary(name: str) -> list[Concept]:
+def get_vocabulary(name: str) -> PaginatedItemsContainer[Concept]:
     """Get the concepts of a single vocabulary by its name."""
     if (concepts := _CONCEPTS_BY_SLUG.get(name)) is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Unknown vocabulary: {name}",
         )
-    return concepts
+    return PaginatedItemsContainer[Concept](items=concepts, total=len(concepts))

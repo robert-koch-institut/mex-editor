@@ -103,6 +103,13 @@
             ]
         },
         {
+            "description": "Group the vitest monorepo into a single PR (needs to be configured after the npm non-major rule), because @vitest/* peer-pin vitest to an exact version, so bumping vitest on its own leaves the lock file unresolvable",
+            "groupName": "vitest",
+            "matchSourceUrls": [
+                "https://github.com/vitest-dev/vitest"
+            ]
+        },
+        {
             "description": "TypeScript-Major only manually with Angular-Major",
             "enabled": false,
             "matchPackageNames": [

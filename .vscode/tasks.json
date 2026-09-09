@@ -1,39 +1,39 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "editor-api-debug",
-      "type": "shell",
-      "command": "uv run debugpy --listen 0.0.0.0:5678 --wait-for-client --log-to-stderr -m mex.editor.main --startup api",
-      "isBackground": true,
-      "problemMatcher": {
-        "pattern": {
-          "regexp": "^$",
-          "file": 1,
-          "location": 2,
-          "message": 3
+    "tasks": [
+        {
+            "command": "uv run debugpy --listen 0.0.0.0:5678 --wait-for-client --log-to-stderr -m mex.editor.main --startup api",
+            "isBackground": true,
+            "label": "editor-api-debug",
+            "problemMatcher": {
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": "wait_for_client()"
+                },
+                "pattern": {
+                    "file": 1,
+                    "location": 2,
+                    "message": 3,
+                    "regexp": "^$"
+                }
+            },
+            "type": "shell"
         },
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": ".",
-          "endsPattern": "wait_for_client()"
+        {
+            "command": "uv run exec-npx ng serve",
+            "isBackground": true,
+            "label": "angular-dev",
+            "problemMatcher": {
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "Building...",
+                    "endsPattern": "Application bundle generation complete."
+                },
+                "owner": "typescript",
+                "pattern": "$tsc"
+            },
+            "type": "shell"
         }
-      }
-    },
-    {
-      "label": "angular-dev",
-      "type": "shell",
-      "command": "uv run exec-npx ng serve",
-      "isBackground": true,
-      "problemMatcher": {
-        "owner": "typescript",
-        "pattern": "$tsc",
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": "Building...",
-          "endsPattern": "Application bundle generation complete."
-        }
-      }
-    },
-  ]
+    ],
+    "version": "2.0.0"
 }

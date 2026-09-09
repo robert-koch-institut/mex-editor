@@ -56,7 +56,6 @@ run: image
 	# run the service as a docker container
 	@ echo running docker container mex-editor:${LATEST}; \
 	docker run \
-		--env MEX_EDITOR_HOST=0.0.0.0 \
 		--publish 8000:8000 \
 		rki/mex-editor:${LATEST}; \
 

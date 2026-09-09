@@ -37,7 +37,7 @@ unit:
 test:
 	# run the unit and integration test suites
 	@ echo running all tests; \
-	uv run pytest --numprocesses=auto --dist=worksteal && \
+	uv run pytest --numprocesses=auto --dist=worksteal; \
 	uv run test-frontend; \
 
 wheel:
@@ -68,6 +68,6 @@ start:
 docs:
 	# use sphinx to auto-generate html docs from code
 	@ echo generating docs; \
-	uv run generate-frontend-docs --output docs/source/frontend_client_docs && \
-	uv run sphinx-apidoc -f -o docs/source mex && \
+	uv run generate-frontend-docs --output docs/source/frontend_client_docs; \
+	uv run sphinx-apidoc -f -o docs/source mex; \
 	uv run sphinx-build -aE -b dirhtml docs docs/dist; \

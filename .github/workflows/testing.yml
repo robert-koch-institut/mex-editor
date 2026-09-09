@@ -71,6 +71,9 @@ jobs:
           echo ${{ matrix.python-version }} > .python-version
           make install
 
+      - name: Wait for container readiness
+        run: docker compose up --wait --wait-timeout 500 placeholder
+
       - name: Run test suite
         run: make test
 

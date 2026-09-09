@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- read vocabulary concepts from `mex.model.VOCABULARY_JSON_BY_NAME`, because mex-common
+  simplified its vocabularies to plain enums without concepts
+- serve concepts as a plain list with just `identifier`, `prefLabel` and `altLabel`,
+  which is all the editor client uses
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.1
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.0
 - set exact version for neo4j:2026.07.1
@@ -18,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 ### Removed
+
+- endpoint `GET /vocabulary` listing all vocabulary names, which had no consumer
 
 ### Fixed
 

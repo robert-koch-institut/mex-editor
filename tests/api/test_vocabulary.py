@@ -6,25 +6,16 @@ if TYPE_CHECKING:
     from fastapi.testclient import TestClient
 
 
-def test_list_vocabularies(client: TestClient) -> None:
-    response = client.get("/api/v0/vocabulary")
-    assert response.status_code == status.HTTP_200_OK, response.text
-    names = response.json()
-    assert isinstance(names, list)
-    assert "bibliographic-resource-type" in names
-    assert len(names) == 18
-
-
 def test_get_vocabulary(client: TestClient) -> None:
     response = client.get("/api/v0/vocabulary/bibliographic-resource-type")
     assert response.status_code == status.HTTP_200_OK, response.text
-    container = response.json()
-    assert set(container) == {"items", "total"}
-    assert container["total"] == len(container["items"])
-    assert container["items"]
-    first = container["items"][0]
-    assert "identifier" in first
-    assert set(first["prefLabel"]) == {"de", "en"}
+    concepts = response.json()
+    assert concepts
+    assert concepts[0] == {
+        "identifier": "https://mex.rki.de/item/bibliographic-resource-type-1",
+        "prefLabel": {"de": "Buch", "en": "Book"},
+        "altLabel": [{"de": "Monografie", "en": "Monograph"}],
+    }
 
 
 def test_get_vocabulary_unknown(client: TestClient) -> None:

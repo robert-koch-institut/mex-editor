@@ -1,30 +1,36 @@
 {
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
-  "html.format.enable": false,
-  "python.autoComplete.extraPaths": ["${workspaceFolder}/.venv/lib"],
-  "python.analysis.extraPaths": ["${workspaceFolder}/.venv/lib"],
-  "python.analysis.exclude": [
-    ".mypy_cache",
-    ".pytest_cache",
-    ".venv",
-    "**/__pycache__",
-    "**/__snapshots__",
-    "**/node_modules",
-    "**/.*"
-  ],
-  "python.testing.pytestArgs": ["-s"],
-  "python.testing.unittestEnabled": false,
-  "python.testing.pytestEnabled": true,
-  "python.testing.pytestPath": "${workspaceFolder}/.venv/scripts/pytest",
-  "ruff.importStrategy": "useBundled",
-  "ruff.nativeServer": "on",
-  "eslint.nodePath": "${workspaceFolder}/mex/editor/client/node_modules"
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "eslint.nodePath": "${workspaceFolder}/mex/editor/client/node_modules",
+    "html.format.enable": false,
+    "python.analysis.exclude": [
+        ".mypy_cache",
+        ".pytest_cache",
+        ".venv",
+        "**/__pycache__",
+        "**/__snapshots__",
+        "**/node_modules",
+        "**/.*"
+    ],
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/.venv/lib"
+    ],
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}/.venv/lib"
+    ],
+    "python.testing.pytestArgs": [
+        "-s"
+    ],
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestPath": "${workspaceFolder}/.venv/scripts/pytest",
+    "python.testing.unittestEnabled": false,
+    "ruff.importStrategy": "useBundled",
+    "ruff.nativeServer": "on"
 }

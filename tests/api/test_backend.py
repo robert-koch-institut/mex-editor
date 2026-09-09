@@ -5,7 +5,7 @@ import requests
 
 from mex.editor.settings import EditorSettings
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     import pytest
     from fastapi.testclient import TestClient
 

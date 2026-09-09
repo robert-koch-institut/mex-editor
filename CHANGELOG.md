@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.1
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.0
 - set exact version for neo4j:2026.07.1
+- update mex-common to 3.4
 
 ### Deprecated
 

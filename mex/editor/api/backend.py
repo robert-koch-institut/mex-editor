@@ -1,8 +1,10 @@
+from functools import partial
 from urllib.parse import urljoin
 
 import requests
 from fastapi import APIRouter, Request, Response
 from starlette import status
+from starlette.concurrency import run_in_threadpool
 
 from mex.common.logging import logger
 from mex.editor.settings import EditorSettings
@@ -26,13 +28,16 @@ async def backend_proxy(path: str, request: Request) -> Response:
     }
     headers["X-API-Key"] = settings.backend_api_key.get_secret_value()
     body = await request.body()
-    upstream = requests.request(
-        method=request.method,
-        url=url,
-        params=request.query_params.multi_items(),
-        headers=headers,
-        data=body,
-        timeout=30,
+    upstream = await run_in_threadpool(
+        partial(
+            requests.request,
+            method=request.method,
+            url=url,
+            params=request.query_params.multi_items(),
+            headers=headers,
+            data=body,
+            timeout=30,
+        )
     )
     if upstream.status_code >= status.HTTP_500_INTERNAL_SERVER_ERROR:
         logger.warning(

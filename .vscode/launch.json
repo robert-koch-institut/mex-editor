@@ -1,42 +1,48 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "editor-api-debug",
-      "type": "debugpy",
-      "request": "attach",
-      "connect": {
-        "host": "0.0.0.0",
-        "port": 5678
-      },
-      "preLaunchTask": "editor-api-debug"
-    },
-    {
-      "name": "angular-dev[edge]",
-      "type": "msedge",
-      "request": "launch",
-      "url": "http://localhost:4200",
-      "webRoot": "${workspaceFolder}/mex/editor/client",
-      "preLaunchTask": "angular-dev",
-      "sourceMaps": true
-    },
-    {
-      "name": "angular-dev[firefox]",
-      "type": "firefox",
-      "request": "launch",
-      "url": "http://localhost:4200",
-      "webRoot": "${workspaceFolder}/mex/editor/client",
-      "preLaunchTask": "angular-dev"
-    }
-  ],
-  "compounds": [
-    {
-      "name": "Run Editor (debug-edge)",
-      "configurations": ["editor-api-debug", "angular-dev[edge]"]
-    },
-    {
-      "name": "Run Editor (debug-firefox)",
-      "configurations": ["editor-api-debug", "angular-dev[firefox]"]
-    }
-  ]
+    "compounds": [
+        {
+            "configurations": [
+                "editor-api-debug",
+                "angular-dev[edge]"
+            ],
+            "name": "Run Editor (debug-edge)"
+        },
+        {
+            "configurations": [
+                "editor-api-debug",
+                "angular-dev[firefox]"
+            ],
+            "name": "Run Editor (debug-firefox)"
+        }
+    ],
+    "configurations": [
+        {
+            "connect": {
+                "host": "0.0.0.0",
+                "port": 5678
+            },
+            "name": "editor-api-debug",
+            "preLaunchTask": "editor-api-debug",
+            "request": "attach",
+            "type": "debugpy"
+        },
+        {
+            "name": "angular-dev[edge]",
+            "preLaunchTask": "angular-dev",
+            "request": "launch",
+            "sourceMaps": true,
+            "type": "msedge",
+            "url": "http://localhost:4200",
+            "webRoot": "${workspaceFolder}/mex/editor/client"
+        },
+        {
+            "name": "angular-dev[firefox]",
+            "preLaunchTask": "angular-dev",
+            "request": "launch",
+            "type": "firefox",
+            "url": "http://localhost:4200",
+            "webRoot": "${workspaceFolder}/mex/editor/client"
+        }
+    ],
+    "version": "0.2.0"
 }

@@ -19,7 +19,7 @@ from mex.editor.frontend import STATIC_DIR, npm_watch
 from mex.editor.logging import UVICORN_LOGGING_CONFIG
 from mex.editor.settings import EditorSettings
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
     from starlette.responses import Response

@@ -10,7 +10,7 @@ import click
 
 from mex.editor.settings import EditorSettings
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from collections.abc import Generator
 
 settings = EditorSettings.get()

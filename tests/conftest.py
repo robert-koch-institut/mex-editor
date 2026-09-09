@@ -10,7 +10,7 @@ from mex.common.logging import logger
 from mex.editor.settings import EditorSettings
 from mex.editor.testing import create_testing_api, create_testing_api_with_frontend
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from collections.abc import Generator
 
 pytest_plugins = ("mex.common.testing.plugin",)

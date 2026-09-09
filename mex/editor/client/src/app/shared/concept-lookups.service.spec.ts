@@ -51,13 +51,11 @@ describe("ConceptLookups", () => {
       items: [
         {
           identifier: "1",
-          inScheme: "x",
           prefLabel: { de: "Bevölkerung", en: "Population" },
           altLabel: [],
         },
         {
           identifier: "2",
-          inScheme: "x",
           prefLabel: { de: "Gesundheit", en: "Health" },
           altLabel: [],
         },

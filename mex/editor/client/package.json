@@ -26,7 +26,7 @@
     "@types/luxon": "^3.7.2",
     "@vitest/ui": "4.1.11",
     "angular-eslint": "^22.0.0",
-    "eslint": "10.9.1",
+    "eslint": "10.10.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-perfectionist": "^5.10.1",
     "eslint-plugin-prettier": "^5.5.6",

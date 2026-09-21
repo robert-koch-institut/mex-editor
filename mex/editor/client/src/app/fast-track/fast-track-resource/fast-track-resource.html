@@ -196,7 +196,6 @@
           [placeholder]="'select.placeholder' | transloco"
           data-testid="frequency-select"
         >
-          <!-- <mat-option [value]="null">{{ t("select.none-option") }}</mat-option> -->
           @for (option of conceptOptions.frequencyOptions(); track option.id) {
             <mat-option [value]="option.id">{{ option.label }}</mat-option>
           }
@@ -253,7 +252,7 @@
           @for (keyword of resourceForm.keywords().value().de; track keyword) {
             <mat-chip-row (removed)="removeKeyword('de', keyword)">
               {{ keyword }}
-              <button matChipRemove>
+              <button matChipRemove type="button">
                 <mat-icon>cancel</mat-icon>
               </button>
             </mat-chip-row>

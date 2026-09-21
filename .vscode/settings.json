@@ -26,5 +26,5 @@
   "python.testing.pytestPath": "${workspaceFolder}/.venv/scripts/pytest",
   "ruff.importStrategy": "useBundled",
   "ruff.nativeServer": "on",
-  "eslint.nodePath": "${workspaceFolder}/mex/editor/client/node_modules",
+  "eslint.nodePath": "${workspaceFolder}/mex/editor/client/node_modules"
 }

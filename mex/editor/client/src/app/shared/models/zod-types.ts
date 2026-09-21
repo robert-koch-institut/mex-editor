@@ -16,9 +16,12 @@ export const luxonDateTimeSchema = () =>
 /**
  * Nullable LuxonDateTime as zod type.
  */
-export const luxonDateTimeNullabeSchema = () =>
+export const luxonDateTimeNullableSchema = () =>
   z
     .custom<DateTime | null>((val) => val == null || DateTime.isDateTime(val), {
-      error: "validation.invalidDate", // null/undefined → leeres Feld
+      error: "validation.invalidDate",
+    })
+    .refine((val) => (DateTime.isDateTime(val) ? val.isValid : val == null), {
+      error: "validation.invalidDate",
     })
     .nullable();

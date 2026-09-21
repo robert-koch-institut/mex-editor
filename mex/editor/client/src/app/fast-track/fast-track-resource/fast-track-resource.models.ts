@@ -11,7 +11,7 @@ import {
   ResourceTypeGeneralSchema,
 } from "../../shared/models/generated/resource";
 import { TextSchema, ThemeSchema } from "../../shared/models/generated/shared";
-import { luxonDateTimeNullabeSchema } from "../../shared/models/zod-types";
+import { luxonDateTimeNullableSchema } from "../../shared/models/zod-types";
 
 /**
  * Schema for UnionType for CreatePerson and PreviewPerson
@@ -67,8 +67,8 @@ export const FastTrackResourceModelSchema = z.object({
   contributingUnit: PreviewOrganizationalUnitSchema.array(),
   spatial: z.string(),
   hasLegalBasis: z.string(),
-  start: luxonDateTimeNullabeSchema(),
-  end: luxonDateTimeNullabeSchema(),
+  start: luxonDateTimeNullableSchema(),
+  end: luxonDateTimeNullableSchema(),
   resourceTypeGeneral: ResourceTypeGeneralSchema.array(),
   theme: ThemeSchema.array(),
 });

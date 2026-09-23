@@ -1,20 +1,4 @@
-"""Equivalence tests -- pure Python, no Node/JS involved.
-
-Runs the real `generate_zod_schemas()` against synthetic pydantic models,
-then checks the generated `.ts` *text* against what `pytypes.fields_of()`
-independently resolved from the same pydantic models -- pattern, bounds,
-and the `.nullable()`/`.nullish()`/`.optional()` wrapping. This proves the
-generator's output structurally matches its own stated source of truth
-(the pydantic model), without needing to execute the generated TypeScript.
-
-Separately, a second block of tests exercises pydantic's *own* validation
-behavior on hand-built payloads (valid data, and one violation per
-constraint kind) -- useful on its own as a sanity check that the
-constraints declared on `sample_models.py` actually do what they claim.
-"""
-
-from __future__ import annotations
-
+import json
 import re
 import shutil
 import tempfile
@@ -24,11 +8,10 @@ from typing import TYPE_CHECKING, Any
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from mex.editor.code_gen.bundle import Bundle
-from mex.editor.code_gen.pytypes import FieldSpec, fields_of
+from mex.editor.code_gen.models import Bundle, FieldSpec
+from mex.editor.code_gen.types import fields_of
 from mex.editor.code_gen.zod_generator import generate_zod_schemas
-
-from .sample_models import (
+from tests.code_gen.sample_models import (
     ExtractedOrganization,
     ExtractedPerson,
     MergedOrganization,
@@ -39,7 +22,6 @@ if TYPE_CHECKING:
     from collections.abc import Generator
 
 ROOT = Path(__file__).parent
-OUTPUT_DIR = ROOT / "generated_ts"
 
 
 @pytest.fixture(scope="session")
@@ -96,7 +78,7 @@ def expected_nullability_suffix(model: type, py_name: str) -> str:
     """Model to null, nullish or optional zod spec.
 
     Independently derives, from pydantic's own resolved field metadata
-    (via pytypes.fields_of -- not from reading zod_generator.py's code),
+    (via types.fields_of -- not from reading zod_generator.py's code),
     what suffix a non-literal field's zod expression should end with.
     """
     spec = spec_of(model, py_name)
@@ -110,7 +92,10 @@ def expected_nullability_suffix(model: type, py_name: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Structural checks: generated Zod text vs. pydantic's own field metadata
+# Structural checks: generated Zod text vs. pydantic's own field metadata.
+#
+# Proves the output matches its stated source of truth without executing any
+# TypeScript. `test_zod_runtime_equivalence.py` is the half that does execute it.
 # ---------------------------------------------------------------------------
 
 
@@ -152,7 +137,8 @@ def test_employee_count_has_the_pydantic_bounds(
         "ExtractedOrganizationSchema",
         "employeeCount",
     )
-    assert expr.startswith("z.number()")
+    # z.int(), not z.number(): pydantic rejects 1.5 for an `int` field.
+    assert expr.startswith("z.int()")
     assert ".min(0)" in expr
     assert ".max(100000)" in expr
 
@@ -199,7 +185,7 @@ def test_website_wrapping_matches_pydantics_optional_and_nullable_flags(
     assert expr == f"z.string(){suffix}"
 
 
-def test_entity_type_is_a_bare_literal_with_no_wrapper(
+def test_entity_type_is_optional_because_pydantic_defaults_it(
     generated_sources: dict[str, str],
 ) -> None:
     expr = field_expr(
@@ -207,7 +193,13 @@ def test_entity_type_is_a_bare_literal_with_no_wrapper(
         "ExtractedOrganizationSchema",
         "entityType",
     )
-    assert expr == 'z.literal("ExtractedOrganization")'
+    # `entity_type: Literal["X"] = "X"` is NOT required in pydantic, so omitting
+    # the key must validate here too. .default() gives that while keeping the
+    # inferred output type non-optional, so TypeScript can still narrow on it.
+    assert not spec_of(ExtractedOrganization, "entity_type").required
+    assert expr == (
+        'z.literal("ExtractedOrganization").default("ExtractedOrganization")'
+    )
 
 
 def test_nested_address_zip_code_uses_its_own_pattern(
@@ -277,10 +269,35 @@ def test_status_enum_is_factored_into_shared_ts_and_imported_not_duplicated(
 
 
 # ---------------------------------------------------------------------------
-# pydantic's own validation behavior (pure Python, no generated code
-# involved at all -- sanity-checks that sample_models.py's constraints do
-# what they claim).
+# Behavioural checks: the shared case corpus, run through pydantic.
+#
+# `equivalence_cases.json` is the single source of truth for these payloads --
+# test_zod_runtime_equivalence.py feeds the very same file to the generated
+# Zod schemas, so the two validators can be compared case for case.
 # ---------------------------------------------------------------------------
+
+
+MODELS: dict[str, type[BaseModel]] = {
+    "ExtractedOrganization": ExtractedOrganization,
+    "ExtractedPerson": ExtractedPerson,
+    "MergedOrganization": MergedOrganization,
+    "MergedPerson": MergedPerson,
+}
+
+
+def load_cases() -> list[tuple[str, type[BaseModel], dict[str, Any], bool]]:
+    """Flatten `equivalence_cases.json` into pytest parameters."""
+    corpus = json.loads((ROOT / "equivalence_cases.json").read_text())
+    return [
+        (
+            f"{group['model']}: {case['description']}",
+            MODELS[group["model"]],
+            case["payload"],
+            case["valid"],
+        )
+        for group in corpus
+        for case in group["cases"]
+    ]
 
 
 def pydantic_ok(model: type[BaseModel], payload: dict[str, Any]) -> bool:
@@ -291,133 +308,16 @@ def pydantic_ok(model: type[BaseModel], payload: dict[str, Any]) -> bool:
     return True
 
 
-VALID_ORG = {
-    "name": "RKI",
-    "identifier": "abcDEF1234567890",
-    "entityType": "ExtractedOrganization",
-    "email": "a@b.com",
-    "employeeCount": 5,
-    "tags": ["research"],
-    "status": "active",
-    "address": {"street": "Musterstr. 1", "zipCode": "12345"},
-    "website": None,
-}
-
-
 @pytest.mark.parametrize(
-    ("description", "payload", "expected_valid"),
-    [
-        ("valid payload", VALID_ORG, True),
-        (
-            "missing required 'name'",
-            {k: v for k, v in VALID_ORG.items() if k != "name"},
-            False,
-        ),
-        ("name too long (>100 chars)", {**VALID_ORG, "name": "x" * 101}, False),
-        (
-            "identifier fails pattern (too short)",
-            {**VALID_ORG, "identifier": "short"},
-            False,
-        ),
-        ("employeeCount negative", {**VALID_ORG, "employeeCount": -1}, False),
-        ("employeeCount over max", {**VALID_ORG, "employeeCount": 100_001}, False),
-        ("malformed email", {**VALID_ORG, "email": "not-an-email"}, False),
-        ("tags empty (violates min_length=1)", {**VALID_ORG, "tags": []}, False),
-        (
-            "tags too many (violates max_length=5)",
-            {**VALID_ORG, "tags": list("abcdef")},
-            False,
-        ),
-        ("invalid status enum value", {**VALID_ORG, "status": "bogus"}, False),
-        (
-            "nested address missing 'street'",
-            {**VALID_ORG, "address": {"zipCode": "12345"}},
-            False,
-        ),
-        (
-            "nested address zipCode fails pattern",
-            {**VALID_ORG, "address": {"street": "S", "zipCode": "abc"}},
-            False,
-        ),
-        ("website explicit null is valid", {**VALID_ORG, "website": None}, True),
-        (
-            "website present is valid",
-            {**VALID_ORG, "website": "https://example.org"},
-            True,
-        ),
-        (
-            "website key omitted entirely is valid",
-            {k: v for k, v in VALID_ORG.items() if k != "website"},
-            True,
-        ),
-    ],
+    ("description", "model", "payload", "expected_valid"), load_cases()
 )
-def test_extracted_organization_validation(
+def test_shared_corpus_against_pydantic(
     description: str,
+    model: type[BaseModel],
     payload: dict[str, Any],
     expected_valid: bool,  # noqa: FBT001
 ) -> None:
-    assert pydantic_ok(ExtractedOrganization, payload) is expected_valid, description
-
-
-VALID_PERSON = {
-    "givenName": "Jane",
-    "familyName": "Doe",
-    "entityType": "ExtractedPerson",
-    "identifier": "abcDEF1234567890",
-    "status": "active",
-    "birthDate": "2024-01-15",
-}
-
-
-@pytest.mark.parametrize(
-    ("description", "payload", "expected_valid"),
-    [
-        ("valid, full YearMonthDay birthDate", VALID_PERSON, True),
-        (
-            "valid, YearMonth-only birthDate",
-            {**VALID_PERSON, "birthDate": "2024-01"},
-            True,
-        ),
-        ("valid, Year-only birthDate", {**VALID_PERSON, "birthDate": "2024"}, True),
-        (
-            "birthDate explicit null is valid (nullable, required key)",
-            {**VALID_PERSON, "birthDate": None},
-            True,
-        ),
-        (
-            "birthDate malformed string matches none of the 3 patterns",
-            {**VALID_PERSON, "birthDate": "not-a-date"},
-            False,
-        ),
-        (
-            "birthDate key OMITTED is invalid (required even though nullable)",
-            {k: v for k, v in VALID_PERSON.items() if k != "birthDate"},
-            False,
-        ),
-        ("identifier fails pattern", {**VALID_PERSON, "identifier": "!!!"}, False),
-    ],
-)
-def test_extracted_person_validation(
-    description: str,
-    payload: dict[str, Any],
-    expected_valid: bool,  # noqa: FBT001
-) -> None:
-    assert pydantic_ok(ExtractedPerson, payload) is expected_valid, description
-
-
-def test_merged_person_entity_type_literal_mismatch_is_rejected() -> None:
-    valid = {
-        "givenName": "Jane",
-        "familyName": "Doe",
-        "entityType": "MergedPerson",
-        "identifier": "abcDEF1234567890",
-        "status": "active",
-    }
-    assert pydantic_ok(MergedPerson, valid) is True
-    assert (
-        pydantic_ok(MergedPerson, {**valid, "entityType": "ExtractedPerson"}) is False
-    )
+    assert pydantic_ok(model, payload) is expected_valid, description
 
 
 def test_pydantics_own_json_dump_of_an_unset_optional_field_is_explicit_null() -> None:
@@ -432,12 +332,19 @@ def test_pydantics_own_json_dump_of_an_unset_optional_field_is_explicit_null() -
     `test_website_wrapping_matches_pydantics_optional_and_nullable_flags`
     above for the structural half of this claim.
     """
-    org = ExtractedOrganization.model_validate(VALID_ORG)
+    valid_org = next(
+        case["payload"]
+        for group in json.loads((ROOT / "equivalence_cases.json").read_text())
+        if group["model"] == "ExtractedOrganization"
+        for case in group["cases"]
+        if case["description"] == "valid payload"
+    )
+    org = ExtractedOrganization.model_validate(valid_org)
     dumped_with_null = org.model_dump(mode="json", by_alias=True)
     assert dumped_with_null["website"] is None
 
     org_no_website = ExtractedOrganization.model_validate(
-        {k: v for k, v in VALID_ORG.items() if k != "website"}
+        {k: v for k, v in valid_org.items() if k != "website"}
     )
     dumped_omitted = org_no_website.model_dump(
         mode="json", by_alias=True, exclude_unset=True

@@ -78,7 +78,6 @@ markers = "integration: mark a test as integration test"
 fix = true
 line-length = 88
 show-fixes = true
-extend-exclude = ["mex/editor/code_gen/**/*.*"]
 
 [tool.ruff.format]
 docstring-code-format = true

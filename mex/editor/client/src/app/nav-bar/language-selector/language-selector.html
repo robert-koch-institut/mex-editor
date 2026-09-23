@@ -1,10 +1,9 @@
-<mat-select
-  class="language-selector"
+<mat-button-toggle-group
   [value]="currentLanguage$ | async"
-  (selectionChange)="changeLanguage($event.value)"
-  panelWidth="200px"
+  (change)="changeLanguage($event.value)"
+  [hideSingleSelectionIndicator]="true"
 >
   @for (lang of availableLanguages; track lang.id) {
-    <mat-option [value]="lang.id">{{ lang.label }}</mat-option>
+    <mat-button-toggle [value]="lang.id">{{ lang.label }}</mat-button-toggle>
   }
-</mat-select>
+</mat-button-toggle-group>

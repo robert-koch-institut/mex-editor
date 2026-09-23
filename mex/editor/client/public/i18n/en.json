@@ -1,8 +1,7 @@
 {
-  "app": {
-    "footer.greetings": "Created with ❤️ by MEx",
-    "header.navigation.themeToggle": "Toggle light/dark theme"
-  },
+  "navbar.create-link.text": "Create {{{{entity_type}}}}",
+  "user-logout.logout-button.text": "Logout",
+  "footer.greetings": "Created with ❤️ by MEx",
   "categories": {
     "optional": "optional",
     "recommended": "recommended",

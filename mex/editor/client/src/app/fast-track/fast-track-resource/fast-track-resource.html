@@ -1,5 +1,5 @@
 <ng-container *transloco="let t">
-  <h1>{{ t("fasttrack.resource.headline") }}</h1>
+  <h1 class="page-title">{{ t("fasttrack.resource.headline") }}</h1>
 
   <form [formRoot]="resourceForm" (submit)="onSubmit()" class="two-column-layout">
     <mex-fieldset [formField]="resourceForm.title" labelKey="title" class="one-column-item">
@@ -339,6 +339,8 @@
       </mat-form-field>
     </mex-fieldset>
 
-    <button matButton="filled" type="submit">Submit</button>
+    <div class="two-column-item form-actions">
+      <button matButton="filled" type="submit" class="secondary">Submit</button>
+    </div>
   </form>
 </ng-container>

@@ -1,8 +1,7 @@
 {
-  "app": {
-    "footer.greetings": "Erstellt mit ❤️ von MEx",
-    "header.navigation.themeToggle": "Umschalten helles/dunkles Erscheinungsbild"
-  },
+  "navbar.create-link.text": "{{{{entity_type}}}} erstellen",
+  "user-logout.logout-button.text": "Abmelden",
+  "footer.greetings": "Erstellt mit ❤️ von MEx",
   "categories": {
     "optional": "Optional",
     "recommended": "Empfohlen",

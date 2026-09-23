@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- rki theme from figma (m3)
 
 ### Changes
 
+- language-selector now uses toggleButtons instead of a select
 - read vocabulary concepts from `mex.model.VOCABULARY_JSON_BY_NAME`, because mex-common
   simplified its vocabularies to plain enums without concepts
 - trim served concepts to `identifier`, `prefLabel` and `altLabel`,

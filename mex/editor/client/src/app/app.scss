@@ -1,4 +1,4 @@
-@use "../variables.scss" as vars;
+@use "../rki-theme" as rki;
 
 :host {
   display: flex;
@@ -9,19 +9,20 @@
 main {
   margin: 0 auto;
   width: 100%;
-  max-width: vars.$max-content-width;
+  max-width: calc(rki.$max-content-width + 32px);
+  padding: 16px;
   flex: 1;
 }
 
 footer {
-  background-color: #03284c;
+  background-color: var(--mat-sys-secondary);
   color: #fff;
   padding: 12px;
 
   .footer-content {
     margin: 0 auto;
     width: 100%;
-    max-width: vars.$max-content-width;
+    max-width: rki.$max-content-width;
 
     display: flex;
   }
@@ -32,12 +33,4 @@ footer {
   gap: 0.25em;
 
   margin-left: auto;
-
-  .heart {
-    display: inline-block;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-image: radial-gradient(circle at center, #ff5f6d, #b91d1d);
-  }
 }

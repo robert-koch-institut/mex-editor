@@ -1,12 +1,12 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, inject } from "@angular/core";
-import { MatSelectModule } from "@angular/material/select";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import type { LangDefinition } from "@jsverse/transloco";
 import { TranslocoService } from "@jsverse/transloco";
 
 @Component({
   selector: "mex-language-selector",
-  imports: [AsyncPipe, MatSelectModule],
+  imports: [AsyncPipe, MatButtonToggleModule],
   templateUrl: "./language-selector.html",
   styleUrl: "./language-selector.scss",
 })

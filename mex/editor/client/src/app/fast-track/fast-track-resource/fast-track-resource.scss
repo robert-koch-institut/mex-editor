@@ -40,3 +40,8 @@
     grid-column: span 1;
   }
 }
+
+.form-actions {
+  display: flex;
+  justify-content: right;
+}

@@ -1,0 +1,281 @@
+@use "sass:map";
+@use "sass:color";
+@use "@angular/material" as mat;
+
+$max-content-width: 1200px;
+
+$primary-color: #005eb7;
+$secondary-color: #03284c;
+$tertiary-color: #7c518f;
+$input-background-color: #ebf2f9;
+
+@function create-m3-palette($base-color) {
+  @return (
+    0: #000000,
+    10: color.scale($base-color, $lightness: -75%),
+    20: color.scale($base-color, $lightness: -50%),
+    25: color.scale($base-color, $lightness: -37.5%),
+    30: color.scale($base-color, $lightness: -25%),
+    35: color.scale($base-color, $lightness: -12.5%),
+    40: $base-color,
+    // Ihre exakte Wunschfarbe wird als dominanter M3-Farbton gesetzt
+    50: color.scale($base-color, $lightness: 20%),
+    60: color.scale($base-color, $lightness: 40%),
+    70: color.scale($base-color, $lightness: 60%),
+    80: color.scale($base-color, $lightness: 75%),
+    90: color.scale($base-color, $lightness: 85%),
+    95: color.scale($base-color, $lightness: 92%),
+    98: color.scale($base-color, $lightness: 97%),
+    99: color.scale($base-color, $lightness: 99%),
+    100: #ffffff
+  );
+}
+
+// Note: Color palettes are generated from primary: #005eb7, secondary: #03284c, tertiary: #7c518f
+$_palettes: (
+  primary: create-m3-palette($primary-color),
+  // (
+  //   0: #000000,
+  //   10: #001b3d,
+  //   20: #003063,
+  //   25: #003b76,
+  //   30: #00468b,
+  //   35: #0051a0,
+  //   40: #005db6,
+  //   50: #3277d1,
+  //   60: #5191ed,
+  //   70: #78acff,
+  //   80: #a9c7ff,
+  //   90: #d6e3ff,
+  //   95: #ecf0ff,
+  //   98: #f9f9ff,
+  //   99: #fdfbff,
+  //   100: #ffffff,
+  // ),
+  secondary: create-m3-palette($secondary-color),
+  // (
+  //   0: #000000,
+  //   10: #001c39,
+  //   20: #103156,
+  //   25: #1e3c61,
+  //   30: #2b486d,
+  //   35: #37547a,
+  //   40: #436087,
+  //   50: #5c79a1,
+  //   60: #7692bc,
+  //   70: #90add8,
+  //   80: #abc8f5,
+  //   90: #d4e3ff,
+  //   95: #ebf1ff,
+  //   98: #f8f9ff,
+  //   99: #fdfcff,
+  //   100: #ffffff,
+  // ),
+  tertiary: create-m3-palette($tertiary-color),
+  // (
+  //   0: #000000,
+  //   10: #2f0543,
+  //   20: #461e59,
+  //   25: #522a65,
+  //   30: #5f3672,
+  //   35: #6b427e,
+  //   40: #784d8b,
+  //   50: #9366a6,
+  //   60: #ae7fc1,
+  //   70: #ca99dd,
+  //   80: #e7b4fa,
+  //   90: #f7d8ff,
+  //   95: #fdebff,
+  //   98: #fff7fc,
+  //   99: #fffbff,
+  //   100: #ffffff,
+  // ),
+  neutral: (
+      0: #000000,
+      10: #191c21,
+      20: #2e3036,
+      25: #393b42,
+      30: #44474d,
+      35: #505259,
+      40: #5c5e65,
+      50: #75777e,
+      60: #8e9098,
+      70: #a9abb2,
+      80: #c5c6ce,
+      90: #e1e2ea,
+      95: #eff0f8,
+      98: #f9f9ff,
+      99: #fdfbff,
+      100: #ffffff,
+      4: #0b0e14,
+      6: #111319,
+      12: #1d2025,
+      17: #272a30,
+      22: #32353b,
+      24: #37393f,
+      87: #d8dae2,
+      92: #e7e8f0,
+      94: #ecedf5,
+      96: #f2f3fb,
+    ),
+  neutral-variant: (
+    0: #000000,
+    10: #161c25,
+    20: #2b313b,
+    25: #363c46,
+    30: #424752,
+    35: #4d525e,
+    40: #595e6a,
+    50: #727783,
+    60: #8c919d,
+    70: #a6abb8,
+    80: #c2c6d4,
+    90: #dee2f0,
+    95: #ecf0ff,
+    98: #f9f9ff,
+    99: #fdfbff,
+    100: #ffffff,
+  ),
+  error: (
+    0: #000000,
+    10: #410002,
+    20: #690005,
+    25: #7e0007,
+    30: #93000a,
+    35: #a80710,
+    40: #ba1a1a,
+    50: #de3730,
+    60: #ff5449,
+    70: #ff897d,
+    80: #ffb4ab,
+    90: #ffdad6,
+    95: #ffedea,
+    98: #fff8f7,
+    99: #fffbff,
+    100: #ffffff,
+  ),
+);
+
+$_rest: (
+  secondary: map.get($_palettes, secondary),
+  neutral: map.get($_palettes, neutral),
+  neutral-variant: map.get($_palettes, neutral-variant),
+  error: map.get($_palettes, error),
+);
+
+$primary-palette: map.merge(map.get($_palettes, primary), $_rest);
+$tertiary-palette: map.merge(map.get($_palettes, tertiary), $_rest);
+
+$rki-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: $primary-palette,
+      tertiary: $tertiary-palette,
+    ),
+    typography: (
+      brand-family: Roboto,
+      plain-family: Roboto,
+    ),
+    density: (
+      scale: 0,
+    ),
+  )
+);
+
+@mixin theme() {
+  // Default to Light Theme
+  @include mat.all-component-themes($rki-theme);
+  @include mat.system-level-colors($rki-theme);
+  @include mat.typography-hierarchy($rki-theme);
+  @include mat.system-level-typography($rki-theme);
+
+  @include mat.button-overrides(
+    (
+      filled-container-shape: 4px,
+    )
+  );
+
+  @include mat.button-toggle-overrides(
+    (
+      shape: 4px,
+    )
+  );
+
+  @include mat.form-field-overrides(
+    (
+      filled-container-color: $input-background-color,
+      filled-active-indicator-color: $primary-color,
+      filled-active-indicator-height: 2px,
+      filled-focus-active-indicator-height: 3px,
+    )
+  );
+
+  @include mat.select-overrides(
+    (
+      panel-background-color: $input-background-color,
+    )
+  );
+
+  @include mat.datepicker-overrides(
+    (
+      calendar-container-background-color: $input-background-color,
+    )
+  );
+
+  @include mat.autocomplete-overrides(
+    (
+      background-color: $input-background-color,
+    )
+  );
+
+  .secondary {
+    @include mat.button-overrides(
+      (
+        filled-container-color: var(--mat-sys-secondary),
+        filled-label-text-color: var(--mat-sys-on-secondary),
+      )
+    );
+
+    @include mat.checkbox-overrides(
+      (
+        selected-checkmark-color: var(--mat-sys-on-secondary),
+        selected-focus-icon-color: var(--mat-sys-secondary),
+        selected-focus-state-layer-color: var(--mat-sys-secondary),
+        selected-hover-icon-color: var(--mat-sys-secondary),
+        selected-hover-state-layer-color: var(--mat-sys-secondary),
+        selected-icon-color: var(--mat-sys-secondary),
+        selected-pressed-icon-color: var(--mat-sys-secondary),
+      )
+    );
+  }
+
+  .tertiary {
+    @include mat.button-overrides(
+      (
+        filled-container-color: var(--mat-sys-tertiary),
+        filled-label-text-color: var(--mat-sys-on-tertiary),
+      )
+    );
+
+    @include mat.checkbox-overrides(
+      (
+        selected-checkmark-color: var(--mat-sys-on-tertiary),
+        selected-focus-icon-color: var(--mat-sys-tertiary),
+        selected-focus-state-layer-color: var(--mat-sys-tertiary),
+        selected-hover-icon-color: var(--mat-sys-tertiary),
+        selected-hover-state-layer-color: var(--mat-sys-tertiary),
+        selected-icon-color: var(--mat-sys-tertiary),
+        selected-pressed-icon-color: var(--mat-sys-tertiary),
+      )
+    );
+  }
+
+  .page-title {
+    font: var(--mat-sys-display-large);
+    letter-spacing: var(--mat-sys-display-large-tracking);
+    color: var(--mat-sys-primary);
+    font-weight: bolder !important;
+    word-wrap: break-word;
+  }
+}

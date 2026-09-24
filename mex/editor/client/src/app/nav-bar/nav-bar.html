@@ -1,20 +1,25 @@
 <mat-toolbar class="nav-bar" *transloco="let t">
+  <button matButton="elevated" class="mobile-menu-trigger-button">
+    <mat-icon>menu</mat-icon>
+  </button>
   <a routerLink="" class="brand" title="MEx - Metadata Exchange">
     <img src="mex-logo.svg" alt="Logo MEx - Metadata Exchange" />
   </a>
   <div class="nav-bar-links">
     <a class="link" routerLink="/create/resource" routerLinkActive="active">
-      {{ t("Resource") }}
+      {{ t("navbar.create-link.text", { entity_type: "Resource" }) }}
       <div class="active-indicator"></div>
     </a>
     <a class="link" routerLink="/create/activity" routerLinkActive="active">
-      {{ t("Activity") }}
+      {{ t("navbar.create-link.text", { entity_type: "Activity" }) }}
       <div class="active-indicator"></div>
     </a>
   </div>
-  <span style="flex: 1 1 auto"></span>
   <div class="nav-bar-controls">
     <mex-language-selector></mex-language-selector>
-    <mex-theme-toggle></mex-theme-toggle>
+    <mex-user-logout></mex-user-logout>
   </div>
+  <button matButton="elevated" class="mobile-menu-trigger-button">
+    <mat-icon>person</mat-icon>
+  </button>
 </mat-toolbar>

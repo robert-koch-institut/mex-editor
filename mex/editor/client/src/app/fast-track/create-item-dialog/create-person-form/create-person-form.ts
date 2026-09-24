@@ -1,14 +1,15 @@
 import { Component, effect, input, linkedSignal, model } from "@angular/core";
-import { form, FormField, FormRoot, required } from "@angular/forms/signals";
+import { form, FormField, FormRoot, validateStandardSchema } from "@angular/forms/signals";
 import { MatInput } from "@angular/material/input";
 import { MatFormField } from "@angular/material/select";
 
-import type { CreatePerson } from "../../../shared/models/create-item";
+import { FieldCategoryPipe } from "../../../shared/field-category-pipe";
+import { type CreatePerson, CreatePersonSchema } from "../../../shared/models/create-item";
 import { Fieldset } from "../../fieldset/fieldset";
 
 @Component({
   selector: "mex-create-person-form",
-  imports: [Fieldset, FormField, FormRoot, MatFormField, MatInput],
+  imports: [FieldCategoryPipe, Fieldset, FormField, FormRoot, MatFormField, MatInput],
   templateUrl: "./create-person-form.html",
   styleUrl: "./create-person-form.scss",
 })
@@ -23,10 +24,9 @@ export class CreatePersonForm {
   protected readonly formModel = linkedSignal<CreatePerson>(
     () => this.data() ?? this.createEmptyCreatePerson(this.inputText() ?? ""),
   );
-
+  protected readonly personSchema = CreatePersonSchema;
   protected readonly personForm = form(this.formModel, (schema) => {
-    required(schema.givenName);
-    required(schema.familyName);
+    validateStandardSchema(schema, CreatePersonSchema);
   });
 
   constructor() {

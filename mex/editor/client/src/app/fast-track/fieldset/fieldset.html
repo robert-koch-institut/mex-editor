@@ -1,9 +1,10 @@
 @let state = formState();
 <div class="label">
+  @let label = labelKey() | transloco: labelParam() ?? {};
   @if (showCategoryLabel()) {
-    {{ labelKey() | transloco: labelParam() ?? {} }} - {{ categoryKey() | transloco }}
+    {{ label }} - {{ categoryKey() | transloco }}
   } @else {
-    {{ labelKey() | transloco }}
+    {{ label }}
   }
 </div>
 @let descKey = descriptionKey();
@@ -13,12 +14,23 @@
 
 <ng-content></ng-content>
 
-@if (state && (showErrorWithoutTouch() || state.touched())) {
-  @let errors = state.errors();
+@if (state && state.invalid() && (showErrorWithoutTouch() || state.touched())) {
+  @let errors = state.errorSummary();
   @if (errors && errors.length > 0) {
     <div class="error-container">
-      @for (err of errors; track err.message) {
-        <div class="error">{{ err.kind }} | {{ err.message }}</div>
+      @for (err of errors; track $index) {
+        @let errorLabel = err | fieldErrorLabel: state : label;
+        <div class="error">
+          {{
+            err.message
+              | transloco
+                : {
+                    field: errorLabel,
+                    ...$any(err)?.issue,
+                    ...$any(err).issue?.params,
+                  }
+          }}
+        </div>
       }
     </div>
   }

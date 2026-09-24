@@ -46,7 +46,6 @@ describe("ToLookupPipe", () => {
       identifier: "concept-1",
       prefLabel: { de: "Bevölkerung", en: "Population" },
       altLabel: [],
-      inScheme: "scheme-1",
     };
     expect(pipe.transform(concept, "de").label).toBe("Bevölkerung");
     expect(pipe.transform(concept, "en").label).toBe("Population");

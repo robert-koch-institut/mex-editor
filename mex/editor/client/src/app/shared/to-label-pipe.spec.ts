@@ -18,7 +18,6 @@ describe("ToLabelPipe", () => {
         identifier: "concept-1",
         prefLabel: { de: "Bevölkerung", en: "Population" },
         altLabel: [],
-        inScheme: "scheme-1",
       };
       expect(pipe.transform(concept, "de")).toBe("Bevölkerung");
       expect(pipe.transform(concept, "en")).toBe("Population");
@@ -29,7 +28,6 @@ describe("ToLabelPipe", () => {
         identifier: "concept-1",
         prefLabel: { de: "Bevölkerung" },
         altLabel: [{ de: "Bevölkerungszahl", en: "Population count" }],
-        inScheme: "scheme-1",
       };
       expect(pipe.transform(concept, "en")).toBe("Population count");
     });
@@ -39,7 +37,6 @@ describe("ToLabelPipe", () => {
         identifier: "concept-1",
         prefLabel: {},
         altLabel: [],
-        inScheme: "scheme-1",
       };
       expect(pipe.transform(concept, "en")).toBe("concept-1");
     });

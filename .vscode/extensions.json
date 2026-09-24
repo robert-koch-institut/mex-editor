@@ -1,9 +1,9 @@
 {
-  "recommendations": [
-    "dbaeumer.vscode-eslint",
-    "editorconfig.editorconfig",
-    "firefox-devtools.vscode-firefox-debug",
-    "esbenp.prettier-vscode",
-    "rvest.vs-code-prettier-eslint"
-  ]
+    "recommendations": [
+        "dbaeumer.vscode-eslint",
+        "editorconfig.editorconfig",
+        "firefox-devtools.vscode-firefox-debug",
+        "esbenp.prettier-vscode",
+        "rvest.vs-code-prettier-eslint"
+    ]
 }

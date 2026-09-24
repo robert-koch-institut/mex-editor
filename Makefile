@@ -1,6 +1,9 @@
 .PHONY: all setup hooks install lint unit test wheel image run start docs
 all: install lint test
 
+SHELL := /bin/bash
+.SHELLFLAGS := -ec
+
 LATEST = $(shell git describe --tags $(shell git rev-list --tags --max-count=1))
 PWD = $(shell pwd)
 
@@ -34,7 +37,7 @@ unit:
 test:
 	# run the unit and integration test suites
 	@ echo running all tests; \
-	uv run pytest --numprocesses=auto --dist=worksteal && \
+	uv run pytest --numprocesses=auto --dist=worksteal; \
 	uv run test-frontend; \
 
 wheel:
@@ -53,7 +56,6 @@ run: image
 	# run the service as a docker container
 	@ echo running docker container mex-editor:${LATEST}; \
 	docker run \
-		--env MEX_EDITOR_HOST=0.0.0.0 \
 		--publish 8000:8000 \
 		rki/mex-editor:${LATEST}; \
 
@@ -65,6 +67,6 @@ start:
 docs:
 	# use sphinx to auto-generate html docs from code
 	@ echo generating docs; \
-	uv run generate-frontend-docs --output docs/source/frontend_client_docs && \
-	uv run sphinx-apidoc -f -o docs/source mex && \
+	uv run generate-frontend-docs --output docs/source/frontend_client_docs; \
+	uv run sphinx-apidoc -f -o docs/source mex; \
 	uv run sphinx-build -aE -b dirhtml docs docs/dist; \

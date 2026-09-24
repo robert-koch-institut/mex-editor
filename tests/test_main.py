@@ -5,7 +5,7 @@ from starlette.routing import Mount
 
 from mex.editor.main import create_fastapi
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from fastapi.testclient import TestClient
 
 

@@ -9,7 +9,7 @@ from mex.common.logging import logger
 from mex.editor.frontend import exec_npm
 from mex.editor.main import create_fastapi
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from fastapi import FastAPI
 
 

@@ -1,5 +1,5 @@
 /**
- * Model for mex.common BilingualText
+ * Model for mex.editor BilingualText
  */
 export interface BilingualText {
   de?: string | null;
@@ -7,12 +7,10 @@ export interface BilingualText {
 }
 
 /**
- * Model for mex.common Concept.
+ * Model for mex.editor Concept.
  */
 export interface Concept {
   identifier: string;
-  inScheme: string;
   prefLabel: BilingualText;
   altLabel: BilingualText[];
-  definition?: BilingualText | null;
 }

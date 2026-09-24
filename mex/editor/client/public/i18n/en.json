@@ -1,7 +1,4 @@
 {
-  "navbar.create-link.text": "Create {{{{entity_type}}}}",
-  "user-logout.logout-button.text": "Logout",
-  "footer.greetings": "Created with ❤️ by MEx",
   "categories": {
     "optional": "optional",
     "recommended": "recommended",
@@ -24,7 +21,9 @@
       "headline": "Create {{Resource}}"
     }
   },
+  "footer.greetings": "Created with ❤️ by MEx",
   "input.placeholder": "Please fillout",
+  "navbar.create-link.text": "Create {{{{entity_type}}}}",
   "reference-select": {
     "placeholder.empty": "Type to filter, you can use \"*\" as a placeholder",
     "placeholder.validTypes": "Search for {value}",
@@ -36,5 +35,6 @@
     }
   },
   "select.none-option": "None",
-  "select.placeholder": "Please select"
+  "select.placeholder": "Please select",
+  "user-logout.logout-button.text": "Logout"
 }

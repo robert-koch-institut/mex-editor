@@ -223,11 +223,50 @@ $rki-theme: mat.define-theme(
     )
   );
 
+  @include mat.autocomplete-overrides(
+    (
+      background-color: $input-background-color,
+    )
+  );
+
   .secondary {
     @include mat.button-overrides(
       (
         filled-container-color: var(--mat-sys-secondary),
         filled-label-text-color: var(--mat-sys-on-secondary),
+      )
+    );
+
+    @include mat.checkbox-overrides(
+      (
+        selected-checkmark-color: var(--mat-sys-on-secondary),
+        selected-focus-icon-color: var(--mat-sys-secondary),
+        selected-focus-state-layer-color: var(--mat-sys-secondary),
+        selected-hover-icon-color: var(--mat-sys-secondary),
+        selected-hover-state-layer-color: var(--mat-sys-secondary),
+        selected-icon-color: var(--mat-sys-secondary),
+        selected-pressed-icon-color: var(--mat-sys-secondary),
+      )
+    );
+  }
+
+  .tertiary {
+    @include mat.button-overrides(
+      (
+        filled-container-color: var(--mat-sys-tertiary),
+        filled-label-text-color: var(--mat-sys-on-tertiary),
+      )
+    );
+
+    @include mat.checkbox-overrides(
+      (
+        selected-checkmark-color: var(--mat-sys-on-tertiary),
+        selected-focus-icon-color: var(--mat-sys-tertiary),
+        selected-focus-state-layer-color: var(--mat-sys-tertiary),
+        selected-hover-icon-color: var(--mat-sys-tertiary),
+        selected-hover-state-layer-color: var(--mat-sys-tertiary),
+        selected-icon-color: var(--mat-sys-tertiary),
+        selected-pressed-icon-color: var(--mat-sys-tertiary),
       )
     );
   }

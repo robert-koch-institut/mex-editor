@@ -1,0 +1,59 @@
+<h2>Figma Test Page</h2>
+<div>
+  <button matButton="filled">Test Button</button>
+  <button matButton="filled" class="secondary">Test Button</button>
+  <button matButton="filled" class="tertiary">Test Button</button>
+</div>
+
+<button matMiniFab>
+  <mat-icon>add</mat-icon>
+</button>
+
+<div>
+  <mat-checkbox checked>Option 1</mat-checkbox>
+  <mat-checkbox>Option 2</mat-checkbox>
+
+  <mat-checkbox checked class="secondary">Option 3</mat-checkbox>
+  <mat-checkbox class="secondary">Option 4</mat-checkbox>
+
+  <mat-checkbox checked class="tertiary">Option 5</mat-checkbox>
+  <mat-checkbox class="tertiary">Option 6</mat-checkbox>
+</div>
+
+<div>
+  <mat-slide-toggle>Slide me!</mat-slide-toggle>
+  <mat-slide-toggle checked>Slide me!</mat-slide-toggle>
+</div>
+
+<mat-button-toggle-group>
+  <mat-button-toggle value="left">Left</mat-button-toggle>
+  <mat-button-toggle value="center" checked>Center</mat-button-toggle>
+  <mat-button-toggle value="right">Right</mat-button-toggle>
+</mat-button-toggle-group>
+
+<mat-form-field>
+  <mat-label>Input</mat-label>
+  <input matInput />
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label>Textarea</mat-label>
+  <textarea matInput></textarea>
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label>Select</mat-label>
+  <mat-select>
+    <mat-option value="1">Option 1</mat-option>
+    <mat-option value="2">Option 2</mat-option>
+    <mat-option value="3">Option 3</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label>Datepicker</mat-label>
+  <input matInput [matDatepicker]="picker" />
+  <mat-hint>I'm a hint</mat-hint>
+  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
+</mat-form-field>

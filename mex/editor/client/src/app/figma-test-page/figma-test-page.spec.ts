@@ -1,18 +1,18 @@
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
 
-import { UserLogout } from "./user-logout";
+import { FigmaTestPage } from "./figma-test-page";
 
-describe("UserLogout", () => {
-  let component: UserLogout;
-  let fixture: ComponentFixture<UserLogout>;
+describe("FigmaTestPage", () => {
+  let component: FigmaTestPage;
+  let fixture: ComponentFixture<FigmaTestPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserLogout],
+      imports: [FigmaTestPage],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(UserLogout);
+    fixture = TestBed.createComponent(FigmaTestPage);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

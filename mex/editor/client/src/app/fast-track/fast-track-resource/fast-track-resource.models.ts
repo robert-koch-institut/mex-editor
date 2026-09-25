@@ -58,8 +58,8 @@ export const FastTrackResourceModelSchema = z.object({
   }),
   resourceCreationMethod: ResourceCreationMethodSchema.array().nonempty(),
   accrualPeriodicity: FrequencySchema.nonoptional(),
-  provenance: TextSchema.shape.value.nonempty(),
-  rights: TextSchema.shape.value.nonempty(),
+  provenance: TextSchema.shape.value,
+  rights: TextSchema.shape.value,
 
   // recommended fields
   creator: CreateOrPreviewPersonSchema.array(),

@@ -295,7 +295,7 @@ export const AdditiveResourceSchema = z.object({
     )
     .optional(),
   stateOfDataProcessing: z.array(DataProcessingStateSchema).optional(),
-  $type: z.literal("AdditiveResource"),
+  $type: z.literal("AdditiveResource").default("AdditiveResource"),
   supersededBy: z.string().regex(new RegExp(identifierPattern)).nullish(),
 });
 

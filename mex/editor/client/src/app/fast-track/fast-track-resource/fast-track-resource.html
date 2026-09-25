@@ -1,7 +1,11 @@
 <ng-container *transloco="let t">
   <h1>{{ t("fasttrack.resource.headline") }}</h1>
-
-  <form [formRoot]="resourceForm" (submit)="onSubmit()" class="two-column-layout">
+  <button matButton (click)="fillTestData()">Fill Data</button>
+  <form
+    [formRoot]="resourceForm"
+    class="two-column-layout"
+    /* (keydown.enter)="$event.preventDefault()" */
+  >
     <mex-fieldset
       [formField]="resourceForm.title"
       labelKey="title"
@@ -13,6 +17,7 @@
           matInput
           [formField]="resourceForm.title"
           [attr.placeholder]="'fasttrack.resource.fields.title.placeholder' | transloco"
+          (keydown.enter)="$event.preventDefault()"
         />
       </mat-form-field>
     </mex-fieldset>
@@ -43,6 +48,7 @@
       <mex-reference-select
         [formField]="resourceForm.contact"
         [isCreationEnabled]="true"
+        (keydown.enter)="$event.preventDefault()"
       ></mex-reference-select>
     </mex-fieldset>
 
@@ -57,6 +63,7 @@
         [formField]="resourceForm.creator"
         [validEntityTypes]="['Person']"
         [isCreationEnabled]="true"
+        (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
     </mex-fieldset>
@@ -72,6 +79,7 @@
         [formField]="resourceForm.contributor"
         [validEntityTypes]="['Person']"
         [isCreationEnabled]="true"
+        (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
     </mex-fieldset>
@@ -86,6 +94,7 @@
       <mex-reference-select
         [formField]="resourceForm.unitInCharge"
         [validEntityTypes]="['OrganizationalUnit']"
+        (keydown.enter)="$event.preventDefault()"
       ></mex-reference-select>
     </mex-fieldset>
 
@@ -99,6 +108,7 @@
       <mex-reference-select
         [formField]="resourceForm.contributingUnit"
         [validEntityTypes]="['OrganizationalUnit']"
+        (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
     </mex-fieldset>
@@ -220,6 +230,7 @@
           <mex-datepicker
             [formField]="resourceForm.start"
             [maxDate]="resourceForm.end().value()"
+            (keydown.enter)="$event.preventDefault()"
           ></mex-datepicker>
         </mex-fieldset>
 
@@ -232,6 +243,7 @@
           <mex-datepicker
             [formField]="resourceForm.end"
             [minDate]="resourceForm.start().value()"
+            (keydown.enter)="$event.preventDefault()"
           ></mex-datepicker>
         </mex-fieldset>
       </div>
@@ -352,3 +364,11 @@
     <button matButton="filled" type="submit">Submit</button>
   </form>
 </ng-container>
+
+<ng-template #errorToast let-data let-snackBarRef="snackBarRef">
+  <div>ERROR {{ data.test }}</div>
+</ng-template>
+
+<ng-template #successToast let-data let-snackBarRef="snackBarRef">
+  <div>Successfully saved! {{ data.test }}</div>
+</ng-template>

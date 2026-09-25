@@ -1,13 +1,13 @@
 import { TestBed } from "@angular/core/testing";
 
-import { ResourceSubmission } from "./resource-submission";
+import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
 
 describe("ResourceSubmission", () => {
-  let service: ResourceSubmission;
+  let service: FastTrackResourceSubmission;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ResourceSubmission);
+    service = TestBed.inject(FastTrackResourceSubmission);
   });
 
   it("should be created", () => {

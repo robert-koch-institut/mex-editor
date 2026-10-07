@@ -3,12 +3,14 @@ import {
   Component,
   computed,
   debounced,
+  ElementRef,
   inject,
   input,
   linkedSignal,
   model,
   output,
   signal,
+  viewChild,
 } from "@angular/core";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -83,6 +85,10 @@ export class ReferenceSelect<
   private readonly labelPipe = new ToLabelPipe();
   private readonly dialog = inject(MatDialog);
 
+  inputControl = viewChild.required("input", {
+    read: ElementRef<HTMLInputElement>,
+  });
+
   readonly validEntityTypes = input<ReferenceSelectTypes[]>([
     "Person",
     "ContactPoint",
@@ -92,6 +98,8 @@ export class ReferenceSelect<
   isCreationEnabled = input(false);
   readonly touch = output<void>();
 
+  disabled = input<boolean>(false);
+  readonly = input<boolean>(false);
   protected readonly isInputFocused = signal(false);
 
   protected readonly searchQuery = signal("");
@@ -137,6 +145,10 @@ export class ReferenceSelect<
       map((x) => x.join(", ")),
     ),
   );
+
+  focus(): void {
+    this.inputControl().nativeElement.focus();
+  }
 
   private uniqueById(items: T[]): T[] {
     return [

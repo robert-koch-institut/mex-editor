@@ -17,8 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   which is all the editor client uses
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.1
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.0
-- set exact version for neo4j:2026.07.1
+- bump neo4j to 2026.09.0 and mex-backend to 4.4.0
 - update mex-common to 3.4
+- update dependencies
 
 ### Deprecated
 

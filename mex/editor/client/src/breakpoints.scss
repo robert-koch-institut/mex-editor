@@ -52,8 +52,3 @@ $breakpoint-xlarge-min: 1920px;
   }
 }
 
-@mixin from-medium {
-  @media (min-width: $breakpoint-medium-min) {
-    @content;
-  }
-}

@@ -10,7 +10,7 @@ import { TranslocoDirective } from "@jsverse/transloco";
   styleUrl: "./user-logout.scss",
 })
 /**
- * Component to allow to user to logout.
+ * Component to allow users to log out.
  */
 export class UserLogout {
   loggedInUser = { name: "rkid1\\NachnameV" };

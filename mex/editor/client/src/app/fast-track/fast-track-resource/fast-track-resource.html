@@ -1,11 +1,7 @@
 <ng-container *transloco="let t">
   <h1>{{ t("fasttrack.resource.headline") }}</h1>
   <button matButton (click)="fillTestData()">Fill Data</button>
-  <form
-    [formRoot]="resourceForm"
-    class="two-column-layout"
-    /* (keydown.enter)="$event.preventDefault()" */
-  >
+  <form [formRoot]="resourceForm" class="two-column-layout">
     <mex-fieldset
       [formField]="resourceForm.title"
       labelKey="title"
@@ -361,7 +357,21 @@
       </mat-form-field>
     </mex-fieldset>
 
-    <button matButton="filled" type="submit">Submit</button>
+    @let formState = resourceForm();
+    <button matButton="filled" type="submit" [disabled]="formState.submitting()">
+      @if (formState.submitting()) {
+        <div class="button-saving">
+          <mat-progress-spinner
+            mode="indeterminate"
+            class="button-spinner"
+            diameter="20"
+          ></mat-progress-spinner>
+          {{ t("fasttrack.resource.save-button.saving") }}
+        </div>
+      } @else {
+        {{ t("fasttrack.resource.save-button.label") }}
+      }
+    </button>
   </form>
 </ng-container>
 
@@ -370,5 +380,8 @@
 </ng-template>
 
 <ng-template #successToast let-data let-snackBarRef="snackBarRef">
-  <div>Successfully saved! {{ data.test }}</div>
+  <span matSnackBarLabel> Pizza party!!! </span>
+  <span matSnackBarActions>
+    <button matButton matSnackBarAction (click)="snackBarRef.dismissWithAction()">🍕</button>
+  </span>
 </ng-template>

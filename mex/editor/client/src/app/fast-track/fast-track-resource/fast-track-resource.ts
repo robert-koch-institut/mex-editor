@@ -13,9 +13,10 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { MatOption, MatPrefix, MatSelect } from "@angular/material/select";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 import { DateTime } from "luxon";
@@ -49,8 +50,10 @@ import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
     MatInput,
     MatOption,
     MatPrefix,
+    MatProgressSpinner,
     MatSelect,
     MatSlideToggle,
+    MatSnackBarModule,
     ReferenceSelect,
     TranslocoDirective,
     TranslocoPipe,
@@ -109,9 +112,14 @@ export class FastTrackResource {
           const submitResult = await this.submission.submit(validModel);
           if ("$type" in submitResult) {
             this.router.navigate(["edit", submitResult.stableTargetId]);
-            this.snackBar.openFromTemplate(this.successToast(), { data: { test: "Hallo!" } });
+            this.snackBar.openFromTemplate(this.successToast(), {
+              data: { test: "Hallo!" },
+              duration: 5000,
+            });
           } else {
-            this.snackBar.openFromTemplate(this.errorToast(), { data: { test: "Bye!" } });
+            this.snackBar.openFromTemplate(this.errorToast(), {
+              data: { test: submitResult.error },
+            });
           }
         },
         onInvalid: (field) => {
@@ -128,9 +136,7 @@ export class FastTrackResource {
       description: "Beschreibung",
       contact: [{ $type: "CreatePerson", familyName: "Person", givenName: "Neue" }],
       contributingUnit: [],
-      unitInCharge: [
-        { $type: "PreviewOrganizationalUnit", identifier: "06ZfMbHPpIZKIkkg7oz5G" } as any,
-      ],
+      unitInCharge: [{ $type: "PreviewOrganizationalUnit", identifier: "06ZfMbHPpIZKIkkg7oz5G" }],
       keywords: {
         de: ["deutsches keyword"],
         en: ["englisch keyword"],

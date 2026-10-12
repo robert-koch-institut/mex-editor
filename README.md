@@ -55,15 +55,23 @@ and reusable.
 
 ### Client
 
-The client is build with angular and lifes in `/mex/editor/client`. The directory is an isolated Node environment managed by `nodeenv`. To install node packages u can use `uv run exec-npm install <packagename>`. To exec angular specfic commands u can use `uv run exec-npx ng add <schematic>`.
+The client is build with angular and lives in `/mex/editor/client`. The directory is an
+isolated Node environment managed by `nodeenv`. To install node packages u can use
+`uv run exec-npm install <packagename>`. To exec angular specific commands u can use
+`uv run exec-npx ng add <schematic>`.
 
 Images have two locations depending on the usage:
-- css: store images in `client/src/assets` and use relative code path to images `url("../assets/image.png")` to ensure basehref sass compiling is working correctly
-- html: store images in `client/public` and use like `<img src="/image.png" />` where public dir acts as relative root.
+
+- css: store images in `client/src/assets` and use relative code path to images
+  `url("../assets/image.png")` to ensure basehref sass compiling is working correctly
+- html: store images in `client/public` and use like `<img src="/image.png" />`
+  where public dir acts as relative root.
 
 ### API
 
-API is build with Fastapi and lifes in `mex/editor/api`and serves data specific for the editor under `/api/v0`. It includes a proxy for the `mex.backend` availabe under `/api/v0/backend`. The build angular client will be served under `/`.
+API is build with Fastapi and lives in `mex/editor/api`and serves data specific for the
+editor under `/api/v0`. It includes a proxy for the `mex.backend` available under
+`/api/v0/backend`. The build angular client will be served under `/`.
 
 ## License
 

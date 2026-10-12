@@ -30,6 +30,6 @@ import { MatSlideToggle } from "@angular/material/slide-toggle";
   styleUrl: "./figma-test-page.scss",
 })
 /**
- * Page to visually check if all material components look as rki as possbile.
+ * Page to visually check if all material components look as rki as possibile.
  */
 export class FigmaTestPage {}

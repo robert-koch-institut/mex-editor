@@ -9,14 +9,10 @@
     [readonly]="readonly()"
     [formField]="dateForm"
     [errorStateMatcher]="customErrorMatcher"
+    (input)="inputText.set(dateInput.value)"
     (blur)="touch.emit()"
     [placeholder]="dateFormats.parse.dateInput"
   />
   <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
   <mat-datepicker #picker />
-  @if (customErrorMatcher.hasParseError()) {
-    <mat-hint class="error-hint">{{
-      "datepicker.validation.parse" | transloco: { format: dateFormats.parse.dateInput }
-    }}</mat-hint>
-  }
 </mat-form-field>

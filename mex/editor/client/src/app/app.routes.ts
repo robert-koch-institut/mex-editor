@@ -16,7 +16,7 @@ const appRoutes: Routes = [
 ];
 
 /**
- * Dev routes (only availble in dev mode) for the app.
+ * Dev routes (only available in dev mode) for the app.
  */
 const devRoutes: Routes = [
   {

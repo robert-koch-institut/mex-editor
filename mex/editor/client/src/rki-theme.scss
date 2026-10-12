@@ -18,7 +18,6 @@ $input-background-color: #ebf2f9;
     30: color.scale($base-color, $lightness: -25%),
     35: color.scale($base-color, $lightness: -12.5%),
     40: $base-color,
-    // Ihre exakte Wunschfarbe wird als dominanter M3-Farbton gesetzt
     50: color.scale($base-color, $lightness: 20%),
     60: color.scale($base-color, $lightness: 40%),
     70: color.scale($base-color, $lightness: 60%),

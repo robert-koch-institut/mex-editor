@@ -1,7 +1,8 @@
 @let state = formState();
 <div class="label">
   @if (showCategoryLabel()) {
-    {{ labelKey() | transloco: labelParam() ?? {} }} - {{ categoryKey() | transloco }}
+    {{ labelKey() | transloco: labelParam() ?? {} }}
+    <span class="category">- {{ categoryKey() | transloco }}</span>
   } @else {
     {{ labelKey() | transloco }}
   }

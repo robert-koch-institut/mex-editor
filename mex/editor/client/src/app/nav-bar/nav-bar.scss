@@ -1,42 +1,74 @@
+@use "@angular/material" as mat;
+@use "./../../breakpoints" as bp;
+
+$nav-bar-max-breakpoint: 1023.98px;
+$nav-bar-min-breakpoint: 1024px;
+
+@mixin large-navbar {
+  @media (min-width: $nav-bar-min-breakpoint) {
+    @content;
+  }
+}
+
+@mixin small-navbar {
+  @media (max-width: $nav-bar-max-breakpoint) {
+    @content;
+  }
+}
+
 .nav-bar {
-  background-color: #005eb7;
+  @include mat.toolbar-overrides(
+    (
+      standard-height: 96px,
+      container-background-color: var(--mat-sys-primary),
+      container-text-color: var(--mat-sys-on-primary),
+      title-text-line-height: var(--mat-sys-title-medium-line-height),
+      title-text-size: var(--mat-sys-title-medium-size),
+      title-text-tracking: var(--mat-sys-title-medium-tracking),
+      title-text-weight: var(--mat-sys-title-medium-weight),
+    )
+  );
 
-  // The navbar background is always blue, so keep the foreground light in every
-  // theme (otherwise light mode renders dark text/icons on the blue background).
-  color: #fff;
-  --mat-toolbar-container-text-color: #fff;
-  --mat-icon-button-icon-color: #fff;
-  --mat-select-enabled-trigger-text-color: #fff;
-  --mat-select-placeholder-text-color: #fff;
-  --mat-select-enabled-arrow-color: #fff;
-  --mat-select-focused-arrow-color: #fff;
+  gap: 16px;
 
-  .brand > img {
-    vertical-align: middle;
+  @include small-navbar() {
+    justify-content: space-between;
+  }
+
+  .brand {
+    > img {
+      height: 40px;
+      vertical-align: middle;
+
+      @include bp.xsmall() {
+        height: 32px;
+      }
+    }
   }
 
   .nav-bar-links {
     display: flex;
-    margin-left: 24px;
-    font-weight: lighter;
-    gap: 12px;
+    margin-left: 16px;
+    gap: 24px;
+
+    @include small-navbar() {
+      display: none;
+    }
 
     .link {
       position: relative;
 
       .active-indicator {
         display: none;
-        width: 100%;
+        width: calc(100% + 4px);
         height: 1px;
         position: absolute;
         background-color: currentColor;
-        bottom: -4px;
-        left: 0;
+        bottom: 0px;
+        left: -2px;
       }
 
       &.active {
-        font-weight: normal;
-
         .active-indicator {
           display: block;
         }
@@ -46,7 +78,35 @@
 
   .nav-bar-controls {
     display: flex;
-    gap: 12px;
+    gap: 24px;
     align-items: center;
+    margin-left: auto;
+
+    @include small-navbar() {
+      display: none;
+    }
+  }
+
+  .mobile-menu-trigger-button {
+    border-radius: var(--mat-icon-button-container-shape, var(--mat-sys-corner-full, 50%));
+    flex-shrink: 0;
+    text-align: center;
+    width: var(--mat-icon-button-state-layer-size, 40px);
+    height: var(--mat-icon-button-state-layer-size, 40px);
+    min-width: var(--mat-icon-button-state-layer-size, 40px);
+    padding: calc(
+      calc(var(--mat-icon-button-state-layer-size, 40px) - var(--mat-icon-button-icon-size, 24px)) /
+        2
+    );
+    font-size: var(--mat-icon-button-icon-size, 24px);
+    color: var(--mat-icon-button-icon-color, var(--mat-sys-on-surface-variant));
+
+    @include large-navbar() {
+      display: none;
+    }
+
+    mat-icon {
+      margin: 0;
+    }
   }
 }

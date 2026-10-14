@@ -1,8 +1,4 @@
 {
-  "app": {
-    "footer.greetings": "Erstellt mit ❤️ von MEx",
-    "header.navigation.themeToggle": "Umschalten helles/dunkles Erscheinungsbild"
-  },
   "categories": {
     "optional": "Optional",
     "recommended": "Empfohlen",
@@ -25,7 +21,9 @@
       "headline": "{{Resource}} erstellen"
     }
   },
+  "footer.greetings": "Erstellt mit ❤️ von MEx",
   "input.placeholder": "Bitte ausfüllen",
+  "navbar.create-link.text": "{{{{entity_type}}}} erstellen",
   "reference-select": {
     "placeholder.empty": "Tippen um zu Filtern, Sie können \"*\" als Platzhalter benutzen",
     "placeholder.validTypes": "Suche nach {value}",
@@ -37,5 +35,6 @@
     }
   },
   "select.none-option": "Keine",
-  "select.placeholder": "Bitte auswählen"
+  "select.placeholder": "Bitte auswählen",
+  "user-logout.logout-button.text": "Abmelden"
 }

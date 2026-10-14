@@ -12,9 +12,9 @@
 
 .label {
   font-weight: bold;
-}
-.description {
-  font-style: italic;
+  .category {
+    font-weight: normal;
+  }
 }
 
 .error-container {

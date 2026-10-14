@@ -1,0 +1,5 @@
+<div>{{ loggedInUser.name }}</div>
+<button matButton="filled" (click)="logout()" class="secondary" *transloco="let t">
+  <mat-icon>exit_to_app</mat-icon>
+  {{ t("user-logout.logout-button.text") }}
+</button>

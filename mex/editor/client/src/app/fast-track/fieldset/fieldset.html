@@ -1,10 +1,9 @@
 @let state = formState();
 <div class="label">
   @let label = labelKey() | transloco: labelParam() ?? {};
+  {{ label }}
   @if (showCategoryLabel()) {
-    {{ label }} - {{ categoryKey() | transloco }}
-  } @else {
-    {{ label }}
+    <span class="category">- {{ categoryKey() | transloco }}</span>
   }
 </div>
 @let descKey = descriptionKey();

@@ -16,7 +16,6 @@ import { MatInput } from "@angular/material/input";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { MatOption, MatPrefix, MatSelect } from "@angular/material/select";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
-import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 import { DateTime } from "luxon";
@@ -24,6 +23,7 @@ import { DateTime } from "luxon";
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
 import type { Frequency } from "../../shared/models/generated/resource";
+import { ToastNotifier } from "../../shared/toast-notifier";
 import { Datepicker } from "../datepicker/datepicker";
 import { Fieldset } from "../fieldset/fieldset";
 import { ReferenceSelect } from "../reference-select/reference-select";
@@ -53,7 +53,6 @@ import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
     MatProgressSpinner,
     MatSelect,
     MatSlideToggle,
-    MatSnackBarModule,
     ReferenceSelect,
     TranslocoDirective,
     TranslocoPipe,
@@ -67,7 +66,7 @@ import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
 export class FastTrackResource {
   private readonly translocoService = inject(TranslocoService);
   private readonly router = inject(Router);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notifier = inject(ToastNotifier);
   protected readonly resourceSchema = FastTrackResourceModelSchema;
   protected readonly conceptOptions = inject(ConceptLookups);
   protected readonly submission = inject(FastTrackResourceSubmission);
@@ -110,16 +109,18 @@ export class FastTrackResource {
         action: async (field) => {
           const validModel = field().value();
           const submitResult = await this.submission.submit(validModel);
-          if ("$type" in submitResult) {
-            this.router.navigate(["edit", submitResult.stableTargetId]);
-            this.snackBar.openFromTemplate(this.successToast(), {
-              data: { test: "Hallo!" },
-              duration: 5000,
-            });
+          if (submitResult.success) {
+            this.router.navigate(["edit", submitResult.response.stableTargetId]);
+            this.notifier.success(
+              this.translocoService.translate("fasttrack.resource.toast.success.message"),
+              this.translocoService.translate("fasttrack.resource.toast.success.title"),
+            );
           } else {
-            this.snackBar.openFromTemplate(this.errorToast(), {
-              data: { test: submitResult.error },
-            });
+            this.notifier.submissionFailure(
+              this.translocoService.translate("fasttrack.resource.toast.submissionFailure.message"),
+              this.translocoService.translate("fasttrack.resource.toast.submissionFailure.title"),
+              submitResult,
+            );
           }
         },
         onInvalid: (field) => {
@@ -154,6 +155,12 @@ export class FastTrackResource {
       resourceTypeGeneral: [],
       theme: [],
     });
+    this.notifier.submissionFailure(
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
+      "TITEL TITEL TITEL",
+      { success: false, error: new Error("ERROR"), payload: {} },
+      1000000,
+    );
   }
 
   prefillRights(fill: boolean) {

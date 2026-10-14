@@ -27,6 +27,17 @@
       "save-button": {
         "label": "Save {{Resource}}",
         "saving": "Saving {{Resource}}..."
+      },
+      "toast": {
+        "submissionFailure": {
+          "message": "Unfortunately, the {{Resource}} could not be saved. An unexpected error occurred.\nYou can send an email to the MeX team to inform them about the issue.",
+          "sendMail": "Send email to MeX",
+          "title": "Error while saving"
+        },
+        "success": {
+          "message": "The {{Resource}} is successfully saved.",
+          "title": "{{Resource}} saved"
+        }
       }
     }
   },

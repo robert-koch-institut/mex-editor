@@ -362,6 +362,7 @@
       @if (formState.submitting()) {
         <div class="button-saving">
           <mat-progress-spinner
+            progressIndicator
             mode="indeterminate"
             class="button-spinner"
             diameter="20"
@@ -374,14 +375,3 @@
     </button>
   </form>
 </ng-container>
-
-<ng-template #errorToast let-data let-snackBarRef="snackBarRef">
-  <div>ERROR {{ data.test }}</div>
-</ng-template>
-
-<ng-template #successToast let-data let-snackBarRef="snackBarRef">
-  <span matSnackBarLabel> Pizza party!!! </span>
-  <span matSnackBarActions>
-    <button matButton matSnackBarAction (click)="snackBarRef.dismissWithAction()">🍕</button>
-  </span>
-</ng-template>

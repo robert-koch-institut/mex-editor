@@ -1,7 +1,16 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { TranslocoService } from "@jsverse/transloco";
-import { combineLatest, firstValueFrom, map, type Observable, of, switchMap, take } from "rxjs";
+import {
+  catchError,
+  combineLatest,
+  firstValueFrom,
+  map,
+  type Observable,
+  of,
+  switchMap,
+  take,
+} from "rxjs";
 
 import type { PreviewItem } from "../../shared/models";
 import type { CreateItem } from "../../shared/models/create-item";
@@ -15,11 +24,34 @@ import type {
   ResourceRuleSetResponse,
 } from "../../shared/models/generated/resource";
 import { type AdditiveResource } from "../../shared/models/generated/resource";
+import type {
+  SubmissionFailure,
+  SubmissionResult,
+  SubmissionSuccess,
+} from "../../shared/models/submission-result";
 import type { FastTrackResourceModel } from "./fast-track-resource.models";
 
 function combineIdsOrEmpty(ids: Observable<string>[]): Observable<string[]> {
   return ids.length > 0 ? combineLatest(ids) : of([]);
 }
+
+/**
+ * Result of a successfull FastTrackResource submission.
+ */
+export type FastTrackResourceSubmissionSuccess = SubmissionSuccess<ResourceRuleSetResponse>;
+
+/**
+ * Result of a failed  FastTrackResource submission.
+ */
+export type FastTrackResourceSubmissionFailure = SubmissionFailure<ResourceRuleSetRequest>;
+
+/**
+ * Result of the FastTrackResource submission.
+ */
+export type FastTrackResourceSubmissionResult = SubmissionResult<
+  ResourceRuleSetResponse,
+  ResourceRuleSetRequest
+>;
 
 @Injectable({ providedIn: "root" })
 /**
@@ -71,7 +103,7 @@ export class FastTrackResourceSubmission {
     return value in ["en", "de"];
   }
 
-  async submit(model: FastTrackResourceModel) {
+  async submit(model: FastTrackResourceModel): Promise<FastTrackResourceSubmissionResult> {
     let language: "de" | "en" = "de";
     const currentLanguage = this.transloco.getActiveLang();
     if (this.isValidLanguage(currentLanguage)) {
@@ -107,15 +139,19 @@ export class FastTrackResourceSubmission {
           additive,
         };
 
-        return this.http.post<ResourceRuleSetResponse>("api/v0/backend/rule-set", payload);
+        return this.http
+          .post<ResourceRuleSetResponse>("api/v0/backend/rule-set", payload)
+          .pipe(
+            catchError((err: Error) => of({ $type: "PostError" as const, error: err, payload })),
+          );
       }),
     );
 
-    try {
-      return await firstValueFrom(saveRequest);
-    } catch (err) {
-      return { kind: "serverError", message: "Failed to save rule set", error: err };
+    const response = await firstValueFrom(saveRequest);
+    if (response.$type == "ResourceRuleSetResponse") {
+      return { success: true, response };
     }
+    return { success: false, payload: response.payload, error: response.error };
   }
 
   private submitCreateItem(item: CreateItem): Observable<string> {

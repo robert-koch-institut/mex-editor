@@ -1,0 +1,39 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast-header {
+  display: flex;
+  align-items: center;
+}
+
+.toast-icon {
+  margin-right: 0.5em;
+}
+
+.toast-title {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.toast-close {
+  margin-left: auto; // ganz rechts
+  color: inherit;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+}
+
+.toast-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

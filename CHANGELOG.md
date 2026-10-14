@@ -8,9 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- code generator to create zod schemas based on pydantic models
+- datepicker component to unify usage and handle parse errors
+- field-category pipe to determine field-category based on zod schema definition
 - rki theme from figma (m3)
 
 ### Changes
+- models are now defined by zod schemas
+- fasttrack-resource form with validation
+- fieldsets category is now required and no longer optional
 
 - language-selector now uses toggleButtons instead of a select
 - read vocabulary concepts from `mex.model.VOCABULARY_JSON_BY_NAME`, because mex-common

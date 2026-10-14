@@ -4,6 +4,7 @@
     [labelParam]="{ count: 1 }"
     [formField]="contactPointForm.email"
     [showErrorWithoutTouch]="true"
+    [category]="contactPointSchema.shape.email | fieldCategory"
   >
     <mat-form-field>
       <input matInput [formField]="contactPointForm.email" class="focus-me" />

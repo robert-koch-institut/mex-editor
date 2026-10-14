@@ -1,0 +1,1000 @@
+[
+    {
+        "cases": [
+            {
+                "description": "valid payload",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "missing required 'name'",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "name too long (>100 chars)",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "name empty (violates min_length=1)",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "identifier fails pattern (too short)",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "short",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "employeeCount at inclusive min 0 is valid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 0,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "employeeCount at inclusive max is valid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 100000,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "employeeCount negative",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": -1,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "employeeCount over max",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 100001,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "malformed email",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "not-an-email",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "tags empty (violates min_length=1)",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "tags too many (violates max_length=5)",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "a",
+                        "b",
+                        "c",
+                        "d",
+                        "e",
+                        "f"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "invalid status enum value",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "bogus",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "nested address missing 'street'",
+                "payload": {
+                    "address": {
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "nested address zipCode fails pattern",
+                "payload": {
+                    "address": {
+                        "street": "S",
+                        "zipCode": "abc"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "website explicit null is valid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "website present is valid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": "https://example.org"
+                },
+                "valid": true
+            },
+            {
+                "description": "website key omitted entirely is valid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold"
+                },
+                "valid": true
+            },
+            {
+                "description": "rating just inside exclusive bounds is valid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 0.1,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "rating at exclusive minimum 0 is invalid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 0,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "rating at exclusive maximum 5 is invalid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "rating below exclusive minimum is invalid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": -1,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "rating null is valid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": null,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "tier other literal member is valid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "silver",
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "tier value outside the literal set is invalid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "bronze",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "tier null is valid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": null,
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "tier key omitted is valid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "entityType key omitted is valid (pydantic defaults it)",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "entityType wrong value is still invalid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "MergedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "employeeCount non-integer is invalid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 1.5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "employeeCount integral float is valid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5.0,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "nullable single-value literal accepts null",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": null,
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "nullable single-value literal accepts its one value",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "public",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": true
+            },
+            {
+                "description": "nullable single-value literal rejects another value",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "scope": "other",
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": false
+            },
+            {
+                "description": "nullable single-value literal key omitted is valid",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "email": "a@b.com",
+                    "employeeCount": 5,
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "rating": 4.5,
+                    "status": "active",
+                    "tags": [
+                        "research"
+                    ],
+                    "tier": "gold",
+                    "website": null
+                },
+                "valid": true
+            }
+        ],
+        "model": "ExtractedOrganization",
+        "module": "organization",
+        "schema": "ExtractedOrganizationSchema"
+    },
+    {
+        "cases": [
+            {
+                "description": "valid, full YearMonthDay birthDate",
+                "payload": {
+                    "birthDate": "2024-01-15",
+                    "entityType": "ExtractedPerson",
+                    "familyName": "Doe",
+                    "givenName": "Jane",
+                    "identifier": "abcDEF1234567890",
+                    "status": "active"
+                },
+                "valid": true
+            },
+            {
+                "description": "valid, YearMonth-only birthDate",
+                "payload": {
+                    "birthDate": "2024-01",
+                    "entityType": "ExtractedPerson",
+                    "familyName": "Doe",
+                    "givenName": "Jane",
+                    "identifier": "abcDEF1234567890",
+                    "status": "active"
+                },
+                "valid": true
+            },
+            {
+                "description": "valid, Year-only birthDate",
+                "payload": {
+                    "birthDate": "2024",
+                    "entityType": "ExtractedPerson",
+                    "familyName": "Doe",
+                    "givenName": "Jane",
+                    "identifier": "abcDEF1234567890",
+                    "status": "active"
+                },
+                "valid": true
+            },
+            {
+                "description": "birthDate explicit null is valid (nullable, required key)",
+                "payload": {
+                    "birthDate": null,
+                    "entityType": "ExtractedPerson",
+                    "familyName": "Doe",
+                    "givenName": "Jane",
+                    "identifier": "abcDEF1234567890",
+                    "status": "active"
+                },
+                "valid": true
+            },
+            {
+                "description": "birthDate malformed string matches none of the 3 patterns",
+                "payload": {
+                    "birthDate": "not-a-date",
+                    "entityType": "ExtractedPerson",
+                    "familyName": "Doe",
+                    "givenName": "Jane",
+                    "identifier": "abcDEF1234567890",
+                    "status": "active"
+                },
+                "valid": false
+            },
+            {
+                "description": "birthDate key OMITTED is invalid (required even though nullable)",
+                "payload": {
+                    "entityType": "ExtractedPerson",
+                    "familyName": "Doe",
+                    "givenName": "Jane",
+                    "identifier": "abcDEF1234567890",
+                    "status": "active"
+                },
+                "valid": false
+            },
+            {
+                "description": "identifier fails pattern",
+                "payload": {
+                    "birthDate": "2024-01-15",
+                    "entityType": "ExtractedPerson",
+                    "familyName": "Doe",
+                    "givenName": "Jane",
+                    "identifier": "!!!",
+                    "status": "active"
+                },
+                "valid": false
+            }
+        ],
+        "model": "ExtractedPerson",
+        "module": "person",
+        "schema": "ExtractedPersonSchema"
+    },
+    {
+        "cases": [
+            {
+                "description": "valid payload",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "entityType": "MergedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "status": "active"
+                },
+                "valid": true
+            },
+            {
+                "description": "address explicit null is valid (nullish)",
+                "payload": {
+                    "address": null,
+                    "entityType": "MergedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "status": "active"
+                },
+                "valid": true
+            },
+            {
+                "description": "address key omitted is valid (nullish)",
+                "payload": {
+                    "entityType": "MergedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "status": "active"
+                },
+                "valid": true
+            },
+            {
+                "description": "address failing its nested pattern is invalid",
+                "payload": {
+                    "address": {
+                        "street": "S",
+                        "zipCode": "abc"
+                    },
+                    "entityType": "MergedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "status": "active"
+                },
+                "valid": false
+            },
+            {
+                "description": "entityType literal mismatch is rejected",
+                "payload": {
+                    "address": {
+                        "street": "Musterstr. 1",
+                        "zipCode": "12345"
+                    },
+                    "entityType": "ExtractedOrganization",
+                    "identifier": "abcDEF1234567890",
+                    "name": "RKI",
+                    "status": "active"
+                },
+                "valid": false
+            }
+        ],
+        "model": "MergedOrganization",
+        "module": "organization",
+        "schema": "MergedOrganizationSchema"
+    },
+    {
+        "cases": [
+            {
+                "description": "valid payload",
+                "payload": {
+                    "entityType": "MergedPerson",
+                    "familyName": "Doe",
+                    "givenName": "Jane",
+                    "identifier": "abcDEF1234567890",
+                    "status": "active"
+                },
+                "valid": true
+            },
+            {
+                "description": "entityType literal mismatch is rejected",
+                "payload": {
+                    "entityType": "ExtractedPerson",
+                    "familyName": "Doe",
+                    "givenName": "Jane",
+                    "identifier": "abcDEF1234567890",
+                    "status": "active"
+                },
+                "valid": false
+            }
+        ],
+        "model": "MergedPerson",
+        "module": "person",
+        "schema": "MergedPersonSchema"
+    }
+]

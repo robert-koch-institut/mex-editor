@@ -2,7 +2,7 @@ import { HttpClient, httpResource } from "@angular/common/http";
 import { inject, Injectable, type Signal } from "@angular/core";
 import type { Observable } from "rxjs";
 
-import type { PreviewOrganizationalUnit } from "../shared/models/organizational-unit";
+import type { PreviewOrganizationalUnit } from "./models/generated/organizational-unit";
 import type { PaginatedItemsContainer } from "./models/paginated-items-container";
 
 @Injectable({ providedIn: "root" })

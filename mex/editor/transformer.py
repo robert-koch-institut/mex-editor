@@ -28,11 +28,14 @@ class DuplicateKeyError(KeyError):
 
 def transform_pofile_to_message_format_json(
     po: polib.POFile | list[polib.POEntry],
+    ignore_duplicates: bool = False,  # noqa: FBT001, FBT002
 ) -> dict[str, str]:
     """Transforms the given pofile (or entries) to message format json.
 
     Args:
         po (polib.POFile | list[polib.POEntry]): input to transform.
+        ignore_duplicates (bool, optional): If True, duplicate keys will be ignored;
+        otherwise a DuplicateKeyError is raised.
 
     Raises:
         DuplicateKeyError: Raises if the key generation creates a duplicate key.
@@ -59,7 +62,7 @@ def transform_pofile_to_message_format_json(
             )
             value = entry.msgstr
 
-        if key in messages:
+        if not ignore_duplicates and key in messages:
             raise DuplicateKeyError(key, entry)
 
         messages[key] = value

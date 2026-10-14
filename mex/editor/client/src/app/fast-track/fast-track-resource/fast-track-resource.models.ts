@@ -41,7 +41,7 @@ export type CreateOrPreviewContactPoint = z.infer<typeof CreateOrPreviewContactP
  */
 export const FastTrackResourceModelSchema = z.object({
   // required fields
-  title: z.string(),
+  title: TextSchema.shape.value,
   description: TextSchema.shape.value,
   contact: z
     .union([

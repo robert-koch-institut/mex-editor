@@ -1,5 +1,5 @@
 <ng-container *transloco="let t">
-  <h1>{{ t("fasttrack.resource.headline") }}</h1>
+  <h1 class="page-title">{{ t("fasttrack.resource.headline") }}</h1>
   <button matButton (click)="fillTestData()">Fill Data</button>
   <form [formRoot]="resourceForm" class="two-column-layout">
     <mex-fieldset
@@ -357,21 +357,28 @@
       </mat-form-field>
     </mex-fieldset>
 
-    @let formState = resourceForm();
-    <button matButton="filled" type="submit" [disabled]="formState.submitting()">
-      @if (formState.submitting()) {
-        <div class="button-saving">
-          <mat-progress-spinner
-            progressIndicator
-            mode="indeterminate"
-            class="button-spinner"
-            diameter="20"
-          ></mat-progress-spinner>
-          {{ t("fasttrack.resource.save-button.saving") }}
-        </div>
-      } @else {
-        {{ t("fasttrack.resource.save-button.label") }}
-      }
-    </button>
+    <div class="two-column-item form-actions">
+      @let formState = resourceForm();
+      <button
+        matButton="filled"
+        type="submit"
+        class="secondary"
+        [disabled]="formState.submitting()"
+      >
+        @if (formState.submitting()) {
+          <div class="button-saving">
+            <mat-progress-spinner
+              progressIndicator
+              mode="indeterminate"
+              class="button-spinner"
+              diameter="20"
+            ></mat-progress-spinner>
+            {{ t("fasttrack.resource.save-button.saving") }}
+          </div>
+        } @else {
+          {{ t("fasttrack.resource.save-button.label") }}
+        }
+      </button>
+    </div>
   </form>
 </ng-container>

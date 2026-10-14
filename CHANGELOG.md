@@ -11,20 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - code generator to create zod schemas based on pydantic models
 - datepicker component to unify usage and handle parse errors
 - field-category pipe to determine field-category based on zod schema definition
+- rki theme from figma (m3)
 
 ### Changes
 - models are now defined by zod schemas
 - fasttrack-resource form with validation
 - fieldsets category is now required and no longer optional
 
+- language-selector now uses toggleButtons instead of a select
 - read vocabulary concepts from `mex.model.VOCABULARY_JSON_BY_NAME`, because mex-common
   simplified its vocabularies to plain enums without concepts
 - trim served concepts to `identifier`, `prefLabel` and `altLabel`,
   which is all the editor client uses
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.1
 - new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.0
-- set exact version for neo4j:2026.07.1
+- bump neo4j to 2026.09.0 and mex-backend to 4.4.0
 - update mex-common to 3.4
+- update dependencies
 
 ### Deprecated
 

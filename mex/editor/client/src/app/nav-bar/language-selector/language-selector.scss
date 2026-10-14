@@ -1,3 +1,12 @@
-.language-selector {
-  width: calc(100% + 0.3em);
+@use "@angular/material" as mat;
+
+:host {
+  @include mat.button-toggle-overrides(
+    (
+      text-color: var(--mat-sys-on-primary),
+      selected-state-background-color: var(--mat-sys-secondary),
+      selected-state-text-color: var(--mat-sys-on-secondary),
+      divider-color: var(--mat-sys-on-primary),
+    )
+  );
 }

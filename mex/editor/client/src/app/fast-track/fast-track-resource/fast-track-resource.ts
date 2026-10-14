@@ -1,4 +1,4 @@
-import { Component, inject, signal, TemplateRef, viewChild } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import {
   disabled,
   form,
@@ -65,14 +65,12 @@ import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
  */
 export class FastTrackResource {
   private readonly translocoService = inject(TranslocoService);
+
   private readonly router = inject(Router);
   private readonly notifier = inject(ToastNotifier);
   protected readonly resourceSchema = FastTrackResourceModelSchema;
   protected readonly conceptOptions = inject(ConceptLookups);
   protected readonly submission = inject(FastTrackResourceSubmission);
-
-  protected readonly errorToast = viewChild.required("errorToast", { read: TemplateRef });
-  protected readonly successToast = viewChild.required("successToast", { read: TemplateRef });
 
   isPrefillChecked = signal(false);
   model = signal<FastTrackResourceModel>({
@@ -98,6 +96,7 @@ export class FastTrackResource {
     contributingUnit: [],
     contributor: [],
   });
+
   resourceForm = form(
     this.model,
     (schema) => {

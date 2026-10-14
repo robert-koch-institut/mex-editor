@@ -21,4 +21,4 @@ router = APIRouter()
 def get_mex_model_translations(lang: Literal["de", "en"]) -> dict[str, str]:
     """Convert mex model .po files to .json files."""
     po = polib.pofile(model_locale_path / f"{lang}.po")
-    return transform_pofile_to_message_format_json(po)
+    return transform_pofile_to_message_format_json(po, True)  # noqa: FBT003

@@ -18,7 +18,7 @@ import { MatOption, MatPrefix, MatSelect } from "@angular/material/select";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { Router } from "@angular/router";
 import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
-import { DateTime } from "luxon";
+import type { DateTime } from "luxon";
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
@@ -129,44 +129,6 @@ export class FastTrackResource {
       },
     },
   );
-
-  fillTestData() {
-    this.model.set({
-      title: "TITEL DER RESOURCE",
-      description: "Beschreibung",
-      contact: [{ $type: "CreatePerson", familyName: "Person", givenName: "Neue" }],
-      contributingUnit: [],
-      unitInCharge: [{ $type: "PreviewOrganizationalUnit", identifier: "06ZfMbHPpIZKIkkg7oz5G" }],
-      keywords: {
-        de: ["deutsches keyword"],
-        en: ["englisch keyword"],
-      },
-      resourceCreationMethod: ["https://mex.rki.de/item/resource-creation-method-1"],
-      accrualPeriodicity: "https://mex.rki.de/item/frequency-1",
-      provenance: "Komme aus Berlin",
-      rights: "special rights",
-      creator: [],
-      contributor: [],
-      spatial: "spatial value",
-      hasLegalBasis: "My legal base",
-      start: DateTime.now(),
-      end: null,
-      resourceTypeGeneral: [],
-      theme: [],
-    });
-    this.notifier.submissionFailure(
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
-      "TITEL TITEL TITEL",
-      { success: false, error: new Error("ERROR"), payload: {} },
-      1000000,
-    );
-    this.notifier.success(
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
-      "TITEL TITEL TITEL",
-      // { success: false, error: new Error("ERROR"), payload: {} },
-      1000000,
-    );
-  }
 
   prefillRights(fill: boolean) {
     this.model.update((x) => {

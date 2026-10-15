@@ -35,33 +35,33 @@ $_palettes: (
   secondary: create-m3-palette($secondary-color),
   tertiary: create-m3-palette($tertiary-color),
   neutral: (
-      0: #000000,
-      10: #191c21,
-      20: #2e3036,
-      25: #393b42,
-      30: #44474d,
-      35: #505259,
-      40: #5c5e65,
-      50: #75777e,
-      60: #8e9098,
-      70: #a9abb2,
-      80: #c5c6ce,
-      90: #e1e2ea,
-      95: #eff0f8,
-      98: #f9f9ff,
-      99: #fdfbff,
-      100: #ffffff,
-      4: #0b0e14,
-      6: #111319,
-      12: #1d2025,
-      17: #272a30,
-      22: #32353b,
-      24: #37393f,
-      87: #d8dae2,
-      92: #e7e8f0,
-      94: #ecedf5,
-      96: #f2f3fb,
-    ),
+    0: #000000,
+    4: #0b0e14,
+    6: #111319,
+    10: #191c21,
+    12: #1d2025,
+    17: #272a30,
+    20: #2e3036,
+    22: #32353b,
+    24: #37393f,
+    25: #393b42,
+    30: #44474d,
+    35: #505259,
+    40: #5c5e65,
+    50: #75777e,
+    60: #8e9098,
+    70: #a9abb2,
+    80: #c5c6ce,
+    87: #d8dae2,
+    90: #e1e2ea,
+    92: #e7e8f0,
+    94: #ecedf5,
+    96: #f2f3fb,
+    95: #eff0f8,
+    98: #f9f9ff,
+    99: #fdfbff,
+    100: #ffffff,
+  ),
   neutral-variant: (
     0: #000000,
     10: #161c25,
@@ -137,6 +137,10 @@ $rki-theme: mat.define-theme(
   @include mat.button-overrides(
     (
       filled-container-shape: 4px,
+      outlined-container-shape: 4px,
+      tonal-container-shape: 4px,
+      protected-container-shape: 4px,
+      text-container-shape: 4px,
     )
   );
 
@@ -221,5 +225,98 @@ $rki-theme: mat.define-theme(
     color: var(--mat-sys-primary);
     font-weight: bolder !important;
     word-wrap: break-word;
+  }
+
+  .toast {
+    .toast-close {
+      color: var(--mat-sys-outline);
+    }
+
+    &.success-toast {
+      $success: #27ba1a;
+      $success-container: #d6ffd6;
+      $on-success-container: #0c9300;
+      @include mat.snack-bar-overrides(
+        (
+          container-color: $success-container,
+          supporting-text-color: $on-success-container,
+        )
+      );
+
+      .mat-mdc-snackbar-surface {
+        border-top: 3px solid $success;
+      }
+
+      .toast-actions {
+        @include mat.button-overrides(
+          (
+            text-label-text-color: $success,
+            text-state-layer-color: $success,
+            text-ripple-color: color-mix(
+                in srgb,
+                $success calc(var(--mat-sys-pressed-state-layer-opacity) * 100%),
+                transparent
+              ),
+          )
+        );
+      }
+
+      .toast-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 4px;
+        border-radius: 50%;
+        background: $success;
+        color: var(--mat-sys-on-error);
+        line-height: 24px;
+        text-align: center;
+      }
+
+      .toast-title {
+        color: $success;
+      }
+    }
+
+    &.error-toast {
+      @include mat.snack-bar-overrides(
+        (
+          container-color: var(--mat-sys-error-container),
+          supporting-text-color: var(--mat-sys-on-error-container),
+        )
+      );
+
+      .mat-mdc-snackbar-surface {
+        border-top: 3px solid var(--mat-sys-error);
+      }
+
+      .toast-actions {
+        @include mat.button-overrides(
+          (
+            text-label-text-color: var(--mat-sys-error),
+            text-state-layer-color: var(--mat-sys-error),
+            text-ripple-color: color-mix(
+                in srgb,
+                var(--mat-sys-error) calc(var(--mat-sys-pressed-state-layer-opacity) * 100%),
+                transparent
+              ),
+          )
+        );
+      }
+
+      .toast-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 4px;
+        border-radius: 50%;
+        background: var(--mat-sys-error);
+        color: var(--mat-sys-on-error);
+        line-height: 24px;
+        text-align: center;
+      }
+
+      .toast-title {
+        color: var(--mat-sys-error);
+      }
+    }
   }
 }

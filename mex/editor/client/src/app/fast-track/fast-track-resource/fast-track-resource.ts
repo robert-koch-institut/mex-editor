@@ -160,6 +160,12 @@ export class FastTrackResource {
       { success: false, error: new Error("ERROR"), payload: {} },
       1000000,
     );
+    this.notifier.success(
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
+      "TITEL TITEL TITEL",
+      // { success: false, error: new Error("ERROR"), payload: {} },
+      1000000,
+    );
   }
 
   prefillRights(fill: boolean) {

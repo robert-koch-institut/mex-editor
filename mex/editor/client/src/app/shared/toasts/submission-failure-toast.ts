@@ -14,11 +14,7 @@ import { ToastContent } from "./toast-content/toast-content";
   template: `
     <mex-toast-content iconName="error">
       <div class="toast-actions" *transloco="let t">
-        <a
-          matFlatButton
-          [href]="data.failure | errorMailTo"
-          (click)="snackBarRef.dismissWithAction()"
-        >
+        <a matButton [href]="data.failure | errorMailTo" (click)="snackBarRef.dismissWithAction()">
           {{ t("fasttrack.resource.toast.submissionFailure.sendMail") }}
         </a>
       </div>

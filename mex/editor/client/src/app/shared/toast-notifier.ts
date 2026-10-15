@@ -20,20 +20,20 @@ export class ToastNotifier {
     verticalPosition: "bottom",
   };
 
-  success(message: string, title = "Erfolgreich", duration = 4000): void {
+  success(message: string, title: string, duration = 4000): void {
     this.snackBar.openFromComponent(SuccessToast, {
       ...this.baseConfig,
       duration,
-      panelClass: ["toast-success"],
+      panelClass: ["toast", "success-toast"],
       data: { title, message } satisfies ToastData,
     });
   }
 
-  error(message: string, title = "Fehler", error: Error, duration = 10000): void {
+  error(message: string, title: string, error: Error, duration = 10000): void {
     this.snackBar.openFromComponent(ErrorToast, {
       ...this.baseConfig,
       duration,
-      panelClass: ["toast-error"],
+      panelClass: ["toast", "error-toast"],
       data: { title, message, error } satisfies ToastErrorData,
     });
   }
@@ -47,7 +47,7 @@ export class ToastNotifier {
     this.snackBar.openFromComponent(SubmissionFailureToast, {
       ...this.baseConfig,
       duration,
-      panelClass: ["toast-error"],
+      panelClass: ["toast", "error-toast"],
       data: { title, message, failure } satisfies ToastSubmissionFailureData<unknown>,
     });
   }

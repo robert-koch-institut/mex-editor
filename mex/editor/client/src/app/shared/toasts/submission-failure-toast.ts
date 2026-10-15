@@ -4,8 +4,8 @@ import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from "@angular/material/snack-bar"
 import { TranslocoDirective } from "@jsverse/transloco";
 
 import { ErrorMailToPipe } from "../error-mail-to-pipe";
-import type { ToastSubmissionFailureData } from "./models";
 import { ToastContent } from "./toast-content/toast-content";
+import type { ToastSubmissionFailureData } from "./toast-data";
 
 @Component({
   selector: "mex-submission-failure-toast",

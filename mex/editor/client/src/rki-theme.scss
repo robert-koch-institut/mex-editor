@@ -128,7 +128,6 @@ $rki-theme: mat.define-theme(
 );
 
 @mixin theme() {
-  // Default to Light Theme
   @include mat.all-component-themes($rki-theme);
   @include mat.system-level-colors($rki-theme);
   @include mat.typography-hierarchy($rki-theme);

@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
-import { ToastNotifier } from "./toast-notifier";
+import { ToastNotifier } from "../toast-notifier";
 
 describe("ToastNotifier", () => {
   let service: ToastNotifier;

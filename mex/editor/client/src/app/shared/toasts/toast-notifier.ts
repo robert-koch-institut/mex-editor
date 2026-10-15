@@ -2,11 +2,11 @@ import { inject, Service } from "@angular/core";
 import type { MatSnackBarConfig } from "@angular/material/snack-bar";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
-import type { SubmissionFailure } from "./models/submission-result";
-import { ErrorToast } from "./toasts/error-toast";
-import type { ToastData, ToastErrorData, ToastSubmissionFailureData } from "./toasts/models";
-import { SubmissionFailureToast } from "./toasts/submission-failure-toast";
-import { SuccessToast } from "./toasts/success-toast";
+import type { SubmissionFailure } from "../models/submission-result";
+import { ErrorToast } from "./error-toast";
+import { SubmissionFailureToast } from "./submission-failure-toast";
+import { SuccessToast } from "./success-toast";
+import type { ToastData, ToastErrorData, ToastSubmissionFailureData } from "./toast-data";
 
 @Service()
 /**

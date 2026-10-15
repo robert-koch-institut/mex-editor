@@ -23,7 +23,7 @@ import { DateTime } from "luxon";
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
 import type { Frequency } from "../../shared/models/generated/resource";
-import { ToastNotifier } from "../../shared/toast-notifier";
+import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import { Datepicker } from "../datepicker/datepicker";
 import { Fieldset } from "../fieldset/fieldset";
 import { ReferenceSelect } from "../reference-select/reference-select";

@@ -1,13 +1,13 @@
 import { TestBed } from "@angular/core/testing";
 
-import { ResourceSubmission } from "./resource-submission";
+import { ToastNotifier } from "../toast-notifier";
 
-describe("ResourceSubmission", () => {
-  let service: ResourceSubmission;
+describe("ToastNotifier", () => {
+  let service: ToastNotifier;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ResourceSubmission);
+    service = TestBed.inject(ToastNotifier);
   });
 
   it("should be created", () => {

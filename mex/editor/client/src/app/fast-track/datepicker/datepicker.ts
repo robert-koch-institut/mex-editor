@@ -6,7 +6,7 @@ import type { FormControl, FormGroupDirective, NgForm } from "@angular/forms";
 import { FormsModule } from "@angular/forms";
 import type { Field, FormValueControl } from "@angular/forms/signals";
 import { form, FormField } from "@angular/forms/signals";
-import type { ErrorStateMatcher, MatDateFormats } from "@angular/material/core";
+import { ErrorStateMatcher } from "@angular/material/core";
 import { DateAdapter } from "@angular/material/core";
 import { MAT_DATE_FORMATS } from "@angular/material/core";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -15,51 +15,19 @@ import { MatFormField, MatHint, MatSuffix } from "@angular/material/select";
 import { TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 import type { DateTime } from "luxon";
 
-/**
- * ErrorMatcher to fake the MatDatepickerParse behaviour in a more consistent way.
- */
-export class ImmediateErrorStateMatcher implements ErrorStateMatcher {
-  protected readonly inputTextElement: Signal<ElementRef<HTMLInputElement>>;
-  protected readonly dateAdapter: DateAdapter<DateTime<boolean>>;
-  protected readonly dateFormats: MatDateFormats;
-  protected readonly parentFormField: FormField<unknown>;
+class DatepickerErrorStateMatcher implements ErrorStateMatcher {
+  protected defaultErrorStateMatcher = inject(ErrorStateMatcher);
 
-  readonly hasParseError = signal(false);
-  readonly hasParentError = signal(false);
-
-  constructor(
-    inputTextElement: Signal<ElementRef<HTMLInputElement>>,
-    dateAdapter: DateAdapter<DateTime>,
-    dateFormats: MatDateFormats,
-    parentFormField: FormField<unknown>,
-  ) {
-    this.inputTextElement = inputTextElement;
-    this.dateAdapter = dateAdapter;
-    this.dateFormats = dateFormats;
-    this.parentFormField = parentFormField;
-  }
+  constructor(protected readonly hasParseError: Signal<boolean>) {}
 
   isErrorState(_control: FormControl | null, _form: FormGroupDirective | NgForm | null): boolean {
-    return this.isSignalErrorState(null);
+    return this.defaultErrorStateMatcher.isErrorState(_control, _form); // || this.hasParseError();
   }
-
   isSignalErrorState(field: Field<unknown> | null): boolean {
-    const inputText = this.inputTextElement().nativeElement.value;
-    const parsed = this.dateAdapter.parse(inputText, this.dateFormats.parse.dateInput);
-
-    const hasParentErrors = this.parentFormField.errors().length > 0;
-    const isTouched = (field ?? (() => null))()?.touched() ?? true;
-    const parentError = isTouched && hasParentErrors;
-    this.hasParentError.set(parentError);
-
-    if (inputText) {
-      const parseError = parsed == null || !parsed.isValid;
-      this.hasParseError.set(parseError);
-      return parseError;
-    }
-
-    this.hasParseError.set(false);
-    return parentError;
+    const defaultState = this.defaultErrorStateMatcher.isSignalErrorState
+      ? this.defaultErrorStateMatcher.isSignalErrorState(field)
+      : false;
+    return defaultState || this.hasParseError();
   }
 }
 
@@ -96,17 +64,14 @@ export class Datepicker implements FormValueControl<DateTime | null> {
   readonly maxDate = input<DateTime | null>(null);
 
   protected readonly dateForm = form(this.value);
+  protected readonly hasParseError = signal(false);
 
   dateAdapter = inject(DateAdapter<DateTime>);
   dateInput = viewChild.required("dateInput", {
     read: ElementRef<HTMLInputElement>,
   }) as Signal<ElementRef<HTMLInputElement>>;
-  customErrorMatcher = new ImmediateErrorStateMatcher(
-    this.dateInput,
-    this.dateAdapter,
-    this.dateFormats,
-    this.hostFormField,
-  );
+
+  customErrorMatcher = new DatepickerErrorStateMatcher(this.hasParseError);
 
   constructor() {
     this.translocoService.langChanges$
@@ -116,5 +81,10 @@ export class Datepicker implements FormValueControl<DateTime | null> {
 
   focus(): void {
     this.dateInput().nativeElement.focus();
+  }
+
+  protected onDateInputChanged(inputText: string) {
+    const parsed = this.dateAdapter.parse(inputText, this.dateFormats.parse.dateInput);
+    this.hasParseError.set(!!inputText && (parsed == null || !parsed.isValid));
   }
 }

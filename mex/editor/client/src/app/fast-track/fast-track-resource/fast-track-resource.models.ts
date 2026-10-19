@@ -2,15 +2,26 @@
 import z from "zod";
 
 import { CreateContactPointSchema, CreatePersonSchema } from "../../shared/models/create-item";
+import type { ContactPointRuleSetRequest } from "../../shared/models/generated/contact-point";
 import { PreviewContactPointSchema } from "../../shared/models/generated/contact-point";
 import { PreviewOrganizationalUnitSchema } from "../../shared/models/generated/organizational-unit";
+import type { PersonRuleSetRequest } from "../../shared/models/generated/person";
 import { PreviewPersonSchema } from "../../shared/models/generated/person";
+import type {
+  ResourceRuleSetRequest,
+  ResourceRuleSetResponse,
+} from "../../shared/models/generated/resource";
 import {
   FrequencySchema,
   ResourceCreationMethodSchema,
   ResourceTypeGeneralSchema,
 } from "../../shared/models/generated/resource";
 import { TextSchema, ThemeSchema } from "../../shared/models/generated/shared";
+import type {
+  SubmissionFailure,
+  SubmissionResult,
+  SubmissionSuccess,
+} from "../../shared/models/submission-result";
 import { luxonDateTimeNullableSchema } from "../../shared/models/zod-types";
 
 /**
@@ -77,3 +88,33 @@ export const FastTrackResourceModelSchema = z.object({
  * Model for the Ressource fast track creation page.
  */
 export type FastTrackResourceModel = z.infer<typeof FastTrackResourceModelSchema>;
+
+/**
+ * Error for submitting fasttrack resource sub items.
+ */
+export class FastTrackResourceSubPostError extends Error {
+  constructor(
+    readonly originalError: Error,
+    readonly payload: PersonRuleSetRequest | ContactPointRuleSetRequest,
+  ) {
+    super("Posting a sub item failed.", { cause: originalError });
+  }
+}
+
+/**
+ * Result of a successfull FastTrackResource submission.
+ */
+export type FastTrackResourceSubmissionSuccess = SubmissionSuccess<ResourceRuleSetResponse>;
+
+/**
+ * Result of a failed  FastTrackResource submission.
+ */
+export type FastTrackResourceSubmissionFailure = SubmissionFailure<ResourceRuleSetRequest>;
+
+/**
+ * Result of the FastTrackResource submission.
+ */
+export type FastTrackResourceSubmissionResult = SubmissionResult<
+  ResourceRuleSetResponse,
+  ResourceRuleSetRequest
+>;

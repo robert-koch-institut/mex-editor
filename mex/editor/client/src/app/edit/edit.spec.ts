@@ -14,6 +14,7 @@ describe("Edit", () => {
 
     fixture = TestBed.createComponent(Edit);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput("entityId", "12345");
     await fixture.whenStable();
   });
 

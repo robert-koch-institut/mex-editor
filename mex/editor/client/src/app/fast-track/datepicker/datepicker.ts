@@ -64,7 +64,7 @@ export class Datepicker implements FormValueControl<DateTime | null> {
   readonly maxDate = input<DateTime | null>(null);
 
   protected readonly dateForm = form(this.value);
-  protected readonly hasParseError = signal(false);
+  readonly hasParseError = signal(false);
 
   dateAdapter = inject(DateAdapter<DateTime>);
   dateInput = viewChild.required("dateInput", {

@@ -79,7 +79,6 @@ export const FastTrackResourceModelSchema = z.object({
   hasLegalBasis: recommended(z.string()),
   start: recommended(luxonDateTimeNullableSchema()),
   end: recommended(luxonDateTimeNullableSchema()),
-  // resourceTypeGeneral: recommended(ResourceTypeGeneralSchema.array()),
   theme: recommended(ThemeSchema.array()),
 });
 

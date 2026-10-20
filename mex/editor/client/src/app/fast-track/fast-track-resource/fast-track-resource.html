@@ -11,7 +11,7 @@
         <input
           matInput
           [formField]="resourceForm.title"
-          [attr.placeholder]="'fasttrack.resource.fields.title.placeholder' | transloco"
+          [attr.placeholder]="'Resource.title.description' | transloco"
           (keydown.enter)="$event.preventDefault()"
         />
       </mat-form-field>
@@ -225,7 +225,8 @@
 
     <mex-fieldset
       [formField]="resourceForm.keywords.de"
-      labelKey="fasttrack.resource.fields.keywords.de"
+      labelKey="fasttrack.resource.fields.keywords.de.label"
+      descriptionKey="Resource.keyword.description"
       class="two-column-item"
       [category]="resourceSchema.shape.keywords.shape.de | fieldCategory"
     >
@@ -247,14 +248,14 @@
         <input
           [matChipInputFor]="keywordGermanChips"
           (matChipInputTokenEnd)="addKeyword('de', $event.value); $event.chipInput.clear()"
-          [placeholder]="'Resource.keyword.description' | transloco"
+          [placeholder]="t('fasttrack.resource.fields.keywords.de.placeholder')"
         />
       </mat-form-field>
     </mex-fieldset>
-
     <mex-fieldset
       [formField]="resourceForm.keywords.en"
-      labelKey="fasttrack.resource.fields.keywords.en"
+      labelKey="fasttrack.resource.fields.keywords.en.label"
+      descriptionKey="Resource.keyword.description"
       class="two-column-item"
       [category]="resourceSchema.shape.keywords.shape.en | fieldCategory"
     >
@@ -276,7 +277,7 @@
         <input
           [matChipInputFor]="keywordEnglishChips"
           (matChipInputTokenEnd)="addKeyword('en', $event.value); $event.chipInput.clear()"
-          [placeholder]="'Resource.keyword.description' | transloco"
+          [placeholder]="t('fasttrack.resource.fields.keywords.en.placeholder')"
         />
       </mat-form-field>
     </mex-fieldset>

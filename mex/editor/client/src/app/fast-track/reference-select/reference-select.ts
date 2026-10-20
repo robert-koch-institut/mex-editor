@@ -6,7 +6,6 @@ import {
   ElementRef,
   inject,
   input,
-  linkedSignal,
   model,
   output,
   signal,
@@ -103,7 +102,7 @@ export class ReferenceSelect<
   protected readonly isInputFocused = signal(false);
 
   protected readonly searchQuery = signal("");
-  protected readonly searchEntityTypes = linkedSignal(() => this.validEntityTypes());
+  protected readonly searchEntityTypes = signal([] as ReferenceSelectTypes[]);
 
   protected readonly labelPlaceholderParam = computed(() => ({
     value: this.validEntityTypeLabels(),
@@ -125,9 +124,13 @@ export class ReferenceSelect<
 
   protected readonly searchQueryDebounced = debounced(() => this.searchQuery(), 200);
   protected readonly searchResult = httpResource<PaginatedItemsContainer<PreviewItem>>(() => {
+    const userEntityTypes = this.searchEntityTypes();
+    const entityTypes =
+      userEntityTypes.length == 0 ? [...this.validEntityTypes()] : userEntityTypes;
+
     const params = {
       q: this.searchQueryDebounced.value().trim(),
-      entityType: this.searchEntityTypes().map((x) => `Merged${x}`),
+      entityType: entityTypes.map((x) => `Merged${x}`),
     };
     if (!params.q || params.entityType.length === 0) {
       return undefined;
@@ -189,9 +192,10 @@ export class ReferenceSelect<
 
   protected toggleSearchEntityType(entityType: ReferenceSelectTypes) {
     const values = this.searchEntityTypes();
-    const update = values.includes(entityType)
-      ? values.filter((x) => x !== entityType)
-      : [...values, entityType];
+    const update =
+      values.length > 0 && values.includes(entityType)
+        ? values.filter((x) => x !== entityType)
+        : [...values, entityType];
 
     this.searchEntityTypes.set(update);
   }

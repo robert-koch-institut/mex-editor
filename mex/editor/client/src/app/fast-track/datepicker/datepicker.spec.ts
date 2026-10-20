@@ -28,7 +28,7 @@ function setNativeValue(
   fixture.detectChanges();
 }
 
-describe("Datepicker", () => {
+describe("Datepicker", async () => {
   let fixture: ComponentFixture<Datepicker>;
   let component: Datepicker;
 
@@ -46,6 +46,7 @@ describe("Datepicker", () => {
     fixture.componentRef.setInput("formField", fakeFieldTree());
 
     fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("creates with a null value by default", () => {

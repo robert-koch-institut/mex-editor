@@ -12,7 +12,6 @@ import { Component, input } from "@angular/core";
  * Page to edit entities.
  */
 export class Edit {
-  // 3m51ZHwqj6PAiOBwATefM
   entityId = input.required<string>();
   entity = httpResource<{ stableTargetId: string }>(
     () => `api/v0/backend/rule-set/${this.entityId()}`,

@@ -7,6 +7,7 @@ import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing"
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { MatSlideToggleHarness } from "@angular/material/slide-toggle/testing";
 import { By } from "@angular/platform-browser";
+import { Router } from "@angular/router";
 import { TranslocoService } from "@jsverse/transloco";
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
@@ -19,10 +20,12 @@ import {
   ResourceTypeGeneralSchema,
 } from "../../shared/models/generated/resource";
 import { ThemeSchema } from "../../shared/models/generated/shared";
+import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import { Fieldset } from "../fieldset/fieldset";
 import { ReferenceSelect } from "../reference-select/reference-select";
 import { FastTrackResource } from "./fast-track-resource";
 import type { FastTrackResourceModel } from "./fast-track-resource.models";
+import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
 
 const THEME_ID = ThemeSchema.enum["https://mex.rki.de/item/theme-1"];
 const RESOURCE_TYPE_ID =
@@ -120,13 +123,21 @@ describe("FastTrackResource", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FastTrackResource],
-      providers: [{ provide: ConceptLookups, useValue: conceptOptionsStub }],
+      providers: [
+        { provide: ConceptLookups, useValue: conceptOptionsStub },
+        { provide: FastTrackResourceSubmission, useValue: { submit: vi.fn() } },
+        {
+          provide: ToastNotifier,
+          useValue: { success: vi.fn(), submissionFailure: vi.fn() },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FastTrackResource);
     component = fixture.componentInstance;
     loader = TestbedHarnessEnvironment.loader(fixture);
     fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("creates the component", () => {
@@ -566,6 +577,169 @@ describe("FastTrackResource", () => {
       // generated Theme/ResourceTypeGeneral/ResourceCreationMethod/
       // Frequency enums -- see the file-level comment.
       expect(component.resourceForm().valid()).toBe(true);
+    });
+  });
+
+  // eslint-disable-next-line max-lines-per-function
+  describe("form submission", () => {
+    function fillEveryRequiredField() {
+      const title = fieldsetEl(fixture, "title").query(By.css("input")).nativeElement;
+      setNativeValue(fixture, title, "A valid title");
+
+      const description = fieldsetEl(fixture, "description").query(
+        By.css("textarea"),
+      ).nativeElement;
+      setNativeValue(fixture, description, "A valid description");
+
+      const provenance = fieldsetEl(fixture, "provenance").query(By.css("textarea")).nativeElement;
+      setNativeValue(fixture, provenance, "A valid provenance");
+
+      const rights = fieldsetEl(fixture, "rights").query(By.css("textarea")).nativeElement;
+      setNativeValue(fixture, rights, "A valid rights statement");
+
+      referenceSelectIn(fixture, "contact").value.set([
+        VALID_CONTACT_POINT("contact-1", "a@b.com"),
+      ]);
+      referenceSelectIn(fixture, "unitInCharge").value.set([VALID_ORG_UNIT("unit-1", "RKI")]);
+
+      component.addKeyword("de", "Gesundheit");
+      component.addKeyword("en", "health");
+      component.model.update((m) => ({
+        ...m,
+        resourceCreationMethod: [RESOURCE_CREATION_METHOD_ID],
+        accrualPeriodicity: FREQUENCY_ID,
+      }));
+
+      fixture.detectChanges();
+    }
+
+    it("submits the valid model and handles a successful response", async () => {
+      fillEveryRequiredField();
+      const expectedModel = component.model();
+
+      const submission = TestBed.inject(FastTrackResourceSubmission);
+      const router = TestBed.inject(Router);
+      const notifier = TestBed.inject(ToastNotifier);
+      const transloco = TestBed.inject(TranslocoService);
+
+      vi.spyOn(router, "navigate").mockResolvedValue(true);
+      vi.mocked(submission.submit).mockResolvedValue({
+        success: true,
+        response: { $type: "ResourceRuleSetResponse", stableTargetId: "resource-123" },
+      } as Awaited<ReturnType<FastTrackResourceSubmission["submit"]>>);
+
+      const form = fixture.nativeElement.querySelector("form") as HTMLFormElement;
+      expect(form).toBeTruthy();
+      form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+      await fixture.whenStable();
+
+      expect(component.resourceForm().valid()).toBe(true);
+      expect(submission.submit).toHaveBeenCalledOnce();
+      expect(submission.submit).toHaveBeenCalledWith(expectedModel);
+      expect(router.navigate).toHaveBeenCalledWith(["edit", "resource-123"]);
+      expect(notifier.success).toHaveBeenCalledWith(
+        transloco.translate("fasttrack.resource.toast.success.message"),
+        transloco.translate("fasttrack.resource.toast.success.title"),
+      );
+      expect(notifier.submissionFailure).not.toHaveBeenCalled();
+    });
+
+    it("passes a failed submission result to the failure notifier", async () => {
+      fillEveryRequiredField();
+
+      const submission = TestBed.inject(FastTrackResourceSubmission);
+      const router = TestBed.inject(Router);
+      const notifier = TestBed.inject(ToastNotifier);
+      const transloco = TestBed.inject(TranslocoService);
+
+      vi.spyOn(router, "navigate").mockResolvedValue(true);
+
+      const submitResult = {
+        success: false,
+        payload: { $type: "ResourceRuleSetRequest", additive: {} },
+        error: new Error("Submission failed"),
+      } as Awaited<ReturnType<FastTrackResourceSubmission["submit"]>>;
+      vi.mocked(submission.submit).mockResolvedValue(submitResult);
+
+      const form = fixture.nativeElement.querySelector("form") as HTMLFormElement;
+      expect(form).toBeTruthy();
+      form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+      await fixture.whenStable();
+
+      expect(component.resourceForm().valid()).toBe(true);
+      expect(submission.submit).toHaveBeenCalledOnce();
+      expect(notifier.submissionFailure).toHaveBeenCalledWith(
+        transloco.translate("fasttrack.resource.toast.submissionFailure.message"),
+        transloco.translate("fasttrack.resource.toast.submissionFailure.title"),
+        submitResult,
+      );
+      expect(router.navigate).not.toHaveBeenCalled();
+      expect(notifier.success).not.toHaveBeenCalled();
+    });
+
+    it("does not submit when required fields are missing", async () => {
+      const submission = TestBed.inject(FastTrackResourceSubmission);
+
+      const form = fixture.nativeElement.querySelector("form") as HTMLFormElement;
+      expect(form).toBeTruthy();
+      form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+      await fixture.whenStable();
+
+      expect(component.resourceForm().valid()).toBe(false);
+      expect(submission.submit).not.toHaveBeenCalled();
+    });
+
+    it("disables the submit button and shows a spinner while submitting", async () => {
+      fillEveryRequiredField();
+
+      const submission = TestBed.inject(FastTrackResourceSubmission);
+      const router = TestBed.inject(Router);
+
+      vi.spyOn(router, "navigate").mockResolvedValue(true);
+
+      // Keep the submission pending so we can inspect the loading state.
+      let resolveSubmit!: (
+        result: Awaited<ReturnType<FastTrackResourceSubmission["submit"]>>,
+      ) => void;
+
+      vi.mocked(submission.submit).mockReturnValue(
+        new Promise((resolve) => {
+          resolveSubmit = resolve;
+        }),
+      );
+
+      const form = fixture.nativeElement.querySelector("form") as HTMLFormElement;
+      const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+      expect(submitButton).toBeTruthy();
+      expect(submitButton.disabled).toBe(false);
+
+      // Trigger submission, but don't resolve the promise yet.
+      form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+
+      // Let the async submission action start and render its pending state.
+      await Promise.resolve();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      // Assert the loading UI.
+      expect(submitButton.disabled).toBe(true);
+      expect(submitButton.querySelector("mat-progress-spinner")).not.toBeNull();
+
+      // Finish the pending submission to cleanly complete the test.
+      resolveSubmit({
+        success: false,
+        error: new Error(),
+        payload: { $type: "ResourceRuleSetRequest" },
+      });
+
+      await vi.waitFor(() => expect(component.resourceForm().submitting()).toBe(false));
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(submitButton.disabled).toBe(false);
+      expect(submitButton.querySelector("mat-progress-spinner")).toBeNull();
     });
   });
 });

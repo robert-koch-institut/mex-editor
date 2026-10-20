@@ -14,7 +14,6 @@ import type {
 import {
   FrequencySchema,
   ResourceCreationMethodSchema,
-  ResourceTypeGeneralSchema,
 } from "../../shared/models/generated/resource";
 import { TextSchema, ThemeSchema } from "../../shared/models/generated/shared";
 import type {
@@ -80,7 +79,7 @@ export const FastTrackResourceModelSchema = z.object({
   hasLegalBasis: recommended(z.string()),
   start: recommended(luxonDateTimeNullableSchema()),
   end: recommended(luxonDateTimeNullableSchema()),
-  resourceTypeGeneral: recommended(ResourceTypeGeneralSchema.array()),
+  // resourceTypeGeneral: recommended(ResourceTypeGeneralSchema.array()),
   theme: recommended(ThemeSchema.array()),
 });
 

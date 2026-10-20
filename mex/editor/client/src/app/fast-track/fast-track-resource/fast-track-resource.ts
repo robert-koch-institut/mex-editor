@@ -77,7 +77,6 @@ export class FastTrackResource {
     title: "",
     description: "",
     theme: [],
-    resourceTypeGeneral: [],
     spatial: "",
     resourceCreationMethod: [],
     accrualPeriodicity: null as unknown as Frequency,

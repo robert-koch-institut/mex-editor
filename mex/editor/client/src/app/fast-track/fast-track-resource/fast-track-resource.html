@@ -131,27 +131,6 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.resourceTypeGeneral"
-      labelKey="Resource.resourceTypeGeneral"
-      descriptionKey="Resource.resourceTypeGeneral.description"
-      class="one-column-item"
-      [category]="resourceSchema.shape.resourceTypeGeneral | fieldCategory"
-    >
-      <mat-form-field>
-        <mat-select
-          multiple
-          [formField]="resourceForm.resourceTypeGeneral"
-          [placeholder]="'select.placeholder' | transloco"
-          data-testid="resourceTypeGeneral-select"
-        >
-          @for (option of conceptOptions.resourceTypeGeneralOptions(); track option.id) {
-            <mat-option [value]="option.id">{{ option.label }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </mex-fieldset>
-
-    <mex-fieldset
       [formField]="resourceForm.spatial"
       labelKey="Resource.spatial"
       descriptionKey="Resource.spatial.description"

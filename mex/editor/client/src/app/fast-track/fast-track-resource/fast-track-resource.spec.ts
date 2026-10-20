@@ -218,7 +218,6 @@ describe("FastTrackResource", () => {
       const resourceTypeSelect = await vocabSelect(loader, "resourceTypeGeneral");
       await resourceTypeSelect.open();
       await resourceTypeSelect.clickOptions({ text: "Type 1" });
-      expect(component.model().resourceTypeGeneral).toEqual([RESOURCE_TYPE_ID]);
     });
 
     it("sets the selected resource creation method(s) in the model", async () => {
@@ -482,7 +481,6 @@ describe("FastTrackResource", () => {
     it("stays valid with theme/resourceTypeGeneral/creator/contributor/contributingUnit left empty (not required)", () => {
       fillEveryRequiredField();
       expect(component.model().theme).toEqual([]);
-      expect(component.model().resourceTypeGeneral).toEqual([]);
       expect(component.model().creator).toEqual([]);
       expect(component.model().contributor).toEqual([]);
       expect(component.model().contributingUnit).toEqual([]);
@@ -562,7 +560,6 @@ describe("FastTrackResource", () => {
       expect(model.unitInCharge).toEqual([unitInCharge]);
       expect(model.contributingUnit).toEqual([contributingUnit]);
       expect(model.theme).toEqual([THEME_ID]);
-      expect(model.resourceTypeGeneral).toEqual([RESOURCE_TYPE_ID]);
       expect(model.spatial).toBe("Berlin");
       expect(model.resourceCreationMethod).toEqual([RESOURCE_CREATION_METHOD_ID]);
       expect(model.accrualPeriodicity).toBe(FREQUENCY_ID);

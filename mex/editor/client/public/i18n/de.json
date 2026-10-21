@@ -11,7 +11,7 @@
   "create-item-dialog.title": "Neuen Eintrag anlegen",
   "datepicker.validation.parse": "Bitte Format {{format}} nutzen",
   "errors.services.concept-lookup.loading": {
-    "message": "Beim Laden des Lookups '{{lookupName}}' ist ein Fehler aufgetreten.",
+    "message": "Beim Laden des Lookups '{{lookupName}}' ist ein Fehler aufgetreten. Bitte laden Sie die Seite erneut.",
     "title": "Fehler beim Laden"
   },
   "fasttrack": {

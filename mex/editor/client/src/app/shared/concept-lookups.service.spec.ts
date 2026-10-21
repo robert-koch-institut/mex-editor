@@ -1,4 +1,3 @@
-// import { HttpErrorResponse } from "@angular/common/http";
 import { HttpTestingController } from "@angular/common/http/testing";
 import { ApplicationRef } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
@@ -88,5 +87,42 @@ describe("ConceptLookups", () => {
       { id: "2", label: "Health" },
       { id: "1", label: "Population" },
     ]);
+  });
+
+  it("shows an error notification when loading a vocabulary fails", async () => {
+    const service = TestBed.inject(ConceptLookups);
+    TestBed.tick();
+
+    const errorResponse = {
+      message: "Server error",
+    };
+
+    const request = httpMock.expectOne("api/v0/vocabulary/theme");
+    request.flush(errorResponse, {
+      status: 500,
+      statusText: "Internal Server Error",
+    });
+
+    // Complete the other requests so afterEach(httpMock.verify) passes.
+    for (const name of vocabularyNames.filter((n) => n !== "theme")) {
+      httpMock.expectOne(`api/v0/vocabulary/${name}`).flush({ items: [], total: 0 });
+    }
+
+    await TestBed.inject(ApplicationRef).whenStable();
+
+    // Evaluate the computed after the HTTP resource enters its error state.
+    expect(service.themeOptions()).toEqual([]);
+
+    expect(notifier.error).toHaveBeenCalledOnce();
+    expect(notifier.error).toHaveBeenCalledWith(
+      {
+        translocoKey: "errors.services.concept-lookup.loading.message",
+        params: { lookupName: "theme" },
+      },
+      {
+        translocoKey: "errors.services.concept-lookup.loading.title",
+      },
+      expect.anything(),
+    );
   });
 });

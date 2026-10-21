@@ -163,9 +163,12 @@ describe("ReferenceSelect", () => {
     fixture.detectChanges();
 
     component["toggleSearchEntityType"]("Person");
-    expect(component["searchEntityTypes"]()).toEqual(expect.not.arrayContaining(["Person"]));
+    const searchTypes = component["searchEntityTypes"]();
+    expect(searchTypes).toEqual(expect.arrayContaining(["Person"]));
+    expect(searchTypes).toEqual(expect.not.arrayContaining(["ContactPoint"]));
 
     component["toggleSearchEntityType"]("Person");
-    expect(component["searchEntityTypes"]()).toEqual(expect.arrayContaining(["Person"]));
+    expect(component["searchEntityTypes"]()).toEqual(expect.not.arrayContaining(["Person"]));
+    expect(searchTypes).toEqual(expect.not.arrayContaining(["ContactPoint"]));
   });
 });

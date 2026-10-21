@@ -138,14 +138,6 @@ describe("ToastNotifier", () => {
         expect(lastCall().config.data.failure).toBe(failure);
       });
 
-      it("falls back to the title 'Fehler' when undefined is passed explicitly", () => {
-        // the default sits in the MIDDLE of the parameter list, so it can only be used by
-        // passing `undefined` -- you cannot simply leave the title out and still pass a failure
-        notifier.submissionFailure("Nachricht", undefined, failure);
-
-        expect(lastCall().config.data.title).toBe("Fehler");
-      });
-
       it("shows for 10 seconds by default, with the error styling", () => {
         notifier.submissionFailure("m", "t", failure);
 

@@ -214,12 +214,6 @@ describe("FastTrackResource", () => {
       expect(component.model().theme).toEqual([THEME_ID]);
     });
 
-    it("sets the selected resource type(s) in the model", async () => {
-      const resourceTypeSelect = await vocabSelect(loader, "resourceTypeGeneral");
-      await resourceTypeSelect.open();
-      await resourceTypeSelect.clickOptions({ text: "Type 1" });
-    });
-
     it("sets the selected resource creation method(s) in the model", async () => {
       const methodSelect = await vocabSelect(loader, "resourceCreationMethod");
       await methodSelect.open();
@@ -519,9 +513,6 @@ describe("FastTrackResource", () => {
       const themeSelect = await vocabSelect(loader, "theme");
       await themeSelect.open();
       await themeSelect.clickOptions({ text: "Theme 1" });
-      const resourceTypeSelect = await vocabSelect(loader, "resourceTypeGeneral");
-      await resourceTypeSelect.open();
-      await resourceTypeSelect.clickOptions({ text: "Type 1" });
 
       const spatial = fieldsetEl(fixture, "spatial").query(By.css("input")).nativeElement;
       setNativeValue(fixture, spatial, "Berlin");

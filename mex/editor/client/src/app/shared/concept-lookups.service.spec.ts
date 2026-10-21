@@ -1,3 +1,4 @@
+// import { HttpErrorResponse } from "@angular/common/http";
 import { HttpTestingController } from "@angular/common/http/testing";
 import { ApplicationRef } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
@@ -5,10 +6,12 @@ import { TranslocoService } from "@jsverse/transloco";
 
 import { ConceptLookups } from "./concept-lookups.service";
 import type { Lookup } from "./to-lookup-pipe";
+import { ToastNotifier } from "./toasts/toast-notifier";
 
 describe("ConceptLookups", () => {
   let httpMock: HttpTestingController;
   let transloco: TranslocoService;
+  let notifier: { error: ReturnType<typeof vi.fn> };
 
   const vocabularyNames = [
     "theme",
@@ -19,8 +22,9 @@ describe("ConceptLookups", () => {
   ];
 
   beforeEach(() => {
+    notifier = { error: vi.fn() };
     TestBed.configureTestingModule({
-      providers: [ConceptLookups],
+      providers: [ConceptLookups, { provide: ToastNotifier, useValue: notifier }],
     });
 
     httpMock = TestBed.inject(HttpTestingController);

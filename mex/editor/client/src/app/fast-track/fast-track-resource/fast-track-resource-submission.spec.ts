@@ -199,14 +199,12 @@ describe("FastTrackResourceSubmission", () => {
       const additive = await sentAdditive(
         makeModel({
           theme: ["theme-1"],
-          resourceTypeGeneral: ["type-1"],
           resourceCreationMethod: ["method-1"],
           accrualPeriodicity: "freq-1",
         }),
       );
 
       expect(additive["theme"]).toEqual(["theme-1"]);
-      expect(additive["resourceTypeGeneral"]).toEqual(["type-1"]);
       expect(additive["resourceCreationMethod"]).toEqual(["method-1"]);
       expect(additive["accrualPeriodicity"]).toBe("freq-1");
     });

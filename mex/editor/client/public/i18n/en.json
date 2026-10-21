@@ -10,6 +10,10 @@
   "create-item-dialog.save-button.label": "Create entry",
   "create-item-dialog.title": "Create new entry",
   "datepicker.validation.parse": "Please use format {{format}}",
+  "errors.services.concept-lookup.loading": {
+    "message": "Beim Laden des Lookups '{{lookupName}}' ist ein Fehler aufgetreten.",
+    "title": "Fehler beim Laden"
+  },
   "fasttrack": {
     "resource": {
       "fields": {

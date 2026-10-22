@@ -1,0 +1,9 @@
+<form [formRoot]="resourceForm">
+  @for (group of groups(); track group[0]) {
+    <h2>{{ group[0] }}</h2>
+    @for (entry of group[1]; track entry[0]) {
+      <mex-zod-field-editor [field]="entry[1]" [schema]="shape[entry[0]]" [name]="entry[0]" />
+    }
+  }
+  <button type="submit">Submit</button>
+</form>

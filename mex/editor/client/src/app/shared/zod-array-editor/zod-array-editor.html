@@ -1,0 +1,19 @@
+<fieldset class="nested">
+  <legend>{{ name() }}</legend>
+  @for (item of items(); track item; let i = $index) {
+    <div class="row">
+      <mex-zod-field-editor
+        class="grow"
+        [field]="$any(item)"
+        [schema]="element()"
+        [name]="name() + ' ' + (i + 1)"
+      />
+      <button mat-icon-button type="button" (click)="remove(i)" aria-label="Entfernen">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  }
+  <button mat-stroked-button type="button" (click)="add()">
+    <mat-icon>add</mat-icon> Hinzufügen
+  </button>
+</fieldset>

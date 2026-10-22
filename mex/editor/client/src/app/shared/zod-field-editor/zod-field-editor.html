@@ -1,0 +1,37 @@
+<mex-fieldset
+  [formField]="field()"
+  [labelKey]="name()"
+  [descriptionKey]="`${name()}.description`"
+  [category]="schema() | fieldCategory"
+>
+  @switch (kind()) {
+    @case ("object") {
+      <div>WE DONT RENDER OBJECTS!</div>
+    }
+    @case ("array") {
+      <div>ARRAY</div>
+      <!-- <mex-zod-array-editor
+        [field]="field()"
+        [schema]="schema()"
+        [name]="name()"
+      ></mex-zod-array-editor> -->
+    }
+    @case ("number") {
+      <input type="number" [formField]="$any(field())" />
+    }
+    @case ("boolean") {
+      <div>Bool</div>
+    }
+    @case ("date") {
+      <div>DATE</div>
+      <!-- <mex-datepicker [formField]="field()"></mex-datepicker> -->
+    }
+    @case ("enum") {
+      <div>Enum</div>
+      <!-- <app-zod-enum-control [formField]="field()" [options]="enumOptions()" /> -->
+    }
+    @default {
+      <input [formField]="$any(field())" />
+    }
+  }
+</mex-fieldset>

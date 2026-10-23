@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - datepicker component to unify usage and handle parse errors
 - field-category pipe to determine field-category based on zod schema definition
 - rki theme from figma (m3)
+- service to submit fasttrack resources
+- edit page stub that reads given id from url and loads the corrosponding item
+- service to raise toasts in order do notify/inform users about successfull or errored operations
 
 ### Changes
 - models are now defined by zod schemas

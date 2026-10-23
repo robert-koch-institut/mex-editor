@@ -31,7 +31,13 @@
           <mat-icon [title]="validType | transloco">
             {{
               validType
-                | typeToIconName: { suffix: searchEnTypes.includes(validType) ? "" : "_off" }
+                | typeToIconName
+                  : {
+                      suffix:
+                        searchEnTypes.length === 0 || searchEnTypes.includes(validType)
+                          ? ""
+                          : "_off",
+                    }
             }}
           </mat-icon>
         </button>

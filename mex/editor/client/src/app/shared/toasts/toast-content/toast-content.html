@@ -1,0 +1,19 @@
+<div class="toast-header">
+  <mat-icon class="toast-icon">{{ iconName() }}</mat-icon>
+  <div class="toast-title">{{ data.title }}</div>
+  <button
+    mat-icon-button
+    type="button"
+    class="toast-close"
+    aria-label="Schließen"
+    (click)="snackBarRef.dismiss()"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<div class="toast-body">
+  <div class="toast-message">{{ data.message }}</div>
+  <div class="toast-content">
+    <ng-content></ng-content>
+  </div>
+</div>

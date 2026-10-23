@@ -2,16 +2,27 @@
 import z from "zod";
 
 import { CreateContactPointSchema, CreatePersonSchema } from "../../shared/models/create-item";
+import type { ContactPointRuleSetRequest } from "../../shared/models/generated/contact-point";
 import { PreviewContactPointSchema } from "../../shared/models/generated/contact-point";
 import { PreviewOrganizationalUnitSchema } from "../../shared/models/generated/organizational-unit";
+import type { PersonRuleSetRequest } from "../../shared/models/generated/person";
 import { PreviewPersonSchema } from "../../shared/models/generated/person";
+import type {
+  ResourceRuleSetRequest,
+  ResourceRuleSetResponse,
+} from "../../shared/models/generated/resource";
 import {
+  ExtractedResourceSchema,
   FrequencySchema,
   ResourceCreationMethodSchema,
-  ResourceTypeGeneralSchema,
 } from "../../shared/models/generated/resource";
 import { TextSchema, ThemeSchema } from "../../shared/models/generated/shared";
-import { luxonDateTimeNullableSchema } from "../../shared/models/zod-types";
+import type {
+  SubmissionFailure,
+  SubmissionResult,
+  SubmissionSuccess,
+} from "../../shared/models/submission-result";
+import { recommended } from "../../shared/models/zod-types";
 
 /**
  * Schema for UnionType for CreatePerson and PreviewPerson
@@ -58,22 +69,51 @@ export const FastTrackResourceModelSchema = z.object({
   }),
   resourceCreationMethod: ResourceCreationMethodSchema.array().nonempty(),
   accrualPeriodicity: FrequencySchema.nonoptional(),
-  provenance: TextSchema.shape.value.nonempty(),
-  rights: TextSchema.shape.value.nonempty(),
+  provenance: TextSchema.shape.value,
+  rights: TextSchema.shape.value,
 
   // recommended fields
-  creator: CreateOrPreviewPersonSchema.array(),
-  contributor: CreateOrPreviewPersonSchema.array(),
-  contributingUnit: PreviewOrganizationalUnitSchema.array(),
-  spatial: z.string(),
-  hasLegalBasis: z.string(),
-  start: luxonDateTimeNullableSchema(),
-  end: luxonDateTimeNullableSchema(),
-  resourceTypeGeneral: ResourceTypeGeneralSchema.array(),
-  theme: ThemeSchema.array(),
+  creator: recommended(CreateOrPreviewPersonSchema.array()),
+  contributor: recommended(CreateOrPreviewPersonSchema.array()),
+  contributingUnit: recommended(PreviewOrganizationalUnitSchema.array()),
+  spatial: recommended(z.string()),
+  hasLegalBasis: recommended(z.string()),
+  start: recommended(ExtractedResourceSchema.shape.start.unwrap().element.nullable()),
+  end: recommended(ExtractedResourceSchema.shape.end.unwrap().element.nullable()),
+  theme: recommended(ThemeSchema.array()),
 });
 
 /**
  * Model for the Ressource fast track creation page.
  */
 export type FastTrackResourceModel = z.infer<typeof FastTrackResourceModelSchema>;
+
+/**
+ * Error for submitting fasttrack resource sub items.
+ */
+export class FastTrackResourceSubPostError extends Error {
+  constructor(
+    readonly originalError: Error,
+    readonly payload: PersonRuleSetRequest | ContactPointRuleSetRequest,
+  ) {
+    super("Posting a sub item failed.", { cause: originalError });
+  }
+}
+
+/**
+ * Result of a successfull FastTrackResource submission.
+ */
+export type FastTrackResourceSubmissionSuccess = SubmissionSuccess<ResourceRuleSetResponse>;
+
+/**
+ * Result of a failed  FastTrackResource submission.
+ */
+export type FastTrackResourceSubmissionFailure = SubmissionFailure<ResourceRuleSetRequest>;
+
+/**
+ * Result of the FastTrackResource submission.
+ */
+export type FastTrackResourceSubmissionResult = SubmissionResult<
+  ResourceRuleSetResponse,
+  ResourceRuleSetRequest
+>;

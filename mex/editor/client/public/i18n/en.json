@@ -10,23 +10,43 @@
   "create-item-dialog.save-button.label": "Create entry",
   "create-item-dialog.title": "Create new entry",
   "datepicker.validation.parse": "Please use format {{format}}",
+  "errors.services.concept-lookup.loading": {
+    "message": "Beim Laden des Lookups '{{lookupName}}' ist ein Fehler aufgetreten. Please reload the page.",
+    "title": "Fehler beim Laden"
+  },
   "fasttrack": {
     "resource": {
       "fields": {
-        "keywords.de": "{{keyword}} - German",
-        "keywords.en": "{{keyword}} - English",
+        "keywords.de.label": "{{keyword}} - German",
+        "keywords.de.placeholder": "Please enter german keyword and add with Enter",
+        "keywords.en.label": "{{keyword}} - English",
+        "keywords.en.placeholder": "Please enter english keyword and add with Enter",
         "rights.prefill": "prefill",
-        "rights.prefill.text": "Health data is particularly sensitive and requires a high level of protection. As this often involves personal data protected by the GDPR (General Data Protection Regulation), it cannot simply be made freely available. The disclosure and processing of this data is therefore, in principle, ruled out initially, but may be possible under certain conditions and circumstances. Whether and in what form data can be made available is therefore subject to a case-by-case assessment. To facilitate the processing of your request, the following information should be included when you first make contact: the applicant and their institution, the name and identifier of the dataset, the intended use along with a brief description of the research project, and the date by which the dataset is required.",
-        "title.placeholder": "Please add a title"
+        "rights.prefill.text": "Health data is particularly sensitive and requires a high level of protection. As this often involves personal data protected by the GDPR (General Data Protection Regulation), it cannot simply be made freely available. The disclosure and processing of this data is therefore, in principle, ruled out initially, but may be possible under certain conditions and circumstances. Whether and in what form data can be made available is therefore subject to a case-by-case assessment. To facilitate the processing of your request, the following information should be included when you first make contact: the applicant and their institution, the name and identifier of the dataset, the intended use along with a brief description of the research project, and the date by which the dataset is required."
       },
-      "headline": "Create {{Resource}}"
+      "headline": "Create {{Resource}}",
+      "save-button": {
+        "label": "Save {{Resource}}",
+        "saving": "Saving {{Resource}}..."
+      },
+      "toast": {
+        "submissionFailure": {
+          "message": "Unfortunately, the {{Resource}} could not be saved. An unexpected error occurred.\nYou can send an email to the MeX team to inform them about the issue.",
+          "sendMail": "Send email to MeX",
+          "title": "Error while saving"
+        },
+        "success": {
+          "message": "The {{Resource}} is successfully saved.",
+          "title": "{{Resource}} saved"
+        }
+      }
     }
   },
   "footer.greetings": "Created with ❤️ by MEx",
   "input.placeholder": "Please fillout",
   "navbar.create-link.text": "Create {{{{entity_type}}}}",
   "reference-select": {
-    "placeholder.empty": "Type to filter, you can use \"*\" as a placeholder",
+    "placeholder.empty": "Type to filter, \"*\" as placeholder",
     "placeholder.validTypes": "Search for {{value}}",
     "search-result": {
       "createNew": "Create new entry for \"{{query}}\"...",

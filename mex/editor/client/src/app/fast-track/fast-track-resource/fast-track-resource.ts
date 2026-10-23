@@ -18,7 +18,6 @@ import { MatOption, MatPrefix, MatSelect } from "@angular/material/select";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { Router } from "@angular/router";
 import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
-import type { DateTime } from "luxon";
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
@@ -80,7 +79,7 @@ export class FastTrackResource {
     spatial: "",
     resourceCreationMethod: [],
     accrualPeriodicity: null as unknown as Frequency,
-    start: null as unknown as DateTime,
+    start: null as unknown as string,
     end: null,
     hasLegalBasis: "",
     provenance: "",

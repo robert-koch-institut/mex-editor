@@ -122,8 +122,8 @@ export class FastTrackResourceSubmission {
       description: [stringToText(model.description)],
       accrualPeriodicity: model.accrualPeriodicity,
       theme: model.theme,
-      end: model.end ? [model.end.toISODate()!] : undefined,
-      start: model.start ? [model.start.toISODate()!] : undefined,
+      end: model.end ? [model.end] : undefined,
+      start: model.start ? [model.start] : undefined,
       hasLegalBasis: [stringToText(model.hasLegalBasis)],
       keyword: [
         ...model.keywords.de.map((x) => ({ value: x, language: "de" as const })),

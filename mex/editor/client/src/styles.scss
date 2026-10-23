@@ -10,6 +10,8 @@
 @use "@angular/material" as mat;
 @use "./rki-theme.scss" as rki;
 
+@import "@angular/cdk/overlay-prebuilt.css";
+
 // Initialize core styles
 @include mat.core();
 
@@ -29,7 +31,7 @@ html {
   @include rki.theme();
 
   margin: 0;
-  height: 100vh;
+  // height: 100vh;
   background-color: var(--mat-app-background-color);
   color: var(--mat-app-text-color);
 }

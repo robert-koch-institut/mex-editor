@@ -11,3 +11,8 @@ mat-form-field {
 .error-hint {
   color: lightcoral;
 }
+
+.input-container {
+  display: flex;
+  align-items: baseline;
+}

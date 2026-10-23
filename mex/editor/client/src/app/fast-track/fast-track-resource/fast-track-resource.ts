@@ -79,7 +79,7 @@ export class FastTrackResource {
     spatial: "",
     resourceCreationMethod: [],
     accrualPeriodicity: null as unknown as Frequency,
-    start: null as unknown as string,
+    start: null,
     end: null,
     hasLegalBasis: "",
     provenance: "",

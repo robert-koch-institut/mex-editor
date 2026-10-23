@@ -16,14 +16,7 @@ import {
   FrequencySchema,
   ResourceCreationMethodSchema,
 } from "../../shared/models/generated/resource";
-import {
-  TextSchema,
-  ThemeSchema,
-  yearMonthDayPattern,
-  yearMonthDayTimePattern,
-  yearMonthPattern,
-  yearPattern,
-} from "../../shared/models/generated/shared";
+import { TextSchema, ThemeSchema } from "../../shared/models/generated/shared";
 import type {
   SubmissionFailure,
   SubmissionResult,
@@ -85,16 +78,7 @@ export const FastTrackResourceModelSchema = z.object({
   contributingUnit: recommended(PreviewOrganizationalUnitSchema.array()),
   spatial: recommended(z.string()),
   hasLegalBasis: recommended(z.string()),
-  start: recommended(
-    z
-      .union([
-        z.string().regex(new RegExp(yearMonthDayTimePattern)).nonempty(),
-        z.string().regex(new RegExp(yearMonthDayPattern)).nonempty(),
-        z.string().regex(new RegExp(yearMonthPattern)).nonempty(),
-        z.string().regex(new RegExp(yearPattern)).nonempty(),
-      ])
-      .nonoptional(),
-  ),
+  start: recommended(ExtractedResourceSchema.shape.start.unwrap().element.nullable()),
   end: recommended(ExtractedResourceSchema.shape.end.unwrap().element.nullable()),
   theme: recommended(ThemeSchema.array()),
 });

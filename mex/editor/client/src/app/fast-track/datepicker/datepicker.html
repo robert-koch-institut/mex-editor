@@ -1,36 +1,59 @@
 <div class="mex-datepicker">
-  @if (showPrecisionSelector()) {
-    <mat-button-toggle-group
-      class="precision-toggle"
-      [value]="mode()"
-      [disabled]="disabled() || readonly()"
-      (change)="onPrecisionChange($event.value)"
-      aria-label="Precision"
-    >
-      @for (option of precisionOptions; track option) {
-        <mat-button-toggle [value]="option" [disabled]="!isAllowed(option)">
-          {{ "datepicker.precision." + option | transloco }}
-        </mat-button-toggle>
-      }
-    </mat-button-toggle-group>
-  }
-
   <mat-form-field>
-    <input
-      matInput
-      #dateInput
-      [matDatepicker]="picker"
-      [value]="pickerValue()"
-      [min]="minDate()"
-      [max]="maxDate()"
-      [disabled]="disabled()"
-      [readonly]="readonly()"
-      [errorStateMatcher]="customErrorMatcher"
-      (dateInput)="onDateInput($event)"
-      (blur)="touch.emit()"
-      (input)="onDateInputChanged(dateInput.value)"
-      [placeholder]="formats.parse.dateInput"
-    />
+    <div class="input-container">
+      <input
+        matInput
+        #dateInput
+        [matDatepicker]="picker"
+        [formField]="dateForm"
+        [min]="minDate()"
+        [max]="maxDate()"
+        [disabled]="disabled()"
+        [readonly]="readonly()"
+        [errorStateMatcher]="customErrorMatcher"
+        (blur)="touch.emit()"
+        (dateInput)="onDateInput($event)"
+        (input)="onDateInputChanged(dateInput.value)"
+        [placeholder]="formats.parse.dateInput"
+      />
+
+      @if (mode() === "datetime") {
+        <input
+          matInput
+          #timeInput
+          type="time"
+          [value]="time()"
+          [disabled]="disabled()"
+          [readonly]="readonly()"
+          (input)="onTimeInput(timeInput.value)"
+          (blur)="touch.emit()"
+          (click)="$event.stopPropagation()"
+        />
+      }
+    </div>
+
+    @if (showPrecisionSelector()) {
+      <ng-container matIconPrefix>
+        <button
+          type="button"
+          matIconButton
+          [matMenuTriggerFor]="menu"
+          [disabled]="disabled() || readonly()"
+        >
+          <mat-icon [svgIcon]="'precision-' + mode()" />
+        </button>
+
+        <mat-menu #menu="matMenu">
+          @for (option of allowed(); track option) {
+            <button mat-menu-item (click)="onPrecisionChange(option)">
+              <mat-icon [svgIcon]="'precision-' + option" />
+              <span> {{ "datepicker.precision." + option | transloco }}</span>
+            </button>
+          }
+        </mat-menu>
+      </ng-container>
+    }
+
     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker
       #picker
@@ -44,19 +67,4 @@
       }}</mat-hint>
     }
   </mat-form-field>
-
-  @if (mode() === "datetime") {
-    <mat-form-field class="time-field">
-      <input
-        matInput
-        #timeInput
-        type="time"
-        [value]="time()"
-        [disabled]="disabled()"
-        [readonly]="readonly()"
-        (input)="onTimeInput(timeInput.value)"
-        (blur)="touch.emit()"
-      />
-    </mat-form-field>
-  }
 </div>

@@ -3,7 +3,7 @@ import { computed, ElementRef, linkedSignal, signal } from "@angular/core";
 import { Component, inject, input, model, output, viewChild } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import type { FormControl, FormGroupDirective, NgForm } from "@angular/forms";
-import type { Field, FieldState, FormValueControl } from "@angular/forms/signals";
+import type { Field, FormValueControl } from "@angular/forms/signals";
 import { FormField } from "@angular/forms/signals";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import type { MatDateFormats } from "@angular/material/core";
@@ -113,7 +113,8 @@ class DatepickerErrorStateMatcher implements ErrorStateMatcher {
     return this.defaultErrorStateMatcher.isErrorState(_control, _form);
   }
   isSignalErrorState(field: Field<unknown> | null): boolean {
-    console.log("ERRORSTATE", field, this.formField());
+    console.log("Errorstate", field);
+    // console.log("ERRORSTATE", field, this.formField());
     const defaultState = this.defaultErrorStateMatcher.isSignalErrorState
       ? this.defaultErrorStateMatcher.isSignalErrorState(field)
       : false;
@@ -237,10 +238,7 @@ export class Datepicker implements FormValueControl<string | null> {
     read: ElementRef<HTMLInputElement>,
   }) as Signal<ElementRef<HTMLInputElement>>;
 
-  customErrorMatcher = new DatepickerErrorStateMatcher(
-    this.hasParseError,
-    this.hostFormField.state,
-  );
+  customErrorMatcher = new DatepickerErrorStateMatcher(this.hasParseError);
 
   constructor() {
     this.formats.precision = this.mode;

@@ -1,6 +1,7 @@
 import { isDevMode } from "@angular/core";
 import type { Routes } from "@angular/router";
 
+import { Edit } from "./edit/edit";
 import { FastTrackActivity } from "./fast-track/fast-track-activity/fast-track-activity";
 import { FastTrackResource } from "./fast-track/fast-track-resource/fast-track-resource";
 import { StartPage } from "./start-page/start-page";
@@ -13,6 +14,11 @@ const appRoutes: Routes = [
 
   { path: "create/activity", component: FastTrackActivity },
   { path: "create/resource", component: FastTrackResource },
+
+  { path: "edit/:entityId", component: Edit },
+
+  // Optional: Redirect any unknown URLs back to the root
+  { path: "**", redirectTo: "" },
 ];
 
 /**

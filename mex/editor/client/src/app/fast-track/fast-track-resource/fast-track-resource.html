@@ -1,7 +1,6 @@
 <ng-container *transloco="let t">
   <h1 class="page-title">{{ t("fasttrack.resource.headline") }}</h1>
-
-  <form [formRoot]="resourceForm" (submit)="onSubmit()" class="two-column-layout">
+  <form [formRoot]="resourceForm" class="two-column-layout">
     <mex-fieldset
       [formField]="resourceForm.title"
       labelKey="title"
@@ -12,7 +11,8 @@
         <input
           matInput
           [formField]="resourceForm.title"
-          [attr.placeholder]="'fasttrack.resource.fields.title.placeholder' | transloco"
+          [attr.placeholder]="'Resource.title.description' | transloco"
+          (keydown.enter)="$event.preventDefault()"
         />
       </mat-form-field>
     </mex-fieldset>
@@ -43,6 +43,7 @@
       <mex-reference-select
         [formField]="resourceForm.contact"
         [isCreationEnabled]="true"
+        (keydown.enter)="$event.preventDefault()"
       ></mex-reference-select>
     </mex-fieldset>
 
@@ -57,6 +58,7 @@
         [formField]="resourceForm.creator"
         [validEntityTypes]="['Person']"
         [isCreationEnabled]="true"
+        (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
     </mex-fieldset>
@@ -72,6 +74,7 @@
         [formField]="resourceForm.contributor"
         [validEntityTypes]="['Person']"
         [isCreationEnabled]="true"
+        (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
     </mex-fieldset>
@@ -86,6 +89,7 @@
       <mex-reference-select
         [formField]="resourceForm.unitInCharge"
         [validEntityTypes]="['OrganizationalUnit']"
+        (keydown.enter)="$event.preventDefault()"
       ></mex-reference-select>
     </mex-fieldset>
 
@@ -99,6 +103,7 @@
       <mex-reference-select
         [formField]="resourceForm.contributingUnit"
         [validEntityTypes]="['OrganizationalUnit']"
+        (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
     </mex-fieldset>
@@ -119,27 +124,6 @@
           data-testid="theme-select"
         >
           @for (option of conceptOptions.themeOptions(); track option.id) {
-            <mat-option [value]="option.id">{{ option.label }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </mex-fieldset>
-
-    <mex-fieldset
-      [formField]="resourceForm.resourceTypeGeneral"
-      labelKey="Resource.resourceTypeGeneral"
-      descriptionKey="Resource.resourceTypeGeneral.description"
-      class="one-column-item"
-      [category]="resourceSchema.shape.resourceTypeGeneral | fieldCategory"
-    >
-      <mat-form-field>
-        <mat-select
-          multiple
-          [formField]="resourceForm.resourceTypeGeneral"
-          [placeholder]="'select.placeholder' | transloco"
-          data-testid="resourceTypeGeneral-select"
-        >
-          @for (option of conceptOptions.resourceTypeGeneralOptions(); track option.id) {
             <mat-option [value]="option.id">{{ option.label }}</mat-option>
           }
         </mat-select>
@@ -220,6 +204,7 @@
           <mex-datepicker
             [formField]="resourceForm.start"
             [maxDate]="resourceForm.end().value()"
+            (keydown.enter)="$event.preventDefault()"
           ></mex-datepicker>
         </mex-fieldset>
 
@@ -232,6 +217,7 @@
           <mex-datepicker
             [formField]="resourceForm.end"
             [minDate]="resourceForm.start().value()"
+            (keydown.enter)="$event.preventDefault()"
           ></mex-datepicker>
         </mex-fieldset>
       </div>
@@ -239,7 +225,8 @@
 
     <mex-fieldset
       [formField]="resourceForm.keywords.de"
-      labelKey="fasttrack.resource.fields.keywords.de"
+      labelKey="fasttrack.resource.fields.keywords.de.label"
+      descriptionKey="Resource.keyword.description"
       class="two-column-item"
       [category]="resourceSchema.shape.keywords.shape.de | fieldCategory"
     >
@@ -261,14 +248,15 @@
         <input
           [matChipInputFor]="keywordGermanChips"
           (matChipInputTokenEnd)="addKeyword('de', $event.value); $event.chipInput.clear()"
-          [placeholder]="'Resource.keyword.description' | transloco"
+          [placeholder]="t('fasttrack.resource.fields.keywords.de.placeholder')"
         />
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
       [formField]="resourceForm.keywords.en"
-      labelKey="fasttrack.resource.fields.keywords.en"
+      labelKey="fasttrack.resource.fields.keywords.en.label"
+      descriptionKey="Resource.keyword.description"
       class="two-column-item"
       [category]="resourceSchema.shape.keywords.shape.en | fieldCategory"
     >
@@ -290,7 +278,7 @@
         <input
           [matChipInputFor]="keywordEnglishChips"
           (matChipInputTokenEnd)="addKeyword('en', $event.value); $event.chipInput.clear()"
-          [placeholder]="'Resource.keyword.description' | transloco"
+          [placeholder]="t('fasttrack.resource.fields.keywords.en.placeholder')"
         />
       </mat-form-field>
     </mex-fieldset>
@@ -350,7 +338,27 @@
     </mex-fieldset>
 
     <div class="two-column-item form-actions">
-      <button matButton="filled" type="submit" class="secondary">Submit</button>
+      @let formState = resourceForm();
+      <button
+        matButton="filled"
+        type="submit"
+        class="secondary"
+        [disabled]="formState.submitting()"
+      >
+        @if (formState.submitting()) {
+          <div class="button-saving">
+            <mat-progress-spinner
+              progressIndicator
+              mode="indeterminate"
+              class="button-spinner"
+              diameter="20"
+            ></mat-progress-spinner>
+            {{ t("fasttrack.resource.save-button.saving") }}
+          </div>
+        } @else {
+          {{ t("fasttrack.resource.save-button.label") }}
+        }
+      </button>
     </div>
   </form>
 </ng-container>

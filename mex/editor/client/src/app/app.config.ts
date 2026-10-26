@@ -18,7 +18,7 @@ import { TranslocoService } from "@jsverse/transloco";
 import z from "zod";
 
 import { routes } from "./app.routes";
-import { datepickerAppInitializer } from "./fast-track/datepicker/datepicker";
+import { iconAppInitializer } from "./icon-initializer";
 import { translocoProviders } from "./transloco";
 
 @Injectable()
@@ -141,6 +141,6 @@ export const appConfig: ApplicationConfig = {
     translocoProviders,
     materialDefaultOptionProviders,
     zodInitProvider,
-    datepickerAppInitializer,
+    iconAppInitializer,
   ],
 };

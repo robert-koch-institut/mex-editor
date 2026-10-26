@@ -8,13 +8,11 @@
         [formField]="dateForm"
         [min]="minDate()"
         [max]="maxDate()"
-        [disabled]="disabled()"
-        [readonly]="readonly()"
         [errorStateMatcher]="customErrorMatcher"
+        [placeholder]="inputFormat()"
         (blur)="touch.emit()"
         (dateInput)="onDateInput($event)"
         (input)="onDateInputChanged(dateInput.value)"
-        [placeholder]="formats.parse.dateInput"
       />
 
       @if (mode() === "datetime") {
@@ -33,37 +31,25 @@
     </div>
 
     @if (showPrecisionSelector()) {
-      <ng-container matIconPrefix>
-        <button
-          type="button"
-          matIconButton
-          [matMenuTriggerFor]="menu"
-          [disabled]="disabled() || readonly()"
-        >
-          <mat-icon [svgIcon]="'precision-' + mode()" />
-        </button>
-
-        <mat-menu #menu="matMenu">
-          @for (option of allowed(); track option) {
-            <button mat-menu-item (click)="onPrecisionChange(option)">
-              <mat-icon [svgIcon]="'precision-' + option" />
-              <span> {{ "datepicker.precision." + option | transloco }}</span>
-            </button>
-          }
-        </mat-menu>
-      </ng-container>
+      <mex-precision-menu
+        matIconPrefix
+        [precision]="mode()"
+        [options]="allowed()"
+        [disabled]="disabled() || readonly()"
+        (precisionSelected)="onPrecisionChange($event)"
+      />
     }
 
-    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker-toggle matIconSuffix [for]="picker" />
     <mat-datepicker
       #picker
       [startView]="startView()"
-      (yearSelected)="onYearSelected($event, picker)"
-      (monthSelected)="onMonthSelected($event, picker)"
+      (yearSelected)="onUnitSelected($event, 'year', picker)"
+      (monthSelected)="onUnitSelected($event, 'month', picker)"
     />
     @if (hasParseError()) {
       <mat-hint class="error-hint">{{
-        "datepicker.validation.parse" | transloco: { format: formats.parse.dateInput }
+        "datepicker.validation.parse" | transloco: { format: inputFormat() }
       }}</mat-hint>
     }
   </mat-form-field>

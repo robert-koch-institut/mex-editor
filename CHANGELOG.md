@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - service to raise toasts in order do notify/inform users about successfull or errored operations
 
 ### Changes
+- datepicker now uses string as value input (so use with native mex model values/types)
 - selection behaviour of reference-select type filter
 - models are now defined by zod schemas
 - fasttrack-resource form with validation

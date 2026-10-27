@@ -8,7 +8,6 @@ describe("Edit", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Edit],
-      // providers: [provideHttpClientTesting()],
     }).compileComponents();
 
     httpTesting = TestBed.inject(HttpTestingController);

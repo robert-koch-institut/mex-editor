@@ -163,6 +163,7 @@
           matInput
           [formField]="resourceForm.spatial"
           [placeholder]="'input.placeholder' | transloco"
+          (keydown.enter)="$event.preventDefault()"
         />
       </mat-form-field>
     </mex-fieldset>

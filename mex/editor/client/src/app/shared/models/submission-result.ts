@@ -1,3 +1,5 @@
+import type { SubmissionError } from "../../fast-track/fast-track-resource/fast-track-resource-submission";
+
 /**
  * Result of a successfull submission.
  */
@@ -9,14 +11,13 @@ export interface SubmissionSuccess<T> {
 /**
  * Result of a failed submission.
  */
-export interface SubmissionFailure<T> {
+export interface SubmissionFailure<T extends { $type: string }> {
   success: false;
-  payload: T;
-  error: Error;
+  error: SubmissionError<T>;
 }
 
 /**
  * Result of a submission.
  */
-export type SubmissionResult<TResponse = unknown, TPayload = unknown> =
-  SubmissionSuccess<TResponse> | SubmissionFailure<TPayload>;
+export type SubmissionResult<TSubmissionResponse, TPayload extends { $type: string }> =
+  SubmissionSuccess<TSubmissionResponse> | SubmissionFailure<TPayload>;

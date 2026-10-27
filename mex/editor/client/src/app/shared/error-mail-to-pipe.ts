@@ -1,7 +1,7 @@
 import type { PipeTransform } from "@angular/core";
 import { Pipe } from "@angular/core";
 
-import type { SubmissionFailure } from "./models/submission-result";
+import type { SubmissionError } from "../fast-track/fast-track-resource/fast-track-resource-submission";
 
 @Pipe({
   name: "errorMailTo",
@@ -9,27 +9,28 @@ import type { SubmissionFailure } from "./models/submission-result";
 /**
  * A pipe that generates a mailto link for errors.
  */
-export class ErrorMailToPipe implements PipeTransform {
-  buildErrorSummary(error: SubmissionFailure<unknown>) {
+export class ErrorMailToPipe<T extends { $type: string }> implements PipeTransform {
+  buildErrorSummary(error: SubmissionError<T>) {
+    const title = `Fehler beim Speichern von '${error.payload.$type}'`;
     return {
-      subject: "Fehler beim Speichern einer Resource.",
+      subject: title,
       content:
-        `Fehler beim Speichern einer Resource!\n` +
+        `${title}!\n` +
         `--- PAYLOAD ---\n` +
         `${JSON.stringify(error.payload, null, 2)}\n\n` +
         `--- ERROR DETAILS ---\n` +
-        `${JSON.stringify(error.error, null, 2)} `,
+        `${JSON.stringify(error.innerError, null, 2)} `,
     };
   }
 
-  transform(failure: SubmissionFailure<unknown>): string {
-    const summary = this.buildErrorSummary(failure);
+  transform(error: SubmissionError<T>): string {
+    const summary = this.buildErrorSummary(error);
     const body =
-      `Hallo MeX-Support,\n\n` +
+      `Hallo MEx-Support,\n\n` +
       `leider ist ein Fehler im Editor aufgetreten.\n\n` +
       `${summary.content}`;
 
     // Sicheres URL-Encoding für Sonderzeichen und Zeilenumbrüche
-    return `mailto:Mex@rki.de?subject=${encodeURIComponent(summary.subject)}&body=${encodeURIComponent(body)}`;
+    return `mailto:mex@rki.de?subject=${encodeURIComponent(summary.subject)}&body=${encodeURIComponent(body)}`;
   }
 }

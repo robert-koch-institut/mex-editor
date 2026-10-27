@@ -2,11 +2,11 @@ import { inject, Service } from "@angular/core";
 import type { MatSnackBarConfig } from "@angular/material/snack-bar";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
-import type { SubmissionFailure } from "../models/submission-result";
+import type { SubmissionError } from "../../fast-track/fast-track-resource/fast-track-resource-submission";
 import { ErrorToast } from "./error-toast";
-import { SubmissionFailureToast } from "./submission-failure-toast";
+import { SubmissionErrorToast } from "./submission-error-toast";
 import { SuccessToast } from "./success-toast";
-import type { ToastData, ToastErrorData, ToastSubmissionFailureData } from "./toast-data";
+import type { ToastData } from "./toast-data";
 
 @Service()
 /**
@@ -34,21 +34,21 @@ export class ToastNotifier {
       ...this.baseConfig,
       duration,
       panelClass: ["toast", "error-toast"],
-      data: { title, message, error } satisfies ToastErrorData,
+      data: { title, message, error },
     });
   }
 
-  submissionFailure(
+  submissionError<T extends { $type: string }>(
     message: string,
-    title = "Fehler",
-    failure: SubmissionFailure<unknown>,
+    title: string,
+    error: SubmissionError<T>,
     duration = 10000,
   ): void {
-    this.snackBar.openFromComponent(SubmissionFailureToast, {
+    this.snackBar.openFromComponent(SubmissionErrorToast, {
       ...this.baseConfig,
       duration,
       panelClass: ["toast", "error-toast"],
-      data: { title, message, failure } satisfies ToastSubmissionFailureData<unknown>,
+      data: { title, message, error },
     });
   }
 }

@@ -1,12 +1,16 @@
 import { HttpErrorResponse } from "@angular/common/http";
 
+import { SubmissionError } from "../fast-track/fast-track-resource/fast-track-resource-submission";
 import { ErrorMailToPipe } from "./error-mail-to-pipe";
-import type { SubmissionFailure } from "./models/submission-result";
 
-const makeFailure = (
-  payload: unknown = { $type: "ResourceRuleSetRequest", additive: { title: [{ value: "Titel" }] } },
+// const payloadValue = { $type: "ResourceRuleSetRequest", additive: { title: [{ value: "Titel" }] } };
+const makeFailure = <T extends { $type: string }>(
+  payload: T = {
+    $type: "ResourceRuleSetRequest",
+    additive: { title: [{ value: "Titel" }] },
+  } as unknown as T,
   error: Error = new HttpErrorResponse({ status: 500, statusText: "Server Error", url: "api/x" }),
-): SubmissionFailure<unknown> => ({ success: false, payload, error });
+) => new SubmissionError(payload, error);
 
 /** Splits the generated mailto link into its decoded parts. */
 function parse(link: string) {
@@ -21,7 +25,7 @@ function parse(link: string) {
 
 // eslint-disable-next-line max-lines-per-function
 describe("ErrorMailToPipe", () => {
-  let pipe: ErrorMailToPipe;
+  let pipe: ErrorMailToPipe<{ $type: string }>;
 
   beforeEach(() => {
     pipe = new ErrorMailToPipe();
@@ -72,7 +76,7 @@ describe("ErrorMailToPipe", () => {
         statusText: "Service Unavailable",
         url: "api/v0/backend/rule-set",
       });
-      const { body } = parse(pipe.transform(makeFailure({}, error)));
+      const { body } = parse(pipe.transform(makeFailure({ $type: "Type" }, error)));
       const details = body!.split("--- ERROR DETAILS ---\n")[1];
 
       expect(JSON.parse(details)).toMatchObject({ status: 503, statusText: "Service Unavailable" });
@@ -84,7 +88,7 @@ describe("ErrorMailToPipe", () => {
         status: 422,
         error: { detail: "title must not be empty" },
       });
-      const { body } = parse(pipe.transform(makeFailure({}, error)));
+      const { body } = parse(pipe.transform(makeFailure({ $type: "payload" }, error)));
 
       expect(body).toContain("title must not be empty");
     });
@@ -100,14 +104,14 @@ describe("ErrorMailToPipe", () => {
     const nasty = 'Ärger & Öl = "ü" #1? 100% <b>fett</b> 😀\nzweite Zeile\ttab';
 
     it("round-trips umlauts, quotes, emoji, newlines and tabs through the link unchanged", () => {
-      const { body } = parse(pipe.transform(makeFailure({ text: nasty })));
+      const { body } = parse(pipe.transform(makeFailure({ $type: "payload", text: nasty })));
       const payloadJson = body!.split("--- PAYLOAD ---\n")[1].split("\n\n--- ERROR DETAILS ---")[0];
 
       expect(JSON.parse(payloadJson)).toEqual({ text: nasty });
     });
 
     it("never leaves raw whitespace, '#' or a stray '&' in the link (they would break the mailto URL)", () => {
-      const link = pipe.transform(makeFailure({ text: nasty }));
+      const link = pipe.transform(makeFailure({ $type: "payload", text: nasty }));
 
       expect(link).not.toMatch(/\s/);
       expect(link).not.toContain("#");
@@ -117,7 +121,9 @@ describe("ErrorMailToPipe", () => {
     });
 
     it("keeps '+' in the payload a '+' (not turned into a space)", () => {
-      const { body } = parse(pipe.transform(makeFailure({ phone: "+49 30 1234" })));
+      const { body } = parse(
+        pipe.transform(makeFailure({ $type: "payload", phone: "+49 30 1234" })),
+      );
 
       expect(body).toContain("+49 30 1234");
     });
@@ -125,7 +131,7 @@ describe("ErrorMailToPipe", () => {
 
   describe("buildErrorSummary", () => {
     it("returns the subject and the payload/error content block", () => {
-      const summary = pipe.buildErrorSummary(makeFailure({ a: 1 }));
+      const summary = pipe.buildErrorSummary(makeFailure({ $type: "payload", a: 1 }));
 
       expect(summary.subject).toBe("Fehler beim Speichern einer Resource.");
       expect(summary.content).toContain("--- PAYLOAD ---");
@@ -141,7 +147,7 @@ describe("ErrorMailToPipe", () => {
     // Once fixed this starts passing and `it.fails` flips it to a failure -- remove `.fails` then.
     it.fails("includes the message of a plain Error in the error details", () => {
       const { body } = parse(
-        pipe.transform(makeFailure({}, new Error("Das ist die Fehlermeldung"))),
+        pipe.transform(makeFailure({ $type: "payload" }, new Error("Das ist die Fehlermeldung"))),
       );
 
       expect(body).toContain("Das ist die Fehlermeldung");
@@ -151,7 +157,10 @@ describe("ErrorMailToPipe", () => {
     // somewhere around 2000 characters. This just records how fast that limit is reached.
     it("produces a link well beyond 2000 characters for a realistic payload", () => {
       const keyword = (i: number) => ({ value: `Schlagwort ${i}`, language: "de" });
-      const payload = { additive: { keyword: Array.from({ length: 40 }, (_, i) => keyword(i)) } };
+      const payload = {
+        $type: "",
+        additive: { keyword: Array.from({ length: 40 }, (_, i) => keyword(i)) },
+      };
 
       expect(pipe.transform(makeFailure(payload)).length).toBeGreaterThan(2000);
     });

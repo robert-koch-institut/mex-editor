@@ -1,3 +1,4 @@
+import type { AfterViewInit } from "@angular/core";
 import { Component, inject, signal } from "@angular/core";
 import {
   disabled,
@@ -31,7 +32,7 @@ import {
   type FastTrackResourceModel,
   FastTrackResourceModelSchema,
 } from "./fast-track-resource.models";
-import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
+import { FastTrackResourceSubmission, SubmissionError } from "./fast-track-resource-submission";
 
 @Component({
   selector: "mex-fast-track-resource",
@@ -63,7 +64,10 @@ import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
 /**
  * Page to create a resource the fast way.
  */
-export class FastTrackResource {
+export class FastTrackResource implements AfterViewInit {
+  ngAfterViewInit(): void {
+    this.notifier.success("SIE HABEN ERFOLGREICh gespeichert..", "gespeichert!", 200000);
+  }
   private readonly translocoService = inject(TranslocoService);
 
   private readonly router = inject(Router);
@@ -114,11 +118,17 @@ export class FastTrackResource {
               this.translocoService.translate("fasttrack.resource.toast.success.message"),
               this.translocoService.translate("fasttrack.resource.toast.success.title"),
             );
+          } else if (submitResult.error instanceof SubmissionError) {
+            this.notifier.submissionError(
+              this.translocoService.translate("fasttrack.resource.toast.submissionError.message"),
+              this.translocoService.translate("fasttrack.resource.toast.submissionError.title"),
+              submitResult.error,
+            );
           } else {
-            this.notifier.submissionFailure(
-              this.translocoService.translate("fasttrack.resource.toast.submissionFailure.message"),
-              this.translocoService.translate("fasttrack.resource.toast.submissionFailure.title"),
-              submitResult,
+            this.notifier.error(
+              this.translocoService.translate("fasttrack.resource.toast.error.message"),
+              this.translocoService.translate("fasttrack.resource.toast.error.title"),
+              submitResult.error,
             );
           }
         },
@@ -126,6 +136,7 @@ export class FastTrackResource {
           const firstError = field().errorSummary()[0];
           firstError?.fieldTree().focusBoundControl();
         },
+        ignoreValidators: "all",
       },
     },
   );

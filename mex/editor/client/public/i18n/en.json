@@ -25,9 +25,12 @@
         "saving": "Saving {{Resource}}..."
       },
       "toast": {
-        "submissionFailure": {
-          "message": "Unfortunately, the {{Resource}} could not be saved. An unexpected error occurred.\nYou can send an email to the MeX team to inform them about the issue.",
-          "sendMail": "Send email to MeX",
+        "error": {
+          "message": "Unfortunately, the {{Resource}} could not be saved. An unexpected error occurred.",
+          "title": "Error while saving"
+        },
+        "submissionError": {
+          "message": "Unfortunately, the {{Resource}} could not be saved. An unexpected error occurred.\nYou can send an email to the MEx team to inform them about the issue.",
           "title": "Error while saving"
         },
         "success": {
@@ -38,7 +41,7 @@
     }
   },
   "footer.greetings": "Created with ❤️ by MEx",
-  "input.placeholder": "Please fillout",
+  "input.placeholder": "Please fill out",
   "navbar.create-link.text": "Create {{{{entity_type}}}}",
   "reference-select": {
     "placeholder.empty": "Type to filter, you can use \"*\" as a placeholder",
@@ -52,6 +55,7 @@
   },
   "select.none-option": "None",
   "select.placeholder": "Please select",
+  "toast.submissionError.sendMail": "Send email to MEx",
   "user-logout.logout-button.text": "Logout",
   "validation": {
     "custom": "{{field}} is invalid",

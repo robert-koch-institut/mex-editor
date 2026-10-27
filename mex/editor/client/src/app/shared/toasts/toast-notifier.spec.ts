@@ -3,17 +3,13 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { firstValueFrom } from "rxjs";
 import { vi } from "vitest";
 
-import type { SubmissionFailure } from "../models/submission-result";
+import { SubmissionError } from "../../fast-track/fast-track-resource/fast-track-resource-submission";
 import { ErrorToast } from "./error-toast";
-import { SubmissionFailureToast } from "./submission-failure-toast";
+import { SubmissionErrorToast } from "./submission-error-toast";
 import { SuccessToast } from "./success-toast";
 import { ToastNotifier } from "./toast-notifier";
 
-const failure: SubmissionFailure<unknown> = {
-  success: false,
-  payload: { $type: "ResourceRuleSetRequest" },
-  error: new Error("boom"),
-};
+const error = new SubmissionError({ $type: "ResourceRuleSetRequest" }, new Error("boom"));
 
 // eslint-disable-next-line max-lines-per-function
 describe("ToastNotifier", () => {
@@ -85,16 +81,16 @@ describe("ToastNotifier", () => {
       });
 
       it("passes title, message and the error to the toast", () => {
-        const error = new Error("boom");
+        const innerError = new Error("boom");
 
-        notifier.error("die Nachricht", "der Titel", error);
+        notifier.error("die Nachricht", "der Titel", innerError);
 
         expect(lastCall().config.data).toEqual({
           title: "der Titel",
           message: "die Nachricht",
-          error,
+          error: innerError,
         });
-        expect(lastCall().config.data.error).toBe(error);
+        expect(lastCall().config.data.error).toBe(innerError);
       });
 
       it("shows for 10 seconds by default (longer than a success)", () => {
@@ -122,39 +118,31 @@ describe("ToastNotifier", () => {
 
     describe("submissionFailure()", () => {
       it("opens a SubmissionFailureToast", () => {
-        notifier.submissionFailure("Nachricht", "Titel", failure);
+        notifier.submissionError("Nachricht", "Titel", error);
 
-        expect(lastCall().component).toBe(SubmissionFailureToast);
+        expect(lastCall().component).toBe(SubmissionErrorToast);
       });
 
       it("passes title, message and the failure to the toast", () => {
-        notifier.submissionFailure("die Nachricht", "der Titel", failure);
+        notifier.submissionError("die Nachricht", "der Titel", error);
 
         expect(lastCall().config.data).toEqual({
           title: "der Titel",
           message: "die Nachricht",
-          failure,
+          failure: error,
         });
-        expect(lastCall().config.data.failure).toBe(failure);
-      });
-
-      it("falls back to the title 'Fehler' when undefined is passed explicitly", () => {
-        // the default sits in the MIDDLE of the parameter list, so it can only be used by
-        // passing `undefined` -- you cannot simply leave the title out and still pass a failure
-        notifier.submissionFailure("Nachricht", undefined, failure);
-
-        expect(lastCall().config.data.title).toBe("Fehler");
+        expect(lastCall().config.data.failure).toBe(error);
       });
 
       it("shows for 10 seconds by default, with the error styling", () => {
-        notifier.submissionFailure("m", "t", failure);
+        notifier.submissionError("m", "t", error);
 
         expect(lastCall().config.duration).toBe(10000);
         expect(lastCall().config.panelClass).toEqual(["toast", "error-toast"]);
       });
 
       it("accepts a custom duration", () => {
-        notifier.submissionFailure("m", "t", failure, 2500);
+        notifier.submissionError("m", "t", error, 2500);
 
         expect(lastCall().config.duration).toBe(2500);
       });
@@ -215,7 +203,7 @@ describe("ToastNotifier", () => {
     });
 
     it("shows a submission-failure toast with a mailto link", async () => {
-      notifier.submissionFailure("Speichern fehlgeschlagen.", "Fehler", failure);
+      notifier.submissionError("Speichern fehlgeschlagen.", "Fehler", error);
 
       await vi.waitFor(() => expect(document.querySelector(".toast-actions a")).not.toBeNull());
       const href = document.querySelector(".toast-actions a")!.getAttribute("href");
@@ -234,7 +222,7 @@ describe("ToastNotifier", () => {
     });
 
     it("dismisses WITH action when the mail link is clicked", async () => {
-      notifier.submissionFailure("m", "t", failure);
+      notifier.submissionError("m", "t", error);
       await vi.waitFor(() => expect(document.querySelector(".toast-actions a")).not.toBeNull());
       const link = document.querySelector(".toast-actions a") as HTMLAnchorElement;
       link.addEventListener("click", (event) => event.preventDefault()); // no real navigation in jsdom

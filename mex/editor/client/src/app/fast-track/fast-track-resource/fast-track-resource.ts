@@ -1,4 +1,3 @@
-import type { AfterViewInit } from "@angular/core";
 import { Component, inject, signal } from "@angular/core";
 import {
   disabled,
@@ -64,10 +63,7 @@ import { FastTrackResourceSubmission, SubmissionError } from "./fast-track-resou
 /**
  * Page to create a resource the fast way.
  */
-export class FastTrackResource implements AfterViewInit {
-  ngAfterViewInit(): void {
-    this.notifier.success("SIE HABEN ERFOLGREICh gespeichert..", "gespeichert!", 200000);
-  }
+export class FastTrackResource {
   private readonly translocoService = inject(TranslocoService);
 
   private readonly router = inject(Router);
@@ -136,7 +132,6 @@ export class FastTrackResource implements AfterViewInit {
           const firstError = field().errorSummary()[0];
           firstError?.fieldTree().focusBoundControl();
         },
-        ignoreValidators: "all",
       },
     },
   );

@@ -25,7 +25,7 @@ import { Fieldset } from "../fieldset/fieldset";
 import { ReferenceSelect } from "../reference-select/reference-select";
 import { FastTrackResource } from "./fast-track-resource";
 import type { FastTrackResourceModel } from "./fast-track-resource.models";
-import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
+import { FastTrackResourceSubmission, SubmissionError } from "./fast-track-resource-submission";
 
 const THEME_ID = ThemeSchema.enum["https://mex.rki.de/item/theme-1"];
 const RESOURCE_TYPE_ID =
@@ -128,7 +128,7 @@ describe("FastTrackResource", () => {
         { provide: FastTrackResourceSubmission, useValue: { submit: vi.fn() } },
         {
           provide: ToastNotifier,
-          useValue: { success: vi.fn(), submissionFailure: vi.fn() },
+          useValue: { success: vi.fn(), error: vi.fn(), submissionError: vi.fn() },
         },
       ],
     }).compileComponents();
@@ -641,7 +641,7 @@ describe("FastTrackResource", () => {
         transloco.translate("fasttrack.resource.toast.success.message"),
         transloco.translate("fasttrack.resource.toast.success.title"),
       );
-      expect(notifier.submissionFailure).not.toHaveBeenCalled();
+      expect(notifier.error).not.toHaveBeenCalled();
     });
 
     it("passes a failed submission result to the failure notifier", async () => {
@@ -654,10 +654,10 @@ describe("FastTrackResource", () => {
 
       vi.spyOn(router, "navigate").mockResolvedValue(true);
 
+      const submitError = new SubmissionError({ $type: "ResourceRuleSetRequest", additive: {} });
       const submitResult = {
         success: false,
-        payload: { $type: "ResourceRuleSetRequest", additive: {} },
-        error: new Error("Submission failed"),
+        error: submitError,
       } as Awaited<ReturnType<FastTrackResourceSubmission["submit"]>>;
       vi.mocked(submission.submit).mockResolvedValue(submitResult);
 
@@ -668,10 +668,10 @@ describe("FastTrackResource", () => {
 
       expect(component.resourceForm().valid()).toBe(true);
       expect(submission.submit).toHaveBeenCalledOnce();
-      expect(notifier.submissionFailure).toHaveBeenCalledWith(
-        transloco.translate("fasttrack.resource.toast.submissionFailure.message"),
-        transloco.translate("fasttrack.resource.toast.submissionFailure.title"),
-        submitResult,
+      expect(notifier.submissionError).toHaveBeenCalledWith(
+        transloco.translate("fasttrack.resource.toast.submissionError.message"),
+        transloco.translate("fasttrack.resource.toast.submissionError.title"),
+        submitError,
       );
       expect(router.navigate).not.toHaveBeenCalled();
       expect(notifier.success).not.toHaveBeenCalled();
@@ -729,8 +729,7 @@ describe("FastTrackResource", () => {
       // Finish the pending submission to cleanly complete the test.
       resolveSubmit({
         success: false,
-        error: new Error(),
-        payload: { $type: "ResourceRuleSetRequest" },
+        error: new SubmissionError({ $type: "ResourceRuleSetRequest" }),
       });
 
       await vi.waitFor(() => expect(component.resourceForm().submitting()).toBe(false));

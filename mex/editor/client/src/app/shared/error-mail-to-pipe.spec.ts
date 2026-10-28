@@ -3,7 +3,6 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { SubmissionError } from "../fast-track/fast-track-resource/fast-track-resource-submission";
 import { ErrorMailToPipe } from "./error-mail-to-pipe";
 
-// const payloadValue = { $type: "ResourceRuleSetRequest", additive: { title: [{ value: "Titel" }] } };
 const makeFailure = <T extends { $type: string }>(
   payload: T = {
     $type: "ResourceRuleSetRequest",
@@ -32,24 +31,22 @@ describe("ErrorMailToPipe", () => {
   });
 
   describe("transform", () => {
-    it("builds a mailto link to the MeX support address", () => {
+    it("builds a mailto link to the MEx support address", () => {
       const { protocol, recipient } = parse(pipe.transform(makeFailure()));
 
       expect(protocol).toBe("mailto:");
-      expect(recipient).toBe("Mex@rki.de");
+      expect(recipient).toBe("mex@rki.de");
     });
 
     it("sets the subject", () => {
-      expect(parse(pipe.transform(makeFailure())).subject).toBe(
-        "Fehler beim Speichern einer Resource.",
-      );
+      expect(parse(pipe.transform(makeFailure())).subject).not.toBe("");
     });
 
     it("greets the support team at the start of the body", () => {
       const { body } = parse(pipe.transform(makeFailure()));
 
       expect(body).toMatch(
-        /^Hallo MeX-Support,\n\nleider ist ein Fehler im Editor aufgetreten\.\n\n/,
+        /^Hallo MEx-Support,\n\nleider ist ein Fehler im Editor aufgetreten\.\n\n/,
       );
     });
 
@@ -107,7 +104,7 @@ describe("ErrorMailToPipe", () => {
       const { body } = parse(pipe.transform(makeFailure({ $type: "payload", text: nasty })));
       const payloadJson = body!.split("--- PAYLOAD ---\n")[1].split("\n\n--- ERROR DETAILS ---")[0];
 
-      expect(JSON.parse(payloadJson)).toEqual({ text: nasty });
+      expect(JSON.parse(payloadJson)).toEqual({ $type: "payload", text: nasty });
     });
 
     it("never leaves raw whitespace, '#' or a stray '&' in the link (they would break the mailto URL)", () => {
@@ -131,9 +128,9 @@ describe("ErrorMailToPipe", () => {
 
   describe("buildErrorSummary", () => {
     it("returns the subject and the payload/error content block", () => {
-      const summary = pipe.buildErrorSummary(makeFailure({ $type: "payload", a: 1 }));
+      const summary = pipe.buildErrorSummary(makeFailure({ $type: "PayloadType", a: 1 }));
 
-      expect(summary.subject).toBe("Fehler beim Speichern einer Resource.");
+      expect(summary.subject).toBe("Fehler beim Speichern von 'PayloadType'");
       expect(summary.content).toContain("--- PAYLOAD ---");
       expect(summary.content).toContain('"a": 1');
       expect(summary.content).toContain("--- ERROR DETAILS ---");

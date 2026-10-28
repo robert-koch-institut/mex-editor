@@ -35,6 +35,7 @@ import {
   type ResourceRuleSetResponse,
 } from "../../shared/models/generated/resource";
 import { TextSchema } from "../../shared/models/generated/shared";
+import type { SubmissionResult } from "../../shared/models/submission-result";
 import { type FastTrackResourceModel } from "./fast-track-resource.models";
 
 /**
@@ -43,7 +44,7 @@ import { type FastTrackResourceModel } from "./fast-track-resource.models";
 export class SubmissionError<T extends { $type: string }> extends Error {
   constructor(
     readonly payload: T,
-    readonly innerError: Error,
+    readonly innerError?: Error,
   ) {
     super(`Error while submitting '${payload.$type}'`);
   }
@@ -57,13 +58,7 @@ export class FastTrackResourceSubmission {
   private http = inject(HttpClient);
   private transloco = inject(TranslocoService);
 
-  async submit(model: FastTrackResourceModel): Promise<
-    | {
-        success: true;
-        response: ResourceRuleSetResponse;
-      }
-    | { success: false; error: Error }
-  > {
+  async submit(model: FastTrackResourceModel): Promise<SubmissionResult<ResourceRuleSetResponse>> {
     let language: "de" | "en" = "de";
     const currentLanguage = this.transloco.getActiveLang();
     if (this.isValidLanguage(currentLanguage)) {

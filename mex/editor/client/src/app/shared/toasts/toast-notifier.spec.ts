@@ -129,9 +129,9 @@ describe("ToastNotifier", () => {
         expect(lastCall().config.data).toEqual({
           title: "der Titel",
           message: "die Nachricht",
-          failure: error,
+          error: error,
         });
-        expect(lastCall().config.data.failure).toBe(error);
+        expect(lastCall().config.data.error).toBe(error);
       });
 
       it("shows for 10 seconds by default, with the error styling", () => {
@@ -207,7 +207,7 @@ describe("ToastNotifier", () => {
 
       await vi.waitFor(() => expect(document.querySelector(".toast-actions a")).not.toBeNull());
       const href = document.querySelector(".toast-actions a")!.getAttribute("href");
-      expect(href).toMatch(/^mailto:Mex@rki\.de\?subject=/);
+      expect(href).toMatch(/^mailto:mex@rki\.de\?subject=/);
     });
 
     it("dismisses (not by action) when the close button is clicked", async () => {

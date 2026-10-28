@@ -2,7 +2,6 @@ services:
   mex-editor:
     build:
       context: .
-    image: mex-editor:local
     ports:
       - 8000:8000
     environment:

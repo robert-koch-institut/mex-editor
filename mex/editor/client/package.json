@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "@angular/cdk": "22.2.3",
+    "@angular/cdk": "22.2.4",
     "@angular/common": "22.2.3",
     "@angular/core": "22.2.3",
     "@angular/forms": "22.2.3",
-    "@angular/material": "22.2.3",
-    "@angular/material-luxon-adapter": "22.2.3",
+    "@angular/material": "22.2.4",
+    "@angular/material-luxon-adapter": "22.2.4",
     "@angular/platform-browser": "22.2.3",
     "@angular/router": "22.2.3",
     "@fontsource-variable/material-symbols-rounded": "^5.3.1",

@@ -149,7 +149,7 @@ export class FastTrackResourceSubmission {
       start: model.start ? [model.start.toISODate()!] : [],
       hasLegalBasis: isValidTextString(model.hasLegalBasis)
         ? [stringToText(model.hasLegalBasis)]
-        : undefined,
+        : [],
       keyword: [
         ...model.keywords.de.map((x) => ({ value: x, language: "de" as const })),
         ...model.keywords.en.map((x) => ({ value: x, language: "en" as const })),
@@ -157,7 +157,7 @@ export class FastTrackResourceSubmission {
       provenance: [stringToText(model.provenance)],
       resourceCreationMethod: model.resourceCreationMethod,
       resourceTypeGeneral: model.resourceTypeGeneral,
-      spatial: isValidTextString(model.spatial) ? [stringToText(model.spatial)] : undefined,
+      spatial: isValidTextString(model.spatial) ? [stringToText(model.spatial)] : [],
     };
     return AdditiveResourceSchema.parse(mapped);
   }

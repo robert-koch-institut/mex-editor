@@ -17,7 +17,7 @@ _STRIP_RESPONSE = frozenset({"content-length", "transfer-encoding", "connection"
 
 @router.api_route(
     "/backend/{path:path}",
-    methods=["GET", "POST", "PUT", "DELETE"],
+    methods=["GET", "POST", "PUT"],
 )
 async def backend_proxy(path: str, request: Request) -> Response:
     """Forward a request to the mex-backend with the editor's API key injected."""

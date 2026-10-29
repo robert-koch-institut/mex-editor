@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - endpoint `GET /vocabulary` listing all vocabulary names, which had no consumer
 - disable unused redoc api documentation, swagger ui at `/docs` stays
+- removed unused PATCH and DELETE methods from backend api proxy
 
 ### Fixed
 

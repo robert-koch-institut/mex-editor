@@ -77,33 +77,3 @@ export const FastTrackResourceModelSchema = z.object({
  * Model for the Ressource fast track creation page.
  */
 export type FastTrackResourceModel = z.infer<typeof FastTrackResourceModelSchema>;
-
-// /**
-//  * Error for submitting fasttrack resource sub items.
-//  */
-// export class FastTrackResourceSubPostError extends Error {
-//   constructor(
-//     readonly originalError: Error,
-//     readonly payload: PersonRuleSetRequest | ContactPointRuleSetRequest,
-//   ) {
-//     super("Posting a sub item failed.", { cause: originalError });
-//   }
-// }
-
-// /**
-//  * Result of a successfull FastTrackResource submission.
-//  */
-// export type FastTrackResourceSubmissionSuccess = SubmissionSuccess<ResourceRuleSetResponse>;
-
-// /**
-//  * Result of a failed  FastTrackResource submission.
-//  */
-// export type FastTrackResourceSubmissionFailure = SubmissionFailure<ResourceRuleSetRequest>;
-
-// /**
-//  * Result of the FastTrackResource submission.
-//  */
-// export type FastTrackResourceSubmissionResult = SubmissionResult<
-//   ResourceRuleSetResponse,
-//   ResourceRuleSetRequest | PersonRuleSetRequest | ContactPointRuleSetRequest
-// >;

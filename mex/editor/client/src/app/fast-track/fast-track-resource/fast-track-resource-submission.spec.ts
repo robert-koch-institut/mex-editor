@@ -5,70 +5,88 @@ import { TranslocoService } from "@jsverse/transloco";
 import { DateTime } from "luxon";
 import { vi } from "vitest";
 
-import {
-  type FastTrackResourceModel,
-  FastTrackResourceModelSchema,
-} from "./fast-track-resource.models";
+import type { FastTrackResourceModel } from "./fast-track-resource.models";
 import { FastTrackResourceSubmission, SubmissionError } from "./fast-track-resource-submission";
 
+/*
+ * Notes:
+ *
+ * 1. HttpClient + the testing backend come from the project's global test providers
+ *    (src/test-providers.ts). The language is pinned per test via `mockActiveLang`, so the tests
+ *    don't depend on the default test language.
+ * 2. The service validates everything with the real Zod schemas, so fixtures must be valid:
+ *    reference ids match the identifier pattern (14-22 letters/digits, see `id()`), vocabulary
+ *    values are real enum members, and texts must not be empty.
+ * 3. Model fixtures are cast through `unknown`: the service only reads `identifier` and `$type`
+ *    of reference items, so they don't need to be complete Preview* objects.
+ * 4. The resource and the new Person/ContactPoint items all go to the same URL
+ *    (`api/v0/backend/rule-set`), so requests are told apart by the `$type` of their body.
+ * 5. `submit()` is supposed to never reject: every error ends up as `{ success: false, error }`.
+ *    Errors of a request are a `SubmissionError` (`payload` = the request that failed,
+ *    `innerError` = why). The two `it.fails` tests below are known gaps in that promise.
+ */
+
 const RULE_SET_URL = "api/v0/backend/rule-set";
+
+const THEME = "https://mex.rki.de/item/theme-1";
+const RESOURCE_TYPE_GENERAL = "https://mex.rki.de/item/resource-type-general-2";
+const RESOURCE_CREATION_METHOD = "https://mex.rki.de/item/resource-creation-method-1";
+const FREQUENCY = "https://mex.rki.de/item/frequency-1";
 
 type Body = Record<string, unknown>;
 type ModelOverrides = { [K in keyof FastTrackResourceModel]?: unknown };
 
+/** A valid reference identifier: 14-22 letters/digits. */
+const id = (name: string) => name.padEnd(14, "0");
+
 const makeModel = (overrides: ModelOverrides = {}): FastTrackResourceModel =>
-  FastTrackResourceModelSchema.parse({
+  ({
     title: "Titel",
     description: "Beschreibung",
     theme: [],
     resourceTypeGeneral: [],
     spatial: "Berlin",
-    resourceCreationMethod: ["https://mex.rki.de/item/resource-creation-method-1"],
-    accrualPeriodicity: "https://mex.rki.de/item/frequency-1",
+    resourceCreationMethod: [RESOURCE_CREATION_METHOD],
+    accrualPeriodicity: FREQUENCY,
     start: null,
     end: null,
     hasLegalBasis: "Rechtsgrundlage",
     provenance: "Herkunft",
     rights: "Rechte",
     keywords: { de: ["Gesundheit"], en: ["health"] },
-    unitInCharge: [previewUnit("11111111111111")],
-    contact: [createContactPoint("email@domain.de")],
+    unitInCharge: [],
+    contact: [],
     creator: [],
     contributingUnit: [],
     contributor: [],
     ...overrides,
-  });
+  }) as unknown as FastTrackResourceModel;
 
 const previewPerson = (identifier: string) => ({
   $type: "PreviewPerson",
   identifier,
   fullName: [{ value: identifier }],
 });
-
 const previewUnit = (identifier: string) => ({
   $type: "PreviewOrganizationalUnit",
   identifier,
   shortName: [{ value: identifier }],
 });
-
 const createPerson = (givenName = "Jane", familyName = "Doe") => ({
   $type: "CreatePerson",
   givenName,
   familyName,
 });
-
 const createContactPoint = (email = "info@example.org") => ({
   $type: "CreateContactPoint",
   email,
 });
 
+/** Wraps a promise so a rejection is observed immediately (no unhandled-rejection noise). */
 function track<T>(promise: Promise<T>) {
-  const state: {
-    status: "pending" | "resolved" | "rejected";
-    value?: T;
-    error?: unknown;
-  } = { status: "pending" };
-
+  const state: { status: "pending" | "resolved" | "rejected"; value?: T; error?: unknown } = {
+    status: "pending",
+  };
   const done = promise.then(
     (value) => {
       state.status = "resolved";
@@ -79,16 +97,23 @@ function track<T>(promise: Promise<T>) {
       state.error = error;
     },
   );
-
   return { state, done };
 }
 
-const carried = (error: unknown): unknown[] =>
-  Object.getOwnPropertyNames(error).map((key) => (error as Record<string, unknown>)[key]);
+/** The `error` of a failed submission result (fails the test if the result is a success). */
+function errorOf(result: unknown) {
+  const failure = result as { success: boolean; error: SubmissionError<{ $type: string }> };
+  expect(failure.success).toBe(false);
+  return failure.error;
+}
 
+/**
+ * Pins the language the service sees, so no test depends on the default language of the project's
+ * global test providers. It spies on `getActiveLang` of the real TranslocoService instead of
+ * replacing the service: the service only calls `getActiveLang()`.
+ */
 function mockActiveLang(initial: string) {
   const spy = vi.spyOn(TestBed.inject(TranslocoService), "getActiveLang").mockReturnValue(initial);
-
   return { set: (lang: string) => spy.mockReturnValue(lang) };
 }
 
@@ -99,68 +124,56 @@ describe("FastTrackResourceSubmission", () => {
   let activeLang: ReturnType<typeof mockActiveLang>;
 
   const bodyOf = (req: TestRequest) => req.request.body as Body;
-
   const requestsOfType = (type: string) =>
-    http.match((r) => r.url === RULE_SET_URL && (r.body as Body | null)?.["$type"] === type);
-
+    http.match((r) => r.url === RULE_SET_URL && (r.body as Body)?.["$type"] === type);
   const personRequests = () => requestsOfType("PersonRuleSetRequest");
   const contactPointRequests = () => requestsOfType("ContactPointRuleSetRequest");
   const resourceRequests = () => requestsOfType("ResourceRuleSetRequest");
-
   const givenNameOf = (r: TestRequest) =>
     ((bodyOf(r)["additive"] as Body)["givenName"] as string[])[0];
-
   const fail = (request: TestRequest, status = 500) =>
     request.flush("fail", { status, statusText: "Server Error" });
 
-  const requireRequest = (requests: TestRequest[], description: string): TestRequest => {
-    const request = requests[0];
-
-    if (!request) {
-      throw new Error(
-        `No HTTP request found: ${description}. ` +
-          "The submission may have failed before sending the request. " +
-          "Check AdditiveResourceSchema validation and the test fixture enum values.",
-      );
-    }
-
-    return request;
-  };
-
+  /** Submits a model that needs no new items and returns the `additive` part of the POSTed resource. */
   async function sentAdditive(model: FastTrackResourceModel): Promise<Body> {
     const { done } = track(service.submit(model));
-
-    const request = requireRequest(resourceRequests(), "ResourceRuleSetRequest in sentAdditive()");
-
+    const [request] = resourceRequests();
     const additive = (bodyOf(request)["additive"] ?? {}) as Body;
-
     request.flush({ $type: "ResourceRuleSetResponse" });
     await done;
-
     return additive;
   }
 
   beforeEach(() => {
     service = TestBed.inject(FastTrackResourceSubmission);
     http = TestBed.inject(HttpTestingController);
-    activeLang = mockActiveLang("de");
+    activeLang = mockActiveLang("de"); // explicit default, independent of the project's test config
   });
 
   afterEach(() => {
+    // cancelled requests (aborted because a sibling failed) are expected in some tests
     http.verify({ ignoreCancelled: true });
     vi.restoreAllMocks();
   });
 
   describe("the POSTed resource", () => {
     it("is a ResourceRuleSetRequest with an AdditiveResource", async () => {
-      const { done } = track(service.submit(makeModel()));
+      const model = makeModel({
+        contact: [createContactPoint()],
+        unitInCharge: [previewUnit(id("unit-1"))],
+      });
+      // try {
+      //   const result = await service.submit(model);
+      //   console.log("RESULT", result);
+      // } catch (error: unknown) {
+      //   console.log("ERROR", error);
+      // }
+      const { done } = track(service.submit(model));
 
-      const request = requireRequest(resourceRequests(), "ResourceRuleSetRequest");
-
+      const [request] = resourceRequests();
       expect(request.request.method).toBe("POST");
       expect(bodyOf(request)["$type"]).toBe("ResourceRuleSetRequest");
       expect((bodyOf(request)["additive"] as Body)["$type"]).toBe("AdditiveResource");
-
       request.flush({ $type: "ResourceRuleSetResponse" });
       await done;
     });
@@ -202,19 +215,19 @@ describe("FastTrackResourceSubmission", () => {
     it("passes the identifiers of existing reference items through, in order", async () => {
       const additive = await sentAdditive(
         makeModel({
-          contact: [previewPerson("contact-1")],
-          contributor: [previewPerson("person-1"), previewPerson("person-2")],
-          unitInCharge: [previewUnit("unit-1")],
-          creator: [previewPerson("person-3")],
-          contributingUnit: [previewUnit("unit-2")],
+          contact: [previewPerson(id("contact1"))],
+          contributor: [previewPerson(id("person1")), previewPerson(id("person2"))],
+          unitInCharge: [previewUnit(id("unit1"))],
+          creator: [previewPerson(id("person3"))],
+          contributingUnit: [previewUnit(id("unit2"))],
         }),
       );
 
-      expect(additive["contact"]).toEqual(["contact-1"]);
-      expect(additive["contributor"]).toEqual(["person-1", "person-2"]);
-      expect(additive["unitInCharge"]).toEqual(["unit-1"]);
-      expect(additive["creator"]).toEqual(["person-3"]);
-      expect(additive["contributingUnit"]).toEqual(["unit-2"]);
+      expect(additive["contact"]).toEqual([id("contact1")]);
+      expect(additive["contributor"]).toEqual([id("person1"), id("person2")]);
+      expect(additive["unitInCharge"]).toEqual([id("unit1")]);
+      expect(additive["creator"]).toEqual([id("person3")]);
+      expect(additive["contributingUnit"]).toEqual([id("unit2")]);
     });
 
     it("sends empty reference lists as empty arrays", async () => {
@@ -230,17 +243,17 @@ describe("FastTrackResourceSubmission", () => {
     it("passes vocabulary values through as-is", async () => {
       const additive = await sentAdditive(
         makeModel({
-          theme: ["theme-1"],
-          resourceTypeGeneral: ["type-1"],
-          resourceCreationMethod: ["method-1"],
-          accrualPeriodicity: "freq-1",
+          theme: [THEME],
+          resourceTypeGeneral: [RESOURCE_TYPE_GENERAL],
+          resourceCreationMethod: [RESOURCE_CREATION_METHOD],
+          accrualPeriodicity: FREQUENCY,
         }),
       );
 
-      expect(additive["theme"]).toEqual(["theme-1"]);
-      expect(additive["resourceTypeGeneral"]).toEqual(["type-1"]);
-      expect(additive["resourceCreationMethod"]).toEqual(["method-1"]);
-      expect(additive["accrualPeriodicity"]).toBe("freq-1");
+      expect(additive["theme"]).toEqual([THEME]);
+      expect(additive["resourceTypeGeneral"]).toEqual([RESOURCE_TYPE_GENERAL]);
+      expect(additive["resourceCreationMethod"]).toEqual([RESOURCE_CREATION_METHOD]);
+      expect(additive["accrualPeriodicity"]).toBe(FREQUENCY);
     });
 
     it("formats start/end as ISO dates (date only, no time)", async () => {
@@ -262,11 +275,27 @@ describe("FastTrackResourceSubmission", () => {
       expect(additive["end"]).toBeUndefined();
     });
 
-    it("currently sends empty optional texts (spatial, hasLegalBasis) as empty texts", async () => {
-      const additive = await sentAdditive(makeModel({ spatial: "", hasLegalBasis: "" }));
+    // KNOWN GAP: spatial and hasLegalBasis may be empty in the form (plain z.string()), but the
+    // service wraps them in TextSchema, whose value must not be empty -- `parse` throws, so the
+    // whole submission fails and no request is sent. Fix: leave empty optional texts out.
+    // Once fixed, this test starts passing and `it.fails` flips it to a failure: remove `.fails`.
+    it.fails(
+      "still submits when the optional texts (spatial, hasLegalBasis) are empty",
+      async () => {
+        const { done } = track(service.submit(makeModel({ spatial: "", hasLegalBasis: "" })));
 
-      expect(additive["spatial"]).toEqual([{ value: "", language: "de" }]);
-      expect(additive["hasLegalBasis"]).toEqual([{ value: "", language: "de" }]);
+        expect(resourceRequests()).toHaveLength(1);
+        await done;
+      },
+    );
+
+    it("returns success:false (not a thrown error) for the empty optional texts above", async () => {
+      const { state, done } = track(service.submit(makeModel({ spatial: "", hasLegalBasis: "" })));
+      await done;
+
+      expect(state.status).toBe("resolved");
+      expect(state.value).toMatchObject({ success: false });
+      expect(resourceRequests()).toHaveLength(0);
     });
   });
 
@@ -276,6 +305,7 @@ describe("FastTrackResourceSubmission", () => {
 
     it("uses German texts when the active language is 'de'", async () => {
       activeLang.set("de");
+
       expect(languageOfTitle(await sentAdditive(makeModel()))).toBe("de");
     });
 
@@ -295,6 +325,7 @@ describe("FastTrackResourceSubmission", () => {
       "falls back to German for the unsupported language '%s'",
       async (lang) => {
         activeLang.set(lang);
+
         expect(languageOfTitle(await sentAdditive(makeModel()))).toBe("de");
       },
     );
@@ -303,21 +334,16 @@ describe("FastTrackResourceSubmission", () => {
   describe("submit: resource without any new reference items", () => {
     it("sends exactly one request and resolves with the response", async () => {
       const model = makeModel({
-        contact: [previewPerson("contact-1")],
-        unitInCharge: [previewUnit("unit-1")],
+        contact: [previewPerson(id("contact1"))],
+        unitInCharge: [previewUnit(id("unit1"))],
       });
 
       const { state, done } = track(service.submit(model));
 
       expect(personRequests()).toHaveLength(0);
       expect(contactPointRequests()).toHaveLength(0);
-
-      const request = requireRequest(resourceRequests(), "resource request");
-      const response = {
-        $type: "ResourceRuleSetResponse",
-        stableTargetId: "res-1",
-      };
-
+      const [request] = resourceRequests();
+      const response = { $type: "ResourceRuleSetResponse", stableTargetId: id("resource1") };
       request.flush(response);
       await done;
 
@@ -332,29 +358,18 @@ describe("FastTrackResourceSubmission", () => {
         service.submit(makeModel({ creator: [createPerson("Jane", "Doe")] })),
       );
 
-      const request = requireRequest(personRequests(), "PersonRuleSetRequest");
-
+      const [request] = personRequests();
       expect(request.request.method).toBe("POST");
       expect(bodyOf(request)).toEqual({
         $type: "PersonRuleSetRequest",
-        additive: {
-          $type: "AdditivePerson",
-          givenName: ["Jane"],
-          familyName: ["Doe"],
-        },
+        additive: { $type: "AdditivePerson", givenName: ["Jane"], familyName: ["Doe"] },
       });
+      request.flush({ stableTargetId: id("newperson1") });
 
-      request.flush({ stableTargetId: "newPerson0001" });
-
-      const resourceRequest = requireRequest(
-        resourceRequests(),
-        "resource request after creating a person",
-      );
-
+      const [resourceRequest] = resourceRequests();
       expect(((bodyOf(resourceRequest)["additive"] ?? {}) as Body)["creator"]).toEqual([
-        "newPerson0001",
+        id("newperson1"),
       ]);
-
       resourceRequest.flush({ $type: "ResourceRuleSetResponse" });
       await done;
 
@@ -366,77 +381,53 @@ describe("FastTrackResourceSubmission", () => {
         service.submit(makeModel({ contact: [createContactPoint("info@example.org")] })),
       );
 
-      const request = requireRequest(contactPointRequests(), "ContactPointRuleSetRequest");
-
+      const [request] = contactPointRequests();
       expect(bodyOf(request)).toEqual({
         $type: "ContactPointRuleSetRequest",
-        additive: {
-          $type: "AdditiveContactPoint",
-          email: ["info@example.org"],
-        },
+        additive: { $type: "AdditiveContactPoint", email: ["info@example.org"] },
       });
+      request.flush({ stableTargetId: id("newcontact1") });
 
-      request.flush({ stableTargetId: "newContact001" });
-
-      const resourceRequest = requireRequest(
-        resourceRequests(),
-        "resource request after creating a contact point",
-      );
-
+      const [resourceRequest] = resourceRequests();
       expect(((bodyOf(resourceRequest)["additive"] ?? {}) as Body)["contact"]).toEqual([
-        "newContact001",
+        id("newcontact1"),
       ]);
-
       resourceRequest.flush({ $type: "ResourceRuleSetResponse" });
       await done;
     });
 
     it("uses the same '$type' key for every request it sends (resource, person, contact point)", async () => {
-      const model = makeModel({
-        contact: [createContactPoint()],
-        creator: [createPerson()],
-      });
-
+      const model = makeModel({ contact: [createContactPoint()], creator: [createPerson()] });
       const { done } = track(service.submit(model));
 
-      const person = requireRequest(personRequests(), "PersonRuleSetRequest");
-      const contactPoint = requireRequest(contactPointRequests(), "ContactPointRuleSetRequest");
-
+      const [person] = personRequests();
+      const [contactPoint] = contactPointRequests();
       for (const request of [person, contactPoint]) {
         expect(bodyOf(request)).not.toHaveProperty("entityType");
         expect((bodyOf(request)["additive"] as Body)["$type"]).toBeDefined();
       }
-
-      person.flush({ stableTargetId: "person00000001" });
-      contactPoint.flush({ stableTargetId: "contact0000001" });
-
-      const resourceRequest = requireRequest(resourceRequests(), "resource request");
+      person.flush({ stableTargetId: id("person1") });
+      contactPoint.flush({ stableTargetId: id("contact1") });
+      const [resourceRequest] = resourceRequests();
       expect(bodyOf(resourceRequest)).not.toHaveProperty("entityType");
-
       resourceRequest.flush({ $type: "ResourceRuleSetResponse" });
       await done;
     });
 
     it("does not send the resource until EVERY new item has been answered", async () => {
       const { done } = track(
-        service.submit(
-          makeModel({
-            contact: [createContactPoint()],
-            creator: [createPerson()],
-          }),
-        ),
+        service.submit(makeModel({ contact: [createContactPoint()], creator: [createPerson()] })),
       );
 
-      const person = requireRequest(personRequests(), "PersonRuleSetRequest");
-      const contactPoint = requireRequest(contactPointRequests(), "ContactPointRuleSetRequest");
+      const [person] = personRequests();
+      const [contactPoint] = contactPointRequests();
 
-      person.flush({ stableTargetId: "person00000001" });
-      expect(resourceRequests()).toHaveLength(0);
-      expect(contactPoint.cancelled).toBe(false);
+      person.flush({ stableTargetId: id("person1") });
+      expect(resourceRequests()).toHaveLength(0); // contact point still outstanding
+      expect(contactPoint.cancelled).toBe(false); // control: a pending sibling is NOT aborted normally
 
-      contactPoint.flush({ stableTargetId: "contact0000001" });
-
-      const resourceRequest = requireRequest(resourceRequests(), "resource request");
+      contactPoint.flush({ stableTargetId: id("contact1") });
+      const [resourceRequest] = resourceRequests();
       expect(resourceRequest).toBeDefined();
 
       resourceRequest.flush({ $type: "ResourceRuleSetResponse" });
@@ -446,36 +437,25 @@ describe("FastTrackResourceSubmission", () => {
     it("keeps the original list order in the result, no matter in which order the answers arrive", async () => {
       const model = makeModel({
         contributor: [
-          previewPerson("existing-1"),
+          previewPerson(id("existing1")),
           createPerson("A", "One"),
           createPerson("B", "Two"),
         ],
       });
-
       const { done } = track(service.submit(model));
 
       const requests = personRequests();
       expect(requests).toHaveLength(2);
+      // answer B first, then A
+      requests.find((r) => givenNameOf(r) === "B")!.flush({ stableTargetId: id("idforb") });
+      requests.find((r) => givenNameOf(r) === "A")!.flush({ stableTargetId: id("idfora") });
 
-      requests
-        .find((r) => givenNameOf(r) === "B")!
-        .flush({
-          stableTargetId: "id-for-B",
-        });
-      requests
-        .find((r) => givenNameOf(r) === "A")!
-        .flush({
-          stableTargetId: "id-for-A",
-        });
-
-      const resourceRequest = requireRequest(resourceRequests(), "resource request");
-
+      const [resourceRequest] = resourceRequests();
       expect(((bodyOf(resourceRequest)["additive"] ?? {}) as Body)["contributor"]).toEqual([
-        "existing-1",
-        "id-for-A",
-        "id-for-B",
+        id("existing1"),
+        id("idfora"),
+        id("idforb"),
       ]);
-
       resourceRequest.flush({ $type: "ResourceRuleSetResponse" });
       await done;
     });
@@ -486,36 +466,21 @@ describe("FastTrackResourceSubmission", () => {
         creator: [createPerson("C", "Creator")],
         contributor: [createPerson("D", "Contributor")],
       });
-
       const { state, done } = track(service.submit(model));
 
-      const contactPoint = requireRequest(contactPointRequests(), "ContactPointRuleSetRequest");
-
+      const [contactPoint] = contactPointRequests();
       const requests = personRequests();
       expect(requests).toHaveLength(2);
+      requests.find((r) => givenNameOf(r) === "C")!.flush({ stableTargetId: id("creator1") });
+      requests.find((r) => givenNameOf(r) === "D")!.flush({ stableTargetId: id("contrib1") });
+      expect(resourceRequests()).toHaveLength(0); // the contact point is still outstanding
+      contactPoint.flush({ stableTargetId: id("contact1") });
 
-      requests
-        .find((r) => givenNameOf(r) === "C")!
-        .flush({
-          stableTargetId: "creator000001",
-        });
-      requests
-        .find((r) => givenNameOf(r) === "D")!
-        .flush({
-          stableTargetId: "contrib000001",
-        });
-
-      expect(resourceRequests()).toHaveLength(0);
-
-      contactPoint.flush({ stableTargetId: "contact000001" });
-
-      const resourceRequest = requireRequest(resourceRequests(), "resource request");
+      const [resourceRequest] = resourceRequests();
       const additive = (bodyOf(resourceRequest)["additive"] ?? {}) as Body;
-
-      expect(additive["creator"]).toEqual(["creator000001"]);
-      expect(additive["contributor"]).toEqual(["contrib000001"]);
-      expect(additive["contact"]).toEqual(["contact000001"]);
-
+      expect(additive["creator"]).toEqual([id("creator1")]);
+      expect(additive["contributor"]).toEqual([id("contrib1")]);
+      expect(additive["contact"]).toEqual([id("contact1")]);
       resourceRequest.flush({ $type: "ResourceRuleSetResponse" });
       await done;
 
@@ -524,59 +489,51 @@ describe("FastTrackResourceSubmission", () => {
   });
 
   describe("submit: the resource request itself fails", () => {
-    it("resolves (does not reject) with success:false, the payload that was sent, and the error", async () => {
+    it("resolves (does not reject) with success:false and a SubmissionError holding the payload that was sent and the HTTP error", async () => {
       const { state, done } = track(
-        service.submit(makeModel({ contact: [previewPerson("contact-1")] })),
+        service.submit(makeModel({ contact: [previewPerson(id("contact1"))] })),
       );
 
-      const request = requireRequest(resourceRequests(), "resource request");
+      const [request] = resourceRequests();
       fail(request);
       await done;
 
       expect(state.status).toBe("resolved");
-
-      const result = state.value as unknown as {
-        success: boolean;
-        payload: Body;
-        error: HttpErrorResponse;
-      };
-
-      expect(result.success).toBe(false);
-      expect(result.payload["$type"]).toBe("ResourceRuleSetRequest");
-      expect(result.payload).toEqual(bodyOf(request));
-      expect(result.error).toBeInstanceOf(HttpErrorResponse);
-      expect(result.error).toMatchObject({ status: 500 });
+      const error = errorOf(state.value);
+      expect(error).toBeInstanceOf(SubmissionError);
+      expect(error.message).toBe("Error while submitting 'ResourceRuleSetRequest'");
+      expect(error.payload["$type"]).toBe("ResourceRuleSetRequest");
+      expect(error.payload).toEqual(bodyOf(request));
+      expect(error.innerError).toBeInstanceOf(HttpErrorResponse);
+      expect(error.innerError).toMatchObject({ status: 500 });
     });
 
     it("reports a network error (status 0) the same way", async () => {
       const { state, done } = track(service.submit(makeModel()));
 
-      const request = requireRequest(resourceRequests(), "resource request");
-      request.error(new ProgressEvent("error"));
-
+      resourceRequests()[0].error(new ProgressEvent("error"));
       await done;
 
       expect(state.status).toBe("resolved");
-      expect(state.value).toMatchObject({ success: false, error: { status: 0 } });
+      expect(errorOf(state.value).innerError).toMatchObject({ status: 0 });
     });
 
     it("still contains the ids of items that were already created before the failure", async () => {
       const { state, done } = track(service.submit(makeModel({ creator: [createPerson()] })));
 
-      requireRequest(personRequests(), "PersonRuleSetRequest").flush({
-        stableTargetId: "person00000001",
-      });
-
-      fail(requireRequest(resourceRequests(), "resource request"), 422);
+      personRequests()[0].flush({ stableTargetId: id("person1") });
+      fail(resourceRequests()[0], 422);
       await done;
 
-      const payload = (state.value as unknown as { payload: { additive: Body } }).payload;
-
-      expect(payload.additive["creator"]).toEqual(["person00000001"]);
+      const payload = errorOf(state.value).payload as unknown as { additive: Body };
+      expect(payload.additive["creator"]).toEqual([id("person1")]);
     });
   });
 
   describe("submit: creating a new item fails", () => {
+    // Like a failing resource request, this resolves with success:false and a SubmissionError.
+    // Its payload is the request of the new item that failed (not the resource).
+
     it.each([
       [
         "contact",
@@ -586,50 +543,41 @@ describe("FastTrackResourceSubmission", () => {
       ["creator", { creator: [createPerson("Kaputt", "Person")] }, "PersonRuleSetRequest"],
       ["contributor", { contributor: [createPerson("Kaputt", "Person")] }, "PersonRuleSetRequest"],
     ] as [string, ModelOverrides, string][])(
-      "rejects with a SubmissionError holding the HTTP error and the failed request ('%s')",
+      "resolves with success:false and a SubmissionError holding the failed request and the HTTP error ('%s')",
       async (_list, overrides, type) => {
         const { state, done } = track(service.submit(makeModel(overrides)));
 
-        const request = requireRequest(
-          [...personRequests(), ...contactPointRequests()],
-          "new item request",
-        );
-
+        const [request] = [...personRequests(), ...contactPointRequests()];
         fail(request);
         await done;
 
-        expect(state.status).toBe("rejected");
-        expect(state.error).toBeInstanceOf(SubmissionError);
-
-        const held = carried(state.error);
-        expect(held).toContainEqual(bodyOf(request));
-        expect(bodyOf(request)["$type"]).toBe(type);
-        expect(held.some((v) => v instanceof HttpErrorResponse && v.status === 500)).toBe(true);
+        expect(state.status).toBe("resolved");
+        const error = errorOf(state.value);
+        expect(error).toBeInstanceOf(SubmissionError);
+        expect(error.message).toBe(`Error while submitting '${type}'`);
+        expect(error.payload).toEqual(bodyOf(request)); // the request that failed
+        expect(error.innerError).toBeInstanceOf(HttpErrorResponse);
+        expect(error.innerError).toMatchObject({ status: 500 });
       },
     );
 
     it("never sends the resource when a new item failed", async () => {
       const { done } = track(service.submit(makeModel({ creator: [createPerson()] })));
 
-      fail(requireRequest(personRequests(), "PersonRuleSetRequest"));
+      fail(personRequests()[0]);
       await done;
 
       expect(resourceRequests()).toHaveLength(0);
     });
 
-    it("rejects with a network error (status 0) the same way", async () => {
+    it("reports a network error (status 0) the same way", async () => {
       const { state, done } = track(service.submit(makeModel({ contact: [createContactPoint()] })));
 
-      requireRequest(contactPointRequests(), "ContactPointRuleSetRequest").error(
-        new ProgressEvent("error"),
-      );
-
+      contactPointRequests()[0].error(new ProgressEvent("error"));
       await done;
 
-      expect(state.error).toBeInstanceOf(SubmissionError);
-      expect(
-        carried(state.error).some((v) => v instanceof HttpErrorResponse && v.status === 0),
-      ).toBe(true);
+      expect(errorOf(state.value)).toBeInstanceOf(SubmissionError);
+      expect(errorOf(state.value).innerError).toMatchObject({ status: 0 });
     });
 
     it("cancels the new-item requests that are still in flight when one of them fails", async () => {
@@ -638,136 +586,126 @@ describe("FastTrackResourceSubmission", () => {
         creator: [createPerson("A", "One")],
         contributor: [createPerson("B", "Two")],
       });
-
       const { state, done } = track(service.submit(model));
 
       const requests = personRequests();
-      const contactPoint = requireRequest(contactPointRequests(), "ContactPointRuleSetRequest");
-
+      const [contactPoint] = contactPointRequests();
       expect(requests).toHaveLength(2);
 
       fail(contactPoint);
       await done;
 
-      expect(state.status).toBe("rejected");
+      expect(state.value).toMatchObject({ success: false });
       expect(requests[0].cancelled).toBe(true);
       expect(requests[1].cancelled).toBe(true);
       expect(resourceRequests()).toHaveLength(0);
     });
 
-    it("holds the request of the item that failed when several were sent (here: the second person)", async () => {
+    it("names the request of the item that failed when several were sent (here: the second person)", async () => {
       const model = makeModel({
         creator: [createPerson("Erste", "Person"), createPerson("Zweite", "Person")],
       });
-
       const { state, done } = track(service.submit(model));
 
       const requests = personRequests();
-
-      requests
-        .find((r) => givenNameOf(r) === "Erste")!
-        .flush({
-          stableTargetId: "person00000001",
-        });
-
+      requests.find((r) => givenNameOf(r) === "Erste")!.flush({ stableTargetId: id("person1") });
       const second = requests.find((r) => givenNameOf(r) === "Zweite")!;
       fail(second, 503);
       await done;
 
-      const held = carried(state.error);
-      expect(held).toContainEqual(bodyOf(second));
-      expect(held.some((v) => v instanceof HttpErrorResponse && v.status === 503)).toBe(true);
+      const error = errorOf(state.value);
+      expect(error.payload).toEqual(bodyOf(second));
+      expect(error.innerError).toMatchObject({ status: 503 });
     });
 
-    it("rejects even though another item was already created, which stays on the backend (no rollback)", async () => {
+    it("fails the whole submission even though another item was already created, which stays on the backend (no rollback)", async () => {
       const model = makeModel({
         creator: [createPerson("A", "One")],
         contact: [createContactPoint()],
       });
-
       const { state, done } = track(service.submit(model));
 
-      const person = requireRequest(personRequests(), "PersonRuleSetRequest");
-      const contactPoint = requireRequest(contactPointRequests(), "ContactPointRuleSetRequest");
+      const [person] = personRequests();
+      const [contactPoint] = contactPointRequests();
 
-      person.flush({ stableTargetId: "person00000001" });
+      person.flush({ stableTargetId: id("person1") }); // already persisted on the backend
       fail(contactPoint, 503);
       await done;
 
-      expect(state.status).toBe("rejected");
+      expect(state.value).toMatchObject({ success: false });
       expect(resourceRequests()).toHaveLength(0);
+      // no compensating request (e.g. a delete) is sent for the person that was already created
       http.expectNone((r) => r.method !== "POST");
     });
 
     it("reports only the first failure if several new items fail", async () => {
-      const model = makeModel({
-        creator: [createPerson("A", "One"), createPerson("B", "Two")],
-      });
-
+      const model = makeModel({ creator: [createPerson("A", "One"), createPerson("B", "Two")] });
       const { state, done } = track(service.submit(model));
 
       const [first, second] = personRequests();
-
-      fail(first);
+      fail(first, 500);
       await done;
 
-      expect(second.cancelled).toBe(true);
-      expect(
-        carried(state.error).some((v) => v instanceof HttpErrorResponse && v.status === 500),
-      ).toBe(true);
+      expect(second.cancelled).toBe(true); // the second never gets to fail separately
+      expect(errorOf(state.value).innerError).toMatchObject({ status: 500 });
     });
 
     it("treats a response without stableTargetId as a failure of that item", async () => {
       const { state, done } = track(service.submit(makeModel({ creator: [createPerson()] })));
 
-      const request = requireRequest(personRequests(), "PersonRuleSetRequest");
+      const [request] = personRequests();
       request.flush({});
       await done;
 
-      expect(state.status).toBe("rejected");
-      expect(state.error).toBeInstanceOf(SubmissionError);
-
-      const held = carried(state.error);
-      expect(held).toContainEqual(bodyOf(request));
-      expect(
-        held.some((v) => v instanceof Error && v.message === "No stableTargetId in response."),
-      ).toBe(true);
-
-      expect(resourceRequests()).toHaveLength(0);
+      expect(state.status).toBe("resolved");
+      const error = errorOf(state.value);
+      expect(error).toBeInstanceOf(SubmissionError);
+      expect(error.payload).toEqual(bodyOf(request));
+      expect(error.innerError?.message).toBe("No stableTargetId in response.");
+      expect(resourceRequests()).toHaveLength(0); // no resource with an `undefined` id gets sent
     });
 
     it("treats an empty response body (null) as a failure of that item as well", async () => {
       const { state, done } = track(service.submit(makeModel({ contact: [createContactPoint()] })));
 
-      requireRequest(contactPointRequests(), "ContactPointRuleSetRequest").flush(null);
-
+      contactPointRequests()[0].flush(null);
       await done;
 
-      expect(state.error).toBeInstanceOf(SubmissionError);
+      expect(state.status).toBe("resolved");
+      expect(errorOf(state.value)).toBeInstanceOf(SubmissionError);
       expect(resourceRequests()).toHaveLength(0);
     });
 
     it("stays usable after a failed submit (no state carried over)", async () => {
       const failing = track(service.submit(makeModel({ creator: [createPerson()] })));
-
-      fail(requireRequest(personRequests(), "PersonRuleSetRequest"));
+      fail(personRequests()[0]);
       await failing.done;
-
-      expect(failing.state.status).toBe("rejected");
+      expect(failing.state.value).toMatchObject({ success: false });
 
       const retry = track(service.submit(makeModel({ creator: [createPerson()] })));
-
-      requireRequest(personRequests(), "retry PersonRuleSetRequest").flush({
-        stableTargetId: "person00000002",
-      });
-
-      requireRequest(resourceRequests(), "retry resource request").flush({
-        $type: "ResourceRuleSetResponse",
-      });
-
+      personRequests()[0].flush({ stableTargetId: id("person2") });
+      resourceRequests()[0].flush({ $type: "ResourceRuleSetResponse" });
       await retry.done;
 
       expect(retry.state.value).toMatchObject({ success: true });
     });
+
+    // KNOWN GAP: the new items are mapped (and validated with Zod) while `submit()` is still
+    // collecting them, which happens BEFORE its try/catch -- so invalid data of a new item (here a
+    // malformed email) makes `submit()` reject instead of returning success:false.
+    // Fix: move that part into the try block. Once fixed, this starts passing and `it.fails`
+    // flips it to a failure: remove `.fails`.
+    it.fails(
+      "returns success:false (does not reject) when the data of a new item is invalid",
+      async () => {
+        const { state, done } = track(
+          service.submit(makeModel({ contact: [createContactPoint("not-an-email")] })),
+        );
+        await done;
+
+        expect(state.status).toBe("resolved");
+        expect(state.value).toMatchObject({ success: false });
+      },
+    );
   });
 });

@@ -156,6 +156,7 @@ describe("FastTrackResourceSubmission", () => {
     vi.restoreAllMocks();
   });
 
+  // eslint-disable-next-line max-lines-per-function
   describe("the POSTed resource", () => {
     it("is a ResourceRuleSetRequest with an AdditiveResource", async () => {
       const model = makeModel({});
@@ -267,10 +268,12 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("still submits when the optional texts (spatial, hasLegalBasis) are empty", async () => {
-      const { done } = track(service.submit(makeModel({ spatial: "", hasLegalBasis: "" })));
-
-      expect(resourceRequests()).toHaveLength(1);
-      await done;
+      const result = await service.submit(makeModel({ spatial: "", hasLegalBasis: "" }));
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.response.additive?.spatial?.length).toBe(0);
+        expect(result.response.additive?.hasLegalBasis?.length).toBe(0);
+      }
     });
   });
 

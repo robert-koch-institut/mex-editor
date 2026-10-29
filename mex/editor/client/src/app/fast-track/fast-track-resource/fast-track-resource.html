@@ -203,7 +203,7 @@
         >
           <mex-datepicker
             [formField]="resourceForm.start"
-            [maxDate]="resourceForm.end().value()"
+            [allowedPrecisions]="['day']"
             (keydown.enter)="$event.preventDefault()"
           ></mex-datepicker>
         </mex-fieldset>
@@ -216,7 +216,7 @@
         >
           <mex-datepicker
             [formField]="resourceForm.end"
-            [minDate]="resourceForm.start().value()"
+            [allowedPrecisions]="['day']"
             (keydown.enter)="$event.preventDefault()"
           ></mex-datepicker>
         </mex-fieldset>

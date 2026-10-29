@@ -5,6 +5,7 @@ import { provideRouter } from "@angular/router";
 import { TranslocoTestingModule } from "@jsverse/transloco";
 
 import { materialDefaultOptionProviders } from "./app/app.config";
+import { iconAppInitializer } from "./app/icon-initializer";
 import { ConceptLookups } from "./app/shared/concept-lookups.service";
 import { translocoConfig, translocoProviders } from "./app/transloco";
 
@@ -35,6 +36,7 @@ const testProviders = [
   }).providers,
   rest,
   materialDefaultOptionProviders,
+  iconAppInitializer,
   {
     provide: ConceptLookups,
     useValue: {

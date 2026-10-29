@@ -12,6 +12,7 @@ import type {
   ResourceRuleSetResponse,
 } from "../../shared/models/generated/resource";
 import {
+  ExtractedResourceSchema,
   FrequencySchema,
   ResourceCreationMethodSchema,
 } from "../../shared/models/generated/resource";
@@ -21,7 +22,7 @@ import type {
   SubmissionResult,
   SubmissionSuccess,
 } from "../../shared/models/submission-result";
-import { luxonDateTimeNullableSchema, recommended } from "../../shared/models/zod-types";
+import { recommended } from "../../shared/models/zod-types";
 
 /**
  * Schema for UnionType for CreatePerson and PreviewPerson
@@ -77,8 +78,8 @@ export const FastTrackResourceModelSchema = z.object({
   contributingUnit: recommended(PreviewOrganizationalUnitSchema.array()),
   spatial: recommended(z.string()),
   hasLegalBasis: recommended(z.string()),
-  start: recommended(luxonDateTimeNullableSchema()),
-  end: recommended(luxonDateTimeNullableSchema()),
+  start: recommended(ExtractedResourceSchema.shape.start.unwrap().element.nullable()),
+  end: recommended(ExtractedResourceSchema.shape.end.unwrap().element.nullable()),
   theme: recommended(ThemeSchema.array()),
 });
 

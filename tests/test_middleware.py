@@ -58,3 +58,27 @@ def test_cors_allowed_origins(
         )
 
     assert response.headers.get("Access-Control-Allow-Origin") == expected_header
+
+
+def test_cors_preflight_restricts_methods_and_headers(
+    monkeypatch: MonkeyPatch, settings: EditorSettings
+) -> None:
+    monkeypatch.setattr(settings, "cors_allowed_origins", ["https://admin.example.org"])
+    preflight = {
+        "Origin": "https://admin.example.org",
+        "Access-Control-Request-Method": "POST",
+    }
+
+    with TestClient(create_fastapi("api")) as client:
+        allowed = client.options(
+            "/api/v0/_system/check",
+            headers={**preflight, "Access-Control-Request-Headers": "content-type"},
+        )
+        disallowed = client.options(
+            "/api/v0/_system/check",
+            headers={**preflight, "Access-Control-Request-Headers": "x-api-key"},
+        )
+
+    assert allowed.status_code == 200
+    assert "*" not in allowed.headers["Access-Control-Allow-Methods"]
+    assert disallowed.status_code == 400

@@ -75,8 +75,8 @@ def create_fastapi(
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_allowed_origins,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["GET", "POST", "PUT", "DELETE"],
+        allow_headers=["Accept", "Content-Type"],
     )
     if startup in ["api", "both"]:
         app.include_router(backend_router, prefix=API_PREFIX)

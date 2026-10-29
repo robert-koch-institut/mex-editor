@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - code generator to create zod schemas based on pydantic models
 - datepicker component to unify usage and handle parse errors
 - field-category pipe to determine field-category based on zod schema definition
@@ -15,10 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - setting `MEX_EDITOR__CORS_ALLOWED_ORIGINS` for browser origins allowed via CORS
 
 ### Changes
+
 - models are now defined by zod schemas
 - fasttrack-resource form with validation
 - fieldsets category is now required and no longer optional
-
 - language-selector now uses toggleButtons instead of a select
 - read vocabulary concepts from `mex.model.VOCABULARY_JSON_BY_NAME`, because mex-common
   simplified its vocabularies to plain enums without concepts
@@ -41,9 +42,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- set security headers (CSP, HSTS, `nosniff`, referrer policy, frame options, cache control) on all responses
-- restrict CORS to configured origins instead of `*`, defaults to same-origin only
-- disable critical css inlining in production builds, its `onload` handler would need `'unsafe-inline'` scripts
+- set security headers (CSP, HSTS, nosniff, referrer policy, frame options,
+  cache control) on all responses
+- restrict CORS origins to explicit setting instead of `*`, defaults to same-origin only
+- restrict CORS headers and methods to actually needed entries
+- disable critical css inlining in production builds, its `onload` handler would need
+  `'unsafe-inline'` scripts
 
 ## [4.1.1] - 2026-08-20
 

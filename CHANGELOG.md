@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - datepicker component to unify usage and handle parse errors
 - field-category pipe to determine field-category based on zod schema definition
 - rki theme from figma (m3)
+- setting `MEX_EDITOR__CORS_ALLOWED_ORIGINS` for browser origins allowed via CORS
 
 ### Changes
 - models are now defined by zod schemas
@@ -34,10 +35,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - endpoint `GET /vocabulary` listing all vocabulary names, which had no consumer
+- disable unused redoc api documentation, swagger ui at `/docs` stays
 
 ### Fixed
 
 ### Security
+
+- set security headers (CSP, HSTS, `nosniff`, referrer policy, frame options, cache control) on all responses
+- restrict CORS to configured origins instead of `*`, defaults to same-origin only
+- disable critical css inlining in production builds, its `onload` handler would need `'unsafe-inline'` scripts
 
 ## [4.1.1] - 2026-08-20
 

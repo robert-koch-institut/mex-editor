@@ -17,6 +17,7 @@ from mex.editor.api.system import router as system_router
 from mex.editor.api.vocabulary import router as vocabulary_router
 from mex.editor.frontend import STATIC_DIR, npm_watch
 from mex.editor.logging import UVICORN_LOGGING_CONFIG
+from mex.editor.middleware import add_security_headers
 from mex.editor.settings import EditorSettings
 
 if TYPE_CHECKING:
@@ -66,12 +67,14 @@ def create_fastapi(
     settings = EditorSettings.get()
     app = FastAPI(
         title="mex-editor",
+        redoc_url=None,
         lifespan=dev_lifespan if mode == "dev" else None,
         root_path="" if settings.base_href == "/" else settings.base_href.rstrip("/"),
     )
+    add_security_headers(app, API_PREFIX)
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=settings.cors_allowed_origins,
         allow_methods=["*"],
         allow_headers=["*"],
     )

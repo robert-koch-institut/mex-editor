@@ -12,6 +12,13 @@ import type { SubmissionError } from "../fast-track/fast-track-resource/fast-tra
 export class ErrorMailToPipe<T extends { $type: string }> implements PipeTransform {
   buildErrorSummary(error: SubmissionError<T>) {
     const title = `Fehler beim Speichern von '${error.payload.$type}'`;
+    const inner = error.innerError
+      ? {
+          ...error.innerError,
+          name: error.innerError.name,
+          message: error.innerError.message,
+        }
+      : {};
     return {
       subject: title,
       content:
@@ -19,7 +26,7 @@ export class ErrorMailToPipe<T extends { $type: string }> implements PipeTransfo
         `--- PAYLOAD ---\n` +
         `${JSON.stringify(error.payload, null, 2)}\n\n` +
         `--- ERROR DETAILS ---\n` +
-        `${JSON.stringify(error.innerError, null, 2)} `,
+        `${JSON.stringify(inner, null, 2)} `,
     };
   }
 

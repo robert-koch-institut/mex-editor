@@ -131,9 +131,9 @@ export class FastTrackResourceSubmission {
     },
     language: "en" | "de",
   ): AdditiveResource {
-    const stringToText = (x: string) => TextSchema.parse({ value: x, language });
+    const stringToText = (value: string) => TextSchema.parse({ value, language });
     const isValidTextString = (x: string) => x && x.length >= 1;
-    return AdditiveResourceSchema.parse({
+    const mapped: AdditiveResource = {
       $type: "AdditiveResource",
       contact: resolvedRefs.contact,
       contributor: resolvedRefs.contributor,
@@ -145,9 +145,11 @@ export class FastTrackResourceSubmission {
       description: [stringToText(model.description)],
       accrualPeriodicity: model.accrualPeriodicity,
       theme: model.theme,
-      end: model.end ? [model.end.toISODate()!] : null,
-      start: model.start ? [model.start.toISODate()!] : null,
-      hasLegalBasis: isValidTextString(model.spatial) ? [stringToText(model.hasLegalBasis)] : null,
+      end: model.end ? [model.end.toISODate()!] : [],
+      start: model.start ? [model.start.toISODate()!] : [],
+      hasLegalBasis: isValidTextString(model.hasLegalBasis)
+        ? [stringToText(model.hasLegalBasis)]
+        : undefined,
       keyword: [
         ...model.keywords.de.map((x) => ({ value: x, language: "de" as const })),
         ...model.keywords.en.map((x) => ({ value: x, language: "en" as const })),
@@ -155,8 +157,9 @@ export class FastTrackResourceSubmission {
       provenance: [stringToText(model.provenance)],
       resourceCreationMethod: model.resourceCreationMethod,
       resourceTypeGeneral: model.resourceTypeGeneral,
-      spatial: isValidTextString(model.spatial) ? [stringToText(model.spatial)] : null,
-    });
+      spatial: isValidTextString(model.spatial) ? [stringToText(model.spatial)] : undefined,
+    };
+    return AdditiveResourceSchema.parse(mapped);
   }
 
   private mapCreateItem(item: CreateItem): PersonRuleSetRequest | ContactPointRuleSetRequest {

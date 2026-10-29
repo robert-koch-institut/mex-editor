@@ -135,21 +135,16 @@ describe("ErrorMailToPipe", () => {
       expect(summary.content).toContain('"a": 1');
       expect(summary.content).toContain("--- ERROR DETAILS ---");
     });
-  });
-
-  describe("limitations", () => {
-    // KNOWN LIMITATION: JSON.stringify(new Error("boom")) is "{}" -- name/message/stack are not
-    // enumerable, so a plain Error loses its message in the mail. HttpErrorResponse (the normal
-    // case here) is fine, see above. A fix could serialize `{ name, message, ...error }`.
-    // Once fixed this starts passing and `it.fails` flips it to a failure -- remove `.fails` then.
-    it.fails("includes the message of a plain Error in the error details", () => {
+    it("includes the message of a plain Error in the error details", () => {
       const { body } = parse(
         pipe.transform(makeFailure({ $type: "payload" }, new Error("Das ist die Fehlermeldung"))),
       );
 
       expect(body).toContain("Das ist die Fehlermeldung");
     });
+  });
 
+  describe("limitations", () => {
     // A resource payload easily gets big; many mail clients/browsers truncate mailto links
     // somewhere around 2000 characters. This just records how fast that limit is reached.
     it("produces a link well beyond 2000 characters for a realistic payload", () => {

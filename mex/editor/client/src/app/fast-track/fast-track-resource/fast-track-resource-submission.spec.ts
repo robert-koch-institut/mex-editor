@@ -158,16 +158,7 @@ describe("FastTrackResourceSubmission", () => {
 
   describe("the POSTed resource", () => {
     it("is a ResourceRuleSetRequest with an AdditiveResource", async () => {
-      const model = makeModel({
-        contact: [createContactPoint()],
-        unitInCharge: [previewUnit(id("unit-1"))],
-      });
-      // try {
-      //   const result = await service.submit(model);
-      //   console.log("RESULT", result);
-      // } catch (error: unknown) {
-      //   console.log("ERROR", error);
-      // }
+      const model = makeModel({});
       const { done } = track(service.submit(model));
 
       const [request] = resourceRequests();
@@ -268,34 +259,18 @@ describe("FastTrackResourceSubmission", () => {
       expect(additive["end"]).toEqual(["2026-12-31"]);
     });
 
-    it("leaves start/end undefined when they are not set", async () => {
+    it("checks start/end are empty arrays when they are not set", async () => {
       const additive = await sentAdditive(makeModel({ start: null, end: null }));
 
-      expect(additive["start"]).toBeUndefined();
-      expect(additive["end"]).toBeUndefined();
+      expect(additive["start"]).toEqual([]);
+      expect(additive["end"]).toEqual([]);
     });
 
-    // KNOWN GAP: spatial and hasLegalBasis may be empty in the form (plain z.string()), but the
-    // service wraps them in TextSchema, whose value must not be empty -- `parse` throws, so the
-    // whole submission fails and no request is sent. Fix: leave empty optional texts out.
-    // Once fixed, this test starts passing and `it.fails` flips it to a failure: remove `.fails`.
-    it.fails(
-      "still submits when the optional texts (spatial, hasLegalBasis) are empty",
-      async () => {
-        const { done } = track(service.submit(makeModel({ spatial: "", hasLegalBasis: "" })));
+    it("still submits when the optional texts (spatial, hasLegalBasis) are empty", async () => {
+      const { done } = track(service.submit(makeModel({ spatial: "", hasLegalBasis: "" })));
 
-        expect(resourceRequests()).toHaveLength(1);
-        await done;
-      },
-    );
-
-    it("returns success:false (not a thrown error) for the empty optional texts above", async () => {
-      const { state, done } = track(service.submit(makeModel({ spatial: "", hasLegalBasis: "" })));
+      expect(resourceRequests()).toHaveLength(1);
       await done;
-
-      expect(state.status).toBe("resolved");
-      expect(state.value).toMatchObject({ success: false });
-      expect(resourceRequests()).toHaveLength(0);
     });
   });
 
@@ -352,6 +327,7 @@ describe("FastTrackResourceSubmission", () => {
     });
   });
 
+  // eslint-disable-next-line max-lines-per-function
   describe("submit: creating new reference items first", () => {
     it("posts a new Person as a PersonRuleSetRequest and uses the returned stableTargetId", async () => {
       const { state, done } = track(
@@ -530,6 +506,7 @@ describe("FastTrackResourceSubmission", () => {
     });
   });
 
+  // eslint-disable-next-line max-lines-per-function
   describe("submit: creating a new item fails", () => {
     // Like a failing resource request, this resolves with success:false and a SubmissionError.
     // Its payload is the request of the new item that failed (not the resource).
@@ -690,22 +667,14 @@ describe("FastTrackResourceSubmission", () => {
       expect(retry.state.value).toMatchObject({ success: true });
     });
 
-    // KNOWN GAP: the new items are mapped (and validated with Zod) while `submit()` is still
-    // collecting them, which happens BEFORE its try/catch -- so invalid data of a new item (here a
-    // malformed email) makes `submit()` reject instead of returning success:false.
-    // Fix: move that part into the try block. Once fixed, this starts passing and `it.fails`
-    // flips it to a failure: remove `.fails`.
-    it.fails(
-      "returns success:false (does not reject) when the data of a new item is invalid",
-      async () => {
-        const { state, done } = track(
-          service.submit(makeModel({ contact: [createContactPoint("not-an-email")] })),
-        );
-        await done;
+    it("returns success:false (does not reject) when the data of a new item is invalid", async () => {
+      const { state, done } = track(
+        service.submit(makeModel({ contact: [createContactPoint("not-an-email")] })),
+      );
+      await done;
 
-        expect(state.status).toBe("resolved");
-        expect(state.value).toMatchObject({ success: false });
-      },
-    );
+      expect(state.status).toBe("resolved");
+      expect(state.value).toMatchObject({ success: false });
+    });
   });
 });

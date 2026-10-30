@@ -19,7 +19,25 @@
         "rights.prefill.text": "Gesundheitsdaten sind besonders sensibel und haben einen hohen Schutzbedarf. Da es sich dabei oftmals um personenbezogene Daten handelt, welche durch die DSGVO (Datenschutzgrundverordnung) geschützt sind, können sie nicht ohne weiteres frei zur Verfügung gestellt werden. Eine Weitergabe und Verarbeitung dieser Daten ist daher prinzipiell zunächst ausgeschlossen, kann aber unter bestimmten Voraussetzungen und Bedingungen möglich sein. Ob und in welcher Form Daten zur Verfügung gestellt werden können, unterliegt daher einer Einzelfallprüfung. Um die Bearbeitung zu vereinfachen, sollten bei der ersten Kontaktaufnahme folgende Informationen enthalten sein: antragstellende Person und Institution, Name und Kennung des Datensatzes, Verwendungszweck mit kurzer Beschreibung des Forschungsvorhabens und bis wann der Datensatz benötigt wird.",
         "title.placeholder": "Bitte den Titel eingeben"
       },
-      "headline": "{{Resource}} erstellen"
+      "headline": "{{Resource}} erstellen",
+      "save-button": {
+        "label": "{{Resource}} speichern",
+        "saving": "Speichere {{Resource}}..."
+      },
+      "toast": {
+        "error": {
+          "message": "Der {{Resource}} konnte leider nicht gespeichert werden. Es ist ein unerwarteter Fehler aufgetreten.",
+          "title": "Fehler beim Speichern"
+        },
+        "submissionError": {
+          "message": "Der {{Resource}} konnte leider nicht gespeichert werden. Es ist ein unerwarteter Fehler aufgetreten.\nSie können eine Email an das MEx-Team senden, um über das Problem zu informieren.",
+          "title": "Fehler beim Speichern"
+        },
+        "success": {
+          "message": "Der {{Resource}} ist erfolgreich gespeichert worden.",
+          "title": "{{Resource}} gespeichert"
+        }
+      }
     }
   },
   "footer.greetings": "Erstellt mit ❤️ von MEx",
@@ -37,6 +55,7 @@
   },
   "select.none-option": "Keine",
   "select.placeholder": "Bitte auswählen",
+  "toast.submissionError.sendMail": "Email an MEx senden",
   "user-logout.logout-button.text": "Abmelden",
   "validation": {
     "custom": "{{field}} ist ungültig",

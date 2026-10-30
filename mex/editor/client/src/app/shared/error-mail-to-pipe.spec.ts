@@ -1,12 +1,15 @@
 import { HttpErrorResponse } from "@angular/common/http";
 
 import { ErrorMailToPipe } from "./error-mail-to-pipe";
-import type { SubmissionFailure } from "./models/submission-result";
+import { SubmissionError } from "./models/submission-result";
 
-const makeFailure = (
-  payload: unknown = { $type: "ResourceRuleSetRequest", additive: { title: [{ value: "Titel" }] } },
+const makeFailure = <T extends { $type: string }>(
+  payload: T = {
+    $type: "ResourceRuleSetRequest",
+    additive: { title: [{ value: "Titel" }] },
+  } as unknown as T,
   error: Error = new HttpErrorResponse({ status: 500, statusText: "Server Error", url: "api/x" }),
-): SubmissionFailure<unknown> => ({ success: false, payload, error });
+) => new SubmissionError(payload, error);
 
 /** Splits the generated mailto link into its decoded parts. */
 function parse(link: string) {
@@ -21,31 +24,29 @@ function parse(link: string) {
 
 // eslint-disable-next-line max-lines-per-function
 describe("ErrorMailToPipe", () => {
-  let pipe: ErrorMailToPipe;
+  let pipe: ErrorMailToPipe<{ $type: string }>;
 
   beforeEach(() => {
     pipe = new ErrorMailToPipe();
   });
 
   describe("transform", () => {
-    it("builds a mailto link to the MeX support address", () => {
+    it("builds a mailto link to the MEx support address", () => {
       const { protocol, recipient } = parse(pipe.transform(makeFailure()));
 
       expect(protocol).toBe("mailto:");
-      expect(recipient).toBe("Mex@rki.de");
+      expect(recipient).toBe("mex@rki.de");
     });
 
     it("sets the subject", () => {
-      expect(parse(pipe.transform(makeFailure())).subject).toBe(
-        "Fehler beim Speichern einer Resource.",
-      );
+      expect(parse(pipe.transform(makeFailure())).subject).not.toBe("");
     });
 
     it("greets the support team at the start of the body", () => {
       const { body } = parse(pipe.transform(makeFailure()));
 
       expect(body).toMatch(
-        /^Hallo MeX-Support,\n\nleider ist ein Fehler im Editor aufgetreten\.\n\n/,
+        /^Hallo MEx-Support,\n\nleider ist ein Fehler im Editor aufgetreten\.\n\n/,
       );
     });
 
@@ -72,7 +73,7 @@ describe("ErrorMailToPipe", () => {
         statusText: "Service Unavailable",
         url: "api/v0/backend/rule-set",
       });
-      const { body } = parse(pipe.transform(makeFailure({}, error)));
+      const { body } = parse(pipe.transform(makeFailure({ $type: "Type" }, error)));
       const details = body!.split("--- ERROR DETAILS ---\n")[1];
 
       expect(JSON.parse(details)).toMatchObject({ status: 503, statusText: "Service Unavailable" });
@@ -84,7 +85,7 @@ describe("ErrorMailToPipe", () => {
         status: 422,
         error: { detail: "title must not be empty" },
       });
-      const { body } = parse(pipe.transform(makeFailure({}, error)));
+      const { body } = parse(pipe.transform(makeFailure({ $type: "payload" }, error)));
 
       expect(body).toContain("title must not be empty");
     });
@@ -100,14 +101,14 @@ describe("ErrorMailToPipe", () => {
     const nasty = 'Ärger & Öl = "ü" #1? 100% <b>fett</b> 😀\nzweite Zeile\ttab';
 
     it("round-trips umlauts, quotes, emoji, newlines and tabs through the link unchanged", () => {
-      const { body } = parse(pipe.transform(makeFailure({ text: nasty })));
+      const { body } = parse(pipe.transform(makeFailure({ $type: "payload", text: nasty })));
       const payloadJson = body!.split("--- PAYLOAD ---\n")[1].split("\n\n--- ERROR DETAILS ---")[0];
 
-      expect(JSON.parse(payloadJson)).toEqual({ text: nasty });
+      expect(JSON.parse(payloadJson)).toEqual({ $type: "payload", text: nasty });
     });
 
     it("never leaves raw whitespace, '#' or a stray '&' in the link (they would break the mailto URL)", () => {
-      const link = pipe.transform(makeFailure({ text: nasty }));
+      const link = pipe.transform(makeFailure({ $type: "payload", text: nasty }));
 
       expect(link).not.toMatch(/\s/);
       expect(link).not.toContain("#");
@@ -117,7 +118,9 @@ describe("ErrorMailToPipe", () => {
     });
 
     it("keeps '+' in the payload a '+' (not turned into a space)", () => {
-      const { body } = parse(pipe.transform(makeFailure({ phone: "+49 30 1234" })));
+      const { body } = parse(
+        pipe.transform(makeFailure({ $type: "payload", phone: "+49 30 1234" })),
+      );
 
       expect(body).toContain("+49 30 1234");
     });
@@ -125,33 +128,31 @@ describe("ErrorMailToPipe", () => {
 
   describe("buildErrorSummary", () => {
     it("returns the subject and the payload/error content block", () => {
-      const summary = pipe.buildErrorSummary(makeFailure({ a: 1 }));
+      const summary = pipe.buildErrorSummary(makeFailure({ $type: "PayloadType", a: 1 }));
 
-      expect(summary.subject).toBe("Fehler beim Speichern einer Resource.");
+      expect(summary.subject).toBe("Fehler beim Speichern von 'PayloadType'");
       expect(summary.content).toContain("--- PAYLOAD ---");
       expect(summary.content).toContain('"a": 1');
       expect(summary.content).toContain("--- ERROR DETAILS ---");
     });
-  });
-
-  describe("limitations", () => {
-    // KNOWN LIMITATION: JSON.stringify(new Error("boom")) is "{}" -- name/message/stack are not
-    // enumerable, so a plain Error loses its message in the mail. HttpErrorResponse (the normal
-    // case here) is fine, see above. A fix could serialize `{ name, message, ...error }`.
-    // Once fixed this starts passing and `it.fails` flips it to a failure -- remove `.fails` then.
-    it.fails("includes the message of a plain Error in the error details", () => {
+    it("includes the message of a plain Error in the error details", () => {
       const { body } = parse(
-        pipe.transform(makeFailure({}, new Error("Das ist die Fehlermeldung"))),
+        pipe.transform(makeFailure({ $type: "payload" }, new Error("Das ist die Fehlermeldung"))),
       );
 
       expect(body).toContain("Das ist die Fehlermeldung");
     });
+  });
 
+  describe("limitations", () => {
     // A resource payload easily gets big; many mail clients/browsers truncate mailto links
     // somewhere around 2000 characters. This just records how fast that limit is reached.
     it("produces a link well beyond 2000 characters for a realistic payload", () => {
       const keyword = (i: number) => ({ value: `Schlagwort ${i}`, language: "de" });
-      const payload = { additive: { keyword: Array.from({ length: 40 }, (_, i) => keyword(i)) } };
+      const payload = {
+        $type: "",
+        additive: { keyword: Array.from({ length: 40 }, (_, i) => keyword(i)) },
+      };
 
       expect(pipe.transform(makeFailure(payload)).length).toBeGreaterThan(2000);
     });

@@ -6,29 +6,28 @@ import { By } from "@angular/platform-browser";
 import { vi } from "vitest";
 
 import { ErrorMailToPipe } from "../error-mail-to-pipe";
-import type { SubmissionFailure } from "../models/submission-result";
-import { SubmissionFailureToast } from "./submission-failure-toast";
+import { SubmissionError } from "../models/submission-result";
+import { SubmissionErrorToast } from "./submission-error-toast";
 
-const failure: SubmissionFailure<unknown> = {
-  success: false,
-  payload: { $type: "ResourceRuleSetRequest", additive: { title: [{ value: "Titel" }] } },
-  error: new Error("boom"),
-};
+const error = new SubmissionError(
+  { $type: "ResourceRuleSetRequest", additive: { title: [{ value: "Titel" }] } },
+  new Error("boom"),
+);
 
 describe("SubmissionFailureToast", () => {
   function setup() {
     const snackBarRef = { dismiss: vi.fn(), dismissWithAction: vi.fn() };
     TestBed.configureTestingModule({
-      imports: [SubmissionFailureToast],
+      imports: [SubmissionErrorToast],
       providers: [
         {
           provide: MAT_SNACK_BAR_DATA,
-          useValue: { title: "Fehler", message: "Speichern fehlgeschlagen.", failure },
+          useValue: { title: "Fehler", message: "Speichern fehlgeschlagen.", error },
         },
         { provide: MatSnackBarRef, useValue: snackBarRef },
       ],
     });
-    const fixture = TestBed.createComponent(SubmissionFailureToast);
+    const fixture = TestBed.createComponent(SubmissionErrorToast);
     fixture.detectChanges();
     const link = fixture.debugElement.query(By.css(".toast-actions a"))?.nativeElement as
       HTMLAnchorElement | undefined;
@@ -60,8 +59,8 @@ describe("SubmissionFailureToast", () => {
     const { link } = setup();
 
     // would be rewritten to "unsafe:mailto:..." if Angular's URL sanitizer rejected the link
-    expect(link!.getAttribute("href")).toBe(new ErrorMailToPipe().transform(failure));
-    expect(link!.getAttribute("href")).toMatch(/^mailto:Mex@rki\.de\?/);
+    expect(link!.getAttribute("href")).toBe(new ErrorMailToPipe().transform(error));
+    expect(link!.getAttribute("href")).toMatch(/^mailto:mex@rki\.de\?/);
   });
 
   it("shows a (non-empty) label on the link", () => {

@@ -28,6 +28,11 @@ function setNativeValue(
   fixture.detectChanges();
 }
 
+function mockActiveLang(initial: string) {
+  const spy = vi.spyOn(TestBed.inject(TranslocoService), "getActiveLang").mockReturnValue(initial);
+  return { set: (lang: string) => spy.mockReturnValue(lang) };
+}
+
 describe("Datepicker", async () => {
   let fixture: ComponentFixture<Datepicker>;
   let component: Datepicker;
@@ -40,6 +45,7 @@ describe("Datepicker", async () => {
 
     fixture = TestBed.createComponent(Datepicker);
     component = fixture.componentInstance;
+    mockActiveLang("de");
 
     // Required host-directive input -- must be set before the first
     // detectChanges(), see the file-level comment above.

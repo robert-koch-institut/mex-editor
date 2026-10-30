@@ -20,18 +20,23 @@ import {
   type CreatePerson,
   isCreateItem,
 } from "../../shared/models/create-item";
-import type { ContactPointRuleSetRequest } from "../../shared/models/generated/contact-point";
-import type { PersonRuleSetRequest } from "../../shared/models/generated/person";
-import type {
-  AdditiveResource,
-  ResourceRuleSetRequest,
-  ResourceRuleSetResponse,
-} from "../../shared/models/generated/resource";
 import {
-  type FastTrackResourceModel,
-  type FastTrackResourceSubmissionResult,
-  FastTrackResourceSubPostError,
-} from "./fast-track-resource.models";
+  type ContactPointRuleSetRequest,
+  ContactPointRuleSetRequestSchema,
+} from "../../shared/models/generated/contact-point";
+import {
+  type PersonRuleSetRequest,
+  PersonRuleSetRequestSchema,
+} from "../../shared/models/generated/person";
+import {
+  type AdditiveResource,
+  AdditiveResourceSchema,
+  ResourceRuleSetRequestSchema,
+  type ResourceRuleSetResponse,
+} from "../../shared/models/generated/resource";
+import { TextSchema } from "../../shared/models/generated/shared";
+import { SubmissionError, type SubmissionResult } from "../../shared/models/submission-result";
+import { type FastTrackResourceModel } from "./fast-track-resource.models";
 
 @Injectable({ providedIn: "root" })
 /**
@@ -41,57 +46,62 @@ export class FastTrackResourceSubmission {
   private http = inject(HttpClient);
   private transloco = inject(TranslocoService);
 
-  async submit(model: FastTrackResourceModel): Promise<FastTrackResourceSubmissionResult> {
+  async submit(model: FastTrackResourceModel): Promise<SubmissionResult<ResourceRuleSetResponse>> {
     let language: "de" | "en" = "de";
     const currentLanguage = this.transloco.getActiveLang();
     if (this.isValidLanguage(currentLanguage)) {
       language = currentLanguage;
     }
 
-    const submitter = (x: CreateItem | PreviewItem) =>
-      isCreateItem(x) ? this.submitCreateItem(x) : of(x.identifier);
+    try {
+      const submitter = (x: CreateItem | PreviewItem) =>
+        isCreateItem(x) ? this.submitCreateItem(x) : of(x.identifier);
 
-    const contactIds = model.contact.map(submitter);
-    const contribIds = model.contributor.map(submitter);
-    const unitInChargeIds = model.unitInCharge.map(submitter);
-    const creatorIds = model.creator.map(submitter);
-    const contributingUnitIds = model.contributingUnit.map(submitter);
+      const contactIds = model.contact.map(submitter);
+      const contributorIds = model.contributor.map(submitter);
+      const unitInChargeIds = model.unitInCharge.map(submitter);
+      const creatorIds = model.creator.map(submitter);
+      const contributingUnitIds = model.contributingUnit.map(submitter);
 
-    const combiner = (ids: Observable<string>[]) => (ids.length > 0 ? combineLatest(ids) : of([]));
+      const combiner = <T>(ids: Observable<T>[]) => (ids.length > 0 ? combineLatest(ids) : of([]));
 
-    const saveRequest = combineLatest([
-      combiner(contactIds),
-      combiner(contribIds),
-      combiner(unitInChargeIds),
-      combiner(creatorIds),
-      combiner(contributingUnitIds),
-    ]).pipe(
-      take(1),
-      switchMap(([contact, contributor, unitInCharge, creator, contributingUnit]) => {
-        const additive = this.mapModel(
-          model,
-          { contact, contributor, unitInCharge, creator, contributingUnit },
-          language,
-        );
-
-        const payload: ResourceRuleSetRequest = {
-          $type: "ResourceRuleSetRequest",
-          additive,
-        };
-
-        return this.http
-          .post<ResourceRuleSetResponse>("api/v0/backend/rule-set", payload)
-          .pipe(
-            catchError((err: Error) => of({ $type: "PostError" as const, error: err, payload })),
+      const saveRequest = combineLatest([
+        combiner(contactIds),
+        combiner(contributorIds),
+        combiner(unitInChargeIds),
+        combiner(creatorIds),
+        combiner(contributingUnitIds),
+      ]).pipe(
+        take(1),
+        switchMap(([contact, contributor, unitInCharge, creator, contributingUnit]) => {
+          const additive = this.mapModel(
+            model,
+            { contact, contributor, unitInCharge, creator, contributingUnit },
+            language,
           );
-      }),
-    );
 
-    const response = await firstValueFrom(saveRequest);
-    if (response.$type == "ResourceRuleSetResponse") {
-      return { success: true, response };
+          const payload = ResourceRuleSetRequestSchema.parse({
+            $type: "ResourceRuleSetRequest",
+            additive,
+          });
+
+          return this.http
+            .post<ResourceRuleSetResponse>("api/v0/backend/rule-set", payload)
+            .pipe(catchError((err: Error) => throwError(() => new SubmissionError(payload, err))));
+        }),
+      );
+
+      const response = await firstValueFrom(saveRequest);
+      return { success: true, response: response };
+    } catch (error: unknown) {
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error
+            : new Error("Unknwon Error while submitting 'FastTrackResource'.", { cause: model }),
+      };
     }
-    return { success: false, payload: response.payload, error: response.error };
   }
 
   private isValidLanguage(value: string): value is "en" | "de" {
@@ -109,8 +119,9 @@ export class FastTrackResourceSubmission {
     },
     language: "en" | "de",
   ): AdditiveResource {
-    const stringToText = (x: string) => ({ value: x, language });
-    return {
+    const stringToText = (value: string) => TextSchema.parse({ value, language });
+    const isValidTextString = (x: string) => x && x.length >= 1;
+    const mapped: AdditiveResource = {
       $type: "AdditiveResource",
       contact: resolvedRefs.contact,
       contributor: resolvedRefs.contributor,
@@ -122,17 +133,20 @@ export class FastTrackResourceSubmission {
       description: [stringToText(model.description)],
       accrualPeriodicity: model.accrualPeriodicity,
       theme: model.theme,
-      end: model.end ? [model.end.toISODate()!] : undefined,
-      start: model.start ? [model.start.toISODate()!] : undefined,
-      hasLegalBasis: [stringToText(model.hasLegalBasis)],
+      end: model.end ? [model.end.toISODate()!] : [],
+      start: model.start ? [model.start.toISODate()!] : [],
+      hasLegalBasis: isValidTextString(model.hasLegalBasis)
+        ? [stringToText(model.hasLegalBasis)]
+        : [],
       keyword: [
         ...model.keywords.de.map((x) => ({ value: x, language: "de" as const })),
         ...model.keywords.en.map((x) => ({ value: x, language: "en" as const })),
       ],
       provenance: [stringToText(model.provenance)],
       resourceCreationMethod: model.resourceCreationMethod,
-      spatial: [stringToText(model.spatial)],
+      spatial: isValidTextString(model.spatial) ? [stringToText(model.spatial)] : [],
     };
+    return AdditiveResourceSchema.parse(mapped);
   }
 
   private mapCreateItem(item: CreateItem): PersonRuleSetRequest | ContactPointRuleSetRequest {
@@ -143,34 +157,37 @@ export class FastTrackResourceSubmission {
   }
 
   private mapCreatePerson(item: CreatePerson) {
-    return {
+    return PersonRuleSetRequestSchema.parse({
       additive: {
         givenName: [item.givenName],
         familyName: [item.familyName],
         $type: "AdditivePerson" as const,
       },
       $type: "PersonRuleSetRequest" as const,
-    };
+    });
   }
 
   private mapCreateContactPoint(item: CreateContactPoint) {
-    return {
+    return ContactPointRuleSetRequestSchema.parse({
       additive: {
         email: [item.email],
         $type: "AdditiveContactPoint" as const,
       },
       $type: "ContactPointRuleSetRequest" as const,
-    };
+    });
   }
 
-  private submitCreateItem(item: CreateItem): Observable<string> {
-    const payload = this.mapCreateItem(item);
-    return this.http.post<{ stableTargetId?: string }>("api/v0/backend/rule-set", payload).pipe(
-      map((x) => {
-        if (x.stableTargetId) return x.stableTargetId;
-        throw new Error("No stableTargetId in response.");
-      }),
-      catchError((err) => throwError(() => new FastTrackResourceSubPostError(err, payload))),
+  private submitCreateItem(item: CreateItem) {
+    return of(this.mapCreateItem(item)).pipe(
+      switchMap((payload) =>
+        this.http.post<{ stableTargetId?: string }>("api/v0/backend/rule-set", payload).pipe(
+          map((x) => {
+            if (x.stableTargetId) return x.stableTargetId;
+            throw new Error("No stableTargetId in response.", { cause: x });
+          }),
+          catchError((err) => throwError(() => new SubmissionError(payload, err))),
+        ),
+      ),
     );
   }
 }

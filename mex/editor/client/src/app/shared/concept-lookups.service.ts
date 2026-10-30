@@ -33,10 +33,10 @@ export class ConceptLookups {
       if (error) {
         this.notifier.error(
           {
-            translocoKey: "errors.services.concept-lookup.loading.message",
+            msgKey: "errors.services.concept-lookup.loading.message",
             params: { lookupName: name },
           },
-          { translocoKey: "errors.services.concept-lookup.loading.title" },
+          { msgKey: "errors.services.concept-lookup.loading.title" },
           error,
         );
         return [];

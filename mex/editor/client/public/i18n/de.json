@@ -30,9 +30,12 @@
         "saving": "Speichere {{Resource}}..."
       },
       "toast": {
-        "submissionFailure": {
-          "message": "Der {{Resource}} konnte leider nicht gespeichert werden. Es ist ein unerwarteter Fehler aufgetreteten.\nSie können eine Email an das MeX-Team senden, um über das Problem zu informieren.",
-          "sendMail": "Email an MeX senden",
+        "error": {
+          "message": "Der {{Resource}} konnte leider nicht gespeichert werden. Es ist ein unerwarteter Fehler aufgetreten.",
+          "title": "Fehler beim Speichern"
+        },
+        "submissionError": {
+          "message": "Der {{Resource}} konnte leider nicht gespeichert werden. Es ist ein unerwarteter Fehler aufgetreten.\nSie können eine Email an das MEx-Team senden, um über das Problem zu informieren.",
           "title": "Fehler beim Speichern"
         },
         "success": {
@@ -57,6 +60,7 @@
   },
   "select.none-option": "Keine",
   "select.placeholder": "Bitte auswählen",
+  "toast.submissionError.sendMail": "Email an MEx senden",
   "user-logout.logout-button.text": "Abmelden",
   "validation": {
     "custom": "{{field}} ist ungültig",

@@ -5,16 +5,22 @@ import { TranslocoService } from "@jsverse/transloco";
 import { DateTime } from "luxon";
 import { vi } from "vitest";
 
-import {
-  type FastTrackResourceModel,
-  FastTrackResourceSubPostError,
-} from "./fast-track-resource.models";
+import { SubmissionError } from "../../shared/models/submission-result";
+import type { FastTrackResourceModel } from "./fast-track-resource.models";
 import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
 
 const RULE_SET_URL = "api/v0/backend/rule-set";
 
+const THEME = "https://mex.rki.de/item/theme-1";
+const RESOURCE_TYPE_GENERAL = "https://mex.rki.de/item/resource-type-general-2";
+const RESOURCE_CREATION_METHOD = "https://mex.rki.de/item/resource-creation-method-1";
+const FREQUENCY = "https://mex.rki.de/item/frequency-1";
+
 type Body = Record<string, unknown>;
 type ModelOverrides = { [K in keyof FastTrackResourceModel]?: unknown };
+
+/** A valid reference identifier: 14-22 letters/digits. */
+const id = (name: string) => name.padEnd(14, "0");
 
 const makeModel = (overrides: ModelOverrides = {}): FastTrackResourceModel =>
   ({
@@ -23,8 +29,8 @@ const makeModel = (overrides: ModelOverrides = {}): FastTrackResourceModel =>
     theme: [],
     resourceTypeGeneral: [],
     spatial: "Berlin",
-    resourceCreationMethod: ["method-1"],
-    accrualPeriodicity: "freq-1",
+    resourceCreationMethod: [RESOURCE_CREATION_METHOD],
+    accrualPeriodicity: FREQUENCY,
     start: null,
     end: null,
     hasLegalBasis: "Rechtsgrundlage",
@@ -77,14 +83,28 @@ function track<T>(promise: Promise<T>) {
   return { state, done };
 }
 
-/** Everything an error object holds: own properties, including non-enumerable ones like `cause`. */
-const carried = (error: unknown): unknown[] =>
-  Object.getOwnPropertyNames(error).map((key) => (error as Record<string, unknown>)[key]);
+/** The `error` of a failed submission result (fails the test if the result is a success). */
+function errorOf(result: unknown) {
+  const failure = result as { success: boolean; error: SubmissionError<{ $type: string }> };
+  expect(failure.success).toBe(false);
+  return failure.error;
+}
+
+/**
+ * Pins the language the service sees, so no test depends on the default language of the project's
+ * global test providers. It spies on `getActiveLang` of the real TranslocoService instead of
+ * replacing the service: the service only calls `getActiveLang()`.
+ */
+function mockActiveLang(initial: string) {
+  const spy = vi.spyOn(TestBed.inject(TranslocoService), "getActiveLang").mockReturnValue(initial);
+  return { set: (lang: string) => spy.mockReturnValue(lang) };
+}
 
 // eslint-disable-next-line max-lines-per-function
 describe("FastTrackResourceSubmission", () => {
   let service: FastTrackResourceSubmission;
   let http: HttpTestingController;
+  let activeLang: ReturnType<typeof mockActiveLang>;
 
   const bodyOf = (req: TestRequest) => req.request.body as Body;
   const requestsOfType = (type: string) =>
@@ -108,11 +128,9 @@ describe("FastTrackResourceSubmission", () => {
   }
 
   beforeEach(() => {
-    const transloco = TestBed.inject(TranslocoService);
-    vi.spyOn(transloco, "getActiveLang").mockReturnValue("de");
-
     service = TestBed.inject(FastTrackResourceSubmission);
     http = TestBed.inject(HttpTestingController);
+    activeLang = mockActiveLang("de"); // explicit default, independent of the project's test config
   });
 
   afterEach(() => {
@@ -123,7 +141,8 @@ describe("FastTrackResourceSubmission", () => {
 
   describe("the POSTed resource", () => {
     it("is a ResourceRuleSetRequest with an AdditiveResource", async () => {
-      const { done } = track(service.submit(makeModel()));
+      const model = makeModel({});
+      const { done } = track(service.submit(model));
 
       const [request] = resourceRequests();
       expect(request.request.method).toBe("POST");
@@ -145,7 +164,7 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("tags keywords with their OWN language, regardless of the active language", async () => {
-      vi.spyOn(TestBed.inject(TranslocoService), "getActiveLang").mockReturnValue("en");
+      activeLang.set("en");
       const additive = await sentAdditive(makeModel());
 
       expect(additive["keyword"]).toEqual([
@@ -170,19 +189,19 @@ describe("FastTrackResourceSubmission", () => {
     it("passes the identifiers of existing reference items through, in order", async () => {
       const additive = await sentAdditive(
         makeModel({
-          contact: [previewPerson("contact-1")],
-          contributor: [previewPerson("person-1"), previewPerson("person-2")],
-          unitInCharge: [previewUnit("unit-1")],
-          creator: [previewPerson("person-3")],
-          contributingUnit: [previewUnit("unit-2")],
+          contact: [previewPerson(id("contact1"))],
+          contributor: [previewPerson(id("person1")), previewPerson(id("person2"))],
+          unitInCharge: [previewUnit(id("unit1"))],
+          creator: [previewPerson(id("person3"))],
+          contributingUnit: [previewUnit(id("unit2"))],
         }),
       );
 
-      expect(additive["contact"]).toEqual(["contact-1"]);
-      expect(additive["contributor"]).toEqual(["person-1", "person-2"]);
-      expect(additive["unitInCharge"]).toEqual(["unit-1"]);
-      expect(additive["creator"]).toEqual(["person-3"]);
-      expect(additive["contributingUnit"]).toEqual(["unit-2"]);
+      expect(additive["contact"]).toEqual([id("contact1")]);
+      expect(additive["contributor"]).toEqual([id("person1"), id("person2")]);
+      expect(additive["unitInCharge"]).toEqual([id("unit1")]);
+      expect(additive["creator"]).toEqual([id("person3")]);
+      expect(additive["contributingUnit"]).toEqual([id("unit2")]);
     });
 
     it("sends empty reference lists as empty arrays", async () => {
@@ -198,15 +217,17 @@ describe("FastTrackResourceSubmission", () => {
     it("passes vocabulary values through as-is", async () => {
       const additive = await sentAdditive(
         makeModel({
-          theme: ["theme-1"],
-          resourceCreationMethod: ["method-1"],
-          accrualPeriodicity: "freq-1",
+          theme: [THEME],
+          resourceTypeGeneral: [RESOURCE_TYPE_GENERAL],
+          resourceCreationMethod: [RESOURCE_CREATION_METHOD],
+          accrualPeriodicity: FREQUENCY,
         }),
       );
 
-      expect(additive["theme"]).toEqual(["theme-1"]);
-      expect(additive["resourceCreationMethod"]).toEqual(["method-1"]);
-      expect(additive["accrualPeriodicity"]).toBe("freq-1");
+      expect(additive["theme"]).toEqual([THEME]);
+      expect(additive["resourceTypeGeneral"]).toEqual([RESOURCE_TYPE_GENERAL]);
+      expect(additive["resourceCreationMethod"]).toEqual([RESOURCE_CREATION_METHOD]);
+      expect(additive["accrualPeriodicity"]).toBe(FREQUENCY);
     });
 
     it("formats start/end as ISO dates (date only, no time)", async () => {
@@ -221,21 +242,18 @@ describe("FastTrackResourceSubmission", () => {
       expect(additive["end"]).toEqual(["2026-12-31"]);
     });
 
-    it("leaves start/end undefined when they are not set", async () => {
+    it("checks start/end are empty arrays when they are not set", async () => {
       const additive = await sentAdditive(makeModel({ start: null, end: null }));
 
-      expect(additive["start"]).toBeUndefined();
-      expect(additive["end"]).toBeUndefined();
+      expect(additive["start"]).toEqual([]);
+      expect(additive["end"]).toEqual([]);
     });
 
-    // Documents what happens today, it does not say this is right: optional texts that were left
-    // empty are sent as an empty text instead of being omitted. If the backend rejects empty
-    // texts, this is where to change it (and then this test).
-    it("currently sends empty optional texts (spatial, hasLegalBasis) as empty texts", async () => {
+    it("checks submitting empty spatial and hasLegalBasis are empty array when not set", async () => {
       const additive = await sentAdditive(makeModel({ spatial: "", hasLegalBasis: "" }));
 
-      expect(additive["spatial"]).toEqual([{ value: "", language: "de" }]);
-      expect(additive["hasLegalBasis"]).toEqual([{ value: "", language: "de" }]);
+      expect(additive["spatial"]).toEqual([]);
+      expect(additive["hasLegalBasis"]).toEqual([]);
     });
   });
 
@@ -244,13 +262,13 @@ describe("FastTrackResourceSubmission", () => {
       (additive["title"] as { language: string }[])[0].language;
 
     it("uses German texts when the active language is 'de'", async () => {
-      vi.spyOn(TestBed.inject(TranslocoService), "getActiveLang").mockReturnValue("de");
+      activeLang.set("de");
 
       expect(languageOfTitle(await sentAdditive(makeModel()))).toBe("de");
     });
 
     it("uses English texts when the active language is 'en'", async () => {
-      vi.spyOn(TestBed.inject(TranslocoService), "getActiveLang").mockReturnValue("en");
+      activeLang.set("en");
       const additive = await sentAdditive(makeModel());
 
       expect(additive["title"]).toEqual([{ value: "Titel", language: "en" }]);
@@ -264,7 +282,7 @@ describe("FastTrackResourceSubmission", () => {
     it.each(["fr", "", "EN", "0", "length"])(
       "falls back to German for the unsupported language '%s'",
       async (lang) => {
-        vi.spyOn(TestBed.inject(TranslocoService), "getActiveLang").mockReturnValue(lang);
+        activeLang.set(lang);
 
         expect(languageOfTitle(await sentAdditive(makeModel()))).toBe("de");
       },
@@ -274,8 +292,8 @@ describe("FastTrackResourceSubmission", () => {
   describe("submit: resource without any new reference items", () => {
     it("sends exactly one request and resolves with the response", async () => {
       const model = makeModel({
-        contact: [previewPerson("contact-1")],
-        unitInCharge: [previewUnit("unit-1")],
+        contact: [previewPerson(id("contact1"))],
+        unitInCharge: [previewUnit(id("unit1"))],
       });
 
       const { state, done } = track(service.submit(model));
@@ -283,7 +301,7 @@ describe("FastTrackResourceSubmission", () => {
       expect(personRequests()).toHaveLength(0);
       expect(contactPointRequests()).toHaveLength(0);
       const [request] = resourceRequests();
-      const response = { $type: "ResourceRuleSetResponse", stableTargetId: "res-1" };
+      const response = { $type: "ResourceRuleSetResponse", stableTargetId: id("resource1") };
       request.flush(response);
       await done;
 
@@ -305,11 +323,11 @@ describe("FastTrackResourceSubmission", () => {
         $type: "PersonRuleSetRequest",
         additive: { $type: "AdditivePerson", givenName: ["Jane"], familyName: ["Doe"] },
       });
-      request.flush({ stableTargetId: "newPerson0001" });
+      request.flush({ stableTargetId: id("newperson1") });
 
       const [resourceRequest] = resourceRequests();
       expect(((bodyOf(resourceRequest)["additive"] ?? {}) as Body)["creator"]).toEqual([
-        "newPerson0001",
+        id("newperson1"),
       ]);
       resourceRequest.flush({ $type: "ResourceRuleSetResponse" });
       await done;
@@ -327,11 +345,11 @@ describe("FastTrackResourceSubmission", () => {
         $type: "ContactPointRuleSetRequest",
         additive: { $type: "AdditiveContactPoint", email: ["info@example.org"] },
       });
-      request.flush({ stableTargetId: "newContact001" });
+      request.flush({ stableTargetId: id("newcontact1") });
 
       const [resourceRequest] = resourceRequests();
       expect(((bodyOf(resourceRequest)["additive"] ?? {}) as Body)["contact"]).toEqual([
-        "newContact001",
+        id("newcontact1"),
       ]);
       resourceRequest.flush({ $type: "ResourceRuleSetResponse" });
       await done;
@@ -347,8 +365,8 @@ describe("FastTrackResourceSubmission", () => {
         expect(bodyOf(request)).not.toHaveProperty("entityType");
         expect((bodyOf(request)["additive"] as Body)["$type"]).toBeDefined();
       }
-      person.flush({ stableTargetId: "person00000001" });
-      contactPoint.flush({ stableTargetId: "contact0000001" });
+      person.flush({ stableTargetId: id("person1") });
+      contactPoint.flush({ stableTargetId: id("contact1") });
       const [resourceRequest] = resourceRequests();
       expect(bodyOf(resourceRequest)).not.toHaveProperty("entityType");
       resourceRequest.flush({ $type: "ResourceRuleSetResponse" });
@@ -363,11 +381,11 @@ describe("FastTrackResourceSubmission", () => {
       const [person] = personRequests();
       const [contactPoint] = contactPointRequests();
 
-      person.flush({ stableTargetId: "person00000001" });
+      person.flush({ stableTargetId: id("person1") });
       expect(resourceRequests()).toHaveLength(0); // contact point still outstanding
       expect(contactPoint.cancelled).toBe(false); // control: a pending sibling is NOT aborted normally
 
-      contactPoint.flush({ stableTargetId: "contact0000001" });
+      contactPoint.flush({ stableTargetId: id("contact1") });
       const [resourceRequest] = resourceRequests();
       expect(resourceRequest).toBeDefined();
 
@@ -378,7 +396,7 @@ describe("FastTrackResourceSubmission", () => {
     it("keeps the original list order in the result, no matter in which order the answers arrive", async () => {
       const model = makeModel({
         contributor: [
-          previewPerson("existing-1"),
+          previewPerson(id("existing1")),
           createPerson("A", "One"),
           createPerson("B", "Two"),
         ],
@@ -388,14 +406,14 @@ describe("FastTrackResourceSubmission", () => {
       const requests = personRequests();
       expect(requests).toHaveLength(2);
       // answer B first, then A
-      requests.find((r) => givenNameOf(r) === "B")!.flush({ stableTargetId: "id-for-B" });
-      requests.find((r) => givenNameOf(r) === "A")!.flush({ stableTargetId: "id-for-A" });
+      requests.find((r) => givenNameOf(r) === "B")!.flush({ stableTargetId: id("idforb") });
+      requests.find((r) => givenNameOf(r) === "A")!.flush({ stableTargetId: id("idfora") });
 
       const [resourceRequest] = resourceRequests();
       expect(((bodyOf(resourceRequest)["additive"] ?? {}) as Body)["contributor"]).toEqual([
-        "existing-1",
-        "id-for-A",
-        "id-for-B",
+        id("existing1"),
+        id("idfora"),
+        id("idforb"),
       ]);
       resourceRequest.flush({ $type: "ResourceRuleSetResponse" });
       await done;
@@ -412,16 +430,16 @@ describe("FastTrackResourceSubmission", () => {
       const [contactPoint] = contactPointRequests();
       const requests = personRequests();
       expect(requests).toHaveLength(2);
-      requests.find((r) => givenNameOf(r) === "C")!.flush({ stableTargetId: "creator000001" });
-      requests.find((r) => givenNameOf(r) === "D")!.flush({ stableTargetId: "contrib000001" });
+      requests.find((r) => givenNameOf(r) === "C")!.flush({ stableTargetId: id("creator1") });
+      requests.find((r) => givenNameOf(r) === "D")!.flush({ stableTargetId: id("contrib1") });
       expect(resourceRequests()).toHaveLength(0); // the contact point is still outstanding
-      contactPoint.flush({ stableTargetId: "contact000001" });
+      contactPoint.flush({ stableTargetId: id("contact1") });
 
       const [resourceRequest] = resourceRequests();
       const additive = (bodyOf(resourceRequest)["additive"] ?? {}) as Body;
-      expect(additive["creator"]).toEqual(["creator000001"]);
-      expect(additive["contributor"]).toEqual(["contrib000001"]);
-      expect(additive["contact"]).toEqual(["contact000001"]);
+      expect(additive["creator"]).toEqual([id("creator1")]);
+      expect(additive["contributor"]).toEqual([id("contrib1")]);
+      expect(additive["contact"]).toEqual([id("contact1")]);
       resourceRequest.flush({ $type: "ResourceRuleSetResponse" });
       await done;
 
@@ -430,9 +448,9 @@ describe("FastTrackResourceSubmission", () => {
   });
 
   describe("submit: the resource request itself fails", () => {
-    it("resolves (does not reject) with success:false, the payload that was sent, and the error", async () => {
+    it("resolves (does not reject) with success:false and a SubmissionError holding the payload that was sent and the HTTP error", async () => {
       const { state, done } = track(
-        service.submit(makeModel({ contact: [previewPerson("contact-1")] })),
+        service.submit(makeModel({ contact: [previewPerson(id("contact1"))] })),
       );
 
       const [request] = resourceRequests();
@@ -440,16 +458,13 @@ describe("FastTrackResourceSubmission", () => {
       await done;
 
       expect(state.status).toBe("resolved");
-      const result = state.value as unknown as {
-        success: boolean;
-        payload: Body;
-        error: HttpErrorResponse;
-      };
-      expect(result.success).toBe(false);
-      expect(result.payload["$type"]).toBe("ResourceRuleSetRequest");
-      expect(result.payload).toEqual(bodyOf(request));
-      expect(result.error).toBeInstanceOf(HttpErrorResponse);
-      expect(result.error).toMatchObject({ status: 500 });
+      const error = errorOf(state.value);
+      expect(error).toBeInstanceOf(SubmissionError);
+      expect(error.message).toBe("Error while submitting 'ResourceRuleSetRequest'");
+      expect(error.payload["$type"]).toBe("ResourceRuleSetRequest");
+      expect(error.payload).toEqual(bodyOf(request));
+      expect(error.innerError).toBeInstanceOf(HttpErrorResponse);
+      expect(error.innerError).toMatchObject({ status: 500 });
     });
 
     it("reports a network error (status 0) the same way", async () => {
@@ -459,26 +474,25 @@ describe("FastTrackResourceSubmission", () => {
       await done;
 
       expect(state.status).toBe("resolved");
-      expect(state.value).toMatchObject({ success: false, error: { status: 0 } });
+      expect(errorOf(state.value).innerError).toMatchObject({ status: 0 });
     });
 
     it("still contains the ids of items that were already created before the failure", async () => {
       const { state, done } = track(service.submit(makeModel({ creator: [createPerson()] })));
 
-      personRequests()[0].flush({ stableTargetId: "person00000001" });
+      personRequests()[0].flush({ stableTargetId: id("person1") });
       fail(resourceRequests()[0], 422);
       await done;
 
-      const payload = (state.value as unknown as { payload: { additive: Body } }).payload;
-      expect(payload.additive["creator"]).toEqual(["person00000001"]);
+      const payload = errorOf(state.value).payload as unknown as { additive: Body };
+      expect(payload.additive["creator"]).toEqual([id("person1")]);
     });
   });
 
   // eslint-disable-next-line max-lines-per-function
   describe("submit: creating a new item fails", () => {
-    // NOTE: unlike a failing resource request (which resolves with success:false), a failing new
-    // item makes submit() REJECT with a FastTrackResourceSubPostError -- nothing in submit()
-    // catches it. Callers must catch it (and the resolved success:false) separately.
+    // Like a failing resource request, this resolves with success:false and a SubmissionError.
+    // Its payload is the request of the new item that failed (not the resource).
 
     it.each([
       [
@@ -489,7 +503,7 @@ describe("FastTrackResourceSubmission", () => {
       ["creator", { creator: [createPerson("Kaputt", "Person")] }, "PersonRuleSetRequest"],
       ["contributor", { contributor: [createPerson("Kaputt", "Person")] }, "PersonRuleSetRequest"],
     ] as [string, ModelOverrides, string][])(
-      "rejects with a FastTrackResourceSubPostError holding the HTTP error and the failed request ('%s')",
+      "resolves with success:false and a SubmissionError holding the failed request and the HTTP error ('%s')",
       async (_list, overrides, type) => {
         const { state, done } = track(service.submit(makeModel(overrides)));
 
@@ -497,12 +511,13 @@ describe("FastTrackResourceSubmission", () => {
         fail(request);
         await done;
 
-        expect(state.status).toBe("rejected");
-        expect(state.error).toBeInstanceOf(FastTrackResourceSubPostError);
-        const held = carried(state.error);
-        expect(held).toContainEqual(bodyOf(request)); // the request that failed
-        expect(bodyOf(request)["$type"]).toBe(type);
-        expect(held.some((v) => v instanceof HttpErrorResponse && v.status === 500)).toBe(true);
+        expect(state.status).toBe("resolved");
+        const error = errorOf(state.value);
+        expect(error).toBeInstanceOf(SubmissionError);
+        expect(error.message).toBe(`Error while submitting '${type}'`);
+        expect(error.payload).toEqual(bodyOf(request)); // the request that failed
+        expect(error.innerError).toBeInstanceOf(HttpErrorResponse);
+        expect(error.innerError).toMatchObject({ status: 500 });
       },
     );
 
@@ -515,16 +530,14 @@ describe("FastTrackResourceSubmission", () => {
       expect(resourceRequests()).toHaveLength(0);
     });
 
-    it("rejects with a network error (status 0) the same way", async () => {
+    it("reports a network error (status 0) the same way", async () => {
       const { state, done } = track(service.submit(makeModel({ contact: [createContactPoint()] })));
 
       contactPointRequests()[0].error(new ProgressEvent("error"));
       await done;
 
-      expect(state.error).toBeInstanceOf(FastTrackResourceSubPostError);
-      expect(
-        carried(state.error).some((v) => v instanceof HttpErrorResponse && v.status === 0),
-      ).toBe(true);
+      expect(errorOf(state.value)).toBeInstanceOf(SubmissionError);
+      expect(errorOf(state.value).innerError).toMatchObject({ status: 0 });
     });
 
     it("cancels the new-item requests that are still in flight when one of them fails", async () => {
@@ -542,30 +555,30 @@ describe("FastTrackResourceSubmission", () => {
       fail(contactPoint);
       await done;
 
-      expect(state.status).toBe("rejected");
+      expect(state.value).toMatchObject({ success: false });
       expect(requests[0].cancelled).toBe(true);
       expect(requests[1].cancelled).toBe(true);
       expect(resourceRequests()).toHaveLength(0);
     });
 
-    it("holds the request of the item that failed when several were sent (here: the second person)", async () => {
+    it("names the request of the item that failed when several were sent (here: the second person)", async () => {
       const model = makeModel({
         creator: [createPerson("Erste", "Person"), createPerson("Zweite", "Person")],
       });
       const { state, done } = track(service.submit(model));
 
       const requests = personRequests();
-      requests.find((r) => givenNameOf(r) === "Erste")!.flush({ stableTargetId: "person00000001" });
+      requests.find((r) => givenNameOf(r) === "Erste")!.flush({ stableTargetId: id("person1") });
       const second = requests.find((r) => givenNameOf(r) === "Zweite")!;
       fail(second, 503);
       await done;
 
-      const held = carried(state.error);
-      expect(held).toContainEqual(bodyOf(second));
-      expect(held.some((v) => v instanceof HttpErrorResponse && v.status === 503)).toBe(true);
+      const error = errorOf(state.value);
+      expect(error.payload).toEqual(bodyOf(second));
+      expect(error.innerError).toMatchObject({ status: 503 });
     });
 
-    it("rejects even though another item was already created, which stays on the backend (no rollback)", async () => {
+    it("fails the whole submission even though another item was already created, which stays on the backend (no rollback)", async () => {
       const model = makeModel({
         creator: [createPerson("A", "One")],
         contact: [createContactPoint()],
@@ -575,11 +588,11 @@ describe("FastTrackResourceSubmission", () => {
       const [person] = personRequests();
       const [contactPoint] = contactPointRequests();
 
-      person.flush({ stableTargetId: "person00000001" }); // already persisted on the backend
+      person.flush({ stableTargetId: id("person1") }); // already persisted on the backend
       fail(contactPoint, 503);
       await done;
 
-      expect(state.status).toBe("rejected");
+      expect(state.value).toMatchObject({ success: false });
       expect(resourceRequests()).toHaveLength(0);
       // no compensating request (e.g. a delete) is sent for the person that was already created
       http.expectNone((r) => r.method !== "POST");
@@ -594,9 +607,7 @@ describe("FastTrackResourceSubmission", () => {
       await done;
 
       expect(second.cancelled).toBe(true); // the second never gets to fail separately
-      expect(
-        carried(state.error).some((v) => v instanceof HttpErrorResponse && v.status === 500),
-      ).toBe(true);
+      expect(errorOf(state.value).innerError).toMatchObject({ status: 500 });
     });
 
     it("treats a response without stableTargetId as a failure of that item", async () => {
@@ -606,13 +617,11 @@ describe("FastTrackResourceSubmission", () => {
       request.flush({});
       await done;
 
-      expect(state.status).toBe("rejected");
-      expect(state.error).toBeInstanceOf(FastTrackResourceSubPostError);
-      const held = carried(state.error);
-      expect(held).toContainEqual(bodyOf(request));
-      expect(
-        held.some((v) => v instanceof Error && v.message === "No stableTargetId in response."),
-      ).toBe(true);
+      expect(state.status).toBe("resolved");
+      const error = errorOf(state.value);
+      expect(error).toBeInstanceOf(SubmissionError);
+      expect(error.payload).toEqual(bodyOf(request));
+      expect(error.innerError?.message).toBe("No stableTargetId in response.");
       expect(resourceRequests()).toHaveLength(0); // no resource with an `undefined` id gets sent
     });
 
@@ -622,7 +631,8 @@ describe("FastTrackResourceSubmission", () => {
       contactPointRequests()[0].flush(null);
       await done;
 
-      expect(state.error).toBeInstanceOf(FastTrackResourceSubPostError);
+      expect(state.status).toBe("resolved");
+      expect(errorOf(state.value)).toBeInstanceOf(SubmissionError);
       expect(resourceRequests()).toHaveLength(0);
     });
 
@@ -630,14 +640,24 @@ describe("FastTrackResourceSubmission", () => {
       const failing = track(service.submit(makeModel({ creator: [createPerson()] })));
       fail(personRequests()[0]);
       await failing.done;
-      expect(failing.state.status).toBe("rejected");
+      expect(failing.state.value).toMatchObject({ success: false });
 
       const retry = track(service.submit(makeModel({ creator: [createPerson()] })));
-      personRequests()[0].flush({ stableTargetId: "person00000002" });
+      personRequests()[0].flush({ stableTargetId: id("person2") });
       resourceRequests()[0].flush({ $type: "ResourceRuleSetResponse" });
       await retry.done;
 
       expect(retry.state.value).toMatchObject({ success: true });
+    });
+
+    it("returns success:false (does not reject) when the data of a new item is invalid", async () => {
+      const { state, done } = track(
+        service.submit(makeModel({ contact: [createContactPoint("not-an-email")] })),
+      );
+      await done;
+
+      expect(state.status).toBe("resolved");
+      expect(state.value).toMatchObject({ success: false });
     });
   });
 });

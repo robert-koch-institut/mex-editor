@@ -23,6 +23,7 @@ import type { DateTime } from "luxon";
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
 import type { Frequency } from "../../shared/models/generated/resource";
+import { SubmissionError } from "../../shared/models/submission-result";
 import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import { Datepicker } from "../datepicker/datepicker";
 import { Fieldset } from "../fieldset/fieldset";
@@ -110,14 +111,20 @@ export class FastTrackResource {
           if (submitResult.success) {
             this.router.navigate(["edit", submitResult.response.stableTargetId]);
             this.notifier.success(
-              this.translocoService.translate("fasttrack.resource.toast.success.message"),
-              this.translocoService.translate("fasttrack.resource.toast.success.title"),
+              { msgKey: "fasttrack.resource.toast.success.message" },
+              { msgKey: "fasttrack.resource.toast.success.title" },
+            );
+          } else if (submitResult.error instanceof SubmissionError) {
+            this.notifier.submissionError(
+              { msgKey: "fasttrack.resource.toast.submissionError.message" },
+              { msgKey: "fasttrack.resource.toast.submissionError.title" },
+              submitResult.error as SubmissionError<{ $type: string }>,
             );
           } else {
-            this.notifier.submissionFailure(
-              this.translocoService.translate("fasttrack.resource.toast.submissionFailure.message"),
-              this.translocoService.translate("fasttrack.resource.toast.submissionFailure.title"),
-              submitResult,
+            this.notifier.error(
+              { msgKey: "fasttrack.resource.toast.error.message" },
+              { msgKey: "fasttrack.resource.toast.error.title" },
+              submitResult.error,
             );
           }
         },

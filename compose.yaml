@@ -26,6 +26,7 @@ services:
     environment:
       - MEX_BACKEND_API_KEY_DATABASE={"write":["write_key"]}
       - MEX_BACKEND_API_USER_DATABASE={"write":{"admin":"admin"}}
+      - MEX_BACKEND_HOST=0.0.0.0
       - MEX_BACKEND_VALKEY_URL=valkey://valkey:6379
       - MEX_GRAPH_URL=neo4j://neo4j:7687
       - MEX_IDENTITY_PROVIDER=graph

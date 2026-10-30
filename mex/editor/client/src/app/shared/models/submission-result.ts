@@ -9,14 +9,25 @@ export interface SubmissionSuccess<T> {
 /**
  * Result of a failed submission.
  */
-export interface SubmissionFailure<T> {
+export interface SubmissionFailure {
   success: false;
-  payload: T;
   error: Error;
 }
 
 /**
  * Result of a submission.
  */
-export type SubmissionResult<TResponse = unknown, TPayload = unknown> =
-  SubmissionSuccess<TResponse> | SubmissionFailure<TPayload>;
+export type SubmissionResult<TSubmissionResponse> =
+  SubmissionSuccess<TSubmissionResponse> | SubmissionFailure;
+
+/**
+ * Class for Error during submission of items including its payload.
+ */
+export class SubmissionError<T extends { $type: string }> extends Error {
+  constructor(
+    readonly payload: T,
+    readonly innerError?: Error,
+  ) {
+    super(`Error while submitting '${payload.$type}'`);
+  }
+}

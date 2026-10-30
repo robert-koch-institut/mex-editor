@@ -3,16 +3,15 @@ import type { MatSnackBarConfig } from "@angular/material/snack-bar";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { TranslocoService } from "@jsverse/transloco";
 
-import type { SubmissionFailure } from "../models/submission-result";
+import type { SubmissionError } from "../models/submission-result";
 import { ErrorToast } from "./error-toast";
-import { SubmissionFailureToast } from "./submission-failure-toast";
+import { SubmissionErrorToast } from "./submission-error-toast";
 import { SuccessToast } from "./success-toast";
-import type { ToastData, ToastErrorData, ToastSubmissionFailureData } from "./toast-data";
 
 /**
  * Message as string or transloco message with params.
  */
-export type TextMessage = string | { translocoKey: string; params?: Record<string, unknown> };
+export type TextMessage = string | { msgKey: string; params?: Record<string, unknown> };
 
 @Service()
 /**
@@ -29,7 +28,7 @@ export class ToastNotifier {
 
   private messageToString(message: TextMessage) {
     if (!(typeof message === "string")) {
-      return this.transloco.translate(message.translocoKey, message.params);
+      return this.transloco.translate(message.msgKey, message.params);
     }
     return message;
   }
@@ -48,7 +47,7 @@ export class ToastNotifier {
       panelClass: ["toast", "success-toast"],
       data: {
         ...this.toToastTexts(message, title),
-      } satisfies ToastData,
+      },
     });
   }
 
@@ -60,24 +59,21 @@ export class ToastNotifier {
       data: {
         ...this.toToastTexts(message, title),
         error,
-      } satisfies ToastErrorData,
+      },
     });
   }
 
-  submissionFailure(
+  submissionError<T extends { $type: string }>(
     message: TextMessage,
     title: TextMessage,
-    failure: SubmissionFailure<unknown>,
+    error: SubmissionError<T>,
     duration = 10000,
   ): void {
-    this.snackBar.openFromComponent(SubmissionFailureToast, {
+    this.snackBar.openFromComponent(SubmissionErrorToast, {
       ...this.baseConfig,
       duration,
       panelClass: ["toast", "error-toast"],
-      data: {
-        ...this.toToastTexts(message, title),
-        failure,
-      } satisfies ToastSubmissionFailureData<unknown>,
+      data: { ...this.toToastTexts(message, title), error },
     });
   }
 }

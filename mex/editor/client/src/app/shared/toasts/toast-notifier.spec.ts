@@ -1,5 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { TranslocoService } from "@jsverse/transloco";
 import { firstValueFrom } from "rxjs";
 import { vi } from "vitest";
 
@@ -17,12 +18,18 @@ describe("ToastNotifier", () => {
   describe("what it asks MatSnackBar to open", () => {
     let notifier: ToastNotifier;
     let openFromComponent: ReturnType<typeof vi.fn>;
+    let translate: ReturnType<typeof vi.fn>;
 
     beforeEach(() => {
       openFromComponent = vi.fn();
       TestBed.configureTestingModule({
         providers: [{ provide: MatSnackBar, useValue: { openFromComponent } }],
       });
+      translate = vi
+        .spyOn(TestBed.inject(TranslocoService), "translate")
+        .mockImplementation((key, params) =>
+          params ? `translated(${key}, ${JSON.stringify(params)})` : `translated(${key})`,
+        );
       notifier = TestBed.inject(ToastNotifier);
     });
 
@@ -148,6 +155,83 @@ describe("ToastNotifier", () => {
       });
     });
 
+    describe("TextMessage handling", () => {
+      it("does not call transloco for plain string messages", () => {
+        notifier.success("die Nachricht", "der Titel");
+        notifier.error("die Nachricht", "der Titel", new Error("x"));
+        notifier.submissionError("die Nachricht", "der Titel", error);
+
+        expect(translate).not.toHaveBeenCalled();
+      });
+
+      it("translates a message given as msgKey", () => {
+        notifier.success({ msgKey: "toast.saved.message" }, "der Titel");
+
+        expect(translate).toHaveBeenCalledTimes(1);
+        expect(translate).toHaveBeenCalledWith("toast.saved.message", undefined);
+        expect(lastCall().config.data).toEqual({
+          title: "der Titel",
+          message: "translated(toast.saved.message)",
+        });
+      });
+
+      it("translates a title given as msgKey", () => {
+        notifier.success("die Nachricht", { msgKey: "toast.saved.title" });
+
+        expect(translate).toHaveBeenCalledTimes(1);
+        expect(translate).toHaveBeenCalledWith("toast.saved.title", undefined);
+        expect(lastCall().config.data).toEqual({
+          title: "translated(toast.saved.title)",
+          message: "die Nachricht",
+        });
+      });
+
+      it("forwards params to transloco", () => {
+        const params = { name: "Resource A", count: 3 };
+
+        notifier.success(
+          { msgKey: "toast.saved.message", params },
+          { msgKey: "toast.saved.title" },
+        );
+
+        expect(translate).toHaveBeenCalledWith("toast.saved.message", params);
+        expect(translate).toHaveBeenCalledWith("toast.saved.title", undefined);
+        expect(lastCall().config.data).toEqual({
+          title: "translated(toast.saved.title)",
+          message: `translated(toast.saved.message, ${JSON.stringify(params)})`,
+        });
+      });
+
+      it("translates message and title independently of each other for error()", () => {
+        const innerError = new Error("boom");
+
+        notifier.error({ msgKey: "toast.error.message" }, "Fehler", innerError);
+
+        expect(translate).toHaveBeenCalledTimes(1);
+        expect(lastCall().config.data).toEqual({
+          title: "Fehler",
+          message: "translated(toast.error.message)",
+          error: innerError,
+        });
+      });
+
+      it("translates message and title for submissionError()", () => {
+        notifier.submissionError(
+          { msgKey: "toast.submission.message", params: { id: 7 } },
+          { msgKey: "toast.submission.title" },
+          error,
+        );
+
+        expect(translate).toHaveBeenCalledTimes(2);
+        expect(lastCall().config.data).toEqual({
+          title: "translated(toast.submission.title)",
+          message: `translated(toast.submission.message, ${JSON.stringify({ id: 7 })})`,
+          error,
+        });
+        expect(lastCall().config.data.error).toBe(error);
+      });
+    });
+
     it("builds a fresh config per call (a later toast cannot leak into an earlier one's config)", () => {
       notifier.success("m1", "t1");
       notifier.error("m2", "t2", new Error("x"));
@@ -166,8 +250,16 @@ describe("ToastNotifier", () => {
     let openSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
+      TestBed.configureTestingModule({
+        // providers: [{ provide: TranslocoService, useValue: { translate: createTranslateMock() } }],
+      });
       notifier = TestBed.inject(ToastNotifier);
       snackBar = TestBed.inject(MatSnackBar);
+      const transloco = TestBed.inject(TranslocoService);
+      vi.spyOn(transloco, "translate").mockImplementation((key, params) =>
+        params ? `translated(${key}, ${JSON.stringify(params)})` : `translated(${key})`,
+      );
+      vi.spyOn(transloco, "getDefaultLang").mockReturnValue("de");
       openSpy = vi.spyOn(snackBar, "openFromComponent");
     });
 
@@ -185,6 +277,20 @@ describe("ToastNotifier", () => {
       await vi.waitFor(() => expect(toastText(".toast-title")).toBe("Gespeichert"));
       expect(toastText(".toast-message")).toBe("Die Resource wurde gespeichert.");
       expect(toastText(".toast-icon")).toBe("check_circle");
+    });
+
+    it("shows translated title and message when given as msgKey", async () => {
+      notifier.success(
+        { msgKey: "toast.saved.message", params: { name: "A" } },
+        { msgKey: "toast.saved.title" },
+      );
+
+      await vi.waitFor(() =>
+        expect(toastText(".toast-title")).toBe("translated(toast.saved.title)"),
+      );
+      expect(toastText(".toast-message")).toBe(
+        `translated(toast.saved.message, ${JSON.stringify({ name: "A" })})`,
+      );
     });
 
     it("shows an error toast with the error icon", async () => {

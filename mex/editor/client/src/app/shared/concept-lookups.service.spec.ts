@@ -29,6 +29,7 @@ describe("ConceptLookups", () => {
     httpMock = TestBed.inject(HttpTestingController);
     transloco = TestBed.inject(TranslocoService);
     transloco.setActiveLang("de");
+    vi.spyOn(transloco, "getDefaultLang").mockReturnValue("de");
   });
 
   // catches duplicate/unexpected requests that expectOne alone wouldn't
@@ -116,11 +117,11 @@ describe("ConceptLookups", () => {
     expect(notifier.error).toHaveBeenCalledOnce();
     expect(notifier.error).toHaveBeenCalledWith(
       {
-        translocoKey: "errors.services.concept-lookup.loading.message",
+        msgKey: "errors.services.concept-lookup.loading.message",
         params: { lookupName: "theme" },
       },
       {
-        translocoKey: "errors.services.concept-lookup.loading.title",
+        msgKey: "errors.services.concept-lookup.loading.title",
       },
       expect.anything(),
     );

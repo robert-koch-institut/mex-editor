@@ -2,6 +2,7 @@ import { HttpTestingController } from "@angular/common/http/testing";
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
 import { MatDialog } from "@angular/material/dialog";
+import { TranslocoService } from "@jsverse/transloco";
 import { of } from "rxjs";
 
 import { CreateItemDialog } from "../create-item-dialog/create-item-dialog";
@@ -23,6 +24,7 @@ describe("ReferenceSelect", () => {
       providers: [{ provide: MatDialog, useValue: { open: dialogOpenSpy } }],
     }).compileComponents();
 
+    vi.spyOn(TestBed.inject(TranslocoService), "getDefaultLang").mockReturnValue("de");
     httpMock = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(ReferenceSelect);
     component = fixture.componentInstance;

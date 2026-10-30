@@ -609,7 +609,6 @@ describe("FastTrackResource", () => {
       const submission = TestBed.inject(FastTrackResourceSubmission);
       const router = TestBed.inject(Router);
       const notifier = TestBed.inject(ToastNotifier);
-      const transloco = TestBed.inject(TranslocoService);
 
       vi.spyOn(router, "navigate").mockResolvedValue(true);
       vi.mocked(submission.submit).mockResolvedValue({
@@ -627,8 +626,8 @@ describe("FastTrackResource", () => {
       expect(submission.submit).toHaveBeenCalledWith(expectedModel);
       expect(router.navigate).toHaveBeenCalledWith(["edit", "resource-123"]);
       expect(notifier.success).toHaveBeenCalledWith(
-        transloco.translate("fasttrack.resource.toast.success.message"),
-        transloco.translate("fasttrack.resource.toast.success.title"),
+        { msgKey: "fasttrack.resource.toast.success.message" },
+        { msgKey: "fasttrack.resource.toast.success.title" },
       );
       expect(notifier.error).not.toHaveBeenCalled();
     });
@@ -639,7 +638,6 @@ describe("FastTrackResource", () => {
       const submission = TestBed.inject(FastTrackResourceSubmission);
       const router = TestBed.inject(Router);
       const notifier = TestBed.inject(ToastNotifier);
-      const transloco = TestBed.inject(TranslocoService);
 
       vi.spyOn(router, "navigate").mockResolvedValue(true);
 
@@ -658,8 +656,8 @@ describe("FastTrackResource", () => {
       expect(component.resourceForm().valid()).toBe(true);
       expect(submission.submit).toHaveBeenCalledOnce();
       expect(notifier.submissionError).toHaveBeenCalledWith(
-        transloco.translate("fasttrack.resource.toast.submissionError.message"),
-        transloco.translate("fasttrack.resource.toast.submissionError.title"),
+        { msgKey: "fasttrack.resource.toast.submissionError.message" },
+        { msgKey: "fasttrack.resource.toast.submissionError.title" },
         submitError,
       );
       expect(router.navigate).not.toHaveBeenCalled();

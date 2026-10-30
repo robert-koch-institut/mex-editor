@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- recommended category
+- error handling for lookups
 - code generator to create zod schemas based on pydantic models
 - datepicker component to unify usage and handle parse errors
 - field-category pipe to determine field-category based on zod schema definition
@@ -17,10 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - service to raise toasts in order do notify/inform users about successfull or errored operations
 
 ### Changes
+- selection behaviour of reference-select type filter
 - models are now defined by zod schemas
 - fasttrack-resource form with validation
 - fieldsets category is now required and no longer optional
-
 - language-selector now uses toggleButtons instead of a select
 - read vocabulary concepts from `mex.model.VOCABULARY_JSON_BY_NAME`, because mex-common
   simplified its vocabularies to plain enums without concepts

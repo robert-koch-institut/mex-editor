@@ -144,7 +144,6 @@ export class FastTrackResourceSubmission {
       ],
       provenance: [stringToText(model.provenance)],
       resourceCreationMethod: model.resourceCreationMethod,
-      resourceTypeGeneral: model.resourceTypeGeneral,
       spatial: isValidTextString(model.spatial) ? [stringToText(model.spatial)] : [],
     };
     return AdditiveResourceSchema.parse(mapped);

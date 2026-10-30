@@ -78,7 +78,6 @@ export class FastTrackResource {
     title: "",
     description: "",
     theme: [],
-    resourceTypeGeneral: [],
     spatial: "",
     resourceCreationMethod: [],
     accrualPeriodicity: null as unknown as Frequency,
@@ -112,19 +111,19 @@ export class FastTrackResource {
           if (submitResult.success) {
             this.router.navigate(["edit", submitResult.response.stableTargetId]);
             this.notifier.success(
-              this.translocoService.translate("fasttrack.resource.toast.success.message"),
-              this.translocoService.translate("fasttrack.resource.toast.success.title"),
+              { msgKey: "fasttrack.resource.toast.success.message" },
+              { msgKey: "fasttrack.resource.toast.success.title" },
             );
           } else if (submitResult.error instanceof SubmissionError) {
             this.notifier.submissionError(
-              this.translocoService.translate("fasttrack.resource.toast.submissionError.message"),
-              this.translocoService.translate("fasttrack.resource.toast.submissionError.title"),
+              { msgKey: "fasttrack.resource.toast.submissionError.message" },
+              { msgKey: "fasttrack.resource.toast.submissionError.title" },
               submitResult.error as SubmissionError<{ $type: string }>,
             );
           } else {
             this.notifier.error(
-              this.translocoService.translate("fasttrack.resource.toast.error.message"),
-              this.translocoService.translate("fasttrack.resource.toast.error.title"),
+              { msgKey: "fasttrack.resource.toast.error.message" },
+              { msgKey: "fasttrack.resource.toast.error.title" },
               submitResult.error,
             );
           }

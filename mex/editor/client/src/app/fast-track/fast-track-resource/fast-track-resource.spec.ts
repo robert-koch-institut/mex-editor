@@ -215,13 +215,6 @@ describe("FastTrackResource", () => {
       expect(component.model().theme).toEqual([THEME_ID]);
     });
 
-    it("sets the selected resource type(s) in the model", async () => {
-      const resourceTypeSelect = await vocabSelect(loader, "resourceTypeGeneral");
-      await resourceTypeSelect.open();
-      await resourceTypeSelect.clickOptions({ text: "Type 1" });
-      expect(component.model().resourceTypeGeneral).toEqual([RESOURCE_TYPE_ID]);
-    });
-
     it("sets the selected resource creation method(s) in the model", async () => {
       const methodSelect = await vocabSelect(loader, "resourceCreationMethod");
       await methodSelect.open();
@@ -483,7 +476,6 @@ describe("FastTrackResource", () => {
     it("stays valid with theme/resourceTypeGeneral/creator/contributor/contributingUnit left empty (not required)", () => {
       fillEveryRequiredField();
       expect(component.model().theme).toEqual([]);
-      expect(component.model().resourceTypeGeneral).toEqual([]);
       expect(component.model().creator).toEqual([]);
       expect(component.model().contributor).toEqual([]);
       expect(component.model().contributingUnit).toEqual([]);
@@ -522,9 +514,6 @@ describe("FastTrackResource", () => {
       const themeSelect = await vocabSelect(loader, "theme");
       await themeSelect.open();
       await themeSelect.clickOptions({ text: "Theme 1" });
-      const resourceTypeSelect = await vocabSelect(loader, "resourceTypeGeneral");
-      await resourceTypeSelect.open();
-      await resourceTypeSelect.clickOptions({ text: "Type 1" });
 
       const spatial = fieldsetEl(fixture, "spatial").query(By.css("input")).nativeElement;
       setNativeValue(fixture, spatial, "Berlin");
@@ -563,7 +552,6 @@ describe("FastTrackResource", () => {
       expect(model.unitInCharge).toEqual([unitInCharge]);
       expect(model.contributingUnit).toEqual([contributingUnit]);
       expect(model.theme).toEqual([THEME_ID]);
-      expect(model.resourceTypeGeneral).toEqual([RESOURCE_TYPE_ID]);
       expect(model.spatial).toBe("Berlin");
       expect(model.resourceCreationMethod).toEqual([RESOURCE_CREATION_METHOD_ID]);
       expect(model.accrualPeriodicity).toBe(FREQUENCY_ID);
@@ -621,7 +609,6 @@ describe("FastTrackResource", () => {
       const submission = TestBed.inject(FastTrackResourceSubmission);
       const router = TestBed.inject(Router);
       const notifier = TestBed.inject(ToastNotifier);
-      const transloco = TestBed.inject(TranslocoService);
 
       vi.spyOn(router, "navigate").mockResolvedValue(true);
       vi.mocked(submission.submit).mockResolvedValue({
@@ -639,8 +626,8 @@ describe("FastTrackResource", () => {
       expect(submission.submit).toHaveBeenCalledWith(expectedModel);
       expect(router.navigate).toHaveBeenCalledWith(["edit", "resource-123"]);
       expect(notifier.success).toHaveBeenCalledWith(
-        transloco.translate("fasttrack.resource.toast.success.message"),
-        transloco.translate("fasttrack.resource.toast.success.title"),
+        { msgKey: "fasttrack.resource.toast.success.message" },
+        { msgKey: "fasttrack.resource.toast.success.title" },
       );
       expect(notifier.error).not.toHaveBeenCalled();
     });
@@ -651,7 +638,6 @@ describe("FastTrackResource", () => {
       const submission = TestBed.inject(FastTrackResourceSubmission);
       const router = TestBed.inject(Router);
       const notifier = TestBed.inject(ToastNotifier);
-      const transloco = TestBed.inject(TranslocoService);
 
       vi.spyOn(router, "navigate").mockResolvedValue(true);
 
@@ -670,8 +656,8 @@ describe("FastTrackResource", () => {
       expect(component.resourceForm().valid()).toBe(true);
       expect(submission.submit).toHaveBeenCalledOnce();
       expect(notifier.submissionError).toHaveBeenCalledWith(
-        transloco.translate("fasttrack.resource.toast.submissionError.message"),
-        transloco.translate("fasttrack.resource.toast.submissionError.title"),
+        { msgKey: "fasttrack.resource.toast.submissionError.message" },
+        { msgKey: "fasttrack.resource.toast.submissionError.title" },
         submitError,
       );
       expect(router.navigate).not.toHaveBeenCalled();

@@ -1,75 +1,43 @@
 services:
   mex-editor:
-    build: .
-    image: mex-editor:local
+    build:
+      context: .
+    ports:
+      - 8000:8000
     environment:
-      MEX_EDITOR__BASE_HREF: "/editor/"
-      MEX_BACKEND_API_KEY: "write_key"
-      MEX_BACKEND_API_URL: "http://mex-backend:8080/"
+      - MEX_BACKEND_API_KEY=write_key
+      - MEX_BACKEND_API_URL=http://mex-backend:8080/
     depends_on:
       mex-backend:
         condition: service_healthy
-
-  httpd:
-    image: httpd:2.4@sha256:979c38c2228d28c2edfd45c6e27dcee1c7b4a101a5526721ae8ece454e89e99e
-    ports:
-      - "8000:80"
-    volumes:
-      - ./httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
-    depends_on:
-      - mex-editor
-
   mex-backend:
     image: ghcr.io/robert-koch-institut/mex-backend:4.6.2@sha256:de00421715eb74758927b11ed49b16c06223c7036eeef98ca498375e3c2ba28d
     ports:
       - 8080:8080
     environment:
       - MEX_BACKEND_API_KEY_DATABASE={"write":["write_key"]}
-      - MEX_BACKEND_API_USER_DATABASE={"write":{"admin":"admin"}}
       - MEX_BACKEND_HOST=0.0.0.0
-      - MEX_BACKEND_VALKEY_URL=valkey://valkey:6379
       - MEX_GRAPH_URL=neo4j://neo4j:7687
       - MEX_IDENTITY_PROVIDER=graph
     healthcheck:
-      test: [ "CMD", "python", "-c", "'import requests; requests.get(\"http://mex-backend:8080/v0/_system/check\").raise_for_status()'" ]
-      interval: 30s
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/v0/_system/check', timeout=3).raise_for_status()" ]
+      interval: 5s
       timeout: 5s
-      retries: 5
-      start_period: 5s
+      retries: 12
+      start_period: 20s
     depends_on:
       neo4j:
         condition: service_healthy
-      valkey:
-        condition: service_healthy
-
   neo4j:
     image: neo4j:2026.10.1-community@sha256:86f8e01402fd0d5fd23e8968375fefdc21284a5c1751fa3fa3de8091a08b6dd6
     environment:
       - NEO4J_AUTH=neo4j/password
+      - NEO4J_dbms_usage__report_enabled=false
     ports:
       - 7687:7687
-    volumes:
-      - neo4j_data:/data
     healthcheck:
-      test: [ "CMD", "cypher-shell", "-u", "neo4j", "-p", "password", "RETURN 1" ]
-      interval: 30s
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "password", "RETURN 1"]
+      interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 10s
-
-  valkey:
-    image: valkey/valkey:9.1.2@sha256:418652cfb58ef879d4978c33553735d7147016032d5aefaa14c828e611eb9dfd
-    ports:
-      - 6379:6379
-    volumes:
-      - valkey_data:/data
-    healthcheck:
-      test: [ "CMD", "valkey-cli", "ping" ]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-
-volumes:
-  neo4j_data:
-  valkey_data:
+      start_period: 30s

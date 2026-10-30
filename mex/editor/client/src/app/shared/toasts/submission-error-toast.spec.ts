@@ -5,8 +5,8 @@ import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from "@angular/material/snack-bar"
 import { By } from "@angular/platform-browser";
 import { vi } from "vitest";
 
-import { SubmissionError } from "../../fast-track/fast-track-resource/fast-track-resource-submission";
 import { ErrorMailToPipe } from "../error-mail-to-pipe";
+import { SubmissionError } from "../models/submission-result";
 import { SubmissionErrorToast } from "./submission-error-toast";
 
 const error = new SubmissionError(

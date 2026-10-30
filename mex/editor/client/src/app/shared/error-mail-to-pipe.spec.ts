@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from "@angular/common/http";
 
-import { SubmissionError } from "../fast-track/fast-track-resource/fast-track-resource-submission";
 import { ErrorMailToPipe } from "./error-mail-to-pipe";
+import { SubmissionError } from "./models/submission-result";
 
 const makeFailure = <T extends { $type: string }>(
   payload: T = {

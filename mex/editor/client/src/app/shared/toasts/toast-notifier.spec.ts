@@ -3,7 +3,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { firstValueFrom } from "rxjs";
 import { vi } from "vitest";
 
-import { SubmissionError } from "../../fast-track/fast-track-resource/fast-track-resource-submission";
+import { SubmissionError } from "../models/submission-result";
 import { ErrorToast } from "./error-toast";
 import { SubmissionErrorToast } from "./submission-error-toast";
 import { SuccessToast } from "./success-toast";

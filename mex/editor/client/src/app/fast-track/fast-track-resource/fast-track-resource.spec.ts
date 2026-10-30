@@ -20,12 +20,13 @@ import {
   ResourceTypeGeneralSchema,
 } from "../../shared/models/generated/resource";
 import { ThemeSchema } from "../../shared/models/generated/shared";
+import { SubmissionError } from "../../shared/models/submission-result";
 import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import { Fieldset } from "../fieldset/fieldset";
 import { ReferenceSelect } from "../reference-select/reference-select";
 import { FastTrackResource } from "./fast-track-resource";
 import type { FastTrackResourceModel } from "./fast-track-resource.models";
-import { FastTrackResourceSubmission, SubmissionError } from "./fast-track-resource-submission";
+import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
 
 const THEME_ID = ThemeSchema.enum["https://mex.rki.de/item/theme-1"];
 const RESOURCE_TYPE_ID =

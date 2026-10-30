@@ -3,13 +3,15 @@ import z from "zod";
 
 import { CreateContactPointSchema, CreatePersonSchema } from "./create-item";
 import { type PreviewContactPoint, PreviewContactPointSchema } from "./generated/contact-point";
+import type { PreviewOrganization } from "./generated/organization";
 import type { PreviewOrganizationalUnit } from "./generated/organizational-unit";
 import { type PreviewPerson, PreviewPersonSchema } from "./generated/person";
 
 /**
  * UnionType for all preview items.
  */
-export type PreviewItem = PreviewOrganizationalUnit | PreviewContactPoint | PreviewPerson;
+export type PreviewItem =
+  PreviewOrganizationalUnit | PreviewContactPoint | PreviewPerson | PreviewOrganization;
 
 /**
  * Catgegory for Field.

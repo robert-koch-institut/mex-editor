@@ -1,0 +1,39 @@
+@if (!hidden()) {
+  <div class="link-editor" role="group" [attr.aria-invalid]="invalid()">
+    <mat-form-field class="url">
+      <mat-label>URL</mat-label>
+      <input matInput type="url" [formField]="linkForm.url" (blur)="touch.emit()" />
+      @if (linkForm.url().touched() && linkForm.url().invalid()) {
+        <mat-error>{{ linkForm.url().errors()[0]?.message }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="title">
+      <mat-label>Title</mat-label>
+      <input matInput [formField]="linkForm.title" (blur)="touch.emit()" />
+      @if (linkForm.title().touched() && linkForm.title().invalid()) {
+        <mat-error>{{ linkForm.title().errors()[0]?.message }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="language">
+      <mat-label>Language</mat-label>
+      <select matNativeControl [formField]="linkForm.language" (blur)="touch.emit()">
+        <option value="">–</option>
+        @for (opt of languageOptions; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+      @if (linkForm.language().touched() && linkForm.language().invalid()) {
+        <mat-error>{{ linkForm.language().errors()[0]?.message }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Errors coming from the parent form, shown only if the internal form has none (avoids duplicates) -->
+    @if (linkForm().valid()) {
+      @for (error of errors(); track error) {
+        <p class="external-error" role="alert">{{ error.message }}</p>
+      }
+    }
+  </div>
+}

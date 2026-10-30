@@ -5,6 +5,7 @@ import type { PreviewItem } from "./models";
 import type { BilingualText, Concept } from "./models/concept";
 import type { CreateItem } from "./models/create-item";
 import type { PreviewContactPoint } from "./models/generated/contact-point";
+import type { PreviewOrganization } from "./models/generated/organization";
 import type { PreviewOrganizationalUnit } from "./models/generated/organizational-unit";
 import type { PreviewPerson } from "./models/generated/person";
 import type { Text } from "./models/generated/shared";
@@ -65,6 +66,10 @@ export class ToLabelPipe implements PipeTransform {
     return this.firstLabelOf([value.fullName], lang);
   }
 
+  private organizationToLabel(value: PreviewOrganization, lang: string) {
+    return this.firstLabelOf([value.officialName, value.shortName, value.alternativeName], lang);
+  }
+
   private contactPointToLabel(value: PreviewContactPoint, lang: string) {
     return this.firstLabelOf([value.email], lang);
   }
@@ -95,6 +100,7 @@ export class ToLabelPipe implements PipeTransform {
     return item.$type.replace(/^Create/, "");
   }
 
+  // eslint-disable-next-line complexity
   transform(value: Concept | PreviewItem | CreateItem, lang: string): string {
     if (!("$type" in value)) {
       return this.getConceptLabel(value, lang);
@@ -107,6 +113,8 @@ export class ToLabelPipe implements PipeTransform {
         return this.personToLabel(value, lang) ?? this.defaultPreviewItemLabel(value);
       case "PreviewContactPoint":
         return this.contactPointToLabel(value, lang) ?? this.defaultPreviewItemLabel(value);
+      case "PreviewOrganization":
+        return this.organizationToLabel(value, lang) ?? this.defaultPreviewItemLabel(value);
       case "CreateContactPoint":
         return `⋆ ${this.firstLabelOf([value.email], lang) ?? this.defaultCreateItemLabel(value)}`;
       case "CreatePerson":

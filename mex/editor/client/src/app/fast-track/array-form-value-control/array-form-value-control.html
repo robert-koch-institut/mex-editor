@@ -1,0 +1,54 @@
+@if (!hidden()) {
+  <div class="array-field" role="group" [attr.aria-invalid]="invalid()">
+    <ul class="list">
+      @for (row of rows(); track row.id) {
+        <li class="row">
+          <div class="item">
+            <ng-container
+              [ngTemplateOutlet]="itemTemplate().template"
+              [ngTemplateOutletContext]="row.context"
+            />
+          </div>
+          <div class="actions">
+            @if (reorderable()) {
+              <button
+                type="button"
+                [disabled]="!editable() || row.context.first"
+                [attr.aria-label]="moveUpLabel()"
+                (click)="move(row.context.index, -1)"
+              >
+                ↑
+              </button>
+              <button
+                type="button"
+                [disabled]="!editable() || row.context.last"
+                [attr.aria-label]="moveDownLabel()"
+                (click)="move(row.context.index, 1)"
+              >
+                ↓
+              </button>
+            }
+            <button
+              type="button"
+              [disabled]="!canRemove()"
+              [attr.aria-label]="removeLabel()"
+              (click)="remove(row.context.index)"
+            >
+              ✕
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+
+    <button type="button" [disabled]="!canAdd()" (click)="add()">{{ addLabel() }}</button>
+
+    @if (invalid()) {
+      <div class="errors" role="alert">
+        @for (error of errors(); track error) {
+          <span>{{ error.message }}</span>
+        }
+      </div>
+    }
+  </div>
+}

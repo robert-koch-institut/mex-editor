@@ -8,13 +8,8 @@ import {
 import { ActivityTypeSchema } from "../../shared/models/generated/activity";
 import { PreviewOrganizationSchema } from "../../shared/models/generated/organization";
 import { PreviewOrganizationalUnitSchema } from "../../shared/models/generated/organizational-unit";
-import {
-  LinkSchema,
-  TextSchema,
-  yearMonthDayPattern,
-  yearMonthPattern,
-  yearPattern,
-} from "../../shared/models/generated/shared";
+import { LinkSchema, TextSchema } from "../../shared/models/generated/shared";
+import { luxonDateTimeNullableSchema } from "../../shared/models/zod-types";
 
 /**
  * Schema for FasttrackActivityModel
@@ -35,29 +30,12 @@ export const FastTrackActivityModelSchema = z.object({
   activityType: z.array(ActivityTypeSchema),
 
   // recommended fields
-  shortName: z.string().optional(),
-  involvedPerson: z.array(CreateOrPreviewPersonSchema).optional(),
-  involvedUnit: z.array(PreviewOrganizationalUnitSchema).optional(),
-  start: z
-    .array(
-      z.union([
-        z.string().regex(new RegExp(yearMonthDayPattern)),
-        z.string().regex(new RegExp(yearMonthPattern)),
-        z.string().regex(new RegExp(yearPattern)),
-      ]),
-    )
-    .optional(),
-
-  end: z
-    .array(
-      z.union([
-        z.string().regex(new RegExp(yearMonthDayPattern)),
-        z.string().regex(new RegExp(yearMonthPattern)),
-        z.string().regex(new RegExp(yearPattern)),
-      ]),
-    )
-    .optional(),
-  funderOrCommissioner: PreviewOrganizationSchema.array().optional(),
+  shortName: z.string(),
+  involvedPerson: z.array(CreateOrPreviewPersonSchema),
+  involvedUnit: z.array(PreviewOrganizationalUnitSchema),
+  start: luxonDateTimeNullableSchema(),
+  end: luxonDateTimeNullableSchema(),
+  funderOrCommissioner: PreviewOrganizationSchema.array(),
   website: z.array(LinkSchema),
 
   // optional fields

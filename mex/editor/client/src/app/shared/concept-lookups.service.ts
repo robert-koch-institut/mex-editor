@@ -19,6 +19,7 @@ export class ConceptLookups {
   resourceCreationMethodOptions = this.buildConceptOptions("resource-creation-method");
   frequencyOptions = this.buildConceptOptions("frequency");
   accessRestrictionOptions = this.buildConceptOptions("access-restriction");
+  activityTypeOptions = this.buildConceptOptions("activity-type");
 
   private buildConceptOptions(name: string) {
     const vocabReq = httpResource<PaginatedItemsContainer<Concept>>(

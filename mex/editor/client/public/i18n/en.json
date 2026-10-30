@@ -11,6 +11,13 @@
   "create-item-dialog.title": "Create new entry",
   "datepicker.validation.parse": "Please use format {{format}}",
   "fasttrack": {
+    "activity": {
+      "headline": "Create {{Activity}}",
+      "save-button": {
+        "label": "Save {{Activity}}",
+        "saving": "Saving {{Activity}}..."
+      }
+    },
     "resource": {
       "fields": {
         "keywords.de": "{{keyword}} - German",

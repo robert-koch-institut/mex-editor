@@ -5,26 +5,9 @@ import { TranslocoService } from "@jsverse/transloco";
 import { DateTime } from "luxon";
 import { vi } from "vitest";
 
+import { SubmissionError } from "../../shared/models/submission-result";
 import type { FastTrackResourceModel } from "./fast-track-resource.models";
-import { FastTrackResourceSubmission, SubmissionError } from "./fast-track-resource-submission";
-
-/*
- * Notes:
- *
- * 1. HttpClient + the testing backend come from the project's global test providers
- *    (src/test-providers.ts). The language is pinned per test via `mockActiveLang`, so the tests
- *    don't depend on the default test language.
- * 2. The service validates everything with the real Zod schemas, so fixtures must be valid:
- *    reference ids match the identifier pattern (14-22 letters/digits, see `id()`), vocabulary
- *    values are real enum members, and texts must not be empty.
- * 3. Model fixtures are cast through `unknown`: the service only reads `identifier` and `$type`
- *    of reference items, so they don't need to be complete Preview* objects.
- * 4. The resource and the new Person/ContactPoint items all go to the same URL
- *    (`api/v0/backend/rule-set`), so requests are told apart by the `$type` of their body.
- * 5. `submit()` is supposed to never reject: every error ends up as `{ success: false, error }`.
- *    Errors of a request are a `SubmissionError` (`payload` = the request that failed,
- *    `innerError` = why). The two `it.fails` tests below are known gaps in that promise.
- */
+import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
 
 const RULE_SET_URL = "api/v0/backend/rule-set";
 

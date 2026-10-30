@@ -23,6 +23,7 @@ import type { DateTime } from "luxon";
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
 import type { Frequency } from "../../shared/models/generated/resource";
+import { SubmissionError } from "../../shared/models/submission-result";
 import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import { Datepicker } from "../datepicker/datepicker";
 import { Fieldset } from "../fieldset/fieldset";
@@ -31,7 +32,7 @@ import {
   type FastTrackResourceModel,
   FastTrackResourceModelSchema,
 } from "./fast-track-resource.models";
-import { FastTrackResourceSubmission, SubmissionError } from "./fast-track-resource-submission";
+import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
 
 @Component({
   selector: "mex-fast-track-resource",
@@ -118,7 +119,7 @@ export class FastTrackResource {
             this.notifier.submissionError(
               this.translocoService.translate("fasttrack.resource.toast.submissionError.message"),
               this.translocoService.translate("fasttrack.resource.toast.submissionError.title"),
-              submitResult.error,
+              submitResult.error as SubmissionError<{ $type: string }>,
             );
           } else {
             this.notifier.error(

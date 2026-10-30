@@ -35,20 +35,8 @@ import {
   type ResourceRuleSetResponse,
 } from "../../shared/models/generated/resource";
 import { TextSchema } from "../../shared/models/generated/shared";
-import type { SubmissionResult } from "../../shared/models/submission-result";
+import { SubmissionError, type SubmissionResult } from "../../shared/models/submission-result";
 import { type FastTrackResourceModel } from "./fast-track-resource.models";
-
-/**
- * Class for Error during submission of items including its payload.
- */
-export class SubmissionError<T extends { $type: string }> extends Error {
-  constructor(
-    readonly payload: T,
-    readonly innerError?: Error,
-  ) {
-    super(`Error while submitting '${payload.$type}'`);
-  }
-}
 
 @Injectable({ providedIn: "root" })
 /**

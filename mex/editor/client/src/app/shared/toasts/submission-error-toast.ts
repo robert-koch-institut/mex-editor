@@ -3,8 +3,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from "@angular/material/snack-bar";
 import { TranslocoDirective } from "@jsverse/transloco";
 
-import type { SubmissionError } from "../../fast-track/fast-track-resource/fast-track-resource-submission";
 import { ErrorMailToPipe } from "../error-mail-to-pipe";
+import type { SubmissionError } from "../models/submission-result";
 import { ToastContent } from "./toast-content/toast-content";
 import type { ToastErrorData } from "./toast-data";
 

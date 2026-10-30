@@ -2,7 +2,7 @@ import { inject, Service } from "@angular/core";
 import type { MatSnackBarConfig } from "@angular/material/snack-bar";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
-import type { SubmissionError } from "../../fast-track/fast-track-resource/fast-track-resource-submission";
+import type { SubmissionError } from "../models/submission-result";
 import { ErrorToast } from "./error-toast";
 import { SubmissionErrorToast } from "./submission-error-toast";
 import { SuccessToast } from "./success-toast";

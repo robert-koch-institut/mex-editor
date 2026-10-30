@@ -1,7 +1,7 @@
 import type { PipeTransform } from "@angular/core";
 import { Pipe } from "@angular/core";
 
-import type { SubmissionError } from "../fast-track/fast-track-resource/fast-track-resource-submission";
+import type { SubmissionError } from "./models/submission-result";
 
 @Pipe({
   name: "errorMailTo",

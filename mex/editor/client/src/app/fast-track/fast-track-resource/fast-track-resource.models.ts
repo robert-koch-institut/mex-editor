@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import z from "zod";
 
-import { CreateContactPointSchema, CreatePersonSchema } from "../../shared/models/create-item";
-import { PreviewContactPointSchema } from "../../shared/models/generated/contact-point";
+import {
+  CreateOrPreviewContactPointSchema,
+  CreateOrPreviewPersonSchema,
+} from "../../shared/models";
 import { PreviewOrganizationalUnitSchema } from "../../shared/models/generated/organizational-unit";
-import { PreviewPersonSchema } from "../../shared/models/generated/person";
 import {
   FrequencySchema,
   ResourceCreationMethodSchema,
@@ -12,29 +13,6 @@ import {
 } from "../../shared/models/generated/resource";
 import { TextSchema, ThemeSchema } from "../../shared/models/generated/shared";
 import { luxonDateTimeNullableSchema } from "../../shared/models/zod-types";
-
-/**
- * Schema for UnionType for CreatePerson and PreviewPerson
- */
-export const CreateOrPreviewPersonSchema = z.union([PreviewPersonSchema, CreatePersonSchema]);
-
-/**
- * UnionType for CreatePerson and PreviewPerson.
- */
-export type CreateOrPreviewPerson = z.infer<typeof CreateOrPreviewPersonSchema>;
-
-/**
- * Schema for UnionType for CreateContactPoint and PreviewContactPoint.
- */
-export const CreateOrPreviewContactPointSchema = z.union([
-  PreviewContactPointSchema,
-  CreateContactPointSchema,
-]);
-
-/**
- * UnionType for CreateContactPoint and PreviewContactPoint.
- */
-export type CreateOrPreviewContactPoint = z.infer<typeof CreateOrPreviewContactPointSchema>;
 
 /**
  * Schema for FasttrackResourceModel

@@ -1,93 +1,378 @@
-<form [formRoot]="activityForm" (submit)="onSubmit()">
-  <mat-form-field>
-    <mat-label>Title</mat-label>
-    <input matInput placeholder="Enter title" [formField]="activityForm.title" />
-    @for (error of activityForm.title().errors(); track error) {
-      <mat-error> {{ error.kind }} | {{ error.message }} </mat-error>
-    }
-  </mat-form-field>
-  <div class="date-fields">
-    <mat-form-field>
-      <mat-label>Start Date</mat-label>
-      <input
-        matInput
-        [matDatepicker]="startPicker"
-        [max]="activityForm.endDate().value()"
-        [formField]="activityForm.startDate"
-      />
-      <mat-hint>DD/MM/YYYY</mat-hint>
-      <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
-      <mat-datepicker #startPicker />
-      @for (error of activityForm.startDate().errors(); track error) {
-        <mat-error> {{ error.kind }} | {{ error.message }} </mat-error>
-      }
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>End Date</mat-label>
-      <input
-        matInput
-        [matDatepicker]="endPicker"
-        [min]="activityForm.startDate().value()"
-        [formField]="activityForm.endDate"
-      />
-      <mat-hint>DD/MM/YYYY</mat-hint>
-      <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
-      <mat-datepicker #endPicker />
-      @for (error of activityForm.endDate().errors(); track error) {
-        <mat-error> {{ error.kind }} | {{ error.message }} </mat-error>
-      }
-    </mat-form-field>
-  </div>
-  <div class="keywords-ger">
-    <mat-form-field>
-      <mat-label>keywords</mat-label>
-      <mat-chip-grid
-        #germanChipGrid
-        aria-label="Deutsche Stichwörter eingeben"
-        [formField]="activityForm.keywords.german"
-      >
-        @for (keyword of activityForm.keywords.german().value(); track keyword) {
-          <mat-chip-row (removed)="removeKeyword(keyword ?? '', 'german')">
-            {{ keyword }}
-            <button matChipRemove [attr.aria-label]="'remove reactive form' + keyword">
-              <mat-icon>cancel</mat-icon>
-            </button>
-          </mat-chip-row>
-        }
-      </mat-chip-grid>
-      <input
-        placeholder="New keyword..."
-        [matChipInputFor]="germanChipGrid"
-        (matChipInputTokenEnd)="addKeyword($event, 'german')"
-      />
-    </mat-form-field>
-    <mat-chip>DEUTSCH</mat-chip>
-  </div>
-  <div class="keywords-en">
-    <mat-form-field>
-      <mat-label>keywords</mat-label>
-      <mat-chip-grid
-        #englishChipGrid
-        aria-label="Enter english keywords"
-        [formField]="activityForm.keywords.english"
-      >
-        @for (keyword of activityForm.keywords.english().value(); track keyword) {
-          <mat-chip-row (removed)="removeKeyword(keyword ?? '', 'english')">
-            {{ keyword }}
-            <button matChipRemove [attr.aria-label]="'remove reactive form' + keyword">
-              <mat-icon>cancel</mat-icon>
-            </button>
-          </mat-chip-row>
-        }
-      </mat-chip-grid>
-      <input
-        placeholder="New keyword..."
-        [matChipInputFor]="englishChipGrid"
-        (matChipInputTokenEnd)="addKeyword($event, 'english')"
-      />
-    </mat-form-field>
-    <mat-chip>ENGLISH</mat-chip>
-  </div>
+<ng-container *transloco="let t">
+  <h1 class="page-title">{{ t("fasttrack.activity.headline") }}</h1>
+  <form [formRoot]="activityForm" class="two-column-layout">
+    <mex-fieldset
+      [formField]="activityForm.title"
+      labelKey="title"
+      class="one-column-item"
+      [category]="activitySchema.shape.title | fieldCategory"
+    >
+      <mat-form-field>
+        <input
+          matInput
+          [formField]="activityForm.title"
+          [attr.placeholder]="'fasttrack.activity.fields.title.placeholder' | transloco"
+          (keydown.enter)="$event.preventDefault()"
+        />
+      </mat-form-field>
+    </mex-fieldset>
 
-  <button matButton type="submit">Submit</button>
-</form>
+    <mex-fieldset
+      [formField]="activityForm.description"
+      labelKey="description"
+      class="two-column-item"
+      [category]="activitySchema.shape.description | fieldCategory"
+    >
+      <mat-form-field>
+        <textarea
+          matInput
+          [formField]="activityForm.description"
+          [rows]="4"
+          [attr.placeholder]="'Activity.description.description' | transloco"
+        ></textarea>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.contact"
+      labelKey="contact"
+      descriptionKey="Activity.contact.description"
+      class="one-column-item"
+      [category]="activitySchema.shape.contact | fieldCategory"
+    >
+      <mex-reference-select
+        [formField]="activityForm.contact"
+        [isCreationEnabled]="true"
+        (keydown.enter)="$event.preventDefault()"
+      ></mex-reference-select>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.creator"
+      labelKey="creator"
+      descriptionKey="Activity.creator.description"
+      class="one-column-item"
+      [category]="activitySchema.shape.creator | fieldCategory"
+    >
+      <mex-reference-select
+        [formField]="activityForm.creator"
+        [validEntityTypes]="['Person']"
+        [isCreationEnabled]="true"
+        (keydown.enter)="$event.preventDefault()"
+      >
+      </mex-reference-select>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.contributor"
+      labelKey="Activity.contributor"
+      descriptionKey="Activity.contributor.description"
+      class="one-column-item"
+      [category]="activitySchema.shape.contributor | fieldCategory"
+    >
+      <mex-reference-select
+        [formField]="activityForm.contributor"
+        [validEntityTypes]="['Person']"
+        [isCreationEnabled]="true"
+        (keydown.enter)="$event.preventDefault()"
+      >
+      </mex-reference-select>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.unitInCharge"
+      labelKey="unitInCharge"
+      descriptionKey="unitInCharge.description"
+      class="one-column-item"
+      [category]="activitySchema.shape.unitInCharge | fieldCategory"
+    >
+      <mex-reference-select
+        [formField]="activityForm.unitInCharge"
+        [validEntityTypes]="['OrganizationalUnit']"
+        (keydown.enter)="$event.preventDefault()"
+      ></mex-reference-select>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.contributingUnit"
+      labelKey="contributingUnit"
+      descriptionKey="Activity.contributingUnit.description"
+      class="one-column-item"
+      [category]="activitySchema.shape.contributingUnit | fieldCategory"
+    >
+      <mex-reference-select
+        [formField]="activityForm.contributingUnit"
+        [validEntityTypes]="['OrganizationalUnit']"
+        (keydown.enter)="$event.preventDefault()"
+      >
+      </mex-reference-select>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.theme"
+      labelKey="theme"
+      descriptionKey="Activity.theme.description"
+      class="one-column-item"
+      [category]="activitySchema.shape.theme | fieldCategory"
+    >
+      <mat-form-field>
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-select
+          multiple
+          [formField]="activityForm.theme"
+          [placeholder]="'select.placeholder' | transloco"
+          data-testid="theme-select"
+        >
+          @for (option of conceptOptions.themeOptions(); track option.id) {
+            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.activityTypeGeneral"
+      labelKey="Activity.activityTypeGeneral"
+      descriptionKey="Activity.activityTypeGeneral.description"
+      class="one-column-item"
+      [category]="activitySchema.shape.activityTypeGeneral | fieldCategory"
+    >
+      <mat-form-field>
+        <mat-select
+          multiple
+          [formField]="activityForm.activityTypeGeneral"
+          [placeholder]="'select.placeholder' | transloco"
+          data-testid="activityTypeGeneral-select"
+        >
+          @for (option of conceptOptions.activityTypeGeneralOptions(); track option.id) {
+            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.spatial"
+      labelKey="Activity.spatial"
+      descriptionKey="Activity.spatial.description"
+      class="one-column-item"
+      [category]="activitySchema.shape.spatial | fieldCategory"
+    >
+      <mat-form-field>
+        <input
+          matInput
+          [formField]="activityForm.spatial"
+          [placeholder]="'input.placeholder' | transloco"
+          (keydown.enter)="$event.preventDefault()"
+        />
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.activityCreationMethod"
+      labelKey="Activity.activityCreationMethod"
+      descriptionKey="Activity.activityCreationMethod.description"
+      class="one-column-item"
+      [category]="activitySchema.shape.activityCreationMethod | fieldCategory"
+    >
+      <mat-form-field>
+        <mat-select
+          multiple
+          [formField]="activityForm.activityCreationMethod"
+          [placeholder]="'select.placeholder' | transloco"
+          data-testid="activityCreationMethod-select"
+        >
+          @for (option of conceptOptions.activityCreationMethodOptions(); track option.id) {
+            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.accrualPeriodicity"
+      labelKey="Activity.accrualPeriodicity"
+      descriptionKey="Activity.accrualPeriodicity.description"
+      class="one-column-item"
+      [category]="activitySchema.shape.accrualPeriodicity | fieldCategory"
+    >
+      <mat-form-field class="one-column-item">
+        <mat-select
+          [formField]="activityForm.accrualPeriodicity"
+          [placeholder]="'select.placeholder' | transloco"
+          data-testid="frequency-select"
+        >
+          @for (option of conceptOptions.frequencyOptions(); track option.id) {
+            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      labelKey="Activity.temporal"
+      descriptionKey="Activity.temporal.description"
+      class="one-column-item"
+      category="optional"
+      [showCategoryLabel]="false"
+    >
+      <div class="two-column-layout">
+        <mex-fieldset
+          [formField]="activityForm.start"
+          labelKey="Activity.start"
+          class="one-column-item"
+          [category]="activitySchema.shape.start | fieldCategory"
+        >
+          <mex-datepicker
+            [formField]="activityForm.start"
+            [maxDate]="activityForm.end().value()"
+            (keydown.enter)="$event.preventDefault()"
+          ></mex-datepicker>
+        </mex-fieldset>
+
+        <mex-fieldset
+          [formField]="activityForm.end"
+          labelKey="Activity.end"
+          class="one-column-item"
+          [category]="activitySchema.shape.end | fieldCategory"
+        >
+          <mex-datepicker
+            [formField]="activityForm.end"
+            [minDate]="activityForm.start().value()"
+            (keydown.enter)="$event.preventDefault()"
+          ></mex-datepicker>
+        </mex-fieldset>
+      </div>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.keywords.de"
+      labelKey="fasttrack.activity.fields.keywords.de"
+      class="two-column-item"
+      [category]="activitySchema.shape.keywords.shape.de | fieldCategory"
+    >
+      <mat-form-field>
+        <mat-chip-grid
+          #keywordGermanChips
+          [formField]="activityForm.keywords.de"
+          class="keyword-chips"
+        >
+          @for (keyword of activityForm.keywords().value().de; track keyword) {
+            <mat-chip-row (removed)="removeKeyword('de', keyword)">
+              {{ keyword }}
+              <button matChipRemove type="button">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          }
+        </mat-chip-grid>
+        <input
+          [matChipInputFor]="keywordGermanChips"
+          (matChipInputTokenEnd)="addKeyword('de', $event.value); $event.chipInput.clear()"
+          [placeholder]="'Activity.keyword.description' | transloco"
+        />
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.keywords.en"
+      labelKey="fasttrack.activity.fields.keywords.en"
+      class="two-column-item"
+      [category]="activitySchema.shape.keywords.shape.en | fieldCategory"
+    >
+      <mat-form-field>
+        <mat-chip-grid
+          #keywordEnglishChips
+          [formField]="activityForm.keywords.en"
+          class="keyword-chips"
+        >
+          @for (keyword of activityForm.keywords().value().en; track keyword) {
+            <mat-chip-row (removed)="removeKeyword('en', keyword)">
+              {{ keyword }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          }
+        </mat-chip-grid>
+        <input
+          [matChipInputFor]="keywordEnglishChips"
+          (matChipInputTokenEnd)="addKeyword('en', $event.value); $event.chipInput.clear()"
+          [placeholder]="'Activity.keyword.description' | transloco"
+        />
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.hasLegalBasis"
+      labelKey="Activity.hasLegalBasis"
+      class="two-column-item"
+      [category]="activitySchema.shape.hasLegalBasis | fieldCategory"
+    >
+      <mat-form-field>
+        <textarea
+          matInput
+          [formField]="activityForm.hasLegalBasis"
+          [rows]="3"
+          [attr.placeholder]="'Activity.hasLegalBasis.description' | transloco"
+        ></textarea>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.provenance"
+      labelKey="Activity.provenance"
+      class="two-column-item"
+      [category]="activitySchema.shape.provenance | fieldCategory"
+    >
+      <mat-form-field>
+        <textarea
+          matInput
+          [formField]="activityForm.provenance"
+          [rows]="3"
+          [attr.placeholder]="'Activity.provenance.description' | transloco"
+        ></textarea>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <mex-fieldset
+      [formField]="activityForm.rights"
+      labelKey="Activity.rights"
+      class="two-column-item"
+      [category]="activitySchema.shape.rights | fieldCategory"
+    >
+      <mat-form-field>
+        <textarea
+          matInput
+          [formField]="activityForm.rights"
+          [rows]="6"
+          [attr.placeholder]="'Activity.rights.description' | transloco"
+        ></textarea>
+      </mat-form-field>
+    </mex-fieldset>
+
+    <div class="two-column-item form-actions">
+      @let formState = activityForm();
+      <button
+        matButton="filled"
+        type="submit"
+        class="secondary"
+        [disabled]="formState.submitting()"
+      >
+        @if (formState.submitting()) {
+          <div class="button-saving">
+            <mat-progress-spinner
+              progressIndicator
+              mode="indeterminate"
+              class="button-spinner"
+              diameter="20"
+            ></mat-progress-spinner>
+            {{ t("fasttrack.activity.save-button.saving") }}
+          </div>
+        } @else {
+          {{ t("fasttrack.activity.save-button.label") }}
+        }
+      </button>
+    </div>
+  </form>
+</ng-container>

@@ -1,7 +1,7 @@
 <ng-container *transloco="let t">
   <h1 class="page-title">{{ t("fasttrack.resource.headline") }}</h1>
 
-  <form [formRoot]="resourceForm" (submit)="onSubmit()" class="two-column-layout">
+  <form [formRoot]="resourceForm" class="two-column-layout">
     <mex-fieldset
       [formField]="resourceForm.title"
       labelKey="title"

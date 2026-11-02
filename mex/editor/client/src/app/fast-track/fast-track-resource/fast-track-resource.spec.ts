@@ -473,7 +473,7 @@ describe("FastTrackResource", () => {
       expect(component.resourceForm().valid()).toBe(true);
     });
 
-    it("stays valid with theme/resourceTypeGeneral/creator/contributor/contributingUnit left empty (not required)", () => {
+    it("stays valid with theme/creator/contributor/contributingUnit left empty (not required)", () => {
       fillEveryRequiredField();
       expect(component.model().theme).toEqual([]);
       expect(component.model().creator).toEqual([]);

@@ -1,7 +1,9 @@
 import { HttpTestingController } from "@angular/common/http/testing";
+import { signal } from "@angular/core";
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
 import { MatDialog } from "@angular/material/dialog";
+import { MatInput } from "@angular/material/input";
 import { TranslocoService } from "@jsverse/transloco";
 import { of } from "rxjs";
 
@@ -15,6 +17,13 @@ describe("ReferenceSelect", () => {
   let httpMock: HttpTestingController;
   let dialogOpenSpy: ReturnType<typeof vi.fn>;
 
+  const createMockField = (invalid: boolean, touched: boolean) => {
+    return signal({
+      invalid: signal(invalid),
+      touched: signal(touched),
+    });
+  };
+
   beforeEach(async () => {
     vi.useFakeTimers();
     dialogOpenSpy = vi.fn();
@@ -27,6 +36,7 @@ describe("ReferenceSelect", () => {
     vi.spyOn(TestBed.inject(TranslocoService), "getDefaultLang").mockReturnValue("de");
     httpMock = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(ReferenceSelect);
+    fixture.componentRef.setInput("formField", null);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -172,5 +182,29 @@ describe("ReferenceSelect", () => {
     component["toggleSearchEntityType"]("Person");
     expect(component["searchEntityTypes"]()).toEqual(expect.not.arrayContaining(["Person"]));
     expect(searchTypes).toEqual(expect.not.arrayContaining(["ContactPoint"]));
+  });
+
+  it("sets the inner MatInput error state when the Signal Form field is invalid and touched", () => {
+    const formField = createMockField(true, true);
+
+    fixture.componentRef.setInput("formField", formField);
+    fixture.detectChanges();
+
+    const input = component["inputControl"]();
+
+    expect(input).toBeInstanceOf(MatInput);
+    expect(input?.errorState).toBe(true);
+  });
+
+  it("does not set the inner MatInput error state when the Signal Form field is invalid but untouched", () => {
+    const formField = createMockField(true, false);
+
+    fixture.componentRef.setInput("formField", formField);
+    fixture.detectChanges();
+
+    const input = component["inputControl"]();
+
+    expect(input).toBeInstanceOf(MatInput);
+    expect(input?.errorState).toBe(false);
   });
 });

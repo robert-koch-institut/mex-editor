@@ -85,7 +85,7 @@ export class ReferenceSelect<
   protected readonly transloco = inject(TranslocoService);
   private readonly labelPipe = new ToLabelPipe();
   private readonly dialog = inject(MatDialog);
-  private readonly formField = inject(FormField, { self: true });
+  private readonly formField = inject(FormField, { self: true, optional: true });
 
   inputControl = viewChild("input", {
     read: MatInput,
@@ -165,10 +165,10 @@ export class ReferenceSelect<
   protected defaultErrorStateMatcher = inject(ErrorStateMatcher);
   constructor() {
     effect(() => {
-      const field = this.formField.field();
+      const field = this.formField?.field();
       const control = this.inputControl();
 
-      if (!control) return;
+      if (!control || !field) return;
 
       if (this.defaultErrorStateMatcher.isSignalErrorState) {
         const result = this.defaultErrorStateMatcher.isSignalErrorState(field);

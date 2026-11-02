@@ -29,7 +29,9 @@ function setNativeValue(
 }
 
 function mockActiveLang(initial: string) {
-  const spy = vi.spyOn(TestBed.inject(TranslocoService), "getActiveLang").mockReturnValue(initial);
+  const transloco = TestBed.inject(TranslocoService);
+  const spy = vi.spyOn(transloco, "getActiveLang").mockReturnValue(initial);
+  vi.spyOn(transloco, "getDefaultLang").mockReturnValue("de");
   return { set: (lang: string) => spy.mockReturnValue(lang) };
 }
 

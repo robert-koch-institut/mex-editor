@@ -3,12 +3,10 @@
     <mat-label>{{ labels.url() }}</mat-label>
     <input matInput type="url" [formField]="linkForm.url" (blur)="touch.emit()" />
     @for (error of linkForm.url().errors(); track $index) {
-      <ng-container>
+      <mat-error>
         @let errorMessage = error | validationErrorMessage: linkForm.url();
-        <mat-error>
-          {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: labels.url() } }}
-        </mat-error>
-      </ng-container>
+        {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: labels.url() } }}
+      </mat-error>
     }
   </mat-form-field>
 
@@ -22,20 +20,16 @@
     ></mex-link-language-menu>
 
     @for (error of linkForm.title().errors(); track $index) {
-      <ng-container>
+      <mat-error>
         @let errorMessage = error | validationErrorMessage: linkForm.title();
-        <mat-error>{{
-          errorMessage.msgKey | transloco: { ...errorMessage.params, field: labels.title() }
-        }}</mat-error>
-      </ng-container>
+        {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: labels.title() } }}
+      </mat-error>
     }
     @for (error of linkForm.language().errors(); track $index) {
-      <ng-container>
+      <mat-error>
         @let errorMessage = error | validationErrorMessage: linkForm.language();
-        <mat-error>{{
-          errorMessage.msgKey | transloco: { ...errorMessage.params, field: labels.language() }
-        }}</mat-error>
-      </ng-container>
+        {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: labels.language() } }}
+      </mat-error>
     }
   </mat-form-field>
 </div>

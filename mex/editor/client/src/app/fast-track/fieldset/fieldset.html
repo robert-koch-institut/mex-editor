@@ -18,17 +18,9 @@
   @if (errors && errors.length > 0) {
     <div class="error-container">
       @for (err of errors; track $index) {
-        @let errorLabel = err | fieldErrorLabel: state : label;
+        @let errorMessage = err | validationErrorMessage: state;
         <div class="error">
-          {{
-            err.message
-              | transloco
-                : {
-                    field: errorLabel,
-                    ...$any(err)?.issue,
-                    ...$any(err).issue?.params,
-                  }
-          }}
+          {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: label } }}
         </div>
       }
     </div>

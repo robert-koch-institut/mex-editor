@@ -1,39 +1,41 @@
-@if (!hidden()) {
-  <div class="link-editor" role="group" [attr.aria-invalid]="invalid()">
-    <mat-form-field class="url">
-      <mat-label>URL</mat-label>
-      <input matInput type="url" [formField]="linkForm.url" (blur)="touch.emit()" />
-      @if (linkForm.url().touched() && linkForm.url().invalid()) {
-        <mat-error>{{ linkForm.url().errors()[0]?.message }}</mat-error>
-      }
-    </mat-form-field>
-
-    <mat-form-field class="title">
-      <mat-label>Title</mat-label>
-      <input matInput [formField]="linkForm.title" (blur)="touch.emit()" />
-      @if (linkForm.title().touched() && linkForm.title().invalid()) {
-        <mat-error>{{ linkForm.title().errors()[0]?.message }}</mat-error>
-      }
-    </mat-form-field>
-
-    <mat-form-field class="language">
-      <mat-label>Language</mat-label>
-      <select matNativeControl [formField]="linkForm.language" (blur)="touch.emit()">
-        <option value="">–</option>
-        @for (opt of languageOptions; track opt.value) {
-          <option [value]="opt.value">{{ opt.label }}</option>
-        }
-      </select>
-      @if (linkForm.language().touched() && linkForm.language().invalid()) {
-        <mat-error>{{ linkForm.language().errors()[0]?.message }}</mat-error>
-      }
-    </mat-form-field>
-
-    <!-- Errors coming from the parent form, shown only if the internal form has none (avoids duplicates) -->
-    @if (linkForm().valid()) {
-      @for (error of errors(); track error) {
-        <p class="external-error" role="alert">{{ error.message }}</p>
-      }
+<div class="link-editor" role="group" [attr.aria-invalid]="invalid()" *transloco="let t">
+  <mat-form-field class="url">
+    <mat-label>{{ labels.url() }}</mat-label>
+    <input matInput type="url" [formField]="linkForm.url" (blur)="touch.emit()" />
+    @for (error of linkForm.url().errors(); track $index) {
+      <ng-container>
+        @let errorMessage = error | validationErrorMessage: linkForm.url();
+        <mat-error>
+          {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: labels.url() } }}
+        </mat-error>
+      </ng-container>
     }
-  </div>
-}
+  </mat-form-field>
+
+  <mat-form-field class="title">
+    <mat-label>{{ labels.title() }}</mat-label>
+    <input matInput [formField]="linkForm.title" (blur)="touch.emit()" />
+    <mex-link-language-menu
+      matSuffix
+      [language]="asLinkLanguage(linkForm.language().value())"
+      (languageSelected)="linkForm.language().value.set($event)"
+    ></mex-link-language-menu>
+
+    @for (error of linkForm.title().errors(); track $index) {
+      <ng-container>
+        @let errorMessage = error | validationErrorMessage: linkForm.title();
+        <mat-error>{{
+          errorMessage.msgKey | transloco: { ...errorMessage.params, field: labels.title() }
+        }}</mat-error>
+      </ng-container>
+    }
+    @for (error of linkForm.language().errors(); track $index) {
+      <ng-container>
+        @let errorMessage = error | validationErrorMessage: linkForm.language();
+        <mat-error>{{
+          errorMessage.msgKey | transloco: { ...errorMessage.params, field: labels.language() }
+        }}</mat-error>
+      </ng-container>
+    }
+  </mat-form-field>
+</div>

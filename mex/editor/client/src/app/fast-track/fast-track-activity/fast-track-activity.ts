@@ -14,6 +14,7 @@ import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/tr
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
 import type { Link } from "../../shared/models/generated/shared";
+import { asLinkLanguage } from "../../shared/util";
 import {
   ArrayFormValueControl,
   ArrayItemTemplate,
@@ -87,6 +88,7 @@ export class FastTrackActivity {
       submission: {
         action: async (field) => {
           const validModel = field().value();
+          // eslint-disable-next-line no-console
           console.log("SUBMITTED", validModel);
         },
         onInvalid: (field) => {
@@ -96,12 +98,7 @@ export class FastTrackActivity {
       },
     },
   );
-  private asValidLanguage(value: string): "en" | "de" {
-    return ["en", "de"].includes(value) ? (value as "en" | "de") : "de";
-  }
 
-  createNewLink = () => {
-    console.log("THIS", this);
-    return { url: "", language: this.asValidLanguage(this.transloco.getActiveLang()) } as Link;
-  };
+  createNewLink = () =>
+    ({ url: "", language: asLinkLanguage(this.transloco.getActiveLang()) }) as Link;
 }

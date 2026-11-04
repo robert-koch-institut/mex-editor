@@ -119,6 +119,8 @@ export class ToLabelPipe implements PipeTransform {
         return `⋆ ${this.firstLabelOf([value.email], lang) ?? this.defaultCreateItemLabel(value)}`;
       case "CreatePerson":
         return `⋆ ${this.firstLabelOf([`${value.givenName} ${value.familyName}`.trim()], lang) ?? this.defaultCreateItemLabel(value)}`;
+      case "CreateOrganization":
+        return `⋆ ${this.firstLabelOf([`${value.officialName}`.trim()], lang) ?? this.defaultCreateItemLabel(value)}`;
     }
   }
 }

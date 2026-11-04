@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import z from "zod";
 
-import { CreateContactPointSchema, CreatePersonSchema } from "./create-item";
+import {
+  CreateContactPointSchema,
+  CreateOrganizationSchema,
+  CreatePersonSchema,
+} from "./create-item";
 import { type PreviewContactPoint, PreviewContactPointSchema } from "./generated/contact-point";
-import type { PreviewOrganization } from "./generated/organization";
+import { type PreviewOrganization, PreviewOrganizationSchema } from "./generated/organization";
 import type { PreviewOrganizationalUnit } from "./generated/organizational-unit";
 import { type PreviewPerson, PreviewPersonSchema } from "./generated/person";
 
@@ -40,3 +44,16 @@ export const CreateOrPreviewContactPointSchema = z.union([
  * UnionType for CreateContactPoint and PreviewContactPoint.
  */
 export type CreateOrPreviewContactPoint = z.infer<typeof CreateOrPreviewContactPointSchema>;
+
+/**
+ * Schema for UnionType for CreateOrganization and PreviewOrganization.
+ */
+export const CreateOrPreviewOrganizationSchema = z.union([
+  PreviewOrganizationSchema,
+  CreateOrganizationSchema,
+]);
+
+/**
+ * UnionType for CreateContactPoint and PreviewContactPoint.
+ */
+export type CreateOrPreviewOrganization = z.infer<typeof CreateOrPreviewOrganizationSchema>;

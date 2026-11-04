@@ -13,6 +13,7 @@ import {
 } from "@angular/core";
 import type { FieldTree, ValidationError, WithOptionalFieldTree } from "@angular/forms/signals";
 import { FORM_FIELD, FormField, type FormValueControl } from "@angular/forms/signals";
+import { MatButton } from "@angular/material/button";
 
 /**
  * ArrayItemContext API documentation.
@@ -45,7 +46,7 @@ export class ArrayItemTemplate<T> {
 
 @Component({
   selector: "mex-array-form-value-control",
-  imports: [NgTemplateOutlet],
+  imports: [MatButton, NgTemplateOutlet],
   templateUrl: "./array-form-value-control.html",
   styleUrl: "./array-form-value-control.scss",
   hostDirectives: [{ directive: FormField, inputs: ["formField"] }],
@@ -123,14 +124,12 @@ export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
     const item = this.createItem()();
     this.ids.update((ids) => [...ids, this.nextId++]);
     this.value.update((arr) => [...arr, item]);
-    this.touch.emit();
   }
 
   protected remove(index: number): void {
     if (!this.canRemove()) return;
     this.ids.update((ids) => ids.filter((_, i) => i !== index));
     this.value.update((arr) => arr.filter((_, i) => i !== index));
-    this.touch.emit();
   }
 
   protected move(index: number, delta: -1 | 1): void {
@@ -138,7 +137,6 @@ export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
     if (!this.editable() || target < 0 || target >= this.value().length) return;
     this.ids.update((ids) => swap(ids, index, target));
     this.value.update((arr) => swap(arr, index, target));
-    this.touch.emit();
   }
 }
 

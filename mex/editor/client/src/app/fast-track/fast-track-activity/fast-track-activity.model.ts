@@ -3,10 +3,10 @@ import z from "zod";
 
 import {
   CreateOrPreviewContactPointSchema,
+  CreateOrPreviewOrganizationSchema,
   CreateOrPreviewPersonSchema,
 } from "../../shared/models";
 import { ActivityTypeSchema } from "../../shared/models/generated/activity";
-import { PreviewOrganizationSchema } from "../../shared/models/generated/organization";
 import { PreviewOrganizationalUnitSchema } from "../../shared/models/generated/organizational-unit";
 import { LinkSchema, TextSchema } from "../../shared/models/generated/shared";
 import { luxonDateTimeNullableSchema } from "../../shared/models/zod-types";
@@ -35,7 +35,7 @@ export const FastTrackActivityModelSchema = z.object({
   involvedUnit: z.array(PreviewOrganizationalUnitSchema),
   start: luxonDateTimeNullableSchema(),
   end: luxonDateTimeNullableSchema(),
-  funderOrCommissioner: PreviewOrganizationSchema.array(),
+  funderOrCommissioner: CreateOrPreviewOrganizationSchema.array(),
   website: z.array(LinkSchema),
 
   // optional fields

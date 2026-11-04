@@ -42,6 +42,7 @@
     >
       <mex-reference-select
         [formField]="resourceForm.contact"
+        [validEntityTypes]="['ContactPoint', 'Person', 'OrganizationalUnit']"
         [isCreationEnabled]="true"
       ></mex-reference-select>
     </mex-fieldset>

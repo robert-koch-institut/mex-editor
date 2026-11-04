@@ -59,6 +59,7 @@
       <mex-reference-select
         [formField]="activityForm.contact"
         [isCreationEnabled]="true"
+        [validEntityTypes]="['ContactPoint', 'Person', 'OrganizationalUnit']"
         (keydown.enter)="$event.preventDefault()"
       ></mex-reference-select>
     </mex-fieldset>
@@ -103,7 +104,7 @@
       <mex-reference-select
         [formField]="activityForm.involvedUnit"
         [validEntityTypes]="['OrganizationalUnit']"
-        [isCreationEnabled]="true"
+        [isCreationEnabled]="false"
         (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
@@ -154,7 +155,11 @@
       class="one-column-item"
       [category]="activitySchema.shape.website | fieldCategory"
     >
-      <mex-array-form-value-control [formField]="activityForm.website" [createItem]="createNewLink">
+      <mex-array-form-value-control
+        [formField]="activityForm.website"
+        [createItem]="createNewLink"
+        [reorderable]="false"
+      >
         <ng-template [mexArrayItem]="activityForm.website" let-field="field">
           <mex-link-editor [formField]="field"></mex-link-editor>
         </ng-template>

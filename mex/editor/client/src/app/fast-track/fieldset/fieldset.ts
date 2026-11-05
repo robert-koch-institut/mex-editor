@@ -2,12 +2,12 @@ import { Component, computed, HostBinding, input } from "@angular/core";
 import { type FieldTree } from "@angular/forms/signals";
 import { TranslocoPipe } from "@jsverse/transloco";
 
+import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
 import type { FieldCategory } from "../../shared/models";
-import { ValidationErrorMessagePipe } from "../validation-error-label-pipe";
 
 @Component({
   selector: "mex-fieldset",
-  imports: [TranslocoPipe, ValidationErrorMessagePipe],
+  imports: [FieldErrorSummary, TranslocoPipe],
   templateUrl: "./fieldset.html",
   styleUrl: "./fieldset.scss",
 })

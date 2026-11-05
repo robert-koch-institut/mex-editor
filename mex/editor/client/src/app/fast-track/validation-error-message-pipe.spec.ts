@@ -1,4 +1,4 @@
-import { ValidationErrorMessagePipe } from "./validation-error-label-pipe";
+import { ValidationErrorMessagePipe } from "./validation-error-message-pipe";
 
 describe("ValidationErrorLabelPipe", () => {
   it("create an instance", () => {

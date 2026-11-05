@@ -13,16 +13,12 @@
 
 <ng-content></ng-content>
 
-@if (state && state.invalid() && (showErrorWithoutTouch() || state.touched())) {
-  @let errors = state.errorSummary();
-  @if (errors && errors.length > 0) {
-    <div class="error-container">
-      @for (err of errors; track $index) {
-        @let errorMessage = err | validationErrorMessage: state;
-        <div class="error">
-          {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: label } }}
-        </div>
-      }
-    </div>
-  }
+@if (state) {
+  <mex-field-error-summary
+    [fieldLabel]="label"
+    [fieldState]="state"
+    [showErrorsWithoutTouch]="showErrorWithoutTouch()"
+    [showNestedErrors]="true"
+  >
+  </mex-field-error-summary>
 }

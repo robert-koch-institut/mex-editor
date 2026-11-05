@@ -13,7 +13,8 @@ import {
 } from "@angular/core";
 import type { FieldTree, ValidationError, WithOptionalFieldTree } from "@angular/forms/signals";
 import { FORM_FIELD, FormField, type FormValueControl } from "@angular/forms/signals";
-import { MatButton } from "@angular/material/button";
+import { MatIconButton } from "@angular/material/button";
+import { MatIcon } from "@angular/material/icon";
 
 /**
  * ArrayItemContext API documentation.
@@ -46,7 +47,7 @@ export class ArrayItemTemplate<T> {
 
 @Component({
   selector: "mex-array-form-value-control",
-  imports: [MatButton, NgTemplateOutlet],
+  imports: [MatIcon, MatIconButton, NgTemplateOutlet],
   templateUrl: "./array-form-value-control.html",
   styleUrl: "./array-form-value-control.scss",
   hostDirectives: [{ directive: FormField, inputs: ["formField"] }],
@@ -61,10 +62,6 @@ export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
   readonly minItems = input(0);
   readonly maxItems = input<number | undefined>(undefined);
   readonly reorderable = input(true);
-  readonly addLabel = input("Add");
-  readonly removeLabel = input("Remove");
-  readonly moveUpLabel = input("Move up");
-  readonly moveDownLabel = input("Move down");
 
   // --- Optional form state (filled by [formField]) ---
   readonly disabled = input(false);
@@ -124,12 +121,14 @@ export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
     const item = this.createItem()();
     this.ids.update((ids) => [...ids, this.nextId++]);
     this.value.update((arr) => [...arr, item]);
+    // this.touch.emit();
   }
 
   protected remove(index: number): void {
     if (!this.canRemove()) return;
     this.ids.update((ids) => ids.filter((_, i) => i !== index));
     this.value.update((arr) => arr.filter((_, i) => i !== index));
+    // this.touch.emit();
   }
 
   protected move(index: number, delta: -1 | 1): void {
@@ -137,6 +136,7 @@ export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
     if (!this.editable() || target < 0 || target >= this.value().length) return;
     this.ids.update((ids) => swap(ids, index, target));
     this.value.update((arr) => swap(arr, index, target));
+    // this.touch.emit();
   }
 }
 

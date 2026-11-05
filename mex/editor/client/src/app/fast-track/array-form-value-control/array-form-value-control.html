@@ -12,38 +12,35 @@
           @if (reorderable()) {
             <button
               type="button"
-              matButton="filled"
+              matIconButton
               [disabled]="!editable() || row.context.first"
-              [attr.aria-label]="moveUpLabel()"
               (click)="move(row.context.index, -1)"
             >
-              ↑
+              <mat-icon>arrow_upward</mat-icon>
             </button>
             <button
               type="button"
-              matButton="filled"
+              matIconButton
               [disabled]="!editable() || row.context.last"
-              [attr.aria-label]="moveDownLabel()"
               (click)="move(row.context.index, 1)"
             >
-              ↓
+              <mat-icon>arrow_downward</mat-icon>
             </button>
           }
           <button
             type="button"
-            matButton="filled"
+            matIconButton
             [disabled]="!canRemove()"
-            [attr.aria-label]="removeLabel()"
             (click)="remove(row.context.index)"
           >
-            ✕
+            <mat-icon>close</mat-icon>
           </button>
         </div>
       </li>
     }
   </ul>
 
-  <button type="button" matButton="filled" [disabled]="!canAdd()" (click)="add()">
-    {{ addLabel() }}
+  <button type="button" matIconButton="filled" [disabled]="!canAdd()" (click)="add()">
+    <mat-icon>add</mat-icon>
   </button>
 </div>

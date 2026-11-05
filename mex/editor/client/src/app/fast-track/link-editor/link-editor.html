@@ -1,17 +1,20 @@
 <div class="link-editor" role="group" [attr.aria-invalid]="invalid()" *transloco="let t">
   <mat-form-field class="url">
-    <mat-label>{{ labels.url() }}</mat-label>
+    <mat-label>{{ t("link-editor.link.url") }}</mat-label>
     <input matInput type="url" [formField]="linkForm.url" (blur)="touch.emit()" />
     @for (error of linkForm.url().errors(); track $index) {
       <mat-error>
-        @let errorMessage = error | validationErrorMessage: linkForm.url();
-        {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: labels.url() } }}
+        @let errorMessage = error | validationErrorMessage;
+        {{
+          errorMessage.msgKey
+            | transloco: { ...errorMessage.params, field: t("link-editor.link.url") }
+        }}
       </mat-error>
     }
   </mat-form-field>
 
   <mat-form-field class="title">
-    <mat-label>{{ labels.title() }}</mat-label>
+    <mat-label>{{ t("link-editor.link.title") }}</mat-label>
     <input matInput [formField]="linkForm.title" (blur)="touch.emit()" />
     <mex-link-language-menu
       matSuffix
@@ -21,14 +24,20 @@
 
     @for (error of linkForm.title().errors(); track $index) {
       <mat-error>
-        @let errorMessage = error | validationErrorMessage: linkForm.title();
-        {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: labels.title() } }}
+        @let errorMessage = error | validationErrorMessage;
+        {{
+          errorMessage.msgKey
+            | transloco: { ...errorMessage.params, field: t("link-editor.link.title") }
+        }}
       </mat-error>
     }
     @for (error of linkForm.language().errors(); track $index) {
       <mat-error>
-        @let errorMessage = error | validationErrorMessage: linkForm.language();
-        {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: labels.language() } }}
+        @let errorMessage = error | validationErrorMessage;
+        {{
+          errorMessage.msgKey
+            | transloco: { ...errorMessage.params, field: t("link-editor.link.language") }
+        }}
       </mat-error>
     }
   </mat-form-field>

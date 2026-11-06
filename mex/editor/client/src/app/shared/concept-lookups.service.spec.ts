@@ -16,6 +16,7 @@ describe("ConceptLookups", () => {
     "resource-creation-method",
     "frequency",
     "access-restriction",
+    "activity-type",
   ];
 
   beforeEach(() => {

@@ -58,6 +58,10 @@ const testProviders = [
         { id: "accessRestriction-1", label: "1. AccessRestriction" },
         { id: "accessRestriction-2", label: "2. AccessRestriction" },
       ]),
+      activityTypeOptions: signal([
+        { id: "activityType-1", label: "1. ActivityType" },
+        { id: "activityTypen-2", label: "2. ActivityType" },
+      ]),
     },
   },
 ];

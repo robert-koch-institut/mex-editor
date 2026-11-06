@@ -1,18 +1,18 @@
 import type { ComponentFixture } from "@angular/core/testing";
 import { TestBed } from "@angular/core/testing";
 
-import { ErrorSummary } from "./error-summary";
+import { FieldErrorSummary } from "./field-error-summary";
 
 describe("ErrorSummary", () => {
-  let component: ErrorSummary;
-  let fixture: ComponentFixture<ErrorSummary>;
+  let component: FieldErrorSummary;
+  let fixture: ComponentFixture<FieldErrorSummary>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ErrorSummary],
+      imports: [FieldErrorSummary],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ErrorSummary);
+    fixture = TestBed.createComponent(FieldErrorSummary);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

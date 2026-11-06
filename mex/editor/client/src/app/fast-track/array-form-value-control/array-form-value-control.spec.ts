@@ -4,8 +4,8 @@ import { TestBed } from "@angular/core/testing";
 import { ArrayFormValueControl } from "./array-form-value-control";
 
 describe("ArrayFormValueControl", () => {
-  let component: ArrayFormValueControl;
-  let fixture: ComponentFixture<ArrayFormValueControl>;
+  let component: ArrayFormValueControl<unknown>;
+  let fixture: ComponentFixture<ArrayFormValueControl<unknown>>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

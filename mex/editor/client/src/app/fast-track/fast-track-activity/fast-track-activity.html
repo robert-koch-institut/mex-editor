@@ -35,7 +35,7 @@
 
     <mex-fieldset
       [formField]="activityForm.abstract"
-      labelKey="description"
+      labelKey="abstract"
       class="two-column-item"
       [category]="activitySchema.shape.abstract | fieldCategory"
     >
@@ -123,7 +123,7 @@
           multiple
           [formField]="activityForm.activityType"
           [placeholder]="'select.placeholder' | transloco"
-          data-testid="theme-select"
+          data-testid="activityType-select"
         >
           @for (option of conceptOptions.activityTypeOptions(); track option.id) {
             <mat-option [value]="option.id">{{ option.label }}</mat-option>

@@ -3,7 +3,7 @@
     <mat-label>{{ t("link-editor.link.url") }}</mat-label>
     <input matInput type="url" [formField]="linkForm.url" (blur)="touch.emit()" />
     @for (error of linkForm.url().errors(); track $index) {
-      <mat-error>
+      <mat-error class="fix-spacing">
         <mex-field-error [error]="error" [fieldLabel]="t('link-editor.link.url')"></mex-field-error>
       </mat-error>
     }
@@ -19,7 +19,7 @@
     ></mex-link-language-menu>
 
     @for (error of linkForm.title().errors(); track $index) {
-      <mat-error>
+      <mat-error class="fix-spacing">
         <mex-field-error
           [error]="error"
           [fieldLabel]="t('link-editor.link.title')"
@@ -27,7 +27,7 @@
       </mat-error>
     }
     @for (error of linkForm.language().errors(); track $index) {
-      <mat-error>
+      <mat-error class="fix-spacing">
         <mex-field-error
           [error]="error"
           [fieldLabel]="t('link-editor.link.language')"

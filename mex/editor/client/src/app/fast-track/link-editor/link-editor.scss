@@ -4,3 +4,11 @@
   grid-template-columns: 2fr 3fr;
   align-items: baseline;
 }
+
+mat-error.fix-spacing {
+  margin-top: 0.25em;
+
+  &::before {
+    content: unset !important;
+  }
+}

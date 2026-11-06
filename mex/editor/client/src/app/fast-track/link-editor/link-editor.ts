@@ -22,6 +22,7 @@ import { asLinkLanguage } from "../../shared/models";
 import type { Link, LinkLanguage } from "../../shared/models/generated/shared";
 import { LinkSchema } from "../../shared/models/generated/shared";
 import { LinkLanguageMenu } from "./link-language-menu/link-language-menu";
+
 /** Internes Formularmodell: kein null/undefined, damit native Inputs funktionieren. */
 export interface LinkDraft {
   language: string;

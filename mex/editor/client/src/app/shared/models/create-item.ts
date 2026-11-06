@@ -2,6 +2,7 @@
 import z from "zod";
 
 import { BaseContactPointSchema } from "../models/generated/contact-point";
+import { BaseOrganizationSchema } from "./generated/organization";
 import { BasePersonSchema } from "./generated/person";
 
 /**
@@ -32,9 +33,22 @@ export const CreateContactPointSchema = z.object({
 export type CreateContactPoint = z.infer<typeof CreateContactPointSchema>;
 
 /**
+ * Schema for CreateOrganization.
+ */
+export const CreateOrganizationSchema = z.object({
+  $type: z.literal("CreateOrganization"),
+  officialName: BaseOrganizationSchema.shape.officialName.unwrap().shape.value,
+});
+
+/**
+ * Model to store data for organization creation.
+ */
+export type CreateOrganization = z.infer<typeof CreateOrganizationSchema>;
+
+/**
  * UnionType for creatable items.
  */
-export type CreateItem = CreatePerson | CreateContactPoint;
+export type CreateItem = CreatePerson | CreateContactPoint | CreateOrganization;
 
 /**
  * Determines if the given object is a {@link CreateItem}.

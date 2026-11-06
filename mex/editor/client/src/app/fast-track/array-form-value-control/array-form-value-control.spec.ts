@@ -1,0 +1,23 @@
+import type { ComponentFixture } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
+
+import { ArrayFormValueControl } from "./array-form-value-control";
+
+describe("ArrayFormValueControl", () => {
+  let component: ArrayFormValueControl<unknown>;
+  let fixture: ComponentFixture<ArrayFormValueControl<unknown>>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ArrayFormValueControl],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ArrayFormValueControl);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it("should create", () => {
+    expect(component).toBeTruthy();
+  });
+});

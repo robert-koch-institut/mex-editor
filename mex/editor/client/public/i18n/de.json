@@ -11,6 +11,13 @@
   "create-item-dialog.title": "Neuen Eintrag anlegen",
   "datepicker.validation.parse": "Bitte Format {{format}} nutzen",
   "fasttrack": {
+    "activity": {
+      "headline": "{{Activity}} erstellen",
+      "save-button": {
+        "label": "{{Activity}} speichern",
+        "saving": "Speichere {{Activity}}..."
+      }
+    },
     "resource": {
       "fields": {
         "keywords.de": "{{keyword}} - Deutsch",
@@ -42,6 +49,20 @@
   },
   "footer.greetings": "Erstellt mit ❤️ von MEx",
   "input.placeholder": "Bitte ausfüllen",
+  "language": {
+    "de": "deutsch",
+    "en": "englisch",
+    "es": "spanisch",
+    "fr": "französisch",
+    "ru": "russisch"
+  },
+  "link-editor": {
+    "link": {
+      "language": "Sprache",
+      "title": "Titel",
+      "url": "URL"
+    }
+  },
   "navbar.create-link.text": "{{{{entity_type}}}} erstellen",
   "reference-select": {
     "placeholder.empty": "Tippen um zu Filtern, Sie können \"*\" als Platzhalter benutzen",
@@ -58,10 +79,9 @@
   "toast.submissionError.sendMail": "Email an MEx senden",
   "user-logout.logout-button.text": "Abmelden",
   "validation": {
+    "arrayError": "{{field}} {{index}}. Eintrag enthält einen Fehler",
     "custom": "{{field}} ist ungültig",
     "generic": "{{field}} ist ungültig",
-    "innerArrayError": "{{field}} {{position}}. Eintrag",
-    "innerObjectError": "{{field}} - {{{{property}}}}",
     "invalidElement": "{{field}} enthält einen ungültigen Eintrag",
     "invalidFormat": {
       "email": "{{field}} muss eine gültige E-Mail-Adresse sein",
@@ -86,6 +106,7 @@
     "minItems": "{{field}} muss mindestens {minimum, plural, =1 {einen Eintrag} other {{minimum} Einträge}} enthalten",
     "minLength": "{{field}} muss mindestens {minimum, plural, =1 {ein Zeichen} other {{minimum} Zeichen}} lang sein",
     "notMultipleOf": "{{field}} muss ein Vielfaches von {{divisor}} sein",
+    "objectError": "{{field}} - {{index}} enthält einen Fehler",
     "required": "{{field}} muss angegeben werden",
     "tooBig": "{{field}} ist zu groß",
     "tooSmall": "{{field}} ist zu klein",

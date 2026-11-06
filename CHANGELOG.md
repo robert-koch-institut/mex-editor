@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Fasttrack for activity (without saving)
+- Component to edit links (LinkEditor)
+- Component to handle array edits in forms (ArrayFormValueControl)
+- Components to show error messages (FieldErrorSummary and FieldError)
+- Component to create Organizations in the dialog (OrganizationCreateDialog)
+
 - code generator to create zod schemas based on pydantic models
 - datepicker component to unify usage and handle parse errors
 - field-category pipe to determine field-category based on zod schema definition

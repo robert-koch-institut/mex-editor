@@ -49,7 +49,8 @@ import { CreateItemDialog } from "../create-item-dialog/create-item-dialog";
 /**
  * Type for valid reference select types.
  */
-export type ReferenceSelectTypes = "Person" | "ContactPoint" | "OrganizationalUnit";
+export type ReferenceSelectTypes =
+  "Person" | "ContactPoint" | "OrganizationalUnit" | "Organization";
 
 @Component({
   selector: "mex-reference-select",
@@ -93,6 +94,7 @@ export class ReferenceSelect<
     "Person",
     "ContactPoint",
     "OrganizationalUnit",
+    "Organization",
   ]);
   readonly value = model<T[]>([]);
   isCreationEnabled = input(false);

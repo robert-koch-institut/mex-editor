@@ -1,0 +1,17 @@
+<button
+  type="button"
+  matIconButton
+  class="menu-trigger"
+  [matMenuTriggerFor]="menu"
+  [disabled]="disabled()"
+>
+  {{ language() }}
+</button>
+
+<mat-menu #menu="matMenu">
+  @for (option of options; track option) {
+    <button type="button" mat-menu-item (click)="languageSelected.emit(option)">
+      {{ `language.${option}` | transloco }}
+    </button>
+  }
+</mat-menu>

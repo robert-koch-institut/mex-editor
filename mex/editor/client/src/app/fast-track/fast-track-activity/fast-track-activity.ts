@@ -13,8 +13,8 @@ import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/tr
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
+import { asLinkLanguage } from "../../shared/models";
 import type { Link } from "../../shared/models/generated/shared";
-import { asLinkLanguage } from "../../shared/util";
 import {
   ArrayFormValueControl,
   ArrayItemTemplate,

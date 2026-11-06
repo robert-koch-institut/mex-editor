@@ -2,7 +2,7 @@ import { Component, input } from "@angular/core";
 import type { ValidationError } from "@angular/forms/signals";
 import { TranslocoPipe } from "@jsverse/transloco";
 
-import { ValidationErrorMessagePipe } from "../../fast-track/validation-error-message-pipe";
+import { ValidationErrorMessagePipe } from "../validation-error-message-pipe";
 
 @Component({
   selector: "mex-field-error",

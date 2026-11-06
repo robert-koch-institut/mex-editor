@@ -14,13 +14,13 @@ import {
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
-import { TranslocoDirective, TranslocoPipe } from "@jsverse/transloco";
+import { TranslocoDirective } from "@jsverse/transloco";
 import z from "zod";
 
+import { FieldError } from "../../shared/field-error/field-error";
+import { asLinkLanguage } from "../../shared/models";
 import type { Link, LinkLanguage } from "../../shared/models/generated/shared";
 import { LinkSchema } from "../../shared/models/generated/shared";
-import { asLinkLanguage } from "../../shared/util";
-import { ValidationErrorMessagePipe } from "../validation-error-message-pipe";
 import { LinkLanguageMenu } from "./link-language-menu/link-language-menu";
 /** Internes Formularmodell: kein null/undefined, damit native Inputs funktionieren. */
 export interface LinkDraft {
@@ -91,14 +91,13 @@ export function sameDraft(a: LinkDraft, b: LinkDraft): boolean {
 @Component({
   selector: "mex-link-editor",
   imports: [
+    FieldError,
     FormField,
     LinkLanguageMenu,
     MatFormFieldModule,
     MatIconModule,
     MatInput,
     TranslocoDirective,
-    TranslocoPipe,
-    ValidationErrorMessagePipe,
   ],
   templateUrl: "./link-editor.html",
   styleUrl: "./link-editor.scss",

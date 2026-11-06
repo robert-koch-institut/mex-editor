@@ -44,41 +44,5 @@ export class ValidationErrorMessagePipe implements PipeTransform {
       msgKey: value.message,
       params: {},
     };
-    // const formPath = this.relativePath(value, state);
-
-    // if (formPath.length > 0) {
-    //   const [indexer, ..._others] = formPath;
-    //   const arrayIndexer = Number(indexer);
-    //   if (Number.isNaN(arrayIndexer)) {
-    //     const binding = state.formFieldBindings().find((x) => x.state().name() === state.name());
-    //     if (binding) {
-    //       const component = binding.injector.get(LabeledControl, null);
-    //       return {
-    //         msgKey: "validation.objectError",
-    //         params: {
-    //           index: component?.labels[indexer](),
-    //         },
-    //       };
-    //     }
-
-    //     return {
-    //       msgKey: "validation.objectError",
-    //       params: {
-    //         index: indexer,
-    //       },
-    //     };
-    //   }
-    //   return {
-    //     msgKey: "validation.arrayError",
-    //     params: {
-    //       index: arrayIndexer + 1,
-    //     },
-    //   };
-    // }
-
-    return {
-      msgKey: value.message,
-      params: {},
-    };
   }
 }

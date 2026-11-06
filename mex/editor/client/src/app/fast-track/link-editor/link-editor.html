@@ -4,11 +4,7 @@
     <input matInput type="url" [formField]="linkForm.url" (blur)="touch.emit()" />
     @for (error of linkForm.url().errors(); track $index) {
       <mat-error>
-        @let errorMessage = error | validationErrorMessage;
-        {{
-          errorMessage.msgKey
-            | transloco: { ...errorMessage.params, field: t("link-editor.link.url") }
-        }}
+        <mex-field-error [error]="error" [fieldLabel]="t('link-editor.link.url')"></mex-field-error>
       </mat-error>
     }
   </mat-form-field>
@@ -24,20 +20,18 @@
 
     @for (error of linkForm.title().errors(); track $index) {
       <mat-error>
-        @let errorMessage = error | validationErrorMessage;
-        {{
-          errorMessage.msgKey
-            | transloco: { ...errorMessage.params, field: t("link-editor.link.title") }
-        }}
+        <mex-field-error
+          [error]="error"
+          [fieldLabel]="t('link-editor.link.title')"
+        ></mex-field-error>
       </mat-error>
     }
     @for (error of linkForm.language().errors(); track $index) {
       <mat-error>
-        @let errorMessage = error | validationErrorMessage;
-        {{
-          errorMessage.msgKey
-            | transloco: { ...errorMessage.params, field: t("link-editor.link.language") }
-        }}
+        <mex-field-error
+          [error]="error"
+          [fieldLabel]="t('link-editor.link.language')"
+        ></mex-field-error>
       </mat-error>
     }
   </mat-form-field>

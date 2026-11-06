@@ -121,14 +121,21 @@ export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
     const item = this.createItem()();
     this.ids.update((ids) => [...ids, this.nextId++]);
     this.value.update((arr) => [...arr, item]);
-    // this.touch.emit();
+
+    // if its already touched, mark new added fields also as touched
+    if (this.formField.state().touched()) {
+      const t = this.tree();
+      const lastItem = t[t.length - 1];
+      if (lastItem) {
+        lastItem().markAsTouched();
+      }
+    }
   }
 
   protected remove(index: number): void {
     if (!this.canRemove()) return;
     this.ids.update((ids) => ids.filter((_, i) => i !== index));
     this.value.update((arr) => arr.filter((_, i) => i !== index));
-    // this.touch.emit();
   }
 
   protected move(index: number, delta: -1 | 1): void {
@@ -136,7 +143,6 @@ export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
     if (!this.editable() || target < 0 || target >= this.value().length) return;
     this.ids.update((ids) => swap(ids, index, target));
     this.value.update((arr) => swap(arr, index, target));
-    // this.touch.emit();
   }
 }
 

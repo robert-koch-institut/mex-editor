@@ -10,6 +10,8 @@ import { type PreviewContactPoint, PreviewContactPointSchema } from "./generated
 import { type PreviewOrganization, PreviewOrganizationSchema } from "./generated/organization";
 import type { PreviewOrganizationalUnit } from "./generated/organizational-unit";
 import { type PreviewPerson, PreviewPersonSchema } from "./generated/person";
+import type { LinkLanguage } from "./generated/shared";
+import { LinkLanguageSchema } from "./generated/shared";
 
 /**
  * UnionType for all preview items.
@@ -57,3 +59,13 @@ export const CreateOrPreviewOrganizationSchema = z.union([
  * UnionType for CreateContactPoint and PreviewContactPoint.
  */
 export type CreateOrPreviewOrganization = z.infer<typeof CreateOrPreviewOrganizationSchema>;
+
+/**
+ * Gives the given string as LinkLanguage. If its not a valid LinkLanuage it will fallback to "de".
+ * @param value The given value to give back as LinkLanguage.
+ * @returns Returns value as LinkLanguage; if its no valid LinkLanguage it will fallback to "de".
+ */
+export function asLinkLanguage(value: string): LinkLanguage {
+  const result = LinkLanguageSchema.safeParse(value);
+  return result.success ? result.data : "de";
+}

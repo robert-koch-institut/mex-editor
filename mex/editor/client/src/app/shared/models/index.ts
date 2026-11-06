@@ -10,8 +10,8 @@ import { type PreviewContactPoint, PreviewContactPointSchema } from "./generated
 import { type PreviewOrganization, PreviewOrganizationSchema } from "./generated/organization";
 import type { PreviewOrganizationalUnit } from "./generated/organizational-unit";
 import { type PreviewPerson, PreviewPersonSchema } from "./generated/person";
-import type { LinkLanguage } from "./generated/shared";
-import { LinkLanguageSchema } from "./generated/shared";
+import type { LinkLanguage, TextLanguage } from "./generated/shared";
+import { LinkLanguageSchema, TextLanguageSchema } from "./generated/shared";
 
 /**
  * UnionType for all preview items.
@@ -61,11 +61,21 @@ export const CreateOrPreviewOrganizationSchema = z.union([
 export type CreateOrPreviewOrganization = z.infer<typeof CreateOrPreviewOrganizationSchema>;
 
 /**
- * Gives the given string as LinkLanguage. If its not a valid LinkLanuage it will fallback to "de".
+ * Gives the given string as LinkLanguage. If its not a valid LinkLanguage it will fallback to "de".
  * @param value The given value to give back as LinkLanguage.
  * @returns Returns value as LinkLanguage; if its no valid LinkLanguage it will fallback to "de".
  */
 export function asLinkLanguage(value: string): LinkLanguage {
   const result = LinkLanguageSchema.safeParse(value);
+  return result.success ? result.data : "de";
+}
+
+/**
+ * Gives the given string as TextLanguage. If its not a valid TextLanguage it will fallback to "de".
+ * @param value The given value to give back as TextLanguage.
+ * @returns Returns value as TextLanguage; if its no valid TextLanguage it will fallback to "de".
+ */
+export function asTextLanguage(value: string): TextLanguage {
+  const result = TextLanguageSchema.safeParse(value);
   return result.success ? result.data : "de";
 }

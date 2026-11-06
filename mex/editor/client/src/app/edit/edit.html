@@ -1,0 +1,6 @@
+<h1 class="page-title">Edit Page</h1>
+<div>Current ID: {{ entityId() }}</div>
+
+<h2>Content</h2>
+@let e = entity.value();
+<pre>{{ e | json }}</pre>

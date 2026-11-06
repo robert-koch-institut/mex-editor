@@ -13,14 +13,18 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { MatOption, MatPrefix, MatSelect } from "@angular/material/select";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { Router } from "@angular/router";
 import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 import type { DateTime } from "luxon";
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
 import type { Frequency } from "../../shared/models/generated/resource";
+import { SubmissionError } from "../../shared/models/submission-result";
+import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import { Datepicker } from "../datepicker/datepicker";
 import { Fieldset } from "../fieldset/fieldset";
 import { ReferenceSelect } from "../reference-select/reference-select";
@@ -28,6 +32,7 @@ import {
   type FastTrackResourceModel,
   FastTrackResourceModelSchema,
 } from "./fast-track-resource.models";
+import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
 
 @Component({
   selector: "mex-fast-track-resource",
@@ -46,6 +51,7 @@ import {
     MatInput,
     MatOption,
     MatPrefix,
+    MatProgressSpinner,
     MatSelect,
     MatSlideToggle,
     ReferenceSelect,
@@ -60,8 +66,12 @@ import {
  */
 export class FastTrackResource {
   private readonly translocoService = inject(TranslocoService);
-  protected readonly conceptOptions = inject(ConceptLookups);
+
+  private readonly router = inject(Router);
+  private readonly notifier = inject(ToastNotifier);
   protected readonly resourceSchema = FastTrackResourceModelSchema;
+  protected readonly conceptOptions = inject(ConceptLookups);
+  protected readonly submission = inject(FastTrackResourceSubmission);
 
   isPrefillChecked = signal(false);
   model = signal<FastTrackResourceModel>({
@@ -87,10 +97,45 @@ export class FastTrackResource {
     contributingUnit: [],
     contributor: [],
   });
-  resourceForm = form(this.model, (schema) => {
-    validateStandardSchema(schema, FastTrackResourceModelSchema);
-    disabled(schema.rights, { when: this.isPrefillChecked });
-  });
+
+  resourceForm = form(
+    this.model,
+    (schema) => {
+      validateStandardSchema(schema, FastTrackResourceModelSchema);
+      disabled(schema.rights, { when: this.isPrefillChecked });
+    },
+    {
+      submission: {
+        action: async (field) => {
+          const validModel = field().value();
+          const submitResult = await this.submission.submit(validModel);
+          if (submitResult.success) {
+            this.router.navigate(["edit", submitResult.response.stableTargetId]);
+            this.notifier.success(
+              this.translocoService.translate("fasttrack.resource.toast.success.message"),
+              this.translocoService.translate("fasttrack.resource.toast.success.title"),
+            );
+          } else if (submitResult.error instanceof SubmissionError) {
+            this.notifier.submissionError(
+              this.translocoService.translate("fasttrack.resource.toast.submissionError.message"),
+              this.translocoService.translate("fasttrack.resource.toast.submissionError.title"),
+              submitResult.error as SubmissionError<{ $type: string }>,
+            );
+          } else {
+            this.notifier.error(
+              this.translocoService.translate("fasttrack.resource.toast.error.message"),
+              this.translocoService.translate("fasttrack.resource.toast.error.title"),
+              submitResult.error,
+            );
+          }
+        },
+        onInvalid: (field) => {
+          const firstError = field().errorSummary()[0];
+          firstError?.fieldTree().focusBoundControl();
+        },
+      },
+    },
+  );
 
   prefillRights(fill: boolean) {
     this.model.update((x) => {
@@ -126,10 +171,5 @@ export class FastTrackResource {
         keywords: { ...x.keywords, [lang]: [...unique.values()] },
       };
     });
-  }
-
-  onSubmit() {
-    // eslint-disable-next-line no-console
-    console.log("FastTrackResource::onSubmit", this.resourceForm(), this.model());
   }
 }

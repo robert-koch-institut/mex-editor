@@ -22,7 +22,7 @@ class FakeCreateContactPointForm {
   isValid = model<boolean>(false);
 }
 
-function setup(data: CreateItemDialogData) {
+async function setup(data: CreateItemDialogData) {
   const closeSpy = vi.fn();
 
   TestBed.configureTestingModule({
@@ -39,52 +39,53 @@ function setup(data: CreateItemDialogData) {
 
   const fixture = TestBed.createComponent(CreateItemDialog);
   fixture.detectChanges();
+  await fixture.whenStable();
   return { fixture, closeSpy, component: fixture.componentInstance };
 }
 
 describe("CreateItemDialog", () => {
-  it("should create", () => {
-    const { component } = setup({});
+  it("should create", async () => {
+    const { component } = await setup({});
     expect(component).toBeTruthy();
   });
 
-  it("shows both tabs by default", () => {
-    const { component } = setup({});
+  it("shows both tabs by default", async () => {
+    const { component } = await setup({});
     expect(component.tabs().map((t) => t.$type)).toEqual(["Person", "ContactPoint"]);
   });
 
-  it("hides the tab header if there is only one allowed type", () => {
-    const { component, fixture } = setup({ allowedTypes: ["Person"] });
+  it("hides the tab header if there is only one allowed type", async () => {
+    const { component, fixture } = await setup({ allowedTypes: ["Person"] });
     expect(component.tabs().length).toEqual(1);
     fixture.debugElement.queryAll(By.css(".mat-tab-header")).forEach((header) => {
       expect(header.nativeElement.style.display).toBe("none");
     });
   });
 
-  it("restricts the tabs to allowedTypes when provided", () => {
-    const { component } = setup({ allowedTypes: ["Person"] });
+  it("restricts the tabs to allowedTypes when provided", async () => {
+    const { component } = await setup({ allowedTypes: ["Person"] });
     expect(component.tabs().map((t) => t.$type)).toEqual(["Person"]);
   });
 
-  it("starts on Person by default", () => {
-    const { component } = setup({});
+  it("starts on Person by default", async () => {
+    const { component } = await setup({});
     expect(component.tabs()[component.selectedTabIndex()].$type).toBe("Person");
   });
 
-  it("starts on the given initialSelectedTab", () => {
-    const { component } = setup({ initialSelectedTab: "ContactPoint" });
+  it("starts on the given initialSelectedTab", async () => {
+    const { component } = await setup({ initialSelectedTab: "ContactPoint" });
     expect(component.tabs()[component.selectedTabIndex()].$type).toBe("ContactPoint");
   });
 
-  it("disables the save button while the active tab's data is invalid", () => {
-    const { fixture } = setup({});
+  it("disables the save button while the active tab's data is invalid", async () => {
+    const { fixture } = await setup({});
     const saveButton = fixture.debugElement.queryAll(By.css("button"))[1]
       .nativeElement as HTMLButtonElement;
     expect(saveButton.disabled).toBe(true);
   });
 
-  it("enables the save button once the active tab's data becomes valid", () => {
-    const { fixture, component } = setup({});
+  it("enables the save button once the active tab's data becomes valid", async () => {
+    const { fixture, component } = await setup({});
     component.tabs.update((tabs) => {
       return tabs.map((t) => {
         if (t.$type === "Person") {
@@ -104,16 +105,16 @@ describe("CreateItemDialog", () => {
     expect(saveButton.disabled).toBe(false);
   });
 
-  it("does not close on Enter while the active tab is invalid", () => {
-    const { fixture, closeSpy } = setup({});
+  it("does not close on Enter while the active tab is invalid", async () => {
+    const { fixture, closeSpy } = await setup({});
     fixture.nativeElement.dispatchEvent(
       new KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
     );
     expect(closeSpy).not.toHaveBeenCalled();
   });
 
-  it("closes with the active tab's data on Enter once it's valid", () => {
-    const { fixture, component, closeSpy } = setup({});
+  it("closes with the active tab's data on Enter once it's valid", async () => {
+    const { fixture, component, closeSpy } = await setup({});
     const personData = { $type: "CreatePerson" as const, givenName: "Jane", familyName: "Doe" };
     component.tabs.update((tabs) => {
       return tabs.map((t) => {
@@ -136,8 +137,8 @@ describe("CreateItemDialog", () => {
     expect(closeSpy).toHaveBeenCalledWith(personData);
   });
 
-  it("closes with the currently SELECTED tab's data, not another valid tab's", () => {
-    const { fixture, component, closeSpy } = setup({});
+  it("closes with the currently SELECTED tab's data, not another valid tab's", async () => {
+    const { fixture, component, closeSpy } = await setup({});
     component.personTab.isValid = true;
     component.personTab.data = { $type: "CreatePerson", givenName: "Jane", familyName: "Doe" };
 

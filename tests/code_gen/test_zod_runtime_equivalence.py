@@ -1,5 +1,4 @@
 import shutil
-import subprocess
 import tempfile
 from pathlib import Path
 
@@ -27,6 +26,10 @@ export default defineConfig({ test: { include: ["*.spec.ts"] } });
 
 
 @pytest.mark.integration
+@pytest.mark.skipif(
+    not CLIENT_NODE_MODULES.is_dir(),
+    reason="frontend not installed -- run `uv run install-frontend` first",
+)
 def test_generated_zod_agrees_with_pydantic_at_runtime() -> None:
     """Execute the emitted Zod against the same corpus pydantic is fed.
 
@@ -37,9 +40,6 @@ def test_generated_zod_agrees_with_pydantic_at_runtime() -> None:
     thing: same `equivalence_cases.json`, byte-identical payloads, so any
     disagreement between the two validators fails the build.
     """
-    if not CLIENT_NODE_MODULES.is_dir():
-        pytest.skip("frontend not installed -- run `uv run install-frontend` first")
-
     # Inside CLIENT so node resolves zod/vitest from the client's node_modules
     # -- pytest's tmp_path lives outside the client, where that upward lookup
     # would fail. `tmp` prefix so the repo's existing `tmp*/` ignore rule
@@ -61,9 +61,7 @@ def test_generated_zod_agrees_with_pydantic_at_runtime() -> None:
         shutil.copyfile(SPEC, fixture_dir / "runtime_equivalence.spec.ts")
         (fixture_dir / "vitest.config.ts").write_text(VITEST_CONFIG)
 
-        try:
-            exec_npx(["vitest", "run", "--root", fixture_dir.as_posix()])
-        except subprocess.CalledProcessError as error:
-            pytest.fail(f"generated Zod disagrees with pydantic (vitest: {error})")
+        # A non-zero vitest exit raises CalledProcessError, failing the test.
+        exec_npx(["vitest", "run", "--root", fixture_dir.as_posix()])
     finally:
         shutil.rmtree(fixture_dir, ignore_errors=True)

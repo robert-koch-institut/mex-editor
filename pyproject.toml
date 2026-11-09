@@ -67,7 +67,7 @@ addopts = [
     "--cov",
     "--no-cov-on-fail",
     "--cov-report=term-missing:skip-covered",
-    "--cov-fail-under=80",
+    "--cov-fail-under=95",
     "--cov-branch",
     "--pdbcls=IPython.terminal.debugger:TerminalPdb",
     "--random-order-bucket=global",
@@ -105,7 +105,6 @@ ignore = [
     "TRY003",  # Allow long exception message at the raise site (for pydantic)
 ]
 select = ["ALL"]
-
 
 [tool.ruff.lint.per-file-ignores]
 "docs/**" = [

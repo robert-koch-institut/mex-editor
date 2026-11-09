@@ -22,7 +22,7 @@ const en = {
 };
 /* eslint-enable @typescript-eslint/naming-convention */
 
-const [_, ...rest] = translocoProviders;
+const [_, ...translocoTestProviders] = translocoProviders;
 
 const testProviders = [
   provideRouter([]),
@@ -33,7 +33,7 @@ const testProviders = [
     translocoConfig,
     preloadLangs: true,
   }).providers,
-  rest,
+  translocoTestProviders,
   materialDefaultOptionProviders,
   {
     provide: ConceptLookups,

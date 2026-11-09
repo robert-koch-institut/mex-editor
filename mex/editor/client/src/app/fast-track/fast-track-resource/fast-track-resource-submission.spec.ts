@@ -12,7 +12,6 @@ import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
 const RULE_SET_URL = "api/v0/backend/rule-set";
 
 const THEME = "https://mex.rki.de/item/theme-1";
-const RESOURCE_TYPE_GENERAL = "https://mex.rki.de/item/resource-type-general-2";
 const RESOURCE_CREATION_METHOD = "https://mex.rki.de/item/resource-creation-method-1";
 const FREQUENCY = "https://mex.rki.de/item/frequency-1";
 
@@ -218,14 +217,12 @@ describe("FastTrackResourceSubmission", () => {
       const additive = await sentAdditive(
         makeModel({
           theme: [THEME],
-          resourceTypeGeneral: [RESOURCE_TYPE_GENERAL],
           resourceCreationMethod: [RESOURCE_CREATION_METHOD],
           accrualPeriodicity: FREQUENCY,
         }),
       );
 
       expect(additive["theme"]).toEqual([THEME]);
-      expect(additive["resourceTypeGeneral"]).toEqual([RESOURCE_TYPE_GENERAL]);
       expect(additive["resourceCreationMethod"]).toEqual([RESOURCE_CREATION_METHOD]);
       expect(additive["accrualPeriodicity"]).toBe(FREQUENCY);
     });

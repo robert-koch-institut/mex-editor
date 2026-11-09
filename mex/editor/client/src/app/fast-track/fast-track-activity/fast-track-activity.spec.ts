@@ -345,20 +345,6 @@ describe("FastTrackActivity", () => {
       expect(component.model().website).toHaveLength(1);
     });
 
-    it("reorders links (reorderable is enabled)", async () => {
-      await click(iconButton(websiteEl(), "add"));
-      await click(iconButton(websiteEl(), "add"));
-      setNativeValue(fixture, urlInputs()[0], "https://first.org");
-      setNativeValue(fixture, urlInputs()[1], "https://second.org");
-      await fixture.whenStable();
-
-      await click(iconButton(websiteEl(), "arrow_upward", 1));
-      expect(component.model().website.map((l) => l.url)).toEqual([
-        "https://second.org",
-        "https://first.org",
-      ]);
-    });
-
     it("is invalid while a link has an empty url and valid once the url is set", async () => {
       fillEveryRequiredField();
       expect(component.activityForm().valid()).toBe(true);

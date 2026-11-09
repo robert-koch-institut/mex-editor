@@ -8,10 +8,9 @@ import { PreviewPersonSchema } from "../../shared/models/generated/person";
 import {
   FrequencySchema,
   ResourceCreationMethodSchema,
-  ResourceTypeGeneralSchema,
 } from "../../shared/models/generated/resource";
 import { TextSchema, ThemeSchema } from "../../shared/models/generated/shared";
-import { luxonDateTimeNullableSchema } from "../../shared/models/zod-types";
+import { luxonDateTimeNullableSchema, recommended } from "../../shared/models/zod-types";
 
 /**
  * Schema for UnionType for CreatePerson and PreviewPerson
@@ -58,19 +57,18 @@ export const FastTrackResourceModelSchema = z.object({
   }),
   resourceCreationMethod: ResourceCreationMethodSchema.array().nonempty(),
   accrualPeriodicity: FrequencySchema.nonoptional(),
-  provenance: TextSchema.shape.value.nonempty(),
-  rights: TextSchema.shape.value.nonempty(),
+  provenance: TextSchema.shape.value,
+  rights: TextSchema.shape.value,
 
   // recommended fields
-  creator: CreateOrPreviewPersonSchema.array(),
-  contributor: CreateOrPreviewPersonSchema.array(),
-  contributingUnit: PreviewOrganizationalUnitSchema.array(),
-  spatial: z.string(),
-  hasLegalBasis: z.string(),
-  start: luxonDateTimeNullableSchema(),
-  end: luxonDateTimeNullableSchema(),
-  resourceTypeGeneral: ResourceTypeGeneralSchema.array(),
-  theme: ThemeSchema.array(),
+  creator: recommended(CreateOrPreviewPersonSchema.array()),
+  contributor: recommended(CreateOrPreviewPersonSchema.array()),
+  contributingUnit: recommended(PreviewOrganizationalUnitSchema.array()),
+  spatial: recommended(z.string()),
+  hasLegalBasis: recommended(z.string()),
+  start: recommended(luxonDateTimeNullableSchema()),
+  end: recommended(luxonDateTimeNullableSchema()),
+  theme: recommended(ThemeSchema.array()),
 });
 
 /**

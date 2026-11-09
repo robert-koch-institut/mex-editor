@@ -61,7 +61,7 @@ export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
   readonly createItem = input.required<() => T>();
   readonly minItems = input(0);
   readonly maxItems = input<number | undefined>(undefined);
-  readonly reorderable = input(true);
+  readonly reorderable = input(false);
 
   // --- Optional form state (filled by [formField]) ---
   readonly disabled = input(false);

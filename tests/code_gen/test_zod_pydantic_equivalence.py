@@ -82,13 +82,12 @@ def expected_nullability_suffix(model: type, py_name: str) -> str:
     what suffix a non-literal field's zod expression should end with.
     """
     spec = spec_of(model, py_name)
-    if spec.nullable and not spec.required:
-        return ".nullish()"
-    if spec.nullable:
-        return ".nullable()"
-    if not spec.required:
-        return ".optional()"
-    return ""
+    return {
+        (True, False): ".nullish()",
+        (True, True): ".nullable()",
+        (False, False): ".optional()",
+        (False, True): "",
+    }[spec.nullable, spec.required]
 
 
 # ---------------------------------------------------------------------------

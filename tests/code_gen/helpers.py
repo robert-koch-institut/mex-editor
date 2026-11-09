@@ -52,8 +52,8 @@ def declaration_order_ok(text: str) -> bool:
         for i, line in enumerate(lines)
         if not re.match(r"\s*(/\*\*|\*|\*/)", line)
     ]
-    for name, at in declared_at.items():
-        for i, line in code_lines:
-            if i != at and re.search(rf"\b{re.escape(name)}\b", line) and i < at:
-                return False
-    return True
+    return not any(
+        i < at and re.search(rf"\b{re.escape(name)}\b", line)
+        for name, at in declared_at.items()
+        for i, line in code_lines
+    )

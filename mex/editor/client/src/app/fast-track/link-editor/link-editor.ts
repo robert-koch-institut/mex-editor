@@ -42,7 +42,12 @@ const LinkDraftSchema = z.object({
 
 type LinkDraft = z.infer<typeof LinkDraftSchema>;
 
-function toDraft(link: Link | null | undefined): LinkDraft {
+/**
+ * Converts a link to a draft link to be used in the form. Empty strings are used for null and undefined values.
+ * @param link The link to convert.
+ * @returns The draft link.
+ */
+export function toDraft(link: Link | null | undefined): LinkDraft {
   return {
     language: (link?.language as LinkLanguage | null | undefined) ?? "",
     title: link?.title ?? "",
@@ -50,11 +55,22 @@ function toDraft(link: Link | null | undefined): LinkDraft {
   };
 }
 
-function isEmptyDraft(d: LinkDraft): boolean {
+/**
+ * Checks if a draft is empty. A draft is considered empty if all its fields are empty strings.
+ * @param d The draft to check.
+ * @returns Returns true if the draft is empty; otherwise false.
+ */
+export function isEmptyDraft(d: LinkDraft): boolean {
   return d.language === "" && d.title === "" && d.url === "";
 }
 
-function fromDraft(d: LinkDraft, nullable: boolean): Link | null {
+/**
+ * Converts a draft link back to a link. Empty strings are converted to null values. If the draft is empty and nullable is true, null is returned.
+ * @param d The draft to convert.
+ * @param nullable Define is null is allowed.
+ * @returns Returns the link or null if the draft is empty and nullable is true.
+ */
+export function fromDraft(d: LinkDraft, nullable: boolean): Link | null {
   if (nullable && isEmptyDraft(d)) {
     return null;
   }
@@ -65,7 +81,13 @@ function fromDraft(d: LinkDraft, nullable: boolean): Link | null {
   };
 }
 
-function sameDraft(a: LinkDraft, b: LinkDraft): boolean {
+/**
+ * Checks if both drafts are the same (comparing their values).
+ * @param a The first draft to compare.
+ * @param b The second draft to compare.
+ * @returns Returns true if both drafts are the same; otherwise false.
+ */
+export function sameDraft(a: LinkDraft, b: LinkDraft): boolean {
   return a.language === b.language && a.title === b.title && a.url === b.url;
 }
 

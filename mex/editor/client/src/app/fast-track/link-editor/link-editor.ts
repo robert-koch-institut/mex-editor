@@ -23,17 +23,6 @@ import type { Link, LinkLanguage } from "../../shared/models/generated/shared";
 import { LinkSchema } from "../../shared/models/generated/shared";
 import { LinkLanguageMenu } from "./link-language-menu/link-language-menu";
 
-/** Internes Formularmodell: kein null/undefined, damit native Inputs funktionieren. */
-export interface LinkDraft {
-  language: string;
-  title: string;
-  url: string;
-}
-
-/**
- * Optionales Draft-Feld: '' bedeutet "nicht gesetzt" (null).
- * Delegiert an das Originalschema; der Output-Typ bleibt `string`.
- */
 function draftField(inner: z.ZodType) {
   return z.string().superRefine((value, ctx) => {
     const result = inner.safeParse(value === "" ? null : value);
@@ -45,17 +34,15 @@ function draftField(inner: z.ZodType) {
   });
 }
 
-/**
- * LinkDraftSchema API documentation.
- */
-export const LinkDraftSchema = z.object({
+const LinkDraftSchema = z.object({
   language: draftField(LinkSchema.shape.language),
   title: draftField(LinkSchema.shape.title),
   url: LinkSchema.shape.url,
 });
 
-/** null, undefined und ein leerer Link ergeben denselben leeren Draft. */
-export function toDraft(link: Link | null | undefined): LinkDraft {
+type LinkDraft = z.infer<typeof LinkDraftSchema>;
+
+function toDraft(link: Link | null | undefined): LinkDraft {
   return {
     language: (link?.language as LinkLanguage | null | undefined) ?? "",
     title: link?.title ?? "",
@@ -63,15 +50,11 @@ export function toDraft(link: Link | null | undefined): LinkDraft {
   };
 }
 
-/**
- * isEmptyDraft API documentation.
- */
-export function isEmptyDraft(d: LinkDraft): boolean {
+function isEmptyDraft(d: LinkDraft): boolean {
   return d.language === "" && d.title === "" && d.url === "";
 }
 
-/** Mit `nullable` wird ein komplett leerer Draft zu null statt zu einem leeren Link-Objekt. */
-export function fromDraft(d: LinkDraft, nullable: boolean): Link | null {
+function fromDraft(d: LinkDraft, nullable: boolean): Link | null {
   if (nullable && isEmptyDraft(d)) {
     return null;
   }
@@ -82,10 +65,7 @@ export function fromDraft(d: LinkDraft, nullable: boolean): Link | null {
   };
 }
 
-/**
- * sameDraft API documentation.
- */
-export function sameDraft(a: LinkDraft, b: LinkDraft): boolean {
+function sameDraft(a: LinkDraft, b: LinkDraft): boolean {
   return a.language === b.language && a.title === b.title && a.url === b.url;
 }
 
@@ -107,12 +87,8 @@ export function sameDraft(a: LinkDraft, b: LinkDraft): boolean {
  * Component to edit link objects.
  */
 export class LinkEditor implements FormValueControl<Link | null> {
-  readonly asLinkLanguage = asLinkLanguage;
-
-  /** null is a valid value (no link). It is shown as an empty editor. */
   readonly value = model<Link | null>({ url: "" });
 
-  /** If true, emptying all three fields sets the value to null instead of an empty link object. */
   readonly nullable = input(false);
   readonly disabled = input(false);
   readonly readonly = input(false);
@@ -122,6 +98,8 @@ export class LinkEditor implements FormValueControl<Link | null> {
   readonly touch = output<void>();
 
   readonly touched = input(false);
+
+  readonly asLinkLanguage = asLinkLanguage;
 
   private readonly draft = linkedSignal<Link | null, LinkDraft>({
     source: () => this.value(),

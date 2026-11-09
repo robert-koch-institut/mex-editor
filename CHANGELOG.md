@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - service to raise toasts in order do notify/inform users about successfull or errored operations
 
 ### Changes
-- selection behaviour of reference-select type filter
+
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0- selection behaviour of reference-select type filter
 - models are now defined by zod schemas
 - fasttrack-resource form with validation
 - fieldsets category is now required and no longer optional

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - recommended category
 - error handling for lookups
 - code generator to create zod schemas based on pydantic models
@@ -19,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - service to raise toasts in order do notify/inform users about successful or errored operations
 
 ### Changes
+
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
 - selection behaviour of reference-select type filter
 - models are now defined by zod schemas
 - fasttrack-resource form with validation

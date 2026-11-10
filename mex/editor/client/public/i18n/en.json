@@ -16,8 +16,8 @@
   "datepicker.precision.year": "Year",
   "datepicker.validation.parse": "Please use format {{format}}",
   "errors.services.concept-lookup.loading": {
-    "message": "Beim Laden des Lookups '{{lookupName}}' ist ein Fehler aufgetreten. Please reload the page.",
-    "title": "Fehler beim Laden"
+    "message": "An error occurred while loading the lookup '{{lookupName}}'. Please reload the page.",
+    "title": "Error while loading"
   },
   "fasttrack": {
     "resource": {
@@ -35,9 +35,12 @@
         "saving": "Saving {{Resource}}..."
       },
       "toast": {
-        "submissionFailure": {
-          "message": "Unfortunately, the {{Resource}} could not be saved. An unexpected error occurred.\nYou can send an email to the MeX team to inform them about the issue.",
-          "sendMail": "Send email to MeX",
+        "error": {
+          "message": "Unfortunately, the {{Resource}} could not be saved. An unexpected error occurred.",
+          "title": "Error while saving"
+        },
+        "submissionError": {
+          "message": "Unfortunately, the {{Resource}} could not be saved. An unexpected error occurred.\nYou can send an email to the MEx team to inform them about the issue.",
           "title": "Error while saving"
         },
         "success": {
@@ -48,7 +51,7 @@
     }
   },
   "footer.greetings": "Created with ❤️ by MEx",
-  "input.placeholder": "Please fillout",
+  "input.placeholder": "Please fill out",
   "navbar.create-link.text": "Create {{{{entity_type}}}}",
   "reference-select": {
     "placeholder.empty": "Type to filter, \"*\" as placeholder",
@@ -62,6 +65,7 @@
   },
   "select.none-option": "None",
   "select.placeholder": "Please select",
+  "toast.submissionError.sendMail": "Send email to MEx",
   "user-logout.logout-button.text": "Logout",
   "validation": {
     "custom": "{{field}} is invalid",

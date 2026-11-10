@@ -43,6 +43,7 @@ export function recommended<T extends ZodType>(fieldSchema: T): T {
 /**
  * Marks the given fieldSchema as recommended.
  * @param fieldSchema The field to mark as recommended.
+ * @returns Returns true if the given field is recommended; otherwise false.
  */
 export function isRecommended<T extends ZodType>(fieldSchema: T): boolean {
   const meta = fieldSchema.meta();

@@ -42,7 +42,7 @@ function typeInto(input: HTMLInputElement, text: string) {
 }
 
 // eslint-disable-next-line max-lines-per-function
-describe("Datepicker", () => {
+describe("Datepicker", async () => {
   let fixture: ComponentFixture<Datepicker>;
   let component: Datepicker;
   let transloco: TranslocoService;

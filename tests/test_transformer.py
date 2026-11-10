@@ -59,3 +59,15 @@ def test_transform_pofile_to_message_format_json_duplicate_key(
     po = polib.pofile(pofile_content)
     with pytest.raises(DuplicateKeyError):
         transform_pofile_to_message_format_json(po)
+
+
+def test_transform_pofile_to_message_format_json_skips_empty_msgid() -> None:
+    entries = [
+        polib.POEntry(msgid="", msgstr="ignored"),
+        polib.POEntry(
+            msgid="accessRestriction.singular", msgstr="Zugriffsbeschränkung"
+        ),
+    ]
+    assert transform_pofile_to_message_format_json(entries) == {
+        "accessRestriction": "Zugriffsbeschränkung"
+    }

@@ -105,3 +105,24 @@ def test_forwards_post_body(
     assert response.status_code == 201
     assert captured["method"] == "POST"
     assert b'"title"' in captured["data"]
+
+
+def test_logs_warning_on_5xx_response(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fake_request(**_: object) -> MagicMock:
+        return _make_upstream(status=502, content=b'{"detail":"bad gateway"}')
+
+    mock_warning = MagicMock()
+    monkeypatch.setattr("mex.editor.api.backend.requests.request", fake_request)
+    monkeypatch.setattr("mex.editor.api.backend.logger.warning", mock_warning)
+    response = client.get("/api/v0/backend/foo")
+
+    assert response.status_code == 502
+    assert response.json() == {"detail": "bad gateway"}
+    mock_warning.assert_called_once()
+    _, method, url, status_code = mock_warning.call_args.args
+    assert method == "GET"
+    assert url.endswith("v0/foo")
+    assert status_code == 502

@@ -22,6 +22,12 @@ export class ConceptLookups {
   frequencyOptions = this.buildConceptOptions("frequency");
   accessRestrictionOptions = this.buildConceptOptions("access-restriction");
 
+  private sortedValues(vocabulary: PaginatedItemsContainer<Concept>) {
+    const currentLang = this.transloco.activeLang();
+    const lookups = vocabulary.items.map((x) => this.lookupPipe.transform(x, currentLang));
+    return lookups.sort((a, b) => a.label.localeCompare(b.label));
+  }
+
   private buildConceptOptions(name: string) {
     const vocabReq = httpResource<PaginatedItemsContainer<Concept>>(
       () => `api/v0/vocabulary/${name}`,
@@ -33,19 +39,18 @@ export class ConceptLookups {
       if (error) {
         this.notifier.error(
           {
-            translocoKey: "errors.services.concept-lookup.loading.message",
+            msgKey: "errors.services.concept-lookup.loading.message",
             params: { lookupName: name },
           },
-          { translocoKey: "errors.services.concept-lookup.loading.title" },
+          { msgKey: "errors.services.concept-lookup.loading.title" },
           error,
         );
-        return [];
+        const snap = vocabReq.snapshot();
+        return snap.status == "resolved" ? this.sortedValues(snap.value) : [];
       }
 
       const vocab = vocabReq.value();
-      const currentLang = this.transloco.activeLang();
-      const lookups = vocab.items.map((x) => this.lookupPipe.transform(x, currentLang));
-      return lookups.sort((a, b) => a.label.localeCompare(b.label));
+      return this.sortedValues(vocab);
     });
   }
 }

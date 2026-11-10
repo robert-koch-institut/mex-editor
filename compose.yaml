@@ -20,12 +20,13 @@ services:
       - mex-editor
 
   mex-backend:
-    image: ghcr.io/robert-koch-institut/mex-backend:4.6.2@sha256:de00421715eb74758927b11ed49b16c06223c7036eeef98ca498375e3c2ba28d
+    image: ghcr.io/robert-koch-institut/mex-backend:4.8.0@sha256:ef85eb36838643acb57fa6646d3f6c232c1f9996ed1f77036842cb48b99d96cf
     ports:
       - 8080:8080
     environment:
       - MEX_BACKEND_API_KEY_DATABASE={"write":["write_key"]}
       - MEX_BACKEND_API_USER_DATABASE={"write":{"admin":"admin"}}
+      - MEX_BACKEND_HOST=0.0.0.0
       - MEX_BACKEND_VALKEY_URL=valkey://valkey:6379
       - MEX_GRAPH_URL=neo4j://neo4j:7687
       - MEX_IDENTITY_PROVIDER=graph
@@ -42,7 +43,7 @@ services:
         condition: service_healthy
 
   neo4j:
-    image: neo4j:2026.10.0-community@sha256:388c0e5c6d4543e3d0e6cee3d1e751c05ad9314aa73342cc63cd0ea0946e38bb
+    image: neo4j:2026.10.1-community@sha256:7dbd307cc8f35d6a061cf71659d3d8f783c3db9e8c2f5bb9d54f77921931952a
     environment:
       - NEO4J_AUTH=neo4j/password
     ports:

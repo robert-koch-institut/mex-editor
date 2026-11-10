@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - recommended category
 - error handling for lookups
 - code generator to create zod schemas based on pydantic models
@@ -19,8 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - service to raise toasts in order do notify/inform users about successfull or errored operations
 
 ### Changes
+
 - datepicker now uses string as value input (so use with native mex model values/types)
 - selection behaviour of reference-select type filter
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
 - models are now defined by zod schemas
 - fasttrack-resource form with validation
 - fieldsets category is now required and no longer optional
@@ -29,11 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   simplified its vocabularies to plain enums without concepts
 - trim served concepts to `identifier`, `prefLabel` and `altLabel`,
   which is all the editor client uses
-- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.1
-- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.0.0
-- bump neo4j to 2026.09.0 and mex-backend to 4.4.0
-- update mex-common to 3.4
-- update dependencies
+- bump neo4j to 2026.10 and mex-backend to 4.6
+- update mex-common to 3.6
+- update python to 3.15
 
 ### Deprecated
 
@@ -64,10 +65,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - renovate config changes for better angular experience
   - trying renovate dependency dashboard and check usage
 - pipes for typeToIconName, toLabel and toLookup
-- new control fasttrack reference-select that allows to search for existing entites or create them.
-- ConceptOptions renamed to ConecptLookups and now use the new ToLookupPipe (which uses the LabelPipe, moved all lookup and label creation to spefic pipes).
-- Grouped everything into fasttrack folder to meet the feature approach. Some components might be moved to shared
-- added sorting linters for imports in typescript files and angular component import parameter
+- new control fasttrack reference-select that allows to search
+  for existing entities or create them
+- ConceptOptions renamed to ConceptLookups and now use the new ToLookupPipe
+  (which uses the LabelPipe, moved all lookup and label creation to specific pipes).
+- Grouped everything into fasttrack folder to meet the feature approach.
+  Some components might be moved to shared
+- added sorting linters for imports in typescript files
+  and angular component import parameter
 - updated dependencies
 
 ### Fixed
@@ -101,7 +106,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial Layout with header (including theme switcher and language switcher with noop) and footer
+- Initial Layout with header (including theme switcher and language switcher with noop)
+  and footer
 - Localization with Transloco and script to create model .po to .json files
 - vitest/ui for better dev experience
 - typedoc to generate typescript documentation

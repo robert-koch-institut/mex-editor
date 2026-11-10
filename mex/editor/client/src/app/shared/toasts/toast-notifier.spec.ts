@@ -1,19 +1,16 @@
 import { TestBed } from "@angular/core/testing";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { TranslocoService } from "@jsverse/transloco";
 import { firstValueFrom } from "rxjs";
 import { vi } from "vitest";
 
-import type { SubmissionFailure } from "../models/submission-result";
+import { SubmissionError } from "../models/submission-result";
 import { ErrorToast } from "./error-toast";
-import { SubmissionFailureToast } from "./submission-failure-toast";
+import { SubmissionErrorToast } from "./submission-error-toast";
 import { SuccessToast } from "./success-toast";
 import { ToastNotifier } from "./toast-notifier";
 
-const failure: SubmissionFailure<unknown> = {
-  success: false,
-  payload: { $type: "ResourceRuleSetRequest" },
-  error: new Error("boom"),
-};
+const error = new SubmissionError({ $type: "ResourceRuleSetRequest" }, new Error("boom"));
 
 // eslint-disable-next-line max-lines-per-function
 describe("ToastNotifier", () => {
@@ -21,12 +18,18 @@ describe("ToastNotifier", () => {
   describe("what it asks MatSnackBar to open", () => {
     let notifier: ToastNotifier;
     let openFromComponent: ReturnType<typeof vi.fn>;
+    let translate: ReturnType<typeof vi.fn>;
 
     beforeEach(() => {
       openFromComponent = vi.fn();
       TestBed.configureTestingModule({
         providers: [{ provide: MatSnackBar, useValue: { openFromComponent } }],
       });
+      translate = vi
+        .spyOn(TestBed.inject(TranslocoService), "translate")
+        .mockImplementation((key, params) =>
+          params ? `translated(${key}, ${JSON.stringify(params)})` : `translated(${key})`,
+        );
       notifier = TestBed.inject(ToastNotifier);
     });
 
@@ -85,16 +88,16 @@ describe("ToastNotifier", () => {
       });
 
       it("passes title, message and the error to the toast", () => {
-        const error = new Error("boom");
+        const innerError = new Error("boom");
 
-        notifier.error("die Nachricht", "der Titel", error);
+        notifier.error("die Nachricht", "der Titel", innerError);
 
         expect(lastCall().config.data).toEqual({
           title: "der Titel",
           message: "die Nachricht",
-          error,
+          error: innerError,
         });
-        expect(lastCall().config.data.error).toBe(error);
+        expect(lastCall().config.data.error).toBe(innerError);
       });
 
       it("shows for 10 seconds by default (longer than a success)", () => {
@@ -122,33 +125,110 @@ describe("ToastNotifier", () => {
 
     describe("submissionFailure()", () => {
       it("opens a SubmissionFailureToast", () => {
-        notifier.submissionFailure("Nachricht", "Titel", failure);
+        notifier.submissionError("Nachricht", "Titel", error);
 
-        expect(lastCall().component).toBe(SubmissionFailureToast);
+        expect(lastCall().component).toBe(SubmissionErrorToast);
       });
 
       it("passes title, message and the failure to the toast", () => {
-        notifier.submissionFailure("die Nachricht", "der Titel", failure);
+        notifier.submissionError("die Nachricht", "der Titel", error);
 
         expect(lastCall().config.data).toEqual({
           title: "der Titel",
           message: "die Nachricht",
-          failure,
+          error: error,
         });
-        expect(lastCall().config.data.failure).toBe(failure);
+        expect(lastCall().config.data.error).toBe(error);
       });
 
       it("shows for 10 seconds by default, with the error styling", () => {
-        notifier.submissionFailure("m", "t", failure);
+        notifier.submissionError("m", "t", error);
 
         expect(lastCall().config.duration).toBe(10000);
         expect(lastCall().config.panelClass).toEqual(["toast", "error-toast"]);
       });
 
       it("accepts a custom duration", () => {
-        notifier.submissionFailure("m", "t", failure, 2500);
+        notifier.submissionError("m", "t", error, 2500);
 
         expect(lastCall().config.duration).toBe(2500);
+      });
+    });
+
+    describe("TextMessage handling", () => {
+      it("does not call transloco for plain string messages", () => {
+        notifier.success("die Nachricht", "der Titel");
+        notifier.error("die Nachricht", "der Titel", new Error("x"));
+        notifier.submissionError("die Nachricht", "der Titel", error);
+
+        expect(translate).not.toHaveBeenCalled();
+      });
+
+      it("translates a message given as msgKey", () => {
+        notifier.success({ msgKey: "toast.saved.message" }, "der Titel");
+
+        expect(translate).toHaveBeenCalledTimes(1);
+        expect(translate).toHaveBeenCalledWith("toast.saved.message", undefined);
+        expect(lastCall().config.data).toEqual({
+          title: "der Titel",
+          message: "translated(toast.saved.message)",
+        });
+      });
+
+      it("translates a title given as msgKey", () => {
+        notifier.success("die Nachricht", { msgKey: "toast.saved.title" });
+
+        expect(translate).toHaveBeenCalledTimes(1);
+        expect(translate).toHaveBeenCalledWith("toast.saved.title", undefined);
+        expect(lastCall().config.data).toEqual({
+          title: "translated(toast.saved.title)",
+          message: "die Nachricht",
+        });
+      });
+
+      it("forwards params to transloco", () => {
+        const params = { name: "Resource A", count: 3 };
+
+        notifier.success(
+          { msgKey: "toast.saved.message", params },
+          { msgKey: "toast.saved.title" },
+        );
+
+        expect(translate).toHaveBeenCalledWith("toast.saved.message", params);
+        expect(translate).toHaveBeenCalledWith("toast.saved.title", undefined);
+        expect(lastCall().config.data).toEqual({
+          title: "translated(toast.saved.title)",
+          message: `translated(toast.saved.message, ${JSON.stringify(params)})`,
+        });
+      });
+
+      it("translates message and title independently of each other for error()", () => {
+        const innerError = new Error("boom");
+
+        notifier.error({ msgKey: "toast.error.message" }, "Fehler", innerError);
+
+        expect(translate).toHaveBeenCalledTimes(1);
+        expect(lastCall().config.data).toEqual({
+          title: "Fehler",
+          message: "translated(toast.error.message)",
+          error: innerError,
+        });
+      });
+
+      it("translates message and title for submissionError()", () => {
+        notifier.submissionError(
+          { msgKey: "toast.submission.message", params: { id: 7 } },
+          { msgKey: "toast.submission.title" },
+          error,
+        );
+
+        expect(translate).toHaveBeenCalledTimes(2);
+        expect(lastCall().config.data).toEqual({
+          title: "translated(toast.submission.title)",
+          message: `translated(toast.submission.message, ${JSON.stringify({ id: 7 })})`,
+          error,
+        });
+        expect(lastCall().config.data.error).toBe(error);
       });
     });
 
@@ -170,8 +250,16 @@ describe("ToastNotifier", () => {
     let openSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
+      TestBed.configureTestingModule({
+        // providers: [{ provide: TranslocoService, useValue: { translate: createTranslateMock() } }],
+      });
       notifier = TestBed.inject(ToastNotifier);
       snackBar = TestBed.inject(MatSnackBar);
+      const transloco = TestBed.inject(TranslocoService);
+      vi.spyOn(transloco, "translate").mockImplementation((key, params) =>
+        params ? `translated(${key}, ${JSON.stringify(params)})` : `translated(${key})`,
+      );
+      vi.spyOn(transloco, "getDefaultLang").mockReturnValue("de");
       openSpy = vi.spyOn(snackBar, "openFromComponent");
     });
 
@@ -191,6 +279,20 @@ describe("ToastNotifier", () => {
       expect(toastText(".toast-icon")).toBe("check_circle");
     });
 
+    it("shows translated title and message when given as msgKey", async () => {
+      notifier.success(
+        { msgKey: "toast.saved.message", params: { name: "A" } },
+        { msgKey: "toast.saved.title" },
+      );
+
+      await vi.waitFor(() =>
+        expect(toastText(".toast-title")).toBe("translated(toast.saved.title)"),
+      );
+      expect(toastText(".toast-message")).toBe(
+        `translated(toast.saved.message, ${JSON.stringify({ name: "A" })})`,
+      );
+    });
+
     it("shows an error toast with the error icon", async () => {
       notifier.error("Das hat nicht geklappt.", "Fehler", new Error("boom"));
 
@@ -207,11 +309,11 @@ describe("ToastNotifier", () => {
     });
 
     it("shows a submission-failure toast with a mailto link", async () => {
-      notifier.submissionFailure("Speichern fehlgeschlagen.", "Fehler", failure);
+      notifier.submissionError("Speichern fehlgeschlagen.", "Fehler", error);
 
       await vi.waitFor(() => expect(document.querySelector(".toast-actions a")).not.toBeNull());
       const href = document.querySelector(".toast-actions a")!.getAttribute("href");
-      expect(href).toMatch(/^mailto:Mex@rki\.de\?subject=/);
+      expect(href).toMatch(/^mailto:mex@rki\.de\?subject=/);
     });
 
     it("dismisses (not by action) when the close button is clicked", async () => {
@@ -226,7 +328,7 @@ describe("ToastNotifier", () => {
     });
 
     it("dismisses WITH action when the mail link is clicked", async () => {
-      notifier.submissionFailure("m", "t", failure);
+      notifier.submissionError("m", "t", error);
       await vi.waitFor(() => expect(document.querySelector(".toast-actions a")).not.toBeNull());
       const link = document.querySelector(".toast-actions a") as HTMLAnchorElement;
       link.addEventListener("click", (event) => event.preventDefault()); // no real navigation in jsdom

@@ -1,5 +1,3 @@
-import type { SubmissionFailure } from "../models/submission-result";
-
 /**
  * Interface for ToastData.
  */
@@ -11,13 +9,6 @@ export interface ToastData {
 /**
  * Interface for ToastErrorData.
  */
-export interface ToastErrorData extends ToastData {
-  error?: Error;
-}
-
-/**
- * Interface for ToastSubmissionFailureData.
- */
-export interface ToastSubmissionFailureData<T> extends ToastData {
-  failure: SubmissionFailure<T>;
+export interface ToastErrorData<T extends Error = Error> extends ToastData {
+  error: T;
 }

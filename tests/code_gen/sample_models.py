@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 # ---------------------------------------------------------------------------
 
 
-class _PatternedString:  # noqa: PLW1641
+class _PatternedString:
     """A scalar-shaped type that validates against a regex.
 
     Not a `str` subclass: it carries its own pydantic-core schema, exactly like
@@ -26,12 +26,6 @@ class _PatternedString:  # noqa: PLW1641
     def __init__(self, value: str) -> None:
         self.value = value
 
-    def __repr__(self) -> str:
-        return f"{type(self).__name__}({self.value!r})"
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, type(self)) and self.value == other.value
-
     @classmethod
     def __get_pydantic_core_schema__(
         cls,
@@ -42,8 +36,6 @@ class _PatternedString:  # noqa: PLW1641
         from pydantic_core import core_schema  # noqa: PLC0415
 
         def validate(value: object) -> _PatternedString:
-            if isinstance(value, cls):
-                return value
             if not isinstance(value, str) or not re.fullmatch(cls._pattern, value):
                 msg = f"Invalid {cls.__name__}: {value!r}"
                 raise ValueError(msg)

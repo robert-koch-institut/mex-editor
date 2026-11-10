@@ -3,7 +3,7 @@ import {
   Component,
   computed,
   debounced,
-  ElementRef,
+  effect,
   inject,
   input,
   linkedSignal,
@@ -20,6 +20,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCheckbox } from "@angular/material/checkbox";
 import { MatChipsModule } from "@angular/material/chips";
+import { ErrorStateMatcher } from "@angular/material/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
@@ -85,9 +86,10 @@ export class ReferenceSelect<
   protected readonly transloco = inject(TranslocoService);
   private readonly labelPipe = new ToLabelPipe();
   private readonly dialog = inject(MatDialog);
+  private readonly formField = inject(FormField, { self: true, optional: true });
 
-  inputControl = viewChild.required("input", {
-    read: ElementRef<HTMLInputElement>,
+  inputControl = viewChild("input", {
+    read: MatInput,
   });
 
   readonly validEntityTypes = input<ReferenceSelectTypes[]>([
@@ -105,7 +107,17 @@ export class ReferenceSelect<
   protected readonly isInputFocused = signal(false);
 
   protected readonly searchQuery = signal("");
-  protected readonly searchEntityTypes = linkedSignal(() => this.validEntityTypes());
+  protected readonly searchEntityTypes = linkedSignal<
+    ReferenceSelectTypes[],
+    ReferenceSelectTypes[]
+  >({
+    source: this.validEntityTypes,
+    computation: (validTypes, previous) => {
+      const previousSelection = previous?.value ?? [];
+
+      return previousSelection.filter((type) => validTypes.includes(type));
+    },
+  });
 
   protected readonly labelPlaceholderParam = computed(() => ({
     value: this.validEntityTypeLabels(),
@@ -127,9 +139,13 @@ export class ReferenceSelect<
 
   protected readonly searchQueryDebounced = debounced(() => this.searchQuery(), 200);
   protected readonly searchResult = httpResource<PaginatedItemsContainer<PreviewItem>>(() => {
+    const userEntityTypes = this.searchEntityTypes();
+    const entityTypes =
+      userEntityTypes.length === 0 ? [...this.validEntityTypes()] : userEntityTypes;
+
     const params = {
       q: this.searchQueryDebounced.value().trim(),
-      entityType: this.searchEntityTypes().map((x) => `Merged${x}`),
+      entityType: entityTypes.map((x) => `Merged${x}`),
     };
     if (!params.q || params.entityType.length === 0) {
       return undefined;
@@ -148,8 +164,23 @@ export class ReferenceSelect<
     ),
   );
 
+  protected defaultErrorStateMatcher = inject(ErrorStateMatcher);
+  constructor() {
+    effect(() => {
+      const field = this.formField?.field();
+      const control = this.inputControl();
+
+      if (!control || !field) return;
+
+      if (this.defaultErrorStateMatcher.isSignalErrorState) {
+        const result = this.defaultErrorStateMatcher.isSignalErrorState(field);
+        control.errorState = result;
+      }
+    });
+  }
+
   focus(): void {
-    this.inputControl().nativeElement.focus();
+    this.inputControl()?.focus();
   }
 
   private uniqueById(items: T[]): T[] {
@@ -191,12 +222,21 @@ export class ReferenceSelect<
 
   protected toggleSearchEntityType(entityType: ReferenceSelectTypes) {
     const values = this.searchEntityTypes();
-    const update = values.includes(entityType)
-      ? values.filter((x) => x !== entityType)
-      : [...values, entityType];
-
-    this.searchEntityTypes.set(update);
+    const isToggled = values.length > 0 && values.includes(entityType);
+    if (!isToggled && !this.validEntityTypes().includes(entityType)) {
+      // if an invalid item will become toggled -> dont add/update
+      return;
+    }
+    const update = isToggled ? values.filter((x) => x !== entityType) : [...values, entityType];
+    if (this.areEqual(update, this.validEntityTypes())) {
+      this.searchEntityTypes.set([]);
+    } else {
+      this.searchEntityTypes.set(update);
+    }
   }
+
+  areEqual = (a: ReferenceSelectTypes[], b: ReferenceSelectTypes[]) =>
+    a.length === b.length && a.every((value) => b.includes(value));
 
   protected removeValue(item: T) {
     const update = isCreateItem(item)

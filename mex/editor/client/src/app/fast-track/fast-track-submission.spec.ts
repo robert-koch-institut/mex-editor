@@ -16,13 +16,14 @@ const RESOURCE_CREATION_METHOD = "https://mex.rki.de/item/resource-creation-meth
 const FREQUENCY = "https://mex.rki.de/item/frequency-1";
 
 type Body = Record<string, unknown>;
-type ModelOverrides = { [K in keyof FastTrackResourceModel]?: unknown };
+type ResourceModelOverrides = { [K in keyof FastTrackResourceModel]?: unknown };
 
 /** A valid reference identifier: 14-22 letters/digits. */
 const id = (name: string) => name.padEnd(14, "0");
 
-const makeModel = (overrides: ModelOverrides = {}): FastTrackResourceModel =>
+const makeResourceModel = (overrides: ResourceModelOverrides = {}): FastTrackResourceModel =>
   ({
+    $type: "FastTrackResourceModel",
     title: "Titel",
     description: "Beschreibung",
     theme: [],
@@ -100,7 +101,7 @@ function mockActiveLang(initial: string) {
 }
 
 // eslint-disable-next-line max-lines-per-function
-describe("FastTrackResourceSubmission", () => {
+describe("FasttrackSubmission", () => {
   let service: FastTrackSubmission;
   let http: HttpTestingController;
   let activeLang: ReturnType<typeof mockActiveLang>;
@@ -140,7 +141,7 @@ describe("FastTrackResourceSubmission", () => {
 
   describe("the POSTed resource", () => {
     it("is a ResourceRuleSetRequest with an AdditiveResource", async () => {
-      const model = makeModel({});
+      const model = makeResourceModel({});
       const { done } = track(service.submit(model));
 
       const [request] = resourceRequests();
@@ -152,7 +153,7 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("wraps single-language text fields as { value, language } using the active language", async () => {
-      const additive = await sentAdditive(makeModel());
+      const additive = await sentAdditive(makeResourceModel());
 
       expect(additive["title"]).toEqual([{ value: "Titel", language: "de" }]);
       expect(additive["description"]).toEqual([{ value: "Beschreibung", language: "de" }]);
@@ -164,7 +165,7 @@ describe("FastTrackResourceSubmission", () => {
 
     it("tags keywords with their OWN language, regardless of the active language", async () => {
       activeLang.set("en");
-      const additive = await sentAdditive(makeModel());
+      const additive = await sentAdditive(makeResourceModel());
 
       expect(additive["keyword"]).toEqual([
         { value: "Gesundheit", language: "de" },
@@ -174,7 +175,7 @@ describe("FastTrackResourceSubmission", () => {
 
     it("emits German keywords before English ones, each list in its original order", async () => {
       const additive = await sentAdditive(
-        makeModel({ keywords: { de: ["a", "b"], en: ["x", "y"] } }),
+        makeResourceModel({ keywords: { de: ["a", "b"], en: ["x", "y"] } }),
       );
 
       expect((additive["keyword"] as { value: string }[]).map((k) => k.value)).toEqual([
@@ -187,7 +188,7 @@ describe("FastTrackResourceSubmission", () => {
 
     it("passes the identifiers of existing reference items through, in order", async () => {
       const additive = await sentAdditive(
-        makeModel({
+        makeResourceModel({
           contact: [previewPerson(id("contact1"))],
           contributor: [previewPerson(id("person1")), previewPerson(id("person2"))],
           unitInCharge: [previewUnit(id("unit1"))],
@@ -204,7 +205,7 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("sends empty reference lists as empty arrays", async () => {
-      const additive = await sentAdditive(makeModel());
+      const additive = await sentAdditive(makeResourceModel());
 
       expect(additive["contact"]).toEqual([]);
       expect(additive["contributor"]).toEqual([]);
@@ -215,7 +216,7 @@ describe("FastTrackResourceSubmission", () => {
 
     it("passes vocabulary values through as-is", async () => {
       const additive = await sentAdditive(
-        makeModel({
+        makeResourceModel({
           theme: [THEME],
           resourceCreationMethod: [RESOURCE_CREATION_METHOD],
           accrualPeriodicity: FREQUENCY,
@@ -229,7 +230,7 @@ describe("FastTrackResourceSubmission", () => {
 
     it("formats start/end as ISO dates (date only, no time)", async () => {
       const additive = await sentAdditive(
-        makeModel({
+        makeResourceModel({
           start: DateTime.fromISO("2026-01-05T23:30:00"),
           end: DateTime.fromISO("2026-12-31T00:00:00"),
         }),
@@ -240,14 +241,14 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("checks start/end are empty arrays when they are not set", async () => {
-      const additive = await sentAdditive(makeModel({ start: null, end: null }));
+      const additive = await sentAdditive(makeResourceModel({ start: null, end: null }));
 
       expect(additive["start"]).toEqual([]);
       expect(additive["end"]).toEqual([]);
     });
 
     it("checks submitting empty spatial and hasLegalBasis are empty array when not set", async () => {
-      const additive = await sentAdditive(makeModel({ spatial: "", hasLegalBasis: "" }));
+      const additive = await sentAdditive(makeResourceModel({ spatial: "", hasLegalBasis: "" }));
 
       expect(additive["spatial"]).toEqual([]);
       expect(additive["hasLegalBasis"]).toEqual([]);
@@ -261,12 +262,12 @@ describe("FastTrackResourceSubmission", () => {
     it("uses German texts when the active language is 'de'", async () => {
       activeLang.set("de");
 
-      expect(languageOfTitle(await sentAdditive(makeModel()))).toBe("de");
+      expect(languageOfTitle(await sentAdditive(makeResourceModel()))).toBe("de");
     });
 
     it("uses English texts when the active language is 'en'", async () => {
       activeLang.set("en");
-      const additive = await sentAdditive(makeModel());
+      const additive = await sentAdditive(makeResourceModel());
 
       expect(additive["title"]).toEqual([{ value: "Titel", language: "en" }]);
       expect(additive["description"]).toEqual([{ value: "Beschreibung", language: "en" }]);
@@ -281,14 +282,14 @@ describe("FastTrackResourceSubmission", () => {
       async (lang) => {
         activeLang.set(lang);
 
-        expect(languageOfTitle(await sentAdditive(makeModel()))).toBe("de");
+        expect(languageOfTitle(await sentAdditive(makeResourceModel()))).toBe("de");
       },
     );
   });
 
   describe("submit: resource without any new reference items", () => {
     it("sends exactly one request and resolves with the response", async () => {
-      const model = makeModel({
+      const model = makeResourceModel({
         contact: [previewPerson(id("contact1"))],
         unitInCharge: [previewUnit(id("unit1"))],
       });
@@ -311,7 +312,7 @@ describe("FastTrackResourceSubmission", () => {
   describe("submit: creating new reference items first", () => {
     it("posts a new Person as a PersonRuleSetRequest and uses the returned stableTargetId", async () => {
       const { state, done } = track(
-        service.submit(makeModel({ creator: [createPerson("Jane", "Doe")] })),
+        service.submit(makeResourceModel({ creator: [createPerson("Jane", "Doe")] })),
       );
 
       const [request] = personRequests();
@@ -334,7 +335,7 @@ describe("FastTrackResourceSubmission", () => {
 
     it("posts a new ContactPoint as a ContactPointRuleSetRequest (email as a list) and uses the returned stableTargetId", async () => {
       const { done } = track(
-        service.submit(makeModel({ contact: [createContactPoint("info@example.org")] })),
+        service.submit(makeResourceModel({ contact: [createContactPoint("info@example.org")] })),
       );
 
       const [request] = contactPointRequests();
@@ -353,7 +354,10 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("uses the same '$type' key for every request it sends (resource, person, contact point)", async () => {
-      const model = makeModel({ contact: [createContactPoint()], creator: [createPerson()] });
+      const model = makeResourceModel({
+        contact: [createContactPoint()],
+        creator: [createPerson()],
+      });
       const { done } = track(service.submit(model));
 
       const [person] = personRequests();
@@ -372,7 +376,9 @@ describe("FastTrackResourceSubmission", () => {
 
     it("does not send the resource until EVERY new item has been answered", async () => {
       const { done } = track(
-        service.submit(makeModel({ contact: [createContactPoint()], creator: [createPerson()] })),
+        service.submit(
+          makeResourceModel({ contact: [createContactPoint()], creator: [createPerson()] }),
+        ),
       );
 
       const [person] = personRequests();
@@ -391,7 +397,7 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("keeps the original list order in the result, no matter in which order the answers arrive", async () => {
-      const model = makeModel({
+      const model = makeResourceModel({
         contributor: [
           previewPerson(id("existing1")),
           createPerson("A", "One"),
@@ -417,7 +423,7 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("creates items for several lists independently and puts each id into the right list", async () => {
-      const model = makeModel({
+      const model = makeResourceModel({
         contact: [createContactPoint("c@example.org")],
         creator: [createPerson("C", "Creator")],
         contributor: [createPerson("D", "Contributor")],
@@ -447,7 +453,7 @@ describe("FastTrackResourceSubmission", () => {
   describe("submit: the resource request itself fails", () => {
     it("resolves (does not reject) with success:false and a SubmissionError holding the payload that was sent and the HTTP error", async () => {
       const { state, done } = track(
-        service.submit(makeModel({ contact: [previewPerson(id("contact1"))] })),
+        service.submit(makeResourceModel({ contact: [previewPerson(id("contact1"))] })),
       );
 
       const [request] = resourceRequests();
@@ -465,7 +471,7 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("reports a network error (status 0) the same way", async () => {
-      const { state, done } = track(service.submit(makeModel()));
+      const { state, done } = track(service.submit(makeResourceModel()));
 
       resourceRequests()[0].error(new ProgressEvent("error"));
       await done;
@@ -475,7 +481,9 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("still contains the ids of items that were already created before the failure", async () => {
-      const { state, done } = track(service.submit(makeModel({ creator: [createPerson()] })));
+      const { state, done } = track(
+        service.submit(makeResourceModel({ creator: [createPerson()] })),
+      );
 
       personRequests()[0].flush({ stableTargetId: id("person1") });
       fail(resourceRequests()[0], 422);
@@ -499,10 +507,10 @@ describe("FastTrackResourceSubmission", () => {
       ],
       ["creator", { creator: [createPerson("Kaputt", "Person")] }, "PersonRuleSetRequest"],
       ["contributor", { contributor: [createPerson("Kaputt", "Person")] }, "PersonRuleSetRequest"],
-    ] as [string, ModelOverrides, string][])(
+    ] as [string, ResourceModelOverrides, string][])(
       "resolves with success:false and a SubmissionError holding the failed request and the HTTP error ('%s')",
       async (_list, overrides, type) => {
-        const { state, done } = track(service.submit(makeModel(overrides)));
+        const { state, done } = track(service.submit(makeResourceModel(overrides)));
 
         const [request] = [...personRequests(), ...contactPointRequests()];
         fail(request);
@@ -519,7 +527,7 @@ describe("FastTrackResourceSubmission", () => {
     );
 
     it("never sends the resource when a new item failed", async () => {
-      const { done } = track(service.submit(makeModel({ creator: [createPerson()] })));
+      const { done } = track(service.submit(makeResourceModel({ creator: [createPerson()] })));
 
       fail(personRequests()[0]);
       await done;
@@ -528,7 +536,9 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("reports a network error (status 0) the same way", async () => {
-      const { state, done } = track(service.submit(makeModel({ contact: [createContactPoint()] })));
+      const { state, done } = track(
+        service.submit(makeResourceModel({ contact: [createContactPoint()] })),
+      );
 
       contactPointRequests()[0].error(new ProgressEvent("error"));
       await done;
@@ -538,7 +548,7 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("cancels the new-item requests that are still in flight when one of them fails", async () => {
-      const model = makeModel({
+      const model = makeResourceModel({
         contact: [createContactPoint()],
         creator: [createPerson("A", "One")],
         contributor: [createPerson("B", "Two")],
@@ -559,7 +569,7 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("names the request of the item that failed when several were sent (here: the second person)", async () => {
-      const model = makeModel({
+      const model = makeResourceModel({
         creator: [createPerson("Erste", "Person"), createPerson("Zweite", "Person")],
       });
       const { state, done } = track(service.submit(model));
@@ -576,7 +586,7 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("fails the whole submission even though another item was already created, which stays on the backend (no rollback)", async () => {
-      const model = makeModel({
+      const model = makeResourceModel({
         creator: [createPerson("A", "One")],
         contact: [createContactPoint()],
       });
@@ -596,7 +606,9 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("reports only the first failure if several new items fail", async () => {
-      const model = makeModel({ creator: [createPerson("A", "One"), createPerson("B", "Two")] });
+      const model = makeResourceModel({
+        creator: [createPerson("A", "One"), createPerson("B", "Two")],
+      });
       const { state, done } = track(service.submit(model));
 
       const [first, second] = personRequests();
@@ -608,7 +620,9 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("treats a response without stableTargetId as a failure of that item", async () => {
-      const { state, done } = track(service.submit(makeModel({ creator: [createPerson()] })));
+      const { state, done } = track(
+        service.submit(makeResourceModel({ creator: [createPerson()] })),
+      );
 
       const [request] = personRequests();
       request.flush({});
@@ -623,7 +637,9 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("treats an empty response body (null) as a failure of that item as well", async () => {
-      const { state, done } = track(service.submit(makeModel({ contact: [createContactPoint()] })));
+      const { state, done } = track(
+        service.submit(makeResourceModel({ contact: [createContactPoint()] })),
+      );
 
       contactPointRequests()[0].flush(null);
       await done;
@@ -634,12 +650,12 @@ describe("FastTrackResourceSubmission", () => {
     });
 
     it("stays usable after a failed submit (no state carried over)", async () => {
-      const failing = track(service.submit(makeModel({ creator: [createPerson()] })));
+      const failing = track(service.submit(makeResourceModel({ creator: [createPerson()] })));
       fail(personRequests()[0]);
       await failing.done;
       expect(failing.state.value).toMatchObject({ success: false });
 
-      const retry = track(service.submit(makeModel({ creator: [createPerson()] })));
+      const retry = track(service.submit(makeResourceModel({ creator: [createPerson()] })));
       personRequests()[0].flush({ stableTargetId: id("person2") });
       resourceRequests()[0].flush({ $type: "ResourceRuleSetResponse" });
       await retry.done;
@@ -649,7 +665,7 @@ describe("FastTrackResourceSubmission", () => {
 
     it("returns success:false (does not reject) when the data of a new item is invalid", async () => {
       const { state, done } = track(
-        service.submit(makeModel({ contact: [createContactPoint("not-an-email")] })),
+        service.submit(makeResourceModel({ contact: [createContactPoint("not-an-email")] })),
       );
       await done;
 

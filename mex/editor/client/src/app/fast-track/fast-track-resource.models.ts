@@ -1,22 +1,17 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import z from "zod";
 
-import {
-  CreateOrPreviewContactPointSchema,
-  CreateOrPreviewPersonSchema,
-} from "../../shared/models";
-import { PreviewOrganizationalUnitSchema } from "../../shared/models/generated/organizational-unit";
-import {
-  FrequencySchema,
-  ResourceCreationMethodSchema,
-} from "../../shared/models/generated/resource";
-import { TextSchema, ThemeSchema } from "../../shared/models/generated/shared";
-import { luxonDateTimeNullableSchema, recommended } from "../../shared/models/zod-types";
+import { CreateOrPreviewContactPointSchema, CreateOrPreviewPersonSchema } from "../shared/models";
+import { PreviewOrganizationalUnitSchema } from "../shared/models/generated/organizational-unit";
+import { FrequencySchema, ResourceCreationMethodSchema } from "../shared/models/generated/resource";
+import { TextSchema, ThemeSchema } from "../shared/models/generated/shared";
+import { luxonDateTimeNullableSchema, recommended } from "../shared/models/zod-types";
 
 /**
  * Schema for FasttrackResourceModel
  */
 export const FastTrackResourceModelSchema = z.object({
+  $type: z.literal("FastTrackResourceModel"),
   // required fields
   title: TextSchema.shape.value,
   description: TextSchema.shape.value,

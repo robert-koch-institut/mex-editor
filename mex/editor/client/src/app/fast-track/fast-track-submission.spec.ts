@@ -5,9 +5,9 @@ import { TranslocoService } from "@jsverse/transloco";
 import { DateTime } from "luxon";
 import { vi } from "vitest";
 
-import { SubmissionError } from "../../shared/models/submission-result";
-import type { FastTrackResourceModel } from "./fast-track-resource.models";
-import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
+import { SubmissionError } from "../shared/models/submission-result";
+import type { FastTrackResourceModel } from "./fast-track-resource/fast-track-resource.models";
+import { FastTrackSubmission } from "./fast-track-submission";
 
 const RULE_SET_URL = "api/v0/backend/rule-set";
 
@@ -101,7 +101,7 @@ function mockActiveLang(initial: string) {
 
 // eslint-disable-next-line max-lines-per-function
 describe("FastTrackResourceSubmission", () => {
-  let service: FastTrackResourceSubmission;
+  let service: FastTrackSubmission;
   let http: HttpTestingController;
   let activeLang: ReturnType<typeof mockActiveLang>;
 
@@ -127,7 +127,7 @@ describe("FastTrackResourceSubmission", () => {
   }
 
   beforeEach(() => {
-    service = TestBed.inject(FastTrackResourceSubmission);
+    service = TestBed.inject(FastTrackSubmission);
     http = TestBed.inject(HttpTestingController);
     activeLang = mockActiveLang("de"); // explicit default, independent of the project's test config
   });

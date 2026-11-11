@@ -20,6 +20,20 @@
       "save-button": {
         "label": "Save {{Activity}}",
         "saving": "Saving {{Activity}}..."
+      },
+      "toast": {
+        "error": {
+          "message": "Unfortunately, the {{Activity}} could not be saved. An unexpected error occurred.",
+          "title": "Error while saving"
+        },
+        "submissionError": {
+          "message": "Unfortunately, the {{Activity}} could not be saved. An unexpected error occurred.\nYou can send an email to the MEx team to inform them about the issue.",
+          "title": "Error while saving"
+        },
+        "success": {
+          "message": "The {{Activity}} is successfully saved.",
+          "title": "{{Activity}} saved"
+        }
       }
     },
     "resource": {

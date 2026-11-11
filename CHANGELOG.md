@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Fasttrack for activity (without saving)
+- Fasttrack for activity including submission
 - Component to edit links (LinkEditor)
 - Component to handle array edits in forms (ArrayFormValueControl)
 - Components to show error messages (FieldErrorSummary and FieldError)

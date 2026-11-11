@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 import { vi } from "vitest";
 
 import { SubmissionError } from "../shared/models/submission-result";
-import type { FastTrackResourceModel } from "./fast-track-resource/fast-track-resource.models";
+import type { FastTrackResourceModel } from "./fast-track-resource.models";
 import { FastTrackSubmission } from "./fast-track-submission";
 
 const RULE_SET_URL = "api/v0/backend/rule-set";

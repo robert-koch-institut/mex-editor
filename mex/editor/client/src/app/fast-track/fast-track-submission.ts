@@ -4,7 +4,6 @@ import { TranslocoService } from "@jsverse/transloco";
 import {
   catchError,
   combineLatest,
-  delay,
   firstValueFrom,
   map,
   type Observable,
@@ -21,7 +20,10 @@ import {
   type CreatePerson,
   isCreateItem,
 } from "../shared/models/create-item";
-import type { AdditiveActivity } from "../shared/models/generated/activity";
+import type {
+  ActivityRuleSetResponse,
+  AdditiveActivity,
+} from "../shared/models/generated/activity";
 import {
   ActivityRuleSetRequestSchema,
   AdditiveActivitySchema,
@@ -69,13 +71,17 @@ export class FastTrackSubmission {
 
   async submit(
     model: FastTrackResourceModel | FastTrackActivityModel,
-  ): Promise<SubmissionResult<ResourceRuleSetResponse>> {
+  ): Promise<SubmissionResult<ResourceRuleSetResponse | ActivityRuleSetResponse>> {
     const currentLanguage = this.transloco.getActiveLang();
     const language = asTextLanguage(currentLanguage);
 
     try {
-      const submitRequest = this.buildSubmitRequest(model, language).pipe(delay(30000));
-      const response = await firstValueFrom(submitRequest);
+      const submitRequest =
+        model.$type === "FastTrackResourceModel"
+          ? firstValueFrom(this.buildResourceSubmitRequest(model, language))
+          : firstValueFrom(this.buildActivitySubmitRequest(model, language));
+
+      const response = await submitRequest;
       return { success: true, response: response };
     } catch (error: unknown) {
       return {
@@ -88,7 +94,10 @@ export class FastTrackSubmission {
     }
   }
 
-  private buildActivitySubmitRequest(model: FastTrackActivityModel, language: TextLanguage) {
+  private buildActivitySubmitRequest(
+    model: FastTrackActivityModel,
+    language: TextLanguage,
+  ): Observable<ActivityRuleSetResponse> {
     return this.buildSubitemSubmitRequests(
       {
         contact: model.contact,
@@ -107,13 +116,16 @@ export class FastTrackSubmission {
         });
 
         return this.http
-          .post<ResourceRuleSetResponse>("api/v0/backend/rule-set", payload)
+          .post<ActivityRuleSetResponse>("api/v0/backend/rule-set", payload)
           .pipe(catchError((err: Error) => throwError(() => new SubmissionError(payload, err))));
       }),
     );
   }
 
-  private buildResourceSubmitRequest(model: FastTrackResourceModel, language: TextLanguage) {
+  private buildResourceSubmitRequest(
+    model: FastTrackResourceModel,
+    language: TextLanguage,
+  ): Observable<ResourceRuleSetResponse> {
     return this.buildSubitemSubmitRequests(
       {
         contact: model.contact,
@@ -149,20 +161,6 @@ export class FastTrackSubmission {
       Object.entries(sourcesObject).map(([key, items]) => [key, combiner(items.map(submitter))]),
     ) as { [K in keyof T]: Observable<string[]> };
     return combineLatest(observables).pipe(take(1));
-  }
-
-  private buildSubmitRequest(
-    model: FastTrackResourceModel | FastTrackActivityModel,
-    language: TextLanguage,
-  ) {
-    switch (model.$type) {
-      case "FastTrackActivityModel":
-        return this.buildActivitySubmitRequest(model, language);
-      case "FastTrackResourceModel":
-        return this.buildResourceSubmitRequest(model, language);
-      default:
-        throw new Error(`Unable to map fasttrack model. Unknown model type.`, { cause: model });
-    }
   }
 
   private submitCreateItem(item: CreateItem, language: TextLanguage): Observable<string> {

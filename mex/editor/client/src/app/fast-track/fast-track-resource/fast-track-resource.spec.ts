@@ -22,11 +22,11 @@ import {
 import { ThemeSchema } from "../../shared/models/generated/shared";
 import { SubmissionError } from "../../shared/models/submission-result";
 import { ToastNotifier } from "../../shared/toasts/toast-notifier";
+import type { FastTrackResourceModel } from "../fast-track-resource.models";
+import { FastTrackSubmission } from "../fast-track-submission";
 import { Fieldset } from "../fieldset/fieldset";
 import { ReferenceSelect } from "../reference-select/reference-select";
 import { FastTrackResource } from "./fast-track-resource";
-import type { FastTrackResourceModel } from "./fast-track-resource.models";
-import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
 
 const THEME_ID = ThemeSchema.enum["https://mex.rki.de/item/theme-1"];
 const RESOURCE_TYPE_ID =
@@ -126,7 +126,7 @@ describe("FastTrackResource", () => {
       imports: [FastTrackResource],
       providers: [
         { provide: ConceptLookups, useValue: conceptOptionsStub },
-        { provide: FastTrackResourceSubmission, useValue: { submit: vi.fn() } },
+        { provide: FastTrackSubmission, useValue: { submit: vi.fn() } },
         {
           provide: ToastNotifier,
           useValue: { success: vi.fn(), error: vi.fn(), submissionError: vi.fn() },
@@ -606,7 +606,7 @@ describe("FastTrackResource", () => {
       fillEveryRequiredField();
       const expectedModel = component.model();
 
-      const submission = TestBed.inject(FastTrackResourceSubmission);
+      const submission = TestBed.inject(FastTrackSubmission);
       const router = TestBed.inject(Router);
       const notifier = TestBed.inject(ToastNotifier);
 
@@ -614,7 +614,7 @@ describe("FastTrackResource", () => {
       vi.mocked(submission.submit).mockResolvedValue({
         success: true,
         response: { $type: "ResourceRuleSetResponse", stableTargetId: "resource-123" },
-      } as Awaited<ReturnType<FastTrackResourceSubmission["submit"]>>);
+      } as Awaited<ReturnType<FastTrackSubmission["submit"]>>);
 
       const form = fixture.nativeElement.querySelector("form") as HTMLFormElement;
       expect(form).toBeTruthy();
@@ -635,7 +635,7 @@ describe("FastTrackResource", () => {
     it("passes a failed submission result to the failure notifier", async () => {
       fillEveryRequiredField();
 
-      const submission = TestBed.inject(FastTrackResourceSubmission);
+      const submission = TestBed.inject(FastTrackSubmission);
       const router = TestBed.inject(Router);
       const notifier = TestBed.inject(ToastNotifier);
 
@@ -645,7 +645,7 @@ describe("FastTrackResource", () => {
       const submitResult = {
         success: false,
         error: submitError,
-      } as Awaited<ReturnType<FastTrackResourceSubmission["submit"]>>;
+      } as Awaited<ReturnType<FastTrackSubmission["submit"]>>;
       vi.mocked(submission.submit).mockResolvedValue(submitResult);
 
       const form = fixture.nativeElement.querySelector("form") as HTMLFormElement;
@@ -665,7 +665,7 @@ describe("FastTrackResource", () => {
     });
 
     it("does not submit when required fields are missing", async () => {
-      const submission = TestBed.inject(FastTrackResourceSubmission);
+      const submission = TestBed.inject(FastTrackSubmission);
 
       const form = fixture.nativeElement.querySelector("form") as HTMLFormElement;
       expect(form).toBeTruthy();
@@ -679,15 +679,13 @@ describe("FastTrackResource", () => {
     it("disables the submit button and shows a spinner while submitting", async () => {
       fillEveryRequiredField();
 
-      const submission = TestBed.inject(FastTrackResourceSubmission);
+      const submission = TestBed.inject(FastTrackSubmission);
       const router = TestBed.inject(Router);
 
       vi.spyOn(router, "navigate").mockResolvedValue(true);
 
       // Keep the submission pending so we can inspect the loading state.
-      let resolveSubmit!: (
-        result: Awaited<ReturnType<FastTrackResourceSubmission["submit"]>>,
-      ) => void;
+      let resolveSubmit!: (result: Awaited<ReturnType<FastTrackSubmission["submit"]>>) => void;
 
       vi.mocked(submission.submit).mockReturnValue(
         new Promise((resolve) => {

@@ -1,7 +1,18 @@
+.mex-datepicker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 mat-form-field {
   width: 100%;
 }
 
 .error-hint {
   color: lightcoral;
+}
+
+.input-container {
+  display: flex;
+  align-items: baseline;
 }

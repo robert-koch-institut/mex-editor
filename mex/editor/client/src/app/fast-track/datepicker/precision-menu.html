@@ -1,0 +1,18 @@
+<button
+  type="button"
+  matIconButton
+  [matMenuTriggerFor]="menu"
+  [disabled]="disabled()"
+  [title]="'datepicker.precision.label' | transloco"
+>
+  <mat-icon [svgIcon]="'precision-' + precision()" />
+</button>
+
+<mat-menu #menu="matMenu">
+  @for (option of options(); track option) {
+    <button type="button" mat-menu-item (click)="precisionSelected.emit(option)">
+      <mat-icon [svgIcon]="'precision-' + option" />
+      <span>{{ "datepicker.precision." + option | transloco }}</span>
+    </button>
+  }
+</mat-menu>

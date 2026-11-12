@@ -9,6 +9,11 @@
   "create-item-dialog.loading": "Lade Einträge...",
   "create-item-dialog.save-button.label": "Eintrag Speichern",
   "create-item-dialog.title": "Neuen Eintrag anlegen",
+  "datepicker.precision.datetime": "Datum und Uhrzeit",
+  "datepicker.precision.day": "Tag",
+  "datepicker.precision.label": "Genauigkeit wählen",
+  "datepicker.precision.month": "Monat",
+  "datepicker.precision.year": "Jahr",
   "datepicker.validation.parse": "Bitte Format {{format}} nutzen",
   "errors.services.concept-lookup.loading": {
     "message": "Beim Laden des Lookups '{{lookupName}}' ist ein Fehler aufgetreten. Bitte laden Sie die Seite erneut.",

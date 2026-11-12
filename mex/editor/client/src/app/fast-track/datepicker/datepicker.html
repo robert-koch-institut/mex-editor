@@ -1,23 +1,56 @@
-<mat-form-field>
-  <input
-    matInput
-    #dateInput
-    [matDatepicker]="picker"
-    [min]="minDate()"
-    [max]="maxDate()"
-    [disabled]="disabled()"
-    [readonly]="readonly()"
-    [formField]="dateForm"
-    [errorStateMatcher]="customErrorMatcher"
-    (blur)="touch.emit()"
-    (input)="onDateInputChanged(dateInput.value)"
-    [placeholder]="dateFormats.parse.dateInput"
-  />
-  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-  <mat-datepicker #picker />
-  @if (hasParseError()) {
-    <mat-hint class="error-hint">{{
-      "datepicker.validation.parse" | transloco: { format: dateFormats.parse.dateInput }
-    }}</mat-hint>
-  }
-</mat-form-field>
+<div class="mex-datepicker">
+  <mat-form-field>
+    <div class="input-container">
+      <input
+        matInput
+        #dateInput
+        [matDatepicker]="picker"
+        [formField]="dateForm"
+        [min]="minDate()"
+        [max]="maxDate()"
+        [errorStateMatcher]="customErrorMatcher"
+        [placeholder]="inputFormat()"
+        (blur)="touch.emit()"
+        (dateInput)="onDateInput($event)"
+        (input)="onDateInputChanged(dateInput.value)"
+      />
+
+      @if (mode() === "datetime") {
+        <input
+          matInput
+          #timeInput
+          type="time"
+          [value]="time()"
+          [disabled]="disabled()"
+          [readonly]="readonly()"
+          (input)="onTimeInput(timeInput.value)"
+          (blur)="touch.emit()"
+          (click)="$event.stopPropagation()"
+        />
+      }
+    </div>
+
+    @if (showPrecisionSelector()) {
+      <mex-precision-menu
+        matIconPrefix
+        [precision]="mode()"
+        [options]="allowed()"
+        [disabled]="disabled() || readonly()"
+        (precisionSelected)="onPrecisionChange($event)"
+      />
+    }
+
+    <mat-datepicker-toggle matIconSuffix [for]="picker" />
+    <mat-datepicker
+      #picker
+      [startView]="startView()"
+      (yearSelected)="onUnitSelected($event, 'year', picker)"
+      (monthSelected)="onUnitSelected($event, 'month', picker)"
+    />
+    @if (hasParseError()) {
+      <mat-hint class="error-hint">{{
+        "datepicker.validation.parse" | transloco: { format: inputFormat() }
+      }}</mat-hint>
+    }
+  </mat-form-field>
+</div>

@@ -32,6 +32,14 @@
                   "type": "anyComponentStyle"
                 }
               ],
+              "optimization": {
+                "fonts": true,
+                "scripts": true,
+                "styles": {
+                  "inlineCritical": false,
+                  "minify": true
+                }
+              },
               "outputHashing": "all"
             },
             "unit-tests": {

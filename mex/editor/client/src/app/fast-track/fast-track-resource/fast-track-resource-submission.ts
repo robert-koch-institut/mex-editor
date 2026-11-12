@@ -132,8 +132,8 @@ export class FastTrackResourceSubmission {
       description: [stringToText(model.description)],
       accrualPeriodicity: model.accrualPeriodicity,
       theme: model.theme,
-      end: model.end ? [model.end.toISODate()!] : [],
-      start: model.start ? [model.start.toISODate()!] : [],
+      end: model.end ? [model.end] : [],
+      start: model.start ? [model.start] : [],
       hasLegalBasis: isValidTextString(model.hasLegalBasis)
         ? [stringToText(model.hasLegalBasis)]
         : [],

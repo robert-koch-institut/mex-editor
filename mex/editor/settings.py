@@ -27,6 +27,14 @@ class EditorSettings(BaseSettings):
         "/",
         validation_alias="MEX_EDITOR__BASE_HREF",
     )
+    cors_allowed_origins: list[str] = Field(
+        [],
+        description=(
+            "Origins that browsers may call the editor api from, e.g. "
+            '`["https://admin.example.org"]`. Empty means same-origin only.'
+        ),
+        validation_alias="MEX_EDITOR__CORS_ALLOWED_ORIGINS",
+    )
     client_dir: Path = Field(
         Path(__file__).parent.resolve() / "client" / "dist",
         validation_alias="MEX_EDITOR__CLIENT_DIR",

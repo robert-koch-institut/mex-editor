@@ -11,6 +11,7 @@ import {
   TextSchema,
   ThemeSchema,
   yearMonthDayPattern,
+  yearMonthDayTimePattern,
   yearMonthPattern,
   yearPattern,
 } from "./shared";
@@ -43,6 +44,7 @@ export const AdditiveActivitySchema = z.object({
   end: z
     .array(
       z.union([
+        z.string().regex(new RegExp(yearMonthDayTimePattern)),
         z.string().regex(new RegExp(yearMonthDayPattern)),
         z.string().regex(new RegExp(yearMonthPattern)),
         z.string().regex(new RegExp(yearPattern)),
@@ -61,6 +63,7 @@ export const AdditiveActivitySchema = z.object({
   start: z
     .array(
       z.union([
+        z.string().regex(new RegExp(yearMonthDayTimePattern)),
         z.string().regex(new RegExp(yearMonthDayPattern)),
         z.string().regex(new RegExp(yearMonthPattern)),
         z.string().regex(new RegExp(yearPattern)),
@@ -126,6 +129,7 @@ export const SubtractiveActivitySchema = z.object({
   end: z
     .array(
       z.union([
+        z.string().regex(new RegExp(yearMonthDayTimePattern)),
         z.string().regex(new RegExp(yearMonthDayPattern)),
         z.string().regex(new RegExp(yearMonthPattern)),
         z.string().regex(new RegExp(yearPattern)),
@@ -144,6 +148,7 @@ export const SubtractiveActivitySchema = z.object({
   start: z
     .array(
       z.union([
+        z.string().regex(new RegExp(yearMonthDayTimePattern)),
         z.string().regex(new RegExp(yearMonthDayPattern)),
         z.string().regex(new RegExp(yearMonthPattern)),
         z.string().regex(new RegExp(yearPattern)),
@@ -221,6 +226,7 @@ export const BaseActivitySchema = z.object({
   end: z
     .array(
       z.union([
+        z.string().regex(new RegExp(yearMonthDayTimePattern)),
         z.string().regex(new RegExp(yearMonthDayPattern)),
         z.string().regex(new RegExp(yearMonthPattern)),
         z.string().regex(new RegExp(yearPattern)),
@@ -239,6 +245,7 @@ export const BaseActivitySchema = z.object({
   start: z
     .array(
       z.union([
+        z.string().regex(new RegExp(yearMonthDayTimePattern)),
         z.string().regex(new RegExp(yearMonthDayPattern)),
         z.string().regex(new RegExp(yearMonthPattern)),
         z.string().regex(new RegExp(yearPattern)),
@@ -303,6 +310,7 @@ export const PreviewActivitySchema = z.object({
   end: z
     .array(
       z.union([
+        z.string().regex(new RegExp(yearMonthDayTimePattern)),
         z.string().regex(new RegExp(yearMonthDayPattern)),
         z.string().regex(new RegExp(yearMonthPattern)),
         z.string().regex(new RegExp(yearPattern)),
@@ -321,6 +329,7 @@ export const PreviewActivitySchema = z.object({
   start: z
     .array(
       z.union([
+        z.string().regex(new RegExp(yearMonthDayTimePattern)),
         z.string().regex(new RegExp(yearMonthDayPattern)),
         z.string().regex(new RegExp(yearMonthPattern)),
         z.string().regex(new RegExp(yearPattern)),

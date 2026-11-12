@@ -16,10 +16,10 @@ import {
  * Zod schema for AdditivePerson.
  */
 export const AdditivePersonSchema = z.object({
+  fullName: z.array(z.string()).optional(),
   affiliation: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
   email: z.array(z.string().regex(new RegExp(emailPattern))).optional(),
   familyName: z.array(z.string()).optional(),
-  fullName: z.array(z.string()).optional(),
   givenName: z.array(z.string()).optional(),
   isniId: z.array(z.string().regex(new RegExp(isniIdPattern))).optional(),
   memberOf: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
@@ -37,10 +37,10 @@ export type AdditivePerson = z.infer<typeof AdditivePersonSchema>;
  * Zod schema for BasePerson.
  */
 export const BasePersonSchema = z.object({
+  fullName: z.array(z.string()).min(1),
   affiliation: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
   email: z.array(z.string().regex(new RegExp(emailPattern))).optional(),
   familyName: z.array(z.string()).optional(),
-  fullName: z.array(z.string()).optional(),
   givenName: z.array(z.string()).optional(),
   isniId: z.array(z.string().regex(new RegExp(isniIdPattern))).optional(),
   memberOf: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
@@ -110,10 +110,10 @@ export type PreventivePerson = z.infer<typeof PreventivePersonSchema>;
  * Zod schema for SubtractivePerson.
  */
 export const SubtractivePersonSchema = z.object({
+  fullName: z.array(z.string()).optional(),
   affiliation: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
   email: z.array(z.string().regex(new RegExp(emailPattern))).optional(),
   familyName: z.array(z.string()).optional(),
-  fullName: z.array(z.string()).optional(),
   givenName: z.array(z.string()).optional(),
   isniId: z.array(z.string().regex(new RegExp(isniIdPattern))).optional(),
   memberOf: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
@@ -176,10 +176,10 @@ export type PersonRuleSetResponse = z.infer<typeof PersonRuleSetResponseSchema>;
  * Zod schema for PreviewPerson.
  */
 export const PreviewPersonSchema = z.object({
+  fullName: z.array(z.string()).optional(),
   affiliation: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
   email: z.array(z.string().regex(new RegExp(emailPattern))).optional(),
   familyName: z.array(z.string()).optional(),
-  fullName: z.array(z.string()).optional(),
   givenName: z.array(z.string()).optional(),
   isniId: z.array(z.string().regex(new RegExp(isniIdPattern))).optional(),
   memberOf: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),

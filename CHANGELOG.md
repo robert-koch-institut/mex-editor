@@ -9,12 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+- generate new zod models for mex-model 5.2
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [4.1.2] - 2026-11-12
+
+### Added
+
 - recommended category
 - error handling for lookups
 - code generator to create zod schemas based on pydantic models
 - datepicker component to unify usage and handle parse errors
 - field-category pipe to determine field-category based on zod schema definition
 - rki theme from figma (m3)
+- setting `MEX_EDITOR__CORS_ALLOWED_ORIGINS` for browser origins allowed via CORS
 - service to submit fasttrack resources
 - edit page stub that reads given id from url and loads the corresponding item
 - service to raise toasts in order do notify/inform users about successful or errored operations
@@ -36,15 +53,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update mex-common to 3.6
 - update python to 3.15
 
-### Deprecated
-
 ### Removed
 
 - endpoint `GET /vocabulary` listing all vocabulary names, which had no consumer
-
-### Fixed
+- disable unused redoc api documentation, swagger ui at `/docs` stays
+- removed unused PATCH method from backend api proxy
 
 ### Security
+
+- set security headers (CSP, HSTS, nosniff, referrer policy, frame options,
+  cache control) on all responses
+- restrict CORS origins to explicit setting instead of `*`, defaults to same-origin only
+- restrict CORS headers and methods to actually needed entries
+- disable critical css inlining in production builds, its `onload` handler would need
+  `'unsafe-inline'` scripts
 
 ## [4.1.1] - 2026-08-20
 

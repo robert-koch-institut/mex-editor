@@ -14,7 +14,7 @@ SECURITY_HEADERS = {
 # angular material injects component styles at runtime, hence 'unsafe-inline' styles
 APP_CSP = (
     "default-src 'self'; "
-    "script-src 'self'; "
+    "script-src 'self' 'unsafe-eval'; "
     "style-src 'self' 'unsafe-inline'; "
     "img-src 'self' data:; "
     "font-src 'self' data:; "

@@ -40,8 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
+- datepicker now uses string as value input (so use with native mex model values/types)
 - selection behaviour of reference-select type filter
+- new template https://github.com/robert-koch-institut/mex-template/releases/tag/2.1.0
 - models are now defined by zod schemas
 - fasttrack-resource form with validation
 - fieldsets category is now required and no longer optional

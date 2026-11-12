@@ -11,17 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
-- generate new zod models for mex-model 5.2
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
-- allow unsafe-eval in csp for transloco to work
-
 ### Security
+
+## [4.2.0] - 2026-11-12
+
+### Changes
+
+- generate new zod models for mex-model 5.2
+
+### Fixed
+
+- allow unsafe-eval in csp for transloco to work
 
 ## [4.1.2] - 2026-11-12
 

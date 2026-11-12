@@ -22,6 +22,7 @@ import {
 export const AdditiveOrganizationSchema = z.object({
   officialName: z.array(TextSchema).optional(),
   alternativeName: z.array(TextSchema).optional(),
+  country: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
   geprisId: z.array(z.string().regex(new RegExp(geprisIdPattern))).optional(),
   gndId: z.array(z.string().regex(new RegExp(gndIdPattern))).optional(),
   isniId: z.array(z.string().regex(new RegExp(isniIdPattern))).optional(),
@@ -44,6 +45,7 @@ export type AdditiveOrganization = z.infer<typeof AdditiveOrganizationSchema>;
 export const BaseOrganizationSchema = z.object({
   officialName: z.array(TextSchema).min(1),
   alternativeName: z.array(TextSchema).optional(),
+  country: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
   geprisId: z.array(z.string().regex(new RegExp(geprisIdPattern))).optional(),
   gndId: z.array(z.string().regex(new RegExp(gndIdPattern))).optional(),
   isniId: z.array(z.string().regex(new RegExp(isniIdPattern))).optional(),
@@ -98,6 +100,7 @@ export type MergedOrganization = z.infer<typeof MergedOrganizationSchema>;
 export const PreventiveOrganizationSchema = z.object({
   $type: z.literal("PreventiveOrganization").default("PreventiveOrganization"),
   alternativeName: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
+  country: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
   geprisId: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
   gndId: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
   isniId: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
@@ -119,6 +122,7 @@ export type PreventiveOrganization = z.infer<typeof PreventiveOrganizationSchema
 export const SubtractiveOrganizationSchema = z.object({
   officialName: z.array(TextSchema).optional(),
   alternativeName: z.array(TextSchema).optional(),
+  country: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
   geprisId: z.array(z.string().regex(new RegExp(geprisIdPattern))).optional(),
   gndId: z.array(z.string().regex(new RegExp(gndIdPattern))).optional(),
   isniId: z.array(z.string().regex(new RegExp(isniIdPattern))).optional(),
@@ -186,6 +190,7 @@ export type OrganizationRuleSetResponse = z.infer<typeof OrganizationRuleSetResp
 export const PreviewOrganizationSchema = z.object({
   officialName: z.array(TextSchema).optional(),
   alternativeName: z.array(TextSchema).optional(),
+  country: z.array(z.string().regex(new RegExp(identifierPattern))).optional(),
   geprisId: z.array(z.string().regex(new RegExp(geprisIdPattern))).optional(),
   gndId: z.array(z.string().regex(new RegExp(gndIdPattern))).optional(),
   isniId: z.array(z.string().regex(new RegExp(isniIdPattern))).optional(),

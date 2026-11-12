@@ -15,7 +15,8 @@
     <mex-link-language-menu
       matSuffix
       [language]="asLinkLanguage(linkForm.language().value())"
-      (languageSelected)="linkForm.language().value.set($event)"
+      [nullable]="true"
+      (languageSelected)="this.linkForm.language().value.set($event ?? '')"
     ></mex-link-language-menu>
 
     @for (error of linkForm.title().errors(); track $index) {

@@ -6,10 +6,10 @@ import {
   CreateOrPreviewOrganizationSchema,
   CreateOrPreviewPersonSchema,
 } from "../shared/models";
-import { ActivityTypeSchema } from "../shared/models/generated/activity";
+import { ActivityTypeSchema, ExtractedActivitySchema } from "../shared/models/generated/activity";
 import { PreviewOrganizationalUnitSchema } from "../shared/models/generated/organizational-unit";
 import { LinkSchema, TextSchema } from "../shared/models/generated/shared";
-import { luxonDateTimeNullableSchema, recommended } from "../shared/models/zod-types";
+import { recommended } from "../shared/models/zod-types";
 
 /**
  * Schema for FasttrackActivityModel
@@ -34,8 +34,8 @@ export const FastTrackActivityModelSchema = z.object({
   shortName: recommended(z.string()),
   involvedPerson: recommended(z.array(CreateOrPreviewPersonSchema)),
   involvedUnit: recommended(z.array(PreviewOrganizationalUnitSchema)),
-  start: recommended(luxonDateTimeNullableSchema()),
-  end: recommended(luxonDateTimeNullableSchema()),
+  start: recommended(ExtractedActivitySchema.shape.start.unwrap().element.nullable()),
+  end: recommended(ExtractedActivitySchema.shape.end.unwrap().element.nullable()),
   funderOrCommissioner: recommended(CreateOrPreviewOrganizationSchema.array()),
   website: recommended(z.array(LinkSchema)),
 

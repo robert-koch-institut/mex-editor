@@ -2,7 +2,6 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { HttpTestingController, type TestRequest } from "@angular/common/http/testing";
 import { TestBed } from "@angular/core/testing";
 import { TranslocoService } from "@jsverse/transloco";
-import { DateTime } from "luxon";
 import { vi } from "vitest";
 
 import { SubmissionError } from "../shared/models/submission-result";
@@ -228,20 +227,17 @@ describe("FasttrackSubmission", () => {
       expect(additive["accrualPeriodicity"]).toBe(FREQUENCY);
     });
 
-    it("formats start/end as ISO dates (date only, no time)", async () => {
+    it("sends start/end exactly as the datepicker value strings", async () => {
       const additive = await sentAdditive(
-        makeResourceModel({
-          start: DateTime.fromISO("2026-01-05T23:30:00"),
-          end: DateTime.fromISO("2026-12-31T00:00:00"),
-        }),
+        makeModel({ start: "2026-01-05", end: "2026-12-31T10:00:00Z" }),
       );
 
       expect(additive["start"]).toEqual(["2026-01-05"]);
-      expect(additive["end"]).toEqual(["2026-12-31"]);
+      expect(additive["end"]).toEqual(["2026-12-31T10:00:00Z"]);
     });
 
-    it("checks start/end are empty arrays when they are not set", async () => {
-      const additive = await sentAdditive(makeResourceModel({ start: null, end: null }));
+    it("leaves start/end an empty list when they are not set", async () => {
+      const additive = await sentAdditive(makeModel({ start: null, end: null }));
 
       expect(additive["start"]).toEqual([]);
       expect(additive["end"]).toEqual([]);

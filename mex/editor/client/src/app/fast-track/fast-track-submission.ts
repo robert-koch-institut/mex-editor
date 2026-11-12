@@ -202,8 +202,8 @@ export class FastTrackSubmission {
       shortName: isValidTextString(model.shortName)
         ? [stringToText(model.shortName, language)]
         : [],
-      start: model.start ? [model.start.toISODate()!] : [],
-      end: model.end ? [model.end.toISODate()!] : [],
+      start: model.start ? [model.start] : [],
+      end: model.end ? [model.end] : [],
       website: structuredClone(model.website),
       activityType: model.activityType,
     };
@@ -235,8 +235,8 @@ export class FastTrackSubmission {
       description: [stringToText(model.description, language)],
       accrualPeriodicity: model.accrualPeriodicity,
       theme: model.theme,
-      end: model.end ? [model.end.toISODate()!] : [],
-      start: model.start ? [model.start.toISODate()!] : [],
+      end: model.end ? [model.end] : [],
+      start: model.start ? [model.start] : [],
       hasLegalBasis: isValidTextString(model.hasLegalBasis)
         ? [stringToText(model.hasLegalBasis, language)]
         : [],

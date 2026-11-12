@@ -3,9 +3,13 @@ import z from "zod";
 
 import { CreateOrPreviewContactPointSchema, CreateOrPreviewPersonSchema } from "../shared/models";
 import { PreviewOrganizationalUnitSchema } from "../shared/models/generated/organizational-unit";
-import { FrequencySchema, ResourceCreationMethodSchema } from "../shared/models/generated/resource";
+import {
+  ExtractedResourceSchema,
+  FrequencySchema,
+  ResourceCreationMethodSchema,
+} from "../shared/models/generated/resource";
 import { TextSchema, ThemeSchema } from "../shared/models/generated/shared";
-import { luxonDateTimeNullableSchema, recommended } from "../shared/models/zod-types";
+import { recommended } from "../shared/models/zod-types";
 
 /**
  * Schema for FasttrackResourceModel
@@ -39,8 +43,8 @@ export const FastTrackResourceModelSchema = z.object({
   contributingUnit: recommended(PreviewOrganizationalUnitSchema.array()),
   spatial: recommended(z.string()),
   hasLegalBasis: recommended(z.string()),
-  start: recommended(luxonDateTimeNullableSchema()),
-  end: recommended(luxonDateTimeNullableSchema()),
+  start: recommended(ExtractedResourceSchema.shape.start.unwrap().element.nullable()),
+  end: recommended(ExtractedResourceSchema.shape.end.unwrap().element.nullable()),
   theme: recommended(ThemeSchema.array()),
 });
 

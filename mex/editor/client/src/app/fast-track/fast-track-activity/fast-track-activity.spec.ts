@@ -208,7 +208,7 @@ describe("FastTrackActivity", () => {
       const { start } = await datepickerInputs(loader);
       await start.setValue("27.07.2026");
 
-      expect(component.model().start?.toISODate()).toBe("2026-07-27");
+      expect(component.model().start).toBe("2026-07-27");
     });
 
     it("parses an English-formatted date ('MM/DD/yyyy') when the language is 'en'", async () => {
@@ -218,7 +218,7 @@ describe("FastTrackActivity", () => {
       const { end } = await datepickerInputs(loader);
       await end.setValue("07/27/2026");
 
-      expect(component.model().end?.toISODate()).toBe("2026-07-27");
+      expect(component.model().end).toBe("2026-07-27");
     });
 
     it("does NOT accept a German-formatted date string while the language is 'en'", async () => {
@@ -463,8 +463,8 @@ describe("FastTrackActivity", () => {
       expect(model.activityType).toEqual([ACTIVITY_TYPE_ID]);
       expect(model.website).toHaveLength(1);
       expect(model.website[0].url).toBe("https://example.org");
-      expect(model.start?.toISODate()).toBe("2026-01-01");
-      expect(model.end?.toISODate()).toBe("2026-12-31");
+      expect(model.start).toBe("2026-01-01");
+      expect(model.end).toBe("2026-12-31");
 
       expect(component.activityForm().valid()).toBe(true);
     });

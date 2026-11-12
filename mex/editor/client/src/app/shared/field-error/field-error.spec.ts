@@ -1,7 +1,7 @@
 import { Pipe, type PipeTransform } from "@angular/core";
 import { type ComponentFixture, TestBed } from "@angular/core/testing";
 import type { ValidationError } from "@angular/forms/signals";
-import { TranslocoTestingModule } from "@jsverse/transloco";
+import { TranslocoService, TranslocoTestingModule } from "@jsverse/transloco";
 
 import { ValidationErrorMessagePipe } from "../validation-error-message-pipe";
 import { FieldError } from "./field-error";
@@ -32,6 +32,8 @@ describe("FieldError", () => {
         }),
       ],
     }).compileComponents();
+    vitest.spyOn(TestBed.inject(TranslocoService), "getActiveLang").mockReturnValue("en");
+
     fixture = TestBed.createComponent(FieldError);
     fixture.componentRef.setInput("error", { kind: "minLength" } as ValidationError.WithFieldTree);
     fixture.componentRef.setInput("fieldLabel", "Name");

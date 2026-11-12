@@ -1,81 +1,56 @@
-import { LiveAnnouncer } from "@angular/cdk/a11y";
 import { Component, inject, signal } from "@angular/core";
-import {
-  form,
-  FormField,
-  FormRoot,
-  minDate,
-  minLength,
-  required,
-  validate,
-} from "@angular/forms/signals";
+import { form, FormField, FormRoot, validateStandardSchema } from "@angular/forms/signals";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButton } from "@angular/material/button";
-import type { MatChipInputEvent } from "@angular/material/chips";
 import { MatChipsModule } from "@angular/material/chips";
-import { MatNativeDateModule } from "@angular/material/core";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
+import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
-import { MatInputModule } from "@angular/material/input";
-import { MatError, MatFormField, MatHint, MatLabel } from "@angular/material/select";
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
+import { MatOption, MatPrefix, MatSelect } from "@angular/material/select";
+import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 
-/**
- * Model for a contact point that is created inline with the activity.
- */
-export interface CreateContactPointModel {
-  $type: "CreateContactPointModel";
-  email: string;
-}
-/**
- * Model for a person that is created inline with the activity.
- */
-export interface CreatePersonModel {
-  $type: "CreatePersonModel";
-  firstname: number;
-  lastname: number;
-}
-/**
- * Union of the contact types that can be created inline with the activity.
- */
-export type CreateContactModel = CreateContactPointModel | CreatePersonModel;
-/**
- * Model backing the fast-track activity form.
- */
-export interface FastTrackActivityModel {
-  title: string;
-  contact: (string | CreateContactModel)[];
-  startDate: Date | null;
-  endDate: Date | null;
-  keywords: KeywordDict;
-}
-/**
- * Keywords of an activity, grouped by language.
- */
-export interface KeywordDict {
-  german: string[];
-  english: string[];
-}
+import { ConceptLookups } from "../../shared/concept-lookups.service";
+import { FieldCategoryPipe } from "../../shared/field-category-pipe";
+import { asLinkLanguage } from "../../shared/models";
+import type { Link } from "../../shared/models/generated/shared";
+import {
+  ArrayFormValueControl,
+  ArrayItemTemplate,
+} from "../array-form-value-control/array-form-value-control";
+import { Datepicker } from "../datepicker/datepicker";
+import { Fieldset } from "../fieldset/fieldset";
+import { LinkEditor } from "../link-editor/link-editor";
+import { ReferenceSelect } from "../reference-select/reference-select";
+import type { FastTrackActivityModel } from "./fast-track-activity.model";
+import { FastTrackActivityModelSchema } from "./fast-track-activity.model";
 
 @Component({
   selector: "mex-fast-track-activity",
   imports: [
+    ArrayFormValueControl,
+    ArrayItemTemplate,
+    Datepicker,
+    FieldCategoryPipe,
+    Fieldset,
     FormField,
     FormRoot,
+    LinkEditor,
+    MatAutocompleteModule,
     MatButton,
     MatChipsModule,
     MatDatepickerModule,
-    MatDatepickerModule,
-    MatError,
-    MatFormField,
     MatFormFieldModule,
-    MatHint,
-    MatIconModule,
+    MatIcon,
     MatInput,
-    MatInputModule,
-    MatLabel,
-    MatNativeDateModule,
-    MatNativeDateModule,
+    MatOption,
+    MatPrefix,
+    MatProgressSpinner,
+    MatSelect,
+    ReferenceSelect,
+    TranslocoDirective,
+    TranslocoPipe,
   ],
 
   templateUrl: "./fast-track-activity.html",
@@ -85,88 +60,45 @@ export interface KeywordDict {
  * Page to create an activity in a fast way.
  */
 export class FastTrackActivity {
-  private readonly announcer = inject(LiveAnnouncer);
+  protected readonly transloco = inject(TranslocoService);
+  protected readonly conceptOptions = inject(ConceptLookups);
+  protected readonly activitySchema = FastTrackActivityModelSchema;
 
   model = signal<FastTrackActivityModel>({
     title: "",
-    contact: [""],
-    startDate: null,
-    endDate: null,
-    keywords: { german: [], english: [] },
+    shortName: "",
+    abstract: "",
+    contact: [],
+    activityType: [],
+    funderOrCommissioner: [],
+    involvedPerson: [],
+    involvedUnit: [],
+    responsibleUnit: [],
+    website: [],
+    end: null,
+    start: null,
   });
 
-  activityForm = form(this.model, (schema) => {
-    required(schema.title, { message: "Title is required" });
-    minLength(schema.title, 3, { message: "Title must be at least 3 characters long" });
-    required(schema.startDate, { message: "Start date is required" });
-    validate(schema.startDate, (ctx) => {
-      const value = ctx.value();
+  activityForm = form(
+    this.model,
+    (schema) => {
+      validateStandardSchema(schema, FastTrackActivityModelSchema);
+    },
+    {
+      submission: {
+        action: async (field) => {
+          const validModel = field().value();
+          // eslint-disable-next-line no-console
+          console.log("SUBMITTED", validModel);
+        },
+        onInvalid: (field) => {
+          const firstError = field().errorSummary()[0];
+          firstError?.fieldTree().focusBoundControl();
+        },
+      },
+    },
+  );
 
-      if (value === null) {
-        return void 0;
-      }
-
-      if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
-        return {
-          kind: "invalidDate",
-          message: "Must be a valid date",
-        };
-      }
-
-      return void 0;
-    });
-    validate(schema.endDate, (ctx) => {
-      const value = ctx.value();
-
-      if (value === null) {
-        return void 0;
-      }
-
-      if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
-        return {
-          kind: "invalidDate",
-          message: "Must be a valid date",
-        };
-      }
-
-      return void 0;
-    });
-    minDate(schema.endDate, (ctx) => ctx.stateOf(schema.startDate).value() ?? undefined, {
-      message: "End date must be on or after start date",
-    });
-  });
-
-  addKeyword(event: MatChipInputEvent, language: "german" | "english"): void {
-    const value = (event.value || "").trim();
-
-    if (value) {
-      this.model.update((current) => {
-        const keywords = {
-          ...current.keywords,
-          [language]: [...current.keywords[language], value],
-        };
-        return { ...current, keywords };
-      });
-    }
-
-    event.chipInput?.clear();
-  }
-
-  removeKeyword(keyword: string, language: "german" | "english"): void {
-    const keywords = this.model().keywords[language];
-    const index = keywords.lastIndexOf(keyword);
-
-    if (index > -1) {
-      const nextKeywords = [...keywords.slice(0, index), ...keywords.slice(index + 1)];
-      this.model.update((current) => ({
-        ...current,
-        keywords: { ...current.keywords, [language]: nextKeywords },
-      }));
-      this.announcer.announce(`removed ${keyword} from reactive form`);
-    }
-  }
-  onSubmit() {
-    // eslint-disable-next-line no-console
-    console.log("Submitted", this.model());
-  }
+  createNewLink = () =>
+    ({ url: "", language: asLinkLanguage(this.transloco.getActiveLang()) }) as Link;
 }

@@ -28,6 +28,13 @@
                 [(isValid)]="tab.isValid"
               ></mex-create-contact-point-form>
             }
+            @case ("Organization") {
+              <mex-create-organization-form
+                [inputText]="data.inputText"
+                [(data)]="tab.data"
+                [(isValid)]="tab.isValid"
+              ></mex-create-organization-form>
+            }
           }
         </div>
       </mat-tab>

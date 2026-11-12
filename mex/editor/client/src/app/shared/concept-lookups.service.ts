@@ -21,6 +21,7 @@ export class ConceptLookups {
   resourceCreationMethodOptions = this.buildConceptOptions("resource-creation-method");
   frequencyOptions = this.buildConceptOptions("frequency");
   accessRestrictionOptions = this.buildConceptOptions("access-restriction");
+  activityTypeOptions = this.buildConceptOptions("activity-type");
 
   private sortedValues(vocabulary: PaginatedItemsContainer<Concept>) {
     const currentLang = this.transloco.activeLang();

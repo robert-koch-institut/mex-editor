@@ -31,7 +31,7 @@ html {
   @include rki.theme();
 
   margin: 0;
-  // height: 100vh;
+
   background-color: var(--mat-app-background-color);
   color: var(--mat-app-text-color);
 }

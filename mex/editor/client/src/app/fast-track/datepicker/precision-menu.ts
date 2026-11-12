@@ -14,7 +14,7 @@ import type { DatepickerPrecision } from "./precision";
 })
 /**
  * Icon button with a menu to choose the precision of the datepicker.
- * The precision icons are registered by `datepickerAppInitializer`.
+ * The precision icons are registered by `iconAppInitializer`.
  */
 export class PrecisionMenu {
   /** Currently selected precision, shown on the button. */

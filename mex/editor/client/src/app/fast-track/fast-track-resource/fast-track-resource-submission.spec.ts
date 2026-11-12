@@ -235,7 +235,7 @@ describe("FastTrackResourceSubmission", () => {
       expect(additive["end"]).toEqual(["2026-12-31T10:00:00Z"]);
     });
 
-    it("leaves start/end undefined when they are not set", async () => {
+    it("leaves start/end an empty list when they are not set", async () => {
       const additive = await sentAdditive(makeModel({ start: null, end: null }));
 
       expect(additive["start"]).toEqual([]);

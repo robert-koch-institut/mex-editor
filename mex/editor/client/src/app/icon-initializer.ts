@@ -2,7 +2,7 @@ import { inject, provideAppInitializer } from "@angular/core";
 import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from "@angular/platform-browser";
 
-// Gemeinsamer Kalenderrahmen (Ringe oben, Kopfleiste, Körper als Aussparung)
+// Shared frame for the all icons.
 const FRAME =
   "M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11z";
 

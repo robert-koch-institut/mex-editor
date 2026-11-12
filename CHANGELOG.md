@@ -16,8 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - field-category pipe to determine field-category based on zod schema definition
 - rki theme from figma (m3)
 - service to submit fasttrack resources
-- edit page stub that reads given id from url and loads the corrosponding item
-- service to raise toasts in order do notify/inform users about successfull or errored operations
+- edit page stub that reads given id from url and loads the corresponding item
+- service to raise toasts in order do notify/inform users about successful or errored operations
 
 ### Changes
 

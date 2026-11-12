@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- allow unsafe-eval in csp for transloco to work
+
 ### Security
 
 ## [4.1.2] - 2026-11-12

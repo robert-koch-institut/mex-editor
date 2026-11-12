@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changes
 
+- generate new zod models for mex-model 5.2
+
 ### Deprecated
 
 ### Removed

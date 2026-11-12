@@ -121,8 +121,6 @@ export class LinkEditor implements FormValueControl<Link | null> {
 
   readonly touched = input(false);
 
-  readonly asLinkLanguage = asLinkLanguage;
-
   private readonly draft = linkedSignal<Link | null, LinkDraft>({
     source: () => this.value(),
     computation: (link) => toDraft(link),
@@ -152,5 +150,9 @@ export class LinkEditor implements FormValueControl<Link | null> {
       }
       this.value.set(fromDraft(draft, untracked(this.nullable)));
     });
+  }
+
+  asLinkLanguage(value: string, nullable = true) {
+    return value === "" && nullable ? null : asLinkLanguage(value);
   }
 }

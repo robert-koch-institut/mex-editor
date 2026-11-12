@@ -59,6 +59,7 @@
     "en": "english",
     "es": "spanish",
     "fr": "french",
+    "none": "none",
     "ru": "russian"
   },
   "link-editor": {

@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changes
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [4.1.2] - 2026-11-12
+
+### Added
+
 - recommended category
 - error handling for lookups
 - code generator to create zod schemas based on pydantic models
@@ -36,15 +50,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - update mex-common to 3.6
 - update python to 3.15
 
-### Deprecated
-
 ### Removed
 
 - endpoint `GET /vocabulary` listing all vocabulary names, which had no consumer
 - disable unused redoc api documentation, swagger ui at `/docs` stays
 - removed unused PATCH method from backend api proxy
-
-### Fixed
 
 ### Security
 

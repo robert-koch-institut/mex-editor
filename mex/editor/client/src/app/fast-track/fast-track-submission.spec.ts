@@ -5,6 +5,7 @@ import { TranslocoService } from "@jsverse/transloco";
 import { vi } from "vitest";
 
 import { SubmissionError } from "../shared/models/submission-result";
+import type { FastTrackActivityModel } from "./fast-track-activity.model";
 import type { FastTrackResourceModel } from "./fast-track-resource.models";
 import { FastTrackSubmission } from "./fast-track-submission";
 
@@ -43,6 +44,33 @@ const makeResourceModel = (overrides: ResourceModelOverrides = {}): FastTrackRes
     contributor: [],
     ...overrides,
   }) as unknown as FastTrackResourceModel;
+
+type ActivityModelOverrides = {
+  [K in keyof FastTrackActivityModel]?: unknown;
+};
+
+const makeActivityModel = (overrides: ActivityModelOverrides = {}): FastTrackActivityModel =>
+  ({
+    $type: "FastTrackActivityModel",
+    title: "Aktivität",
+    abstract: "Beschreibung der Aktivität",
+    contact: [previewPerson(id("contact1"))],
+    responsibleUnit: [previewUnit(id("unit1"))],
+    activityType: [],
+    shortName: "Kurzname",
+    involvedPerson: [],
+    involvedUnit: [],
+    start: null,
+    end: null,
+    funderOrCommissioner: [],
+    website: [],
+    ...overrides,
+  }) as unknown as FastTrackActivityModel;
+
+const createOrganization = (officialName = "Organisation") => ({
+  $type: "CreateOrganization",
+  officialName,
+});
 
 const previewPerson = (identifier: string) => ({
   $type: "PreviewPerson",
@@ -115,6 +143,19 @@ describe("FasttrackSubmission", () => {
     ((bodyOf(r)["additive"] as Body)["givenName"] as string[])[0];
   const fail = (request: TestRequest, status = 500) =>
     request.flush("fail", { status, statusText: "Server Error" });
+
+  const activityRequests = () => requestsOfType("ActivityRuleSetRequest");
+  const organizationRequests = () => requestsOfType("OrganizationRuleSetRequest");
+  const activityAdditive = (request: TestRequest) => (bodyOf(request)["additive"] ?? {}) as Body;
+
+  async function sentActivityAdditive(model: FastTrackActivityModel): Promise<Body> {
+    const { done } = track(service.submit(model));
+    const [request] = activityRequests();
+    const additive = activityAdditive(request);
+    request.flush({ $type: "ActivityRuleSetResponse" });
+    await done;
+    return additive;
+  }
 
   /** Submits a model that needs no new items and returns the `additive` part of the POSTed resource. */
   async function sentAdditive(model: FastTrackResourceModel): Promise<Body> {
@@ -667,6 +708,378 @@ describe("FasttrackSubmission", () => {
 
       expect(state.status).toBe("resolved");
       expect(state.value).toMatchObject({ success: false });
+    });
+  });
+
+  describe("the POSTed activity", () => {
+    it("is an ActivityRuleSetRequest with an AdditiveActivity", async () => {
+      const { done } = track(service.submit(makeActivityModel()));
+
+      expect(resourceRequests()).toHaveLength(0);
+      const [request] = activityRequests();
+
+      expect(request.request.method).toBe("POST");
+      expect(bodyOf(request)["$type"]).toBe("ActivityRuleSetRequest");
+      expect(activityAdditive(request)["$type"]).toBe("AdditiveActivity");
+
+      request.flush({ $type: "ActivityRuleSetResponse" });
+      await done;
+    });
+
+    it("wraps title and abstract using the active language", async () => {
+      const additive = await sentActivityAdditive(makeActivityModel());
+
+      expect(additive["title"]).toEqual([{ value: "Aktivität", language: "de" }]);
+      expect(additive["abstract"]).toEqual([
+        { value: "Beschreibung der Aktivität", language: "de" },
+      ]);
+    });
+
+    it("uses the active language for title and abstract", async () => {
+      activeLang.set("en");
+
+      const additive = await sentActivityAdditive(makeActivityModel());
+
+      expect(additive["title"]).toEqual([{ value: "Aktivität", language: "en" }]);
+      expect(additive["abstract"]).toEqual([
+        { value: "Beschreibung der Aktivität", language: "en" },
+      ]);
+    });
+
+    it.each(["it", "", "EN", "0", "length"])(
+      "falls back to German for unsupported language '%s'",
+      async (lang) => {
+        activeLang.set(lang);
+
+        const additive = await sentActivityAdditive(makeActivityModel());
+
+        expect((additive["title"] as { language: string }[])[0].language).toBe("de");
+      },
+    );
+
+    it("maps shortName when provided", async () => {
+      const additive = await sentActivityAdditive(makeActivityModel({ shortName: "FAST" }));
+
+      expect(additive["shortName"]).toEqual([{ value: "FAST", language: "de" }]);
+    });
+
+    it("leaves shortName empty when it is not a valid text string", async () => {
+      const additive = await sentActivityAdditive(makeActivityModel({ shortName: "" }));
+
+      expect(additive["shortName"]).toEqual([]);
+    });
+
+    it("maps start and end as lists", async () => {
+      const additive = await sentActivityAdditive(
+        makeActivityModel({
+          start: "2026-01-05",
+          end: "2026-12-31T10:00:00Z",
+        }),
+      );
+
+      expect(additive["start"]).toEqual(["2026-01-05"]);
+      expect(additive["end"]).toEqual(["2026-12-31T10:00:00Z"]);
+    });
+
+    it("leaves start and end empty when they are not set", async () => {
+      const additive = await sentActivityAdditive(makeActivityModel({ start: null, end: null }));
+
+      expect(additive["start"]).toEqual([]);
+      expect(additive["end"]).toEqual([]);
+    });
+
+    it("passes website and activityType through", async () => {
+      // The exact LinkSchema shape is intentionally not assumed here.
+      // The empty arrays are valid model values and must remain empty arrays.
+      const additive = await sentActivityAdditive(makeActivityModel());
+
+      expect(additive["website"]).toEqual([]);
+      expect(additive["activityType"]).toEqual([]);
+    });
+
+    it("passes existing reference identifiers through in order", async () => {
+      const additive = await sentActivityAdditive(
+        makeActivityModel({
+          contact: [previewPerson(id("contact1")), previewPerson(id("contact2"))],
+          responsibleUnit: [previewUnit(id("unit1"))],
+          involvedPerson: [previewPerson(id("person1")), previewPerson(id("person2"))],
+          involvedUnit: [previewUnit(id("unit2"))],
+        }),
+      );
+
+      expect(additive["contact"]).toEqual([id("contact1"), id("contact2")]);
+      expect(additive["responsibleUnit"]).toEqual([id("unit1")]);
+      expect(additive["involvedPerson"]).toEqual([id("person1"), id("person2")]);
+      expect(additive["involvedUnit"]).toEqual([id("unit2")]);
+      expect(additive["funderOrCommissioner"]).toEqual([]);
+    });
+
+    it("sends empty optional reference lists as empty arrays", async () => {
+      const additive = await sentActivityAdditive(makeActivityModel());
+
+      expect(additive["involvedPerson"]).toEqual([]);
+      expect(additive["involvedUnit"]).toEqual([]);
+      expect(additive["funderOrCommissioner"]).toEqual([]);
+    });
+  });
+
+  // eslint-disable-next-line max-lines-per-function
+  describe("submit: activity with new reference items", () => {
+    it("creates a new contact person and uses its stableTargetId", async () => {
+      const { done } = track(
+        service.submit(makeActivityModel({ contact: [createPerson("Jane", "Doe")] })),
+      );
+
+      const [person] = personRequests();
+      expect(bodyOf(person)).toEqual({
+        $type: "PersonRuleSetRequest",
+        additive: {
+          $type: "AdditivePerson",
+          givenName: ["Jane"],
+          familyName: ["Doe"],
+        },
+      });
+
+      person.flush({ stableTargetId: id("newperson1") });
+
+      const [activity] = activityRequests();
+      expect(activityAdditive(activity)["contact"]).toEqual([id("newperson1")]);
+
+      activity.flush({ $type: "ActivityRuleSetResponse" });
+      await done;
+    });
+
+    it("creates a new contact point and uses its stableTargetId", async () => {
+      const { done } = track(
+        service.submit(
+          makeActivityModel({
+            contact: [createContactPoint("info@example.org")],
+          }),
+        ),
+      );
+
+      const [contact] = contactPointRequests();
+      expect(bodyOf(contact)).toEqual({
+        $type: "ContactPointRuleSetRequest",
+        additive: {
+          $type: "AdditiveContactPoint",
+          email: ["info@example.org"],
+        },
+      });
+
+      contact.flush({ stableTargetId: id("newcontact1") });
+
+      const [activity] = activityRequests();
+      expect(activityAdditive(activity)["contact"]).toEqual([id("newcontact1")]);
+
+      activity.flush({ $type: "ActivityRuleSetResponse" });
+      await done;
+    });
+
+    it("creates involved persons and preserves their original order", async () => {
+      const { done } = track(
+        service.submit(
+          makeActivityModel({
+            involvedPerson: [
+              previewPerson(id("existing1")),
+              createPerson("Alice", "One"),
+              createPerson("Bob", "Two"),
+            ],
+          }),
+        ),
+      );
+
+      const requests = personRequests();
+      expect(requests).toHaveLength(2);
+
+      requests
+        .find((r) => givenNameOf(r) === "Bob")!
+        .flush({
+          stableTargetId: id("person2"),
+        });
+      requests
+        .find((r) => givenNameOf(r) === "Alice")!
+        .flush({
+          stableTargetId: id("person1"),
+        });
+
+      const [activity] = activityRequests();
+      expect(activityAdditive(activity)["involvedPerson"]).toEqual([
+        id("existing1"),
+        id("person1"),
+        id("person2"),
+      ]);
+
+      activity.flush({ $type: "ActivityRuleSetResponse" });
+      await done;
+    });
+
+    it("creates a new organization and uses its stableTargetId", async () => {
+      const { done } = track(
+        service.submit(
+          makeActivityModel({
+            funderOrCommissioner: [createOrganization("Forschungsinstitut")],
+          }),
+        ),
+      );
+
+      const [organization] = organizationRequests();
+
+      expect(bodyOf(organization)).toEqual({
+        $type: "OrganizationRuleSetRequest",
+        additive: {
+          $type: "AdditiveOrganization",
+          officialName: [{ value: "Forschungsinstitut", language: "de" }],
+        },
+      });
+
+      organization.flush({ stableTargetId: id("organization1") });
+
+      const [activity] = activityRequests();
+      expect(activityAdditive(activity)["funderOrCommissioner"]).toEqual([id("organization1")]);
+
+      activity.flush({ $type: "ActivityRuleSetResponse" });
+      await done;
+    });
+
+    it("waits for all new items before submitting the activity", async () => {
+      const { done } = track(
+        service.submit(
+          makeActivityModel({
+            contact: [createContactPoint()],
+            involvedPerson: [createPerson()],
+          }),
+        ),
+      );
+
+      const [person] = personRequests();
+      const [contact] = contactPointRequests();
+
+      person.flush({ stableTargetId: id("person1") });
+
+      expect(activityRequests()).toHaveLength(0);
+      expect(contact.cancelled).toBe(false);
+
+      contact.flush({ stableTargetId: id("contact1") });
+
+      const [activity] = activityRequests();
+      expect(activity).toBeDefined();
+
+      activity.flush({ $type: "ActivityRuleSetResponse" });
+      await done;
+    });
+
+    it("does not send the activity when creating a new item fails", async () => {
+      const { state, done } = track(
+        service.submit(makeActivityModel({ involvedPerson: [createPerson()] })),
+      );
+
+      fail(personRequests()[0]);
+      await done;
+
+      expect(state.value).toMatchObject({ success: false });
+      expect(activityRequests()).toHaveLength(0);
+
+      const error = errorOf(state.value);
+      expect(error).toBeInstanceOf(SubmissionError);
+      expect(error.innerError).toBeInstanceOf(HttpErrorResponse);
+    });
+
+    it("cancels outstanding reference requests when one fails", async () => {
+      const { state, done } = track(
+        service.submit(
+          makeActivityModel({
+            contact: [createContactPoint()],
+            involvedPerson: [createPerson("Alice", "One"), createPerson("Bob", "Two")],
+          }),
+        ),
+      );
+
+      const persons = personRequests();
+      const [contact] = contactPointRequests();
+      expect(persons).toHaveLength(2);
+
+      fail(contact);
+      await done;
+
+      expect(state.value).toMatchObject({ success: false });
+      expect(persons.every((request) => request.cancelled)).toBe(true);
+      expect(activityRequests()).toHaveLength(0);
+    });
+
+    it("treats a response without stableTargetId as a failure", async () => {
+      const { state, done } = track(
+        service.submit(makeActivityModel({ involvedPerson: [createPerson()] })),
+      );
+
+      personRequests()[0].flush({});
+      await done;
+
+      expect(state.status).toBe("resolved");
+      expect(state.value).toMatchObject({ success: false });
+      expect(errorOf(state.value).innerError?.message).toBe("No stableTargetId in response.");
+      expect(activityRequests()).toHaveLength(0);
+    });
+
+    it("treats an empty response body as a failure", async () => {
+      const { state, done } = track(
+        service.submit(makeActivityModel({ contact: [createContactPoint()] })),
+      );
+
+      contactPointRequests()[0].flush(null);
+      await done;
+
+      expect(state.value).toMatchObject({ success: false });
+      expect(activityRequests()).toHaveLength(0);
+    });
+  });
+
+  describe("submit: the activity request itself fails", () => {
+    it("resolves with success:false and a SubmissionError holding the payload and HTTP error", async () => {
+      const { state, done } = track(service.submit(makeActivityModel()));
+
+      const [request] = activityRequests();
+      fail(request);
+      await done;
+
+      expect(state.status).toBe("resolved");
+      const error = errorOf(state.value);
+
+      expect(error).toBeInstanceOf(SubmissionError);
+      expect(error.message).toBe("Error while submitting 'ActivityRuleSetRequest'");
+      expect(error.payload).toEqual(bodyOf(request));
+      expect(error.innerError).toBeInstanceOf(HttpErrorResponse);
+      expect(error.innerError).toMatchObject({ status: 500 });
+    });
+
+    it("reports network errors with status 0", async () => {
+      const { state, done } = track(service.submit(makeActivityModel()));
+
+      activityRequests()[0].error(new ProgressEvent("error"));
+      await done;
+
+      expect(state.status).toBe("resolved");
+      expect(errorOf(state.value).innerError).toMatchObject({
+        status: 0,
+      });
+    });
+
+    it("remains usable after a failed submission", async () => {
+      const failing = track(service.submit(makeActivityModel()));
+
+      fail(activityRequests()[0]);
+      await failing.done;
+
+      expect(failing.state.value).toMatchObject({ success: false });
+
+      const retry = track(service.submit(makeActivityModel()));
+
+      activityRequests()[0].flush({
+        $type: "ActivityRuleSetResponse",
+      });
+      await retry.done;
+
+      expect(retry.state.value).toMatchObject({ success: true });
     });
   });
 });

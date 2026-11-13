@@ -5,19 +5,17 @@ import {
   CreateOrPreviewContactPointSchema,
   CreateOrPreviewOrganizationSchema,
   CreateOrPreviewPersonSchema,
-} from "../../shared/models";
-import {
-  ActivityTypeSchema,
-  ExtractedActivitySchema,
-} from "../../shared/models/generated/activity";
-import { PreviewOrganizationalUnitSchema } from "../../shared/models/generated/organizational-unit";
-import { LinkSchema, TextSchema } from "../../shared/models/generated/shared";
-import { recommended } from "../../shared/models/zod-types";
+} from "../shared/models";
+import { ActivityTypeSchema, ExtractedActivitySchema } from "../shared/models/generated/activity";
+import { PreviewOrganizationalUnitSchema } from "../shared/models/generated/organizational-unit";
+import { LinkSchema, TextSchema } from "../shared/models/generated/shared";
+import { recommended } from "../shared/models/zod-types";
 
 /**
  * Schema for FasttrackActivityModel
  */
 export const FastTrackActivityModelSchema = z.object({
+  $type: z.literal("FastTrackActivityModel"),
   // required fields
   title: TextSchema.shape.value,
   abstract: TextSchema.shape.value,

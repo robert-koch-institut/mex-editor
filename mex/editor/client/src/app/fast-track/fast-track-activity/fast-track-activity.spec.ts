@@ -5,6 +5,7 @@ import { TestBed } from "@angular/core/testing";
 import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { By } from "@angular/platform-browser";
+import { Router } from "@angular/router";
 import { TranslocoService } from "@jsverse/transloco";
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
@@ -12,6 +13,9 @@ import type { PreviewItem } from "../../shared/models";
 import { asLinkLanguage } from "../../shared/models";
 import type { CreateItem } from "../../shared/models/create-item";
 import { ActivityTypeSchema } from "../../shared/models/generated/activity";
+import { SubmissionError } from "../../shared/models/submission-result";
+import { ToastNotifier } from "../../shared/toasts/toast-notifier";
+import { FastTrackSubmission } from "../fast-track-submission";
 import { Fieldset } from "../fieldset/fieldset";
 import { ReferenceSelect } from "../reference-select/reference-select";
 import { FastTrackActivity } from "./fast-track-activity";
@@ -109,7 +113,14 @@ describe("FastTrackActivity", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FastTrackActivity],
-      providers: [{ provide: ConceptLookups, useValue: conceptOptionsStub }],
+      providers: [
+        { provide: ConceptLookups, useValue: conceptOptionsStub },
+        { provide: FastTrackSubmission, useValue: { submit: vi.fn() } },
+        {
+          provide: ToastNotifier,
+          useValue: { success: vi.fn(), error: vi.fn(), submissionError: vi.fn() },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FastTrackActivity);
@@ -460,25 +471,69 @@ describe("FastTrackActivity", () => {
   });
 
   describe("form submission", () => {
-    it("submits the valid model", async () => {
+    it("submits the valid model and handles a successful response", async () => {
       fillEveryRequiredField();
       const expectedModel = component.model();
-      const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
+
+      const submission = TestBed.inject(FastTrackSubmission);
+      const router = TestBed.inject(Router);
+      const notifier = TestBed.inject(ToastNotifier);
+
+      vi.spyOn(router, "navigate").mockResolvedValue(true);
+      vi.mocked(submission.submit).mockResolvedValue({
+        success: true,
+        response: { $type: "ActivityRuleSetResponse", stableTargetId: "activity-123" },
+      } as Awaited<ReturnType<FastTrackSubmission["submit"]>>);
 
       await submitForm();
 
       expect(component.activityForm().valid()).toBe(true);
-      expect(log).toHaveBeenCalledOnce();
-      expect(log).toHaveBeenCalledWith("SUBMITTED", expectedModel);
+      expect(submission.submit).toHaveBeenCalledOnce();
+      expect(submission.submit).toHaveBeenCalledWith(expectedModel);
+      expect(router.navigate).toHaveBeenCalledWith(["edit", "activity-123"]);
+      expect(notifier.success).toHaveBeenCalledWith(
+        { msgKey: "fasttrack.activity.toast.success.message" },
+        { msgKey: "fasttrack.activity.toast.success.title" },
+      );
+      expect(notifier.error).not.toHaveBeenCalled();
+    });
+
+    it("passes a failed submission result to the failure notifier", async () => {
+      fillEveryRequiredField();
+
+      const submission = TestBed.inject(FastTrackSubmission);
+      const router = TestBed.inject(Router);
+      const notifier = TestBed.inject(ToastNotifier);
+
+      vi.spyOn(router, "navigate").mockResolvedValue(true);
+
+      const submitError = new SubmissionError({ $type: "ActivityRuleSetRequest", additive: {} });
+      const submitResult = {
+        success: false,
+        error: submitError,
+      } as Awaited<ReturnType<FastTrackSubmission["submit"]>>;
+      vi.mocked(submission.submit).mockResolvedValue(submitResult);
+
+      await submitForm();
+
+      expect(component.activityForm().valid()).toBe(true);
+      expect(submission.submit).toHaveBeenCalledOnce();
+      expect(notifier.submissionError).toHaveBeenCalledWith(
+        { msgKey: "fasttrack.activity.toast.submissionError.message" },
+        { msgKey: "fasttrack.activity.toast.submissionError.title" },
+        submitError,
+      );
+      expect(router.navigate).not.toHaveBeenCalled();
+      expect(notifier.success).not.toHaveBeenCalled();
     });
 
     it("does not submit when required fields are missing", async () => {
-      const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
+      const submission = TestBed.inject(FastTrackSubmission);
 
       await submitForm();
 
       expect(component.activityForm().valid()).toBe(false);
-      expect(log).not.toHaveBeenCalled();
+      expect(submission.submit).not.toHaveBeenCalled();
     });
 
     it("focuses the first invalid control when submitting an invalid form", async () => {
@@ -499,6 +554,56 @@ describe("FastTrackActivity", () => {
       expect(button.textContent?.trim()).toBe(
         TestBed.inject(TranslocoService).translate("fasttrack.activity.save-button.label"),
       );
+    });
+
+    it("disables the submit button and shows a spinner while submitting", async () => {
+      fillEveryRequiredField();
+
+      const submission = TestBed.inject(FastTrackSubmission);
+      const router = TestBed.inject(Router);
+
+      vi.spyOn(router, "navigate").mockResolvedValue(true);
+
+      // Keep the submission pending so we can inspect the loading state.
+      let resolveSubmit!: (result: Awaited<ReturnType<FastTrackSubmission["submit"]>>) => void;
+
+      vi.mocked(submission.submit).mockReturnValue(
+        new Promise((resolve) => {
+          resolveSubmit = resolve;
+        }),
+      );
+
+      const form = fixture.nativeElement.querySelector("form") as HTMLFormElement;
+      const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+      expect(submitButton).toBeTruthy();
+      expect(submitButton.disabled).toBe(false);
+
+      // Trigger submission, but don't resolve the promise yet.
+      form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+
+      // Let the async submission action start and render its pending state.
+      await Promise.resolve();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      // Assert the loading UI.
+      expect(submitButton.disabled).toBe(true);
+      expect(submitButton.querySelector("mat-progress-spinner")).not.toBeNull();
+
+      // Finish the pending submission to cleanly complete the test.
+      resolveSubmit({
+        success: false,
+        error: new SubmissionError({ $type: "ActivityRuleSetRequest" }),
+      });
+
+      await vi.waitFor(() => expect(component.activityForm().submitting()).toBe(false));
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(submitButton.disabled).toBe(false);
+      expect(submitButton.querySelector("mat-progress-spinner")).toBeNull();
     });
   });
 

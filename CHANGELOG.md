@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- httpd and valkey are dropped from compose to simplify the setup
+
 ### Fixed
 
 ### Security

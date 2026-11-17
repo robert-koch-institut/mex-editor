@@ -7,15 +7,6 @@ import type { CreateItem } from "./models/create-item";
 import { isCreateItem } from "./models/create-item";
 import { ToLabelPipe } from "./to-label-pipe";
 
-/**
- * Data as Lookup containing id and label.
- */
-export interface Lookup<T> {
-  id: string;
-  label: string;
-  data: T;
-}
-
 @Pipe({
   name: "toLookup",
 })
@@ -25,13 +16,13 @@ export interface Lookup<T> {
 export class ToLookupPipe implements PipeTransform {
   private labelPipe = new ToLabelPipe();
 
-  transform(
-    value: Concept | PreviewItem | CreateItem,
+  transform<T extends Concept | PreviewItem | CreateItem>(
+    value: T,
     lang: string,
-  ): Lookup<Concept | PreviewItem | CreateItem> {
+  ): { value: string; label: string; data: T } {
     const label = this.labelPipe.transform(value, lang);
     return {
-      id: isCreateItem(value) ? crypto.randomUUID() : value.identifier,
+      value: isCreateItem(value) ? crypto.randomUUID() : value.identifier,
       label: label,
       data: value,
     };

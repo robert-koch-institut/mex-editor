@@ -88,6 +88,12 @@
       "url": "URL"
     }
   },
+  "text-editor": {
+    "text": {
+      "value": "Text",
+      "language": "Language"
+    }
+  },
   "navbar.create-link.text": "Create {{{{entity_type}}}}",
   "reference-select": {
     "placeholder.empty": "Type to filter, \"*\" as placeholder",

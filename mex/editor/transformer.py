@@ -29,6 +29,7 @@ class DuplicateKeyError(KeyError):
 def transform_pofile_to_message_format_json(
     po: polib.POFile | list[polib.POEntry],
     ignore_duplicates: bool = False,  # noqa: FBT001, FBT002
+    add_explicit_field_for_entity_types: bool = True,  # noqa: FBT001, FBT002
 ) -> dict[str, str]:
     """Transforms the given pofile (or entries) to message format json.
 
@@ -36,6 +37,9 @@ def transform_pofile_to_message_format_json(
         po (polib.POFile | list[polib.POEntry]): input to transform.
         ignore_duplicates (bool, optional): If True, duplicate keys will be ignored;
         otherwise a DuplicateKeyError is raised.
+        add_explicit_field_for_entity_types (bool, optional): If True, add explicity
+        entity entries for generic fields like 'title' and others ('title' ->
+        'Resource.title')
 
     Raises:
         DuplicateKeyError: Raises if the key generation creates a duplicate key.
@@ -66,5 +70,16 @@ def transform_pofile_to_message_format_json(
             raise DuplicateKeyError(key, entry)
 
         messages[key] = value
+
+    if add_explicit_field_for_entity_types:
+        addition_entitytypes = ["Activity", "Resource"]
+        additions = {
+            f"{entity}.{k}": v
+            for entity in addition_entitytypes
+            for k, v in messages.items()
+            # every lower cased entry if not defined by entitytype
+            if k[:1].islower() and f"{entity}.{k}" not in messages
+        }
+        messages.update(additions)
 
     return messages

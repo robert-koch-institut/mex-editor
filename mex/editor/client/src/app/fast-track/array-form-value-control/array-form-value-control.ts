@@ -11,7 +11,12 @@ import {
   output,
   TemplateRef,
 } from "@angular/core";
-import type { FieldTree, ValidationError, WithOptionalFieldTree } from "@angular/forms/signals";
+import type {
+  Field,
+  FieldTree,
+  ValidationError,
+  WithOptionalFieldTree,
+} from "@angular/forms/signals";
 import { FORM_FIELD, FormField, type FormValueControl } from "@angular/forms/signals";
 import { MatIconButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
@@ -20,8 +25,8 @@ import { MatIcon } from "@angular/material/icon";
  * ArrayItemContext API documentation.
  */
 export interface ArrayItemContext<T> {
-  $implicit: FieldTree<T>;
-  field: FieldTree<T>;
+  $implicit: Field<T>;
+  field: Field<T>;
   value: T;
   index: number;
   first: boolean;
@@ -34,7 +39,7 @@ export interface ArrayItemContext<T> {
  */
 export class ArrayItemTemplate<T> {
   /** Only a type hint for the template type checker. Pass the same field as on the host. */
-  readonly mexArrayItem = input<FieldTree<T[]> | undefined>();
+  readonly mexArrayItem = input<Field<T[]> | undefined>();
   readonly template = inject<TemplateRef<ArrayItemContext<T>>>(TemplateRef);
 
   static ngTemplateContextGuard<T>(

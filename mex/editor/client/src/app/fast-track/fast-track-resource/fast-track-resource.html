@@ -124,8 +124,8 @@
           [placeholder]="'select.placeholder' | transloco"
           data-testid="theme-select"
         >
-          @for (option of conceptOptions.themeOptions(); track option.id) {
-            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          @for (option of conceptOptions.themeOptions(); track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -162,8 +162,8 @@
           [placeholder]="'select.placeholder' | transloco"
           data-testid="resourceCreationMethod-select"
         >
-          @for (option of conceptOptions.resourceCreationMethodOptions(); track option.id) {
-            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          @for (option of conceptOptions.resourceCreationMethodOptions(); track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -182,8 +182,8 @@
           [placeholder]="'select.placeholder' | transloco"
           data-testid="frequency-select"
         >
-          @for (option of conceptOptions.frequencyOptions(); track option.id) {
-            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          @for (option of conceptOptions.frequencyOptions(); track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>

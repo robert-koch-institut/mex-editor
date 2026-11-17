@@ -1,0 +1,23 @@
+<form [formRoot]="resourceForm">
+  @for (group of groups(); track group.groupName) {
+    <h2 class="two-column-item">{{ group.groupName }}</h2>
+    <div class="two-column-layout">
+      @for (entry of group.fields; track entry.key) {
+        <mex-fieldset
+          [labelKey]="`Resource.${entry.key}`"
+          [descriptionKey]="`Resource.${entry.key}.description`"
+          [category]="entry.schema | fieldCategory"
+          [formField]="entry.field"
+        >
+          <mex-zod-field-editor
+            #fieldEditor
+            class="one-column-item"
+            [formField]="entry.field"
+            [schema]="entry.schema"
+          />
+        </mex-fieldset>
+      }
+    </div>
+  }
+  <button type="submit">Submit</button>
+</form>

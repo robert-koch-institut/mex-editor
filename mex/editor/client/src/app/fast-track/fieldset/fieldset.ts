@@ -1,5 +1,4 @@
-import { Component, computed, HostBinding, input } from "@angular/core";
-import { type FieldTree } from "@angular/forms/signals";
+import { Component, computed, input } from "@angular/core";
 import { TranslocoPipe } from "@jsverse/transloco";
 
 import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
@@ -14,16 +13,16 @@ import type { FieldCategory } from "../../shared/models";
 /**
  * Component to wrap controls with label, description and errors.
  */
-export class Fieldset<T> {
-  private dataTestidSig = computed(() => {
-    const state = this.formState();
-    return state ? `fieldset-${state.name().split(".").at(-1)}` : null;
-  });
+export class Fieldset {
+  // private dataTestidSig = computed(() => {
+  //   const state = this.formState();
+  //   return state ? `fieldset-${state.name().split(".").at(-1)}` : null;
+  // });
 
-  @HostBinding("attr.data-testid")
-  get dataTestId() {
-    return this.dataTestidSig();
-  }
+  // @HostBinding("attr.data-testid")
+  // get dataTestId() {
+  //   return this.dataTestidSig();
+  // }
 
   labelKey = input.required<string>();
   labelParam = input<Record<string, unknown>>();
@@ -33,11 +32,11 @@ export class Fieldset<T> {
   category = input.required<FieldCategory>();
   categoryKey = computed(() => `categories.${this.category()}`);
 
-  showErrorWithoutTouch = input(false);
+  // showErrorWithoutTouch = input(false);
 
-  formField = input<FieldTree<T>>();
-  formState = computed(() => {
-    const formField = this.formField();
-    return formField ? formField() : null;
-  });
+  // formField = input<FieldTree<T>>();
+  // formState = computed(() => {
+  //   const formField = this.formField();
+  //   return formField ? formField() : null;
+  // });
 }

@@ -1,0 +1,74 @@
+@let resSchema = resolvedSchema();
+@switch (resSchema.$type) {
+  @case ("array") {
+    <mex-array-form-value-control
+      [formField]="resSchema.formField"
+      [createItem]="resSchema.createNewItem"
+    >
+      <ng-template [mexArrayItem]="resSchema.formField" let-field="field">
+        <mex-zod-field-editor class="grow" [formField]="field" [schema]="resSchema.elementSchema" />
+      </ng-template>
+    </mex-array-form-value-control>
+  }
+  @case ("number") {
+    <mat-form-field>
+      <input
+        matInput
+        type="number"
+        [formField]="resSchema.formField"
+        (keydown.enter)="$event.preventDefault()"
+      />
+    </mat-form-field>
+  }
+  @case ("string") {
+    <mat-form-field>
+      <input
+        matInput
+        type="text"
+        [formField]="resSchema.formField"
+        (keydown.enter)="$event.preventDefault()"
+      />
+    </mat-form-field>
+  }
+  @case ("link") {
+    <mex-link-editor [formField]="resSchema.formField"></mex-link-editor>
+  }
+  @case ("text") {
+    <mex-text-editor [formField]="resSchema.formField"></mex-text-editor>
+  }
+  @case ("enum") {
+    <mat-form-field>
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-select
+        [formField]="resSchema.formField"
+        [placeholder]="'select.placeholder' | transloco"
+      >
+        @for (option of resSchema.options(); track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+  @case ("enum-array") {
+    <mat-form-field>
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-select
+        multiple
+        [formField]="resSchema.formField"
+        [placeholder]="'select.placeholder' | transloco"
+      >
+        @for (option of resSchema.options(); track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+  @default {
+    UNHANDLED {{ resSchema.$type }}
+    <pre style="max-height: 300px; overflow: auto">
+      <code>
+        {{ resSchema | json }}
+      </code>
+    </pre>
+  }
+}

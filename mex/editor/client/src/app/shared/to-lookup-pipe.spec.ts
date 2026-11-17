@@ -19,7 +19,7 @@ describe("ToLookupPipe", () => {
     };
     const result = pipe.transform(person, "de");
 
-    expect(result.id).toBe("person-1");
+    expect(result.value).toBe("person-1");
     expect(result.label).toBe("Jane Doe");
     expect(result.data).toBe(person);
   });
@@ -28,7 +28,7 @@ describe("ToLookupPipe", () => {
     const draft = { $type: "CreatePerson" as const, givenName: "Jane", familyName: "Doe" };
     const result = pipe.transform(draft, "de");
 
-    expect(result.id).toBeTruthy();
+    expect(result.value).toBeTruthy();
     expect(result.label).toBe("⋆ Jane Doe");
     expect(result.data).toBe(draft);
   });
@@ -38,7 +38,7 @@ describe("ToLookupPipe", () => {
     const first = pipe.transform(draft, "de");
     const second = pipe.transform(draft, "de");
 
-    expect(first.id).not.toBe(second.id);
+    expect(first.value).not.toBe(second.value);
   });
 
   it("delegates label generation to ToLabelPipe (language-aware)", () => {

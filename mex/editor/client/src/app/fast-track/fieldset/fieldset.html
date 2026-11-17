@@ -1,4 +1,4 @@
-@let state = formState();
+<!-- @let state = formState(); -->
 <div class="label">
   @let label = labelKey() | transloco: labelParam() ?? {};
   {{ label }}
@@ -12,7 +12,7 @@
 }
 
 <ng-content></ng-content>
-
+<!--
 @if (state) {
   <mex-field-error-summary
     [fieldLabel]="label"
@@ -21,4 +21,4 @@
     [showNestedErrors]="true"
   >
   </mex-field-error-summary>
-}
+} -->

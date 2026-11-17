@@ -74,7 +74,7 @@ describe("ConceptLookups", () => {
     await TestBed.inject(ApplicationRef).whenStable();
     const trimData = (x: Lookup<unknown>) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { data, ...rest } = x;
+      const { data: data, ...rest } = x;
       return rest;
     };
 

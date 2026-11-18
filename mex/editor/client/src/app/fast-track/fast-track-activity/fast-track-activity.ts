@@ -14,6 +14,7 @@ import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/tr
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
+import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
 import { asLinkLanguage } from "../../shared/models";
 import type { Link } from "../../shared/models/generated/shared";
 import { SubmissionError } from "../../shared/models/submission-result";
@@ -37,6 +38,7 @@ import { ReferenceSelect } from "../reference-select/reference-select";
     ArrayItemTemplate,
     Datepicker,
     FieldCategoryPipe,
+    FieldErrorSummary,
     Fieldset,
     FormField,
     FormRoot,

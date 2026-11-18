@@ -81,18 +81,14 @@
     "none": "keine",
     "ru": "russisch"
   },
-  "link-editor": {
-    "link": {
-      "language": "Sprache",
-      "title": "Titel",
-      "url": "URL"
-    }
+  "Link": {
+    "language": "Sprache",
+    "title": "Titel",
+    "url": "URL"
   },
-  "text-editor": {
-    "text": {
-      "value": "Text",
-      "language": "Sprache"
-    }
+  "Text": {
+    "value": "Text",
+    "language": "Sprache"
   },
   "navbar.create-link.text": "{{{{entity_type}}}} erstellen",
   "reference-select": {

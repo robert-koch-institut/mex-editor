@@ -1,6 +1,15 @@
 import { JsonPipe } from "@angular/common";
 import type { Signal } from "@angular/core";
-import { Component, computed, inject, input, model, output, signal } from "@angular/core";
+import {
+  Component,
+  computed,
+  forwardRef,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+} from "@angular/core";
 import type { Field, FormValueControl } from "@angular/forms/signals";
 import { FormField } from "@angular/forms/signals";
 import { MatIcon } from "@angular/material/icon";
@@ -15,8 +24,9 @@ import {
 } from "../../fast-track/array-form-value-control/array-form-value-control";
 import { Datepicker } from "../../fast-track/datepicker/datepicker";
 import { LinkEditor } from "../../fast-track/link-editor/link-editor";
-import type { ConceptLookup, NoneLookup } from "../../shared/concept-lookups.service";
+import type { Lookup, NoneLookup } from "../../shared/concept-lookups.service";
 import { ConceptLookups } from "../../shared/concept-lookups.service";
+import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
 import { asLinkLanguage } from "../../shared/models";
 import {
   AccessRestrictionSchema,
@@ -32,8 +42,15 @@ import {
   ResourceTypeGeneralSchema,
 } from "../../shared/models/generated/resource";
 import type { Link, Text } from "../../shared/models/generated/shared";
-import { LinkSchema, TextSchema, ThemeSchema } from "../../shared/models/generated/shared";
+import {
+  LinkLanguageSchema,
+  LinkSchema,
+  TextLanguageSchema,
+  TextSchema,
+  ThemeSchema,
+} from "../../shared/models/generated/shared";
 import { TextEditor } from "../../shared/text-editor/text-editor";
+import { ZodObjectEditor } from "../zod-object-editor/zod-object-editor";
 import type { ResolvedSchema } from "./zod-type-resolve";
 import { innerOf, WRAPPERS } from "./zod-type-resolve";
 
@@ -62,7 +79,9 @@ function unwrapDetailed(schema: z.ZodType) {
     ArrayFormValueControl,
     ArrayItemTemplate,
     Datepicker,
+    FieldErrorSummary,
     FormField,
+    forwardRef(() => ZodObjectEditor),
     JsonPipe,
     LinkEditor,
     MatFormField,
@@ -86,6 +105,8 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
   readonly disabled = input(false);
   readonly readonly = input(false);
 
+  readonly label = input<string>("Feld");
+
   /** Form value; kept in sync with the bound field by `[formField]`. */
   readonly value = model.required<z.infer<T>>();
   /** Emitted when the user leaves an input; lets `[formField]` mark the outer field as touched. */
@@ -99,7 +120,7 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
   private readonly transloco = inject(TranslocoService);
   readonly selectNoneLabel = translateSignal("select.none-option");
   readonly lookups = inject(ConceptLookups);
-  private lookupMapping = new Map<z.ZodEnum, Signal<ConceptLookup[]>>([
+  private lookupMapping = new Map<z.ZodEnum, Signal<Lookup[]>>([
     [ThemeSchema, this.lookups.themeOptions],
     [AccessRestrictionSchema, this.lookups.accessRestrictionOptions],
     [FrequencySchema, this.lookups.frequencyOptions],
@@ -111,12 +132,14 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
     [ResourceTypeGeneralSchema, this.lookups.resourceTypeGeneralOptions],
     [PurposeSchema, this.lookups.purposeOptions],
     [HealthCategorySchema, this.lookups.healthCategoryOptions],
-    [DataProcessingStateSchema, this.lookups.dataProcessingState],
+    [DataProcessingStateSchema, this.lookups.dataProcessingStateOptions],
+    [TextLanguageSchema, this.lookups.textLanguageOptions],
+    [LinkLanguageSchema, this.lookups.linkLanguageOptions],
   ]);
   private getLookup(
     enumType: z.ZodEnum,
     lookupConfig?: { optional: boolean; nullable: boolean },
-  ): Signal<(NoneLookup | ConceptLookup)[]> {
+  ): Signal<Lookup[]> {
     if (this.lookupMapping.has(enumType)) {
       const mapping = this.lookupMapping.get(enumType)!;
       if (lookupConfig && (lookupConfig.nullable || lookupConfig.optional)) {
@@ -220,8 +243,16 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
       if (unwrapped === TextSchema) {
         return { ...baseResult, $type: "text", formField: formField.field() as Field<Text> };
       }
-    }
 
+      console.log("ITS AN OBJECT", unwrapped);
+
+      return {
+        ...baseResult,
+        $type: "object",
+        formField: formField.field() as Field<object>,
+        entries: objectEntries(unwrapped),
+      };
+    }
     if (unwrapped instanceof z.ZodArray) {
       const elementSchema = unwrapped.element as z.ZodType;
       const unwrappedElementResult = unwrapDetailed(elementSchema);

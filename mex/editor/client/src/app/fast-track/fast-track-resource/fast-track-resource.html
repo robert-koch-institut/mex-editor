@@ -2,8 +2,8 @@
   <h1 class="page-title">{{ t("fasttrack.resource.headline") }}</h1>
   <form [formRoot]="resourceForm" class="two-column-layout">
     <mex-fieldset
-      [formField]="resourceForm.title"
-      labelKey="title"
+      #titleFieldset
+      labelKey="Resource.title"
       class="one-column-item"
       [category]="resourceSchema.shape.title | fieldCategory"
     >
@@ -14,12 +14,18 @@
           [attr.placeholder]="'Resource.title.description' | transloco"
           (keydown.enter)="$event.preventDefault()"
         />
+        <mat-error>
+          <mex-field-error-summary
+            [fieldState]="resourceForm.title()"
+            [fieldLabel]="titleFieldset.label()"
+          ></mex-field-error-summary>
+        </mat-error>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.description"
-      labelKey="description"
+      #descriptionFieldset
+      labelKey="Resource.description"
       class="two-column-item"
       [category]="resourceSchema.shape.description | fieldCategory"
     >
@@ -30,11 +36,17 @@
           [rows]="4"
           [attr.placeholder]="'Resource.description.description' | transloco"
         ></textarea>
+        <mat-error>
+          <mex-field-error-summary
+            [fieldState]="resourceForm.description()"
+            [fieldLabel]="descriptionFieldset.label()"
+          ></mex-field-error-summary>
+        </mat-error>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.contact"
+      #contactFieldset
       labelKey="contact"
       descriptionKey="Resource.contact.description"
       class="one-column-item"
@@ -46,10 +58,16 @@
         [isCreationEnabled]="true"
         (keydown.enter)="$event.preventDefault()"
       ></mex-reference-select>
+      <mat-error>
+        <mex-field-error-summary
+          [fieldState]="resourceForm.contact()"
+          [fieldLabel]="contactFieldset.label()"
+        ></mex-field-error-summary>
+      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.creator"
+      #creatorFieldset
       labelKey="creator"
       descriptionKey="Resource.creator.description"
       class="one-column-item"
@@ -62,10 +80,16 @@
         (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
+      <mat-error>
+        <mex-field-error-summary
+          [fieldState]="resourceForm.creator()"
+          [fieldLabel]="creatorFieldset.label()"
+        ></mex-field-error-summary>
+      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.contributor"
+      #contributorFieldset
       labelKey="Resource.contributor"
       descriptionKey="Resource.contributor.description"
       class="one-column-item"
@@ -78,10 +102,16 @@
         (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
+      <mat-error>
+        <mex-field-error-summary
+          [fieldState]="resourceForm.contributor()"
+          [fieldLabel]="contributorFieldset.label()"
+        ></mex-field-error-summary>
+      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.unitInCharge"
+      #unitInChargeFieldset
       labelKey="unitInCharge"
       descriptionKey="unitInCharge.description"
       class="one-column-item"
@@ -92,10 +122,16 @@
         [validEntityTypes]="['OrganizationalUnit']"
         (keydown.enter)="$event.preventDefault()"
       ></mex-reference-select>
+      <mat-error>
+        <mex-field-error-summary
+          [fieldState]="resourceForm.unitInCharge()"
+          [fieldLabel]="unitInChargeFieldset.label()"
+        ></mex-field-error-summary>
+      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.contributingUnit"
+      #contributingUnitFieldset
       labelKey="contributingUnit"
       descriptionKey="Resource.contributingUnit.description"
       class="one-column-item"
@@ -107,10 +143,16 @@
         (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
+      <mat-error>
+        <mex-field-error-summary
+          [fieldState]="resourceForm.contributingUnit()"
+          [fieldLabel]="contributingUnitFieldset.label()"
+        ></mex-field-error-summary>
+      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.theme"
+      #themeFieldset
       labelKey="theme"
       descriptionKey="Resource.theme.description"
       class="one-column-item"
@@ -128,11 +170,17 @@
             <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
         </mat-select>
+        <mat-error>
+          <mex-field-error-summary
+            [fieldState]="resourceForm.theme()"
+            [fieldLabel]="themeFieldset.label()"
+          ></mex-field-error-summary>
+        </mat-error>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.spatial"
+      #spatialFieldset
       labelKey="Resource.spatial"
       descriptionKey="Resource.spatial.description"
       class="one-column-item"
@@ -145,11 +193,17 @@
           [placeholder]="'input.placeholder' | transloco"
           (keydown.enter)="$event.preventDefault()"
         />
+        <mat-error>
+          <mex-field-error-summary
+            [fieldState]="resourceForm.spatial()"
+            [fieldLabel]="spatialFieldset.label()"
+          ></mex-field-error-summary>
+        </mat-error>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.resourceCreationMethod"
+      #resourceCreationMethodFieldset
       labelKey="Resource.resourceCreationMethod"
       descriptionKey="Resource.resourceCreationMethod.description"
       class="one-column-item"
@@ -158,7 +212,6 @@
       <mat-form-field>
         <mat-select
           multiple
-          [formField]="resourceForm.resourceCreationMethod"
           [placeholder]="'select.placeholder' | transloco"
           data-testid="resourceCreationMethod-select"
         >
@@ -166,26 +219,34 @@
             <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
         </mat-select>
+        <mat-error>
+          <mex-field-error-summary
+            [fieldState]="resourceForm.resourceCreationMethod()"
+            [fieldLabel]="resourceCreationMethodFieldset.label()"
+          ></mex-field-error-summary>
+        </mat-error>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.accrualPeriodicity"
+      #accrualPeriodicityFieldset
       labelKey="Resource.accrualPeriodicity"
       descriptionKey="Resource.accrualPeriodicity.description"
       class="one-column-item"
       [category]="resourceSchema.shape.accrualPeriodicity | fieldCategory"
     >
       <mat-form-field class="one-column-item">
-        <mat-select
-          [formField]="resourceForm.accrualPeriodicity"
-          [placeholder]="'select.placeholder' | transloco"
-          data-testid="frequency-select"
-        >
+        <mat-select [placeholder]="'select.placeholder' | transloco" data-testid="frequency-select">
           @for (option of conceptOptions.frequencyOptions(); track option.value) {
             <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
         </mat-select>
+        <mat-error>
+          <mex-field-error-summary
+            [fieldState]="resourceForm.accrualPeriodicity()"
+            [fieldLabel]="accrualPeriodicityFieldset.label()"
+          ></mex-field-error-summary>
+        </mat-error>
       </mat-form-field>
     </mex-fieldset>
 
@@ -198,7 +259,7 @@
     >
       <div class="two-column-layout">
         <mex-fieldset
-          [formField]="resourceForm.start"
+          #startFieldset
           labelKey="Resource.start"
           class="one-column-item"
           [category]="resourceSchema.shape.start | fieldCategory"
@@ -208,10 +269,16 @@
             [allowedPrecisions]="['day']"
             (keydown.enter)="$event.preventDefault()"
           ></mex-datepicker>
+          <mat-error>
+            <mex-field-error-summary
+              [fieldState]="resourceForm.start()"
+              [fieldLabel]="startFieldset.label()"
+            ></mex-field-error-summary>
+          </mat-error>
         </mex-fieldset>
 
         <mex-fieldset
-          [formField]="resourceForm.end"
+          #endFieldset
           labelKey="Resource.end"
           class="one-column-item"
           [category]="resourceSchema.shape.end | fieldCategory"
@@ -221,12 +288,18 @@
             [allowedPrecisions]="['day']"
             (keydown.enter)="$event.preventDefault()"
           ></mex-datepicker>
+          <mat-error>
+            <mex-field-error-summary
+              [fieldState]="resourceForm.end()"
+              [fieldLabel]="endFieldset.label()"
+            ></mex-field-error-summary>
+          </mat-error>
         </mex-fieldset>
       </div>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.keywords.de"
+      #keywordsDeFieldset
       labelKey="fasttrack.resource.fields.keywords.de.label"
       descriptionKey="Resource.keyword.description"
       class="two-column-item"
@@ -252,11 +325,17 @@
           (matChipInputTokenEnd)="addKeyword('de', $event.value); $event.chipInput.clear()"
           [placeholder]="t('fasttrack.resource.fields.keywords.de.placeholder')"
         />
+        <mat-error>
+          <mex-field-error-summary
+            [fieldState]="resourceForm.keywords.de()"
+            [fieldLabel]="keywordsDeFieldset.label()"
+          ></mex-field-error-summary>
+        </mat-error>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.keywords.en"
+      #keywordsEnFieldset
       labelKey="fasttrack.resource.fields.keywords.en.label"
       descriptionKey="Resource.keyword.description"
       class="two-column-item"
@@ -282,11 +361,17 @@
           (matChipInputTokenEnd)="addKeyword('en', $event.value); $event.chipInput.clear()"
           [placeholder]="t('fasttrack.resource.fields.keywords.en.placeholder')"
         />
+        <mat-error>
+          <mex-field-error-summary
+            [fieldState]="resourceForm.keywords.en()"
+            [fieldLabel]="keywordsEnFieldset.label()"
+          ></mex-field-error-summary>
+        </mat-error>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.hasLegalBasis"
+      #hasLegalBasisFieldset
       labelKey="Resource.hasLegalBasis"
       class="two-column-item"
       [category]="resourceSchema.shape.hasLegalBasis | fieldCategory"
@@ -299,10 +384,16 @@
           [attr.placeholder]="'Resource.hasLegalBasis.description' | transloco"
         ></textarea>
       </mat-form-field>
+      <mat-error>
+        <mex-field-error-summary
+          [fieldState]="resourceForm.hasLegalBasis()"
+          [fieldLabel]="hasLegalBasisFieldset.label()"
+        ></mex-field-error-summary>
+      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.provenance"
+      #provenanceFieldset
       labelKey="Resource.provenance"
       class="two-column-item"
       [category]="resourceSchema.shape.provenance | fieldCategory"
@@ -315,10 +406,16 @@
           [attr.placeholder]="'Resource.provenance.description' | transloco"
         ></textarea>
       </mat-form-field>
+      <mat-error>
+        <mex-field-error-summary
+          [fieldState]="resourceForm.provenance()"
+          [fieldLabel]="provenanceFieldset.label()"
+        ></mex-field-error-summary>
+      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.rights"
+      #rightsFieldset
       labelKey="Resource.rights"
       class="two-column-item"
       [category]="resourceSchema.shape.rights | fieldCategory"
@@ -337,6 +434,12 @@
           [attr.placeholder]="'Resource.rights.description' | transloco"
         ></textarea>
       </mat-form-field>
+      <mat-error>
+        <mex-field-error-summary
+          [fieldState]="resourceForm.rights()"
+          [fieldLabel]="rightsFieldset.label()"
+        ></mex-field-error-summary>
+      </mat-error>
     </mex-fieldset>
 
     <div class="two-column-item form-actions">

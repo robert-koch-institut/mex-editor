@@ -1,9 +1,11 @@
-import { Component, computed, input, output } from "@angular/core";
+import { Component, computed, inject, input, output } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
-import { TranslocoPipe } from "@jsverse/transloco";
+import { translateSignal, TranslocoPipe } from "@jsverse/transloco";
 
-import { type TextLanguage, TextLanguageSchema } from "../../models/generated/shared";
+import type { NoneLookup } from "../../concept-lookups.service";
+import { ConceptLookups } from "../../concept-lookups.service";
+import { type TextLanguage } from "../../models/generated/shared";
 
 type MaybeNullabelTextLanguage<T extends true | false> = T extends true
   ? TextLanguage | null
@@ -23,12 +25,14 @@ export class TextLanguageMenu<T extends true | false = false> {
   readonly nullable = input<T>(false as T);
   readonly languageSelected = output<MaybeNullabelTextLanguage<T>>();
 
+  private readonly lookups = inject(ConceptLookups);
+  private readonly noneLanguageLabel = translateSignal("language.none");
+
   readonly options = computed(() => [
-    ...Object.values(TextLanguageSchema.def.entries).map((x) => ({
-      value: x,
-      labelKey: `language.${x}`,
-    })),
-    ...(this.nullable() ? [{ value: null, labelKey: "none" }] : []),
+    ...this.lookups.textLanguageOptions(),
+    ...(this.nullable()
+      ? [{ value: null, label: this.noneLanguageLabel(), data: null } as NoneLookup]
+      : []),
   ]);
   readonly disabled = input<boolean>(false);
 

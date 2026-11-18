@@ -21,6 +21,8 @@ import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/tr
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
+import { FieldError } from "../../shared/field-error/field-error";
+import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
 import type { Frequency } from "../../shared/models/generated/resource";
 import { SubmissionError } from "../../shared/models/submission-result";
 import { ToastNotifier } from "../../shared/toasts/toast-notifier";
@@ -38,6 +40,8 @@ import { ReferenceSelect } from "../reference-select/reference-select";
   imports: [
     Datepicker,
     FieldCategoryPipe,
+    FieldError,
+    FieldErrorSummary,
     Fieldset,
     FormField,
     FormRoot,

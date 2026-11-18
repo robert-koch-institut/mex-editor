@@ -4,17 +4,20 @@
     <div class="two-column-layout">
       @for (entry of group.fields; track entry.key) {
         <mex-fieldset
+          #fieldset
           [labelKey]="`Resource.${entry.key}`"
           [descriptionKey]="`Resource.${entry.key}.description`"
           [category]="entry.schema | fieldCategory"
-          [formField]="entry.field"
         >
           <mex-zod-field-editor
-            #fieldEditor
             class="one-column-item"
             [formField]="entry.field"
             [schema]="entry.schema"
           />
+          <mex-field-error-summary
+            [fieldState]="entry.field()"
+            [fieldLabel]="fieldset.label()"
+          ></mex-field-error-summary>
         </mex-fieldset>
       }
     </div>

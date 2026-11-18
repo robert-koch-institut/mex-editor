@@ -2,7 +2,7 @@ import type { Signal } from "@angular/core";
 import type { Field } from "@angular/forms/signals";
 import type z from "zod";
 
-import type { ConceptLookup, NoneLookup } from "../../shared/concept-lookups.service";
+import type { Lookup } from "../../shared/concept-lookups.service";
 import type { Link, Text } from "../../shared/models/generated/shared";
 
 /** Wrapper schemas that only decorate an inner schema and keep the editable shape. */
@@ -41,9 +41,8 @@ interface BaseResolvedSchema<T> {
  * Resolved schema for enums.
  */
 export interface ResolvedEnumSchema extends BaseResolvedSchema<string> {
-  $type: "enum";
-
-  options: Signal<(NoneLookup | ConceptLookup)[]>;
+  $type: "enum" | "enum-array";
+  options: Signal<Lookup[]>;
 }
 
 /**
@@ -51,7 +50,7 @@ export interface ResolvedEnumSchema extends BaseResolvedSchema<string> {
  */
 export interface ResolvedEnumArraySchema extends BaseResolvedSchema<string[]> {
   $type: "enum-array";
-  options: Signal<(NoneLookup | ConceptLookup)[]>;
+  options: Signal<Lookup[]>;
 }
 
 /**
@@ -83,6 +82,14 @@ export interface ResolvedTextSchema extends BaseResolvedSchema<Text> {
 }
 
 /**
+ * Resolved schema for object.
+ */
+export interface ResolvedObjectSchema extends BaseResolvedSchema<object> {
+  $type: "object";
+  entries: { key: string; schema: z.ZodType }[];
+}
+
+/**
  * Resolved schema for arrays.
  */
 export interface ResolvedArraySchema extends BaseResolvedSchema<unknown[]> {
@@ -109,4 +116,5 @@ export type ResolvedSchema =
   | ResolvedNumberSchema
   | ResolvedLinkSchema
   | ResolvedTextSchema
+  | ResolvedObjectSchema
   | ResolvedUnknownSchema;

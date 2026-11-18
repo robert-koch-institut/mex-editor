@@ -6,6 +6,8 @@ import { TranslocoService } from "@jsverse/transloco";
 import type { PreviewItem } from "./models";
 import type { Concept } from "./models/concept";
 import type { CreateItem } from "./models/create-item";
+import type { LinkLanguage, TextLanguage } from "./models/generated/shared";
+import { LinkLanguageSchema, TextLanguageSchema } from "./models/generated/shared";
 import type { PaginatedItemsContainer } from "./models/paginated-items-container";
 import { ToLookupPipe } from "./to-lookup-pipe";
 import { ToastNotifier } from "./toasts/toast-notifier";
@@ -43,7 +45,6 @@ import { ToastNotifier } from "./toasts/toast-notifier";
 /**
  * UnionType for all lookup items.
  */
-// export type LookupItem = Concept | PreviewItem | CreateItem | NoneLookupItem;
 
 /**
  * Model for NoneLookup.
@@ -53,7 +54,6 @@ export interface NoneLookup {
   value: undefined | null;
   label: string;
 }
-
 /**
  * Model for ConceptLookup.
  */
@@ -78,6 +78,33 @@ export interface CreateItemLookup {
   label: string;
   data: CreateItem;
 }
+/**
+ * Model for TextLanguageLookup.
+ */
+export interface TextLanguageLookup {
+  value: TextLanguage;
+  label: string;
+  data: TextLanguage;
+}
+/**
+ * Model for LinkLanguageLookup.
+ */
+export interface LinkLanguageLookup {
+  value: LinkLanguage;
+  label: string;
+  data: LinkLanguage;
+}
+
+/**
+ * Union type for all Lookups
+ */
+export type Lookup =
+  | TextLanguageLookup
+  | LinkLanguageLookup
+  | ConceptLookup
+  | PreviewItemLookup
+  | CreateItemLookup
+  | NoneLookup;
 
 @Injectable({ providedIn: "root" })
 /**
@@ -100,7 +127,30 @@ export class ConceptLookups {
   languageOptions = this.buildConceptOptions("language");
   purposeOptions = this.buildConceptOptions("purpose");
   healthCategoryOptions = this.buildConceptOptions("health-category");
-  dataProcessingState = this.buildConceptOptions("data-processing-state");
+  dataProcessingStateOptions = this.buildConceptOptions("data-processing-state");
+
+  textLanguageOptions = computed(() => {
+    const lang = this.transloco.activeLang();
+    return TextLanguageSchema.options.map(
+      (x) =>
+        ({
+          label: this.transloco.translate(`language.${x}`, {}, lang),
+          value: x,
+          data: x,
+        }) as TextLanguageLookup,
+    );
+  });
+  linkLanguageOptions = computed(() => {
+    const lang = this.transloco.activeLang();
+    return LinkLanguageSchema.options.map(
+      (x) =>
+        ({
+          label: this.transloco.translate(`language.${x}`, {}, lang),
+          value: x,
+          data: x,
+        }) as LinkLanguageLookup,
+    );
+  });
 
   private sortedValues(vocabulary: PaginatedItemsContainer<Concept>) {
     const currentLang = this.transloco.activeLang();

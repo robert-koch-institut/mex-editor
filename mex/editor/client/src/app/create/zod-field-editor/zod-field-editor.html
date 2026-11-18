@@ -6,9 +6,15 @@
       [createItem]="resSchema.createNewItem"
     >
       <ng-template [mexArrayItem]="resSchema.formField" let-field="field">
-        <mex-zod-field-editor class="grow" [formField]="field" [schema]="resSchema.elementSchema" />
+        <mex-zod-field-editor [formField]="field" [schema]="resSchema.elementSchema" />
       </ng-template>
     </mex-array-form-value-control>
+  }
+  @case ("object") {
+    <mex-zod-object-editor
+      [formField]="resSchema.formField"
+      [schema]="resSchema.schema"
+    ></mex-zod-object-editor>
   }
   @case ("number") {
     <mat-form-field>
@@ -31,10 +37,16 @@
     </mat-form-field>
   }
   @case ("link") {
-    <mex-link-editor [formField]="resSchema.formField"></mex-link-editor>
+    <mex-link-editor
+      [formField]="resSchema.formField"
+      [nullable]="resSchema.nullable"
+    ></mex-link-editor>
   }
   @case ("text") {
-    <mex-text-editor [formField]="resSchema.formField"></mex-text-editor>
+    <mex-text-editor
+      [formField]="resSchema.formField"
+      [nullable]="resSchema.nullable"
+    ></mex-text-editor>
   }
   @case ("enum") {
     <mat-form-field>
@@ -72,3 +84,8 @@
     </pre>
   }
 }
+<mex-field-error-summary
+  [fieldState]="formField.state()"
+  [fieldLabel]="label()"
+  [showErrorsWithoutTouch]="true"
+></mex-field-error-summary>

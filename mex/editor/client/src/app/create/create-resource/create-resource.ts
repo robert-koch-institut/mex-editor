@@ -1,9 +1,11 @@
 import { Component, computed, signal } from "@angular/core";
 import type { FieldTree } from "@angular/forms/signals";
 import { form, FormField, FormRoot, validateStandardSchema } from "@angular/forms/signals";
+import { MatError } from "@angular/material/form-field";
 
 import { Fieldset } from "../../fast-track/fieldset/fieldset";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
+import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
 import type { AccessRestriction } from "../../shared/models/generated/resource";
 import { groupConf } from "../field-group-config";
 import { ZodFieldEditor } from "../zod-field-editor/zod-field-editor";
@@ -33,7 +35,15 @@ export interface FieldGroup {
 }
 
 @Component({
-  imports: [FieldCategoryPipe, Fieldset, FormField, FormRoot, ZodFieldEditor],
+  imports: [
+    FieldCategoryPipe,
+    FieldErrorSummary,
+    Fieldset,
+    FormField,
+    FormRoot,
+    MatError,
+    ZodFieldEditor,
+  ],
   selector: "mex-create-resource",
   styleUrl: "./create-resource.scss",
   templateUrl: "./create-resource.html",

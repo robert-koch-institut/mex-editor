@@ -1,5 +1,5 @@
 import { Component, computed, input } from "@angular/core";
-import { TranslocoPipe } from "@jsverse/transloco";
+import { translateSignal, TranslocoPipe } from "@jsverse/transloco";
 
 import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
 import type { FieldCategory } from "../../shared/models";
@@ -26,6 +26,7 @@ export class Fieldset {
 
   labelKey = input.required<string>();
   labelParam = input<Record<string, unknown>>();
+  label = translateSignal(this.labelKey, this.labelParam);
   descriptionKey = input<string>();
 
   showCategoryLabel = input(true);

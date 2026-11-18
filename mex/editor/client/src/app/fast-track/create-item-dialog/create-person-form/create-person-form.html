@@ -1,8 +1,8 @@
 <form [formRoot]="personForm">
   <mex-fieldset
     labelKey="Person.givenName"
-    [formField]="personForm.givenName"
-    [showErrorWithoutTouch]="true"
+    /* [formField]="personForm.givenName" */
+    /* [showErrorWithoutTouch]="true" */
     [category]="personSchema.shape.givenName | fieldCategory"
   >
     <mat-form-field>
@@ -12,7 +12,7 @@
   <mex-fieldset
     labelKey="Person.familyName"
     [formField]="personForm.familyName"
-    [showErrorWithoutTouch]="true"
+    /* [showErrorWithoutTouch]="true" */
     [category]="personSchema.shape.familyName | fieldCategory"
   >
     <mat-form-field>

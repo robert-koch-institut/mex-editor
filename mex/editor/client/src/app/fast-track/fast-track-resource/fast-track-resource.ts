@@ -10,7 +10,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButton } from "@angular/material/button";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatError, MatFormFieldModule } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
@@ -20,27 +20,25 @@ import { Router } from "@angular/router";
 import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
+import { Datepicker } from "../../shared/datepicker/datepicker";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
-import { FieldError } from "../../shared/field-error/field-error";
 import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
+import { Fieldset } from "../../shared/fieldset/fieldset";
 import type { Frequency } from "../../shared/models/generated/resource";
 import { SubmissionError } from "../../shared/models/submission-result";
+import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 import { ToastNotifier } from "../../shared/toasts/toast-notifier";
-import { Datepicker } from "../datepicker/datepicker";
 import {
   type FastTrackResourceModel,
   FastTrackResourceModelSchema,
 } from "../fast-track-resource.models";
 import { FastTrackSubmission } from "../fast-track-submission";
-import { Fieldset } from "../fieldset/fieldset";
-import { ReferenceSelect } from "../reference-select/reference-select";
 
 @Component({
   selector: "mex-fast-track-resource",
   imports: [
     Datepicker,
     FieldCategoryPipe,
-    FieldError,
     FieldErrorSummary,
     Fieldset,
     FormField,
@@ -49,6 +47,7 @@ import { ReferenceSelect } from "../reference-select/reference-select";
     MatButton,
     MatChipsModule,
     MatDatepickerModule,
+    MatError,
     MatFormFieldModule,
     MatIcon,
     MatInput,

@@ -35,17 +35,17 @@ import {
 import { translateSignal } from "@jsverse/transloco";
 import { combineLatest, map, switchMap } from "rxjs";
 
-import type { PreviewItem } from "../../shared/models";
-import type { CreateItem } from "../../shared/models/create-item";
-import { isCreateItem } from "../../shared/models/create-item";
-import type { PaginatedItemsContainer } from "../../shared/models/paginated-items-container";
-import { ToLabelPipe } from "../../shared/to-label-pipe";
-import { TypeToIconNamePipe } from "../../shared/type-to-icon-name-pipe";
+import type { PreviewItem } from "../models";
+import type { CreateItem } from "../models/create-item";
+import { isCreateItem } from "../models/create-item";
+import type { PaginatedItemsContainer } from "../models/paginated-items-container";
+import { ToLabelPipe } from "../to-label-pipe";
+import { TypeToIconNamePipe } from "../type-to-icon-name-pipe";
 import type {
   CreateItemDialogData,
   CreateItemDialogResult,
-} from "../create-item-dialog/create-item-dialog";
-import { CreateItemDialog } from "../create-item-dialog/create-item-dialog";
+} from "./create-item-dialog/create-item-dialog";
+import { CreateItemDialog } from "./create-item-dialog/create-item-dialog";
 
 /**
  * Type for valid reference select types.

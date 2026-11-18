@@ -2,7 +2,7 @@ import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { type ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatMenuHarness } from "@angular/material/menu/testing";
 
-import { LinkLanguageSchema } from "../../../shared/models/generated/shared";
+import { LinkLanguageSchema } from "../../models/generated/shared";
 import { LinkLanguageMenu } from "./link-language-menu";
 
 describe("LinkLanguageMenu", () => {

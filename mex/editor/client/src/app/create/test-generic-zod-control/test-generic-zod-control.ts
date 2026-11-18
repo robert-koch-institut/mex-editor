@@ -3,7 +3,7 @@ import { form, FormRoot, validateStandardSchema } from "@angular/forms/signals";
 import z from "zod";
 
 import { TextSchema } from "../../shared/models/generated/shared";
-import { ZodFieldEditor } from "../zod-field-editor/zod-field-editor";
+import { ZodFieldEditor } from "../../shared/zod-field-editor/zod-field-editor";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const SimpleSchema = z.object({

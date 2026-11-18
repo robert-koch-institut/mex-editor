@@ -13,11 +13,8 @@
             class="one-column-item"
             [formField]="entry.field"
             [schema]="entry.schema"
+            [label]="fieldset.label()"
           />
-          <mex-field-error-summary
-            [fieldState]="entry.field()"
-            [fieldLabel]="fieldset.label()"
-          ></mex-field-error-summary>
         </mex-fieldset>
       }
     </div>

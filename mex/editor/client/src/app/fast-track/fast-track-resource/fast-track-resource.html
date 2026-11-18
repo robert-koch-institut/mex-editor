@@ -58,12 +58,10 @@
         [isCreationEnabled]="true"
         (keydown.enter)="$event.preventDefault()"
       ></mex-reference-select>
-      <mat-error>
-        <mex-field-error-summary
-          [fieldState]="resourceForm.contact()"
-          [fieldLabel]="contactFieldset.label()"
-        ></mex-field-error-summary>
-      </mat-error>
+      <mex-field-error-summary
+        [fieldState]="resourceForm.contact()"
+        [fieldLabel]="contactFieldset.label()"
+      ></mex-field-error-summary>
     </mex-fieldset>
 
     <mex-fieldset
@@ -80,12 +78,10 @@
         (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
-      <mat-error>
-        <mex-field-error-summary
-          [fieldState]="resourceForm.creator()"
-          [fieldLabel]="creatorFieldset.label()"
-        ></mex-field-error-summary>
-      </mat-error>
+      <mex-field-error-summary
+        [fieldState]="resourceForm.creator()"
+        [fieldLabel]="creatorFieldset.label()"
+      ></mex-field-error-summary>
     </mex-fieldset>
 
     <mex-fieldset
@@ -102,12 +98,10 @@
         (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
-      <mat-error>
-        <mex-field-error-summary
-          [fieldState]="resourceForm.contributor()"
-          [fieldLabel]="contributorFieldset.label()"
-        ></mex-field-error-summary>
-      </mat-error>
+      <mex-field-error-summary
+        [fieldState]="resourceForm.contributor()"
+        [fieldLabel]="contributorFieldset.label()"
+      ></mex-field-error-summary>
     </mex-fieldset>
 
     <mex-fieldset
@@ -122,12 +116,10 @@
         [validEntityTypes]="['OrganizationalUnit']"
         (keydown.enter)="$event.preventDefault()"
       ></mex-reference-select>
-      <mat-error>
-        <mex-field-error-summary
-          [fieldState]="resourceForm.unitInCharge()"
-          [fieldLabel]="unitInChargeFieldset.label()"
-        ></mex-field-error-summary>
-      </mat-error>
+      <mex-field-error-summary
+        [fieldState]="resourceForm.unitInCharge()"
+        [fieldLabel]="unitInChargeFieldset.label()"
+      ></mex-field-error-summary>
     </mex-fieldset>
 
     <mex-fieldset
@@ -143,12 +135,10 @@
         (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
-      <mat-error>
-        <mex-field-error-summary
-          [fieldState]="resourceForm.contributingUnit()"
-          [fieldLabel]="contributingUnitFieldset.label()"
-        ></mex-field-error-summary>
-      </mat-error>
+      <mex-field-error-summary
+        [fieldState]="resourceForm.contributingUnit()"
+        [fieldLabel]="contributingUnitFieldset.label()"
+      ></mex-field-error-summary>
     </mex-fieldset>
 
     <mex-fieldset

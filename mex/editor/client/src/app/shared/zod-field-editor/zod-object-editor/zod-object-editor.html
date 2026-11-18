@@ -4,9 +4,8 @@
     [descriptionKey]="`${entry.key}.description`"
     [category]="entry.schema | fieldCategory"
   >
-    <mex-zod-field-editor
-      [formField]="$any(innerForm)[entry.key]"
-      [schema]="entry.schema"
-    ></mex-zod-field-editor>
+    @if (innerForm[entry.key]; as field) {
+      <mex-zod-field-editor [formField]="field" [schema]="entry.schema" />
+    }
   </mex-fieldset>
 }

@@ -1,21 +1,19 @@
 import { Component, computed, signal } from "@angular/core";
-import type { FieldTree } from "@angular/forms/signals";
+import type { Field } from "@angular/forms/signals";
 import { form, FormField, FormRoot, validateStandardSchema } from "@angular/forms/signals";
-import { MatError } from "@angular/material/form-field";
 
-import { Fieldset } from "../../fast-track/fieldset/fieldset";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
-import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
+import { Fieldset } from "../../shared/fieldset/fieldset";
 import type { AccessRestriction } from "../../shared/models/generated/resource";
+import { ZodFieldEditor } from "../../shared/zod-field-editor/zod-field-editor";
 import { groupConf } from "../field-group-config";
-import { ZodFieldEditor } from "../zod-field-editor/zod-field-editor";
 import type { CreateResourceModel } from "./create-resource.model";
 import { CreateResourceModelSchema } from "./create-resource.model";
 
 /**
  * ResourceFieldTree API documentation.
  */
-export type CreateResourceFieldTree = FieldTree<CreateResourceModel[keyof CreateResourceModel]>;
+export type CreateResourceFieldTree = Field<CreateResourceModel[keyof CreateResourceModel]>;
 
 /**
  * FieldGroupEntry API documentation.
@@ -35,15 +33,7 @@ export interface FieldGroup {
 }
 
 @Component({
-  imports: [
-    FieldCategoryPipe,
-    FieldErrorSummary,
-    Fieldset,
-    FormField,
-    FormRoot,
-    MatError,
-    ZodFieldEditor,
-  ],
+  imports: [FieldCategoryPipe, Fieldset, FormField, FormRoot, ZodFieldEditor],
   selector: "mex-create-resource",
   styleUrl: "./create-resource.scss",
   templateUrl: "./create-resource.html",
@@ -113,8 +103,6 @@ export class CreateResource {
     start: [],
     stateOfDataProcessing: [],
   });
-
-  shape = CreateResourceModelSchema.shape;
 
   resourceForm = form(
     this.model,

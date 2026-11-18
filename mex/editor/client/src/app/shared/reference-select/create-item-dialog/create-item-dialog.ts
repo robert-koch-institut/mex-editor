@@ -9,7 +9,7 @@ import type {
   CreateContactPoint,
   CreateOrganization,
   CreatePerson,
-} from "../../shared/models/create-item";
+} from "../../models/create-item";
 import { CreateContactPointForm } from "./create-contact-point-form/create-contact-point-form";
 import { CreateOrganizationForm } from "./create-organization-form/create-organization-form";
 import { CreatePersonForm } from "./create-person-form/create-person-form";

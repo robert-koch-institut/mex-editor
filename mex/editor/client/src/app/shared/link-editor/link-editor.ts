@@ -17,10 +17,10 @@ import { MatInput } from "@angular/material/input";
 import { TranslocoDirective } from "@jsverse/transloco";
 import z from "zod";
 
-import { FieldError } from "../../shared/field-error/field-error";
-import { asLinkLanguage } from "../../shared/models";
-import type { Link, LinkLanguage } from "../../shared/models/generated/shared";
-import { LinkSchema } from "../../shared/models/generated/shared";
+import { FieldError } from "../field-error/field-error";
+import { asLinkLanguage } from "../models";
+import type { Link, LinkLanguage } from "../models/generated/shared";
+import { LinkSchema } from "../models/generated/shared";
 import { LinkLanguageMenu } from "./link-language-menu/link-language-menu";
 
 function draftField(inner: z.ZodType) {
@@ -138,7 +138,11 @@ export class LinkEditor implements FormValueControl<Link | null> {
   constructor() {
     effect(() => {
       const touched = this.touched();
-      untracked(() => (touched ? this.linkForm().markAsTouched() : this.linkForm().reset()));
+      untracked(() => {
+        if (touched) {
+          this.linkForm().markAsTouched();
+        }
+      });
     });
 
     effect(() => {

@@ -22,14 +22,14 @@ import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import {
   ArrayFormValueControl,
   ArrayItemTemplate,
-} from "../array-form-value-control/array-form-value-control";
-import { Datepicker } from "../datepicker/datepicker";
+} from "../../shared/array-form-value-control/array-form-value-control";
+import { Datepicker } from "../../shared/datepicker/datepicker";
 import type { FastTrackActivityModel } from "../fast-track-activity.model";
 import { FastTrackActivityModelSchema } from "../fast-track-activity.model";
 import { FastTrackSubmission } from "../fast-track-submission";
-import { Fieldset } from "../fieldset/fieldset";
-import { LinkEditor } from "../link-editor/link-editor";
-import { ReferenceSelect } from "../reference-select/reference-select";
+import { Fieldset } from "../../shared/fieldset/fieldset";
+import { LinkEditor } from "../../shared/link-editor/link-editor";
+import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 
 @Component({
   selector: "mex-fast-track-activity",

@@ -16,8 +16,8 @@ import { ActivityTypeSchema } from "../../shared/models/generated/activity";
 import { SubmissionError } from "../../shared/models/submission-result";
 import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import { FastTrackSubmission } from "../fast-track-submission";
-import { Fieldset } from "../fieldset/fieldset";
-import { ReferenceSelect } from "../reference-select/reference-select";
+import { Fieldset } from "../../shared/fieldset/fieldset";
+import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 import { FastTrackActivity } from "./fast-track-activity";
 
 const ACTIVITY_TYPE_ID = ActivityTypeSchema.enum["https://mex.rki.de/item/activity-type-1"];

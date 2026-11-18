@@ -3,12 +3,12 @@ import { form, FormField, FormRoot, validateStandardSchema } from "@angular/form
 import { MatInput } from "@angular/material/input";
 import { MatFormField } from "@angular/material/select";
 
-import { FieldCategoryPipe } from "../../../shared/field-category-pipe";
+import { FieldCategoryPipe } from "../../../field-category-pipe";
 import {
   type CreateContactPoint,
   CreateContactPointSchema,
-} from "../../../shared/models/create-item";
-import { Fieldset } from "../../fieldset/fieldset";
+} from "../../../models/create-item";
+import { Fieldset } from "../../../fieldset/fieldset";
 
 @Component({
   selector: "mex-create-contact-point-form",

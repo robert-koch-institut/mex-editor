@@ -4,8 +4,8 @@ import { disabled, form, FormField } from "@angular/forms/signals";
 import { By } from "@angular/platform-browser";
 import { TranslocoTestingModule } from "@jsverse/transloco";
 
-import type { Link } from "../../shared/models/generated/shared";
-import { LinkLanguageSchema } from "../../shared/models/generated/shared";
+import type { Link } from "../models/generated/shared";
+import { LinkLanguageSchema } from "../models/generated/shared";
 import { fromDraft, isEmptyDraft, LinkEditor, sameDraft, toDraft } from "./link-editor";
 import { LinkLanguageMenu } from "./link-language-menu/link-language-menu";
 

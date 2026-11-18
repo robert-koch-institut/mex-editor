@@ -138,7 +138,11 @@ export class TextEditor implements FormValueControl<Text | null> {
   constructor() {
     effect(() => {
       const touched = this.touched();
-      untracked(() => (touched ? this.textForm().markAsTouched() : this.textForm().reset()));
+      untracked(() => {
+        if (touched) {
+          this.textForm().markAsTouched();
+        }
+      });
     });
 
     effect(() => {

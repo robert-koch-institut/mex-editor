@@ -49,9 +49,9 @@ import { ToastNotifier } from "./toasts/toast-notifier";
 /**
  * Model for NoneLookup.
  */
-export interface NoneLookup {
-  data: undefined | null;
-  value: undefined | null;
+export interface NoneLookup<T extends undefined | null = undefined | null> {
+  data: T;
+  value: T;
   label: string;
 }
 /**

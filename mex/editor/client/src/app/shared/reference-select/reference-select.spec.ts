@@ -7,7 +7,7 @@ import { MatInput } from "@angular/material/input";
 import { TranslocoService } from "@jsverse/transloco";
 import { of } from "rxjs";
 
-import { CreateItemDialog } from "../create-item-dialog/create-item-dialog";
+import { CreateItemDialog } from "./create-item-dialog/create-item-dialog";
 import { ReferenceSelect } from "./reference-select";
 
 // eslint-disable-next-line max-lines-per-function

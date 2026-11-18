@@ -5,7 +5,7 @@ import {
   yearMonthDayTimePattern,
   yearMonthPattern,
   yearPattern,
-} from "../../shared/models/generated/shared";
+} from "../models/generated/shared";
 
 /**
  * Precision for datepicker selection behaviour.

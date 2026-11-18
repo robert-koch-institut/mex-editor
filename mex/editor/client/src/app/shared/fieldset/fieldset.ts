@@ -1,8 +1,8 @@
 import { Component, computed, input } from "@angular/core";
 import { translateSignal, TranslocoPipe } from "@jsverse/transloco";
 
-import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
-import type { FieldCategory } from "../../shared/models";
+import { FieldErrorSummary } from "../field-error-summary/field-error-summary";
+import type { FieldCategory } from "../models";
 
 @Component({
   selector: "mex-fieldset",
@@ -14,16 +14,6 @@ import type { FieldCategory } from "../../shared/models";
  * Component to wrap controls with label, description and errors.
  */
 export class Fieldset {
-  // private dataTestidSig = computed(() => {
-  //   const state = this.formState();
-  //   return state ? `fieldset-${state.name().split(".").at(-1)}` : null;
-  // });
-
-  // @HostBinding("attr.data-testid")
-  // get dataTestId() {
-  //   return this.dataTestidSig();
-  // }
-
   labelKey = input.required<string>();
   labelParam = input<Record<string, unknown>>();
   label = translateSignal(this.labelKey, this.labelParam);
@@ -32,12 +22,4 @@ export class Fieldset {
   showCategoryLabel = input(true);
   category = input.required<FieldCategory>();
   categoryKey = computed(() => `categories.${this.category()}`);
-
-  // showErrorWithoutTouch = input(false);
-
-  // formField = input<FieldTree<T>>();
-  // formState = computed(() => {
-  //   const formField = this.formField();
-  //   return formField ? formField() : null;
-  // });
 }

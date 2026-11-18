@@ -16,18 +16,19 @@ import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { MatFormField, MatOption, MatPrefix, MatSelect } from "@angular/material/select";
 import { translateSignal, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
+import type { ZodObject } from "zod";
 import { z } from "zod";
 
 import {
   ArrayFormValueControl,
   ArrayItemTemplate,
-} from "../../fast-track/array-form-value-control/array-form-value-control";
-import { Datepicker } from "../../fast-track/datepicker/datepicker";
-import { LinkEditor } from "../../fast-track/link-editor/link-editor";
-import type { Lookup, NoneLookup } from "../../shared/concept-lookups.service";
-import { ConceptLookups } from "../../shared/concept-lookups.service";
-import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
-import { asLinkLanguage } from "../../shared/models";
+} from "../array-form-value-control/array-form-value-control";
+import type { Lookup, NoneLookup } from "../concept-lookups.service";
+import { ConceptLookups } from "../concept-lookups.service";
+import { Datepicker } from "../datepicker/datepicker";
+import { FieldErrorSummary } from "../field-error-summary/field-error-summary";
+import { LinkEditor } from "../link-editor/link-editor";
+import { asLinkLanguage } from "../models";
 import {
   AccessRestrictionSchema,
   AnonymizationPseudonymizationSchema,
@@ -40,17 +41,17 @@ import {
   PurposeSchema,
   ResourceCreationMethodSchema,
   ResourceTypeGeneralSchema,
-} from "../../shared/models/generated/resource";
-import type { Link, Text } from "../../shared/models/generated/shared";
+} from "../models/generated/resource";
+import type { Link, Text } from "../models/generated/shared";
 import {
   LinkLanguageSchema,
   LinkSchema,
   TextLanguageSchema,
   TextSchema,
   ThemeSchema,
-} from "../../shared/models/generated/shared";
-import { TextEditor } from "../../shared/text-editor/text-editor";
-import { ZodObjectEditor } from "../zod-object-editor/zod-object-editor";
+} from "../models/generated/shared";
+import { TextEditor } from "../text-editor/text-editor";
+import { ZodObjectEditor } from "./zod-object-editor/zod-object-editor";
 import type { ResolvedSchema } from "./zod-type-resolve";
 import { innerOf, WRAPPERS } from "./zod-type-resolve";
 
@@ -101,11 +102,10 @@ function unwrapDetailed(schema: z.ZodType) {
  * ZodFieldEditor API documentation.
  */
 export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.infer<T>> {
+  readonly label = input<string>("Feld");
   readonly schema = input.required<T>();
   readonly disabled = input(false);
   readonly readonly = input(false);
-
-  readonly label = input<string>("Feld");
 
   /** Form value; kept in sync with the bound field by `[formField]`. */
   readonly value = model.required<z.infer<T>>();
@@ -144,7 +144,7 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
       const mapping = this.lookupMapping.get(enumType)!;
       if (lookupConfig && (lookupConfig.nullable || lookupConfig.optional)) {
         return computed(() => {
-          const emptyOption: NoneLookup = {
+          const emptyOption: NoneLookup<null | undefined> = {
             value: lookupConfig.nullable ? null : undefined,
             label: this.selectNoneLabel(),
             data: lookupConfig.nullable ? null : undefined,
@@ -249,8 +249,9 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
       return {
         ...baseResult,
         $type: "object",
-        formField: formField.field() as Field<object>,
-        entries: objectEntries(unwrapped),
+        formField: formField.field() as Field<z.infer<ZodObject>>,
+        objectSchema: unwrapped,
+        // entries: objectEntries(unwrapped),
       };
     }
     if (unwrapped instanceof z.ZodArray) {

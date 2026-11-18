@@ -1,9 +1,10 @@
 import type { Signal } from "@angular/core";
 import type { Field } from "@angular/forms/signals";
 import type z from "zod";
+import type { ZodObject } from "zod";
 
-import type { Lookup } from "../../shared/concept-lookups.service";
-import type { Link, Text } from "../../shared/models/generated/shared";
+import type { Lookup } from "../concept-lookups.service";
+import type { Link, Text } from "../models/generated/shared";
 
 /** Wrapper schemas that only decorate an inner schema and keep the editable shape. */
 export const WRAPPERS = new Set([
@@ -41,7 +42,7 @@ interface BaseResolvedSchema<T> {
  * Resolved schema for enums.
  */
 export interface ResolvedEnumSchema extends BaseResolvedSchema<string> {
-  $type: "enum" | "enum-array";
+  $type: "enum";
   options: Signal<Lookup[]>;
 }
 
@@ -84,9 +85,11 @@ export interface ResolvedTextSchema extends BaseResolvedSchema<Text> {
 /**
  * Resolved schema for object.
  */
-export interface ResolvedObjectSchema extends BaseResolvedSchema<object> {
+export interface ResolvedObjectSchema<T extends ZodObject = ZodObject> extends BaseResolvedSchema<
+  z.infer<T>
+> {
   $type: "object";
-  entries: { key: string; schema: z.ZodType }[];
+  objectSchema: T;
 }
 
 /**

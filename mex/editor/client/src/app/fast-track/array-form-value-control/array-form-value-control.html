@@ -1,0 +1,46 @@
+<div class="array-field" role="group" [attr.aria-invalid]="invalid()">
+  <ul class="list">
+    @for (row of rows(); track row.id) {
+      <li class="row">
+        <div class="item">
+          <ng-container
+            [ngTemplateOutlet]="itemTemplate().template"
+            [ngTemplateOutletContext]="row.context"
+          />
+        </div>
+        <div class="actions">
+          @if (reorderable()) {
+            <button
+              type="button"
+              matIconButton
+              [disabled]="!editable() || row.context.first"
+              (click)="move(row.context.index, -1)"
+            >
+              <mat-icon>arrow_upward</mat-icon>
+            </button>
+            <button
+              type="button"
+              matIconButton
+              [disabled]="!editable() || row.context.last"
+              (click)="move(row.context.index, 1)"
+            >
+              <mat-icon>arrow_downward</mat-icon>
+            </button>
+          }
+          <button
+            type="button"
+            matIconButton
+            [disabled]="!canRemove()"
+            (click)="remove(row.context.index)"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </li>
+    }
+  </ul>
+
+  <button type="button" matIconButton="filled" [disabled]="!canAdd()" (click)="add()">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

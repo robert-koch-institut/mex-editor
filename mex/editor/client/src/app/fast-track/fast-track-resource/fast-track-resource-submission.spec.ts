@@ -272,7 +272,7 @@ describe("FastTrackResourceSubmission", () => {
       expect(additive["hasLegalBasis"]).toEqual([{ value: "Rechtsgrundlage", language: "en" }]);
     });
 
-    it.each(["fr", "", "EN", "0", "length"])(
+    it.each(["it", "", "EN", "0", "length"])(
       "falls back to German for the unsupported language '%s'",
       async (lang) => {
         activeLang.set(lang);

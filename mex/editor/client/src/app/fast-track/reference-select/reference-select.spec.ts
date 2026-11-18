@@ -66,6 +66,7 @@ describe("ReferenceSelect", () => {
       "MergedPerson",
       "MergedContactPoint",
       "MergedOrganizationalUnit",
+      "MergedOrganization",
     ]);
     req.flush({ items: [], total: 0 });
   });

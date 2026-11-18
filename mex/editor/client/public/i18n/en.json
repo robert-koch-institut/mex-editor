@@ -20,6 +20,13 @@
     "title": "Error while loading"
   },
   "fasttrack": {
+    "activity": {
+      "headline": "Create {{Activity}}",
+      "save-button": {
+        "label": "Save {{Activity}}",
+        "saving": "Saving {{Activity}}..."
+      }
+    },
     "resource": {
       "fields": {
         "keywords.de.label": "{{keyword}} - German",
@@ -52,6 +59,21 @@
   },
   "footer.greetings": "Created with ❤️ by MEx",
   "input.placeholder": "Please fill out",
+  "language": {
+    "de": "german",
+    "en": "english",
+    "es": "spanish",
+    "fr": "french",
+    "none": "none",
+    "ru": "russian"
+  },
+  "link-editor": {
+    "link": {
+      "language": "Language",
+      "title": "Title",
+      "url": "URL"
+    }
+  },
   "navbar.create-link.text": "Create {{{{entity_type}}}}",
   "reference-select": {
     "placeholder.empty": "Type to filter, \"*\" as placeholder",
@@ -68,10 +90,9 @@
   "toast.submissionError.sendMail": "Send email to MEx",
   "user-logout.logout-button.text": "Logout",
   "validation": {
+    "arrayError": "{{field}} {index, plural, =1 {1st} =2 {2nd} =3 {3rd} other {{index}th}} entry contains an error",
     "custom": "{{field}} is invalid",
     "generic": "{{field}} is invalid",
-    "innerArrayError": "{{field}} {position, plural, =1 {1st} =2 {2nd} =3 {3rd} other {{position}th}} entry",
-    "innerObjectError": "{{field}} - {{{{property}}}}",
     "invalidElement": "{{field}} contains an invalid entry",
     "invalidFormat": {
       "email": "{{field}} must be a valid email address",
@@ -96,6 +117,7 @@
     "minItems": "{{field}} must contain at least {minimum, plural, =1 {one item} other {{minimum} items}}",
     "minLength": "{{field}} must be at least {minimum, plural, =1 {one character} other {{minimum} characters}} long",
     "notMultipleOf": "{{field}} must be a multiple of {{divisor}}",
+    "objectError": "{{field}} - {{index}} contains an error",
     "required": "{{field}} must be provided",
     "tooBig": "{{field}} is too large",
     "tooSmall": "{{field}} is too small",

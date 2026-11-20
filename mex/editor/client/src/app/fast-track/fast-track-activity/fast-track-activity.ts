@@ -12,24 +12,24 @@ import { MatOption, MatPrefix, MatSelect } from "@angular/material/select";
 import { Router } from "@angular/router";
 import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 
-import { ConceptLookups } from "../../shared/concept-lookups.service";
-import { FieldCategoryPipe } from "../../shared/field-category-pipe";
-import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
-import { asLinkLanguage } from "../../shared/models";
-import type { Link } from "../../shared/models/generated/shared";
-import { SubmissionError } from "../../shared/models/submission-result";
-import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import {
   ArrayFormValueControl,
   ArrayItemTemplate,
 } from "../../shared/array-form-value-control/array-form-value-control";
+import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { Datepicker } from "../../shared/datepicker/datepicker";
+import { FieldCategoryPipe } from "../../shared/field-category-pipe";
+import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
+import { Fieldset } from "../../shared/fieldset/fieldset";
+import { LinkEditor } from "../../shared/link-editor/link-editor";
+import { asLinkLanguage } from "../../shared/models";
+import type { Link } from "../../shared/models/generated/shared";
+import { SubmissionError } from "../../shared/models/submission-result";
+import { ReferenceSelect } from "../../shared/reference-select/reference-select";
+import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import type { FastTrackActivityModel } from "../fast-track-activity.model";
 import { FastTrackActivityModelSchema } from "../fast-track-activity.model";
 import { FastTrackSubmission } from "../fast-track-submission";
-import { Fieldset } from "../../shared/fieldset/fieldset";
-import { LinkEditor } from "../../shared/link-editor/link-editor";
-import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 
 @Component({
   selector: "mex-fast-track-activity",

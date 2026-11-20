@@ -38,6 +38,7 @@ export interface FieldGroup {
   styleUrl: "./create-resource.scss",
   templateUrl: "./create-resource.html",
 })
+
 /**
  * Component to create a Resource with all fields.
  */

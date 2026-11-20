@@ -127,14 +127,14 @@ export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
     this.ids.update((ids) => [...ids, this.nextId++]);
     this.value.update((arr) => [...arr, item]);
 
-    // if its already touched, mark new added fields also as touched
-    if (this.formField.state().touched()) {
-      const t = this.tree();
-      const lastItem = t[t.length - 1];
-      if (lastItem) {
-        lastItem().markAsTouched();
-      }
-    }
+    // // if its already touched, mark new added fields also as touched
+    // if (this.formField.state().touched()) {
+    //   const t = this.tree();
+    //   const lastItem = t[t.length - 1];
+    //   if (lastItem) {
+    //     lastItem().markAsTouched();
+    //   }
+    // }
   }
 
   protected remove(index: number): void {

@@ -1,24 +1,26 @@
-<!-- @let state = formState(); -->
 <div class="label">
-  @let l = label();
-  {{ l }}
+  @let _fieldLabelKey = fieldLabelKey();
+  @let fieldLabel =
+    _fieldLabelKey ? (_fieldLabelKey | transloco) : (labelKey() | transloco: labelParam());
+  {{ fieldLabel }}
   @if (showCategoryLabel()) {
     <span class="category">- {{ categoryKey() | transloco }}</span>
   }
 </div>
-@let descKey = descriptionKey();
-@if (descKey) {
-  <div class="description">{{ descKey | transloco }}</div>
+@if (showDescription()) {
+  @let descKey = fieldDescriptionKey() ?? descriptionKey();
+  @if (descKey) {
+    <div class="description">{{ descKey | transloco }}</div>
+  }
 }
 
 <ng-content></ng-content>
-<!--
-@if (state) {
-  <mex-field-error-summary
-    [fieldLabel]="label"
-    [fieldState]="state"
-    [showErrorsWithoutTouch]="showErrorWithoutTouch()"
-    [showNestedErrors]="true"
-  >
-  </mex-field-error-summary>
-} -->
+
+@if (showErrors()) {
+  @let field = formField();
+  @if (field && field(); as fieldState) {
+    @if (fieldState.invalid() && (showErrorsWithoutTouch() || fieldState.touched())) {
+      <mex-field-errors [formField]="field" [fieldLabel]="fieldLabel"></mex-field-errors>
+    }
+  }
+}

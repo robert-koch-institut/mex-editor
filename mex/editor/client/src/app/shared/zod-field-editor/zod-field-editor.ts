@@ -27,8 +27,10 @@ import type { Lookup, NoneLookup } from "../concept-lookups.service";
 import { ConceptLookups } from "../concept-lookups.service";
 import { Datepicker } from "../datepicker/datepicker";
 import { FieldErrorSummary } from "../field-error-summary/field-error-summary";
+import { FieldErrors } from "../field-errors/field-errors";
 import { LinkEditor } from "../link-editor/link-editor";
-import { asLinkLanguage } from "../models";
+import { asLinkLanguage, asTextLanguage } from "../models";
+import { ActivityTypeSchema } from "../models/generated/activity";
 import {
   AccessRestrictionSchema,
   AnonymizationPseudonymizationSchema,
@@ -52,13 +54,119 @@ import {
 } from "../models/generated/shared";
 import { TextEditor } from "../text-editor/text-editor";
 import { ZodObjectEditor } from "./zod-object-editor/zod-object-editor";
-import type { ResolvedSchema } from "./zod-type-resolve";
-import { innerOf, WRAPPERS } from "./zod-type-resolve";
+
+/** Wrapper schemas that only decorate an inner schema and keep the editable shape. */
+export const WRAPPERS = new Set([
+  "optional",
+  "nullable",
+  "default",
+  "prefault",
+  "readonly",
+  "catch",
+  "nonoptional",
+]);
+
+/** Return the innerType of the given zod-type. */
+export function innerOf(schema: z.ZodType): z.ZodType {
+  return (schema.def as unknown as { innerType: z.ZodType }).innerType;
+}
 
 function objectEntries(schema: z.ZodType): { key: string; schema: z.ZodType }[] {
   const shape = (schema as z.ZodObject).shape as Record<string, z.ZodType>;
   return Object.entries(shape).map(([key, child]) => ({ key, schema: child }));
 }
+
+interface BaseResolvedSchema<T> {
+  readonly schema: z.ZodType;
+  readonly unwrappedSchema: z.ZodType;
+  readonly zodType: string;
+  readonly optional: boolean;
+  readonly nullable: boolean;
+  readonly formField: Field<T>;
+}
+/**
+ * Resolved schema for enums.
+ */
+export interface ResolvedEnumSchema extends BaseResolvedSchema<string> {
+  $type: "enum";
+  options: Signal<Lookup[]>;
+}
+
+/**
+ * Resolved schema for enums arrays.
+ */
+export interface ResolvedEnumArraySchema extends BaseResolvedSchema<string[]> {
+  $type: "enum-array";
+  options: Signal<Lookup[]>;
+}
+
+/**
+ * Resolved schema for string.
+ */
+export interface ResolvedStringSchema extends BaseResolvedSchema<string> {
+  $type: "string";
+}
+
+/**
+ * Resolved schema for number.
+ */
+export interface ResolvedNumberSchema extends BaseResolvedSchema<number> {
+  $type: "number";
+}
+
+/**
+ * Resolved schema for link.
+ */
+export interface ResolvedLinkSchema extends BaseResolvedSchema<Link> {
+  $type: "link";
+}
+
+/**
+ * Resolved schema for text.
+ */
+export interface ResolvedTextSchema extends BaseResolvedSchema<Text> {
+  $type: "text";
+}
+
+/**
+ * Resolved schema for object.
+ */
+export interface ResolvedObjectSchema<T extends ZodObject = ZodObject> extends BaseResolvedSchema<
+  z.infer<T>
+> {
+  $type: "object";
+  objectSchema: T;
+}
+
+/**
+ * Resolved schema for arrays.
+ */
+export interface ResolvedArraySchema extends BaseResolvedSchema<unknown[]> {
+  $type: "array";
+  elementSchema: z.ZodType;
+  createNewItem: () => unknown;
+}
+
+/**
+ * Resolved schema for types that are not known yet/can't be handled.
+ */
+export interface ResolvedUnknownSchema extends Omit<BaseResolvedSchema<unknown>, "formField"> {
+  $type: "unknown";
+}
+
+/**
+ * Resolved schema for zod-types. Used as interface for the components internal behaviour, representing all schemas that the component is able to serve/render.
+ */
+export type ResolvedSchema =
+  | ResolvedEnumSchema
+  | ResolvedEnumArraySchema
+  | ResolvedArraySchema
+  | ResolvedStringSchema
+  | ResolvedNumberSchema
+  | ResolvedLinkSchema
+  | ResolvedTextSchema
+  | ResolvedObjectSchema
+  | ResolvedUnknownSchema;
 
 function unwrapDetailed(schema: z.ZodType) {
   let unwrapped: z.ZodType = schema;
@@ -80,6 +188,7 @@ function unwrapDetailed(schema: z.ZodType) {
     ArrayFormValueControl,
     ArrayItemTemplate,
     Datepicker,
+    FieldErrors,
     FieldErrorSummary,
     FormField,
     forwardRef(() => ZodObjectEditor),
@@ -102,7 +211,6 @@ function unwrapDetailed(schema: z.ZodType) {
  * ZodFieldEditor API documentation.
  */
 export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.infer<T>> {
-  readonly label = input<string>("Feld");
   readonly schema = input.required<T>();
   readonly disabled = input(false);
   readonly readonly = input(false);
@@ -133,9 +241,11 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
     [PurposeSchema, this.lookups.purposeOptions],
     [HealthCategorySchema, this.lookups.healthCategoryOptions],
     [DataProcessingStateSchema, this.lookups.dataProcessingStateOptions],
+    [ActivityTypeSchema, this.lookups.activityTypeOptions],
     [TextLanguageSchema, this.lookups.textLanguageOptions],
     [LinkLanguageSchema, this.lookups.linkLanguageOptions],
   ]);
+
   private getLookup(
     enumType: z.ZodEnum,
     lookupConfig?: { optional: boolean; nullable: boolean },
@@ -217,6 +327,14 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
         return emptyLink;
       }
 
+      if (schema === TextSchema) {
+        const emptyText: Text = {
+          value: "",
+          language: asTextLanguage(this.transloco.getActiveLang()),
+        };
+        return emptyText;
+      }
+
       return Object.fromEntries(
         objectEntries(schema).map(({ key, schema: child }) => [key, this.createEmptyValue(child)]),
       );
@@ -251,7 +369,6 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
         $type: "object",
         formField: formField.field() as Field<z.infer<ZodObject>>,
         objectSchema: unwrapped,
-        // entries: objectEntries(unwrapped),
       };
     }
     if (unwrapped instanceof z.ZodArray) {

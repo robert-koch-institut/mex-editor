@@ -2,6 +2,8 @@ import { Component, signal } from "@angular/core";
 import { form, FormRoot, validateStandardSchema } from "@angular/forms/signals";
 import z from "zod";
 
+import type { FastTrackActivityModel } from "../../fast-track/fast-track-activity.model";
+import { FastTrackActivityModelSchema } from "../../fast-track/fast-track-activity.model";
 import { TextSchema } from "../../shared/models/generated/shared";
 import { ZodFieldEditor } from "../../shared/zod-field-editor/zod-field-editor";
 
@@ -22,7 +24,7 @@ const SimpleSchema = z.object({
   }),
 });
 
-type SimpleSchema = z.infer<typeof SimpleSchema>;
+type Simple = z.infer<typeof SimpleSchema>;
 
 @Component({
   imports: [FormRoot, ZodFieldEditor],
@@ -34,7 +36,7 @@ type SimpleSchema = z.infer<typeof SimpleSchema>;
  * Test
  */
 export class TestGenericZodControl {
-  simpleModel = signal<SimpleSchema>({
+  simpleModel = signal<Simple>({
     title: null,
     titleMandatory: { value: "", language: null },
     titleArray: [],
@@ -55,8 +57,43 @@ export class TestGenericZodControl {
     },
     {
       submission: {
-        action: async (_field) => {
-          console.log("submit", this.simpleModel());
+        action: async (field) => {
+          console.log("submit simple", field());
+        },
+        onInvalid: (field) => {
+          const firstError = field().errorSummary()[0];
+          firstError?.fieldTree().focusBoundControl();
+        },
+        ignoreValidators: "all",
+      },
+    },
+  );
+
+  fastActivityModel = signal<FastTrackActivityModel>({
+    $type: "FastTrackActivityModel",
+    title: "",
+    abstract: "",
+    contact: [],
+    responsibleUnit: [],
+    activityType: [],
+    shortName: "",
+    involvedPerson: [],
+    involvedUnit: [],
+    start: null,
+    end: null,
+    funderOrCommissioner: [],
+    website: [],
+  });
+  fastActivitySchema = FastTrackActivityModelSchema;
+  fastActivityForm = form(
+    this.fastActivityModel,
+    (schema) => {
+      validateStandardSchema(schema, FastTrackActivityModelSchema);
+    },
+    {
+      submission: {
+        action: async (field) => {
+          console.log("submit fast activity", field());
         },
         onInvalid: (field) => {
           const firstError = field().errorSummary()[0];

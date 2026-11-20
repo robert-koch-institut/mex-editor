@@ -96,6 +96,15 @@ export interface LinkLanguageLookup {
 }
 
 /**
+ * Model for a generic Lookup.
+ */
+export interface AnyLookup<TValue = unknown, TData = unknown> {
+  value: TValue;
+  label: string;
+  data: TData;
+}
+
+/**
  * Union type for all Lookups
  */
 export type Lookup =
@@ -104,7 +113,8 @@ export type Lookup =
   | ConceptLookup
   | PreviewItemLookup
   | CreateItemLookup
-  | NoneLookup;
+  | NoneLookup
+  | AnyLookup;
 
 @Injectable({ providedIn: "root" })
 /**

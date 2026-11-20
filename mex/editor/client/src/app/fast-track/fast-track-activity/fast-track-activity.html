@@ -2,10 +2,10 @@
   <h1 class="page-title">{{ t("fasttrack.activity.headline") }}</h1>
   <form [formRoot]="activityForm" class="two-column-layout">
     <mex-fieldset
-      #titleFieldset
       labelKey="Activity.title"
-      class="one-column-item"
+      [formField]="activityForm.title"
       [category]="activitySchema.shape.title | fieldCategory"
+      class="one-column-item"
     >
       <mat-form-field>
         <input
@@ -14,20 +14,14 @@
           [attr.placeholder]="'Activity.title.description' | transloco"
           (keydown.enter)="$event.preventDefault()"
         />
-        <mat-error>
-          <mex-field-error-summary
-            [fieldState]="activityForm.title()"
-            [fieldLabel]="titleFieldset.label()"
-          ></mex-field-error-summary>
-        </mat-error>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      #shortNameFieldset
       labelKey="shortName"
-      class="one-column-item"
+      [formField]="activityForm.shortName"
       [category]="activitySchema.shape.shortName | fieldCategory"
+      class="one-column-item"
     >
       <mat-form-field>
         <input
@@ -36,20 +30,14 @@
           [attr.placeholder]="'shortName.description' | transloco"
           (keydown.enter)="$event.preventDefault()"
         />
-        <mat-error>
-          <mex-field-error-summary
-            [fieldState]="activityForm.shortName()"
-            [fieldLabel]="shortNameFieldset.label()"
-          ></mex-field-error-summary>
-        </mat-error>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      #abstractFieldset
       labelKey="abstract"
-      class="two-column-item"
+      [formField]="activityForm.abstract"
       [category]="activitySchema.shape.abstract | fieldCategory"
+      class="two-column-item"
     >
       <mat-form-field>
         <textarea
@@ -58,21 +46,15 @@
           [rows]="4"
           [attr.placeholder]="'Activity.abstract.description' | transloco"
         ></textarea>
-        <mat-error>
-          <mex-field-error-summary
-            [fieldState]="activityForm.abstract()"
-            [fieldLabel]="abstractFieldset.label()"
-          ></mex-field-error-summary>
-        </mat-error>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      #contactFieldset
       labelKey="contact"
       descriptionKey="Activity.contact.description"
-      class="one-column-item"
+      [formField]="activityForm.contact"
       [category]="activitySchema.shape.contact | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="activityForm.contact"
@@ -80,20 +62,14 @@
         [validEntityTypes]="['ContactPoint', 'Person', 'OrganizationalUnit']"
         (keydown.enter)="$event.preventDefault()"
       ></mex-reference-select>
-      <mat-error>
-        <mex-field-error-summary
-          [fieldState]="activityForm.contact()"
-          [fieldLabel]="contactFieldset.label()"
-        ></mex-field-error-summary>
-      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
-      #involvedPersonFieldset
       labelKey="Activity.involvedPerson"
       descriptionKey="Activity.involvedPerson.description"
-      class="one-column-item"
+      [formField]="activityForm.involvedPerson"
       [category]="activitySchema.shape.involvedPerson | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="activityForm.involvedPerson"
@@ -102,40 +78,28 @@
         (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
-      <mat-error>
-        <mex-field-error-summary
-          [fieldState]="activityForm.involvedPerson()"
-          [fieldLabel]="involvedPersonFieldset.label()"
-        ></mex-field-error-summary>
-      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
-      #responsibleUnitFieldset
       labelKey="Activity.responsibleUnit"
       descriptionKey="Activity.responsibleUnit.description"
-      class="one-column-item"
+      [formField]="activityForm.responsibleUnit"
       [category]="activitySchema.shape.responsibleUnit | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="activityForm.responsibleUnit"
         [validEntityTypes]="['OrganizationalUnit']"
         (keydown.enter)="$event.preventDefault()"
       ></mex-reference-select>
-      <mat-error>
-        <mex-field-error-summary
-          [fieldState]="activityForm.responsibleUnit()"
-          [fieldLabel]="responsibleUnitFieldset.label()"
-        ></mex-field-error-summary>
-      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
-      #involvedUnitFieldset
       labelKey="Activity.involvedUnit"
       descriptionKey="Activity.involvedUnit.description"
-      class="one-column-item"
+      [formField]="activityForm.involvedUnit"
       [category]="activitySchema.shape.involvedUnit | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="activityForm.involvedUnit"
@@ -144,20 +108,14 @@
         (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
-      <mat-error>
-        <mex-field-error-summary
-          [fieldState]="activityForm.involvedUnit()"
-          [fieldLabel]="involvedUnitFieldset.label()"
-        ></mex-field-error-summary>
-      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
-      #activityTypeFieldset
       labelKey="Activity.activityType"
       descriptionKey="Activity.activityType.description"
-      class="one-column-item"
+      [formField]="activityForm.activityType"
       [category]="activitySchema.shape.activityType | fieldCategory"
+      class="one-column-item"
     >
       <mat-form-field>
         <mat-icon matPrefix>search</mat-icon>
@@ -171,21 +129,15 @@
             <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
         </mat-select>
-        <mat-error>
-          <mex-field-error-summary
-            [fieldState]="activityForm.activityType()"
-            [fieldLabel]="activityTypeFieldset.label()"
-          ></mex-field-error-summary>
-        </mat-error>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      #funderOrCommissionerFieldset
       labelKey="Activity.funderOrCommissioner"
       descriptionKey="Activity.funderOrCommissioner.description"
-      class="one-column-item"
+      [formField]="activityForm.funderOrCommissioner"
       [category]="activitySchema.shape.funderOrCommissioner | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="activityForm.funderOrCommissioner"
@@ -194,20 +146,14 @@
         (keydown.enter)="$event.preventDefault()"
       >
       </mex-reference-select>
-      <mat-error>
-        <mex-field-error-summary
-          [fieldState]="activityForm.funderOrCommissioner()"
-          [fieldLabel]="funderOrCommissionerFieldset.label()"
-        ></mex-field-error-summary>
-      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
-      #websiteFieldset
       labelKey="website"
       descriptionKey="website.description"
-      class="one-column-item"
+      [formField]="activityForm.website"
       [category]="activitySchema.shape.website | fieldCategory"
+      class="one-column-item"
     >
       <mex-array-form-value-control
         [formField]="activityForm.website"
@@ -218,13 +164,6 @@
           <mex-link-editor [formField]="field"></mex-link-editor>
         </ng-template>
       </mex-array-form-value-control>
-      <mat-error>
-        <mex-field-error-summary
-          [fieldState]="activityForm.website()"
-          [fieldLabel]="websiteFieldset.label()"
-          [showNestedErrors]="true"
-        ></mex-field-error-summary>
-      </mat-error>
     </mex-fieldset>
 
     <mex-fieldset
@@ -236,39 +175,27 @@
     >
       <div class="two-column-layout">
         <mex-fieldset
-          #startFieldset
           labelKey="Activity.start"
-          class="one-column-item"
+          [formField]="activityForm.start"
           [category]="activitySchema.shape.start | fieldCategory"
+          class="one-column-item"
         >
           <mex-datepicker
             [formField]="activityForm.start"
             (keydown.enter)="$event.preventDefault()"
           ></mex-datepicker>
-          <mat-error>
-            <mex-field-error-summary
-              [fieldState]="activityForm.start()"
-              [fieldLabel]="startFieldset.label()"
-            ></mex-field-error-summary>
-          </mat-error>
         </mex-fieldset>
 
         <mex-fieldset
-          #endFieldset
           labelKey="Activity.end"
-          class="one-column-item"
+          [formField]="activityForm.end"
           [category]="activitySchema.shape.end | fieldCategory"
+          class="one-column-item"
         >
           <mex-datepicker
             [formField]="activityForm.end"
             (keydown.enter)="$event.preventDefault()"
           ></mex-datepicker>
-          <mat-error>
-            <mex-field-error-summary
-              [fieldState]="activityForm.end()"
-              [fieldLabel]="endFieldset.label()"
-            ></mex-field-error-summary>
-          </mat-error>
         </mex-fieldset>
       </div>
     </mex-fieldset>

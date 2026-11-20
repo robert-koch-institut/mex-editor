@@ -5,8 +5,12 @@
       [formField]="resSchema.formField"
       [createItem]="resSchema.createNewItem"
     >
-      <ng-template [mexArrayItem]="resSchema.formField" let-field="field">
+      <ng-template [mexArrayItem]="resSchema.formField" let-field="field" let-index="index">
         <mex-zod-field-editor [formField]="field" [schema]="resSchema.elementSchema" />
+        <mex-field-error-summary
+          [fieldState]="field()"
+          [fieldLabel]="`Element ${index}`"
+        ></mex-field-error-summary>
       </ng-template>
     </mex-array-form-value-control>
   }
@@ -84,8 +88,10 @@
     </pre>
   }
 }
-<mex-field-error-summary
+
+<mex-field-errors [formField]="formField.field()"></mex-field-errors>
+
+<!-- <mex-field-error-summary
   [fieldState]="formField.state()"
-  [fieldLabel]="label()"
   [showErrorsWithoutTouch]="true"
-></mex-field-error-summary>
+></mex-field-error-summary> -->

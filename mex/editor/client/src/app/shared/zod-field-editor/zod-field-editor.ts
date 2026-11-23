@@ -18,6 +18,7 @@ import { MatFormField, MatOption, MatPrefix, MatSelect } from "@angular/material
 import { translateSignal, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 import type { ZodObject } from "zod";
 import { z } from "zod";
+import { $ZodCheckRegex } from "zod/v4/core";
 
 import {
   ArrayFormValueControl,
@@ -25,9 +26,10 @@ import {
 } from "../array-form-value-control/array-form-value-control";
 import type { Lookup, NoneLookup } from "../concept-lookups.service";
 import { ConceptLookups } from "../concept-lookups.service";
+import type { DatepickerPrecision } from "../datepicker/datepicker";
 import { Datepicker } from "../datepicker/datepicker";
 import { FieldErrors } from "../field-errors/field-errors";
-import { FieldMetadataPipe } from "../field-metadata.pipe";
+import { FieldMetadataPipe, readFieldMetadata } from "../field-metadata.pipe";
 import { LinkEditor } from "../link-editor/link-editor";
 import { asLinkLanguage, asTextLanguage } from "../models";
 import { ActivityTypeSchema } from "../models/generated/activity";
@@ -51,6 +53,10 @@ import {
   TextLanguageSchema,
   TextSchema,
   ThemeSchema,
+  yearMonthDayPattern,
+  yearMonthDayTimePattern,
+  yearMonthPattern,
+  yearPattern,
 } from "../models/generated/shared";
 import { TextEditor } from "../text-editor/text-editor";
 import { ZodObjectEditor } from "./zod-object-editor/zod-object-editor";
@@ -148,6 +154,14 @@ export interface ResolvedArraySchema extends BaseResolvedSchema<unknown[]> {
 }
 
 /**
+ * Resolved schema datetime strings.
+ */
+export interface ResolvedDateSchema extends BaseResolvedSchema<string | null> {
+  $type: "date";
+  allowedPrecisions: readonly DatepickerPrecision[];
+}
+
+/**
  * Resolved schema for types that are not known yet/can't be handled.
  */
 export interface ResolvedUnknownSchema extends Omit<BaseResolvedSchema<unknown>, "formField"> {
@@ -161,6 +175,7 @@ export type ResolvedSchema =
   | ResolvedEnumSchema
   | ResolvedEnumArraySchema
   | ResolvedArraySchema
+  | ResolvedDateSchema
   | ResolvedStringSchema
   | ResolvedNumberSchema
   | ResolvedLinkSchema
@@ -180,6 +195,34 @@ function unwrapDetailed(schema: z.ZodType) {
   }
 
   return { unwrapped, optional, nullable };
+}
+
+/** Maps the source of each date regex to the matching datepicker precision. */
+const PRECISION_BY_PATTERN_SOURCE = new Map<string, DatepickerPrecision>([
+  [yearMonthDayTimePattern, "datetime"], // Name prüfen, siehe unten
+  [yearMonthDayPattern, "day"],
+  [yearMonthPattern, "month"],
+  [yearPattern, "year"],
+]);
+
+/**
+ * Returns the precisions of a union, if ALL options are date strings.
+ * A single other option (e.g. the plain `z.string()` in `temporal`) makes the result null.
+ */
+function datePrecisionsOfUnion(schema: z.ZodUnion): DatepickerPrecision[] | null {
+  const precisions: DatepickerPrecision[] = [];
+  for (const option of schema.options) {
+    const precision =
+      option instanceof z.ZodString &&
+      option.def.checks?.length === 1 &&
+      option.def.checks[0] instanceof $ZodCheckRegex
+        ? PRECISION_BY_PATTERN_SOURCE.get(option.def.checks[0]._zod.def.pattern.source)
+        : undefined;
+
+    if (!precision) return null;
+    precisions.push(precision);
+  }
+  return precisions;
 }
 
 @Component({
@@ -354,6 +397,18 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
       unwrappedSchema: unwrapped,
     };
 
+    if (unwrapped instanceof z.ZodUnion) {
+      const allowedPrecisions = datePrecisionsOfUnion(unwrapped);
+      if (allowedPrecisions) {
+        return {
+          ...baseResult,
+          $type: "date",
+          formField: formField.field() as Field<string | null>,
+          allowedPrecisions,
+        };
+      }
+    }
+
     if (unwrapped instanceof z.ZodObject) {
       if (unwrapped === LinkSchema) {
         return { ...baseResult, $type: "link", formField: formField.field() as Field<Link> };
@@ -414,6 +469,7 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
       };
     }
 
+    console.log("UNKNOWN FOR", readFieldMetadata(formField.field(), "labelKey"));
     return {
       ...baseResult,
       $type: "unknown",

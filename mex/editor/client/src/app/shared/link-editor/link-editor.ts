@@ -17,7 +17,7 @@ import { MatInput } from "@angular/material/input";
 import { TranslocoDirective } from "@jsverse/transloco";
 import z from "zod";
 
-import { FieldError } from "../field-error/field-error";
+import { FieldErrors } from "../field-errors/field-errors";
 import { asLinkLanguage } from "../models";
 import type { Link, LinkLanguage } from "../models/generated/shared";
 import { LinkSchema } from "../models/generated/shared";
@@ -94,7 +94,7 @@ export function sameDraft(a: LinkDraft, b: LinkDraft): boolean {
 @Component({
   selector: "mex-link-editor",
   imports: [
-    FieldError,
+    FieldErrors,
     FormField,
     LinkLanguageMenu,
     MatFormFieldModule,

@@ -31,7 +31,6 @@ export function addFieldLabelKeys<T extends object>(
 
     const child = children[key];
     const label = prefix ? `${prefix}.${key}` : key;
-    console.log("ADDING LABEL for", key, label);
 
     addFieldLabelKey(child, label);
 

@@ -17,7 +17,7 @@ import { MatInput } from "@angular/material/input";
 import { TranslocoDirective } from "@jsverse/transloco";
 import z from "zod";
 
-import { FieldError } from "../field-error/field-error";
+import { FieldErrors } from "../field-errors/field-errors";
 import { asTextLanguage } from "../models";
 import type { Text, TextLanguage } from "../models/generated/shared";
 import { TextLanguageSchema, TextSchema } from "../models/generated/shared";
@@ -91,7 +91,7 @@ export function sameDraft(a: TextDraft, b: TextDraft): boolean {
 
 @Component({
   imports: [
-    FieldError,
+    FieldErrors,
     FormField,
     MatFormFieldModule,
     MatIconModule,

@@ -9,14 +9,9 @@
       (languageSelected)="this.textForm.language().value.set($event ?? '')"
     ></mex-text-language-menu>
   </mat-form-field>
-  @for (error of textForm.value().errors(); track $index) {
-    <!-- <mat-error> -->
-    <mex-field-error [error]="error" [fieldLabel]="t('Text.value')"></mex-field-error>
-    <!-- </mat-error> -->
-  }
-  @for (error of textForm.language().errors(); track $index) {
-    <!-- <mat-error> -->
-    <mex-field-error [error]="error" [fieldLabel]="t('Text.language')"></mex-field-error>
-    <!-- </mat-error> -->
-  }
+  <mex-field-errors [formField]="textForm.value" [fieldLabel]="t('Text.value')"></mex-field-errors>
+  <mex-field-errors
+    [formField]="textForm.language"
+    [fieldLabel]="t('Text.language')"
+  ></mex-field-errors>
 </div>

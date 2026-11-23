@@ -4,11 +4,7 @@
       <mat-label>{{ t("Link.url") }}</mat-label>
       <input matInput type="url" [formField]="linkForm.url" (blur)="touch.emit()" />
     </mat-form-field>
-    @for (error of linkForm.url().errors(); track $index) {
-      <!-- <mat-error> -->
-      <mex-field-error [error]="error" [fieldLabel]="t('Link.url')"></mex-field-error>
-      <!-- </mat-error> -->
-    }
+    <mex-field-errors [formField]="linkForm.url" [fieldLabel]="t('Link.url')"></mex-field-errors>
   </div>
   <div class="title">
     <mat-form-field>
@@ -21,15 +17,13 @@
         (languageSelected)="this.linkForm.language().value.set($event ?? '')"
       ></mex-link-language-menu>
     </mat-form-field>
-    @for (error of linkForm.title().errors(); track $index) {
-      <!-- <mat-error> -->
-      <mex-field-error [error]="error" [fieldLabel]="t('Link.title')"></mex-field-error>
-      <!-- </mat-error> -->
-    }
-    @for (error of linkForm.language().errors(); track $index) {
-      <!-- <mat-error> -->
-      <mex-field-error [error]="error" [fieldLabel]="t('Link.language')"></mex-field-error>
-      <!-- </mat-error> -->
-    }
+    <mex-field-errors
+      [formField]="linkForm.title"
+      [fieldLabel]="t('Link.title')"
+    ></mex-field-errors>
+    <mex-field-errors
+      [formField]="linkForm.language"
+      [fieldLabel]="t('Link.language')"
+    ></mex-field-errors>
   </div>
 </div>

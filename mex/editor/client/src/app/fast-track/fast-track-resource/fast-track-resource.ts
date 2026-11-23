@@ -10,7 +10,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButton } from "@angular/material/button";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MatError, MatFormFieldModule } from "@angular/material/form-field";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
@@ -22,7 +22,6 @@ import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/tr
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { Datepicker } from "../../shared/datepicker/datepicker";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
-import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
 import { Fieldset } from "../../shared/fieldset/fieldset";
 import type { Frequency } from "../../shared/models/generated/resource";
 import { SubmissionError } from "../../shared/models/submission-result";
@@ -39,7 +38,6 @@ import { FastTrackSubmission } from "../fast-track-submission";
   imports: [
     Datepicker,
     FieldCategoryPipe,
-    FieldErrorSummary,
     Fieldset,
     FormField,
     FormRoot,
@@ -47,7 +45,6 @@ import { FastTrackSubmission } from "../fast-track-submission";
     MatButton,
     MatChipsModule,
     MatDatepickerModule,
-    MatError,
     MatFormFieldModule,
     MatIcon,
     MatInput,

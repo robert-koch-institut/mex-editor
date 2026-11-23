@@ -3,10 +3,12 @@ import { Pipe } from "@angular/core";
 import type { Field, FieldTree, SchemaPath, SchemaPathTree } from "@angular/forms/signals";
 import { createMetadataKey, metadata } from "@angular/forms/signals";
 
-/** SignalForm metadata key for field labelkey. */
-export const fieldLabelKeyMetadataKey = createMetadataKey<string>();
-/** SignalForm metadata key for field description. */
-export const fieldDescriptionKeyMetadataKey = createMetadataKey<string>();
+const fieldLabelKeyMetadataKey = createMetadataKey<string>();
+const fieldDescriptionKeyMetadataKey = createMetadataKey<string>();
+
+interface ObjectSchemaLike {
+  shape: Record<string, unknown>;
+}
 
 /**
  * Adds a labelkey to the given schema.
@@ -17,33 +19,58 @@ export function addFieldLabelKey<T>(schema: SchemaPath<T>, labelkey: string) {
 /**
  * Adds a labelkey to each property schema for object schema.
  */
-export function addFieldLabelKeys<T extends object>(path: SchemaPathTree<T>, prefix = "") {
+export function addFieldLabelKeys<T extends object>(
+  path: SchemaPathTree<T>,
+  schema: ObjectSchemaLike,
+  prefix = "",
+) {
   const children = path as unknown as Record<string, SchemaPath<unknown>>;
 
-  for (const key of Object.keys(children)) {
-    if (key.startsWith("$")) continue;
-    const labelkey = prefix ? `${prefix}.${key}` : key;
-    addFieldLabelKey(children[key], labelkey);
+  for (const [key, fieldSchema] of Object.entries(schema.shape)) {
+    if (key.startsWith("$")) continue; // skip the $type discriminator
+
+    const child = children[key];
+    const label = prefix ? `${prefix}.${key}` : key;
+    console.log("ADDING LABEL for", key, label);
+
+    addFieldLabelKey(child, label);
+
+    if (isObjectSchema(fieldSchema)) {
+      addFieldLabelKeys(child as unknown as SchemaPathTree<object>, fieldSchema, label);
+    }
   }
+}
+
+function isObjectSchema(value: unknown): value is ObjectSchemaLike {
+  return typeof value === "object" && value !== null && "shape" in value;
 }
 
 /**
  * Adds a descriptionkey to the given schema.
  */
 export function addFieldDescriptionKey<T>(schema: SchemaPath<T>, descriptionkey: string) {
-  metadata(schema, fieldLabelKeyMetadataKey, () => descriptionkey);
+  metadata(schema, fieldDescriptionKeyMetadataKey, () => descriptionkey);
 }
 /**
  * Adds a descriptionkey to each property schema for object schema.
  */
-export function addFieldDescriptionKeys<T extends object>(path: SchemaPathTree<T>, prefix = "") {
+export function addFieldDescriptionKeys<T extends object>(
+  path: SchemaPathTree<T>,
+  schema: ObjectSchemaLike,
+  prefix = "",
+) {
   const children = path as unknown as Record<string, SchemaPath<unknown>>;
 
-  for (const key of Object.keys(children)) {
-    if (key.startsWith("$")) continue;
-    const descriptionkeyKey = `${key}.descriptionkey`;
-    const descriptionkey = prefix ? `${prefix}.${descriptionkeyKey}` : descriptionkeyKey;
-    addFieldDescriptionKey(children[key], descriptionkey);
+  for (const [key, fieldSchema] of Object.entries(schema.shape)) {
+    if (key.startsWith("$")) continue; // skip the $type discriminator
+
+    const child = children[key];
+    const prefixedKey = prefix ? `${prefix}.${key}` : key;
+    addFieldDescriptionKey(child, `${prefixedKey}.description`);
+
+    if (isObjectSchema(fieldSchema)) {
+      addFieldDescriptionKeys(child as unknown as SchemaPathTree<object>, fieldSchema, prefixedKey);
+    }
   }
 }
 
@@ -52,10 +79,11 @@ export function addFieldDescriptionKeys<T extends object>(path: SchemaPathTree<T
  */
 export function addFieldLabelKeysAndDescriptionKeys<T extends object>(
   path: SchemaPathTree<T>,
+  schema: ObjectSchemaLike,
   prefix = "",
 ) {
-  addFieldLabelKeys(path, prefix);
-  addFieldDescriptionKeys(path, prefix);
+  addFieldLabelKeys(path, schema, prefix);
+  addFieldDescriptionKeys(path, schema, prefix);
 }
 
 /**
@@ -74,7 +102,7 @@ const whatMap = {
  * @param name The name of the metadata to read.
  * @returns Returns the read metadata if present; otherwise undefined.
  */
-export function readFieldMetadata<T>(field: Field<T> | FieldTree<T>, name: FieldMetadataName) {
+export function readFieldMetadata<T>(field: Field<T>, name: FieldMetadataName) {
   const state = field();
   const key = whatMap[name];
   return state.hasMetadata(key) ? state.metadata(key)!() : undefined;

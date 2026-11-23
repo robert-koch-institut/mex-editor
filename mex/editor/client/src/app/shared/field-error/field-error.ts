@@ -1,4 +1,3 @@
-import { JsonPipe } from "@angular/common";
 import { Component, input } from "@angular/core";
 import type { ValidationError } from "@angular/forms/signals";
 import { TranslocoPipe } from "@jsverse/transloco";
@@ -7,7 +6,7 @@ import { ValidationErrorMessagePipe } from "../validation-error-message-pipe";
 
 @Component({
   selector: "mex-field-error",
-  imports: [JsonPipe, TranslocoPipe, ValidationErrorMessagePipe],
+  imports: [TranslocoPipe, ValidationErrorMessagePipe],
   templateUrl: "./field-error.html",
   styleUrl: "./field-error.scss",
 })

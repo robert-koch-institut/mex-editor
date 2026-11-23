@@ -7,10 +7,7 @@
     >
       <ng-template [mexArrayItem]="resSchema.formField" let-field="field" let-index="index">
         <mex-zod-field-editor [formField]="field" [schema]="resSchema.elementSchema" />
-        <mex-field-error-summary
-          [fieldState]="field()"
-          [fieldLabel]="`Element ${index}`"
-        ></mex-field-error-summary>
+        <mex-field-errors [formField]="field"></mex-field-errors>
       </ng-template>
     </mex-array-form-value-control>
   }
@@ -19,6 +16,7 @@
       [formField]="resSchema.formField"
       [schema]="resSchema.objectSchema"
     ></mex-zod-object-editor>
+    <mex-field-errors [formField]="resSchema.formField"></mex-field-errors>
   }
   @case ("number") {
     <mat-form-field>
@@ -88,10 +86,4 @@
     </pre>
   }
 }
-
-<mex-field-errors [formField]="formField.field()"></mex-field-errors>
-
-<!-- <mex-field-error-summary
-  [fieldState]="formField.state()"
-  [showErrorsWithoutTouch]="true"
-></mex-field-error-summary> -->
+<!-- <mex-field-errors [formField]="formField.field()"></mex-field-errors> -->

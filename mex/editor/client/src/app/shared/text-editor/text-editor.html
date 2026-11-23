@@ -8,16 +8,15 @@
       [nullable]="true"
       (languageSelected)="this.textForm.language().value.set($event ?? '')"
     ></mex-text-language-menu>
-
-    @for (error of textForm.value().errors(); track $index) {
-      <mat-error>
-        <mex-field-error [error]="error" [fieldLabel]="t('Text.value')"></mex-field-error>
-      </mat-error>
-    }
-    @for (error of textForm.language().errors(); track $index) {
-      <mat-error>
-        <mex-field-error [error]="error" [fieldLabel]="t('Text.language')"></mex-field-error>
-      </mat-error>
-    }
   </mat-form-field>
+  @for (error of textForm.value().errors(); track $index) {
+    <!-- <mat-error> -->
+    <mex-field-error [error]="error" [fieldLabel]="t('Text.value')"></mex-field-error>
+    <!-- </mat-error> -->
+  }
+  @for (error of textForm.language().errors(); track $index) {
+    <!-- <mat-error> -->
+    <mex-field-error [error]="error" [fieldLabel]="t('Text.language')"></mex-field-error>
+    <!-- </mat-error> -->
+  }
 </div>

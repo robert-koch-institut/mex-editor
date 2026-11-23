@@ -18,9 +18,7 @@
 
 @if (showErrors()) {
   @let field = formField();
-  @if (field && field(); as fieldState) {
-    @if (fieldState.invalid() && (showErrorsWithoutTouch() || fieldState.touched())) {
-      <mex-field-errors [formField]="field" [fieldLabel]="fieldLabel"></mex-field-errors>
-    }
+  @if (field) {
+    <mex-field-errors [formField]="field" [fieldLabel]="fieldLabel"></mex-field-errors>
   }
 }

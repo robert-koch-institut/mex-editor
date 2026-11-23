@@ -3,7 +3,7 @@
 @if (state.invalid() && (showErrorsWithoutTouch() || state.touched())) {
   @let errors = state.errors();
   @if (errors && errors.length > 0) {
-    @let label = field | fieldMetadata: "labelKey";
+    @let label = field | fieldMetadata: "labelKey" | transloco;
     <div class="error-container">
       @for (error of errors; track $index) {
         <mex-field-error

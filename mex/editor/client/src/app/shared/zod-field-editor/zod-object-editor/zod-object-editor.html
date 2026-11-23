@@ -1,11 +1,10 @@
 @for (entry of entries(); track entry.key) {
   <mex-fieldset
+    [formField]="entry.field"
     [labelKey]="entry.key"
     [descriptionKey]="`${entry.key}.description`"
     [category]="entry.schema | fieldCategory"
   >
-    @if (innerForm[entry.key]; as field) {
-      <mex-zod-field-editor [formField]="field" [schema]="entry.schema" />
-    }
+    <mex-zod-field-editor [formField]="entry.field" [schema]="entry.schema" />
   </mex-fieldset>
 }

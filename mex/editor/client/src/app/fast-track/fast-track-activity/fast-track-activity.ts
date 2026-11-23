@@ -19,7 +19,6 @@ import {
 import { ConceptLookups } from "../../shared/concept-lookups.service";
 import { Datepicker } from "../../shared/datepicker/datepicker";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
-import { FieldErrorSummary } from "../../shared/field-error-summary/field-error-summary";
 import { Fieldset } from "../../shared/fieldset/fieldset";
 import { LinkEditor } from "../../shared/link-editor/link-editor";
 import { asLinkLanguage } from "../../shared/models";
@@ -38,7 +37,6 @@ import { FastTrackSubmission } from "../fast-track-submission";
     ArrayItemTemplate,
     Datepicker,
     FieldCategoryPipe,
-    FieldErrorSummary,
     Fieldset,
     FormField,
     FormRoot,

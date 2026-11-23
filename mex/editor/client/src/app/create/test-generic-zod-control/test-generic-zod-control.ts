@@ -4,6 +4,7 @@ import z from "zod";
 
 import type { FastTrackActivityModel } from "../../fast-track/fast-track-activity.model";
 import { FastTrackActivityModelSchema } from "../../fast-track/fast-track-activity.model";
+import { addFieldLabelKeysAndDescriptionKeys } from "../../shared/field-metadata.pipe";
 import { TextSchema } from "../../shared/models/generated/shared";
 import { ZodFieldEditor } from "../../shared/zod-field-editor/zod-field-editor";
 
@@ -12,15 +13,19 @@ const SimpleSchema = z.object({
   title: TextSchema.nullable(),
   titleMandatory: TextSchema.nonoptional(),
   titleArray: TextSchema.array(),
-  titleArrayMandatory: TextSchema.array().min(1),
+  titleArrayMandatory: TextSchema.array().min(2),
 
   name: z.string().optional(),
   nameMandatory: z.string().nonempty(),
   nameArray: z.string().array(),
-  nameArrayMandatory: TextSchema.array().min(1),
+  nameArrayMandatory: TextSchema.array().min(2),
 
   other: z.object({
-    otherProp: z.string(),
+    otherProp: z.string().min(1),
+    otherMandatoryProp: z.string().nonoptional(),
+    otherArrayProp: z.string().min(1).array(),
+    otherMandatoryArrayProp: z.string().array().min(2),
+    otherMandatoryArrayWithInnerProp: z.string().min(1).array().min(2),
   }),
 });
 
@@ -47,6 +52,10 @@ export class TestGenericZodControl {
     nameArrayMandatory: [],
     other: {
       otherProp: "",
+      otherMandatoryProp: "",
+      otherArrayProp: [],
+      otherMandatoryArrayProp: [],
+      otherMandatoryArrayWithInnerProp: [],
     },
   });
   simpleSchema = SimpleSchema;
@@ -58,7 +67,7 @@ export class TestGenericZodControl {
     {
       submission: {
         action: async (field) => {
-          console.log("submit simple", field());
+          console.log("submit simple", field().value());
         },
         onInvalid: (field) => {
           const firstError = field().errorSummary()[0];
@@ -89,6 +98,7 @@ export class TestGenericZodControl {
     this.fastActivityModel,
     (schema) => {
       validateStandardSchema(schema, FastTrackActivityModelSchema);
+      addFieldLabelKeysAndDescriptionKeys(schema, FastTrackActivityModelSchema, "Activity");
     },
     {
       submission: {

@@ -26,8 +26,8 @@ import {
 import type { Lookup, NoneLookup } from "../concept-lookups.service";
 import { ConceptLookups } from "../concept-lookups.service";
 import { Datepicker } from "../datepicker/datepicker";
-import { FieldErrorSummary } from "../field-error-summary/field-error-summary";
 import { FieldErrors } from "../field-errors/field-errors";
+import { FieldMetadataPipe } from "../field-metadata.pipe";
 import { LinkEditor } from "../link-editor/link-editor";
 import { asLinkLanguage, asTextLanguage } from "../models";
 import { ActivityTypeSchema } from "../models/generated/activity";
@@ -189,7 +189,7 @@ function unwrapDetailed(schema: z.ZodType) {
     ArrayItemTemplate,
     Datepicker,
     FieldErrors,
-    FieldErrorSummary,
+    FieldMetadataPipe,
     FormField,
     forwardRef(() => ZodObjectEditor),
     JsonPipe,
@@ -361,8 +361,6 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
       if (unwrapped === TextSchema) {
         return { ...baseResult, $type: "text", formField: formField.field() as Field<Text> };
       }
-
-      console.log("ITS AN OBJECT", unwrapped);
 
       return {
         ...baseResult,

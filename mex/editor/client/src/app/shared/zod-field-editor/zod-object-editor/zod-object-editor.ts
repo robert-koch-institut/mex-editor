@@ -1,21 +1,20 @@
-import { Component, computed, forwardRef, input, model, output } from "@angular/core";
-import type { FormValueControl } from "@angular/forms/signals";
-import { disabled, form, readonly, validateStandardSchema } from "@angular/forms/signals";
+import { Component, computed, forwardRef, inject, input, model, output } from "@angular/core";
+import type { Field, FieldTree, FormValueControl } from "@angular/forms/signals";
+import { FormField } from "@angular/forms/signals";
 import { TranslocoPipe } from "@jsverse/transloco";
 import type z from "zod";
-import type { ZodObject } from "zod";
 
 import { FieldCategoryPipe } from "../../field-category-pipe";
 import { FieldError } from "../../field-error/field-error";
-import { FieldErrorSummary } from "../../field-error-summary/field-error-summary";
 import { Fieldset } from "../../fieldset/fieldset";
 import { ZodFieldEditor } from "../zod-field-editor";
+
+// type ObjectFieldTree = Field<CreateResourceModel[keyof CreateResourceModel]>;
 
 @Component({
   imports: [
     FieldCategoryPipe,
     FieldError,
-    FieldErrorSummary,
     Fieldset,
     forwardRef(() => ZodFieldEditor),
     TranslocoPipe,
@@ -27,7 +26,7 @@ import { ZodFieldEditor } from "../zod-field-editor";
 /**
  * Docs
  */
-export class ZodObjectEditor<T extends ZodObject> implements FormValueControl<z.infer<T>> {
+export class ZodObjectEditor<T extends z.ZodObject> implements FormValueControl<z.infer<T>> {
   readonly schema = input.required<T>();
   readonly value = model.required<z.infer<T>>();
 
@@ -36,17 +35,18 @@ export class ZodObjectEditor<T extends ZodObject> implements FormValueControl<z.
 
   readonly touch = output<void>();
 
-  readonly innerForm = form<Record<string, unknown>>(this.value, (path) => {
-    validateStandardSchema(path, () => this.schema());
-    disabled(path, { when: () => this.disabled() });
-    readonly(path, { when: () => this.readonly() });
-  });
+  private readonly formField = inject(FormField<z.infer<T>>);
 
   readonly entries = computed(() => {
     const shape = this.schema().shape;
+    const objField = this.formField.field() as Field<z.infer<T>, string>;
+    const objFieldState = objField();
+    const objFieldTree = objFieldState.fieldTree as FieldTree<z.infer<T>, string, "writable">;
+
     return Object.entries(shape).map(([key, schema]) => ({
       key,
       schema,
+      field: objFieldTree[key]!,
     }));
   });
 }

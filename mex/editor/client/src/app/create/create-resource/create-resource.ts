@@ -3,6 +3,11 @@ import type { Field } from "@angular/forms/signals";
 import { form, FormField, FormRoot, validateStandardSchema } from "@angular/forms/signals";
 
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
+import { FieldErrors } from "../../shared/field-errors/field-errors";
+import {
+  addFieldLabelKeysAndDescriptionKeys,
+  FieldMetadataPipe,
+} from "../../shared/field-metadata.pipe";
 import { Fieldset } from "../../shared/fieldset/fieldset";
 import type { AccessRestriction } from "../../shared/models/generated/resource";
 import { ZodFieldEditor } from "../../shared/zod-field-editor/zod-field-editor";
@@ -33,7 +38,15 @@ export interface FieldGroup {
 }
 
 @Component({
-  imports: [FieldCategoryPipe, Fieldset, FormField, FormRoot, ZodFieldEditor],
+  imports: [
+    FieldCategoryPipe,
+    FieldErrors,
+    FieldMetadataPipe,
+    Fieldset,
+    FormField,
+    FormRoot,
+    ZodFieldEditor,
+  ],
   selector: "mex-create-resource",
   styleUrl: "./create-resource.scss",
   templateUrl: "./create-resource.html",
@@ -109,6 +122,7 @@ export class CreateResource {
     this.model,
     (schema) => {
       validateStandardSchema(schema, CreateResourceModelSchema);
+      addFieldLabelKeysAndDescriptionKeys(schema, CreateResourceModelSchema, "Resource");
     },
     {
       submission: {
@@ -123,6 +137,7 @@ export class CreateResource {
       },
     },
   );
+
   protected readonly groups = computed<FieldGroup[]>(() => {
     const grouped = new Map<string, FieldGroupEntry[]>();
 

@@ -30,7 +30,7 @@ export const FastTrackActivityModelSchema = z.object({
     .array()
     .nonempty(),
   responsibleUnit: z.array(PreviewOrganizationalUnitSchema).nonempty(),
-  activityType: z.array(ActivityTypeSchema),
+  activityType: z.array(ActivityTypeSchema).nonempty(),
 
   // recommended fields
   shortName: recommended(z.string()),

@@ -155,11 +155,7 @@
       class="one-column-item"
       [category]="activitySchema.shape.website | fieldCategory"
     >
-      <mex-array-form-value-control
-        [formField]="activityForm.website"
-        [createItem]="createNewLink"
-        /* [reorderable]="true" */
-      >
+      <mex-array-form-value-control [formField]="activityForm.website" [createItem]="createNewLink">
         <ng-template [mexArrayItem]="activityForm.website" let-field="field">
           <mex-link-editor [formField]="field"></mex-link-editor>
         </ng-template>

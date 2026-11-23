@@ -56,7 +56,7 @@ export const CreateOrPreviewOrganizationSchema = z.union([
 ]);
 
 /**
- * UnionType for CreateContactPoint and PreviewContactPoint.
+ * UnionType for CreateOrganization and PreviewOrganization.
  */
 export type CreateOrPreviewOrganization = z.infer<typeof CreateOrPreviewOrganizationSchema>;
 

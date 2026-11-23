@@ -28,7 +28,7 @@ export class LinkLanguageMenu<T extends true | false = false> {
       value: x,
       labelKey: `language.${x}`,
     })),
-    ...(this.nullable() ? [{ value: null, labelKey: "none" }] : []),
+    ...(this.nullable() ? [{ value: null, labelKey: "language.none" }] : []),
   ]);
   readonly disabled = input<boolean>(false);
 

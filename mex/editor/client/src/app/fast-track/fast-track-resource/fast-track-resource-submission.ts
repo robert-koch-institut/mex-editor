@@ -168,7 +168,7 @@ export class FastTrackResourceSubmission {
     };
     return OrganizationRuleSetRequestSchema.parse({
       additive,
-      $type: "PersonRuleSetRequest" as const,
+      $type: "OrganizationRuleSetRequest" as const,
     });
   }
 

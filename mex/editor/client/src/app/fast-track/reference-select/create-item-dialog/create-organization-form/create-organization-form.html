@@ -2,8 +2,8 @@
   <mex-fieldset
     labelKey="Organization.officialName"
     [labelParam]="{ count: 1 }"
-    /* [formField]="organizationForm.officialName" */
-    /* [showErrorWithoutTouch]="true" */
+    [formField]="organizationForm.officialName"
+    [showErrorsWithoutTouch]="true"
     [category]="organizationSchema.shape.officialName | fieldCategory"
   >
     <mat-form-field>

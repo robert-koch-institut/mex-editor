@@ -3,44 +3,12 @@ import type { Signal } from "@angular/core";
 import { computed, inject, Injectable } from "@angular/core";
 import { TranslocoService } from "@jsverse/transloco";
 
-import type { PreviewItem } from "./models";
 import type { Concept } from "./models/concept";
-import type { CreateItem } from "./models/create-item";
 import type { LinkLanguage, TextLanguage } from "./models/generated/shared";
 import { LinkLanguageSchema, TextLanguageSchema } from "./models/generated/shared";
 import type { PaginatedItemsContainer } from "./models/paginated-items-container";
-import { ToLookupPipe } from "./to-lookup-pipe";
+import { ToLabelPipe } from "./to-label-pipe";
 import { ToastNotifier } from "./toasts/toast-notifier";
-// /**
-//  * LookupItem for an empty selection.
-//  */
-// export interface NoneLookupItem {
-//   value: null | undefined;
-// }
-
-// function hasOwnProperty<T extends object, K extends PropertyKey>(
-//   obj: T,
-//   key: K,
-// ): obj is T & Record<K, unknown> {
-//   return Object.hasOwn(obj, key);
-// }
-
-// /**
-//  * Checks if the given value is a NoneLookupItem.
-//  * @param value The value to check.
-//  * @returns True if the given value is a NoneLookupItem; otherwise false.
-//  */
-// export function isNoneLookupItem(value: unknown): value is NoneLookupItem {
-//   if (
-//     value &&
-//     typeof value === "object" &&
-//     hasOwnProperty(value, "value") &&
-//     [null, undefined].includes(value.value as null | undefined)
-//   ) {
-//     return true;
-//   }
-//   return false;
-// }
 
 /**
  * UnionType for all lookup items.
@@ -63,22 +31,6 @@ export interface ConceptLookup {
   data: Concept;
 }
 /**
- * Model for PreviewItemLookup.
- */
-export interface PreviewItemLookup {
-  value: string;
-  label: string;
-  data: PreviewItem;
-}
-/**
- * Model for CreateItemLookup.
- */
-export interface CreateItemLookup {
-  value: string;
-  label: string;
-  data: CreateItem;
-}
-/**
  * Model for TextLanguageLookup.
  */
 export interface TextLanguageLookup {
@@ -95,34 +47,14 @@ export interface LinkLanguageLookup {
   data: LinkLanguage;
 }
 
-/**
- * Model for a generic Lookup.
- */
-export interface AnyLookup<TValue = unknown, TData = unknown> {
-  value: TValue;
-  label: string;
-  data: TData;
-}
-
-/**
- * Union type for all Lookups
- */
-export type Lookup =
-  | TextLanguageLookup
-  | LinkLanguageLookup
-  | ConceptLookup
-  | PreviewItemLookup
-  | CreateItemLookup
-  | NoneLookup
-  | AnyLookup;
-
 @Injectable({ providedIn: "root" })
 /**
  * Provides concepts as options.
  */
 export class ConceptLookups {
   private transloco = inject(TranslocoService);
-  private lookupPipe = new ToLookupPipe();
+  // private lookupPipe = new ToLookupPipe();
+  private readonly labelPipe = new ToLabelPipe();
   private notifier = inject(ToastNotifier);
 
   themeOptions = this.buildConceptOptions("theme");
@@ -164,7 +96,11 @@ export class ConceptLookups {
 
   private sortedValues(vocabulary: PaginatedItemsContainer<Concept>) {
     const currentLang = this.transloco.activeLang();
-    const lookups = vocabulary.items.map((x) => this.lookupPipe.transform(x, currentLang));
+    const lookups = vocabulary.items.map((x) => ({
+      value: x.identifier,
+      data: x,
+      label: this.labelPipe.transform(x, currentLang),
+    })); // this.lookupPipe.transform(x, currentLang));
     return lookups.sort((a, b) => a.label.localeCompare(b.label));
   }
 

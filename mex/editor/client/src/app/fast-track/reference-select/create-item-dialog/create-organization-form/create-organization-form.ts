@@ -3,10 +3,10 @@ import { form, FormField, FormRoot, validateStandardSchema } from "@angular/form
 import { MatInput } from "@angular/material/input";
 import { MatFormField } from "@angular/material/select";
 
-import { FieldCategoryPipe } from "../../../field-category-pipe";
-import type { CreateOrganization } from "../../../models/create-item";
-import { CreateOrganizationSchema } from "../../../models/create-item";
-import { Fieldset } from "../../../fieldset/fieldset";
+import { FieldCategoryPipe } from "../../../../shared/field-category-pipe";
+import { Fieldset } from "../../../../shared/fieldset/fieldset";
+import type { CreateOrganization } from "../../../create-item";
+import { CreateOrganizationSchema } from "../../../create-item";
 
 @Component({
   selector: "mex-create-organization-form",

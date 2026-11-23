@@ -2,8 +2,8 @@
   <mex-fieldset
     labelKey="email"
     [labelParam]="{ count: 1 }"
-    /* [formField]="contactPointForm.email" */
-    /* [showErrorWithoutTouch]="true" */
+    [formField]="contactPointForm.email"
+    [showErrorsWithoutTouch]="true"
     [category]="contactPointSchema.shape.email | fieldCategory"
   >
     <mat-form-field>

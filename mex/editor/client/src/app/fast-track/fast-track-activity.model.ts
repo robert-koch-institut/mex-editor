@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import z from "zod";
 
-import {
-  CreateOrPreviewContactPointSchema,
-  CreateOrPreviewOrganizationSchema,
-  CreateOrPreviewPersonSchema,
-} from "../shared/models";
 import { ActivityTypeSchema, ExtractedActivitySchema } from "../shared/models/generated/activity";
 import { PreviewOrganizationalUnitSchema } from "../shared/models/generated/organizational-unit";
 import { LinkSchema, TextSchema } from "../shared/models/generated/shared";
 import { recommended } from "../shared/models/zod-types";
+import {
+  CreateOrPreviewContactPointSchema,
+  CreateOrPreviewOrganizationSchema,
+  CreateOrPreviewPersonSchema,
+} from "./create-item";
 
 /**
  * Schema for FasttrackActivityModel

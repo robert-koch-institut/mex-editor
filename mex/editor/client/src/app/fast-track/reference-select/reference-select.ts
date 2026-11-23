@@ -35,17 +35,17 @@ import {
 import { translateSignal } from "@jsverse/transloco";
 import { combineLatest, map, switchMap } from "rxjs";
 
-import type { PreviewItem } from "../models";
-import type { CreateItem } from "../models/create-item";
-import { isCreateItem } from "../models/create-item";
-import type { PaginatedItemsContainer } from "../models/paginated-items-container";
-import { ToLabelPipe } from "../to-label-pipe";
-import { TypeToIconNamePipe } from "../type-to-icon-name-pipe";
+import type { PreviewItem } from "../../shared/models";
+import type { PaginatedItemsContainer } from "../../shared/models/paginated-items-container";
+import { TypeToIconNamePipe } from "../../shared/type-to-icon-name-pipe";
+import type { CreateItem } from "../create-item";
+import { isCreateItem } from "../create-item";
 import type {
   CreateItemDialogData,
   CreateItemDialogResult,
 } from "./create-item-dialog/create-item-dialog";
 import { CreateItemDialog } from "./create-item-dialog/create-item-dialog";
+import { ToReferenceLabelPipe } from "./to-reference-label-pipe";
 
 /**
  * Type for valid reference select types.
@@ -68,7 +68,7 @@ export type ReferenceSelectTypes =
     MatLabel,
     MatOptgroup,
     MatOption,
-    ToLabelPipe,
+    ToReferenceLabelPipe,
     TranslocoDirective,
     TranslocoPipe,
     TypeToIconNamePipe,
@@ -84,7 +84,7 @@ export class ReferenceSelect<
   T extends PreviewItem | CreateItem = PreviewItem | CreateItem,
 > implements FormValueControl<T[]> {
   protected readonly transloco = inject(TranslocoService);
-  private readonly labelPipe = new ToLabelPipe();
+  private readonly labelPipe = new ToReferenceLabelPipe();
   private readonly dialog = inject(MatDialog);
   private readonly formField = inject(FormField, { self: true, optional: true });
 

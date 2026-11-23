@@ -6,5 +6,6 @@
     [category]="entry.schema | fieldCategory"
   >
     <mex-zod-field-editor [formField]="entry.field" [schema]="entry.schema" />
+    <mex-field-errors [formField]="entry.field"></mex-field-errors>
   </mex-fieldset>
 }

@@ -24,12 +24,17 @@ import {
   ArrayFormValueControl,
   ArrayItemTemplate,
 } from "../array-form-value-control/array-form-value-control";
-import type { Lookup, NoneLookup } from "../concept-lookups.service";
+import type {
+  ConceptLookup,
+  LinkLanguageLookup,
+  NoneLookup,
+  TextLanguageLookup,
+} from "../concept-lookups.service";
 import { ConceptLookups } from "../concept-lookups.service";
 import type { DatepickerPrecision } from "../datepicker/datepicker";
 import { Datepicker } from "../datepicker/datepicker";
 import { FieldErrors } from "../field-errors/field-errors";
-import { FieldMetadataPipe, readFieldMetadata } from "../field-metadata.pipe";
+import { readFieldMetadata } from "../field-metadata.pipe";
 import { LinkEditor } from "../link-editor/link-editor";
 import { asLinkLanguage, asTextLanguage } from "../models";
 import { ActivityTypeSchema } from "../models/generated/activity";
@@ -82,6 +87,7 @@ function objectEntries(schema: z.ZodType): { key: string; schema: z.ZodType }[] 
   return Object.entries(shape).map(([key, child]) => ({ key, schema: child }));
 }
 
+type Lookup = ConceptLookup | LinkLanguageLookup | TextLanguageLookup | NoneLookup;
 interface BaseResolvedSchema<T> {
   readonly schema: z.ZodType;
   readonly unwrappedSchema: z.ZodType;
@@ -162,6 +168,14 @@ export interface ResolvedDateSchema extends BaseResolvedSchema<string | null> {
 }
 
 /**
+ * Resolved schema datetime strings.
+ */
+export interface ResolvedReferenceSchema extends BaseResolvedSchema<string> {
+  $type: "reference";
+  allowedEntityTypes: string[];
+}
+
+/**
  * Resolved schema for types that are not known yet/can't be handled.
  */
 export interface ResolvedUnknownSchema extends Omit<BaseResolvedSchema<unknown>, "formField"> {
@@ -178,6 +192,7 @@ export type ResolvedSchema =
   | ResolvedDateSchema
   | ResolvedStringSchema
   | ResolvedNumberSchema
+  | ResolvedReferenceSchema
   | ResolvedLinkSchema
   | ResolvedTextSchema
   | ResolvedObjectSchema
@@ -199,27 +214,32 @@ function unwrapDetailed(schema: z.ZodType) {
 
 /** Maps the source of each date regex to the matching datepicker precision. */
 const PRECISION_BY_PATTERN_SOURCE = new Map<string, DatepickerPrecision>([
-  [yearMonthDayTimePattern, "datetime"], // Name prüfen, siehe unten
+  [yearMonthDayTimePattern, "datetime"],
   [yearMonthDayPattern, "day"],
   [yearMonthPattern, "month"],
   [yearPattern, "year"],
 ]);
 
+function getZodRegExString<T>(value: T): string | null {
+  return (
+    (value instanceof z.ZodString &&
+      value.def.checks?.length === 1 &&
+      value.def.checks[0] instanceof $ZodCheckRegex &&
+      value.def.checks[0]._zod.def.pattern.source) ||
+    null
+  );
+}
+
 /**
  * Returns the precisions of a union, if ALL options are date strings.
- * A single other option (e.g. the plain `z.string()` in `temporal`) makes the result null.
  */
 function datePrecisionsOfUnion(schema: z.ZodUnion): DatepickerPrecision[] | null {
   const precisions: DatepickerPrecision[] = [];
   for (const option of schema.options) {
-    const precision =
-      option instanceof z.ZodString &&
-      option.def.checks?.length === 1 &&
-      option.def.checks[0] instanceof $ZodCheckRegex
-        ? PRECISION_BY_PATTERN_SOURCE.get(option.def.checks[0]._zod.def.pattern.source)
-        : undefined;
-
+    const regEx = getZodRegExString(option);
+    const precision = regEx ? PRECISION_BY_PATTERN_SOURCE.get(regEx) : undefined;
     if (!precision) return null;
+
     precisions.push(precision);
   }
   return precisions;
@@ -232,7 +252,6 @@ function datePrecisionsOfUnion(schema: z.ZodUnion): DatepickerPrecision[] | null
     ArrayItemTemplate,
     Datepicker,
     FieldErrors,
-    FieldMetadataPipe,
     FormField,
     forwardRef(() => ZodObjectEditor),
     JsonPipe,
@@ -462,6 +481,9 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
     }
 
     if (unwrapped instanceof z.ZodString) {
+      const regEx = getZodRegExString(unwrapped);
+      console.log("IM STRGIN", regEx);
+
       return {
         ...baseResult,
         $type: "string",

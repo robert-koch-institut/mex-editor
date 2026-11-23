@@ -5,11 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/materia
 import { MatTabsModule } from "@angular/material/tabs";
 import { TranslocoPipe } from "@jsverse/transloco";
 
-import type {
-  CreateContactPoint,
-  CreateOrganization,
-  CreatePerson,
-} from "../../models/create-item";
+import type { CreateContactPoint, CreateOrganization, CreatePerson } from "../../create-item";
 import { CreateContactPointForm } from "./create-contact-point-form/create-contact-point-form";
 import { CreateOrganizationForm } from "./create-organization-form/create-organization-form";
 import { CreatePersonForm } from "./create-person-form/create-person-form";

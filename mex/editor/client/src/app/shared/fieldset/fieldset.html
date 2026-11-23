@@ -19,6 +19,10 @@
 @if (showErrors()) {
   @let field = formField();
   @if (field) {
-    <mex-field-errors [formField]="field" [fieldLabel]="fieldLabel"></mex-field-errors>
+    <mex-field-errors
+      [formField]="field"
+      [fieldLabel]="fieldLabel"
+      [showErrorsWithoutTouch]="showErrorsWithoutTouch()"
+    ></mex-field-errors>
   }
 }

@@ -24,7 +24,7 @@ import { LinkEditor } from "../../shared/link-editor/link-editor";
 import { asLinkLanguage } from "../../shared/models";
 import type { Link } from "../../shared/models/generated/shared";
 import { SubmissionError } from "../../shared/models/submission-result";
-import { ReferenceSelect } from "../../shared/reference-select/reference-select";
+import { ReferenceSelect } from "../reference-select/reference-select";
 import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import type { FastTrackActivityModel } from "../fast-track-activity.model";
 import { FastTrackActivityModelSchema } from "../fast-track-activity.model";

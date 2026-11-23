@@ -5,16 +5,14 @@ import { TranslocoPipe } from "@jsverse/transloco";
 import type z from "zod";
 
 import { FieldCategoryPipe } from "../../field-category-pipe";
-import { FieldError } from "../../field-error/field-error";
+import { FieldErrors } from "../../field-errors/field-errors";
 import { Fieldset } from "../../fieldset/fieldset";
 import { ZodFieldEditor } from "../zod-field-editor";
-
-// type ObjectFieldTree = Field<CreateResourceModel[keyof CreateResourceModel]>;
 
 @Component({
   imports: [
     FieldCategoryPipe,
-    FieldError,
+    FieldErrors,
     Fieldset,
     forwardRef(() => ZodFieldEditor),
     TranslocoPipe,

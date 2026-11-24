@@ -1,7 +1,6 @@
 import { Component, computed, forwardRef, inject, input, model, output } from "@angular/core";
 import type { Field, FieldTree, FormValueControl } from "@angular/forms/signals";
 import { FormField } from "@angular/forms/signals";
-import { TranslocoPipe } from "@jsverse/transloco";
 import type z from "zod";
 
 import { FieldCategoryPipe } from "../../field-category-pipe";
@@ -10,13 +9,7 @@ import { Fieldset } from "../../fieldset/fieldset";
 import { ZodFieldEditor } from "../zod-field-editor";
 
 @Component({
-  imports: [
-    FieldCategoryPipe,
-    FieldErrors,
-    Fieldset,
-    forwardRef(() => ZodFieldEditor),
-    TranslocoPipe,
-  ],
+  imports: [FieldCategoryPipe, FieldErrors, Fieldset, forwardRef(() => ZodFieldEditor)],
   selector: "mex-zod-object-editor",
   styleUrl: "./zod-object-editor.scss",
   templateUrl: "./zod-object-editor.html",

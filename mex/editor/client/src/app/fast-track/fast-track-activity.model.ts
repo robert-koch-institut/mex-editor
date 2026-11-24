@@ -9,7 +9,7 @@ import {
   CreateOrPreviewContactPointSchema,
   CreateOrPreviewOrganizationSchema,
   CreateOrPreviewPersonSchema,
-} from "./create-item";
+} from "../shared/models/create-item";
 
 /**
  * Schema for FasttrackActivityModel

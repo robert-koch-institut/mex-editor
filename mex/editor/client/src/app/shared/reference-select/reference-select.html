@@ -50,7 +50,7 @@
       <mat-option (onSelectionChange)="removeValue(item)">
         <mat-checkbox [checked]="true" (change)="removeValue(item)"></mat-checkbox>
         <mat-icon [inline]="true">{{ item.$type | typeToIconName }}</mat-icon>
-        {{ item | toReferenceLabel: transloco.activeLang() }}
+        {{ item | toLabel: transloco.activeLang() }}
       </mat-option>
     }
     @if (query !== "") {
@@ -76,7 +76,7 @@
                 <mat-icon [inline]="true">
                   {{ item.$type | typeToIconName }}
                 </mat-icon>
-                {{ item | toReferenceLabel: transloco.activeLang() }}
+                {{ item | toLabel: transloco.activeLang() }}
               </mat-option>
             } @empty {
               <mat-option disabled>

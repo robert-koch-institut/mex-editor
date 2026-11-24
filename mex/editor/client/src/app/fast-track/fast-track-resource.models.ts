@@ -9,7 +9,7 @@ import {
 } from "../shared/models/generated/resource";
 import { TextSchema, ThemeSchema } from "../shared/models/generated/shared";
 import { recommended } from "../shared/models/zod-types";
-import { CreateOrPreviewContactPointSchema, CreateOrPreviewPersonSchema } from "./create-item";
+import { CreateOrPreviewContactPointSchema, CreateOrPreviewPersonSchema } from "../shared/models/create-item";
 
 /**
  * Schema for FasttrackResourceModel

@@ -31,7 +31,7 @@ import {
   FastTrackResourceModelSchema,
 } from "../fast-track-resource.models";
 import { FastTrackSubmission } from "../fast-track-submission";
-import { ReferenceSelect } from "../reference-select/reference-select";
+import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 
 @Component({
   selector: "mex-fast-track-resource",

@@ -25,7 +25,7 @@ import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import type { FastTrackResourceModel } from "../fast-track-resource.models";
 import { FastTrackSubmission } from "../fast-track-submission";
 import { Fieldset } from "../../shared/fieldset/fieldset";
-import { ReferenceSelect } from "../reference-select/reference-select";
+import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 import { FastTrackResource } from "./fast-track-resource";
 
 const THEME_ID = ThemeSchema.enum["https://mex.rki.de/item/theme-1"];

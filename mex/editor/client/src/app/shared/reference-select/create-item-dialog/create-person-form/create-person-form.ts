@@ -3,10 +3,10 @@ import { form, FormField, FormRoot, validateStandardSchema } from "@angular/form
 import { MatInput } from "@angular/material/input";
 import { MatFormField } from "@angular/material/select";
 
-import { FieldCategoryPipe } from "../../../../shared/field-category-pipe";
-import { Fieldset } from "../../../../shared/fieldset/fieldset";
-import type { CreatePerson } from "../../../create-item";
-import { CreatePersonSchema } from "../../../create-item";
+import { FieldCategoryPipe } from "../../../field-category-pipe";
+import { Fieldset } from "../../../fieldset/fieldset";
+import type { CreatePerson } from "../../../models/create-item";
+import { CreatePersonSchema } from "../../../models/create-item";
 
 @Component({
   selector: "mex-create-person-form",

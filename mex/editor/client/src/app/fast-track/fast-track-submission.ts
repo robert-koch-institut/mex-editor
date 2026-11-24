@@ -14,6 +14,12 @@ import {
 } from "rxjs";
 
 import { asTextLanguage, type PreviewItem } from "../shared/models";
+import type { CreateItem, CreateOrganization } from "../shared/models/create-item";
+import {
+  type CreateContactPoint,
+  type CreatePerson,
+  isCreateItem,
+} from "../shared/models/create-item";
 import type {
   ActivityRuleSetResponse,
   AdditiveActivity,
@@ -44,8 +50,6 @@ import {
 import type { Text, TextLanguage } from "../shared/models/generated/shared";
 import { TextSchema } from "../shared/models/generated/shared";
 import { SubmissionError, type SubmissionResult } from "../shared/models/submission-result";
-import type { CreateItem, CreateOrganization } from "./create-item";
-import { type CreateContactPoint, type CreatePerson, isCreateItem } from "./create-item";
 import type { FastTrackActivityModel } from "./fast-track-activity.model";
 import { type FastTrackResourceModel } from "./fast-track-resource.models";
 

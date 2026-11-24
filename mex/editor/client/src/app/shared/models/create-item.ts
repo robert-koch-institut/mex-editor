@@ -1,15 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import z from "zod";
 
-import {
-  BaseContactPointSchema,
-  PreviewContactPointSchema,
-} from "../shared/models/generated/contact-point";
-import {
-  BaseOrganizationSchema,
-  PreviewOrganizationSchema,
-} from "../shared/models/generated/organization";
-import { BasePersonSchema, PreviewPersonSchema } from "../shared/models/generated/person";
+import { BaseContactPointSchema, PreviewContactPointSchema } from "./generated/contact-point";
+import { BaseOrganizationSchema, PreviewOrganizationSchema } from "./generated/organization";
+import { BasePersonSchema, PreviewPersonSchema } from "./generated/person";
 
 /**
  * Schema for CreatePerson.

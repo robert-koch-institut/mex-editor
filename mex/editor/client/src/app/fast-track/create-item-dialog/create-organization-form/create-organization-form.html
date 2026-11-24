@@ -1,0 +1,13 @@
+<form [formRoot]="organizationForm">
+  <mex-fieldset
+    labelKey="Organization.officialName"
+    [labelParam]="{ count: 1 }"
+    [formField]="organizationForm.officialName"
+    [showErrorWithoutTouch]="true"
+    [category]="organizationSchema.shape.officialName | fieldCategory"
+  >
+    <mat-form-field>
+      <input matInput [formField]="organizationForm.officialName" class="focus-me" />
+    </mat-form-field>
+  </mex-fieldset>
+</form>

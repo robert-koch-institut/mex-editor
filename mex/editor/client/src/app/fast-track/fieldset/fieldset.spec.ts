@@ -5,37 +5,15 @@ import type { FieldTree } from "@angular/forms/signals";
 import { By } from "@angular/platform-browser";
 import type { TranslateParams } from "@jsverse/transloco";
 import { TranslocoService } from "@jsverse/transloco";
-import type { MockInstance } from "vitest";
 import { vi } from "vitest";
 
 import { Fieldset } from "./fieldset";
 
-/*
- * Notes / assumptions for this rewrite:
- *
- * 1. `category` is now `input.required<FieldCategory>()` -- every
- *    setInputs() call below supplies it. `FieldCategory`'s exact allowed
- *    values weren't given to me this round; kept consistent with the
- *    values used previously ("required" | "optional" | "recommended") --
- *    adjust the type below if the real union differs.
- * 2. `data-testid` (via @HostBinding) is now derived from the bound
- *    field's own name (`state.name().split(".").at(-1)`), not from
- *    labelKey -- so the fake FieldState below implements `.name()`.
- * 3. Error rendering now goes through `state.invalid()` +
- *    `(showErrorWithoutTouch() || state.touched())`, reading
- *    `state.errorSummary()` (not `.errors()`), and each error's
- *    `.message` is now a TRANSLATION KEY interpolated via the new
- *    `FieldErrorLabel` pipe -- which isn't `export`ed from fieldset.ts,
- *    so it can only be exercised indirectly through Fieldset's own
- *    template, not unit-tested directly. Since translate() is
- *    identity-mocked throughout this spec, interpolation params don't
- *    matter for these assertions -- tests just check which translation
- *    key ended up in the DOM, which tells us which code branch ran.
- */
-
 interface FakeErrorSpec {
   message: string;
-  keyInParent?: unknown; // defaults to the fake state's own keyInParent -> a "direct" (non-inner) error
+  issue?: {
+    path: (string | number)[];
+  }; // defaults to the fake state's own keyInParent -> a "direct" (non-inner) error
 }
 
 function fakeFormField(state: {
@@ -46,17 +24,17 @@ function fakeFormField(state: {
   keyInParent?: unknown;
   value?: unknown;
 }) {
-  const keyInParent = state.keyInParent ?? "field";
   const fieldState = {
     invalid: () => state.invalid ?? false,
     touched: () => state.touched ?? false,
+    errors: () => state.errors ?? [],
     errorSummary: () =>
       (state.errors ?? []).map((e) => ({
         message: e.message,
-        fieldTree: () => ({ keyInParent: () => e.keyInParent ?? keyInParent }),
+        issue: e.issue,
+        // fieldTree: () => ({ keyInParent: () => e.keyInParent ?? keyInParent }),
       })),
     name: () => state.name ?? "resourceForm.field",
-    keyInParent: () => keyInParent,
     value: () => state.value,
   };
   return (() => fieldState) as unknown as FieldTree<unknown>;
@@ -65,16 +43,9 @@ function fakeFormField(state: {
 // eslint-disable-next-line max-lines-per-function
 describe("Fieldset", () => {
   let fixture: ComponentFixture<Fieldset<unknown>>;
-  let translateMock: MockInstance;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({ imports: [Fieldset] }).compileComponents();
-
-    const translocoService = TestBed.inject(TranslocoService);
-    translateMock = vi
-      .spyOn(translocoService, "translate")
-      .mockImplementation((key: TranslateParams) => key);
-
     fixture = TestBed.createComponent(Fieldset);
   });
 
@@ -160,7 +131,6 @@ describe("Fieldset", () => {
     });
   });
 
-  // eslint-disable-next-line max-lines-per-function
   describe("errors", () => {
     it("shows errors when invalid and touched", () => {
       setInputs({
@@ -232,7 +202,7 @@ describe("Fieldset", () => {
         formField: fakeFormField({
           invalid: false,
           touched: true,
-          errors: [{ message: "validation.required" }],
+          errors: [{ message: "validation.required", issue: { path: ["title"] } }],
         }),
       });
       fixture.detectChanges();
@@ -255,68 +225,13 @@ describe("Fieldset", () => {
           invalid: true,
           touched: true,
           keyInParent: "title",
-          errors: [{ message: "validation.required", keyInParent: "title" }], // same key -> not "inner"
+          errors: [{ message: "validation.required", issue: { path: ["title"] } }], // same key -> not "inner"
         }),
       });
       fixture.detectChanges();
 
       const errorText = fixture.debugElement.query(By.css(".error")).nativeElement.textContent;
       expect(errorText).toContain("validation.required");
-    });
-
-    it("uses the inner-array error message when the error belongs to an item inside an array value", () => {
-      translateMock.mockReset();
-      const translocoService = TestBed.inject(TranslocoService);
-      translocoService.setTranslationKey("keywords", "KeywordTranslation");
-      translocoService.setTranslationKey("validation.required", "{{field}} must be provided");
-      translocoService.setTranslationKey(
-        "validation.innerArrayError",
-        "{{field}} {position, plural, =1 {1st} =2 {2nd} =3 {3rd} other {{position}th}} entry",
-      );
-
-      setInputs({
-        labelKey: "keywords",
-        category: "required",
-        formField: fakeFormField({
-          invalid: true,
-          touched: true,
-          keyInParent: "keywords",
-          value: ["a", "b"], // an array value -> triggers FieldErrorLabel's innerArrayError branch
-          errors: [{ message: "validation.required", keyInParent: "0" }], // different key -> "inner" error
-        }),
-      });
-      fixture.detectChanges();
-
-      const errorText = fixture.debugElement.query(By.css(".error")).nativeElement.textContent;
-      expect(errorText).toContain("KeywordTranslation 1st entry must be provided");
-    });
-
-    it("uses the inner-object error message when the error belongs to a property inside a plain object value", () => {
-      translateMock.mockReset();
-      const translocoService = TestBed.inject(TranslocoService);
-      translocoService.setTranslationKey("address", "AddressTranslation");
-      translocoService.setTranslationKey("street", "StreetTranslation");
-      translocoService.setTranslationKey("validation.required", "{{field}} must be provided");
-      translocoService.setTranslationKey(
-        "validation.innerObjectError",
-        "{{field}} - {{{{property}}}}",
-      );
-
-      setInputs({
-        labelKey: "address",
-        category: "required",
-        formField: fakeFormField({
-          invalid: true,
-          touched: true,
-          keyInParent: "address",
-          value: { street: "" }, // a plain object, not an array
-          errors: [{ message: "validation.required", keyInParent: "street" }],
-        }),
-      });
-      fixture.detectChanges();
-
-      const errorText = fixture.debugElement.query(By.css(".error")).nativeElement.textContent;
-      expect(errorText).toContain("AddressTranslation - StreetTranslation must be provided");
     });
   });
 });

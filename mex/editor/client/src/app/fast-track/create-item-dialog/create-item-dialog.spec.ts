@@ -49,9 +49,13 @@ describe("CreateItemDialog", () => {
     expect(component).toBeTruthy();
   });
 
-  it("shows both tabs by default", async () => {
+  it("shows all tabs by default", async () => {
     const { component } = await setup({});
-    expect(component.tabs().map((t) => t.$type)).toEqual(["Person", "ContactPoint"]);
+    expect(component.tabs().map((t) => t.$type)).toEqual([
+      "Person",
+      "ContactPoint",
+      "Organization",
+    ]);
   });
 
   it("hides the tab header if there is only one allowed type", async () => {

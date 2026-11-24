@@ -1,0 +1,4 @@
+@let errorMessage = error() | validationErrorMessage;
+<div class="error">
+  {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: fieldLabel() } }}
+</div>

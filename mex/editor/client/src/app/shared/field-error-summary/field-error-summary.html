@@ -1,0 +1,11 @@
+@let state = fieldState();
+@if (state.invalid() && (showErrorsWithoutTouch() || state.touched())) {
+  @let errors = (showNestedErrors() ? state.errorSummary() : state.errors()) || [];
+  @if (errors && errors.length > 0) {
+    <div class="error-container">
+      @for (error of errors; track $index) {
+        <mex-field-error [error]="error" [fieldLabel]="fieldLabel()"></mex-field-error>
+      }
+    </div>
+  }
+}

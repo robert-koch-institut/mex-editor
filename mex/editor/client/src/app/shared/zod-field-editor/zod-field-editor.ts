@@ -1,5 +1,6 @@
 import { JsonPipe } from "@angular/common";
 import type { Signal } from "@angular/core";
+import { ElementRef } from "@angular/core";
 import {
   Component,
   computed,
@@ -9,6 +10,7 @@ import {
   model,
   output,
   signal,
+  viewChild,
 } from "@angular/core";
 import type { Field, FormValueControl } from "@angular/forms/signals";
 import { FormField } from "@angular/forms/signals";
@@ -36,7 +38,9 @@ import { Datepicker } from "../datepicker/datepicker";
 import { FieldErrors } from "../field-errors/field-errors";
 import { readFieldMetadata } from "../field-metadata.pipe";
 import { LinkEditor } from "../link-editor/link-editor";
+import type { PreviewItem } from "../models";
 import { asLinkLanguage, asTextLanguage } from "../models";
+import type { CreateItem } from "../models/create-item";
 import { ActivityTypeSchema } from "../models/generated/activity";
 import {
   AccessRestrictionSchema,
@@ -63,6 +67,8 @@ import {
   yearMonthPattern,
   yearPattern,
 } from "../models/generated/shared";
+import type { ReferenceType } from "../models/zod-reference";
+import { ReferenceSelect } from "../reference-select/reference-select";
 import { TextEditor } from "../text-editor/text-editor";
 import { ZodObjectEditor } from "./zod-object-editor/zod-object-editor";
 
@@ -151,6 +157,14 @@ export interface ResolvedObjectSchema<T extends ZodObject = ZodObject> extends B
 }
 
 /**
+ * Resolved schema for unions.
+ */
+export interface ResolvedUnionSchema extends BaseResolvedSchema<unknown> {
+  $type: "union";
+  schemaOptions: readonly z.ZodType[];
+}
+
+/**
  * Resolved schema for arrays.
  */
 export interface ResolvedArraySchema extends BaseResolvedSchema<unknown[]> {
@@ -168,11 +182,21 @@ export interface ResolvedDateSchema extends BaseResolvedSchema<string | null> {
 }
 
 /**
- * Resolved schema datetime strings.
+ * Resolved schema for reference.
  */
-export interface ResolvedReferenceSchema extends BaseResolvedSchema<string> {
+export interface ResolvedReferenceSchema extends BaseResolvedSchema<PreviewItem | CreateItem> {
   $type: "reference";
-  allowedEntityTypes: string[];
+  allowedTypes: ReferenceType[];
+}
+
+/**
+ * Resolved schema for reference arrays.
+ */
+export interface ResolvedReferenceArraySchema extends BaseResolvedSchema<
+  (PreviewItem | CreateItem)[]
+> {
+  $type: "reference-array";
+  allowedTypes: ReferenceType[];
 }
 
 /**
@@ -193,6 +217,8 @@ export type ResolvedSchema =
   | ResolvedStringSchema
   | ResolvedNumberSchema
   | ResolvedReferenceSchema
+  | ResolvedUnionSchema
+  | ResolvedReferenceArraySchema
   | ResolvedLinkSchema
   | ResolvedTextSchema
   | ResolvedObjectSchema
@@ -262,6 +288,7 @@ function datePrecisionsOfUnion(schema: z.ZodUnion): DatepickerPrecision[] | null
     MatOption,
     MatPrefix,
     MatSelect,
+    ReferenceSelect,
     TextEditor,
     TranslocoPipe,
   ],
@@ -281,6 +308,24 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
   readonly value = model.required<z.infer<T>>();
   /** Emitted when the user leaves an input; lets `[formField]` mark the outer field as touched. */
   readonly touch = output<void>();
+
+  protected readonly activeFocusContol = viewChild<
+    FormValueControl<unknown> | ElementRef<HTMLElement>
+  >("focusControl");
+
+  focus() {
+    const target = this.activeFocusContol();
+    console.log("FOCUS IN ZOD-FIELD-EDITOR!");
+    if (target) {
+      if (target instanceof ElementRef) {
+        console.log("FOCUS NATIVE ");
+        target.nativeElement.focus();
+      } else if (target.focus) {
+        console.log("FOCUS FORMVALUECONTROls ");
+        target.focus();
+      }
+    }
+  }
 
   private readonly formField = inject(FormField<z.infer<T>>);
   readonly resolvedSchema = computed(() => {
@@ -405,6 +450,7 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
     return undefined;
   }
 
+  // eslint-disable-next-line complexity, max-lines-per-function
   protected resolveSchema(schema: T, formField: FormField<z.infer<T>>): ResolvedSchema {
     const { unwrapped, optional, nullable } = unwrapDetailed(schema);
     const zodType = unwrapped.def.type as string;
@@ -416,6 +462,24 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
       unwrappedSchema: unwrapped,
     };
 
+    const referenceTypes = schema.meta()?.referenceTypes;
+    if (referenceTypes) {
+      if (unwrapped instanceof z.ZodArray) {
+        return {
+          ...baseResult,
+          $type: "reference-array",
+          formField: formField.field() as Field<(CreateItem | PreviewItem)[]>,
+          allowedTypes: referenceTypes,
+        };
+      }
+      return {
+        ...baseResult,
+        $type: "reference",
+        formField: formField.field() as Field<CreateItem | PreviewItem>,
+        allowedTypes: referenceTypes,
+      };
+    }
+
     if (unwrapped instanceof z.ZodUnion) {
       const allowedPrecisions = datePrecisionsOfUnion(unwrapped);
       if (allowedPrecisions) {
@@ -426,6 +490,13 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
           allowedPrecisions,
         };
       }
+      console.log("GENERIC UNION FOR", readFieldMetadata(formField.field(), "labelKey"));
+      return {
+        ...baseResult,
+        $type: "union",
+        formField: formField.field() as Field<unknown>,
+        schemaOptions: unwrapped.options as z.ZodType[],
+      };
     }
 
     if (unwrapped instanceof z.ZodObject) {
@@ -435,6 +506,8 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
       if (unwrapped === TextSchema) {
         return { ...baseResult, $type: "text", formField: formField.field() as Field<Text> };
       }
+
+      console.log("IM OBJECT", unwrapped, formField, formField.field()());
 
       return {
         ...baseResult,
@@ -446,6 +519,7 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
     if (unwrapped instanceof z.ZodArray) {
       const elementSchema = unwrapped.element as z.ZodType;
       const unwrappedElementResult = unwrapDetailed(elementSchema);
+
       if (unwrappedElementResult.unwrapped instanceof z.ZodEnum) {
         return {
           ...baseResult,
@@ -482,7 +556,7 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
 
     if (unwrapped instanceof z.ZodString) {
       const regEx = getZodRegExString(unwrapped);
-      console.log("IM STRGIN", regEx);
+      console.log("IM STRING", regEx ? "with regex " + regEx : "");
 
       return {
         ...baseResult,

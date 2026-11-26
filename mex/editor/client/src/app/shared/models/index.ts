@@ -1,15 +1,68 @@
-import { type PreviewContactPoint } from "./generated/contact-point";
-import { type PreviewOrganization } from "./generated/organization";
-import type { PreviewOrganizationalUnit } from "./generated/organizational-unit";
-import { type PreviewPerson } from "./generated/person";
+/* eslint-disable @typescript-eslint/naming-convention */
+import z from "zod";
+
+import {
+  CreateContactPointSchema,
+  CreateOrganizationSchema,
+  CreatePersonSchema,
+} from "./create-item";
+import { PreviewContactPointSchema } from "./generated/contact-point";
+import { PreviewOrganizationSchema } from "./generated/organization";
+import { PreviewOrganizationalUnitSchema } from "./generated/organizational-unit";
+import { PreviewPersonSchema } from "./generated/person";
 import type { LinkLanguage, TextLanguage } from "./generated/shared";
 import { LinkLanguageSchema, TextLanguageSchema } from "./generated/shared";
 
 /**
+ * UnionSchema for all preview items.
+ */
+export const PreviewItemSchema = z.union([
+  PreviewOrganizationSchema,
+  PreviewContactPointSchema,
+  PreviewPersonSchema,
+  PreviewOrganizationalUnitSchema,
+]);
+
+/**
  * UnionType for all preview items.
  */
-export type PreviewItem =
-  PreviewOrganizationalUnit | PreviewContactPoint | PreviewPerson | PreviewOrganization;
+export type PreviewItem = z.infer<typeof PreviewItemSchema>;
+
+/**
+ * Schema for UnionType for CreatePerson and PreviewPerson
+ */
+export const CreateOrPreviewPersonSchema = z.union([PreviewPersonSchema, CreatePersonSchema]);
+
+/**
+ * UnionType for CreatePerson and PreviewPerson.
+ */
+export type CreateOrPreviewPerson = z.infer<typeof CreateOrPreviewPersonSchema>;
+
+/**
+ * Schema for UnionType for CreateContactPoint and PreviewContactPoint.
+ */
+export const CreateOrPreviewContactPointSchema = z.union([
+  PreviewContactPointSchema,
+  CreateContactPointSchema,
+]);
+
+/**
+ * UnionType for CreateContactPoint and PreviewContactPoint.
+ */
+export type CreateOrPreviewContactPoint = z.infer<typeof CreateOrPreviewContactPointSchema>;
+
+/**
+ * Schema for UnionType for CreateOrganization and PreviewOrganization.
+ */
+export const CreateOrPreviewOrganizationSchema = z.union([
+  PreviewOrganizationSchema,
+  CreateOrganizationSchema,
+]);
+
+/**
+ * UnionType for CreateContactPoint and PreviewContactPoint.
+ */
+export type CreateOrPreviewOrganization = z.infer<typeof CreateOrPreviewOrganizationSchema>;
 
 /**
  * Catgegory for Field.

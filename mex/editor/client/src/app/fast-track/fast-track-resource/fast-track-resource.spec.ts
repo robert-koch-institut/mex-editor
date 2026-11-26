@@ -11,6 +11,7 @@ import { Router } from "@angular/router";
 import { TranslocoService } from "@jsverse/transloco";
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
+import { Fieldset } from "../../shared/fieldset/fieldset";
 import type { PreviewItem } from "../../shared/models";
 import type { CreateItem } from "../../shared/models/create-item";
 import {
@@ -21,11 +22,10 @@ import {
 } from "../../shared/models/generated/resource";
 import { ThemeSchema } from "../../shared/models/generated/shared";
 import { SubmissionError } from "../../shared/models/submission-result";
+import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import type { FastTrackResourceModel } from "../fast-track-resource.models";
 import { FastTrackSubmission } from "../fast-track-submission";
-import { Fieldset } from "../../shared/fieldset/fieldset";
-import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 import { FastTrackResource } from "./fast-track-resource";
 
 const THEME_ID = ThemeSchema.enum["https://mex.rki.de/item/theme-1"];

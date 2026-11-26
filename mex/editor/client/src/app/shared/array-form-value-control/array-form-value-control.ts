@@ -77,6 +77,9 @@ export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
   readonly touch = output<void>();
 
   protected readonly itemTemplate = contentChild.required<ArrayItemTemplate<T>>(ArrayItemTemplate);
+  focus() {
+    console.log("ARRAY FOCUS!!");
+  }
 
   // Throws NG0201 if used without [formField]. That is intended.
   private readonly formField = inject(FORM_FIELD);
@@ -126,6 +129,15 @@ export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
     const item = this.createItem()();
     this.ids.update((ids) => [...ids, this.nextId++]);
     this.value.update((arr) => [...arr, item]);
+
+    // if its already touched, mark new added fields also as touched
+    if (this.formField.state().touched()) {
+      const t = this.tree();
+      const lastItem = t[t.length - 1];
+      if (lastItem) {
+        lastItem().markAsTouched();
+      }
+    }
   }
 
   protected remove(index: number): void {

@@ -1,8 +1,16 @@
 import type { PipeTransform } from "@angular/core";
 import { Pipe } from "@angular/core";
-import type { Field, FieldTree, SchemaPath, SchemaPathTree } from "@angular/forms/signals";
+import type {
+  Field,
+  FieldTree,
+  ReadonlyFieldTree,
+  SchemaPath,
+  SchemaPathTree,
+} from "@angular/forms/signals";
 import { applyEach, createMetadataKey, metadata } from "@angular/forms/signals";
 import type { z } from "zod";
+
+import { LinkSchema, TextSchema } from "./models/generated/shared";
 
 const fieldLabelKeyMetadataKey = createMetadataKey<string>();
 const fieldDescriptionKeyMetadataKey = createMetadataKey<string>();
@@ -79,6 +87,11 @@ function addPropertyKeys(
   prefix: string,
 ): void {
   const children = path as unknown as Record<string, SchemaPath<unknown>>;
+  if (shape === TextSchema.shape) {
+    prefix = "Text";
+  } else if (shape === LinkSchema.shape) {
+    prefix = "Link";
+  }
 
   for (const [key, fieldSchema] of Object.entries(shape)) {
     if (key.startsWith("$")) continue; // skip the $type discriminator
@@ -121,7 +134,10 @@ const whatMap = {
  * @param name The name of the metadata to read.
  * @returns Returns the read metadata if present; otherwise undefined.
  */
-export function readFieldMetadata<T>(field: Field<T>, name: FieldMetadataName) {
+export function readFieldMetadata<T>(
+  field: Field<T> | ReadonlyFieldTree<T>,
+  name: FieldMetadataName,
+) {
   const state = field();
   const key = whatMap[name];
   return state.hasMetadata(key) ? state.metadata(key)!() : undefined;
@@ -134,7 +150,7 @@ export function readFieldMetadata<T>(field: Field<T>, name: FieldMetadataName) {
  * Pipe to transform data to lookups.
  */
 export class FieldMetadataPipe implements PipeTransform {
-  transform<T>(value: Field<T> | FieldTree<T>, name: FieldMetadataName) {
+  transform<T>(value: Field<T> | FieldTree<T> | ReadonlyFieldTree<T>, name: FieldMetadataName) {
     return readFieldMetadata(value, name);
   }
 }

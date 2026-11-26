@@ -72,3 +72,7 @@ mat-error:has(> mex-field-error, > mex-field-error-summary) {
     content: unset !important;
   }
 }
+
+.w-100 {
+  width: 100%;
+}

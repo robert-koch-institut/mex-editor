@@ -1,4 +1,14 @@
-import { Component, effect, input, linkedSignal, model, output, untracked } from "@angular/core";
+import type { ElementRef } from "@angular/core";
+import {
+  Component,
+  effect,
+  input,
+  linkedSignal,
+  model,
+  output,
+  untracked,
+  viewChild,
+} from "@angular/core";
 import type {
   FormValueControl,
   ValidationError,
@@ -18,6 +28,7 @@ import { TranslocoDirective } from "@jsverse/transloco";
 import z from "zod";
 
 import { FieldErrors } from "../field-errors/field-errors";
+import { addFieldLabelKeysAndDescriptionKeys } from "../field-metadata.pipe";
 import { asTextLanguage } from "../models";
 import type { Text, TextLanguage } from "../models/generated/shared";
 import { TextLanguageSchema, TextSchema } from "../models/generated/shared";
@@ -119,6 +130,11 @@ export class TextEditor implements FormValueControl<Text | null> {
 
   readonly touched = input(false);
 
+  protected readonly focusInput = viewChild.required<ElementRef<HTMLInputElement>>("focusInput");
+  focus(): void {
+    this.focusInput().nativeElement.focus();
+  }
+
   protected readonly languages = TextLanguageSchema.options;
 
   private readonly draft = linkedSignal<Text | null, TextDraft>({
@@ -129,6 +145,7 @@ export class TextEditor implements FormValueControl<Text | null> {
 
   protected readonly textForm = form(this.draft, (s) => {
     validateStandardSchema(s, TextDraftSchema);
+    addFieldLabelKeysAndDescriptionKeys(s, TextDraftSchema, "Text");
     for (const path of [s.language, s.value]) {
       disabled(path, { when: () => this.disabled() });
       readonly(path, { when: () => this.readonly() });

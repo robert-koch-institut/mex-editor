@@ -1,7 +1,7 @@
 <div class="text-editor" role="group" [attr.aria-invalid]="invalid()" *transloco="let t">
-  <mat-form-field class="title">
+  <mat-form-field class="title w-100">
     <mat-label>{{ t("Text.value") }}</mat-label>
-    <input matInput [formField]="textForm.value" (blur)="touch.emit()" />
+    <input matInput #focusInput [formField]="textForm.value" (blur)="touch.emit()" />
     <mex-text-language-menu
       matSuffix
       [language]="asTextLanguage(textForm.language().value())"

@@ -16,7 +16,13 @@ const appRoutes: Routes = [
   { path: "fasttrack/activity", component: FastTrackActivity },
   { path: "fasttrack/resource", component: FastTrackResource },
 
-  { path: "create/resource", component: CreateResource },
+  {
+    path: "create/resource",
+    children: [
+      { path: "", redirectTo: "general", pathMatch: "full" },
+      { path: ":step", component: CreateResource },
+    ],
+  },
 
   { path: "edit/:entityId", component: Edit },
 ];

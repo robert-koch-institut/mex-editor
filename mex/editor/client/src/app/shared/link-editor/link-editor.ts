@@ -1,6 +1,16 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { Component, effect, input, linkedSignal, model, output, untracked } from "@angular/core";
+import type { ElementRef } from "@angular/core";
+import {
+  Component,
+  effect,
+  input,
+  linkedSignal,
+  model,
+  output,
+  untracked,
+  viewChild,
+} from "@angular/core";
 import {
   disabled,
   form,
@@ -18,6 +28,7 @@ import { TranslocoDirective } from "@jsverse/transloco";
 import z from "zod";
 
 import { FieldErrors } from "../field-errors/field-errors";
+import { addFieldLabelKeysAndDescriptionKeys } from "../field-metadata.pipe";
 import { asLinkLanguage } from "../models";
 import type { Link, LinkLanguage } from "../models/generated/shared";
 import { LinkSchema } from "../models/generated/shared";
@@ -121,6 +132,10 @@ export class LinkEditor implements FormValueControl<Link | null> {
 
   readonly touched = input(false);
 
+  protected readonly focusInput = viewChild.required<ElementRef<HTMLInputElement>>("focusInput");
+  focus(): void {
+    this.focusInput().nativeElement.focus();
+  }
   private readonly draft = linkedSignal<Link | null, LinkDraft>({
     source: () => this.value(),
     computation: (link) => toDraft(link),
@@ -129,6 +144,7 @@ export class LinkEditor implements FormValueControl<Link | null> {
 
   protected readonly linkForm = form(this.draft, (s) => {
     validateStandardSchema(s, LinkDraftSchema);
+    addFieldLabelKeysAndDescriptionKeys(s, LinkDraftSchema, "Link");
     for (const path of [s.language, s.title, s.url]) {
       disabled(path, { when: () => this.disabled() });
       readonly(path, { when: () => this.readonly() });

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import z from "zod";
 
+import { CreateOrPreviewContactPointSchema, CreateOrPreviewPersonSchema } from "../shared/models";
 import { PreviewOrganizationalUnitSchema } from "../shared/models/generated/organizational-unit";
 import {
   ExtractedResourceSchema,
@@ -8,8 +9,7 @@ import {
   ResourceCreationMethodSchema,
 } from "../shared/models/generated/resource";
 import { TextSchema, ThemeSchema } from "../shared/models/generated/shared";
-import { recommended } from "../shared/models/zod-types";
-import { CreateOrPreviewContactPointSchema, CreateOrPreviewPersonSchema } from "../shared/models/create-item";
+import { recommended } from "../shared/models/zod-recommended";
 
 /**
  * Schema for FasttrackResourceModel

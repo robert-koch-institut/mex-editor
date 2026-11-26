@@ -1,11 +1,4 @@
 @let errorMessage = error() | validationErrorMessage;
 <div class="error">
-  {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: fieldLabel() } }}
+  {{ errorMessage.msgKey | transloco: { ...errorMessage.params, field: innerFieldLabel() } }}
 </div>
-<!--
-<div>
-  ERROR IS
-  <pre style="max-height: 300px; overflow: auto"><code>
-    {{ error() | json }}
-  </code></pre>
-</div> -->

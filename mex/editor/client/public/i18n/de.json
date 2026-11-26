@@ -1,8 +1,54 @@
 {
+  "Link": {
+    "language": "Sprache",
+    "title": "Titel",
+    "url": "URL"
+  },
+  "Text": {
+    "language": "Sprache",
+    "value": "Text"
+  },
   "categories": {
     "optional": "Optional",
     "recommended": "Empfohlen",
     "required": "Pflicht"
+  },
+  "create": {
+    "activity": {
+      "groupNames": {
+        "contact": "Kontakt",
+        "creators": "Urheber & Mitwirkende",
+        "description": "Beschreibung",
+        "general": "Allgemein",
+        "partners": "Partner & Förderung",
+        "publication": "Zugehörige Publikationen & weitere Dokumentation",
+        "relatedResources": "Zugehörige Ressourcen"
+      }
+    },
+    "buttons.nextStep": "Weiter",
+    "buttons.previousStep": "Zurück",
+    "resource": {
+      "buttons.submit": "{{Resource}} speichern",
+      "groupNames": {
+        "access": "Zugang & Nutzungsrechte",
+        "contact": "Kontakt",
+        "coverage": "Datenrepräsentation & Abdeckung",
+        "creators": "Urheber & Mitwirkende",
+        "files": "Dateien",
+        "general": "Allgemein",
+        "generatedBy": "Zugehörige Projekte",
+        "keywords": "Thema & Schlagwörter",
+        "legal": "Rechtsgrundlage & Datenherkunft",
+        "methodology": "Methodik",
+        "processing": "Datenerhebung & -verarbeitung",
+        "publication": "Zugehörige Publikationen & weitere Dokumentation",
+        "quality": "Standards & Qualität",
+        "relatedResources": "Zugehörige Ressourcen",
+        "variables": "Variablen"
+      },
+      "headline.title": "{{Resource}} erstellen"
+    },
+    "summary.title": "Zusammenfassung"
   },
   "create-item-dialog.cancel-button.label": "Abbrechen",
   "create-item-dialog.description": "Erstellen Sie einen neuen Eintrag, indem Sie alle erforderlichen Felder ausfüllen und anschließend auf \"{{create-item-dialog.save-button.label}}\" drücken, um den Eintrag anzulegen.",
@@ -80,15 +126,6 @@
     "fr": "französisch",
     "none": "keine",
     "ru": "russisch"
-  },
-  "Link": {
-    "language": "Sprache",
-    "title": "Titel",
-    "url": "URL"
-  },
-  "Text": {
-    "value": "Text",
-    "language": "Sprache"
   },
   "navbar.create-link.text": "{{{{entity_type}}}} erstellen",
   "reference-select": {

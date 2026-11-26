@@ -1,24 +1,104 @@
-<form [formRoot]="resourceForm">
-  <div>LABEL: {{ resourceForm.accessRestriction | fieldMetadata: "labelKey" }}</div>
-
-  <mex-field-errors
-    /* [showErrorsWithoutTouch]="true" */
-    [formField]="resourceForm.accessRestriction"
-  ></mex-field-errors>
-
-  @for (group of groups(); track group.groupName) {
-    <h2 class="two-column-item">{{ group.groupName }}</h2>
-    <div class="two-column-layout">
-      @for (entry of group.fields; track entry.key) {
-        <mex-fieldset [formField]="entry.field" [category]="entry.schema | fieldCategory">
-          <mex-zod-field-editor
-            class="one-column-item"
-            [formField]="entry.field"
-            [schema]="entry.schema"
-          />
-        </mex-fieldset>
+<div *transloco="let t">
+  <h1>{{ t("create.resource.headline.title") }}</h1>
+  <div style="height: 300px; display: flex; align-items: center">PLACEHOLDER FOR CHARTS</div>
+  <form [formRoot]="resourceForm">
+    <mat-stepper
+      #stepper
+      class="create-stepper"
+      [selectedIndex]="selectedIndex()"
+      (selectionChange)="onStepChanged($event, { isLastStep: $event.selectedStep === summaryStep })"
+    >
+      @let fieldGroups = groups();
+      @for (group of fieldGroups; track group.groupName) {
+        @let errors = group.errors();
+        @let firstErrorMessage = errors.length > 0 ? (errors[0] | validationErrorMessage) : null;
+        <mat-step
+          [hasError]="errors.length > 0"
+          [errorMessage]="
+            firstErrorMessage ? t(firstErrorMessage.msgKey, firstErrorMessage.params) : ''
+          "
+        >
+          @let groupLabel = t(`create.resource.groupNames.${group.groupName}`);
+          <ng-template matStepLabel>{{ groupLabel }}</ng-template>
+          <div class="step-content">
+            <h2>{{ groupLabel }}</h2>
+            <div class="two-column-layout">
+              @for (entry of group.fields; track entry.key) {
+                <mex-fieldset
+                  [formField]="entry.field"
+                  [category]="entry.schema | fieldCategory"
+                  class="one-column-item"
+                >
+                  <mex-zod-field-editor [formField]="entry.field" [schema]="entry.schema" />
+                </mex-fieldset>
+              }
+              <div class="two-column-item action-buttons">
+                @if (!$first) {
+                  <button
+                    type="button"
+                    matButton="filled"
+                    matStepperPrevious
+                    class="previous-button"
+                  >
+                    {{ t("create.buttons.previousStep") }}
+                  </button>
+                }
+                @if (!$last) {
+                  <button type="button" matButton="filled" matStepperNext class="next-button">
+                    {{ t("create.buttons.nextStep") }}
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        </mat-step>
       }
-    </div>
-  }
-  <button type="submit">Submit</button>
-</form>
+      <mat-step #summaryStep>
+        @let stepTitle = t("create.summary.title");
+        <ng-template matStepLabel>{{ stepTitle }}</ng-template>
+        <div class="step-content summary.step">
+          <h2>{{ stepTitle }}</h2>
+          @let formInvalid = resourceForm().invalid();
+          @if (formInvalid) {
+            @for (group of groups(); track group.groupName) {
+              @let errors = group.errors();
+              @if (errors.length > 0) {
+                <div class="group-errors">
+                  <div class="group-header">
+                    <b>{{ t(`create.resource.groupNames.${group.groupName}`) }}</b>
+                    <i> ({{ errors.length }} Fehler)</i>
+                  </div>
+                  <br />
+                  @for (error of errors; track $index) {
+                    <div class="group-error">
+                      <mex-field-error [error]="error"></mex-field-error>
+                      <button
+                        type="button"
+                        matButton="outlined"
+                        (click)="
+                          stepper.selectedIndex = fieldGroups.indexOf(group); focusControl(error)
+                        "
+                      >
+                        GoTo
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+            }
+          } @else {
+            <div>ALLES SUPER! Bitte speichern!</div>
+          }
+          <div class="action-buttons">
+            <button type="button" matButton="filled" matStepperPrevious class="previous-button">
+              {{ t("create.buttons.previousStep") }}
+            </button>
+            <button type="submit" matButton="filled" [disabled]="formInvalid">
+              {{ t("create.resource.buttons.submit") }}
+            </button>
+          </div>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </form>
+</div>

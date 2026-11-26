@@ -39,6 +39,7 @@ import type { PreviewItem } from "../models";
 import type { CreateItem } from "../models/create-item";
 import { isCreateItem } from "../models/create-item";
 import type { PaginatedItemsContainer } from "../models/paginated-items-container";
+import type { ReferenceType } from "../models/zod-reference";
 import { ToLabelPipe } from "../to-label-pipe";
 import { TypeToIconNamePipe } from "../type-to-icon-name-pipe";
 import type {
@@ -46,12 +47,6 @@ import type {
   CreateItemDialogResult,
 } from "./create-item-dialog/create-item-dialog";
 import { CreateItemDialog } from "./create-item-dialog/create-item-dialog";
-
-/**
- * Type for valid reference select types.
- */
-export type ReferenceSelectTypes =
-  "Person" | "ContactPoint" | "OrganizationalUnit" | "Organization";
 
 @Component({
   selector: "mex-reference-select",
@@ -92,7 +87,7 @@ export class ReferenceSelect<
     read: MatInput,
   });
 
-  readonly validEntityTypes = input<ReferenceSelectTypes[]>([
+  readonly validEntityTypes = input<ReferenceType[]>([
     "Person",
     "ContactPoint",
     "OrganizationalUnit",
@@ -107,10 +102,7 @@ export class ReferenceSelect<
   protected readonly isInputFocused = signal(false);
 
   protected readonly searchQuery = signal("");
-  protected readonly searchEntityTypes = linkedSignal<
-    ReferenceSelectTypes[],
-    ReferenceSelectTypes[]
-  >({
+  protected readonly searchEntityTypes = linkedSignal<ReferenceType[], ReferenceType[]>({
     source: this.validEntityTypes,
     computation: (validTypes, previous) => {
       const previousSelection = previous?.value ?? [];
@@ -220,7 +212,7 @@ export class ReferenceSelect<
     setTimeout(() => trigger.openPanel(), 10);
   }
 
-  protected toggleSearchEntityType(entityType: ReferenceSelectTypes) {
+  protected toggleSearchEntityType(entityType: ReferenceType) {
     const values = this.searchEntityTypes();
     const isToggled = values.length > 0 && values.includes(entityType);
     if (!isToggled && !this.validEntityTypes().includes(entityType)) {
@@ -235,7 +227,7 @@ export class ReferenceSelect<
     }
   }
 
-  areEqual = (a: ReferenceSelectTypes[], b: ReferenceSelectTypes[]) =>
+  areEqual = (a: ReferenceType[], b: ReferenceType[]) =>
     a.length === b.length && a.every((value) => b.includes(value));
 
   protected removeValue(item: T) {

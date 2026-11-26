@@ -4,7 +4,7 @@ import type { ZodType } from "zod";
 import { ZodArray, ZodString } from "zod";
 
 import type { FieldCategory } from "./models";
-import { isRecommended } from "./models/zod-types";
+import { isRecommended } from "./models/zod-recommended";
 
 @Pipe({
   name: "fieldCategory",

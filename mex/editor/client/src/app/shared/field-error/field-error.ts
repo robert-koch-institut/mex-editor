@@ -1,7 +1,8 @@
-import { Component, input } from "@angular/core";
+import { Component, computed, input } from "@angular/core";
 import type { ValidationError } from "@angular/forms/signals";
 import { TranslocoPipe } from "@jsverse/transloco";
 
+import { readFieldMetadata } from "../field-metadata.pipe";
 import { ValidationErrorMessagePipe } from "../validation-error-message-pipe";
 
 @Component({
@@ -15,5 +16,9 @@ import { ValidationErrorMessagePipe } from "../validation-error-message-pipe";
  */
 export class FieldError {
   error = input.required<ValidationError.WithFieldTree>();
-  fieldLabel = input.required<string>();
+  fieldLabel = input<string>();
+
+  protected readonly innerFieldLabel = computed(() => {
+    return this.fieldLabel() ?? `{{${readFieldMetadata(this.error().fieldTree, "labelKey")}}}`;
+  });
 }

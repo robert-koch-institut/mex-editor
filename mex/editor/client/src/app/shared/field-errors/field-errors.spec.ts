@@ -4,8 +4,8 @@ import { TestBed } from "@angular/core/testing";
 import { FieldErrors } from "./field-errors";
 
 describe("FieldErrors", () => {
-  let component: FieldErrors;
-  let fixture: ComponentFixture<FieldErrors>;
+  let component: FieldErrors<unknown>;
+  let fixture: ComponentFixture<FieldErrors<unknown>>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

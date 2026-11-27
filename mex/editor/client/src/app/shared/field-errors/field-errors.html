@@ -3,12 +3,12 @@
 @if (state.invalid() && (showErrorsWithoutTouch() || state.touched())) {
   @let errors = state.errors();
   @if (errors && errors.length > 0) {
-    @let label = field | fieldMetadata: "labelKey" | transloco;
+    @let labelKey = field | fieldMetadata: "labelKey";
     <div class="error-container">
       @for (error of errors; track $index) {
         <mex-field-error
           [error]="error"
-          [fieldLabel]="label ?? fieldLabel() ?? ''"
+          [fieldLabel]="labelKey ? `{{${labelKey}}}` : (fieldLabel() ?? '')"
         ></mex-field-error>
       }
     </div>

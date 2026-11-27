@@ -58,7 +58,7 @@ describe("Fieldset", () => {
     labelKey?: string;
     showCategoryLabel?: boolean;
     descriptionKey?: string;
-    showErrorWithoutTouch?: boolean;
+    showErrorsWithoutTouch?: boolean;
     formField?: FieldTree<unknown>;
   }) {
     for (const [key, value] of Object.entries(inputs)) {
@@ -183,7 +183,7 @@ describe("Fieldset", () => {
       setInputs({
         labelKey: "title",
         category: "required",
-        showErrorWithoutTouch: true,
+        showErrorsWithoutTouch: true,
         formField: fakeFormField({
           invalid: true,
           touched: false,

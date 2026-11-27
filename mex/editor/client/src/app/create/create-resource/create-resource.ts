@@ -144,6 +144,7 @@ export class CreateResource {
     {
       submission: {
         action: async (_field) => {
+          // eslint-disable-next-line no-console
           console.log("submit", this.model());
         },
         onInvalid: (field) => {
@@ -180,12 +181,7 @@ export class CreateResource {
 
   focusControl(error: ValidationError.WithFieldTree) {
     const tree = error.fieldTree();
-    console.log("FOCUS", error, tree);
     setTimeout(() => tree.focusBoundControl(), 250);
-  }
-
-  protected execAfter(fn: () => void, delayMs: number): ReturnType<typeof setTimeout> {
-    return setTimeout(fn, delayMs);
   }
 
   protected readonly groups = computed<FieldGroup[]>(() => {

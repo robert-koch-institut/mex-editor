@@ -13,12 +13,12 @@ import { readFieldMetadata } from "./field-metadata.pipe";
 export function transformValidationErrorToMessage(value: ValidationError.WithFieldTree) {
   if (value instanceof StandardSchemaValidationError) {
     const { message, ...rest } = value.issue;
+    const fieldLabelKey = readFieldMetadata(value.fieldTree, "labelKey");
+    const params = { ...rest, ...(fieldLabelKey && { field: `{{${fieldLabelKey}}}` }) };
+
     return {
       msgKey: message,
-      params: {
-        ...rest,
-        field: `{{${readFieldMetadata(value.fieldTree, "labelKey")}}}`,
-      },
+      params,
     };
   }
 

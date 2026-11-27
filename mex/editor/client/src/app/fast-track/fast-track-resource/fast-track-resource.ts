@@ -25,13 +25,13 @@ import { FieldCategoryPipe } from "../../shared/field-category-pipe";
 import { Fieldset } from "../../shared/fieldset/fieldset";
 import type { Frequency } from "../../shared/models/generated/resource";
 import { SubmissionError } from "../../shared/models/submission-result";
+import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import {
   type FastTrackResourceModel,
   FastTrackResourceModelSchema,
 } from "../fast-track-resource.models";
 import { FastTrackSubmission } from "../fast-track-submission";
-import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 
 @Component({
   selector: "mex-fast-track-resource",

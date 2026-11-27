@@ -93,7 +93,12 @@ function objectEntries(schema: z.ZodType): { key: string; schema: z.ZodType }[] 
   return Object.entries(shape).map(([key, child]) => ({ key, schema: child }));
 }
 
-type Lookup = ConceptLookup | LinkLanguageLookup | TextLanguageLookup | NoneLookup;
+interface EnumLookup {
+  label: string;
+  value: unknown;
+}
+type Lookup = ConceptLookup | LinkLanguageLookup | TextLanguageLookup | NoneLookup | EnumLookup;
+
 interface BaseResolvedSchema<T> {
   readonly schema: z.ZodType;
   readonly unwrappedSchema: z.ZodType;
@@ -315,13 +320,10 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
 
   focus() {
     const target = this.activeFocusContol();
-    console.log("FOCUS IN ZOD-FIELD-EDITOR!");
     if (target) {
       if (target instanceof ElementRef) {
-        console.log("FOCUS NATIVE ");
         target.nativeElement.focus();
       } else if (target.focus) {
-        console.log("FOCUS FORMVALUECONTROls ");
         target.focus();
       }
     }
@@ -373,8 +375,11 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
       return mapping;
     }
 
-    console.log("NO ENUM LOOKUPS FOUND FOR", enumType);
-    return signal([]);
+    return signal(
+      Object.entries(enumType.def.entries).map(([label, value]) => {
+        return { label, value, data: value };
+      }),
+    );
   }
 
   // eslint-disable-next-line complexity
@@ -490,7 +495,7 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
           allowedPrecisions,
         };
       }
-      console.log("GENERIC UNION FOR", readFieldMetadata(formField.field(), "labelKey"));
+
       return {
         ...baseResult,
         $type: "union",
@@ -506,8 +511,6 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
       if (unwrapped === TextSchema) {
         return { ...baseResult, $type: "text", formField: formField.field() as Field<Text> };
       }
-
-      console.log("IM OBJECT", unwrapped, formField, formField.field()());
 
       return {
         ...baseResult,
@@ -556,7 +559,15 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
 
     if (unwrapped instanceof z.ZodString) {
       const regEx = getZodRegExString(unwrapped);
-      console.log("IM STRING", regEx ? "with regex " + regEx : "");
+      if (regEx) {
+        // eslint-disable-next-line no-console
+        console.log(
+          "Found Regex",
+          readFieldMetadata(formField.field(), "labelKey"),
+          regEx,
+          "resolve to formatted-text",
+        );
+      }
 
       return {
         ...baseResult,
@@ -565,7 +576,6 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
       };
     }
 
-    console.log("UNKNOWN FOR", readFieldMetadata(formField.field(), "labelKey"));
     return {
       ...baseResult,
       $type: "unknown",

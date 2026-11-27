@@ -9,11 +9,7 @@ import {
   untracked,
   viewChild,
 } from "@angular/core";
-import type {
-  FormValueControl,
-  ValidationError,
-  WithOptionalFieldTree,
-} from "@angular/forms/signals";
+import type { FormValueControl } from "@angular/forms/signals";
 import {
   disabled,
   form,
@@ -31,7 +27,7 @@ import { FieldErrors } from "../field-errors/field-errors";
 import { addFieldLabelKeysAndDescriptionKeys } from "../field-metadata.pipe";
 import { asTextLanguage } from "../models";
 import type { Text, TextLanguage } from "../models/generated/shared";
-import { TextLanguageSchema, TextSchema } from "../models/generated/shared";
+import { TextSchema } from "../models/generated/shared";
 import { TextLanguageMenu } from "./text-language-menu/text-language-menu";
 
 function draftField(inner: z.ZodType) {
@@ -123,19 +119,13 @@ export class TextEditor implements FormValueControl<Text | null> {
   readonly nullable = input(false);
   readonly disabled = input(false);
   readonly readonly = input(false);
-  readonly hidden = input(false);
-  readonly invalid = input(false);
-  readonly errors = input<readonly WithOptionalFieldTree<ValidationError>[]>([]);
-  readonly touch = output<void>();
-
   readonly touched = input(false);
+  readonly touch = output<void>();
 
   protected readonly focusInput = viewChild.required<ElementRef<HTMLInputElement>>("focusInput");
   focus(): void {
     this.focusInput().nativeElement.focus();
   }
-
-  protected readonly languages = TextLanguageSchema.options;
 
   private readonly draft = linkedSignal<Text | null, TextDraft>({
     source: () => this.value(),

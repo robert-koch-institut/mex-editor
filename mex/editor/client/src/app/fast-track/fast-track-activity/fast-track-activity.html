@@ -155,11 +155,7 @@
       [category]="activitySchema.shape.website | fieldCategory"
       class="one-column-item"
     >
-      <mex-array-form-value-control
-        [formField]="activityForm.website"
-        [createItem]="createNewLink"
-        /* [reorderable]="true" */
-      >
+      <mex-array-form-value-control [formField]="activityForm.website" [createItem]="createNewLink">
         <ng-template [mexArrayItem]="activityForm.website" let-field="field">
           <mex-link-editor [formField]="field"></mex-link-editor>
         </ng-template>
@@ -168,7 +164,6 @@
 
     <mex-fieldset
       labelKey="Activity.temporal"
-      descriptionKey="Activity.temporal.description"
       class="one-column-item"
       category="optional"
       [showCategoryLabel]="false"

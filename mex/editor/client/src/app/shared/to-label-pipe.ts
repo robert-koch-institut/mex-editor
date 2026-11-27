@@ -66,12 +66,12 @@ export class ToLabelPipe implements PipeTransform {
     return this.firstLabelOf([value.fullName], lang);
   }
 
-  private contactPointToLabel(value: PreviewContactPoint, lang: string) {
-    return this.firstLabelOf([value.email], lang);
-  }
-
   private organizationToLabel(value: PreviewOrganization, lang: string) {
     return this.firstLabelOf([value.officialName, value.shortName, value.alternativeName], lang);
+  }
+
+  private contactPointToLabel(value: PreviewContactPoint, lang: string) {
+    return this.firstLabelOf([value.email], lang);
   }
 
   private getConceptLabel(concept: Concept, lang: string) {

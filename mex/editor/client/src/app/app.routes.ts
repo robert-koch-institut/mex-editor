@@ -35,13 +35,6 @@ const devRoutes: Routes = [
     path: "dev/figma-test",
     loadComponent: () => import("./figma-test-page/figma-test-page").then((m) => m.FigmaTestPage),
   },
-  {
-    path: "dev/zod-control-test",
-    loadComponent: () =>
-      import("./create/test-generic-zod-control/test-generic-zod-control").then(
-        (m) => m.TestGenericZodControl,
-      ),
-  },
 ];
 
 /**

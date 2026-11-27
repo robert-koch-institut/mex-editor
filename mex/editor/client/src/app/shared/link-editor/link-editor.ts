@@ -18,8 +18,6 @@ import {
   type FormValueControl,
   readonly,
   validateStandardSchema,
-  type ValidationError,
-  type WithOptionalFieldTree,
 } from "@angular/forms/signals";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
@@ -125,12 +123,8 @@ export class LinkEditor implements FormValueControl<Link | null> {
   readonly nullable = input(false);
   readonly disabled = input(false);
   readonly readonly = input(false);
-  readonly hidden = input(false);
-  readonly invalid = input(false);
-  readonly errors = input<readonly WithOptionalFieldTree<ValidationError>[]>([]);
-  readonly touch = output<void>();
-
   readonly touched = input(false);
+  readonly touch = output<void>();
 
   protected readonly focusInput = viewChild.required<ElementRef<HTMLInputElement>>("focusInput");
   focus(): void {

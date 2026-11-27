@@ -11,13 +11,8 @@ import {
   output,
   TemplateRef,
 } from "@angular/core";
-import type {
-  Field,
-  FieldTree,
-  ValidationError,
-  WithOptionalFieldTree,
-} from "@angular/forms/signals";
-import { FORM_FIELD, FormField, type FormValueControl } from "@angular/forms/signals";
+import type { Field, FieldTree } from "@angular/forms/signals";
+import { FORM_FIELD, type FormValueControl } from "@angular/forms/signals";
 import { MatIconButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 
@@ -55,31 +50,25 @@ export class ArrayItemTemplate<T> {
   imports: [MatIcon, MatIconButton, NgTemplateOutlet],
   templateUrl: "./array-form-value-control.html",
   styleUrl: "./array-form-value-control.scss",
-  hostDirectives: [{ directive: FormField, inputs: ["formField"] }],
+  // hostDirectives: [{ directive: FormField, inputs: ["formField"] }],
 })
 /**
  * Generic control to add and remove items from an array.
  */
 export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
   readonly value = model<T[]>([]);
-  // --- Configuration ---
+
   readonly createItem = input.required<() => T>();
   readonly minItems = input(0);
   readonly maxItems = input<number | undefined>(undefined);
   readonly reorderable = input(false);
 
-  // --- Optional form state (filled by [formField]) ---
+  readonly touched = input(false);
   readonly disabled = input(false);
   readonly readonly = input(false);
-  readonly hidden = input(false);
-  readonly invalid = input(false);
-  readonly errors = input<readonly WithOptionalFieldTree<ValidationError>[]>([]);
   readonly touch = output<void>();
 
   protected readonly itemTemplate = contentChild.required<ArrayItemTemplate<T>>(ArrayItemTemplate);
-  focus() {
-    console.log("ARRAY FOCUS!!");
-  }
 
   // Throws NG0201 if used without [formField]. That is intended.
   private readonly formField = inject(FORM_FIELD);
@@ -131,7 +120,7 @@ export class ArrayFormValueControl<T> implements FormValueControl<T[]> {
     this.value.update((arr) => [...arr, item]);
 
     // if its already touched, mark new added fields also as touched
-    if (this.formField.state().touched()) {
+    if (this.touched()) {
       const t = this.tree();
       const lastItem = t[t.length - 1];
       if (lastItem) {

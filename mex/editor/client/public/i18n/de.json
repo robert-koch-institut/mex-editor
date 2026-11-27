@@ -1,4 +1,5 @@
 {
+  "Activity.temporal": "Projektlaufzeit",
   "Link": {
     "language": "Sprache",
     "title": "Titel",
@@ -143,6 +144,7 @@
   "toast.submissionError.sendMail": "Email an MEx senden",
   "user-logout.logout-button.text": "Abmelden",
   "validation": {
+    "arrayError": "{{field}} {{index}}. Eintrag enthält einen Fehler",
     "custom": "{{field}} ist ungültig",
     "generic": "{{field}} ist ungültig",
     "invalidElement": "{{field}} enthält einen ungültigen Eintrag",

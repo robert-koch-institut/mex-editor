@@ -62,7 +62,7 @@ const testProviders = [
       ]),
       activityTypeOptions: signal([
         { id: "activityType-1", label: "1. ActivityType" },
-        { id: "activityTypen-2", label: "2. ActivityType" },
+        { id: "activityType-2", label: "2. ActivityType" },
       ]),
     },
   },

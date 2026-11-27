@@ -1,13 +1,11 @@
 from functools import partial
-from urllib.parse import urljoin
 
-import requests
 from fastapi import APIRouter, Request, Response
 from starlette import status
 from starlette.concurrency import run_in_threadpool
 
+from mex.common.backend_api.connector import BackendApiConnector
 from mex.common.logging import logger
-from mex.editor.settings import EditorSettings
 
 router = APIRouter()
 
@@ -20,17 +18,22 @@ _STRIP_RESPONSE = frozenset({"content-length", "transfer-encoding", "connection"
     methods=["GET", "POST", "PUT", "DELETE"],
 )
 async def backend_proxy(path: str, request: Request) -> Response:
-    """Forward a request to the mex-backend with the editor's API key injected."""
-    settings = EditorSettings.get()
-    url = urljoin(str(settings.backend_api_url), f"v0/{path}")
+    """Forward a request to the mex-backend with the editor's API key injected.
+
+    Uses the session of the `BackendApiConnector`, which carries the backend URL,
+    the API key and the `verify_session` setting. We call the session directly
+    instead of `request_raw`, because that would raise on non-2xx responses and
+    retry on 5xx/429, which a transparent proxy must not do (e.g. for POSTs).
+    """
+    connector = await run_in_threadpool(BackendApiConnector.get)
+    url = f"{connector.url.rstrip('/')}/{path}"
     headers = {
         k: v for k, v in request.headers.items() if k.lower() in _FORWARD_REQUEST
     }
-    headers["X-API-Key"] = settings.backend_api_key.get_secret_value()
     body = await request.body()
     upstream = await run_in_threadpool(
         partial(
-            requests.request,
+            connector.session.request,
             method=request.method,
             url=url,
             params=request.query_params.multi_items(),

@@ -170,7 +170,6 @@ export class Datepicker implements FormValueControl<string | null> {
   }
 
   focus(): void {
-    console.log("FOCUS IN DATEPCIKER!");
     this.dateInput().nativeElement.focus();
   }
 

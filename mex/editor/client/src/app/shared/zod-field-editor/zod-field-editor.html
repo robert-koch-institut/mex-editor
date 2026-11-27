@@ -8,15 +8,12 @@
 @switch (resSchema.$type) {
   @case ("array") {
     <mex-array-form-value-control
+      #focusControl
       [formField]="resSchema.formField"
       [createItem]="resSchema.createNewItem"
     >
       <ng-template [mexArrayItem]="resSchema.formField" let-field="field" let-index="index">
-        <mex-zod-field-editor
-          #focusControl
-          [formField]="field"
-          [schema]="resSchema.elementSchema"
-        />
+        <mex-zod-field-editor [formField]="field" [schema]="resSchema.elementSchema" />
         <mex-field-errors [formField]="field"></mex-field-errors>
       </ng-template>
     </mex-array-form-value-control>

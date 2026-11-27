@@ -1,11 +1,12 @@
 {
+  "Activity.temporal": "Project duration",
   "Link": {
-    "language": "Sprache",
-    "title": "Titel",
+    "language": "Language",
+    "title": "Title",
     "url": "URL"
   },
   "Text": {
-    "language": "Sprache",
+    "language": "Language",
     "value": "Text"
   },
   "categories": {

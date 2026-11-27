@@ -1,4 +1,4 @@
-<div class="link-editor" role="group" [attr.aria-invalid]="invalid()" *transloco="let t">
+<div class="link-editor" role="group" *transloco="let t">
   <div class="url">
     <mat-form-field class="w-100">
       <mat-label>{{ t("Link.url") }}</mat-label>
@@ -14,7 +14,7 @@
         matSuffix
         [language]="asLinkLanguage(linkForm.language().value())"
         [nullable]="true"
-        (languageSelected)="this.linkForm.language().value.set($event ?? '')"
+        (languageSelected)="this.linkForm.language().value.set($event ?? ''); touch.emit()"
       ></mex-link-language-menu>
     </mat-form-field>
     <mex-field-errors

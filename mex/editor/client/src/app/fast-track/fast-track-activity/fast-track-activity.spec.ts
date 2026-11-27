@@ -9,15 +9,15 @@ import { Router } from "@angular/router";
 import { TranslocoService } from "@jsverse/transloco";
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
+import { Fieldset } from "../../shared/fieldset/fieldset";
 import type { PreviewItem } from "../../shared/models";
 import { asLinkLanguage } from "../../shared/models";
 import type { CreateItem } from "../../shared/models/create-item";
 import { ActivityTypeSchema } from "../../shared/models/generated/activity";
 import { SubmissionError } from "../../shared/models/submission-result";
+import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 import { ToastNotifier } from "../../shared/toasts/toast-notifier";
 import { FastTrackSubmission } from "../fast-track-submission";
-import { Fieldset } from "../../shared/fieldset/fieldset";
-import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 import { FastTrackActivity } from "./fast-track-activity";
 
 const ACTIVITY_TYPE_ID = ActivityTypeSchema.enum["https://mex.rki.de/item/activity-type-1"];

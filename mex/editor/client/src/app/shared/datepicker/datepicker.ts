@@ -28,6 +28,7 @@ import { MatInput } from "@angular/material/input";
 import { TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 import { DateTime } from "luxon";
 
+import { MexErrorStateMatcher } from "../mex-error-state-matcher";
 import type { DatepickerPrecision } from "./precision";
 import {
   ALL_PRECISIONS,
@@ -268,19 +269,24 @@ export class Datepicker implements FormValueControl<string | null> {
 /**
  * Error state of the host form field, plus an error while the typed text cannot be parsed.
  */
-export class DatepickerErrorStateMatcher implements ErrorStateMatcher {
+export class DatepickerErrorStateMatcher extends MexErrorStateMatcher {
   private readonly defaultErrorStateMatcher = inject(ErrorStateMatcher);
 
   constructor(
     private readonly hasParseError: Signal<boolean>,
     private readonly formField: Signal<FieldState<unknown>>,
-  ) {}
+  ) {
+    super();
+  }
 
-  isErrorState(control: FormControl | null, formObj: FormGroupDirective | NgForm | null): boolean {
+  override isErrorState(
+    control: FormControl | null,
+    formObj: FormGroupDirective | NgForm | null,
+  ): boolean {
     return this.defaultErrorStateMatcher.isErrorState(control, formObj);
   }
 
-  isSignalErrorState(_field: Field<unknown> | null): boolean {
+  override isSignalErrorState(_field: Field<unknown> | null): boolean {
     const formFieldState = this.defaultErrorStateMatcher.isSignalErrorState
       ? this.defaultErrorStateMatcher.isSignalErrorState(() => this.formField())
       : false;

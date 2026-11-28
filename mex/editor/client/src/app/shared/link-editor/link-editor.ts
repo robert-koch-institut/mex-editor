@@ -15,6 +15,7 @@ import {
   disabled,
   form,
   FormField,
+  FormRoot,
   type FormValueControl,
   readonly,
   validateStandardSchema,
@@ -27,6 +28,7 @@ import z from "zod";
 
 import { FieldErrors } from "../field-errors/field-errors";
 import { addFieldLabelKeysAndDescriptionKeys } from "../field-metadata.pipe";
+import { MexErrorStateMatcher } from "../mex-error-state-matcher";
 import { asLinkLanguage } from "../models";
 import type { Link, LinkLanguage } from "../models/generated/shared";
 import { LinkSchema } from "../models/generated/shared";
@@ -105,6 +107,7 @@ export function sameDraft(a: LinkDraft, b: LinkDraft): boolean {
   imports: [
     FieldErrors,
     FormField,
+    FormRoot,
     LinkLanguageMenu,
     MatFormFieldModule,
     MatIconModule,
@@ -125,6 +128,8 @@ export class LinkEditor implements FormValueControl<Link | null> {
   readonly readonly = input(false);
   readonly touched = input(false);
   readonly touch = output<void>();
+
+  protected readonly errorMatcher = new MexErrorStateMatcher();
 
   protected readonly focusInput = viewChild.required<ElementRef<HTMLInputElement>>("focusInput");
   focus(): void {

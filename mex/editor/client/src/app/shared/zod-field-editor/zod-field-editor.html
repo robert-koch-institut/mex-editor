@@ -58,12 +58,24 @@
   }
   @case ("number") {
     <mat-form-field class="w-100">
-      <input matInput type="number" #focusControl [formField]="resSchema.formField" />
+      <input
+        matInput
+        type="number"
+        #focusControl
+        [formField]="resSchema.formField"
+        [errorStateMatcher]="errorMatcher"
+      />
     </mat-form-field>
   }
   @case ("string") {
     <mat-form-field class="w-100">
-      <input matInput type="text" #focusControl [formField]="resSchema.formField" />
+      <input
+        matInput
+        type="text"
+        #focusControl
+        [formField]="resSchema.formField"
+        [errorStateMatcher]="errorMatcher"
+      />
     </mat-form-field>
   }
   @case ("date") {
@@ -94,6 +106,7 @@
         #focusControl
         [formField]="resSchema.formField"
         [placeholder]="'select.placeholder' | transloco"
+        [errorStateMatcher]="errorMatcher"
       >
         @for (option of resSchema.options(); track option.value) {
           <mat-option [value]="option.value">{{ option.label }}</mat-option>
@@ -109,6 +122,7 @@
         multiple
         [formField]="resSchema.formField"
         [placeholder]="'select.placeholder' | transloco"
+        [errorStateMatcher]="errorMatcher"
       >
         @for (option of resSchema.options(); track option.value) {
           <mat-option [value]="option.value">{{ option.label }}</mat-option>

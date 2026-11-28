@@ -38,8 +38,8 @@ import { Datepicker } from "../datepicker/datepicker";
 import { FieldErrors } from "../field-errors/field-errors";
 import { readFieldMetadata } from "../field-metadata.pipe";
 import { LinkEditor } from "../link-editor/link-editor";
+import { MexErrorStateMatcher } from "../mex-error-state-matcher";
 import type { PreviewItem } from "../models";
-import { asLinkLanguage, asTextLanguage } from "../models";
 import type { CreateItem } from "../models/create-item";
 import { ActivityTypeSchema } from "../models/generated/activity";
 import {
@@ -70,28 +70,8 @@ import {
 import type { ReferenceType } from "../models/zod-reference";
 import { ReferenceSelect } from "../reference-select/reference-select";
 import { TextEditor } from "../text-editor/text-editor";
+import { createEmptyValue, unwrapDetailed } from "../zod-util";
 import { ZodObjectEditor } from "./zod-object-editor/zod-object-editor";
-
-/** Wrapper schemas that only decorate an inner schema and keep the editable shape. */
-export const WRAPPERS = new Set([
-  "optional",
-  "nullable",
-  "default",
-  "prefault",
-  "readonly",
-  "catch",
-  "nonoptional",
-]);
-
-/** Return the innerType of the given zod-type. */
-export function innerOf(schema: z.ZodType): z.ZodType {
-  return (schema.def as unknown as { innerType: z.ZodType }).innerType;
-}
-
-function objectEntries(schema: z.ZodType): { key: string; schema: z.ZodType }[] {
-  const shape = (schema as z.ZodObject).shape as Record<string, z.ZodType>;
-  return Object.entries(shape).map(([key, child]) => ({ key, schema: child }));
-}
 
 interface EnumLookup {
   label: string;
@@ -229,20 +209,6 @@ export type ResolvedSchema =
   | ResolvedObjectSchema
   | ResolvedUnknownSchema;
 
-function unwrapDetailed(schema: z.ZodType) {
-  let unwrapped: z.ZodType = schema;
-  let optional = false;
-  let nullable = false;
-
-  while (WRAPPERS.has(unwrapped.def.type)) {
-    if (unwrapped.def.type === "optional") optional = true;
-    if (unwrapped.def.type === "nullable") nullable = true;
-    unwrapped = innerOf(unwrapped);
-  }
-
-  return { unwrapped, optional, nullable };
-}
-
 /** Maps the source of each date regex to the matching datepicker precision. */
 const PRECISION_BY_PATTERN_SOURCE = new Map<string, DatepickerPrecision>([
   [yearMonthDayTimePattern, "datetime"],
@@ -308,11 +274,14 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
   readonly schema = input.required<T>();
   readonly disabled = input(false);
   readonly readonly = input(false);
+  readonly touched = input(false);
 
   /** Form value; kept in sync with the bound field by `[formField]`. */
   readonly value = model.required<z.infer<T>>();
   /** Emitted when the user leaves an input; lets `[formField]` mark the outer field as touched. */
   readonly touch = output<void>();
+
+  protected readonly errorMatcher = new MexErrorStateMatcher();
 
   protected readonly activeFocusContol = viewChild<
     FormValueControl<unknown> | ElementRef<HTMLElement>
@@ -380,79 +349,6 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
         return { label, value, data: value };
       }),
     );
-  }
-
-  // eslint-disable-next-line complexity
-  protected createEmptyValue(schema: z.ZodType): unknown {
-    const type = schema.def.type as string;
-    if (type === "optional") {
-      return undefined;
-    }
-
-    if (type === "nullable" || type === "null") {
-      return null;
-    }
-
-    if (type === "default" || type === "prefault") {
-      const parsed = schema.safeParse(undefined);
-      return parsed.success ? parsed.data : this.createEmptyValue(innerOf(schema));
-    }
-
-    if (type === "readonly" || type === "nonoptional") {
-      return this.createEmptyValue(innerOf(schema));
-    }
-
-    if (type === "string") {
-      return "";
-    }
-
-    if (type === "number") {
-      return NaN;
-    }
-
-    if (type === "boolean") {
-      return false;
-    }
-
-    if (type === "enum" && schema instanceof z.ZodEnum) {
-      return schema.options.at(0);
-    }
-
-    if (type === "literal" && schema instanceof z.ZodLiteral) {
-      return schema.def.values.at(0);
-    }
-
-    if (type === "union" && schema instanceof z.ZodUnion) {
-      return this.createEmptyValue(schema.options.at(0) as z.ZodType);
-    }
-
-    if (type === "array") {
-      return [];
-    }
-
-    if (type === "object") {
-      if (schema === LinkSchema) {
-        const emptyLink: Link = {
-          url: "",
-          language: asLinkLanguage(this.transloco.getActiveLang()),
-        };
-        return emptyLink;
-      }
-
-      if (schema === TextSchema) {
-        const emptyText: Text = {
-          value: "",
-          language: asTextLanguage(this.transloco.getActiveLang()),
-        };
-        return emptyText;
-      }
-
-      return Object.fromEntries(
-        objectEntries(schema).map(({ key, schema: child }) => [key, this.createEmptyValue(child)]),
-      );
-    }
-
-    return undefined;
   }
 
   // eslint-disable-next-line complexity, max-lines-per-function
@@ -536,7 +432,7 @@ export class ZodFieldEditor<T extends z.ZodType> implements FormValueControl<z.i
         $type: "array",
         formField: formField.field() as Field<unknown[]>,
         elementSchema: elementSchema,
-        createNewItem: () => this.createEmptyValue(elementSchema),
+        createNewItem: () => createEmptyValue(elementSchema, this.transloco.activeLang),
       };
     }
 

@@ -1,6 +1,7 @@
 <div *transloco="let t">
   <h1>{{ t("create.resource.headline.title") }}</h1>
   <div style="height: 300px; display: flex; align-items: center">PLACEHOLDER FOR CHARTS</div>
+  <div>Form touched? {{ resourceForm().touched() }}</div>
   <form [formRoot]="resourceForm">
     <mat-stepper
       #stepper

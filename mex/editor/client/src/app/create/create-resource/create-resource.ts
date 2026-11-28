@@ -12,15 +12,15 @@ import {
 import { MatButton } from "@angular/material/button";
 import { MatStepperModule } from "@angular/material/stepper";
 import { ActivatedRoute, Router } from "@angular/router";
-import { TranslocoDirective } from "@jsverse/transloco";
+import { TranslocoDirective, TranslocoService } from "@jsverse/transloco";
 
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
 import { FieldError } from "../../shared/field-error/field-error";
 import { addFieldLabelKeysAndDescriptionKeys } from "../../shared/field-metadata.pipe";
 import { Fieldset } from "../../shared/fieldset/fieldset";
-import type { AccessRestriction } from "../../shared/models/generated/resource";
 import { ValidationErrorMessagePipe } from "../../shared/validation-error-message-pipe";
 import { ZodFieldEditor } from "../../shared/zod-field-editor/zod-field-editor";
+import { createEmptyFormValue } from "../../shared/zod-util";
 import { groupConf } from "../field-group-config";
 import type { CreateResourceModel } from "./create-resource.model";
 import { CreateResourceModelSchema } from "./create-resource.model";
@@ -72,68 +72,11 @@ export interface FieldGroup {
 export class CreateResource {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly transloco = inject(TranslocoService);
 
-  model = signal<CreateResourceModel>({
-    accessRestriction: null as unknown as AccessRestriction,
-    accrualPeriodicity: null,
-    created: "",
-    doi: "",
-    hasPersonalData: null,
-    license: null,
-    maxTypicalAge: null,
-    minTypicalAge: null,
-    modified: "",
-    numberOfRecords: null,
-    numberOfUniqueIndividuals: null,
-    sizeOfDataBasis: "",
-    temporal: "",
-    wasGeneratedBy: null,
-    contact: [],
-    theme: [],
-    title: [],
-    unitInCharge: [],
-    accessPlatform: [],
-    alternativeTitle: [],
-    analytics: [],
-    anonymizationPseudonymization: [],
-    conformsTo: [],
-    contributingUnit: [],
-    contributor: [],
-    creator: [],
-    description: [],
-    distribution: [],
-    documentation: [],
-    end: [],
-    externalPartner: [],
-    hasCodeValues: [],
-    hasLegalBasis: [],
-    hasPurpose: [],
-    healthCategory: [],
-    icd10code: [],
-    instrumentToolOrApparatus: [{ value: "" }],
-    isPartOf: [],
-    keyword: [],
-    language: [],
-    loincId: [],
-    meshId: [],
-    method: [],
-    methodDescription: [],
-    populationCoverage: [],
-    provenance: [],
-    publication: [],
-    publisher: [],
-    qualityInformation: [],
-    relatedResource: [],
-    resourceCreationMethod: [],
-    resourceTypeGeneral: [],
-    resourceTypeSpecific: [],
-    rights: [],
-    sample: [],
-    source: [],
-    spatial: [],
-    start: [],
-    stateOfDataProcessing: [],
-  });
+  model = signal<CreateResourceModel>(
+    createEmptyFormValue(CreateResourceModelSchema, this.transloco.activeLang),
+  );
 
   resourceForm = form(
     this.model,
@@ -188,7 +131,7 @@ export class CreateResource {
     const grouped = new Map<string, FieldGroupEntry[]>();
 
     // Get strictly typed keys from your model
-    const keys = Object.keys(this.model()) as (keyof CreateResourceModel)[];
+    const keys = Object.keys(CreateResourceModelSchema.shape) as (keyof CreateResourceModel)[];
 
     for (const key of keys) {
       const groupName =

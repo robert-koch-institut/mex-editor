@@ -14,17 +14,19 @@ import {
   disabled,
   form,
   FormField,
+  FormRoot,
   readonly,
   validateStandardSchema,
 } from "@angular/forms/signals";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
-import { MatInput } from "@angular/material/input";
+import { MatInputModule } from "@angular/material/input";
 import { TranslocoDirective } from "@jsverse/transloco";
 import z from "zod";
 
 import { FieldErrors } from "../field-errors/field-errors";
 import { addFieldLabelKeysAndDescriptionKeys } from "../field-metadata.pipe";
+import { MexErrorStateMatcher } from "../mex-error-state-matcher";
 import { asTextLanguage } from "../models";
 import type { Text, TextLanguage } from "../models/generated/shared";
 import { TextSchema } from "../models/generated/shared";
@@ -100,9 +102,10 @@ export function sameDraft(a: TextDraft, b: TextDraft): boolean {
   imports: [
     FieldErrors,
     FormField,
+    FormRoot,
     MatFormFieldModule,
     MatIconModule,
-    MatInput,
+    MatInputModule,
     TextLanguageMenu,
     TranslocoDirective,
   ],
@@ -121,6 +124,8 @@ export class TextEditor implements FormValueControl<Text | null> {
   readonly readonly = input(false);
   readonly touched = input(false);
   readonly touch = output<void>();
+
+  protected readonly errorMatcher = new MexErrorStateMatcher();
 
   protected readonly focusInput = viewChild.required<ElementRef<HTMLInputElement>>("focusInput");
   focus(): void {
@@ -141,6 +146,8 @@ export class TextEditor implements FormValueControl<Text | null> {
       readonly(path, { when: () => this.readonly() });
     }
   });
+
+  // readonly matcher = new MyErrorMatcher();
 
   constructor() {
     effect(() => {

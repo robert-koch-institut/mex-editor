@@ -30,11 +30,11 @@ describe("NavBarComponent", () => {
 
   it("should add active class to links", async () => {
     const harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl("/create/resource", FastTrackResource);
+    await harness.navigateByUrl("/fasttrack/resource", FastTrackResource);
     let activeLinks = fixture.nativeElement.querySelectorAll(".link.active");
     expect(activeLinks.length).toBe(1);
 
-    await harness.navigateByUrl("/create/activity", FastTrackActivity);
+    await harness.navigateByUrl("/fasttrack/activity", FastTrackActivity);
     activeLinks = fixture.nativeElement.querySelectorAll(".link.active");
     expect(activeLinks.length).toBe(1);
 

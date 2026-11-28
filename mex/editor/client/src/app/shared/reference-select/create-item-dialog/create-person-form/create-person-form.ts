@@ -1,0 +1,55 @@
+import { Component, effect, input, linkedSignal, model } from "@angular/core";
+import { form, FormField, FormRoot, validateStandardSchema } from "@angular/forms/signals";
+import { MatInput } from "@angular/material/input";
+import { MatFormField } from "@angular/material/select";
+
+import { FieldCategoryPipe } from "../../../field-category-pipe";
+import { Fieldset } from "../../../fieldset/fieldset";
+import type { CreatePerson } from "../../../models/create-item";
+import { CreatePersonSchema } from "../../../models/create-item";
+
+@Component({
+  selector: "mex-create-person-form",
+  imports: [FieldCategoryPipe, Fieldset, FormField, FormRoot, MatFormField, MatInput],
+  templateUrl: "./create-person-form.html",
+  styleUrl: "./create-person-form.scss",
+})
+/**
+ * Form based component to create a {@link CreatePerson}.
+ */
+export class CreatePersonForm {
+  readonly data = model<CreatePerson>();
+  readonly inputText = input<string>();
+  readonly isValid = model<boolean>();
+
+  protected readonly formModel = linkedSignal<CreatePerson>(
+    () => this.data() ?? this.createEmptyCreatePerson(this.inputText() ?? ""),
+  );
+  protected readonly personSchema = CreatePersonSchema;
+  protected readonly personForm = form(this.formModel, (schema) => {
+    validateStandardSchema(schema, CreatePersonSchema);
+  });
+
+  constructor() {
+    effect(() => {
+      const pForm = this.personForm();
+      this.isValid.set(pForm.valid());
+      this.data.set(pForm.value());
+    });
+  }
+
+  private createEmptyCreatePerson(inputText: string): CreatePerson {
+    let givenName = "";
+    let familyName = "";
+    if (inputText) {
+      const [first, ...rest] = inputText.split(" ");
+      givenName = first;
+      familyName = rest.join(" ");
+    }
+    return {
+      $type: "CreatePerson",
+      givenName,
+      familyName,
+    };
+  }
+}

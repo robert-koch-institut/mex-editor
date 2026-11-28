@@ -1,7 +1,7 @@
 import z from "zod";
 
 import { FieldCategoryPipe } from "./field-category-pipe";
-import { recommended } from "./models/zod-types";
+import { recommended } from "./models/zod-recommended";
 
 describe("FieldCategoryPipe", () => {
   it("create an instance", () => {

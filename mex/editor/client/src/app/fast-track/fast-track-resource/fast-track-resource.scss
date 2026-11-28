@@ -1,60 +1,7 @@
-@use "../../../breakpoints.scss" as bp;
-@use "@angular/material" as mat;
+@use "../fast-track-styles" as *;
 
-.vertical-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.horizontal-list {
-  display: flex;
-  flex-direction: row;
-}
-
-.two-column-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  grid-auto-rows: auto;
-  grid-auto-flow: row;
-  gap: 24px;
-  align-items: start;
-}
-
-.two-column-item {
-  grid-column: 1 / span 2;
-}
-
-.one-column-item {
-  grid-column: span 1;
-}
+@include fast-track-styles;
 
 .keyword-chips:has(mat-chip-row) {
   margin-bottom: 8px;
-}
-
-.button-saving {
-  display: inline-flex;
-  align-items: center;
-  gap: 1em;
-
-  @include mat.progress-spinner-overrides(
-    (
-      active-indicator-color: orange,
-    )
-  );
-}
-
-@include bp.up-to-small {
-  .two-column-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .two-column-item {
-    grid-column: span 1;
-  }
-}
-
-.form-actions {
-  display: flex;
-  justify-content: right;
 }

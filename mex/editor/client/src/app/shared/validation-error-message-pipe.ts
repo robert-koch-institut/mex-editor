@@ -3,6 +3,31 @@ import { Pipe } from "@angular/core";
 import type { ValidationError } from "@angular/forms/signals";
 import { StandardSchemaValidationError } from "@angular/forms/signals";
 
+import { readFieldMetadata } from "./field-metadata.pipe";
+
+/**
+ * Transforms a validation error into a message containing key and param.
+ * @param value The error to transform to a message.
+ * @returns The transformed error as message.
+ */
+export function transformValidationErrorToMessage(value: ValidationError.WithFieldTree) {
+  if (value instanceof StandardSchemaValidationError) {
+    const { message, ...rest } = value.issue;
+    const fieldLabelKey = readFieldMetadata(value.fieldTree, "labelKey");
+    const params = { ...rest, ...(fieldLabelKey && { field: `{{${fieldLabelKey}}}` }) };
+
+    return {
+      msgKey: message,
+      params,
+    };
+  }
+
+  return {
+    msgKey: value.message ?? "",
+    params: {},
+  };
+}
+
 @Pipe({
   name: "validationErrorMessage",
 })
@@ -11,38 +36,6 @@ import { StandardSchemaValidationError } from "@angular/forms/signals";
  */
 export class ValidationErrorMessagePipe implements PipeTransform {
   transform(value: ValidationError.WithFieldTree) {
-    if (value instanceof StandardSchemaValidationError) {
-      const isNestedIssue = value.issue.path && value.issue.path.length >= 2;
-      if (isNestedIssue) {
-        const indexer = value.issue.path[1];
-        if (typeof indexer === "number") {
-          return {
-            msgKey: "validation.arrayError",
-            params: {
-              index: indexer + 1,
-            },
-          };
-        }
-        return {
-          msgKey: "validation.objectError",
-          params: {
-            index: indexer,
-          },
-        };
-      }
-
-      const { message, ...rest } = value.issue;
-      return {
-        msgKey: message,
-        params: {
-          ...rest,
-        },
-      };
-    }
-
-    return {
-      msgKey: value.message,
-      params: {},
-    };
+    return transformValidationErrorToMessage(value);
   }
 }

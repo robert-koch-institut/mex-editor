@@ -1,0 +1,42 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  mex-fieldset & {
+    .label {
+      font-weight: normal;
+    }
+  }
+  ::ng-deep > mex-field-error-summary {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-family: var(--mat-form-field-subscript-text-font, var(--mat-sys-body-small-font));
+    line-height: var(
+      --mat-form-field-subscript-text-line-height,
+      var(--mat-sys-body-small-line-height)
+    );
+    font-size: var(--mat-form-field-subscript-text-size, var(--mat-sys-body-small-size));
+    letter-spacing: var(
+      --mat-form-field-subscript-text-tracking,
+      var(--mat-sys-body-small-tracking)
+    );
+    font-weight: var(--mat-form-field-subscript-text-weight, var(--mat-sys-body-small-weight));
+
+    position: static;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 0 16px;
+    opacity: 1;
+    transform: translateY(0);
+    animation: _mat-form-field-subscript-animation 0ms cubic-bezier(0.55, 0, 0.55, 0.2);
+  }
+}
+
+.label {
+  font-weight: bold;
+  .category {
+    font-weight: normal;
+  }
+}

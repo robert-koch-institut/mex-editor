@@ -6,23 +6,27 @@ import {
   CreateOrganizationSchema,
   CreatePersonSchema,
 } from "./create-item";
-import { type PreviewContactPoint, PreviewContactPointSchema } from "./generated/contact-point";
-import { type PreviewOrganization, PreviewOrganizationSchema } from "./generated/organization";
-import type { PreviewOrganizationalUnit } from "./generated/organizational-unit";
-import { type PreviewPerson, PreviewPersonSchema } from "./generated/person";
+import { PreviewContactPointSchema } from "./generated/contact-point";
+import { PreviewOrganizationSchema } from "./generated/organization";
+import { PreviewOrganizationalUnitSchema } from "./generated/organizational-unit";
+import { PreviewPersonSchema } from "./generated/person";
 import type { LinkLanguage, TextLanguage } from "./generated/shared";
 import { LinkLanguageSchema, TextLanguageSchema } from "./generated/shared";
 
 /**
- * UnionType for all preview items.
+ * UnionSchema for all preview items.
  */
-export type PreviewItem =
-  PreviewOrganizationalUnit | PreviewContactPoint | PreviewPerson | PreviewOrganization;
+export const PreviewItemSchema = z.union([
+  PreviewOrganizationSchema,
+  PreviewContactPointSchema,
+  PreviewPersonSchema,
+  PreviewOrganizationalUnitSchema,
+]);
 
 /**
- * Catgegory for Field.
+ * UnionType for all preview items.
  */
-export type FieldCategory = "optional" | "recommended" | "required";
+export type PreviewItem = z.infer<typeof PreviewItemSchema>;
 
 /**
  * Schema for UnionType for CreatePerson and PreviewPerson
@@ -56,9 +60,14 @@ export const CreateOrPreviewOrganizationSchema = z.union([
 ]);
 
 /**
- * UnionType for CreateOrganization and PreviewOrganization.
+ * UnionType for CreateContactPoint and PreviewContactPoint.
  */
 export type CreateOrPreviewOrganization = z.infer<typeof CreateOrPreviewOrganizationSchema>;
+
+/**
+ * Catgegory for Field.
+ */
+export type FieldCategory = "optional" | "recommended" | "required";
 
 /**
  * Gives the given string as LinkLanguage. If its not a valid LinkLanguage it will fallback to "de".

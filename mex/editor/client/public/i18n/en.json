@@ -1,9 +1,55 @@
 {
   "Activity.temporal": "Project duration",
+  "Link": {
+    "language": "Language",
+    "title": "Title",
+    "url": "URL"
+  },
+  "Text": {
+    "language": "Language",
+    "value": "Text"
+  },
   "categories": {
     "optional": "optional",
     "recommended": "recommended",
     "required": "mandatory"
+  },
+  "create": {
+    "activity": {
+      "groupNames": {
+        "contact": "Contact",
+        "creators": "Creators & Contributors",
+        "description": "Description",
+        "general": "General",
+        "partners": "Partners & Funding",
+        "publication": "Related Publications & Further Documentation",
+        "relatedResources": "Related Resources"
+      }
+    },
+    "buttons.nextStep": "Next",
+    "buttons.previousStep": "Previous",
+    "resource": {
+      "buttons.submit": "Save {{Resource}}",
+      "groupNames": {
+        "access": "Access & Usage Rights",
+        "contact": "Contact",
+        "coverage": "Data Representation & Coverage",
+        "creators": "Creators & Contributors",
+        "files": "Files",
+        "general": "General",
+        "generatedBy": "Related Projects",
+        "keywords": "Theme & Keywords",
+        "legal": "Legal Basis & Data Provenance",
+        "methodology": "Methodology",
+        "processing": "Data Collection & Processing",
+        "publication": "Related Publications & Further Documentation",
+        "quality": "Standards & Quality",
+        "relatedResources": "Related Resources",
+        "variables": "Variables"
+      },
+      "headline.title": "Create {{Resource}}"
+    },
+    "summary.title": "Summary"
   },
   "create-item-dialog.cancel-button.label": "Cancel",
   "create-item-dialog.description": "Create a new entry by filling out all required fields and press \"{{create-item-dialog.save-button.label}}\" afterwards to create the entry.",
@@ -26,6 +72,20 @@
       "save-button": {
         "label": "Save {{Activity}}",
         "saving": "Saving {{Activity}}..."
+      },
+      "toast": {
+        "error": {
+          "message": "Unfortunately, the {{Activity}} could not be saved. An unexpected error occurred.",
+          "title": "Error while saving"
+        },
+        "submissionError": {
+          "message": "Unfortunately, the {{Activity}} could not be saved. An unexpected error occurred.\nYou can send an email to the MEx team to inform them about the issue.",
+          "title": "Error while saving"
+        },
+        "success": {
+          "message": "The {{Activity}} is successfully saved.",
+          "title": "{{Activity}} saved"
+        }
       }
     },
     "resource": {
@@ -67,13 +127,6 @@
     "fr": "french",
     "none": "none",
     "ru": "russian"
-  },
-  "link-editor": {
-    "link": {
-      "language": "Language",
-      "title": "Title",
-      "url": "URL"
-    }
   },
   "navbar.create-link.text": "Create {{{{entity_type}}}}",
   "reference-select": {

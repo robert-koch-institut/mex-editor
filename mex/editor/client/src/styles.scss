@@ -64,3 +64,15 @@ a {
   font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
 }
+
+mat-error:has(> mex-field-error, > mex-field-error-summary) {
+  margin-top: 0.25em;
+
+  &::before {
+    content: unset !important;
+  }
+}
+
+.w-100 {
+  width: 100%;
+}

@@ -20,18 +20,18 @@ import { Router } from "@angular/router";
 import { TranslocoDirective, TranslocoPipe, TranslocoService } from "@jsverse/transloco";
 
 import { ConceptLookups } from "../../shared/concept-lookups.service";
+import { Datepicker } from "../../shared/datepicker/datepicker";
 import { FieldCategoryPipe } from "../../shared/field-category-pipe";
+import { Fieldset } from "../../shared/fieldset/fieldset";
 import type { Frequency } from "../../shared/models/generated/resource";
 import { SubmissionError } from "../../shared/models/submission-result";
+import { ReferenceSelect } from "../../shared/reference-select/reference-select";
 import { ToastNotifier } from "../../shared/toasts/toast-notifier";
-import { Datepicker } from "../datepicker/datepicker";
-import { Fieldset } from "../fieldset/fieldset";
-import { ReferenceSelect } from "../reference-select/reference-select";
 import {
   type FastTrackResourceModel,
   FastTrackResourceModelSchema,
-} from "./fast-track-resource.models";
-import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
+} from "../fast-track-resource.models";
+import { FastTrackSubmission } from "../fast-track-submission";
 
 @Component({
   selector: "mex-fast-track-resource",
@@ -64,16 +64,16 @@ import { FastTrackResourceSubmission } from "./fast-track-resource-submission";
  * Page to create a resource the fast way.
  */
 export class FastTrackResource {
-  private readonly translocoService = inject(TranslocoService);
-
   private readonly router = inject(Router);
   private readonly notifier = inject(ToastNotifier);
+  private readonly translocoService = inject(TranslocoService);
+  private readonly submission = inject(FastTrackSubmission);
   protected readonly resourceSchema = FastTrackResourceModelSchema;
   protected readonly conceptOptions = inject(ConceptLookups);
-  protected readonly submission = inject(FastTrackResourceSubmission);
 
   isPrefillChecked = signal(false);
   model = signal<FastTrackResourceModel>({
+    $type: "FastTrackResourceModel",
     title: "",
     description: "",
     theme: [],

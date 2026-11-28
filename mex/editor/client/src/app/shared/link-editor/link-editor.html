@@ -1,0 +1,41 @@
+<form [formRoot]="linkForm" class="link-editor" role="group" *transloco="let t">
+  <div class="url">
+    <mat-form-field class="w-100">
+      <mat-label>{{ t("Link.url") }}</mat-label>
+      <input
+        matInput
+        #focusInput
+        type="url"
+        [formField]="linkForm.url"
+        [errorStateMatcher]="errorMatcher"
+        (blur)="touch.emit()"
+      />
+    </mat-form-field>
+    <mex-field-errors [formField]="linkForm.url" [fieldLabel]="t('Link.url')"></mex-field-errors>
+  </div>
+  <div class="title">
+    <mat-form-field class="w-100">
+      <mat-label>{{ t("Link.title") }}</mat-label>
+      <input
+        matInput
+        [formField]="linkForm.title"
+        [errorStateMatcher]="errorMatcher"
+        (blur)="touch.emit()"
+      />
+      <mex-link-language-menu
+        matSuffix
+        [language]="asLinkLanguage(linkForm.language().value())"
+        [nullable]="true"
+        (languageSelected)="this.linkForm.language().value.set($event ?? ''); touch.emit()"
+      ></mex-link-language-menu>
+    </mat-form-field>
+    <mex-field-errors
+      [formField]="linkForm.title"
+      [fieldLabel]="t('Link.title')"
+    ></mex-field-errors>
+    <mex-field-errors
+      [formField]="linkForm.language"
+      [fieldLabel]="t('Link.language')"
+    ></mex-field-errors>
+  </div>
+</form>

@@ -1,0 +1,141 @@
+@let resSchema = resolvedSchema();
+@if (resSchema.nullable) {
+  <div>NULLABLE</div>
+}
+@if (resSchema.optional) {
+  <div>OPTIONAL</div>
+}
+@switch (resSchema.$type) {
+  @case ("array") {
+    <mex-array-form-value-control
+      #focusControl
+      [formField]="resSchema.formField"
+      [createItem]="resSchema.createNewItem"
+    >
+      <ng-template [mexArrayItem]="resSchema.formField" let-field="field" let-index="index">
+        <mex-zod-field-editor [formField]="field" [schema]="resSchema.elementSchema" />
+        <mex-field-errors [formField]="field"></mex-field-errors>
+      </ng-template>
+    </mex-array-form-value-control>
+  }
+  @case ("object") {
+    <mex-zod-object-editor
+      #focusControl
+      [formField]="resSchema.formField"
+      [schema]="resSchema.objectSchema"
+    ></mex-zod-object-editor>
+    <mex-field-errors [formField]="resSchema.formField"></mex-field-errors>
+  }
+  @case ("union") {
+    <div class="todo">
+      UNION REFERENCE
+      <mat-form-field>
+        <mat-select #selectedUnion placeholder="Select Uniontype">
+          @for (option of resSchema.schemaOptions; track option) {
+            <mat-option [value]="option">{{ option }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      @if (selectedUnion.value) {
+        <mex-zod-field-editor
+          [schema]="selectedUnion.value"
+          [formField]="resSchema.formField"
+        ></mex-zod-field-editor>
+      } @else {
+        <div>select union type</div>
+      }
+    </div>
+  }
+  @case ("reference") {
+    <div class="todo">SINGLE REFERENCE {{ resSchema.allowedTypes }}</div>
+  }
+  @case ("reference-array") {
+    <mex-reference-select
+      #focusControl
+      [formField]="resSchema.formField"
+      [validEntityTypes]="resSchema.allowedTypes"
+    />
+  }
+  @case ("number") {
+    <mat-form-field class="w-100">
+      <input
+        matInput
+        type="number"
+        #focusControl
+        [formField]="resSchema.formField"
+        [errorStateMatcher]="errorMatcher"
+      />
+    </mat-form-field>
+  }
+  @case ("string") {
+    <mat-form-field class="w-100">
+      <input
+        matInput
+        type="text"
+        #focusControl
+        [formField]="resSchema.formField"
+        [errorStateMatcher]="errorMatcher"
+      />
+    </mat-form-field>
+  }
+  @case ("date") {
+    <mex-datepicker
+      #focusControl
+      [formField]="resSchema.formField"
+      [allowedPrecisions]="resSchema.allowedPrecisions"
+    />
+  }
+  @case ("link") {
+    <mex-link-editor
+      #focusControl
+      [formField]="resSchema.formField"
+      [nullable]="resSchema.nullable"
+    ></mex-link-editor>
+  }
+  @case ("text") {
+    <mex-text-editor
+      #focusControl
+      [formField]="resSchema.formField"
+      [nullable]="resSchema.nullable"
+    ></mex-text-editor>
+  }
+  @case ("enum") {
+    <mat-form-field class="w-100">
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-select
+        #focusControl
+        [formField]="resSchema.formField"
+        [placeholder]="'select.placeholder' | transloco"
+        [errorStateMatcher]="errorMatcher"
+      >
+        @for (option of resSchema.options(); track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+  @case ("enum-array") {
+    <mat-form-field class="w-100">
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-select
+        #focusControl
+        multiple
+        [formField]="resSchema.formField"
+        [placeholder]="'select.placeholder' | transloco"
+        [errorStateMatcher]="errorMatcher"
+      >
+        @for (option of resSchema.options(); track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+  @default {
+    UNHANDLED {{ resSchema.$type }}
+    <pre style="max-height: 300px; overflow: auto">
+      <code>
+        {{ resSchema | json }}
+      </code>
+    </pre>
+  }
+}

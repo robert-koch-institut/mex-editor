@@ -1,0 +1,22 @@
+<form [formRoot]="personForm">
+  <mex-fieldset
+    labelKey="Person.givenName"
+    [formField]="personForm.givenName"
+    [showErrorsWithoutTouch]="true"
+    [category]="personSchema.shape.givenName | fieldCategory"
+  >
+    <mat-form-field>
+      <input matInput [formField]="personForm.givenName" class="focus-me" />
+    </mat-form-field>
+  </mex-fieldset>
+  <mex-fieldset
+    labelKey="Person.familyName"
+    [formField]="personForm.familyName"
+    [showErrorsWithoutTouch]="true"
+    [category]="personSchema.shape.familyName | fieldCategory"
+  >
+    <mat-form-field>
+      <input matInput [formField]="personForm.familyName" />
+    </mat-form-field>
+  </mex-fieldset>
+</form>

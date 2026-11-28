@@ -4,7 +4,6 @@ import { TestBed } from "@angular/core/testing";
 import { TranslocoService } from "@jsverse/transloco";
 
 import { ConceptLookups } from "./concept-lookups.service";
-import type { Lookup } from "./to-lookup-pipe";
 import { ToastNotifier } from "./toasts/toast-notifier";
 
 describe("ConceptLookups", () => {
@@ -72,9 +71,9 @@ describe("ConceptLookups", () => {
     }
 
     await TestBed.inject(ApplicationRef).whenStable();
-    const trimData = (x: Lookup<unknown>) => {
+    const trimData = (x: { data: unknown }) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { data, ...rest } = x;
+      const { data: data, ...rest } = x;
       return rest;
     };
 

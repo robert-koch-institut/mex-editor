@@ -1,0 +1,28 @@
+<div class="label">
+  @let _fieldLabelKey = fieldLabelKey();
+  @let fieldLabel =
+    _fieldLabelKey ? (_fieldLabelKey | transloco) : (labelKey() | transloco: labelParam());
+  {{ fieldLabel }}
+  @if (showCategoryLabel()) {
+    <span class="category">- {{ categoryKey() | transloco }}</span>
+  }
+</div>
+@if (showDescription()) {
+  @let descKey = fieldDescriptionKey() ?? descriptionKey();
+  @if (descKey) {
+    <div class="description">{{ descKey | transloco }}</div>
+  }
+}
+
+<ng-content></ng-content>
+
+@if (showErrors()) {
+  @let field = formField();
+  @if (field) {
+    <mex-field-errors
+      [formField]="field"
+      [fieldLabel]="fieldLabel"
+      [showErrorsWithoutTouch]="showErrorsWithoutTouch()"
+    ></mex-field-errors>
+  }
+}

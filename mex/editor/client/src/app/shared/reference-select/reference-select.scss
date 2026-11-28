@@ -1,0 +1,30 @@
+@use "@angular/material" as mat;
+
+:host {
+  width: 100%;
+  display: flex;
+}
+
+mat-form-field {
+  width: 100%;
+  ::ng-deep {
+    label {
+      width: 100%;
+
+      &.mdc-floating-label--float-above {
+        width: unset;
+      }
+    }
+
+    .mdc-text-field--filled:not(.mdc-text-field--disabled).mdc-text-field--invalid
+      .mdc-floating-label {
+      color: var(--mat-form-field-filled-hover-label-text-color, var(--mat-sys-on-surface-variant));
+    }
+    .mdc-text-field--filled:not(.mdc-text-field--disabled).mdc-text-field--invalid:not(
+        .mdc-text-field--disabled
+      ):hover
+      .mdc-floating-label {
+      color: var(--mat-form-field-filled-hover-label-text-color, var(--mat-sys-on-surface-variant));
+    }
+  }
+}

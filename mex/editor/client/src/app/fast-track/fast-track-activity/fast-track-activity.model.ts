@@ -12,7 +12,7 @@ import {
 } from "../../shared/models/generated/activity";
 import { PreviewOrganizationalUnitSchema } from "../../shared/models/generated/organizational-unit";
 import { LinkSchema, TextSchema } from "../../shared/models/generated/shared";
-import { recommended } from "../../shared/models/zod-types";
+import { recommended } from "../../shared/models/zod-recommended";
 
 /**
  * Schema for FasttrackActivityModel

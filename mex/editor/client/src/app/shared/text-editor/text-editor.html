@@ -1,0 +1,25 @@
+<div>TextForm touched? {{ textForm().touched() }}</div>
+<div>TextForm.value touched? {{ textForm.value().touched() }}</div>
+<form [formRoot]="textForm" class="text-editor" role="group" *transloco="let t">
+  <mat-form-field class="title w-100">
+    <mat-label>{{ t("Text.value") }}</mat-label>
+    <input
+      matInput
+      #focusInput
+      [formField]="textForm.value"
+      [errorStateMatcher]="errorMatcher"
+      (blur)="touch.emit()"
+    />
+    <mex-text-language-menu
+      matSuffix
+      [language]="asTextLanguage(textForm.language().value())"
+      [nullable]="true"
+      (languageSelected)="this.textForm.language().value.set($event ?? ''); touch.emit()"
+    ></mex-text-language-menu>
+  </mat-form-field>
+  <mex-field-errors [formField]="textForm.value" [fieldLabel]="t('Text.value')"></mex-field-errors>
+  <mex-field-errors
+    [formField]="textForm.language"
+    [fieldLabel]="t('Text.language')"
+  ></mex-field-errors>
+</form>

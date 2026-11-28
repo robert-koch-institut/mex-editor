@@ -2,10 +2,10 @@
   <h1 class="page-title">{{ t("fasttrack.resource.headline") }}</h1>
   <form [formRoot]="resourceForm" class="two-column-layout">
     <mex-fieldset
+      labelKey="Resource.title"
       [formField]="resourceForm.title"
-      labelKey="title"
-      class="one-column-item"
       [category]="resourceSchema.shape.title | fieldCategory"
+      class="one-column-item"
     >
       <mat-form-field>
         <input
@@ -18,10 +18,10 @@
     </mex-fieldset>
 
     <mex-fieldset
+      labelKey="Resource.description"
       [formField]="resourceForm.description"
-      labelKey="description"
-      class="two-column-item"
       [category]="resourceSchema.shape.description | fieldCategory"
+      class="two-column-item"
     >
       <mat-form-field>
         <textarea
@@ -34,11 +34,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.contact"
       labelKey="contact"
       descriptionKey="Resource.contact.description"
-      class="one-column-item"
+      [formField]="resourceForm.contact"
       [category]="resourceSchema.shape.contact | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="resourceForm.contact"
@@ -49,11 +49,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.creator"
       labelKey="creator"
       descriptionKey="Resource.creator.description"
-      class="one-column-item"
+      [formField]="resourceForm.creator"
       [category]="resourceSchema.shape.creator | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="resourceForm.creator"
@@ -65,11 +65,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.contributor"
       labelKey="Resource.contributor"
       descriptionKey="Resource.contributor.description"
-      class="one-column-item"
+      [formField]="resourceForm.contributor"
       [category]="resourceSchema.shape.contributor | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="resourceForm.contributor"
@@ -81,11 +81,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.unitInCharge"
       labelKey="unitInCharge"
       descriptionKey="unitInCharge.description"
-      class="one-column-item"
       [category]="resourceSchema.shape.unitInCharge | fieldCategory"
+      [formField]="resourceForm.unitInCharge"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="resourceForm.unitInCharge"
@@ -95,11 +95,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.contributingUnit"
       labelKey="contributingUnit"
       descriptionKey="Resource.contributingUnit.description"
-      class="one-column-item"
       [category]="resourceSchema.shape.contributingUnit | fieldCategory"
+      [formField]="resourceForm.contributingUnit"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="resourceForm.contributingUnit"
@@ -110,11 +110,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.theme"
       labelKey="theme"
       descriptionKey="Resource.theme.description"
-      class="one-column-item"
       [category]="resourceSchema.shape.theme | fieldCategory"
+      [formField]="resourceForm.theme"
+      class="one-column-item"
     >
       <mat-form-field>
         <mat-icon matPrefix>search</mat-icon>
@@ -124,19 +124,19 @@
           [placeholder]="'select.placeholder' | transloco"
           data-testid="theme-select"
         >
-          @for (option of conceptOptions.themeOptions(); track option.id) {
-            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          @for (option of conceptOptions.themeOptions(); track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.spatial"
       labelKey="Resource.spatial"
       descriptionKey="Resource.spatial.description"
-      class="one-column-item"
       [category]="resourceSchema.shape.spatial | fieldCategory"
+      [formField]="resourceForm.spatial"
+      class="one-column-item"
     >
       <mat-form-field>
         <input
@@ -149,41 +149,36 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.resourceCreationMethod"
       labelKey="Resource.resourceCreationMethod"
       descriptionKey="Resource.resourceCreationMethod.description"
-      class="one-column-item"
       [category]="resourceSchema.shape.resourceCreationMethod | fieldCategory"
+      [formField]="resourceForm.resourceCreationMethod"
+      class="one-column-item"
     >
       <mat-form-field>
         <mat-select
           multiple
-          [formField]="resourceForm.resourceCreationMethod"
           [placeholder]="'select.placeholder' | transloco"
           data-testid="resourceCreationMethod-select"
         >
-          @for (option of conceptOptions.resourceCreationMethodOptions(); track option.id) {
-            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          @for (option of conceptOptions.resourceCreationMethodOptions(); track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.accrualPeriodicity"
       labelKey="Resource.accrualPeriodicity"
       descriptionKey="Resource.accrualPeriodicity.description"
-      class="one-column-item"
+      [formField]="resourceForm.accrualPeriodicity"
       [category]="resourceSchema.shape.accrualPeriodicity | fieldCategory"
+      class="one-column-item"
     >
       <mat-form-field class="one-column-item">
-        <mat-select
-          [formField]="resourceForm.accrualPeriodicity"
-          [placeholder]="'select.placeholder' | transloco"
-          data-testid="frequency-select"
-        >
-          @for (option of conceptOptions.frequencyOptions(); track option.id) {
-            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+        <mat-select [placeholder]="'select.placeholder' | transloco" data-testid="frequency-select">
+          @for (option of conceptOptions.frequencyOptions(); track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -198,10 +193,10 @@
     >
       <div class="two-column-layout">
         <mex-fieldset
-          [formField]="resourceForm.start"
           labelKey="Resource.start"
-          class="one-column-item"
+          [formField]="resourceForm.start"
           [category]="resourceSchema.shape.start | fieldCategory"
+          class="one-column-item"
         >
           <mex-datepicker
             [formField]="resourceForm.start"
@@ -211,10 +206,10 @@
         </mex-fieldset>
 
         <mex-fieldset
-          [formField]="resourceForm.end"
           labelKey="Resource.end"
-          class="one-column-item"
+          [formField]="resourceForm.end"
           [category]="resourceSchema.shape.end | fieldCategory"
+          class="one-column-item"
         >
           <mex-datepicker
             [formField]="resourceForm.end"
@@ -226,11 +221,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.keywords.de"
       labelKey="fasttrack.resource.fields.keywords.de.label"
       descriptionKey="Resource.keyword.description"
-      class="two-column-item"
+      [formField]="resourceForm.keywords.de"
       [category]="resourceSchema.shape.keywords.shape.de | fieldCategory"
+      class="two-column-item"
     >
       <mat-form-field>
         <mat-chip-grid
@@ -256,11 +251,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.keywords.en"
       labelKey="fasttrack.resource.fields.keywords.en.label"
       descriptionKey="Resource.keyword.description"
-      class="two-column-item"
+      [formField]="resourceForm.keywords.en"
       [category]="resourceSchema.shape.keywords.shape.en | fieldCategory"
+      class="two-column-item"
     >
       <mat-form-field>
         <mat-chip-grid
@@ -286,10 +281,10 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.hasLegalBasis"
       labelKey="Resource.hasLegalBasis"
-      class="two-column-item"
+      [formField]="resourceForm.hasLegalBasis"
       [category]="resourceSchema.shape.hasLegalBasis | fieldCategory"
+      class="two-column-item"
     >
       <mat-form-field>
         <textarea
@@ -302,10 +297,10 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.provenance"
       labelKey="Resource.provenance"
-      class="two-column-item"
+      [formField]="resourceForm.provenance"
       [category]="resourceSchema.shape.provenance | fieldCategory"
+      class="two-column-item"
     >
       <mat-form-field>
         <textarea
@@ -318,10 +313,10 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="resourceForm.rights"
       labelKey="Resource.rights"
-      class="two-column-item"
+      [formField]="resourceForm.rights"
       [category]="resourceSchema.shape.rights | fieldCategory"
+      class="two-column-item"
     >
       <mat-slide-toggle
         [checked]="isPrefillChecked()"

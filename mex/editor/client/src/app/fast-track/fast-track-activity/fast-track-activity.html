@@ -2,10 +2,10 @@
   <h1 class="page-title">{{ t("fasttrack.activity.headline") }}</h1>
   <form [formRoot]="activityForm" class="two-column-layout">
     <mex-fieldset
+      labelKey="Activity.title"
       [formField]="activityForm.title"
-      labelKey="title"
-      class="one-column-item"
       [category]="activitySchema.shape.title | fieldCategory"
+      class="one-column-item"
     >
       <mat-form-field>
         <input
@@ -18,10 +18,10 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="activityForm.shortName"
       labelKey="shortName"
-      class="one-column-item"
+      [formField]="activityForm.shortName"
       [category]="activitySchema.shape.shortName | fieldCategory"
+      class="one-column-item"
     >
       <mat-form-field>
         <input
@@ -34,10 +34,10 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="activityForm.abstract"
       labelKey="abstract"
-      class="two-column-item"
+      [formField]="activityForm.abstract"
       [category]="activitySchema.shape.abstract | fieldCategory"
+      class="two-column-item"
     >
       <mat-form-field>
         <textarea
@@ -50,11 +50,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="activityForm.contact"
       labelKey="contact"
       descriptionKey="Activity.contact.description"
-      class="one-column-item"
+      [formField]="activityForm.contact"
       [category]="activitySchema.shape.contact | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="activityForm.contact"
@@ -65,11 +65,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="activityForm.involvedPerson"
       labelKey="Activity.involvedPerson"
       descriptionKey="Activity.involvedPerson.description"
-      class="one-column-item"
+      [formField]="activityForm.involvedPerson"
       [category]="activitySchema.shape.involvedPerson | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="activityForm.involvedPerson"
@@ -81,11 +81,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="activityForm.responsibleUnit"
       labelKey="Activity.responsibleUnit"
       descriptionKey="Activity.responsibleUnit.description"
-      class="one-column-item"
+      [formField]="activityForm.responsibleUnit"
       [category]="activitySchema.shape.responsibleUnit | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="activityForm.responsibleUnit"
@@ -95,11 +95,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="activityForm.involvedUnit"
       labelKey="Activity.involvedUnit"
       descriptionKey="Activity.involvedUnit.description"
-      class="one-column-item"
+      [formField]="activityForm.involvedUnit"
       [category]="activitySchema.shape.involvedUnit | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="activityForm.involvedUnit"
@@ -111,11 +111,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="activityForm.activityType"
       labelKey="Activity.activityType"
       descriptionKey="Activity.activityType.description"
-      class="one-column-item"
+      [formField]="activityForm.activityType"
       [category]="activitySchema.shape.activityType | fieldCategory"
+      class="one-column-item"
     >
       <mat-form-field>
         <mat-icon matPrefix>search</mat-icon>
@@ -125,19 +125,19 @@
           [placeholder]="'select.placeholder' | transloco"
           data-testid="activityType-select"
         >
-          @for (option of conceptOptions.activityTypeOptions(); track option.id) {
-            <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          @for (option of conceptOptions.activityTypeOptions(); track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="activityForm.funderOrCommissioner"
       labelKey="Activity.funderOrCommissioner"
       descriptionKey="Activity.funderOrCommissioner.description"
-      class="one-column-item"
+      [formField]="activityForm.funderOrCommissioner"
       [category]="activitySchema.shape.funderOrCommissioner | fieldCategory"
+      class="one-column-item"
     >
       <mex-reference-select
         [formField]="activityForm.funderOrCommissioner"
@@ -149,11 +149,11 @@
     </mex-fieldset>
 
     <mex-fieldset
-      [formField]="activityForm.website"
       labelKey="website"
       descriptionKey="website.description"
-      class="one-column-item"
+      [formField]="activityForm.website"
       [category]="activitySchema.shape.website | fieldCategory"
+      class="one-column-item"
     >
       <mex-array-form-value-control [formField]="activityForm.website" [createItem]="createNewLink">
         <ng-template [mexArrayItem]="activityForm.website" let-field="field">
@@ -170,10 +170,10 @@
     >
       <div class="two-column-layout">
         <mex-fieldset
-          [formField]="activityForm.start"
           labelKey="Activity.start"
-          class="one-column-item"
+          [formField]="activityForm.start"
           [category]="activitySchema.shape.start | fieldCategory"
+          class="one-column-item"
         >
           <mex-datepicker
             [formField]="activityForm.start"
@@ -182,10 +182,10 @@
         </mex-fieldset>
 
         <mex-fieldset
-          [formField]="activityForm.end"
           labelKey="Activity.end"
-          class="one-column-item"
+          [formField]="activityForm.end"
           [category]="activitySchema.shape.end | fieldCategory"
+          class="one-column-item"
         >
           <mex-datepicker
             [formField]="activityForm.end"

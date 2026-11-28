@@ -10,16 +10,12 @@ export class MexErrorStateMatcher extends ErrorStateMatcher {
     control: AbstractControl | null,
     f: FormGroupDirective | NgForm | null,
   ): boolean {
-    const result = super.isErrorState(control, f);
-    console.log("MyErrorMatcher :: isErrorState", control, f, result);
-    return result;
+    return super.isErrorState(control, f);
   }
   override isSignalErrorState(field: Field<unknown> | null): boolean {
     if (!super.isSignalErrorState) {
-      throw new Error("WTF");
+      return false;
     }
-    const result = super.isSignalErrorState(field);
-    console.log("MyErrorMatcher :: isSignalErrorState", field, result);
-    return result;
+    return super.isSignalErrorState(field);
   }
 }
